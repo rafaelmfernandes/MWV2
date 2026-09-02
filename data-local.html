@@ -1,107 +1,95 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data / Local</title>
-    <link rel="stylesheet" href="css/data-local.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ArtistaShow - Local e Data</title>
+  <link rel="stylesheet" href="css/data-local.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
 </head>
 <body>
 
-    <div class="app-container">
-        <!-- Topbar -->
-        <header class="topbar">
-            <button class="btn-voltar">&lt;</button>
-            <span class="topbar-titulo">Data / Local</span>
-            <button class="btn-cancelar">Cancelar</button>
-        </header>
-
-        <!-- Conteúdo Principal -->
-        <main class="conteudo">
-            <section class="secao-endereco">
-                <h2>Qual o endereço do evento?</h2>
-                <p class="subtitulo">Informe corretamente o endereço do seu evento, ele será importante para o contratado chegar ao local.</p>
-
-                <div class="input-local">
-                    <span>Nome do local</span>
-                </div>
-
-                <div class="card-endereco-selecionado">
-                    <div class="icone-local">📍</div>
-                    <div class="info-endereco">
-                        <span class="nome-lugar">Boteco do simpão</span>
-                        <span class="endereco-texto">Av. Deputado Jamel Cecilio, 2410<br>CEP 74810-100, Jardim Goiás, Goiania - GO</span>
-                        <span class="complemento">Em frente ao visage arena</span>
-                    </div>
-                    <a href="#" class="editar-local">Editar ou escolher outro</a>
-                </div>
-            </section>
-
-            <section class="secao-calendario">
-                <h2>Escolha a data em que o seu evento ira acontecer</h2>
-
-                <div class="calendario-box">
-                    <div class="calendario-header">
-                        <button class="mes-nav">&lt;</button>
-                        <span class="mes-atual">Março 2023</span>
-                        <button class="mes-nav">&gt;</button>
-                    </div>
-
-                    <div class="calendario-grid">
-                        <span class="dia-semana">S</span>
-                        <span class="dia-semana">T</span>
-                        <span class="dia-semana">Q</span>
-                        <span class="dia-semana">Q</span>
-                        <span class="dia-semana">S</span>
-                        <span class="dia-semana">S</span>
-                        <span class="dia-semana">D</span>
-
-                        <!-- Dias do mês -->
-                        <span class="dia outro-mes">29</span>
-                        <span class="dia outro-mes">30</span>
-                        <span class="dia outro-mes">31</span>
-                        <span class="dia">1</span>
-                        <span class="dia">2</span>
-                        <span class="dia">3</span>
-                        <span class="dia">4</span>
-
-                        <span class="dia">5</span>
-                        <span class="dia">6</span>
-                        <span class="dia">7</span>
-                        <span class="dia">8</span>
-                        <span class="dia">9</span>
-                        <span class="dia">10</span>
-                        <span class="dia">11</span>
-
-                        <span class="dia">12</span>
-                        <span class="dia">13</span>
-                        <span class="dia">14</span>
-                        <span class="dia">15</span>
-                        <span class="dia">16</span>
-                        <span class="dia">17</span>
-                        <span class="dia">18</span>
-
-                        <span class="dia">20</span>
-                        <span class="dia">21</span>
-                        <span class="dia">22</span>
-                        <span class="dia">23</span>
-                        <span class="dia selecionado">24</span>
-                        <span class="dia">26</span>
-                        <span class="dia">27</span>
-
-                        <span class="dia">29</span>
-                        <span class="dia">30</span>
-                        <span class="dia">31</span>
-                    </div>
-                </div>
-            </section>
-        </main>
-
-        <!-- Rodapé com botão -->
-        <footer class="footer-acao">
-            <button class="btn-avancar">Avançar</button>
-        </footer>
+  <div class="app-container">
+    
+    <!-- Top Bar -->
+    <div class="profile-top-actions">
+      <button class="icon-circle-btn" onclick="window.history.back()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+      </button>
+      <span class="top-bar-title">Contratação</span>
+      <div style="width: 36px;"></div> <!-- Elemento invisível para centralizar o título -->
     </div>
 
+    <!-- Conteúdo da Página Data e Local -->
+    <div class="checkout-container" style="margin-top: 15px;">
+      
+      <!-- Stepper / Progresso Padronizado -->
+      <div class="stepper-header">
+        <div class="step-info">
+          <span>Passo 1 de 2</span>
+          <strong>Local e Data</strong>
+        </div>
+        <div class="stepper-bars">
+          <div class="bar active"></div>
+          <div class="bar"></div>
+        </div>
+      </div>
+
+      <!-- Resumo do Serviço Escolhido -->
+      <div class="checkout-card" style="background-color: #1f1f23;">
+        <span class="checkout-etapa">Serviço Selecionado</span>
+        <h2 id="resumo-servico-nome" style="font-size: 16px; color: #fff; margin-top: 2px;">Carregando...</h2>
+        <span id="resumo-servico-preco" style="font-size: 13px; color: #38bdf8; font-weight: 700;"></span>
+      </div>
+
+      <!-- Formulário de Informações para o Artista -->
+      <div class="checkout-card">
+        <span class="checkout-etapa">Detalhes do Evento</span>
+        <h2 style="font-size: 18px; color: #fff; margin-bottom: 6px;">Onde e quando será?</h2>
+        <p style="font-size: 12px; color: #a1a1aa; margin-bottom: 14px;">Informe o CEP ou arraste o pino no mapa para ajustar a localização exata do evento.</p>
+
+        <!-- TÍTULO DO LOCAL -->
+        <div class="form-group" style="margin-bottom: 14px;">
+          <label>Nome do Local (Ex: Bar do Zé, Chácara Recanto Feliz)</label>
+          <input type="text" id="input-titulo-local" placeholder="Ex: Chácara dos Ipês" class="input-custom">
+        </div>
+
+        <!-- CEP -->
+        <div class="form-group">
+          <label>CEP do Evento</label>
+          <input type="text" id="input-cep" placeholder="Digite o CEP (ex: 74000-000)" maxlength="9" class="input-custom" onblur="buscarCep()">
+        </div>
+
+        <!-- Endereço Completo -->
+        <div class="form-group" style="margin-top: 14px;">
+          <label>Endereço Completo</label>
+          <input type="text" id="input-local" placeholder="Rua, número, bairro, cidade - UF" class="input-custom">
+        </div>
+
+        <!-- MAPA INTERATIVO -->
+        <div class="form-group" style="margin-top: 14px;">
+          <label>Arraste o pino para o local exato:</label>
+          <div id="map"></div>
+        </div>
+
+        <div class="form-group" style="margin-top: 14px;">
+          <label>Data do Evento</label>
+          <input type="date" id="input-data" class="input-custom">
+        </div>
+
+        <div class="form-group" style="margin-top: 14px;">
+          <label>Horário de Início</label>
+          <input type="time" id="input-horario" class="input-custom">
+        </div>
+
+        <button class="btn-continuar-proximo" onclick="salvarInformacoesArtista()">Salvar e Enviar para o Artista</button>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="js/data-local.js"></script>
 </body>
 </html>

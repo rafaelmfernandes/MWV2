@@ -1,231 +1,357 @@
-/* Reset básico */
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-}
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
 
 body {
-    background-color: #ffffff;
-    color: #000000;
+  background-color: #09090b;
+  color: #f4f4f5;
+  display: flex;
+  justify-content: center;
 }
 
-/* Container principal preenchendo a tela */
 .app-container {
-    width: 100%;
-    min-height: 100vh;
-    background-color: #ffffff;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+  width: 100%;
+  max-width: 440px;
+  min-height: 100vh;
+  background-color: #121215;
+  position: relative;
+  padding-bottom: 30px;
+  padding-top: 60px;
+  border: 1px solid #1f1f23;
 }
 
-/* Barra superior */
-.topbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px 20px;
-    background-color: #ffffff;
+.profile-top-actions {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 16px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 20;
 }
 
-.btn-voltar {
-    background: none;
-    border: none;
-    font-size: 20px;
-    cursor: pointer;
-    color: #000000;
+.icon-circle-btn {
+  width: 36px;
+  height: 36px;
+  background-color: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
 }
 
-.topbar-titulo {
-    font-size: 16px;
-    font-weight: 600;
-    color: #000000;
+.icon-circle-btn svg {
+  width: 16px;
+  height: 16px;
 }
 
-.btn-cancelar {
-    background: none;
-    border: none;
-    font-size: 14px;
-    color: #000000;
-    cursor: pointer;
+.profile-header-area {
+  position: relative;
+  margin-top: 30px;
+  padding: 0 16px;
 }
 
-/* Conteúdo */
-.conteudo {
-    padding: 20px;
-    flex: 1;
-    overflow-y: auto;
+.avatar-overlap {
+  width: 68px;
+  height: 68px;
+  background-color: #0b2e59;
+  color: #38bdf8;
+  font-weight: 800;
+  font-size: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid #121215;
+  position: absolute;
+  top: -34px;
+  left: 28px;
+  z-index: 5;
 }
 
-.conteudo h2 {
-    font-size: 17px;
-    font-weight: 700;
-    color: #000000;
-    margin-bottom: 8px;
-    line-height: 1.3;
+.profile-main-card {
+  background-color: #161619;
+  border: 1px solid #222226;
+  border-radius: 16px;
+  padding: 44px 16px 0 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
-.subtitulo {
-    font-size: 13px;
-    color: #8e8e93;
-    line-height: 1.4;
-    margin-bottom: 16px;
+.top-row-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
 }
 
-/* Campo "Nome do local" */
-.input-local {
-    background-color: #f7f7f7;
-    border: 1px solid #e5e5ea;
-    border-radius: 10px;
-    padding: 14px 16px;
-    font-size: 14px;
-    color: #8e8e93;
-    margin-bottom: 16px;
+.artista-nome {
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 2px;
 }
 
-/* Card de endereço selecionado */
-.card-endereco-selecionado {
-    border: 1.5px solid #3b50ff;
-    border-radius: 12px;
-    padding: 16px;
-    position: relative;
-    background-color: #ffffff;
-    margin-bottom: 30px;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
+.artista-sub {
+  font-size: 12px;
+  color: #a1a1aa;
 }
 
-.icone-local {
-    position: absolute;
-    top: 16px;
-    left: 16px;
-    font-size: 18px;
+.btn-contratar {
+  background-color: #1f1f23;
+  color: #fff;
+  border: 1px solid #323238;
+  padding: 8px 18px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
 }
 
-.info-endereco {
-    margin-left: 32px;
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    margin-bottom: 8px;
+.artista-meta {
+  display: flex;
+  gap: 14px;
+  font-size: 12px;
+  color: #a1a1aa;
+  padding-bottom: 12px;
 }
 
-.nome-lugar {
-    font-size: 15px;
-    font-weight: 700;
-    color: #000000;
+.star-rate { color: #fbbf24; }
+.verif-tag { color: #34d399; }
+
+/* Abas */
+.tabs-header {
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid #222226;
+  margin-top: 4px;
 }
 
-.endereco-texto {
-    font-size: 13px;
-    color: #333333;
-    line-height: 1.4;
+.tab-btn {
+  background: none;
+  border: none;
+  color: #71717a;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 12px 0;
+  cursor: pointer;
+  position: relative;
+  flex: 1;
+  text-align: center;
 }
 
-.complemento {
-    font-size: 12px;
-    color: #666666;
-    margin-top: 2px;
+.tab-btn.ativo {
+  color: #3b82f6;
 }
 
-.editar-local {
-    align-self: flex-end;
-    font-size: 13px;
-    color: #3b50ff;
-    text-decoration: none;
-    font-weight: 600;
+.tab-btn.ativo::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: #3b82f6;
 }
 
-/* Seção do Calendário */
-.secao-calendario {
-    margin-top: 10px;
+/* Corpo das Abas */
+.tab-body-container {
+  padding: 16px;
 }
 
-.calendario-box {
-    margin-top: 12px;
+.tab-content {
+  display: none;
+  flex-direction: column;
+  gap: 12px;
 }
 
-.calendario-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 16px;
+.tab-content.ativo {
+  display: flex;
 }
 
-.mes-atual {
-    font-size: 16px;
-    font-weight: 600;
-    color: #000000;
+.descricao-bio {
+  font-size: 13px;
+  color: #a1a1aa;
+  line-height: 1.5;
+  background-color: #161619;
+  padding: 14px;
+  border-radius: 12px;
+  border: 1px solid #222226;
 }
 
-.mes-nav {
-    background: none;
-    border: none;
-    font-size: 16px;
-    cursor: pointer;
-    font-weight: bold;
+.section-title {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #71717a;
+  margin-top: 8px;
 }
 
-.calendario-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    text-align: center;
-    row-gap: 12px;
-    align-items: center;
+.catalog-card {
+  background-color: #161619;
+  border: 1px solid #222226;
+  border-radius: 12px;
+  padding: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
 }
 
-.dia-semana {
-    font-size: 13px;
-    font-weight: 600;
-    color: #8e8e93;
+.catalog-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
-.dia {
-    font-size: 14px;
-    color: #000000;
-    height: 36px;
-    width: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto;
-    border-radius: 50%;
-    cursor: pointer;
+.catalog-info strong { font-size: 13px; color: #fff; }
+.catalog-info span { font-size: 11px; color: #a1a1aa; }
+.catalog-price { font-size: 14px; font-weight: 700; color: #fff; }
+
+.portfolio-grid-mini {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
 }
 
-.dia.outro-mes {
-    color: #c7c7cc;
+.media-preview-box {
+  background-color: #161619;
+  border: 1px solid #222226;
+  height: 90px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.dia.selecionado {
-    background-color: #3b50ff;
-    color: #ffffff;
-    font-weight: 600;
+.play-svg {
+  width: 24px;
+  height: 24px;
+  color: #52525b;
 }
 
-/* Rodapé com botão */
-.footer-acao {
-    padding: 20px;
-    background-color: #ffffff;
+/* Estilos específicos da página data-local.html (Checkout / Formulários) */
+.checkout-container {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
-.btn-avancar {
-    width: 100%;
-    padding: 16px;
-    background-color: #3b50ff;
-    color: #ffffff;
-    border: none;
-    border-radius: 12px;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    text-align: center;
-    box-shadow: 0 4px 12px rgba(59, 80, 255, 0.3);
+.checkout-card {
+  background-color: #161619;
+  border: 1px solid #222226;
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
-.btn-avancar:active {
-    opacity: 0.9;
+.checkout-etapa {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #3b82f6;
+  font-weight: 700;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group label {
+  font-size: 12px;
+  color: #a1a1aa;
+}
+
+.input-custom {
+  background-color: #121215;
+  border: 1px solid #323238;
+  border-radius: 10px;
+  padding: 12px;
+  color: #fff;
+  font-size: 13px;
+  width: 100%;
+  outline: none;
+}
+
+.input-custom:focus {
+  border-color: #3b82f6;
+}
+
+.btn-continuar-proximo {
+  background-color: #3b82f6;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 14px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 16px;
+  text-align: center;
+}
+/* Estilo para o Mapa Interativo */
+#map {
+  width: 100%;
+  height: 220px;
+  border-radius: 12px;
+  border: 1px solid #323238;
+  z-index: 1;
+}
+
+/* Ajuste do tema escuro para os tiles do mapa (opcional para ficar bonito no dark mode) */
+.leaflet-container {
+  background-color: #121215 !important;
+}
+/* Stepper / Progresso Padronizado e Unificado */
+.stepper-header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background-color: #18181b;
+  border: 1px solid #27272a;
+  border-radius: 16px;
+  padding: 16px;
+}
+
+.step-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+}
+
+.step-info span {
+  color: #71717a;
+  text-transform: uppercase;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.step-info strong {
+  color: #fff;
+  font-size: 13px;
+}
+
+.stepper-bars {
+  display: flex;
+  gap: 6px;
+}
+
+.stepper-bars .bar {
+  flex: 1;
+  height: 4px;
+  background-color: #27272a;
+  border-radius: 2px;
+}
+
+.stepper-bars .bar.active {
+  background-color: #3b82f6;
 }
