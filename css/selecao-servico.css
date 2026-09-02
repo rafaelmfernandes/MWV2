@@ -1,306 +1,247 @@
-/* Reset básico */
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-}
-
 body {
-    background-color: #ffffff;
-    color: #000000;
+  background-color: #09090b;
+  color: #f4f4f5;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  margin: 0;
+  padding: 0;
 }
 
-/* Container principal preenchendo a tela */
 .app-container {
-    width: 100%;
-    min-height: 100vh;
-    background-color: #ffffff;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: 100vh;
+  background-color: #09090b;
+  position: relative;
+  padding-bottom: 90px;
 }
 
-/* Barra superior */
-.topbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px 20px;
-    background-color: #ffffff;
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border-bottom: 1px solid #27272a;
+  background-color: #09090b;
 }
 
-.btn-voltar {
-    background: none;
-    border: none;
-    font-size: 20px;
-    cursor: pointer;
-    color: #000000;
-    text-decoration: none;
+.logo {
+  font-size: 18px;
+  font-weight: 800;
+  color: #fff;
 }
 
-.topbar-titulo {
-    font-size: 16px;
-    font-weight: 600;
-    color: #000000;
+.logo span {
+  color: #38bdf8;
 }
 
-.btn-cancelar {
-    background: none;
-    border: none;
-    font-size: 14px;
-    color: #000000;
-    cursor: pointer;
+.nav-icon-btn {
+  background: #18181b;
+  border: 1px solid #27272a;
+  color: #fff;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
 }
 
-/* Conteúdo */
-.conteudo {
-    padding: 20px;
-    flex: 1;
-    overflow-y: auto;
+.top-icon-svg {
+  width: 18px;
+  height: 18px;
 }
 
-.conteudo h1, .conteudo h2 {
-    font-size: 18px;
-    font-weight: 700;
-    color: #000000;
-    margin-bottom: 8px;
-    line-height: 1.3;
+.main-content {
+  padding: 16px;
 }
 
-.subtitulo {
-    font-size: 13px;
-    color: #8e8e93;
-    line-height: 1.4;
-    margin-bottom: 16px;
+.detail-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
-.divisor {
-    height: 1px;
-    background-color: #efeff4;
-    width: 100%;
-    margin-bottom: 20px;
+.profile-header-card {
+  background-color: #121215;
+  border: 1px solid #27272a;
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
-/* Lista de serviços (Radio list) */
-.lista-servicos {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+.profile-top-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
-.item-servico {
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-    width: 100%;
+.profile-avatar-large {
+  width: 56px;
+  height: 56px;
+  color: white;
+  font-weight: 700;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
 }
 
-.item-servico input[type="radio"] {
-    appearance: none;
-    -webkit-appearance: none;
-    width: 20px;
-    height: 20px;
-    border: 2px solid #b0b0b5;
-    border-radius: 50%;
-    outline: none;
-    margin-right: 14px;
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
+.profile-title-info h2 {
+  font-size: 16px;
+  color: #fff;
+  font-weight: 700;
+  margin: 0 0 2px 0;
 }
 
-.item-servico input[type="radio"]:checked {
-    border-color: #3b50ff;
+.ad-meta-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  font-size: 12px;
 }
 
-.item-servico input[type="radio"]:checked::after {
-    content: "";
-    width: 10px;
-    height: 10px;
-    background-color: #3b50ff;
-    border-radius: 50%;
+.ad-estilo {
+  color: #38bdf8;
+  font-weight: 500;
 }
 
-.info-servico {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
+.rating {
+  color: #fbbf24;
 }
 
-.info-servico .nome {
-    font-size: 15px;
-    font-weight: 500;
-    color: #000000;
+.ad-descricao {
+  font-size: 13px;
+  color: #a1a1aa;
 }
 
-.info-servico .detalhe {
-    font-size: 11px;
-    color: #8e8e93;
-    margin-top: 2px;
+.ad-descricao strong {
+  color: #fff;
+  display: block;
+  margin-bottom: 4px;
 }
 
-.valor {
-    font-size: 15px;
-    font-weight: 500;
-    color: #000000;
-    text-align: right;
+.ad-footer {
+  font-size: 12px;
+  color: #71717a;
 }
 
-/* Componentes da tela de Data/Local */
-.input-local {
-    background-color: #f7f7f7;
-    border: 1px solid #e5e5ea;
-    border-radius: 10px;
-    padding: 14px 16px;
-    font-size: 14px;
-    color: #8e8e93;
-    margin-bottom: 16px;
+.profile-options-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 4px;
 }
 
-.card-endereco-selecionado {
-    border: 1.5px solid #3b50ff;
-    border-radius: 12px;
-    padding: 16px;
-    position: relative;
-    background-color: #ffffff;
-    margin-bottom: 30px;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
+.profile-options-section h3 {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #38bdf8;
+  margin: 0 0 2px 0;
 }
 
-.icone-local {
-    position: absolute;
-    top: 16px;
-    left: 16px;
-    font-size: 18px;
+.service-option-card {
+  background-color: #18181b;
+  border: 1px solid #27272a;
+  border-radius: 14px;
+  padding: 12px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-.info-endereco {
-    margin-left: 32px;
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    margin-bottom: 8px;
+.service-option-card:hover {
+  border-color: #38bdf8;
+  background-color: #1d1d22;
 }
 
-.nome-lugar {
-    font-size: 15px;
-    font-weight: 700;
-    color: #000000;
+.service-option-card.selecionado {
+  border-color: #38bdf8;
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.08) 0%, #18181b 100%);
 }
 
-.endereco-texto {
-    font-size: 13px;
-    color: #333333;
-    line-height: 1.4;
+.service-info-left {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
-.complemento {
-    font-size: 12px;
-    color: #666666;
-    margin-top: 2px;
+.service-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
 }
 
-.editar-local {
-    align-self: flex-end;
-    font-size: 13px;
-    color: #3b50ff;
-    text-decoration: none;
-    font-weight: 600;
+.service-desc {
+  font-size: 11px;
+  color: #a1a1aa;
 }
 
-.secao-calendario {
-    margin-top: 10px;
+.service-price-right {
+  font-size: 14px;
+  font-weight: 700;
+  color: #34d399;
+  text-align: right;
 }
 
-.calendario-box {
-    margin-top: 12px;
+.contratar-action-box {
+  margin-top: 8px;
 }
 
-.calendario-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 16px;
+.btn-full-primary {
+  width: 100%;
+  background-color: #38bdf8;
+  color: #09090b;
+  border: none;
+  padding: 12px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.2s;
 }
 
-.mes-atual {
-    font-size: 16px;
-    font-weight: 600;
-    color: #000000;
+.btn-full-primary:hover {
+  opacity: 0.9;
 }
 
-.mes-nav {
-    background: none;
-    border: none;
-    font-size: 16px;
-    cursor: pointer;
-    font-weight: bold;
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 480px;
+  background-color: #121215;
+  border-top: 1px solid #27272a;
+  display: flex;
+  justify-content: space-around;
+  padding: 8px 0;
+  z-index: 100;
 }
 
-.calendario-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    text-align: center;
-    row-gap: 12px;
-    align-items: center;
+.bottom-nav-item {
+  background: none;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  color: #71717a;
+  cursor: pointer;
 }
 
-.dia-semana {
-    font-size: 13px;
-    font-weight: 600;
-    color: #8e8e93;
+.bottom-nav-item.ativo {
+  color: #38bdf8;
 }
 
-.dia {
-    font-size: 14px;
-    color: #000000;
-    height: 36px;
-    width: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto;
-    border-radius: 50%;
-    cursor: pointer;
-}
-
-.dia.outro-mes {
-    color: #c7c7cc;
-}
-
-.dia.selecionado {
-    background-color: #3b50ff;
-    color: #ffffff;
-    font-weight: 600;
-}
-
-/* Rodapé com botão */
-.footer-acao {
-    padding: 20px;
-    background-color: #ffffff;
-}
-
-.btn-avancar {
-    display: block;
-    width: 100%;
-    padding: 16px;
-    background-color: #3b50ff;
-    color: #ffffff;
-    border: none;
-    border-radius: 12px;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    text-align: center;
-    text-decoration: none;
-    box-shadow: 0 4px 12px rgba(59, 80, 255, 0.3);
-}
-
-.btn-avancar:active {
-    opacity: 0.9;
+.nav-label {
+  font-size: 10px;
 }

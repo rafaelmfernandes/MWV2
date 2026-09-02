@@ -1,264 +1,385 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ArtistaShow</title>
-    <!-- Google Fonts & FontAwesome -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Caminho correto para a pasta css -->
-    <link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ArtistaShow - Conectando a Cena de Goiânia</title>
+  <link rel="stylesheet" href="css/main.css">
 </head>
 <body>
 
-    <div class="mobile-container">
+  <div class="app-container">
+    
+    <!-- Cabeçalho / Navbar Superior -->
+    <header class="navbar">
+      <div class="logo">Artista<span>Show</span></div>
+      
+      <div class="navbar-icons">
+        <!-- Notificações (Direciona para a página de notificações) -->
+        <button class="nav-icon-btn" onclick="window.location.href='notificacoes.html'" title="Notificações">
+          <svg class="top-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+          </svg>
+          <span class="notification-badge">5</span>
+        </button>
 
-        <header class="app-header">
-            <h1 class="username">Rafaelfernandes</h1>
-            <div class="header-icons">
-                <div class="icon-badge">
-                    <i class="fa-regular fa-bell"></i>
-                    <span class="badge red">5</span>
-                </div>
-                <div class="icon-badge">
-                    <i class="fa-regular fa-comment-dots"></i>
-                    <span class="badge red">10</span>
-                </div>
-                <button class="filter-btn" aria-label="Filtrar"><i class="fa-solid fa-sliders"></i></button>
-            </div>
-        </header>
+        <!-- Mensagens -->
+        <button class="nav-icon-btn" onclick="window.location.href='mensagens.html'" title="Mensagens">
+          <div class="msg-icon-wrapper">
+            <svg class="top-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            </svg>
+            <span class="msg-letter">M</span>
+          </div>
+          <span class="notification-badge">10</span>
+        </button>
 
-        <main class="app-content">
-            
-            <!-- Menu Toggle Estilo Abas Deslizantes (Login/Cadastro) -->
-            <div class="auth-tabs tres-opcoes" id="categoriasTabs">
-                <div class="slider-bg-tres"></div>
-                <button class="tab-btn ativo" onclick="mudarCategoria('cantores', 0)">
-                    <i class="fa-solid fa-microphone"></i> Cantores
-                </button>
-                <button class="tab-btn" onclick="mudarCategoria('musicos', 1)">
-                    <i class="fa-solid fa-compact-disc"></i> Músicos
-                </button>
-                <button class="tab-btn" onclick="mudarCategoria('shows', 2)">
-                    <i class="fa-solid fa-bullhorn"></i> Shows/e...
-                </button>
-            </div>
+        <!-- Filtro -->
+        <button class="nav-icon-btn" onclick="abrirModalFiltro()" title="Filtros">
+          <svg class="top-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="4" y1="21" x2="4" y2="14"></line>
+            <line x1="4" y1="10" x2="4" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="12"></line>
+            <line x1="12" y1="8" x2="12" y2="3"></line>
+            <line x1="20" y1="21" x2="20" y2="16"></line>
+            <line x1="20" y1="12" x2="20" y2="3"></line>
+            <line x1="1" y1="14" x2="7" y2="14"></line>
+            <line x1="9" y1="8" x2="15" y2="8"></line>
+            <line x1="17" y1="16" x2="23" y2="16"></line>
+          </svg>
+        </button>
+      </div>
+    </header>
 
-            <!-- Stories apontando para imagens locais na pasta img/ -->
-            <section class="stories-section">
-                <div class="story-card" style="background-image: url('img/bruno-marrone.jpg')">
-                    <div class="story-overlay">
-                        <span class="story-title">Bruno e Marrone</span>
-                        <span class="story-date">16 de outubro</span>
-                    </div>
-                </div>
-
-                <div class="story-card" style="background-image: url('img/igor-wallace.jpg')">
-                    <div class="story-overlay">
-                        <span class="story-title">Igor e Wallace</span>
-                        <span class="story-date">24 de outubro</span>
-                    </div>
-                </div>
-
-                <div class="story-card" style="background-image: url('img/isabella.jpg')">
-                    <div class="story-overlay">
-                        <span class="story-title">ISABELLA ARANTES</span>
-                        <span class="story-date">RUA 137-A, 44 ST. MAR...</span>
-                    </div>
-                </div>
-            </section>
-
-            <div class="info-banner" id="infoBanner">
-                <div class="banner-icon">
-                    <i class="fa-solid fa-sliders"></i>
-                </div>
-                <div class="banner-text">
-                    <h3>Um novo jeito de encontrar artistas, shows e eventos</h3>
-                    <p>Contrate cantores, músicos e encontre shows próximos de você. Navegue e veja todas as nossas opções.</p>
-                </div>
-                <button class="close-banner" id="closeBannerBtn" aria-label="Fechar banner"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-
-            <!-- Card de Anúncio de Artista / Músico Atualizado -->
-            <article class="feed-post">
-                <div class="post-header">
-                    <div class="post-user-info">
-                        <img src="img/avatar.jpg" alt="Avatar" class="user-avatar">
-                        <div>
-                            <span class="post-username">Luismar_peixe_</span>
-                            <span class="post-time">30 min</span>
-                        </div>
-                    </div>
-                    <button class="post-options" aria-label="Opções do post"><i class="fa-solid fa-ellipsis-vertical"></i></button>
-                </div>
-
-                <div class="post-media" style="background-image: url('img/post-foto.jpg')">
-                    <div class="post-media-overlay">
-                        <span class="artist-name">Luismar Peixe</span>
-                        <span class="artist-role">Produtor musical / Baterista</span>
-                    </div>
-                </div>
-
-                <div class="hire-bar">
-                    <span class="hire-text">Contratar agora</span>
-                    <span class="hire-price">R$ 700,00</span>
-                </div>
-
-                <div class="post-actions">
-                    <div class="action-left">
-                        <button class="action-btn" aria-label="Curtir"><i class="fa-regular fa-heart"></i></button>
-                        <button class="action-btn" aria-label="Comentar"><i class="fa-regular fa-comment"></i></button>
-                        <button class="action-btn" aria-label="Compartilhar"><i class="fa-regular fa-paper-plane"></i></button>
-                    </div>
-                    <button class="action-btn" aria-label="Salvar"><i class="fa-regular fa-bookmark"></i></button>
-                </div>
-
-                <div class="post-details">
-                    <span class="likes-count">304 curtidas</span>
-                    <p class="post-caption">
-                        <strong>Luismar_peixe_</strong> Gratitude is the key word for all the achievements achieved! Being an endorser of the best leather brand in the world is priceless.
-                    </p>
-                </div>
-            </article>
-
-        </main>
-
-        <nav class="app-nav">
-            <a href="#" class="nav-item active">
-                <i class="fa-solid fa-house"></i>
-                <span>Início</span>
-            </a>
-            <a href="#" class="nav-item">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                <span>Pesquisar</span>
-            </a>
-            <button class="nav-item announce-trigger" id="announceBtn" style="background:none; border:none; cursor:pointer;">
-                <i class="fa-solid fa-circle-plus"></i>
-                <span>Anunciar</span>
-            </button>
-            <a href="perfil.html" class="nav-item">
-                <i class="fa-solid fa-user"></i>
-                <span>Perfil</span>
-            </a>
-        </nav>
-
-    </div>
-
-    <!-- MODAL DE CATEGORIA DO ANÚNCIO (Bottom Sheet) -->
-    <div class="modal-overlay" id="modalOverlay">
-        <div class="modal-sheet">
-            <div class="modal-indicator"></div>
-            
-            <div class="modal-header">
-                <h2>Categoria do anúncio</h2>
-            </div>
-
-            <div class="modal-body">
-                <p class="modal-subtitle">Por favor defina o que você deseja anunciar</p>
-
-                <label class="modal-option">
-                    <div class="option-icon"><i class="fa-solid fa-microphone"></i></div>
-                    <div class="option-text">
-                        <span class="option-title">Cantor</span>
-                    </div>
-                    <input type="radio" name="categoria" checked>
-                    <span class="radio-custom"></span>
-                </label>
-
-                <label class="modal-option">
-                    <div class="option-icon"><i class="fa-solid fa-compact-disc"></i></div>
-                    <div class="option-text">
-                        <span class="option-title">Musico</span>
-                    </div>
-                    <input type="radio" name="categoria">
-                    <span class="radio-custom"></span>
-                </label>
-
-                <label class="modal-option">
-                    <div class="option-icon"><i class="fa-solid fa-bullhorn"></i></div>
-                    <div class="option-text">
-                        <span class="option-title">Evento/show</span>
-                        <span class="option-desc">Publico ou privado</span>
-                    </div>
-                    <input type="radio" name="categoria">
-                    <span class="radio-custom"></span>
-                </label>
-
-                <p class="modal-footer-text">Dessa forma nossa plataforma entrega seu anuncio para o publico certo.</p>
-
-                <button class="modal-btn-next">Avançar</button>
-            </div>
+    <!-- Conteúdo Principal -->
+    <main class="main-content">
+      
+      <!-- Hero Section -->
+      <section class="hero-section">
+        <h1 class="hero-title">O som certo para o seu evento</h1>
+        <p class="hero-subtitle">Conecte-se com talentos, obras e oportunidades em Goiânia.</p>
+        
+        <div class="search-box">
+          <input type="text" placeholder="O que você está procurando?" class="search-input">
+          <button class="search-btn">🔍</button>
         </div>
-    </div>
+      </section>
 
-    <!-- MODAL DE FILTRO (Bottom Sheet) -->
-    <div class="modal-overlay" id="modalFilterOverlay">
-        <div class="modal-sheet">
-            <div class="modal-indicator"></div>
-            
-            <div class="modal-header">
-                <h2>Filtro</h2>
-            </div>
-
-            <div class="modal-body">
-                <p class="modal-subtitle">Selecione as opções desejadas e aplique o filtro</p>
-
-                <!-- Linha 1: Estado e Cidade -->
-                <div class="filter-row">
-                    <div class="filter-select-wrapper">
-                        <select class="filter-select">
-                            <option value="GO">Goiás</option>
-                        </select>
-                        <i class="fa-solid fa-chevron-down"></i>
-                    </div>
-                    <div class="filter-select-wrapper">
-                        <select class="filter-select">
-                            <option value="Goiania">Goiânia</option>
-                        </select>
-                        <i class="fa-solid fa-chevron-down"></i>
-                    </div>
-                </div>
-
-                <!-- Categoria -->
-                <div class="filter-select-wrapper full-width">
-                    <select class="filter-select">
-                        <option value="">Todas as categorias</option>
-                        <option value="cantor">Cantor</option>
-                        <option value="musico">Músico</option>
-                        <option value="evento">Evento / Show</option>
-                    </select>
-                    <i class="fa-solid fa-chevron-down"></i>
-                </div>
-
-                <!-- Estilos -->
-                <div class="filter-select-wrapper full-width">
-                    <select class="filter-select">
-                        <option value="">Todos os estilos</option>
-                        <option value="sertanejo">Sertanejo</option>
-                        <option value="pop-rock">Pop Rock</option>
-                        <option value="acustico">Acústico</option>
-                    </select>
-                    <i class="fa-solid fa-chevron-down"></i>
-                </div>
-
-                <!-- Faixa de Preço (Min e Max) -->
-                <div class="filter-price-row">
-                    <div class="price-input-box">
-                        <span class="price-label">R$ 200,00</span>
-                    </div>
-                    <div class="price-input-box">
-                        <span class="price-label">R$ 600,00</span>
-                    </div>
-                </div>
-
-                <button class="modal-btn-next" id="applyFilterBtn">Aplicar</button>
-            </div>
+      <!-- Abas de Categorias Interativas -->
+      <section class="section">
+        <div class="categories-tabs">
+          <button class="cat-tab ativo" onclick="mudarCategoria('cantores', this)">Cantores</button>
+          <button class="cat-tab" onclick="mudarCategoria('musicos', this)">Músicos</button>
+          <button class="cat-tab" onclick="mudarCategoria('composicoes', this)">Composições</button>
+          <button class="cat-tab" onclick="mudarCategoria('eventos', this)">Shows/Eventos</button>
         </div>
+
+        <!-- Conteúdo: Cantores -->
+        <div id="cat-cantores" class="cat-content ativo">
+          <a href="detalhes-anuncio.html?id=rafael-melo" style="text-decoration: none; color: inherit; display: block;">
+            <div class="ad-card-novo">
+              <div class="ad-header">
+                <div class="ad-avatar-user">RM</div>
+                <div class="ad-user-info">
+                  <h4>Rafael Melo</h4>
+                  <div class="ad-meta-row">
+                    <span class="ad-estilo">MPB / Sertanejo</span>
+                    <span class="rating">⭐ 4.9 (128)</span>
+                  </div>
+                </div>
+              </div>
+              <div class="ad-media-box">
+                <span>▶ Vídeo de Apresentação (Ao Vivo)</span>
+              </div>
+              <div class="ad-descricao">
+                <strong>Show Completo</strong>
+                <p>10 anos de estrada, repertório autoral e covers para casamentos, aniversários e eventos corporativos.</p>
+              </div>
+              <div class="ad-precos-lista">
+                <div class="preco-item">
+                  <span class="preco-formato">🎵 Acústico (Voz e Violão)</span>
+                  <span class="preco-valor">R$ 800</span>
+                </div>
+              </div>
+              <div class="ad-footer">
+                <span>📍 Goiânia, GO</span>
+                <button class="btn-detalhes" onclick="event.preventDefault(); window.location.href='detalhes-anuncio.html?id=rafael-melo';">Contratar</button>
+              </div>
+            </div>
+          </a>
+        </div>
+
+        <!-- Conteúdo: Músicos -->
+        <div id="cat-musicos" class="cat-content">
+          <a href="detalhes-anuncio.html?id=gabriel-tatu" style="text-decoration: none; color: inherit; display: block;">
+            <div class="ad-card-novo">
+              <div class="ad-header">
+                <div class="ad-avatar-user" style="background-color: #047857;">GT</div>
+                <div class="ad-user-info">
+                  <h4>Gabriel Tatu</h4>
+                  <div class="ad-meta-row">
+                    <span class="ad-estilo">Sanfoneiro</span>
+                    <span class="rating">⭐ 5.0 (42)</span>
+                  </div>
+                </div>
+              </div>
+              <div class="ad-media-box">
+                <span>▶ Solo de Sanfona em Estúdio</span>
+              </div>
+              <div class="ad-descricao">
+                <strong>Acompanhamento para Bandas e Gravações</strong>
+                <p>Sanfoneiro profissional com alta versatilidade para forró, sertanejo universitário e piseiro.</p>
+              </div>
+              <div class="ad-precos-lista">
+                <div class="preco-item">
+                  <span class="preco-formato">🎸 Show / Diária em Banda</span>
+                  <span class="preco-valor">R$ 1.200</span>
+                </div>
+              </div>
+              <div class="ad-footer">
+                <span>📍 Goiânia, GO</span>
+                <button class="btn-detalhes" onclick="event.preventDefault(); window.location.href='detalhes-anuncio.html?id=gabriel-tatu';">Contratar Músico</button>
+              </div>
+            </div>
+          </a>
+        </div>
+
+        <!-- Conteúdo: Composições -->
+        <div id="cat-composicoes" class="cat-content">
+          <a href="detalhes-anuncio.html?id=marcos-lima" style="text-decoration: none; color: inherit; display: block;">
+            <div class="ad-card-novo">
+              <div class="ad-header">
+                <div class="ad-avatar-user" style="background-color: #7c2d12;">ML</div>
+                <div class="ad-user-info">
+                  <h4>Marcos Lima</h4>
+                  <div class="ad-meta-row">
+                    <span class="ad-estilo">Compositor / Modão</span>
+                    <span class="rating">⭐ 4.9 (56)</span>
+                  </div>
+                </div>
+              </div>
+              <div class="ad-media-box">
+                <span>▶ Áudio Guia da Composição Inédita</span>
+              </div>
+              <div class="ad-descricao">
+                <strong>Modão Apaixonado (Inédita)</strong>
+                <p>Letra e Melodia sertaneja romântica disponíveis para gravação.</p>
+              </div>
+              <div class="ad-footer">
+                <span>📍 Goiânia, GO</span>
+                <button class="btn-detalhes" onclick="event.preventDefault(); window.location.href='detalhes-anuncio.html?id=marcos-lima';">Ver Detalhes</button>
+              </div>
+            </div>
+          </a>
+        </div>
+
+        <!-- Conteúdo: Shows/Eventos -->
+        <div id="cat-eventos" class="cat-content">
+          <a href="detalhes-anuncio.html?id=carlos-silva" style="text-decoration: none; color: inherit; display: block;">
+            <div class="ad-card-novo">
+              <div class="ad-header">
+                <div class="ad-avatar-user" style="background-color: #b45309;">CS</div>
+                <div class="ad-user-info">
+                  <h4>Carlos Silva</h4>
+                  <div class="ad-meta-row">
+                    <span class="ad-estilo">Contratante</span>
+                    <span class="rating">⭐ 5.0 (12)</span>
+                  </div>
+                </div>
+              </div>
+              <div class="ad-media-box photo-bg">
+                <span>🖼 Foto do Local do Evento</span>
+              </div>
+              <div class="ad-descricao">
+                <strong>Aniversário no Setor Bueno</strong>
+                <p>Preciso de dupla sertaneja para tocar 3h em festa particular para 80 pessoas.</p>
+              </div>
+              <div class="ad-footer">
+                <span>📍 Goiânia, GO</span>
+                <button class="btn-detalhes" onclick="event.preventDefault(); window.location.href='detalhes-anuncio.html?id=carlos-silva';">Candidatar-se</button>
+              </div>
+            </div>
+          </a>
+        </div>
+
+      </section>
+
+    </main>
+
+    <!-- Modal de Seleção de Tipo de Anúncio -->
+    <div id="modal-anunciar" class="modal-overlay" onclick="fecharModalAnuncioFora(event)">
+      <div class="modal-sheet">
+        <div class="modal-handle"></div>
+        <div class="modal-header">
+          <h3>Criar Anúncio</h3>
+          <p>O que você deseja anunciar na plataforma?</p>
+        </div>
+        <div class="modal-options-list">
+          <button class="modal-option-item" onclick="selecionarTipoAnuncio('cantor')">
+            <div class="modal-option-icon singer-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v1a7 7 0 0 1-14 0v-1"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
+            </div>
+            <div class="modal-option-text">
+              <h4>Cantor / Dupla</h4>
+              <p>Divulgue seu show, repertório e valores para contratantes</p>
+            </div>
+            <span class="modal-arrow">›</span>
+          </button>
+          <button class="modal-option-item" onclick="selecionarTipoAnuncio('musico')">
+            <div class="modal-option-icon musician-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
+            </div>
+            <div class="modal-option-text">
+              <h4>Músico / Instrumentista</h4>
+              <p>Ofereça seus serviços para bandas, gravações e diárias</p>
+            </div>
+            <span class="modal-arrow">›</span>
+          </button>
+          <button class="modal-option-item" onclick="selecionarTipoAnuncio('evento')">
+            <div class="modal-option-icon event-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line><path d="M8 14h.01"></path><path d="M12 14h.01"></path><path d="M16 14h.01"></path><path d="M8 18h.01"></path><path d="M12 18h.01"></path></svg>
+            </div>
+            <div class="modal-option-text">
+              <h4>Show / Evento</h4>
+              <p>Busque talentos e músicos para o seu evento ou festa</p>
+            </div>
+            <span class="modal-arrow">›</span>
+          </button>
+          <button class="modal-option-item" onclick="selecionarTipoAnuncio('composicao')">
+            <div class="modal-option-icon song-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            </div>
+            <div class="modal-option-text">
+              <h4>Composição Inédita</h4>
+              <p>Venda ou apresente suas letras e obras para gravação</p>
+            </div>
+            <span class="modal-arrow">›</span>
+          </button>
+        </div>
+        <button class="modal-close-btn" onclick="fecharModalAnuncio()">Cancelar</button>
+      </div>
     </div>
 
-    <!-- Caminho para o JavaScript na pasta js -->
-    <script src="js/main.js"></script>
+    <!-- Modal de Filtros (Bottom Sheet) -->
+    <div id="modal-filtro" class="modal-overlay" onclick="fecharModalFiltroFora(event)">
+      <div class="modal-sheet filter-sheet">
+        <div class="modal-handle"></div>
+        
+        <div class="modal-header">
+          <h3>Filtrar Anúncios</h3>
+          <p>Encontre exatamente o perfil musical que você procura</p>
+        </div>
+
+        <div class="filter-form-scroll">
+          
+          <!-- Localização: Estado e Cidade -->
+          <div class="filter-row">
+            <div class="filter-group">
+              <label>Estado</label>
+              <select id="filtro-estado" class="filter-select">
+                <option value="">Selecione o Estado</option>
+                <option value="GO" selected>Goiás (GO)</option>
+                <option value="SP">São Paulo (SP)</option>
+                <option value="MG">Minas Gerais (MG)</option>
+                <option value="DF">Distrito Federal (DF)</option>
+                <option value="BA">Bahia (BA)</option>
+              </select>
+            </div>
+            <div class="filter-group">
+              <label>Cidade</label>
+              <select id="filtro-cidade" class="filter-select">
+                <option value="">Selecione a Cidade</option>
+                <option value="Goiania" selected>Goiânia</option>
+                <option value="Aparecida">Aparecida de Goiânia</option>
+                <option value="Anapolis">Anápolis</option>
+                <option value="Trindade">Trindade</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Categoria -->
+          <div class="filter-group">
+            <label>Categoria</label>
+            <select id="filtro-categoria" class="filter-select" onchange="tratarMudancaCategoriaFiltro()">
+              <option value="">Todas as categorias</option>
+              <option value="cantores">Cantores / Duplas</option>
+              <option value="musicos">Músicos / Instrumentistas</option>
+              <option value="composicoes">Composições Inéditas</option>
+              <option value="eventos">Shows / Eventos</option>
+            </select>
+          </div>
+
+          <!-- Subcategoria Condicional (Apenas para Músicos) -->
+          <div id="wrapper-instrumento" class="filter-group conditional-field" style="display: none;">
+            <label>Tipo de Serviço / Instrumento</label>
+            <select id="filtro-instrumento" class="filter-select">
+              <option value="">Qualquer instrumento</option>
+              <option value="sanfoneiro">Sanfoneiro</option>
+              <option value="guitarrista">Guitarrista</option>
+              <option value="violonista">Violonista</option>
+              <option value="baterista">Baterista</option>
+              <option value="baixista">Baixista</option>
+              <option value="tecladista">Tecladista</option>
+              <option value="percussionista">Percussionista</option>
+            </select>
+          </div>
+
+          <!-- Estilo Musical -->
+          <div class="filter-group">
+            <label>Estilo Musical</label>
+            <select id="filtro-estilo" class="filter-select">
+              <option value="">Qualquer estilo</option>
+              <option value="sertanejo">Sertanejo / Modão</option>
+              <option value="poprock">Pop Rock</option>
+              <option value="mpb">MPB</option>
+              <option value="forro">Forró / Piseiro</option>
+              <option value="samba">Samba / Pagode</option>
+              <option value="eletronica">Eletrônica</option>
+            </select>
+          </div>
+
+          <!-- Faixa de Valores -->
+          <div class="filter-group">
+            <label>Faixa de Valor (R$)</label>
+            <div class="filter-row-prices">
+              <input type="number" id="filtro-valor-min" class="filter-input" placeholder="Mín (Ex: 300)">
+              <span class="price-separator">até</span>
+              <input type="number" id="filtro-valor-max" class="filter-input" placeholder="Máx (Ex: 3000)">
+            </div>
+          </div>
+
+        </div>
+
+        <div class="filter-actions">
+          <button class="filter-btn-clear" onclick="limparFiltros()">Limpar</button>
+          <button class="filter-btn-apply" onclick="aplicarFiltros()">Aplicar Filtros</button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Menu Inferior Fixo -->
+    <nav class="bottom-nav">
+      <button class="bottom-nav-item ativo" onclick="mudarAbaInferior('home', this)">
+        <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+        <span class="nav-label">Início</span>
+      </button>
+      <button class="bottom-nav-item" onclick="mudarAbaInferior('anunciar', this)">
+        <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+        <span class="nav-label">Anunciar</span>
+      </button>
+      <button class="bottom-nav-item" onclick="mudarAbaInferior('perfil', this)">
+        <div class="profile-icon-wrapper">
+          <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          <span class="profile-dot"></span>
+        </div>
+        <span class="nav-label">Perfil</span>
+      </button>
+    </nav>
+
+  </div>
+
+  <script src="js/main.js"></script>
 </body>
 </html>

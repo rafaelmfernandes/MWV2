@@ -3,212 +3,234 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Rafael Melo - Cantor e Violonista</title>
+  <title>ArtistaShow - Perfil e Serviços</title>
   <link rel="stylesheet" href="css/perfil-artista.css">
 </head>
 <body>
 
   <div class="app-container">
     
-    <!-- Topo / Capa -->
-    <div class="header-capa">
-      <button class="icon-btn" title="Voltar">←</button>
-      <button class="icon-btn" title="Favoritar">♥</button>
-    </div>
+    <!-- Top Bar com Voltar e Favorito -->
+    <header class="profile-top-bar">
+      <button class="nav-icon-btn" onclick="window.history.back()" title="Voltar">
+        <svg class="top-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+      </button>
+      <button class="nav-icon-btn" title="Favoritar">
+        <svg class="top-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+      </button>
+    </header>
 
-    <!-- Informações do Artista -->
-    <div class="artista-info-container">
-      <div class="avatar-e-botao">
-        <div class="avatar">RM</div>
-        <button class="btn-contratar">Contratar</button>
+    <!-- Cabeçalho Fixo do Perfil -->
+    <div class="profile-header-card">
+      <div class="profile-top-row">
+        <div class="profile-avatar-large">RM</div>
+        <div class="profile-title-info">
+          <h2>Rafael Melo</h2>
+          <span class="sub-cargo">Cantor e violonista</span>
+        </div>
+        <button class="btn-contratar-topo" onclick="acaoContratar()">Contratar</button>
       </div>
-      <h1 class="artista-nome">Rafael Melo</h1>
-      <p class="artista-sub">Cantor e violonista · MPB, pop, sertanejo</p>
       
-      <div class="artista-badges">
-        <span>⭐ 4.9 (128)</span>
-        <span>📍 Goiânia, GO</span>
-        <span class="badge-verde">✔ Verificado</span>
+      <div class="ad-meta-row">
+        <span class="rating">⭐ 4.9 (128)</span>
+        <span class="local">📍 Goiânia, GO</span>
+        <span class="verificado">✓ Verificado</span>
+      </div>
+
+      <!-- Abas de Navegação -->
+      <div class="profile-tabs-nav">
+        <button class="profile-tab ativo" onclick="mudarAba('sobre', this)">Sobre</button>
+        <button class="profile-tab" onclick="mudarAba('portfolio', this)">Portfolio</button>
+        <button class="profile-tab" onclick="mudarAba('agenda', this)">Agenda</button>
+        <button class="profile-tab" onclick="mudarAba('avaliacoes', this)">Avaliacoes</button>
       </div>
     </div>
 
-    <!-- Abas de Navegação -->
-    <div class="tabs-container">
-      <button class="tab-item ativo" onclick="mudarAba('sobre', this)">Sobre</button>
-      <button class="tab-item" onclick="mudarAba('portfolio', this)">Portfolio</button>
-      <button class="tab-item" onclick="mudarAba('agenda', this)">Agenda</button>
-      <button class="tab-item" onclick="mudarAba('avaliacoes', this)">Avaliacoes</button>
-    </div>
-
-    <!-- ABA SOBRE -->
-    <div id="aba-sobre" class="tab-content ativo">
-      <p class="secao-texto">10 anos de estrada, repertório autoral e covers. Toco em casamentos, aniversários e eventos corporativos, sozinho ou com banda.</p>
+    <!-- Conteúdo Dinâmico das Abas -->
+    <main class="main-content">
       
-      <h3 class="titulo-secao">Catalogo</h3>
-      <div class="catalogo-card">
-        <div>
-          <div class="catalogo-titulo">Voz e violao (2h)</div>
-          <div class="catalogo-sub">Ideal para cerimonias e recepcoes</div>
+      <!-- ABA 1: SOBRE -->
+      <div id="aba-sobre" class="tab-content ativo">
+        <div class="info-section-card">
+          <p class="descricao-texto">10 anos de estrada, repertório autoral e covers. Toco em casamentos, aniversários e eventos corporativos, sozinho ou com banda.</p>
         </div>
-        <div class="catalogo-preco">R$ 800</div>
-      </div>
 
-      <div class="catalogo-card">
-        <div>
-          <div class="catalogo-titulo">Banda completa (4h)</div>
-          <div class="catalogo-sub">4 musicos, som e iluminacao inclusos</div>
+        <div class="profile-options-section">
+          <h3>Catalogo</h3>
+          <div class="service-option-card" onclick="selecionarServico('Voz e violao (2h)', 'R$ 800')">
+            <div class="service-info-left">
+              <span class="service-name">Voz e violao (2h)</span>
+              <span class="service-desc">Ideal para cerimonias e recepcoes</span>
+            </div>
+            <div class="service-price-right">R$ 800</div>
+          </div>
+          <div class="service-option-card" onclick="selecionarServico('Banda completa (4h)', 'R$ 2.400')">
+            <div class="service-info-left">
+              <span class="service-name">Banda completa (4h)</span>
+              <span class="service-desc">4 musicos, som e iluminacao inclusos</span>
+            </div>
+            <div class="service-price-right">R$ 2.400</div>
+          </div>
         </div>
-        <div class="catalogo-preco">R$ 2.400</div>
-      </div>
 
-      <h3 class="titulo-secao" style="margin-top: 14px;">Portfolio</h3>
-      <div class="portfolio-grid">
-        <div class="portfolio-box">▶</div>
-        <div class="portfolio-box">▶</div>
-      </div>
-    </div>
-
-    <!-- ABA PORTFOLIO -->
-    <div id="aba-portfolio" class="tab-content">
-      <div class="portfolio-secao-titulo">
-        <span>Videos</span>
-        <a href="#" class="link-ver-todos">Ver todos</a>
-      </div>
-      <div class="video-grid">
-        <div class="video-card">
-          <span>▶</span>
-          <span class="video-duracao">3:12</span>
-        </div>
-        <div class="video-card">
-          <span>▶</span>
-          <span class="video-duracao">2:04</span>
+        <div class="profile-options-section" style="margin-top: 16px;">
+          <h3>Portfolio</h3>
+          <div class="portfolio-grid-preview">
+            <div class="media-box-preview"><svg class="play-icon-mini" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg></div>
+            <div class="media-box-preview"><svg class="play-icon-mini" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg></div>
+          </div>
         </div>
       </div>
 
-      <div class="portfolio-secao-titulo">
-        <span>Composicoes e audios</span>
-        <a href="#" class="link-ver-todos">Ver todos</a>
-      </div>
-      <div class="audio-item">
-        <div class="audio-icone">▶</div>
-        <div class="audio-detalhes">
-          <h4>Caminho de volta</h4>
-          <p>Composicao propria · 3:45</p>
+      <!-- ABA 2: PORTFOLIO -->
+      <div id="aba-portfolio" class="tab-content">
+        <div class="portfolio-section-block">
+          <div class="section-title-row">
+            <h4>Videos</h4>
+            <span class="ver-todos">Ver todos</span>
+          </div>
+          <div class="portfolio-grid-2">
+            <div class="video-card-item">
+              <div class="video-thumb"><svg class="play-icon-mini" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg><span class="video-duracao">3:12</span></div>
+            </div>
+            <div class="video-card-item">
+              <div class="video-thumb"><svg class="play-icon-mini" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg><span class="video-duracao">2:04</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="portfolio-section-block">
+          <div class="section-title-row">
+            <h4>Composicoes e audios</h4>
+            <span class="ver-todos">Ver todos</span>
+          </div>
+          <div class="audio-list-container">
+            <div class="audio-card-item">
+              <div class="audio-icon-btn"><svg class="play-icon-mini" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg></div>
+              <div class="audio-info">
+                <span class="audio-titulo">Caminho de volta</span>
+                <span class="audio-sub">Composicao propria • 3:45</span>
+              </div>
+            </div>
+            <div class="audio-card-item">
+              <div class="audio-icon-btn"><svg class="play-icon-mini" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg></div>
+              <div class="audio-info">
+                <span class="audio-titulo">Manha de domingo</span>
+                <span class="audio-sub">Cover acustico • 2:58</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="portfolio-section-block">
+          <div class="section-title-row">
+            <h4>Fotos de eventos</h4>
+            <span class="ver-todos">Ver todos</span>
+          </div>
+          <div class="portfolio-grid-2">
+            <div class="foto-card-item"><svg class="play-icon-mini" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg></div>
+            <div class="foto-card-item"><svg class="play-icon-mini" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg></div>
+          </div>
         </div>
       </div>
-      <div class="audio-item">
-        <div class="audio-icone">▶</div>
-        <div class="audio-detalhes">
-          <h4>Manha de domingo</h4>
-          <p>Cover acustico · 2:58</p>
+
+      <!-- ABA 3: AGENDA -->
+      <div id="aba-agenda" class="tab-content">
+        <div class="agenda-card-container">
+          <div class="agenda-header-mes">
+            <button class="mes-nav-btn">‹</button>
+            <h3>Setembro 2026</h3>
+            <button class="mes-nav-btn">›</button>
+          </div>
+          
+          <div class="agenda-grid-dias-semana">
+            <span>D</span><span>S</span><span>T</span><span>Q</span><span>Q</span><span>S</span><span>S</span>
+          </div>
+          
+          <div class="agenda-grid-calendario">
+            <span class="dia-vazio"></span>
+            <span class="dia-vazio"></span>
+            <span class="dia ocupado">1</span>
+            <span class="dia ocupado">2</span>
+            <span class="dia ocupado">3</span>
+            <span class="dia livre">4</span>
+            <span class="dia livre">5</span>
+            <span class="dia livre">6</span>
+            <span class="dia ocupado">7</span>
+            <span class="dia ocupado">8</span>
+            <span class="dia livre">9</span>
+            <span class="dia livre">10</span>
+            <span class="dia livre">11</span>
+            <span class="dia hoje">12</span>
+            <span class="dia livre">13</span>
+            <span class="dia ocupado">14</span>
+            <span class="dia livre">15</span>
+            <span class="dia livre">16</span>
+            <span class="dia ocupado">17</span>
+            <span class="dia livre">18</span>
+            <span class="dia livre">19</span>
+            <span class="dia livre">20</span>
+            <span class="dia livre">21</span>
+            <span class="dia ocupado">22</span>
+            <span class="dia ocupado">23</span>
+            <span class="dia livre">24</span>
+            <span class="dia livre">25</span>
+            <span class="dia livre">26</span>
+            <span class="dia livre">27</span>
+            <span class="dia livre">28</span>
+            <span class="dia ocupado">29</span>
+            <span class="dia livre">30</span>
+          </div>
+
+          <div class="agenda-legenda">
+            <div class="legenda-item"><span class="bola-cor livre"></span> Livre</div>
+            <div class="legenda-item"><span class="bola-cor ocupado"></span> Ocupado</div>
+            <div class="legenda-item"><span class="bola-cor hoje"></span> Hoje</div>
+          </div>
+
+          <button class="btn-full-primary" style="margin-top: 16px;" onclick="solicitarData()">Solicitar data</button>
         </div>
       </div>
 
-      <div class="portfolio-secao-titulo" style="margin-top: 10px;">
-        <span>Fotos de eventos</span>
-        <a href="#" class="link-ver-todos">Ver todas</a>
-      </div>
-      <div class="portfolio-grid">
-        <div class="portfolio-box">📷</div>
-        <div class="portfolio-box">📷</div>
-      </div>
-    </div>
-
-    <!-- ABA AGENDA -->
-    <div id="aba-agenda" class="tab-content">
-      <div class="calendario-topo">
-        <span>‹</span>
-        <span>Setembro 2026</span>
-        <span>›</span>
-      </div>
-
-      <div class="dias-semana">
-        <div>D</div><div>S</div><div>T</div><div>Q</div><div>Q</div><div>S</div><div>S</div>
-      </div>
-
-      <div class="dias-grid">
-        <div class="dia vazio"></div>
-        <div class="dia vazio"></div>
-        <div class="dia livre">1</div>
-        <div class="dia livre">2</div>
-        <div class="dia ocupado">3</div>
-        <div class="dia livre">4</div>
-        <div class="dia livre">5</div>
-
-        <div class="dia livre">6</div>
-        <div class="dia ocupado">7</div>
-        <div class="dia ocupado">8</div>
-        <div class="dia livre">9</div>
-        <div class="dia livre">10</div>
-        <div class="dia livre">11</div>
-        <div class="dia hoje">12</div>
-
-        <div class="dia livre">13</div>
-        <div class="dia livre">14</div>
-        <div class="dia livre">15</div>
-        <div class="dia ocupado">16</div>
-        <div class="dia ocupado">17</div>
-        <div class="dia livre">18</div>
-        <div class="dia livre">19</div>
-
-        <div class="dia livre">20</div>
-        <div class="dia livre">21</div>
-        <div class="dia ocupado">22</div>
-        <div class="dia livre">23</div>
-        <div class="dia livre">24</div>
-        <div class="dia livre">25</div>
-        <div class="dia ocupado">26</div>
-
-        <div class="dia livre">27</div>
-        <div class="dia livre">28</div>
-        <div class="dia livre">29</div>
-        <div class="dia livre">30</div>
-      </div>
-
-      <div class="legenda-agenda">
-        <div class="legenda-item"><span class="ponto livre"></span> Livre</div>
-        <div class="legenda-item"><span class="ponto ocupado"></span> Ocupado</div>
-        <div class="legenda-item"><span class="ponto hoje"></span> Hoje</div>
-      </div>
-
-      <button class="btn-solicitar">Solicitar data</button>
-    </div>
-
-    <!-- ABA AVALIAÇÕES -->
-    <div id="aba-avaliacoes" class="tab-content">
-      <div class="media-topo">
-        <span class="media-nota">4.9</span>
-        <span class="media-total">128 avaliacoes</span>
-      </div>
-
-      <div class="avaliacao-card">
-        <div class="aval-topo">
-          <span class="aval-nome">Camila S.</span>
-          <span class="tag-evento">Casamento</span>
+      <!-- ABA 4: AVALIACOES -->
+      <div id="aba-avaliacoes" class="tab-content">
+        <div class="rating-overview-card">
+          <div class="rating-big-num">4.9</div>
+          <div class="rating-count-label">128 avaliacoes</div>
         </div>
-        <p class="aval-texto">Repertorio impecavel, chegou antes do horario e emocionou todos os convidados.</p>
+
+        <div class="avaliacoes-list">
+          <div class="review-card">
+            <div class="review-header">
+              <span class="review-autor">Camila S.</span>
+              <span class="review-badge">Casamento</span>
+            </div>
+            <p class="review-texto">Repertorio impecavel, chegou antes do horario e emocionou todos os convidados.</p>
+          </div>
+
+          <div class="review-card">
+            <div class="review-header">
+              <span class="review-autor">Bruno A.</span>
+              <span class="review-badge">Aniversario</span>
+            </div>
+            <div class="review-estrelas">⭐⭐⭐⭐⭐</div>
+            <p class="review-texto">Otimo custo beneficio, so achei o som um pouco baixo no comeco.</p>
+          </div>
+
+          <div class="review-card">
+            <div class="review-header">
+              <span class="review-autor">Marcia T.</span>
+              <span class="review-badge">Corporativo</span>
+            </div>
+            <p class="review-texto">Profissional, pontual e muito flexivel com o repertorio pedido pela empresa.</p>
+          </div>
+        </div>
       </div>
 
-      <div class="avaliacao-card">
-        <div class="aval-topo">
-          <span class="aval-nome">Bruno A.</span>
-          <span class="tag-evento">Aniversario</span>
-        </div>
-        <p class="aval-texto">Otimo custo beneficio, so achei o som um pouco baixo no comeco.</p>
-      </div>
-
-      <div class="avaliacao-card">
-        <div class="aval-topo">
-          <span class="aval-nome">Marcia T.</span>
-          <span class="tag-evento">Corporativo</span>
-        </div>
-        <p class="aval-texto">Profissional, pontual e muito flexivel com o repertorio pedido pela empresa.</p>
-      </div>
-    </div>
+    </main>
 
   </div>
 
-  <script src="js/perfil_artista.js"></script>
-
+  <script src="js/perfil-artista.js"></script>
 </body>
 </html>

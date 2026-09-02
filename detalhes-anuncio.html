@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ArtistaShow - Detalhes do Anúncio</title>
+  <link rel="stylesheet" href="css/detalhes-anuncio.css">
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <!-- Cabeçalho / Navbar -->
+    <header class="navbar">
+      <div class="logo">Detalhes do <span>Anúncio</span></div>
+      
+      <div class="navbar-icons">
+        <button class="nav-icon-btn" onclick="window.history.back()" title="Voltar">
+          <svg class="top-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Conteúdo Principal -->
+    <main class="main-content">
+      
+      <!-- Card Principal de Detalhes -->
+      <div class="ad-details-card">
+        
+        <!-- Topo com Avatar e Info do Artista -->
+        <div class="ad-header">
+          <div class="ad-avatar-user" style="background-color: #38bdf8;">RM</div>
+          <div class="ad-user-info">
+            <h2>Rafael Melo</h2>
+            <div class="ad-meta-row">
+              <span class="ad-estilo">MPB / Sertanejo Universitário</span>
+              <span class="rating">⭐ 4.9 (128 avaliações)</span>
+            </div>
+            <span class="notif-location">📍 Goiânia, GO (Atende toda a região)</span>
+          </div>
+        </div>
+
+        <!-- Mídia / Vídeo em Destaque -->
+        <div class="ad-media-preview">
+          <span>▶ Assistir Vídeo de Apresentação (Ao Vivo)</span>
+        </div>
+
+        <!-- Descrição Completa -->
+        <div class="details-section">
+          <h3>Sobre a Apresentação</h3>
+          <p>Show completo com 10 anos de estrada, trazendo um repertório animado e versátil focado em sucessos do sertanejo universitário, modões clássicos e MPB. Ideal para casamentos, aniversários, confraternizações e eventos corporativos.</p>
+        </div>
+
+        <!-- Opções de Contratação e Valores (4 Formatos) -->
+        <div class="details-section">
+            <h3>Formatos e Valores Disponíveis</h3>
+            <div class="ad-precos-lista">
+              <div class="preco-item">
+                <span class="preco-formato">🎵 Acústico (Voz e Violão - 2h)</span>
+                <span class="preco-valor">R$ 800,00</span>
+              </div>
+              <div class="preco-item">
+                <span class="preco-formato">🎸 Banda Completa (3h de Show)</span>
+                <span class="preco-valor">R$ 2.500,00</span>
+              </div>
+              <div class="preco-item">
+                <span class="preco-formato">🌟 Show com Participações Especiais</span>
+                <span class="preco-valor">R$ 3.800,00</span>
+              </div>
+              <div class="preco-item">
+                <span class="preco-formato">⚙️ Personalizado / Sob Demanda</span>
+                <span class="preco-valor">Sob Consulta</span>
+              </div>
+            </div>
+        </div>
+
+        <!-- Informações Adicionais -->
+        <div class="details-section info-extra">
+            <div class="info-row">
+                <span class="label">Equipamento de Som:</span>
+                <span class="value">Possui som próprio (até 100 pessoas)</span>
+            </div>
+            <div class="info-row">
+                <span class="label">Tempo de Montagem:</span>
+                <span class="value">45 minutos antes do evento</span>
+            </div>
+        </div>
+
+      </div>
+
+    </main>
+
+    <!-- Rodapé Fixo com Botão de Ação -->
+    <div class="bottom-action-bar">
+      <button class="btn-primary-action" onclick="window.location.href='mensagens.html'">
+        Entrar em Contato / Contratar
+      </button>
+    </div>
+
+  </div>
+
+</body>
+</html>

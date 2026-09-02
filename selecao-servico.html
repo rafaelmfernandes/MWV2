@@ -1,61 +1,56 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Seleção de Serviço</title>
-    <link rel="stylesheet" href="css/selecao-servico.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ArtistaShow - Seleção de Serviço</title>
+  <link rel="stylesheet" href="css/selecao-servico.css">
 </head>
 <body>
 
-    <div class="app-container">
-        <!-- Topbar com botão voltar, título e cancelar -->
-        <header class="topbar">
-            <button class="btn-voltar">&lt;</button>
-            <span class="topbar-titulo">Serviço</span>
-            <button class="btn-cancelar">Cancelar</button>
-        </header>
+  <div class="app-container">
+    
+    <!-- Cabeçalho / Navbar Superior -->
+    <header class="navbar">
+      <div class="logo">Artista<span>Show</span></div>
+      <div class="navbar-icons">
+        <button class="nav-icon-btn" onclick="window.history.back()" title="Voltar">
+          <svg class="top-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+        </button>
+      </div>
+    </header>
 
-        <!-- Conteúdo Principal -->
-        <main class="conteudo">
-            <h1>Selecione a forma de serviço que deseja contratar</h1>
-            <p class="subtitulo">Selecione a forma de serviço que você deseja contratar e veja os diferenciais de cada um no resumo abaixo</p>
+    <!-- Conteúdo Principal Dinâmico por ID -->
+    <main class="main-content">
+      <div class="detail-container" id="detalhes-container">
+        <!-- O conteúdo será injetado via JavaScript com base no ID da URL -->
+      </div>
+    </main>
 
-            <div class="divisor"></div>
+    <!-- Menu Inferior Fixo -->
+    <nav class="bottom-nav">
+      <button class="bottom-nav-item" onclick="window.location.href='index.html'">
+        <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+        <span class="nav-label">Início</span>
+      </button>
+      <button class="bottom-nav-item" onclick="window.location.href='index.html'">
+        <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+        <span class="nav-label">Anunciar</span>
+      </button>
+      <button class="bottom-nav-item" onclick="window.location.href='index.html'">
+        <div class="profile-icon-wrapper">
+          <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          <span class="profile-dot"></span>
+        </div>
+        <span class="nav-label">Perfil</span>
+      </button>
+    </nav>
 
-            <form class="lista-servicos">
-                <label class="item-servico">
-                    <input type="radio" name="servico" checked>
-                    <div class="info-servico">
-                        <span class="nome">Produtor Musical</span>
-                    </div>
-                    <span class="valor">R$ 3.000,00</span>
-                </label>
+  </div>
 
-                <label class="item-servico">
-                    <input type="radio" name="servico">
-                    <div class="info-servico">
-                        <span class="nome">Baterista</span>
-                    </div>
-                    <span class="valor">R$ 500,00</span>
-                </label>
-
-                <label class="item-servico">
-                    <input type="radio" name="servico">
-                    <div class="info-servico">
-                        <span class="nome">Negociar valor</span>
-                        <span class="detalhe">Lance mínimo de</span>
-                    </div>
-                    <span class="valor">R$ 500,00</span>
-                </label>
-            </form>
-        </main>
-
-        <!-- Rodapé com link/botão para a próxima página -->
-        <footer class="footer-acao">
-            <a href="data-local.html" class="btn-avancar">Avançar</a>
-        </footer>
-    </div>
-
+  <script src="js/detalhes.js"></script>
 </body>
 </html>

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ArtistaShow - Mensagens</title>
+  <link rel="stylesheet" href="css/mensagens.css">
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <header class="navbar">
+      <div class="navbar-left">
+        <button class="back-btn" onclick="voltarHome()" title="Voltar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+        </button>
+        <h2 class="page-title">Mensagens</h2>
+      </div>
+      <div class="navbar-icons">
+        <button class="nav-icon-btn" title="Nova Mensagem">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+        </button>
+      </div>
+    </header>
+
+    <main class="main-content">
+      
+      <div class="search-box">
+        <input type="text" placeholder="Buscar nas conversas..." class="search-input">
+        <button class="search-btn">🔍</button>
+      </div>
+
+      <div class="categories-tabs">
+        <button class="cat-tab ativo" onclick="filtrarConversas('todas', this)">Todas</button>
+        <button class="cat-tab" onclick="filtrarConversas('contratados', this)">Contratados</button>
+        <button class="cat-tab" onclick="filtrarConversas('servicos', this)">Serviços Feitos</button>
+      </div>
+
+      <div class="conversations-list">
+        
+        <div class="conv-item unread" onclick="abrirChat('Rafael Melo', '🎵 Show Acústico - Casamento')">
+          <div class="conv-avatar" style="background-color: #0b2545; color: #38bdf8;">RM</div>
+          <div class="conv-info">
+            <div class="conv-header-row">
+              <h4>Rafael Melo</h4>
+              <span class="conv-time">14:32</span>
+            </div>
+            <p class="conv-sub">🎵 Show Acústico - Casamento</p>
+            <p class="conv-last-msg">Combinado então! Chego às 18h no local para passagem...</p>
+          </div>
+          <span class="unread-dot"></span>
+        </div>
+
+        <div class="conv-item unread" onclick="abrirChat('Carlos Silva', '🎉 Aniversário no Setor Bueno')">
+          <div class="conv-avatar" style="background-color: #b45309; color: #fde047;">CS</div>
+          <div class="conv-info">
+            <div class="conv-header-row">
+              <h4>Carlos Silva <span class="tag-tipo">Contratante</span></h4>
+              <span class="conv-time">Ontem</span>
+            </div>
+            <p class="conv-sub">🎉 Aniversário no Setor Bueno</p>
+            <p class="conv-last-msg">O cachê foi liberado pela plataforma. Muito obrigado pelo show!</p>
+          </div>
+          <span class="unread-dot"></span>
+        </div>
+
+        <div class="conv-item" onclick="abrirChat('Marcos Lima', '📝 Parceria Composição')">
+          <div class="conv-avatar" style="background-color: #7c2d12; color: #fdba74;">ML</div>
+          <div class="conv-info">
+            <div class="conv-header-row">
+              <h4>Marcos Lima</h4>
+              <span class="conv-time">Seg</span>
+            </div>
+            <p class="conv-sub">📝 Parceria Composição</p>
+            <p class="conv-last-msg">Enviei o áudio-guia da nova moda. Dá uma olhada aí.</p>
+          </div>
+        </div>
+
+      </div>
+
+    </main>
+
+    <div id="chat-modal" class="chat-modal-container">
+      <div class="chat-header">
+        <button class="back-btn" onclick="fecharChat()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+        </button>
+        <div class="chat-user-profile">
+          <div class="chat-avatar-mini" id="chat-active-avatar">RM</div>
+          <div>
+            <h4 id="chat-active-name">Rafael Melo</h4>
+            <span id="chat-active-context" class="chat-context-sub">🎵 Show Acústico</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="chat-messages-body" id="chat-body">
+        <div class="chat-date-divider"><span>Hoje</span></div>
+        
+        <div class="msg received">
+          <p>E aí, tudo bem? Fechado o repertório para sábado?</p>
+          <span class="msg-time">14:10</span>
+        </div>
+
+        <div class="msg sent">
+          <p>Fala Rafael! Tudo ótimo. Sim, separei aquelas que você pediu.</p>
+          <span class="msg-time">14:15</span>
+        </div>
+
+        <div class="msg received">
+          <p>Combinado então! Chego às 18h no local para passagem de som.</p>
+          <span class="msg-time">14:32</span>
+        </div>
+      </div>
+
+      <div class="chat-input-footer">
+        <input type="text" id="msg-input" placeholder="Escreva sua mensagem..." onkeypress="verificarEnter(event)">
+        <button class="send-btn" onclick="enviarMensagem()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+        </button>
+      </div>
+    </div>
+
+    <nav class="bottom-nav">
+      <button class="bottom-nav-item" onclick="window.location.href='index.html'">
+        <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+        <span class="nav-label">Início</span>
+      </button>
+
+      <button class="bottom-nav-item" onclick="alert('Tela de Anunciar')">
+        <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+        <span class="nav-label">Anunciar</span>
+      </button>
+
+      <button class="bottom-nav-item" onclick="alert('Tela de Perfil')">
+        <div class="profile-icon-wrapper">
+          <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+        </div>
+        <span class="nav-label">Perfil</span>
+      </button>
+    </nav>
+
+    
+
+  </div>
+
+  <script src="js/mensagens.js"></script>
+</body>
+</html>

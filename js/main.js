@@ -1,90 +1,124 @@
-/**
- * Aguarda o documento HTML carregar totalmente antes de executar qualquer script.
- */
-document.addEventListener('DOMContentLoaded', () => {
+// ==========================================
+// CONTROLE DE ABAS SUPERIORES (Conteúdo)
+// ==========================================
+function mudarCategoria(categoriaId, elementoBtn) {
+  // Remove classe ativa de todas as abas
+  const abas = document.querySelectorAll('.cat-tab');
+  abas.forEach(tab => tab.classList.remove('ativo'));
+  
+  // Adiciona classe ativa na aba clicada
+  elementoBtn.classList.add('ativo');
 
-    /* ==========================================================
-     * 1. LÓGICA DO BANNER INFORMATIVO (Fechar ao clicar no 'X')
-     * ========================================================== */
-    const closeBtn = document.getElementById('closeBannerBtn');
-    const banner = document.getElementById('infoBanner');
+  // Oculta todos os conteúdos
+  const conteudos = document.querySelectorAll('.cat-content');
+  conteudos.forEach(content => content.classList.remove('ativo'));
 
-    if (closeBtn && banner) {
-        closeBtn.addEventListener('click', () => {
-            banner.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
-            banner.style.opacity = '0';
-            banner.style.transform = 'scale(0.95)';
-            
-            setTimeout(() => {
-                banner.remove();
-            }, 300);
-        });
-    }
+  // Exibe o conteúdo correspondente
+  const conteudoAtivo = document.getElementById(`cat-${categoriaId}`);
+  if (conteudoAtivo) {
+    conteudoAtivo.classList.add('ativo');
+  }
+}
 
-    /* ==========================================================
-     * 2. LÓGICA DO MODAL DE ANÚNCIO (BOTTOM SHEET)
-     * ========================================================== */
-    const announceBtn = document.getElementById("announceBtn");
-    const modalOverlay = document.getElementById("modalOverlay");
+// ==========================================
+// CONTROLE DO MENU INFERIOR
+// ==========================================
+function mudarAbaInferior(abaName, elementoBtn) {
+  if (abaName === 'anunciar') {
+    abrirModalAnuncio();
+    return; // Não altera o botão ativo inferior se for pra abrir modal
+  }
 
-    if (announceBtn && modalOverlay) {
-        announceBtn.addEventListener("click", (e) => {
-            e.preventDefault();
-            modalOverlay.classList.add("active");
-        });
+  const itens = document.querySelectorAll('.bottom-nav-item');
+  itens.forEach(item => item.classList.remove('ativo'));
+  elementoBtn.classList.add('ativo');
 
-        modalOverlay.addEventListener("click", (e) => {
-            if (e.target === modalOverlay) {
-                modalOverlay.classList.remove("active");
-            }
-        });
-    }
+  if (abaName === 'home') {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+}
 
-    /* ==========================================================
-     * 3. LÓGICA DO MODAL DE FILTRO (BOTTOM SHEET)
-     * ========================================================== */
-    const filterBtn = document.querySelector(".filter-btn");
-    const modalFilterOverlay = document.getElementById("modalFilterOverlay");
-    const applyFilterBtn = document.getElementById("applyFilterBtn");
+// ==========================================
+// MODAL DE CRIAR ANÚNCIO
+// ==========================================
+function abrirModalAnuncio() {
+  const modal = document.getElementById('modal-anunciar');
+  modal.classList.add('ativo');
+}
 
-    if (filterBtn && modalFilterOverlay) {
-        filterBtn.addEventListener("click", () => {
-            modalFilterOverlay.classList.add("active");
-        });
+function fecharModalAnuncio() {
+  const modal = document.getElementById('modal-anunciar');
+  modal.classList.remove('ativo');
+}
 
-        modalFilterOverlay.addEventListener("click", (e) => {
-            if (e.target === modalFilterOverlay) {
-                modalFilterOverlay.classList.remove("active");
-            }
-        });
-    }
+function fecharModalAnuncioFora(event) {
+  const modal = document.getElementById('modal-anunciar');
+  if (event.target === modal) {
+    fecharModalAnuncio();
+  }
+}
 
-    if (applyFilterBtn && modalFilterOverlay) {
-        applyFilterBtn.addEventListener("click", () => {
-            modalFilterOverlay.classList.remove("active");
-        });
-    }
-});
+function selecionarTipoAnuncio(tipo) {
+  fecharModalAnuncio();
+  alert(`Redirecionando para o fluxo de cadastro de anúncio: ${tipo.toUpperCase()}`);
+}
 
-/* ==========================================================
- * 4. FUNÇÃO DO TOGGLE DESLIZANTE DAS CATEGORIAS
- * ========================================================== */
-function mudarCategoria(tipo, index) {
-    const container = document.getElementById('categoriasTabs');
-    if (!container) return;
+// ==========================================
+// MODAL DE FILTROS (Novo)
+// ==========================================
+function abrirModalFiltro() {
+  const modal = document.getElementById('modal-filtro');
+  modal.classList.add('ativo');
+}
 
-    const botoes = container.querySelectorAll('.tab-btn');
-    
-    botoes.forEach((btn, i) => {
-        if (i === index) {
-            btn.classList.add('ativo');
-        } else {
-            btn.classList.remove('ativo');
-        }
-    });
+function fecharModalFiltro() {
+  const modal = document.getElementById('modal-filtro');
+  modal.classList.remove('ativo');
+}
 
-    const slider = container.querySelector('.slider-bg-tres');
-    if (slider) {
-        slider.style.transform = `translateX(${index * 100}%)`;
-    }
+function fecharModalFiltroFora(event) {
+  const modal = document.getElementById('modal-filtro');
+  if (event.target === modal) {
+    fecharModalFiltro();
+  }
+}
+
+// Controla a exibição do seletor de instrumentos caso escolha "Músicos"
+function tratarMudancaCategoriaFiltro() {
+  const categoriaSelect = document.getElementById('filtro-categoria');
+  const wrapperInstrumento = document.getElementById('wrapper-instrumento');
+
+  if (categoriaSelect.value === 'musicos') {
+    wrapperInstrumento.style.display = 'flex';
+  } else {
+    wrapperInstrumento.style.display = 'none';
+    document.getElementById('filtro-instrumento').value = ''; // Reseta campo
+  }
+}
+
+function limparFiltros() {
+  document.getElementById('filtro-estado').value = '';
+  document.getElementById('filtro-cidade').value = '';
+  document.getElementById('filtro-categoria').value = '';
+  document.getElementById('filtro-instrumento').value = '';
+  document.getElementById('filtro-estilo').value = '';
+  document.getElementById('filtro-valor-min').value = '';
+  document.getElementById('filtro-valor-max').value = '';
+  tratarMudancaCategoriaFiltro();
+}
+
+function aplicarFiltros() {
+  const estado = document.getElementById('filtro-estado').value;
+  const cidade = document.getElementById('filtro-cidade').value;
+  const categoria = document.getElementById('filtro-categoria').value;
+  const instrumento = document.getElementById('filtro-instrumento').value;
+  const estilo = document.getElementById('filtro-estilo').value;
+  const vMin = document.getElementById('filtro-valor-min').value;
+  const vMax = document.getElementById('filtro-valor-max').value;
+
+  // Lógica de feedback ou requisição de listagem filtrada
+  console.log('Filtros aplicados:', { estado, cidade, categoria, instrumento, estilo, vMin, vMax });
+  
+  fecharModalFiltro();
+  alert('Filtros aplicados com sucesso! Atualizando resultados...');
 }

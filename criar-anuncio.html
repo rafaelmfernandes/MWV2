@@ -1,122 +1,128 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ArtistaShow - Criar Anúncio</title>
-    <!-- Google Fonts & FontAwesome -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <link rel="stylesheet" href="css/criar-anuncio.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ArtistaShow - Criar Anúncio</title>
+  <link rel="stylesheet" href="css/criar-anuncio.css">
 </head>
 <body>
 
-    <div class="mobile-container">
+  <div class="app-container">
+    
+    <!-- Cabeçalho / Navbar -->
+    <header class="navbar">
+      <div class="logo">Novo <span>Anúncio</span></div>
+      
+      <div class="navbar-icons">
+        <button class="nav-icon-btn" onclick="window.history.back()" title="Fechar">
+          <svg class="top-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Formulário de Criação -->
+    <main class="main-content">
+      <form class="create-form" onsubmit="event.preventDefault(); alert('Anúncio criado com sucesso!');">
         
-        <!-- Header da Página -->
-        <div class="app-header">
-            <button class="filter-btn" onclick="window.location.href='index.html'"><i class="fa-solid fa-arrow-left"></i></button>
-            <span class="username" style="font-size: 16px;">Criar Anúncio</span>
-            <div style="width: 18px;"></div>
+        <!-- Seção 1: Informações Básicas -->
+        <div class="form-section">
+          <h3>Informações Básicas</h3>
+          
+          <div class="form-group">
+            <label>Título do Anúncio / Nome Artístico</label>
+            <input type="text" class="form-input" placeholder="Ex: Rafael Melo (Show Completo)" required>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Estilo Musical</label>
+              <select class="form-select" required>
+                <option value="">Selecione</option>
+                <option value="sertanejo">Sertanejo / Modão</option>
+                <option value="mpb">MPB</option>
+                <option value="poprock">Pop Rock</option>
+                <option value="forro">Forró / Piseiro</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Localização</label>
+              <input type="text" class="form-input" value="Goiânia, GO" required>
+            </div>
+          </div>
         </div>
 
-        <!-- Conteúdo do Formulário com Rolagem -->
-        <div class="app-content" style="padding: 16px;">
+        <!-- Seção 2: Descrição e Mídia Única -->
+        <div class="form-section">
+          <h3>Sobre a Apresentação e Mídia</h3>
+          
+          <div class="form-group">
+            <label>Descrição Detalhada</label>
+            <textarea class="form-textarea" rows="4" placeholder="Conte sua história, repertório e o que o contratante pode esperar..." required></textarea>
+          </div>
+
+          <!-- Botão Único de Mídia (Foto ou Vídeo) -->
+          <div class="form-group">
+            <label>Mídia de Destaque (Escolha 1: Foto ou Vídeo)</label>
             
-            <div style="text-align: left; margin-bottom: 20px;">
-                <h1 style="font-size: 20px; font-weight: 700; color: #111; margin-bottom: 4px;">Divulgue seu Talento</h1>
-                <p style="font-size: 12px; color: #666;">Preencha os dados abaixo para aparecer para contratantes e donos de estabelecimentos.</p>
+            <div class="media-dropzone" id="dropzone-box" onclick="acionarSeletorMidia()">
+              <div class="dropzone-icon-wrapper" id="icon-wrapper">
+                <!-- Ícone Padrão (Upload) -->
+                <svg id="dropzone-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+              </div>
+              <div class="dropzone-text">
+                <span id="media-name-display" class="main-text">Clique para enviar Foto ou Vídeo</span>
+                <span id="media-sub-display" class="sub-text">Aceita imagens (JPG, PNG) ou vídeos (MP4)</span>
+              </div>
+              
+              <!-- Botão de remover caso queira trocar -->
+              <button type="button" id="btn-remover" class="btn-remove-media" style="display: none;" onclick="event.stopPropagation(); limparMidia();" title="Remover mídia">✕</button>
             </div>
 
-            <!-- Upload de Mídia -->
-            <div style="margin-bottom: 16px;">
-                <span style="font-size: 11px; color: #666; display: block; margin-bottom: 6px; font-weight: 600;">Mídia Principal (Show ao Vivo / Foto de Perfil)</span>
-                <div style="border: 2px dashed #d1d5db; border-radius: 14px; padding: 24px; text-align: center; background: #ffffff; cursor: pointer;">
-                    <i class="fa-solid fa-cloud-arrow-up" style="font-size: 28px; color: #2563eb; margin-bottom: 8px;"></i>
-                    <p style="font-size: 13px; font-weight: 600; color: #111; margin-bottom: 2px;">Toque para enviar foto ou vídeo</p>
-                    <p style="font-size: 10px; color: #888;">Recomendado formato vertical (Stories/Reels)</p>
-                </div>
-            </div>
-
-            <!-- Nome Artístico / Banda -->
-            <div class="filter-select-wrapper full-width">
-                <span style="font-size: 11px; color: #666; display: block; margin-bottom: 4px; font-weight: 500;">Nome Artístico ou da Banda</span>
-                <input type="text" class="filter-select login-input" placeholder="Ex: Banda Rock Acústico">
-            </div>
-
-            <!-- Estilo Musical -->
-            <div class="filter-select-wrapper full-width">
-                <span style="font-size: 11px; color: #666; display: block; margin-bottom: 4px; font-weight: 500;">Gênero Musical Principal</span>
-                <select class="filter-select">
-                    <option>Sertanejo Universitário</option>
-                    <option>Samba e Pagode</option>
-                    <option>Rock / Pop Rock</option>
-                    <option>MPB / Acústico</option>
-                    <option>Eletrônica / DJ</option>
-                </select>
-            </div>
-
-            <!-- Seção de Formatos Múltiplos (Ex: Acústico vs Banda Completa) -->
-            <div style="margin-top: 16px; margin-bottom: 8px;">
-                <span style="font-size: 12px; color: #111; font-weight: 700; display: block; margin-bottom: 8px;">Formatos de Show e Valores</span>
-            </div>
-
-            <!-- Formato 1: Acústico -->
-            <div style="background: #fff; border: 1px solid #d1d5db; border-radius: 12px; padding: 14px; margin-bottom: 12px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                    <span style="font-size: 13px; font-weight: 700; color: #111;">Formato 1: Acústico</span>
-                    <span style="font-size: 10px; color: #2563eb; font-weight: 600;">Principal</span>
-                </div>
-                
-                <div class="filter-select-wrapper full-width" style="margin-bottom: 8px;">
-                    <span style="font-size: 10px; color: #666; display: block; margin-bottom: 2px;">Cachê para este formato (R$)</span>
-                    <input type="text" class="filter-select login-input" placeholder="Ex: R$ 800,00">
-                </div>
-
-                <div class="filter-select-wrapper full-width" style="margin-bottom: 0;">
-                    <span style="font-size: 10px; color: #666; display: block; margin-bottom: 2px;">Integrantes / Instrumentos</span>
-                    <input type="text" class="filter-select login-input" placeholder="Ex: Cantor + Violonista">
-                </div>
-            </div>
-
-            <!-- Formato 2: Banda Completa -->
-            <div style="background: #fff; border: 1px solid #d1d5db; border-radius: 12px; padding: 14px; margin-bottom: 14px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                    <span style="font-size: 13px; font-weight: 700; color: #111;">Formato 2: Banda Completa</span>
-                </div>
-                
-                <div class="filter-select-wrapper full-width" style="margin-bottom: 8px;">
-                    <span style="font-size: 10px; color: #666; display: block; margin-bottom: 2px;">Cachê para este formato (R$)</span>
-                    <input type="text" class="filter-select login-input" placeholder="Ex: R$ 2.500,00">
-                </div>
-
-                <div class="filter-select-wrapper full-width" style="margin-bottom: 0;">
-                    <span style="font-size: 10px; color: #666; display: block; margin-bottom: 2px;">Integrantes / Instrumentos</span>
-                    <input type="text" class="filter-select login-input" placeholder="Ex: Vocal, Guitarra, Baixo, Bateria">
-                </div>
-            </div>
-
-            <!-- Botão para Adicionar Novo Formato -->
-            <button style="width: 100%; background: transparent; border: 1px dashed #2563eb; color: #2563eb; border-radius: 12px; padding: 12px; font-size: 13px; font-weight: 600; cursor: pointer; margin-bottom: 16px;">
-                <i class="fa-solid fa-plus"></i> Adicionar Outro Formato
-            </button>
-
-            <!-- Descrição Geral / Repertório -->
-            <div class="filter-select-wrapper full-width" style="height: auto;">
-                <span style="font-size: 11px; color: #666; display: block; margin-bottom: 4px; font-weight: 500;">Sobre o Show / Repertório Geral</span>
-                <textarea class="filter-select login-input" rows="3" placeholder="Fale sobre sua experiência e o estilo geral do show..." style="resize: none;"></textarea>
-            </div>
-
+            <!-- Input único que aceita ambos os formatos -->
+            <input type="file" id="input-midia-unica" accept="image/*,video/*" style="display: none;" onchange="processarMidiaUnica(this)">
+          </div>
         </div>
 
-        <!-- Botão de Publicação Fixo na Base -->
-        <div style="padding: 16px; background: #ffffff; border-top: 1px solid #eee;">
-            <button class="modal-btn-next" onclick="alert('Anúncio criado com sucesso!'); window.location.href='index.html';">Publicar Anúncio</button>
+        <!-- Seção 3: Formatos e Valores de Show -->
+        <div class="form-section">
+          <h3>Valores por Formato de Show</h3>
+          <p class="section-desc">Defina os valores para cada formato de apresentação oferecido:</p>
+          
+          <div class="price-input-group">
+            <span class="format-label">🎵 Acústico (Voz e Violão)</span>
+            <input type="text" class="form-input-price" placeholder="R$ 0,00">
+          </div>
+
+          <div class="price-input-group">
+            <span class="format-label">🎸 Banda Completa</span>
+            <input type="text" class="form-input-price" placeholder="R$ 0,00">
+          </div>
+
+          <div class="price-input-group">
+            <span class="format-label">🌟 Participações Especiais</span>
+            <input type="text" class="form-input-price" placeholder="R$ 0,00">
+          </div>
+
+          <div class="price-input-group">
+            <span class="format-label">⚙️ Personalizado / Sob Demanda</span>
+            <input type="text" class="form-input-price" value="Sob Consulta" disabled>
+          </div>
         </div>
 
-    </div>
+        <!-- Botão Salvar -->
+        <button type="submit" class="btn-submit-ad">Publicar Anúncio</button>
 
-    <script src="js/main.js"></script>
+      </form>
+    </main>
+
+  </div>
+
+  <!-- Script externo vinculado -->
+  <script src="js/criar-anuncio.js"></script>
+
 </body>
 </html>
