@@ -1,294 +1,244 @@
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+
 body {
   background-color: #09090b;
   color: #f4f4f5;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  margin: 0;
-  padding: 0;
+  display: flex;
+  justify-content: center;
 }
 
 .app-container {
-  max-width: 480px;
-  margin: 0 auto;
+  width: 100%;
+  max-width: 440px;
   min-height: 100vh;
-  background-color: #09090b;
+  background-color: #121215;
   position: relative;
-  padding-bottom: 40px;
+  padding-bottom: 30px;
+  padding-top: 60px;
+  border: 1px solid #1f1f23;
 }
 
-.profile-top-bar {
+.profile-top-actions {
   display: flex;
   justify-content: space-between;
-  padding: 16px;
+  padding: 12px 16px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 20;
 }
 
-.nav-icon-btn {
-  background: #18181b;
-  border: 1px solid #27272a;
-  color: #fff;
+.icon-circle-btn {
   width: 36px;
   height: 36px;
-  border-radius: 10px;
+  background-color: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
 }
 
-.top-icon-svg {
-  width: 18px;
-  height: 18px;
+.icon-circle-btn svg {
+  width: 16px;
+  height: 16px;
 }
 
-.profile-header-card {
-  background-color: #121215;
-  border-bottom: 1px solid #27272a;
-  padding: 0 16px 16px 16px;
+.profile-header-area {
+  position: relative;
+  margin-top: 30px;
+  padding: 0 16px;
+}
+
+.avatar-overlap {
+  width: 68px;
+  height: 68px;
+  background-color: #0b2e59;
+  color: #38bdf8;
+  font-weight: 800;
+  font-size: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid #121215;
+  position: absolute;
+  top: -34px;
+  left: 28px;
+  z-index: 5;
+}
+
+.profile-main-card {
+  background-color: #161619;
+  border: 1px solid #222226;
+  border-radius: 16px;
+  padding: 44px 16px 0 16px;
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-.profile-top-row {
+.top-row-info {
   display: flex;
-  align-items: center;
-  gap: 12px;
+  justify-content: space-between;
+  align-items: flex-start;
 }
 
-.profile-avatar-large {
-  width: 56px;
-  height: 56px;
-  background-color: #0284c7;
-  color: white;
+.artista-nome {
+  font-size: 20px;
   font-weight: 700;
-  border-radius: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  flex-shrink: 0;
-}
-
-.profile-title-info {
-  flex-grow: 1;
-}
-
-.profile-title-info h2 {
-  font-size: 16px;
   color: #fff;
-  font-weight: 700;
-  margin: 0 0 2px 0;
+  margin-bottom: 2px;
 }
 
-.sub-cargo {
+.artista-sub {
   font-size: 12px;
   color: #a1a1aa;
 }
 
-.btn-contratar-topo {
-  background-color: #18181b;
-  border: 1px solid #27272a;
+.btn-contratar {
+  background-color: #1f1f23;
   color: #fff;
-  padding: 8px 16px;
+  border: 1px solid #323238;
+  padding: 8px 18px;
   border-radius: 20px;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
 }
 
-.ad-meta-row {
+.artista-meta {
   display: flex;
-  gap: 12px;
-  align-items: center;
+  gap: 14px;
   font-size: 12px;
   color: #a1a1aa;
+  padding-bottom: 12px;
 }
 
-.rating { color: #fbbf24; }
-.verificado { color: #34d399; }
+.star-rate { color: #fbbf24; }
+.verif-tag { color: #34d399; }
 
-/* Abas de Navegação */
-.profile-tabs-nav {
+/* Abas */
+.tabs-header {
   display: flex;
   justify-content: space-between;
-  border-top: 1px solid #27272a;
+  border-top: 1px solid #222226;
   margin-top: 4px;
-  padding-top: 12px;
 }
 
-.profile-tab {
+.tab-btn {
   background: none;
   border: none;
   color: #71717a;
   font-size: 13px;
   font-weight: 600;
+  padding: 12px 0;
   cursor: pointer;
-  padding-bottom: 6px;
   position: relative;
+  flex: 1;
+  text-align: center;
 }
 
-.profile-tab.ativo {
-  color: #38bdf8;
+/* Cor e linha azul aplicadas EXCLUSIVAMENTE na aba com a classe .ativo */
+.tab-btn.ativo {
+  color: #3b82f6;
 }
 
-.profile-tab.ativo::after {
+.tab-btn.ativo::after {
   content: '';
   position: absolute;
-  bottom: -12px;
+  bottom: 0;
   left: 0;
   width: 100%;
   height: 2px;
-  background-color: #38bdf8;
+  background-color: #3b82f6;
 }
 
-.main-content {
+/* Corpo das Abas */
+.tab-body-container {
   padding: 16px;
 }
 
-/* Controle de Abas Visíveis */
 .tab-content {
   display: none;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
 }
 
 .tab-content.ativo {
   display: flex;
 }
 
-/* Seções Internas */
-.info-section-card, .rating-overview-card, .agenda-card-container, .review-card {
-  background-color: #121215;
-  border: 1px solid #27272a;
-  border-radius: 14px;
-  padding: 16px;
-}
-
-.descricao-texto {
+.descricao-bio {
   font-size: 13px;
   color: #a1a1aa;
-  margin: 0;
   line-height: 1.5;
-}
-
-.profile-options-section h3 {
-  font-size: 13px;
-  text-transform: uppercase;
-  color: #fff;
-  margin-bottom: 10px;
-}
-
-.service-option-card {
-  background-color: #18181b;
-  border: 1px solid #27272a;
+  background-color: #161619;
+  padding: 14px;
   border-radius: 12px;
-  padding: 12px 14px;
+  border: 1px solid #222226;
+}
+
+.section-title {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #71717a;
+  margin-top: 8px;
+}
+
+.section-title-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.ver-todos { font-size: 11px; color: #38bdf8; cursor: pointer; }
+
+.catalog-card {
+  background-color: #161619;
+  border: 1px solid #222226;
+  border-radius: 12px;
+  padding: 14px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   cursor: pointer;
-  margin-bottom: 8px;
 }
 
-.service-name { font-size: 13px; font-weight: 600; color: #fff; display: block; }
-.service-desc { font-size: 11px; color: #a1a1aa; }
-.service-price-right { font-size: 14px; font-weight: 700; color: #fff; }
+.catalog-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
 
-.portfolio-grid-preview {
+.catalog-info strong { font-size: 13px; color: #fff; }
+.catalog-info span { font-size: 11px; color: #a1a1aa; }
+.catalog-price { font-size: 14px; font-weight: 700; color: #fff; }
+
+.portfolio-grid-mini {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px;
 }
 
-.media-box-preview, .video-thumb, .foto-card-item {
-  background-color: #18181b;
-  border: 1px solid #27272a;
+.media-preview-box {
+  background-color: #161619;
+  border: 1px solid #222226;
   height: 90px;
-  border-radius: 10px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
 }
 
-.play-icon-mini {
+.play-svg {
   width: 24px;
   height: 24px;
-  color: #71717a;
+  color: #52525b;
 }
 
-/* Estilos Portfólio Aba */
-.portfolio-section-block {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.section-title-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.section-title-row h4 { font-size: 13px; color: #fff; margin: 0; }
-.ver-todos { font-size: 11px; color: #38bdf8; cursor: pointer; }
-
-.portfolio-grid-2 {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-}
-
-.video-thumb { height: 110px; }
-.video-duracao {
-  position: absolute;
-  bottom: 6px;
-  right: 6px;
-  background: rgba(0,0,0,0.8);
-  font-size: 10px;
-  padding: 2px 6px;
-  border-radius: 4px;
-  color: #fff;
-}
-
-.audio-list-container {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.audio-card-item {
-  background-color: #121215;
-  border: 1px solid #27272a;
-  border-radius: 12px;
-  padding: 10px 12px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.audio-icon-btn {
-  width: 36px;
-  height: 36px;
-  background: #18181b;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #38bdf8;
-}
-
-.audio-info { display: flex; flex-direction: column; gap: 2px; }
-.audio-titulo { font-size: 13px; font-weight: 600; color: #fff; }
-.audio-sub { font-size: 11px; color: #a1a1aa; }
-
-/* Estilos Agenda Aba */
-.agenda-header-mes {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-}
-.agenda-header-mes h3 { font-size: 14px; color: #fff; margin: 0; }
+/* Agenda / Calendário */
+.agenda-card-container { background-color: #161619; border: 1px solid #222226; border-radius: 12px; padding: 14px; }
+.agenda-header-mes { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
 .mes-nav-btn { background: none; border: none; color: #a1a1aa; font-size: 16px; cursor: pointer; }
 
 .agenda-grid-dias-semana, .agenda-grid-calendario {
@@ -297,9 +247,7 @@ body {
   text-align: center;
   gap: 6px;
 }
-
 .agenda-grid-dias-semana span { font-size: 11px; color: #71717a; font-weight: 600; margin-bottom: 4px; }
-
 .agenda-grid-calendario span {
   height: 32px;
   display: flex;
@@ -309,77 +257,13 @@ body {
   border-radius: 8px;
   font-weight: 600;
 }
-
 .agenda-grid-calendario .livre { background-color: #064e3b; color: #34d399; }
 .agenda-grid-calendario .ocupado { background-color: #7f1d1d; color: #fca5a5; }
 .agenda-grid-calendario .hoje { background-color: #0284c7; color: #fff; }
 
-.agenda-legenda {
-  display: flex;
-  justify-content: center;
-  gap: 16px;
-  margin-top: 14px;
-  font-size: 11px;
-  color: #a1a1aa;
-}
-
+.agenda-legenda { display: flex; justify-content: center; gap: 16px; margin-top: 14px; font-size: 11px; color: #a1a1aa; }
 .legenda-item { display: flex; align-items: center; gap: 6px; }
 .bola-cor { width: 8px; height: 8px; border-radius: 50%; }
 .bola-cor.livre { background-color: #34d399; }
 .bola-cor.ocupado { background-color: #fca5a5; }
 .bola-cor.hoje { background-color: #0284c7; }
-
-.btn-full-primary {
-  width: 100%;
-  background-color: #18181b;
-  border: 1px solid #27272a;
-  color: #fff;
-  padding: 12px;
-  border-radius: 12px;
-  font-size: 13px;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-/* Estilos Avaliações Aba */
-.rating-overview-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  padding: 20px;
-}
-
-.rating-big-num { font-size: 32px; font-weight: 800; color: #fff; }
-.rating-count-label { font-size: 12px; color: #a1a1aa; }
-
-.avaliacoes-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.review-card {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.review-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.review-autor { font-size: 13px; font-weight: 700; color: #fff; }
-.review-badge {
-  background-color: #0284c7;
-  color: #fff;
-  font-size: 10px;
-  padding: 2px 8px;
-  border-radius: 10px;
-  font-weight: 600;
-}
-
-.review-estrelas { font-size: 11px; }
-.review-texto { font-size: 12px; color: #a1a1aa; margin: 0; }
