@@ -36,6 +36,9 @@ function mudarAbaInferior(abaName, elementoBtn) {
   if (abaName === 'home') {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
+  if (abaName === 'perfil') {
+    window.location='perfil-artista.html';
+  }
 }
 
 // ==========================================
