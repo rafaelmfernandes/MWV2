@@ -1,0 +1,276 @@
+/* ==========================================
+   CSS COMPLETO DA TELA DE LOGIN / CADASTRO
+   ========================================== */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+body {
+  background-color: #09090b;
+  color: #f4f4f5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.app-container {
+  width: 100%;
+  max-width: 420px;
+  background-color: #121215;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.6);
+  overflow-x: hidden;
+  justify-content: center;
+  align-items: center;
+}
+
+@media (min-width: 421px) {
+  .app-container {
+    height: 850px;
+    min-height: unset;
+    border-radius: 24px;
+    overflow-y: auto;
+    border: 1px solid #27272a;
+  }
+}
+
+/* Card de Acesso */
+.checkout-card {
+  background-color: #18181b;
+  border: 1px solid #27272a;
+  border-radius: 16px;
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 380px;
+  align-items: center;
+  gap: 20px;
+}
+
+/* Toggle Principal (Entrar / Cadastrar) */
+.auth-toggle-container {
+  position: relative;
+  display: flex;
+  background-color: #121215;
+  border: 1px solid #27272a;
+  border-radius: 12px;
+  padding: 4px;
+  width: 100%;
+  height: 44px;
+  overflow: hidden;
+}
+
+.auth-toggle-slider {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: calc(50% - 4px);
+  height: calc(100% - 8px);
+  background-color: #27272a;
+  border-radius: 9px;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1;
+}
+
+.auth-tab-btn {
+  flex: 1;
+  background: none;
+  border: none;
+  color: #a1a1aa;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  z-index: 2;
+  transition: color 0.2s;
+  text-align: center;
+}
+
+.auth-tab-btn.active {
+  color: #fff;
+}
+
+.auth-toggle-container.right .auth-toggle-slider {
+  transform: translateX(100%);
+}
+
+/* Sub-Toggle de Cadastro (Cliente, Cantor, Músico) */
+.cadastro-tipo-container {
+  position: relative;
+  display: flex;
+  background-color: #121215;
+  border: 1px solid #27272a;
+  border-radius: 10px;
+  padding: 3px;
+  width: 100%;
+  height: 38px;
+  overflow: hidden;
+}
+
+.cadastro-tipo-slider {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: calc((100% - 6px) / 3);
+  height: calc(100% - 6px);
+  background-color: #27272a;
+  border-radius: 8px;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1;
+}
+
+.cadastro-tipo-slider.cliente {
+  transform: translateX(0%);
+}
+
+.cadastro-tipo-slider.cantor {
+  transform: translateX(100%);
+}
+
+.cadastro-tipo-slider.musico {
+  transform: translateX(200%);
+}
+
+.tipo-btn {
+  flex: 1;
+  background: none;
+  border: none;
+  color: #a1a1aa;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  z-index: 2;
+  transition: color 0.2s;
+  text-align: center;
+}
+
+.tipo-btn.active {
+  color: #fff;
+}
+
+/* Formulários Dinâmicos */
+.auth-form-pane {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  animation: fadeInAuth 0.3s ease-in-out;
+}
+
+@keyframes fadeInAuth {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.form-group label {
+  font-size: 12px;
+  color: #a1a1aa;
+}
+
+.input-custom {
+  background-color: #121215;
+  border: 1px solid #27272a;
+  border-radius: 10px;
+  padding: 12px;
+  color: #fff;
+  font-size: 13px;
+  outline: none;
+  width: 100%;
+  transition: border-color 0.2s;
+}
+
+.input-custom:focus {
+  border-color: #3b82f6;
+}
+
+.btn-continuar-proximo {
+  background-color: #3b82f6;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 14px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  text-align: center;
+  transition: background-color 0.2s;
+  margin-top: 6px;
+}
+
+.btn-continuar-proximo:hover {
+  background-color: #2563eb;
+}
+
+/* Divisor e Botões Sociais */
+.auth-divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+  margin: 4px 0;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid #27272a;
+}
+
+.auth-divider span {
+  padding: 0 10px;
+  font-size: 11px;
+  color: #71717a;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.social-buttons-container {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+}
+
+.btn-social {
+  flex: 1;
+  background-color: #121215;
+  border: 1px solid #27272a;
+  border-radius: 10px;
+  padding: 10px;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.btn-social:hover {
+  background-color: #27272a;
+  border-color: #3f3f46;
+}
