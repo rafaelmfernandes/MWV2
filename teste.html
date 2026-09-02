@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ArtistaShow - Conectando a Cena de Goiânia</title>
+  <link rel="stylesheet" href="css/teste.css">
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <!-- Cabeçalho -->
+    <header class="navbar">
+      <div class="logo">Artista<span>Show</span></div>
+      <button class="menu-btn" title="Menu">☰</button>
+    </header>
+
+    <!-- Conteúdo Principal -->
+    <main class="main-content">
+      
+      <!-- Hero Section -->
+      <section class="hero-section">
+        <h1 class="hero-title">O som certo para o seu evento</h1>
+        <p class="hero-subtitle">Conecte-se com talentos, obras e oportunidades em Goiânia.</p>
+        
+        <div class="search-box">
+          <input type="text" placeholder="O que você está procurando?" class="search-input">
+          <button class="search-btn">🔍</button>
+        </div>
+      </section>
+
+      <!-- Abas de Categorias Interativas -->
+      <section class="section">
+        <div class="categories-tabs">
+          <button class="cat-tab ativo" onclick="mudarCategoria('cantores', this)">Cantores</button>
+          <button class="cat-tab" onclick="mudarCategoria('musicos', this)">Músicos</button>
+          <button class="cat-tab" onclick="mudarCategoria('composicoes', this)">Composições</button>
+          <button class="cat-tab" onclick="mudarCategoria('eventos', this)">Shows/Eventos</button>
+        </div>
+
+        <!-- Conteúdo: Cantores (Com Preços e Formatos) -->
+        <div id="cat-cantores" class="cat-content ativo">
+          <div class="ad-card-novo">
+            <div class="ad-header">
+              <div class="ad-avatar-user">RM</div>
+              <div class="ad-user-info">
+                <h4>Rafael Melo</h4>
+                <div class="ad-meta-row">
+                  <span class="ad-estilo">MPB / Sertanejo</span>
+                  <span class="rating">⭐ 4.9 (128)</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="ad-media-box">
+              <span>▶ Vídeo de Apresentação (Ao Vivo)</span>
+            </div>
+
+            <div class="ad-descricao">
+              <strong>Show Completo</strong>
+              <p>10 anos de estrada, repertório autoral e covers para casamentos, aniversários e eventos corporativos.</p>
+            </div>
+
+            <!-- Preços e Formatos -->
+            <div class="ad-precos-lista">
+              <div class="preco-item">
+                <span class="preco-formato">🎵 Acústico (Voz e Violão)</span>
+                <span class="preco-valor">R$ 800</span>
+              </div>
+              <div class="preco-item">
+                <span class="preco-formato">🎸 Banda Completa</span>
+                <span class="preco-valor">R$ 2.400</span>
+              </div>
+            </div>
+
+            <div class="ad-footer">
+              <span>📍 Goiânia, GO</span>
+              <button class="btn-detalhes">Contratar</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Conteúdo: Músicos -->
+        <div id="cat-musicos" class="cat-content">
+          <div class="ad-card-novo">
+            <div class="ad-header">
+              <div class="ad-avatar-user" style="background-color: #047857;">GT</div>
+              <div class="ad-user-info">
+                <h4>Gabriel Tatu</h4>
+                <div class="ad-meta-row">
+                  <span class="ad-estilo">Sanfoneiro</span>
+                  <span class="rating">⭐ 5.0 (42)</span>
+                </div>
+              </div>
+            </div>
+            <div class="ad-media-box">
+              <span>▶ Solo de Sanfona no Estúdio</span>
+            </div>
+            <div class="ad-descricao">
+              <strong>Sanfoneiro Profissional para Gravações e Shows</strong>
+              <p>Disponível para integrar bandas de forró e sertanejo ou participações em gravações de estúdio.</p>
+            </div>
+            <div class="ad-footer">
+              <span>📍 Goiânia, GO</span>
+              <button class="btn-detalhes">Contratar</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Conteúdo: Composições -->
+        <div id="cat-composicoes" class="cat-content">
+          <div class="ad-card-novo">
+            <div class="ad-header">
+              <div class="ad-avatar-user" style="background-color: #7c2d12;">ML</div>
+              <div class="ad-user-info">
+                <h4>Marcos Lima</h4>
+                <div class="ad-meta-row">
+                  <span class="ad-estilo">Compositor / Modão</span>
+                  <span class="rating">⭐ 4.9 (56)</span>
+                </div>
+              </div>
+            </div>
+            <div class="ad-media-box">
+              <span>▶ Áudio Guia da Composição Inédita</span>
+            </div>
+            <div class="ad-descricao">
+              <strong>Modão Apaixonado (Inédita)</strong>
+              <p>Letra e Melodia sertaneja romântica disponíveis para gravação. Ritmo envolvente focado em lançamento.</p>
+            </div>
+            <div class="ad-footer">
+              <span>📍 Goiânia, GO</span>
+              <button class="btn-detalhes">Ver Detalhes</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Conteúdo: Shows/Eventos -->
+        <div id="cat-eventos" class="cat-content">
+          <div class="ad-card-novo">
+            <div class="ad-header">
+              <div class="ad-avatar-user" style="background-color: #b45309;">CS</div>
+              <div class="ad-user-info">
+                <h4>Carlos Silva</h4>
+                <div class="ad-meta-row">
+                  <span class="ad-estilo">Contratante</span>
+                  <span class="rating">⭐ 5.0 (12)</span>
+                </div>
+              </div>
+            </div>
+            <div class="ad-media-box photo-bg">
+              <span>🖼 Foto do Local do Evento</span>
+            </div>
+            <div class="ad-descricao">
+              <strong>Aniversário no Setor Bueno</strong>
+              <p>Preciso de dupla sertaneja para tocar 3h em festa particular para 80 pessoas. Data: 18/09.</p>
+            </div>
+            <div class="ad-footer">
+              <span>📍 Goiânia, GO</span>
+              <button class="btn-detalhes">Candidatar-se</button>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+    </main>
+
+    <footer class="footer">
+      <p>© 2026 ArtistaShow · Goiânia, GO</p>
+    </footer>
+
+  </div>
+
+  <script src="script-home.js"></script>
+</body>
+</html>

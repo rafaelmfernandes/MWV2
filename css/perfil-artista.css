@@ -1,0 +1,434 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+body {
+  background-color: #18181b;
+  color: #f1f5f9;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+}
+
+.app-container {
+  width: 100%;
+  max-width: 600px;
+  background-color: #18181b;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+/* Topo / Capa */
+.header-capa {
+  height: 160px;
+  background: linear-gradient(135deg, #27272a, #09090b);
+  position: relative;
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-shrink: 0;
+}
+
+.icon-btn {
+  background: rgba(0, 0, 0, 0.5);
+  border: none;
+  color: #fff;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+/* Info do Artista */
+.artista-info-container {
+  padding: 0 16px 16px 16px;
+  position: relative;
+  margin-top: -40px;
+  flex-shrink: 0;
+}
+
+.avatar-e-botao {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 12px;
+}
+
+.avatar {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  background-color: #0b2545;
+  border: 4px solid #18181b;
+  color: #38bdf8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 24px;
+}
+
+.btn-contratar {
+  background-color: #27272a;
+  color: #fff;
+  border: 1px solid #3f3f46;
+  padding: 8px 22px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.artista-nome {
+  font-size: 22px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 4px;
+}
+
+.artista-sub {
+  font-size: 13px;
+  color: #a1a1aa;
+  margin-bottom: 10px;
+}
+
+.artista-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 12px;
+  color: #a1a1aa;
+  align-items: center;
+}
+
+.badge-verde {
+  color: #4ade80;
+}
+
+/* Abas de Navegação */
+.tabs-container {
+  display: flex;
+  border-bottom: 1px solid #27272a;
+  flex-shrink: 0;
+}
+
+.tab-item {
+  flex: 1;
+  text-align: center;
+  padding: 12px 4px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #a1a1aa;
+  cursor: pointer;
+  background: none;
+  border: none;
+  position: relative;
+}
+
+.tab-item.ativo {
+  color: #38bdf8;
+  font-weight: 600;
+}
+
+.tab-item.ativo::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: #38bdf8;
+}
+
+/* Conteúdo das Abas */
+.tab-content {
+  display: none;
+  padding: 16px;
+  flex: 1;
+}
+
+.tab-content.ativo {
+  display: block;
+}
+
+/* Estilos ABA SOBRE */
+.secao-texto {
+  font-size: 14px;
+  color: #d4d4d8;
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+
+.titulo-secao {
+  font-size: 15px;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 10px;
+}
+
+.catalogo-card {
+  background-color: #27272a;
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #3f3f46;
+}
+
+.catalogo-titulo {
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 2px;
+}
+
+.catalogo-sub {
+  font-size: 12px;
+  color: #a1a1aa;
+}
+
+.catalogo-preco {
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.portfolio-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.portfolio-box {
+  background-color: #27272a;
+  height: 110px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #71717a;
+  font-size: 20px;
+}
+
+/* Estilos ABA PORTFÓLIO */
+.portfolio-secao-titulo {
+  font-size: 13px;
+  font-weight: 600;
+  color: #a1a1aa;
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.link-ver-todos {
+  color: #38bdf8;
+  font-size: 12px;
+  text-decoration: none;
+}
+
+.video-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.video-card {
+  background-color: #27272a;
+  height: 110px;
+  border-radius: 10px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #71717a;
+}
+
+.video-duracao {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background: rgba(0,0,0,0.7);
+  color: #fff;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.audio-item {
+  background-color: #27272a;
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.audio-icone {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #0284c7;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+}
+
+.audio-detalhes h4 {
+  font-size: 13px;
+  color: #fff;
+  margin-bottom: 2px;
+}
+
+.audio-detalhes p {
+  font-size: 11px;
+  color: #a1a1aa;
+}
+
+/* Estilos ABA AGENDA */
+.calendario-topo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.dias-semana {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  font-size: 12px;
+  color: #71717a;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.dias-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.dia {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.dia.livre { background-color: #14532d; color: #4ade80; }
+.dia.ocupado { background-color: #7f1d1d; color: #f87171; }
+.dia.hoje { background-color: #2563eb; color: #fff; font-weight: bold; }
+.dia.vazio { background: transparent; }
+
+.legenda-agenda {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  font-size: 12px;
+  color: #a1a1aa;
+  margin-bottom: 20px;
+}
+
+.legenda-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ponto {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.ponto.livre { background-color: #4ade80; }
+.ponto.ocupado { background-color: #f87171; }
+.ponto.hoje { background-color: #38bdf8; }
+
+.btn-solicitar {
+  width: 100%;
+  background-color: #27272a;
+  color: #fff;
+  border: 1px solid #3f3f46;
+  padding: 12px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  text-align: center;
+}
+
+/* Estilos ABA AVALIAÇÕES */
+.media-topo {
+  margin-bottom: 16px;
+}
+
+.media-nota {
+  font-size: 30px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.media-total {
+  font-size: 12px;
+  color: #a1a1aa;
+}
+
+.avaliacao-card {
+  background-color: #27272a;
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 10px;
+  border: 1px solid #3f3f46;
+}
+
+.aval-topo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.aval-nome {
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.tag-evento {
+  background-color: #1e3a8a;
+  color: #93c5fd;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+.aval-texto {
+  font-size: 12px;
+  color: #d4d4d8;
+  line-height: 1.4;
+}

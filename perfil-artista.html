@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rafael Melo - Cantor e Violonista</title>
+  <link rel="stylesheet" href="css/perfil-artista.css">
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <!-- Topo / Capa -->
+    <div class="header-capa">
+      <button class="icon-btn" title="Voltar">←</button>
+      <button class="icon-btn" title="Favoritar">♥</button>
+    </div>
+
+    <!-- Informações do Artista -->
+    <div class="artista-info-container">
+      <div class="avatar-e-botao">
+        <div class="avatar">RM</div>
+        <button class="btn-contratar">Contratar</button>
+      </div>
+      <h1 class="artista-nome">Rafael Melo</h1>
+      <p class="artista-sub">Cantor e violonista · MPB, pop, sertanejo</p>
+      
+      <div class="artista-badges">
+        <span>⭐ 4.9 (128)</span>
+        <span>📍 Goiânia, GO</span>
+        <span class="badge-verde">✔ Verificado</span>
+      </div>
+    </div>
+
+    <!-- Abas de Navegação -->
+    <div class="tabs-container">
+      <button class="tab-item ativo" onclick="mudarAba('sobre', this)">Sobre</button>
+      <button class="tab-item" onclick="mudarAba('portfolio', this)">Portfolio</button>
+      <button class="tab-item" onclick="mudarAba('agenda', this)">Agenda</button>
+      <button class="tab-item" onclick="mudarAba('avaliacoes', this)">Avaliacoes</button>
+    </div>
+
+    <!-- ABA SOBRE -->
+    <div id="aba-sobre" class="tab-content ativo">
+      <p class="secao-texto">10 anos de estrada, repertório autoral e covers. Toco em casamentos, aniversários e eventos corporativos, sozinho ou com banda.</p>
+      
+      <h3 class="titulo-secao">Catalogo</h3>
+      <div class="catalogo-card">
+        <div>
+          <div class="catalogo-titulo">Voz e violao (2h)</div>
+          <div class="catalogo-sub">Ideal para cerimonias e recepcoes</div>
+        </div>
+        <div class="catalogo-preco">R$ 800</div>
+      </div>
+
+      <div class="catalogo-card">
+        <div>
+          <div class="catalogo-titulo">Banda completa (4h)</div>
+          <div class="catalogo-sub">4 musicos, som e iluminacao inclusos</div>
+        </div>
+        <div class="catalogo-preco">R$ 2.400</div>
+      </div>
+
+      <h3 class="titulo-secao" style="margin-top: 14px;">Portfolio</h3>
+      <div class="portfolio-grid">
+        <div class="portfolio-box">▶</div>
+        <div class="portfolio-box">▶</div>
+      </div>
+    </div>
+
+    <!-- ABA PORTFOLIO -->
+    <div id="aba-portfolio" class="tab-content">
+      <div class="portfolio-secao-titulo">
+        <span>Videos</span>
+        <a href="#" class="link-ver-todos">Ver todos</a>
+      </div>
+      <div class="video-grid">
+        <div class="video-card">
+          <span>▶</span>
+          <span class="video-duracao">3:12</span>
+        </div>
+        <div class="video-card">
+          <span>▶</span>
+          <span class="video-duracao">2:04</span>
+        </div>
+      </div>
+
+      <div class="portfolio-secao-titulo">
+        <span>Composicoes e audios</span>
+        <a href="#" class="link-ver-todos">Ver todos</a>
+      </div>
+      <div class="audio-item">
+        <div class="audio-icone">▶</div>
+        <div class="audio-detalhes">
+          <h4>Caminho de volta</h4>
+          <p>Composicao propria · 3:45</p>
+        </div>
+      </div>
+      <div class="audio-item">
+        <div class="audio-icone">▶</div>
+        <div class="audio-detalhes">
+          <h4>Manha de domingo</h4>
+          <p>Cover acustico · 2:58</p>
+        </div>
+      </div>
+
+      <div class="portfolio-secao-titulo" style="margin-top: 10px;">
+        <span>Fotos de eventos</span>
+        <a href="#" class="link-ver-todos">Ver todas</a>
+      </div>
+      <div class="portfolio-grid">
+        <div class="portfolio-box">📷</div>
+        <div class="portfolio-box">📷</div>
+      </div>
+    </div>
+
+    <!-- ABA AGENDA -->
+    <div id="aba-agenda" class="tab-content">
+      <div class="calendario-topo">
+        <span>‹</span>
+        <span>Setembro 2026</span>
+        <span>›</span>
+      </div>
+
+      <div class="dias-semana">
+        <div>D</div><div>S</div><div>T</div><div>Q</div><div>Q</div><div>S</div><div>S</div>
+      </div>
+
+      <div class="dias-grid">
+        <div class="dia vazio"></div>
+        <div class="dia vazio"></div>
+        <div class="dia livre">1</div>
+        <div class="dia livre">2</div>
+        <div class="dia ocupado">3</div>
+        <div class="dia livre">4</div>
+        <div class="dia livre">5</div>
+
+        <div class="dia livre">6</div>
+        <div class="dia ocupado">7</div>
+        <div class="dia ocupado">8</div>
+        <div class="dia livre">9</div>
+        <div class="dia livre">10</div>
+        <div class="dia livre">11</div>
+        <div class="dia hoje">12</div>
+
+        <div class="dia livre">13</div>
+        <div class="dia livre">14</div>
+        <div class="dia livre">15</div>
+        <div class="dia ocupado">16</div>
+        <div class="dia ocupado">17</div>
+        <div class="dia livre">18</div>
+        <div class="dia livre">19</div>
+
+        <div class="dia livre">20</div>
+        <div class="dia livre">21</div>
+        <div class="dia ocupado">22</div>
+        <div class="dia livre">23</div>
+        <div class="dia livre">24</div>
+        <div class="dia livre">25</div>
+        <div class="dia ocupado">26</div>
+
+        <div class="dia livre">27</div>
+        <div class="dia livre">28</div>
+        <div class="dia livre">29</div>
+        <div class="dia livre">30</div>
+      </div>
+
+      <div class="legenda-agenda">
+        <div class="legenda-item"><span class="ponto livre"></span> Livre</div>
+        <div class="legenda-item"><span class="ponto ocupado"></span> Ocupado</div>
+        <div class="legenda-item"><span class="ponto hoje"></span> Hoje</div>
+      </div>
+
+      <button class="btn-solicitar">Solicitar data</button>
+    </div>
+
+    <!-- ABA AVALIAÇÕES -->
+    <div id="aba-avaliacoes" class="tab-content">
+      <div class="media-topo">
+        <span class="media-nota">4.9</span>
+        <span class="media-total">128 avaliacoes</span>
+      </div>
+
+      <div class="avaliacao-card">
+        <div class="aval-topo">
+          <span class="aval-nome">Camila S.</span>
+          <span class="tag-evento">Casamento</span>
+        </div>
+        <p class="aval-texto">Repertorio impecavel, chegou antes do horario e emocionou todos os convidados.</p>
+      </div>
+
+      <div class="avaliacao-card">
+        <div class="aval-topo">
+          <span class="aval-nome">Bruno A.</span>
+          <span class="tag-evento">Aniversario</span>
+        </div>
+        <p class="aval-texto">Otimo custo beneficio, so achei o som um pouco baixo no comeco.</p>
+      </div>
+
+      <div class="avaliacao-card">
+        <div class="aval-topo">
+          <span class="aval-nome">Marcia T.</span>
+          <span class="tag-evento">Corporativo</span>
+        </div>
+        <p class="aval-texto">Profissional, pontual e muito flexivel com o repertorio pedido pela empresa.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="js/perfil_artista.js"></script>
+
+</body>
+</html>
