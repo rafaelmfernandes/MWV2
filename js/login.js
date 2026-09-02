@@ -4,7 +4,6 @@ function alternarAba(tipo) {
   const tabCadastro = document.getElementById('tab-cadastro');
   const containerConteudo = document.getElementById('auth-content-container');
 
-  // Se o usuário clicou em 'login'
   if (tipo === 'login') {
     toggleContainer.classList.remove('right');
     tabLogin.classList.add('active');
@@ -44,12 +43,10 @@ function alternarAba(tipo) {
       </form>
     `;
   } else {
-    // Se o usuário clicou em 'cadastrar' ou trocou entre as sub-categorias
     toggleContainer.classList.add('right');
     tabCadastro.classList.add('active');
     tabLogin.classList.remove('active');
 
-    // Define 'cliente' como padrão se nenhum subtipo foi passado
     const subTipo = (tipo === 'cantor' || tipo === 'musico') ? tipo : 'cliente';
 
     containerConteudo.innerHTML = `
@@ -74,10 +71,20 @@ function alternarAba(tipo) {
           <input type="password" class="input-custom" placeholder="Mínimo 6 caracteres" required>
         </div>
         
-        ${subTipo !== 'cliente' ? `
+        ${subTipo === 'cantor' ? `
         <div class="form-group">
-          <label>Estilo Principal</label>
+          <label>Estilo Musical Principal</label>
           <input type="text" class="input-custom" placeholder="Ex: Sertanejo, Rock, MPB" required>
+        </div>` : ''}
+
+        ${subTipo === 'musico' ? `
+        <div class="form-group">
+          <label>Instrumento Principal</label>
+          <input type="text" class="input-custom" placeholder="Ex: Guitarrista, Violonista, Baterista" required>
+        </div>
+        <div class="form-group">
+          <label>Estilo Musical</label>
+          <input type="text" class="input-custom" placeholder="Ex: Jazz, Samba, Rock" required>
         </div>` : ''}
 
         <button type="submit" class="btn-continuar-proximo" style="margin-top: 4px;">Criar Conta de ${subTipo.charAt(0).toUpperCase() + subTipo.slice(1)}</button>
