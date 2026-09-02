@@ -1,0 +1,616 @@
+/* Configurações Globais e Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    background-color: #000000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* Container Mobile Ocupando Tela Cheia Real */
+.mobile-container {
+    width: 100%;
+    height: 100%;
+    max-width: 480px;
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Header / Barra Superior */
+.app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: #fff;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.username {
+    font-size: 19px;
+    font-weight: 700;
+    color: #111;
+}
+
+.header-icons {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.icon-badge {
+    position: relative;
+    font-size: 20px;
+    color: #222;
+}
+
+.badge.red {
+    position: absolute;
+    top: -6px;
+    right: -8px;
+    background-color: #ff3b30;
+    color: white;
+    font-size: 9px;
+    font-weight: 700;
+    padding: 2px 5px;
+    border-radius: 10px;
+}
+
+.filter-btn {
+    background: none;
+    border: none;
+    font-size: 18px;
+    color: #222;
+    cursor: pointer;
+}
+
+/* Conteúdo com rolagem flexível */
+.app-content {
+    flex: 1;
+    overflow-y: auto;
+    background-color: #f8f9fa;
+    padding-bottom: 16px;
+}
+
+/* Ocultar barras de rolagem mantendo a funcionalidade */
+.app-content::-webkit-scrollbar,
+.stories-section::-webkit-scrollbar {
+    display: none;
+}
+
+/* Menu Toggle Animado (3 Opções - Estilo Login/Cadastro) */
+.auth-tabs.tres-opcoes {
+    position: relative;
+    display: flex;
+    background-color: #f0f0f5;
+    border-radius: 14px;
+    padding: 4px;
+    margin: 14px 16px;
+}
+
+.slider-bg-tres {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: calc((100% - 8px) / 3);
+    height: calc(100% - 8px);
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.auth-tabs.tres-opcoes .tab-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: transparent;
+    border: none;
+    padding: 10px 0;
+    font-size: 13px;
+    font-weight: 600;
+    color: #666666;
+    border-radius: 10px;
+    cursor: pointer;
+    z-index: 1;
+    position: relative;
+    white-space: nowrap;
+    transition: color 0.2s ease;
+}
+
+.auth-tabs.tres-opcoes .tab-btn.ativo {
+    color: #2563eb;
+}
+
+/* Seção de Stories / Cards Verticais */
+.stories-section {
+    display: flex;
+    gap: 12px;
+    padding: 4px 16px 12px 16px;
+    overflow-x: auto;
+    background: #fff;
+    margin-bottom: 8px;
+}
+
+.story-card {
+    min-width: 135px;
+    height: 210px;
+    border-radius: 14px;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 12px;
+    overflow: hidden;
+}
+
+.story-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.85) 100%);
+}
+
+.story-overlay {
+    position: relative;
+    z-index: 1;
+    color: white;
+}
+
+.story-title {
+    font-size: 12px;
+    font-weight: 700;
+    display: block;
+    margin-bottom: 2px;
+}
+
+.story-date {
+    font-size: 9px;
+    opacity: 0.9;
+}
+
+/* Banner Informativo */
+.info-banner {
+    background: #ffffff;
+    margin: 8px 16px;
+    padding: 14px;
+    border-radius: 12px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    position: relative;
+    border: 1px solid #eee;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.banner-icon {
+    font-size: 16px;
+    color: #222;
+    margin-top: 2px;
+}
+
+.banner-text h3 {
+    font-size: 12px;
+    font-weight: 700;
+    color: #111;
+    margin-bottom: 4px;
+}
+
+.banner-text p {
+    font-size: 11px;
+    color: #666;
+    line-height: 1.4;
+}
+
+.close-banner {
+    background: none;
+    border: none;
+    font-size: 13px;
+    color: #999;
+    cursor: pointer;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+/* Card de Anúncio e Feed */
+.feed-post {
+    background: #ffffff;
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+    margin-top: 8px;
+}
+
+.post-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 16px;
+}
+
+.post-user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.user-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.post-username {
+    font-size: 13px;
+    font-weight: 600;
+    color: #111;
+    display: block;
+}
+
+.post-time {
+    font-size: 10px;
+    color: #888;
+}
+
+.post-options {
+    background: none;
+    border: none;
+    color: #333;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.post-media {
+    width: 100%;
+    height: 340px;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.post-media-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 14px 16px;
+    background: linear-gradient(180deg, rgba(0,0,0,0) 20%, rgba(0,0,0,0.85) 100%);
+    color: #fff;
+}
+
+.artist-name {
+    font-size: 14px;
+    font-weight: 700;
+    display: block;
+    margin-bottom: 2px;
+}
+
+.artist-role {
+    font-size: 11px;
+    color: #e0e0e0;
+    font-weight: 400;
+}
+
+/* Barra de Contratação */
+.hire-bar {
+    background-color: #111111;
+    color: #ffffff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.hire-price {
+    font-weight: 700;
+}
+
+/* Ações do Post */
+.post-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 16px 6px 16px;
+}
+
+.action-left {
+    display: flex;
+    gap: 16px;
+}
+
+.action-btn {
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: #222;
+    cursor: pointer;
+    padding: 0;
+}
+
+.post-details {
+    padding: 0 16px 14px 16px;
+}
+
+.likes-count {
+    font-size: 12px;
+    font-weight: 700;
+    color: #111;
+    display: block;
+    margin-bottom: 6px;
+}
+
+.post-caption {
+    font-size: 11px;
+    color: #444;
+    line-height: 1.4;
+}
+
+.post-caption strong {
+    color: #111;
+    margin-right: 4px;
+}
+
+/* Barra de Navegação Inferior */
+.app-nav {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background: #ffffff;
+    border-top: 1px solid #eee;
+    padding: 8px 0;
+    height: 56px;
+}
+
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: #888;
+    font-size: 10px;
+    gap: 3px;
+}
+
+.nav-item i {
+    font-size: 18px;
+}
+
+.nav-item.active {
+    color: #111;
+    font-weight: 600;
+}
+
+/* Estilos do Modal Bottom Sheet */
+.modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-sheet {
+    width: 100%;
+    background-color: #ffffff;
+    border-top-left-radius: 24px;
+    border-top-right-radius: 24px;
+    padding: 12px 20px 24px 20px;
+    transform: translateY(100%);
+    transition: transform 0.35s cubic-bezier(0.1, 1, 0.1, 1);
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
+}
+
+.modal-overlay.active .modal-sheet {
+    transform: translateY(0);
+}
+
+.modal-indicator {
+    width: 36px;
+    height: 4px;
+    background-color: #d1d5db;
+    border-radius: 2px;
+    margin: 0 auto 12px auto;
+}
+
+.modal-header h2 {
+    font-size: 16px;
+    font-weight: 700;
+    text-align: center;
+    color: #111;
+    margin-bottom: 16px;
+}
+
+.modal-subtitle {
+    font-size: 13px;
+    font-weight: 600;
+    color: #111;
+    margin-bottom: 16px;
+}
+
+.modal-option {
+    display: flex;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #f3f4f6;
+    cursor: pointer;
+    position: relative;
+}
+
+.modal-option input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.option-icon {
+    width: 40px;
+    height: 40px;
+    background-color: #f3f4f6;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 12px;
+    color: #333;
+    font-size: 16px;
+}
+
+.option-text {
+    flex: 1;
+}
+
+.option-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #111;
+    display: block;
+}
+
+.option-desc {
+    font-size: 11px;
+    color: #6b7280;
+}
+
+.radio-custom {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #d1d5db;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.2s;
+}
+
+.modal-option input[type="radio"]:checked ~ .radio-custom {
+    border-color: #2563eb;
+    background-color: #2563eb;
+    box-shadow: inset 0 0 0 4px #ffffff;
+}
+
+.modal-footer-text {
+    font-size: 11px;
+    color: #6b7280;
+    margin: 16px 0 20px 0;
+    line-height: 1.4;
+}
+
+.modal-btn-next {
+    width: 100%;
+    background-color: #2563eb;
+    color: #ffffff;
+    border: none;
+    border-radius: 12px;
+    padding: 14px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+}
+
+/* Estilos específicos para o Modal de Filtro */
+.filter-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.filter-select-wrapper {
+    position: relative;
+    flex: 1;
+    background: #fff;
+    border: 1px solid #d1d5db;
+    border-radius: 12px;
+    margin-bottom: 12px;
+    display: flex;
+    flex-direction: column;
+    padding: 8px 12px;
+}
+
+.filter-select-wrapper.full-width {
+    width: 100%;
+}
+
+.filter-select {
+    width: 100%;
+    padding: 4px 0;
+    background: transparent;
+    border: none;
+    font-size: 13px;
+    font-weight: 500;
+    color: #111;
+    outline: none;
+    cursor: pointer;
+}
+
+.filter-price-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.price-input-box {
+    flex: 1;
+    background: #fff;
+    border: 1px solid #d1d5db;
+    border-radius: 12px;
+    padding: 14px 16px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 600;
+    color: #111;
+}
+
+/* Estilos Específicos para a Página de Criar Anúncio */
+textarea.filter-select {
+    font-family: 'Inter', sans-serif;
+    line-height: 1.4;
+    resize: none;
+}
+
+select.filter-select {
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 4px center;
+    background-size: 16px;
+    padding-right: 28px;
+}

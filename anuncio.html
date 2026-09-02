@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ArtistaShow - Detalhe do Anúncio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/anuncio.css">
+</head>
+<body>
+
+    <div class="mobile-container">
+        
+        <!-- Barra de Status Superior -->
+        <div class="status-bar">
+            <span class="time">9:27</span>
+            <div class="status-icons">
+                <i class="fa-solid fa-signal"></i>
+                <i class="fa-solid fa-wifi"></i>
+                <i class="fa-solid fa-battery-full"></i>
+            </div>
+        </div>
+
+        <!-- Header da Página de Anúncio -->
+        <header class="ad-header-top">
+            <a href="index.html" class="back-btn" aria-label="Voltar"><i class="fa-solid fa-chevron-left"></i></a>
+            <div class="ad-header-title">
+                <span class="ad-category-subtitle">Musico</span>
+                <h1 class="ad-username">Luismar_peixe</h1>
+            </div>
+            <button class="header-action-btn" aria-label="Avançar">Avançar</button>
+        </header>
+
+        <!-- Conteúdo Rolável -->
+        <main class="app-content">
+            
+            <!-- Mídia do Anúncio (Vídeo / Foto) -->
+            <div class="ad-media-container">
+                <video src="img/video-anuncio.mp4" autoplay muted loop playsinline class="ad-video"></video>
+                <div class="ad-media-overlay">
+                    <span class="artist-name">Luismar Peixe</span>
+                    <span class="artist-role">Produtor musical / Baterista</span>
+                </div>
+                <div class="ad-media-stats">
+                    <i class="fa-regular fa-heart"></i>
+                    <span class="stat-num">246</span>
+                </div>
+            </div>
+
+            <!-- Ações e Legenda -->
+            <div class="ad-interaction-section">
+                <div class="post-actions">
+                    <div class="action-left">
+                        <button class="action-btn"><i class="fa-regular fa-heart"></i></button>
+                        <button class="action-btn"><i class="fa-regular fa-comment"></i></button>
+                        <button class="action-btn"><i class="fa-regular fa-paper-plane"></i></button>
+                    </div>
+                    <button class="action-btn"><i class="fa-regular fa-bookmark"></i></button>
+                </div>
+
+                <div class="post-details">
+                    <span class="likes-count">304 curtidas</span>
+                    <p class="post-caption">
+                        Show de hj com meu irmão 🥁⚪ <a href="#" class="tag-link">@gabrielcosttaofc</a> 🙌📄 no festival <a href="#" class="tag-link">@costelaemodaOgratidão</a> pelo convite irmão Part 2 set up 🥁 bateria <a href="#" class="tag-link">@dwdrums</a> design seriesPeles <a href="#" class="tag-link">@aquarian.drumheads.br.oficial</a> Modelo classic clearMics <a href="#" class="tag-link">@audixmics</a> <a href="#" class="tag-link">@audix_latinoamerica</a> Pratos <a href="#" class="tag-link">@orioncymbals</a> <a href="#" class="tag-link">@orioncymbals.usa</a>
+                    </p>
+                    <span class="post-time-ago">30 min</span>
+                </div>
+            </div>
+
+            <!-- Bloco de Serviços Disponíveis e Preços -->
+            <section class="services-pricing-section">
+                <div class="services-header">
+                    <span class="status-dot-green"></span>
+                    <h2>Serviços disponíveis</h2>
+                </div>
+
+                <div class="service-price-row">
+                    <span class="service-name">Produtor musical</span>
+                    <span class="service-value">R$ 3.000,00</span>
+                </div>
+
+                <div class="service-price-row">
+                    <span class="service-name">Baterista</span>
+                    <span class="service-value">R$ 500,00</span>
+                </div>
+
+                <div class="service-price-row negotiation-row">
+                    <div>
+                        <span class="service-name">Negociação</span>
+                        <span class="service-desc-sub">Lance mínimo de</span>
+                    </div>
+                    <span class="service-value">R$ 500,00</span>
+                </div>
+            </section>
+
+            <!-- Seção de Comentários Recentes -->
+            <section class="comments-section">
+                <h3>Comentários mais recentes</h3>
+
+                <div class="comment-item">
+                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop" alt="Rafaelfernandes" class="comment-avatar">
+                    <div class="comment-content">
+                        <div class="comment-bubble">
+                            <span class="comment-user">Rafaelfernandes <small>1 semana</small></span>
+                            <p>O melhor sem duvidas. Parabéns irmão, sucesso!</p>
+                        </div>
+                        <div class="comment-actions">
+                            <button class="cm-btn">Responder</button>
+                            <button class="cm-btn delete">Excluir</button>
+                        </div>
+                    </div>
+                    <button class="like-comment-btn"><i class="fa-regular fa-heart"></i></button>
+                </div>
+
+                <div class="comment-item">
+                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop" alt="Igorewallace" class="comment-avatar">
+                    <div class="comment-content">
+                        <div class="comment-bubble">
+                            <span class="comment-user">Igorewallace <small>1 semana</small></span>
+                            <p>O melhor sem duvidas. Parabéns irmão, sucesso!</p>
+                        </div>
+                        <div class="comment-actions">
+                            <button class="cm-btn">Responder</button>
+                            <button class="cm-btn delete">Excluir</button>
+                        </div>
+                    </div>
+                    <button class="like-comment-btn"><i class="fa-regular fa-heart"></i></button>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- Botão Fixo Inferior de Contratação -->
+        <div class="footer-action-bar">
+            <a href="selecao-servico.html" class="btn-primary-hire-link">Contratar</a>
+        </div>
+
+    </div>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

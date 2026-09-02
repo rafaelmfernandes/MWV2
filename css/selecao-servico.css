@@ -1,0 +1,306 @@
+/* Reset básico */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+body {
+    background-color: #ffffff;
+    color: #000000;
+}
+
+/* Container principal preenchendo a tela */
+.app-container {
+    width: 100%;
+    min-height: 100vh;
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+/* Barra superior */
+.topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    background-color: #ffffff;
+}
+
+.btn-voltar {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: #000000;
+    text-decoration: none;
+}
+
+.topbar-titulo {
+    font-size: 16px;
+    font-weight: 600;
+    color: #000000;
+}
+
+.btn-cancelar {
+    background: none;
+    border: none;
+    font-size: 14px;
+    color: #000000;
+    cursor: pointer;
+}
+
+/* Conteúdo */
+.conteudo {
+    padding: 20px;
+    flex: 1;
+    overflow-y: auto;
+}
+
+.conteudo h1, .conteudo h2 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #000000;
+    margin-bottom: 8px;
+    line-height: 1.3;
+}
+
+.subtitulo {
+    font-size: 13px;
+    color: #8e8e93;
+    line-height: 1.4;
+    margin-bottom: 16px;
+}
+
+.divisor {
+    height: 1px;
+    background-color: #efeff4;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+/* Lista de serviços (Radio list) */
+.lista-servicos {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.item-servico {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    width: 100%;
+}
+
+.item-servico input[type="radio"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #b0b0b5;
+    border-radius: 50%;
+    outline: none;
+    margin-right: 14px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.item-servico input[type="radio"]:checked {
+    border-color: #3b50ff;
+}
+
+.item-servico input[type="radio"]:checked::after {
+    content: "";
+    width: 10px;
+    height: 10px;
+    background-color: #3b50ff;
+    border-radius: 50%;
+}
+
+.info-servico {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.info-servico .nome {
+    font-size: 15px;
+    font-weight: 500;
+    color: #000000;
+}
+
+.info-servico .detalhe {
+    font-size: 11px;
+    color: #8e8e93;
+    margin-top: 2px;
+}
+
+.valor {
+    font-size: 15px;
+    font-weight: 500;
+    color: #000000;
+    text-align: right;
+}
+
+/* Componentes da tela de Data/Local */
+.input-local {
+    background-color: #f7f7f7;
+    border: 1px solid #e5e5ea;
+    border-radius: 10px;
+    padding: 14px 16px;
+    font-size: 14px;
+    color: #8e8e93;
+    margin-bottom: 16px;
+}
+
+.card-endereco-selecionado {
+    border: 1.5px solid #3b50ff;
+    border-radius: 12px;
+    padding: 16px;
+    position: relative;
+    background-color: #ffffff;
+    margin-bottom: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.icone-local {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    font-size: 18px;
+}
+
+.info-endereco {
+    margin-left: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-bottom: 8px;
+}
+
+.nome-lugar {
+    font-size: 15px;
+    font-weight: 700;
+    color: #000000;
+}
+
+.endereco-texto {
+    font-size: 13px;
+    color: #333333;
+    line-height: 1.4;
+}
+
+.complemento {
+    font-size: 12px;
+    color: #666666;
+    margin-top: 2px;
+}
+
+.editar-local {
+    align-self: flex-end;
+    font-size: 13px;
+    color: #3b50ff;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.secao-calendario {
+    margin-top: 10px;
+}
+
+.calendario-box {
+    margin-top: 12px;
+}
+
+.calendario-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.mes-atual {
+    font-size: 16px;
+    font-weight: 600;
+    color: #000000;
+}
+
+.mes-nav {
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.calendario-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    row-gap: 12px;
+    align-items: center;
+}
+
+.dia-semana {
+    font-size: 13px;
+    font-weight: 600;
+    color: #8e8e93;
+}
+
+.dia {
+    font-size: 14px;
+    color: #000000;
+    height: 36px;
+    width: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.dia.outro-mes {
+    color: #c7c7cc;
+}
+
+.dia.selecionado {
+    background-color: #3b50ff;
+    color: #ffffff;
+    font-weight: 600;
+}
+
+/* Rodapé com botão */
+.footer-acao {
+    padding: 20px;
+    background-color: #ffffff;
+}
+
+.btn-avancar {
+    display: block;
+    width: 100%;
+    padding: 16px;
+    background-color: #3b50ff;
+    color: #ffffff;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    box-shadow: 0 4px 12px rgba(59, 80, 255, 0.3);
+}
+
+.btn-avancar:active {
+    opacity: 0.9;
+}

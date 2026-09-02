@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ArtistaShow</title>
+    <!-- Google Fonts & FontAwesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Caminho correto para a pasta css -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <div class="mobile-container">
+
+        <header class="app-header">
+            <h1 class="username">Rafaelfernandes</h1>
+            <div class="header-icons">
+                <div class="icon-badge">
+                    <i class="fa-regular fa-bell"></i>
+                    <span class="badge red">5</span>
+                </div>
+                <div class="icon-badge">
+                    <i class="fa-regular fa-comment-dots"></i>
+                    <span class="badge red">10</span>
+                </div>
+                <button class="filter-btn" aria-label="Filtrar"><i class="fa-solid fa-sliders"></i></button>
+            </div>
+        </header>
+
+        <main class="app-content">
+            
+            <!-- Menu Toggle Estilo Abas Deslizantes (Login/Cadastro) -->
+            <div class="auth-tabs tres-opcoes" id="categoriasTabs">
+                <div class="slider-bg-tres"></div>
+                <button class="tab-btn ativo" onclick="mudarCategoria('cantores', 0)">
+                    <i class="fa-solid fa-microphone"></i> Cantores
+                </button>
+                <button class="tab-btn" onclick="mudarCategoria('musicos', 1)">
+                    <i class="fa-solid fa-compact-disc"></i> Músicos
+                </button>
+                <button class="tab-btn" onclick="mudarCategoria('shows', 2)">
+                    <i class="fa-solid fa-bullhorn"></i> Shows/e...
+                </button>
+            </div>
+
+            <!-- Stories apontando para imagens locais na pasta img/ -->
+            <section class="stories-section">
+                <div class="story-card" style="background-image: url('img/bruno-marrone.jpg')">
+                    <div class="story-overlay">
+                        <span class="story-title">Bruno e Marrone</span>
+                        <span class="story-date">16 de outubro</span>
+                    </div>
+                </div>
+
+                <div class="story-card" style="background-image: url('img/igor-wallace.jpg')">
+                    <div class="story-overlay">
+                        <span class="story-title">Igor e Wallace</span>
+                        <span class="story-date">24 de outubro</span>
+                    </div>
+                </div>
+
+                <div class="story-card" style="background-image: url('img/isabella.jpg')">
+                    <div class="story-overlay">
+                        <span class="story-title">ISABELLA ARANTES</span>
+                        <span class="story-date">RUA 137-A, 44 ST. MAR...</span>
+                    </div>
+                </div>
+            </section>
+
+            <div class="info-banner" id="infoBanner">
+                <div class="banner-icon">
+                    <i class="fa-solid fa-sliders"></i>
+                </div>
+                <div class="banner-text">
+                    <h3>Um novo jeito de encontrar artistas, shows e eventos</h3>
+                    <p>Contrate cantores, músicos e encontre shows próximos de você. Navegue e veja todas as nossas opções.</p>
+                </div>
+                <button class="close-banner" id="closeBannerBtn" aria-label="Fechar banner"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <!-- Card de Anúncio de Artista / Músico Atualizado -->
+            <article class="feed-post">
+                <div class="post-header">
+                    <div class="post-user-info">
+                        <img src="img/avatar.jpg" alt="Avatar" class="user-avatar">
+                        <div>
+                            <span class="post-username">Luismar_peixe_</span>
+                            <span class="post-time">30 min</span>
+                        </div>
+                    </div>
+                    <button class="post-options" aria-label="Opções do post"><i class="fa-solid fa-ellipsis-vertical"></i></button>
+                </div>
+
+                <div class="post-media" style="background-image: url('img/post-foto.jpg')">
+                    <div class="post-media-overlay">
+                        <span class="artist-name">Luismar Peixe</span>
+                        <span class="artist-role">Produtor musical / Baterista</span>
+                    </div>
+                </div>
+
+                <div class="hire-bar">
+                    <span class="hire-text">Contratar agora</span>
+                    <span class="hire-price">R$ 700,00</span>
+                </div>
+
+                <div class="post-actions">
+                    <div class="action-left">
+                        <button class="action-btn" aria-label="Curtir"><i class="fa-regular fa-heart"></i></button>
+                        <button class="action-btn" aria-label="Comentar"><i class="fa-regular fa-comment"></i></button>
+                        <button class="action-btn" aria-label="Compartilhar"><i class="fa-regular fa-paper-plane"></i></button>
+                    </div>
+                    <button class="action-btn" aria-label="Salvar"><i class="fa-regular fa-bookmark"></i></button>
+                </div>
+
+                <div class="post-details">
+                    <span class="likes-count">304 curtidas</span>
+                    <p class="post-caption">
+                        <strong>Luismar_peixe_</strong> Gratitude is the key word for all the achievements achieved! Being an endorser of the best leather brand in the world is priceless.
+                    </p>
+                </div>
+            </article>
+
+        </main>
+
+        <nav class="app-nav">
+            <a href="#" class="nav-item active">
+                <i class="fa-solid fa-house"></i>
+                <span>Início</span>
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <span>Pesquisar</span>
+            </a>
+            <button class="nav-item announce-trigger" id="announceBtn" style="background:none; border:none; cursor:pointer;">
+                <i class="fa-solid fa-circle-plus"></i>
+                <span>Anunciar</span>
+            </button>
+            <a href="perfil.html" class="nav-item">
+                <i class="fa-solid fa-user"></i>
+                <span>Perfil</span>
+            </a>
+        </nav>
+
+    </div>
+
+    <!-- MODAL DE CATEGORIA DO ANÚNCIO (Bottom Sheet) -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-sheet">
+            <div class="modal-indicator"></div>
+            
+            <div class="modal-header">
+                <h2>Categoria do anúncio</h2>
+            </div>
+
+            <div class="modal-body">
+                <p class="modal-subtitle">Por favor defina o que você deseja anunciar</p>
+
+                <label class="modal-option">
+                    <div class="option-icon"><i class="fa-solid fa-microphone"></i></div>
+                    <div class="option-text">
+                        <span class="option-title">Cantor</span>
+                    </div>
+                    <input type="radio" name="categoria" checked>
+                    <span class="radio-custom"></span>
+                </label>
+
+                <label class="modal-option">
+                    <div class="option-icon"><i class="fa-solid fa-compact-disc"></i></div>
+                    <div class="option-text">
+                        <span class="option-title">Musico</span>
+                    </div>
+                    <input type="radio" name="categoria">
+                    <span class="radio-custom"></span>
+                </label>
+
+                <label class="modal-option">
+                    <div class="option-icon"><i class="fa-solid fa-bullhorn"></i></div>
+                    <div class="option-text">
+                        <span class="option-title">Evento/show</span>
+                        <span class="option-desc">Publico ou privado</span>
+                    </div>
+                    <input type="radio" name="categoria">
+                    <span class="radio-custom"></span>
+                </label>
+
+                <p class="modal-footer-text">Dessa forma nossa plataforma entrega seu anuncio para o publico certo.</p>
+
+                <button class="modal-btn-next">Avançar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE FILTRO (Bottom Sheet) -->
+    <div class="modal-overlay" id="modalFilterOverlay">
+        <div class="modal-sheet">
+            <div class="modal-indicator"></div>
+            
+            <div class="modal-header">
+                <h2>Filtro</h2>
+            </div>
+
+            <div class="modal-body">
+                <p class="modal-subtitle">Selecione as opções desejadas e aplique o filtro</p>
+
+                <!-- Linha 1: Estado e Cidade -->
+                <div class="filter-row">
+                    <div class="filter-select-wrapper">
+                        <select class="filter-select">
+                            <option value="GO">Goiás</option>
+                        </select>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </div>
+                    <div class="filter-select-wrapper">
+                        <select class="filter-select">
+                            <option value="Goiania">Goiânia</option>
+                        </select>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </div>
+                </div>
+
+                <!-- Categoria -->
+                <div class="filter-select-wrapper full-width">
+                    <select class="filter-select">
+                        <option value="">Todas as categorias</option>
+                        <option value="cantor">Cantor</option>
+                        <option value="musico">Músico</option>
+                        <option value="evento">Evento / Show</option>
+                    </select>
+                    <i class="fa-solid fa-chevron-down"></i>
+                </div>
+
+                <!-- Estilos -->
+                <div class="filter-select-wrapper full-width">
+                    <select class="filter-select">
+                        <option value="">Todos os estilos</option>
+                        <option value="sertanejo">Sertanejo</option>
+                        <option value="pop-rock">Pop Rock</option>
+                        <option value="acustico">Acústico</option>
+                    </select>
+                    <i class="fa-solid fa-chevron-down"></i>
+                </div>
+
+                <!-- Faixa de Preço (Min e Max) -->
+                <div class="filter-price-row">
+                    <div class="price-input-box">
+                        <span class="price-label">R$ 200,00</span>
+                    </div>
+                    <div class="price-input-box">
+                        <span class="price-label">R$ 600,00</span>
+                    </div>
+                </div>
+
+                <button class="modal-btn-next" id="applyFilterBtn">Aplicar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Caminho para o JavaScript na pasta js -->
+    <script src="js/main.js"></script>
+</body>
+</html>

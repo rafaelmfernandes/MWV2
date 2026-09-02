@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Horário / Pagamento</title>
+    <link rel="stylesheet" href="css/hora-pagamento.css">
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- Topbar -->
+        <header class="topbar">
+            <a href="data-local.html" class="btn-voltar">&lt;</a>
+            <span class="topbar-titulo">Horário / Pagamento</span>
+            <button class="btn-cancelar">Cancelar</button>
+        </header>
+
+        <!-- Conteúdo Principal -->
+        <main class="conteudo">
+            <section class="secao-horario">
+                <h2>Preencha os campos abaixo corretamente</h2>
+                <p class="subtitulo">Eles ajudaram o artista a organizar sua agenda de acordo com o que vc solicitou.</p>
+
+                <div class="input-grupo">
+                    <span class="label-flutuante">Periodo</span>
+                    <div class="input-conteudo">
+                        <span>Noturno</span>
+                        <span class="seta">▼</span>
+                    </div>
+                </div>
+
+                <div class="input-grupo">
+                    <span class="label-flutuante">Horario de inicio</span>
+                    <div class="input-conteudo">
+                        <span>22 horas</span>
+                        <span class="seta">▼</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="secao-pagamento">
+                <h2>Escolha sua forma de pagamento</h2>
+                <p class="subtitulo">Selecione a forma que você deseja realizar o pagamento para o artista. Dessa forma ele saberá como irá receber.</p>
+
+                <div class="opcoes-pagamento">
+                    <!-- Opção Cartão Selecionada -->
+                    <div class="card-pagamento selecionado">
+                        <span class="tag-selecionado">Selecionado</span>
+                        <div class="info-pagamento">
+                            <span class="titulo-pagamento">DEBITO / CREDITO</span>
+                        </div>
+                        <div class="icone-pagamento">
+                            💵
+                        </div>
+                    </div>
+
+                    <!-- Opção Pix -->
+                    <div class="card-pagamento">
+                        <div class="info-pagamento">
+                            <span class="titulo-pagamento">Pix</span>
+                        </div>
+                        <div class="icone-pagamento pix-icone">
+                            ◆ pix
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Rodapé com botão -->
+        <footer class="footer-acao">
+            <button class="btn-avancar">Avançar</button>
+        </footer>
+    </div>
+
+</body>
+</html>

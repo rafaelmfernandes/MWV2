@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seleção de Serviço</title>
+    <link rel="stylesheet" href="css/selecao-servico.css">
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- Topbar com botão voltar, título e cancelar -->
+        <header class="topbar">
+            <button class="btn-voltar">&lt;</button>
+            <span class="topbar-titulo">Serviço</span>
+            <button class="btn-cancelar">Cancelar</button>
+        </header>
+
+        <!-- Conteúdo Principal -->
+        <main class="conteudo">
+            <h1>Selecione a forma de serviço que deseja contratar</h1>
+            <p class="subtitulo">Selecione a forma de serviço que você deseja contratar e veja os diferenciais de cada um no resumo abaixo</p>
+
+            <div class="divisor"></div>
+
+            <form class="lista-servicos">
+                <label class="item-servico">
+                    <input type="radio" name="servico" checked>
+                    <div class="info-servico">
+                        <span class="nome">Produtor Musical</span>
+                    </div>
+                    <span class="valor">R$ 3.000,00</span>
+                </label>
+
+                <label class="item-servico">
+                    <input type="radio" name="servico">
+                    <div class="info-servico">
+                        <span class="nome">Baterista</span>
+                    </div>
+                    <span class="valor">R$ 500,00</span>
+                </label>
+
+                <label class="item-servico">
+                    <input type="radio" name="servico">
+                    <div class="info-servico">
+                        <span class="nome">Negociar valor</span>
+                        <span class="detalhe">Lance mínimo de</span>
+                    </div>
+                    <span class="valor">R$ 500,00</span>
+                </label>
+            </form>
+        </main>
+
+        <!-- Rodapé com link/botão para a próxima página -->
+        <footer class="footer-acao">
+            <a href="data-local.html" class="btn-avancar">Avançar</a>
+        </footer>
+    </div>
+
+</body>
+</html>
