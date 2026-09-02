@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ArtistaShow - Contratação Realizada</title>
+  <link rel="stylesheet" href="css/sucesso-servico.css">
+</head>
+<body>
+
+  <div class="app-container" style="justify-content: center; align-items: center; padding: 24px;">
+    
+    <div class="checkout-card" style="width: 100%; max-width: 380px; align-items: center; text-align: center; gap: 14px; padding: 30px 20px;">
+      
+      <div class="success-icon-box">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 32px; height: 32px;"><polyline points="20 6 9 17 4 12"></polyline></svg>
+      </div>
+
+      <div>
+        <h1 style="font-size: 18px; color: #fff; margin-bottom: 4px;">Contratação Realizada!</h1>
+        <p style="font-size: 12px; color: #a1a1aa;">Seu pedido foi enviado com sucesso.</p>
+      </div>
+
+      <div class="status-badge-pendente">
+        <span class="dot-pulsing"></span>
+        <span>Aguardando a confirmação do artista</span>
+      </div>
+
+      <div style="width: 100%; background-color: #121215; border: 1px solid #27272a; border-radius: 12px; padding: 14px; text-align: left; display: flex; flex-direction: column; gap: 8px; margin-top: 6px;">
+        <span style="font-size: 11px; color: #71717a; text-transform: uppercase; font-weight: 600;">Resumo do Pedido</span>
+        
+        <div style="display: flex; justify-content: space-between; font-size: 13px;">
+          <span style="color: #a1a1aa;">Serviço:</span>
+          <strong id="resumo-servico" style="color: #fff;">-</strong>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; font-size: 13px;">
+          <span style="color: #a1a1aa;">Local:</span>
+          <strong id="resumo-local" style="color: #fff; text-align: right; max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">-</strong>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; font-size: 13px;">
+          <span style="color: #a1a1aa;">Data e Hora:</span>
+          <strong id="resumo-data" style="color: #fff;">-</strong>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; font-size: 13px; border-top: 1px solid #27272a; padding-top: 8px; margin-top: 2px;">
+          <span style="color: #a1a1aa;">Valor:</span>
+          <strong id="resumo-preco" style="color: #38bdf8;">-</strong>
+        </div>
+      </div>
+
+      <button class="btn-continuar-proximo" onclick="window.location.href='index.html'" style="margin-top: 10px;">Voltar ao Início</button>
+    </div>
+
+  </div>
+
+  <script src="js/sucesso-servico.js"></script>
+</body>
+</html>
