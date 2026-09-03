@@ -1,132 +1,229 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ArtistaShow - Notificações e Solicitações</title>
-  <link rel="stylesheet" href="css/notificacoes.css">
-</head>
-<body>
+<!DOCTYPE html> 
+<html lang="pt-BR"> 
+  <head> 
+    <meta charset="UTF-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <meta name="theme-color" content="#ffffff"> 
+    <title>MusicalWorld - Solicitações</title> 
+    <link rel="stylesheet" href="css/notificacoes.css"> 
+  </head> 
+  
+<body> 
 
-  <div class="app-container">
-    
-    <!-- Cabeçalho / Navbar Superior -->
-    <header class="navbar">
-      <div class="logo">Solicita<span>ções</span></div>
-      
-      <div class="navbar-icons">
-        <!-- Voltar para o Início -->
-        <button class="nav-icon-btn" onclick="window.location.href='index.html'" title="Voltar ao Início">
-          <svg class="top-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
-          </svg>
-        </button>
-      </div>
-    </header>
+<div class="app-container">
+<!-- =====================================================
+     CABEÇALHO
+     ===================================================== -->
 
-    <!-- Conteúdo Principal de Notificações -->
-    <main class="main-content">
-      
-      <div class="notifications-header-info">
-        <h2>Propostas de Contratação</h2>
-        <p>Gerencie os convites para shows e eventos enviados por contratantes.</p>
-      </div>
+<header class="navbar">
 
-      <div class="notifications-list">
+  <div class="logo">
+    Musical<span>World</span>
+  </div>
 
-        <!-- Solicitação 1 (Pendente) -->
-        <div class="notification-card pending">
-          <div class="notif-card-top">
-            <div class="notif-avatar" style="background-color: #b45309;">CS</div>
-            <div class="notif-user-details">
-              <div class="notif-name-row">
-                <h4>Carlos Silva</h4>
-                <span class="badge-status pendente">Pendente</span>
-              </div>
-              <span class="notif-location">📍 Setor Bueno, Goiânia - GO</span>
-            </div>
-          </div>
+  <button
+    class="nav-icon-btn"
+    onclick="voltarInicio()"
+    aria-label="Voltar ao início"
+    title="Voltar ao início"
+  >
 
-          <div class="notif-details-box">
-            <div class="notif-info-row">
-              <span class="label">Serviço Solicitado:</span>
-              <span class="value">Show Acústico (Voz e Violão)</span>
-            </div>
-            <div class="notif-info-row">
-              <span class="label">Data do Evento:</span>
-              <span class="value">18/09/2026 às 20:00</span>
-            </div>
-            <div class="notif-info-row">
-              <span class="label">Valor Oferecido:</span>
-              <span class="value cash">R$ 1.200,00</span>
-            </div>
-            <p class="notif-obs">"Aniversário de 40 anos para cerca de 80 pessoas. Precisamos de um repertório bem animado de sertanejo universitário."</p>
-          </div>
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <line x1="18" y1="6" x2="6" y2="18"></line>
+      <line x1="6" y1="6" x2="18" y2="18"></line>
+    </svg>
 
-          <div class="notif-actions">
-            <button class="btn-recusar" onclick="responderProposta(this, 'recusada')">Recusar</button>
-            <button class="btn-aceitar" onclick="responderProposta(this, 'aceita')">Aceitar Proposta</button>
-          </div>
-        </div>
+  </button>
 
-        <!-- Solicitação 2 (Aceita) -->
-        <div class="notification-card accepted">
-          <div class="notif-card-top">
-            <div class="notif-avatar" style="background-color: #047857;">AL</div>
-            <div class="notif-user-details">
-              <div class="notif-name-row">
-                <h4>Amanda Lima (Produção Eventos)</h4>
-                <span class="badge-status aceito">Aceito</span>
-              </div>
-              <span class="notif-location">📍 Anápolis - GO</span>
-            </div>
-          </div>
+</header>
 
-          <div class="notif-details-box">
-            <div class="notif-info-row">
-              <span class="label">Serviço Solicitado:</span>
-              <span class="value">Banda Completa (Diária)</span>
-            </div>
-            <div class="notif-info-row">
-              <span class="label">Data do Evento:</span>
-              <span class="value">25/09/2026 às 22:00</span>
-            </div>
-            <div class="notif-info-row">
-              <span class="label">Valor Acordado:</span>
-              <span class="value cash">R$ 2.800,00</span>
-            </div>
-          </div>
 
-          <div class="notif-actions-fixed">
-            <button class="btn-chat" onclick="window.location.href='mensagens.html'">Conversar com Contratante</button>
-          </div>
-        </div>
+<!-- =====================================================
+     CONTEÚDO
+     ===================================================== -->
 
-      </div>
+<main class="main-content">
 
-    </main>
+  <div class="page-header">
 
-    <!-- Menu Inferior Fixo -->
-    <nav class="bottom-nav">
-      <button class="bottom-nav-item" onclick="window.location.href='index.html'">
-        <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-        <span class="nav-label">Início</span>
-      </button>
-      <button class="bottom-nav-item" onclick="window.location.href='index.html'">
-        <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
-        <span class="nav-label">Anunciar</span>
-      </button>
-      <button class="bottom-nav-item ativo" onclick="window.location.href='notificacoes.html'">
-        <div class="profile-icon-wrapper">
-          <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
-        </div>
-        <span class="nav-label">Alertas</span>
-      </button>
-    </nav>
+    <span class="page-kicker">
+      CENTRAL DE SOLICITAÇÕES
+    </span>
+
+    <h1>
+      Solicitações
+    </h1>
+
+    <p>
+      Acompanhe propostas e contratações recebidas.
+    </p>
 
   </div>
 
-  <script src="js/notificacoes.js"></script>
-</body>
-</html>
+
+  <!-- FILTROS -->
+
+  <div class="filter-tabs">
+
+    <button
+      class="filter-tab ativo"
+      data-filtro="todas"
+      onclick="filtrarSolicitacoes('todas')"
+    >
+      Todas
+    </button>
+
+    <button
+      class="filter-tab"
+      data-filtro="pendente"
+      onclick="filtrarSolicitacoes('pendente')"
+    >
+      Pendentes
+    </button>
+
+    <button
+      class="filter-tab"
+      data-filtro="aceito"
+      onclick="filtrarSolicitacoes('aceito')"
+    >
+      Aceitas
+    </button>
+
+  </div>
+
+
+  <!-- LISTA -->
+
+  <div
+    id="notifications-list"
+    class="notifications-list"
+  ></div>
+
+
+  <!-- ESTADO VAZIO -->
+
+  <div
+    id="empty-state"
+    class="empty-state"
+    style="display: none;"
+  >
+
+    <div class="empty-icon">
+
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+        <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+      </svg>
+
+    </div>
+
+    <h3>
+      Nenhuma solicitação encontrada
+    </h3>
+
+    <p>
+      Quando houver novas propostas, elas aparecerão aqui.
+    </p>
+
+  </div>
+
+</main>
+
+
+<!-- =====================================================
+     MENU INFERIOR
+     ===================================================== -->
+
+<nav class="bottom-nav">
+
+  <button
+    class="bottom-nav-item"
+    onclick="window.location.href='index.html'"
+  >
+
+    <svg
+      class="nav-icon-svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+      <polyline points="9 22 9 12 15 12 15 22"></polyline>
+    </svg>
+
+    <span class="nav-label">
+      Início
+    </span>
+
+  </button>
+
+
+  <button
+    class="bottom-nav-item"
+    onclick="window.location.href='index.html'"
+  >
+
+    <svg
+      class="nav-icon-svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <circle cx="12" cy="12" r="10"></circle>
+      <line x1="12" y1="8" x2="12" y2="16"></line>
+      <line x1="8" y1="12" x2="16" y2="12"></line>
+    </svg>
+
+    <span class="nav-label">
+      Anunciar
+    </span>
+
+  </button>
+
+
+  <button
+    class="bottom-nav-item ativo"
+    onclick="window.location.href='notificacoes.html'"
+  >
+
+    <svg
+      class="nav-icon-svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+      <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+    </svg>
+
+    <span class="nav-label">
+      Alertas
+    </span>
+
+  </button>
+
+</nav>
+</div> <script src="js/notificacoes.js"></script> </body> </html>
