@@ -10,8 +10,8 @@
 }
 
 body {
-  background-color: #09090b;
-  color: #f4f4f5;
+  background-color: #f1f5f9;
+  color: #0f172a;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -21,15 +21,16 @@ body {
 .app-container {
   width: 100%;
   max-width: 420px;
-  background-color: #121215;
+  background-color: #ffffff;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   position: relative;
-  box-shadow: 0 0 25px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 0 25px rgba(15, 23, 42, 0.08);
   overflow-x: hidden;
   justify-content: center;
   align-items: center;
+  padding: 24px;
 }
 
 @media (min-width: 421px) {
@@ -38,14 +39,36 @@ body {
     min-height: unset;
     border-radius: 24px;
     overflow-y: auto;
-    border: 1px solid #27272a;
+    border: 1px solid #e2e8f0;
   }
+}
+
+/* Cabeçalho (logo e subtítulo) */
+.auth-header {
+  text-align: center;
+}
+
+.auth-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.5px;
+  margin-bottom: 4px;
+}
+
+.auth-title span {
+  color: #2563eb;
+}
+
+.auth-subtitle {
+  font-size: 12px;
+  color: #64748b;
 }
 
 /* Card de Acesso */
 .checkout-card {
-  background-color: #18181b;
-  border: 1px solid #27272a;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
   border-radius: 16px;
   padding: 24px 20px;
   display: flex;
@@ -54,14 +77,16 @@ body {
   max-width: 380px;
   align-items: center;
   gap: 20px;
+  box-shadow: 0 4px 24px rgba(15, 23, 42, 0.06);
+  margin: auto;
 }
 
 /* Toggle Principal (Entrar / Cadastrar) */
 .auth-toggle-container {
   position: relative;
   display: flex;
-  background-color: #121215;
-  border: 1px solid #27272a;
+  background-color: #f1f5f9;
+  border: 1px solid #e2e8f0;
   border-radius: 12px;
   padding: 4px;
   width: 100%;
@@ -75,8 +100,9 @@ body {
   left: 4px;
   width: calc(50% - 4px);
   height: calc(100% - 8px);
-  background-color: #27272a;
+  background-color: #ffffff;
   border-radius: 9px;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 1;
 }
@@ -85,7 +111,7 @@ body {
   flex: 1;
   background: none;
   border: none;
-  color: #a1a1aa;
+  color: #64748b;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
@@ -95,7 +121,7 @@ body {
 }
 
 .auth-tab-btn.active {
-  color: #fff;
+  color: #2563eb;
 }
 
 .auth-toggle-container.right .auth-toggle-slider {
@@ -106,8 +132,8 @@ body {
 .cadastro-tipo-container {
   position: relative;
   display: flex;
-  background-color: #121215;
-  border: 1px solid #27272a;
+  background-color: #f1f5f9;
+  border: 1px solid #e2e8f0;
   border-radius: 10px;
   padding: 3px;
   width: 100%;
@@ -121,8 +147,9 @@ body {
   left: 3px;
   width: calc((100% - 6px) / 3);
   height: calc(100% - 6px);
-  background-color: #27272a;
+  background-color: #ffffff;
   border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.08);
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 1;
 }
@@ -143,7 +170,7 @@ body {
   flex: 1;
   background: none;
   border: none;
-  color: #a1a1aa;
+  color: #64748b;
   font-size: 11px;
   font-weight: 600;
   cursor: pointer;
@@ -153,7 +180,7 @@ body {
 }
 
 .tipo-btn.active {
-  color: #fff;
+  color: #2563eb;
 }
 
 /* Formulários Dinâmicos */
@@ -185,28 +212,41 @@ body {
 
 .form-group label {
   font-size: 12px;
-  color: #a1a1aa;
+  color: #334155;
+  font-weight: 500;
 }
 
 .input-custom {
-  background-color: #121215;
-  border: 1px solid #27272a;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
   border-radius: 10px;
   padding: 12px;
-  color: #fff;
+  color: #0f172a;
   font-size: 13px;
   outline: none;
   width: 100%;
-  transition: border-color 0.2s;
+  transition: border-color 0.2s, background-color 0.2s;
+}
+
+.input-custom::placeholder {
+  color: #94a3b8;
 }
 
 .input-custom:focus {
-  border-color: #3b82f6;
+  border-color: #2563eb;
+  background-color: #ffffff;
+}
+
+.link-esqueci-senha {
+  font-size: 11px;
+  color: #2563eb;
+  text-decoration: none;
+  font-weight: 500;
 }
 
 .btn-continuar-proximo {
-  background-color: #3b82f6;
-  color: #fff;
+  background-color: #2563eb;
+  color: #ffffff;
   border: none;
   border-radius: 12px;
   padding: 14px;
@@ -220,7 +260,7 @@ body {
 }
 
 .btn-continuar-proximo:hover {
-  background-color: #2563eb;
+  background-color: #1d4ed8;
 }
 
 /* Divisor e Botões Sociais */
@@ -236,13 +276,13 @@ body {
 .auth-divider::after {
   content: '';
   flex: 1;
-  border-bottom: 1px solid #27272a;
+  border-bottom: 1px solid #e2e8f0;
 }
 
 .auth-divider span {
   padding: 0 10px;
   font-size: 11px;
-  color: #71717a;
+  color: #94a3b8;
   text-transform: uppercase;
   font-weight: 500;
 }
@@ -255,11 +295,11 @@ body {
 
 .btn-social {
   flex: 1;
-  background-color: #121215;
-  border: 1px solid #27272a;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
   border-radius: 10px;
   padding: 10px;
-  color: #fff;
+  color: #0f172a;
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
@@ -271,6 +311,6 @@ body {
 }
 
 .btn-social:hover {
-  background-color: #27272a;
-  border-color: #3f3f46;
+  background-color: #f1f5f9;
+  border-color: #cbd5e1;
 }
