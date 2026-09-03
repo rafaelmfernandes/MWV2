@@ -1,56 +1,899 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
+
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+  >
+
+  <meta
+    name="theme-color"
+    content="#ffffff"
+  >
+
+  <meta
+    name="apple-mobile-web-app-capable"
+    content="yes"
+  >
+
   <title>ArtistaShow - Seleção de Serviço</title>
-  <link rel="stylesheet" href="css/selecao-servico.css">
+
+  <link
+    rel="stylesheet"
+    href="css/selecao-servico.css"
+  >
+
 </head>
+
+
 <body>
 
   <div class="app-container">
-    
-    <!-- Cabeçalho / Navbar Superior -->
+
+
+    <!-- =====================================================
+         NAVBAR SUPERIOR
+    ====================================================== -->
+
     <header class="navbar">
-      <div class="logo">Artista<span>Show</span></div>
-      <div class="navbar-icons">
-        <button class="nav-icon-btn" onclick="window.history.back()" title="Voltar">
-          <svg class="top-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="19" y1="12" x2="5" y2="12"></line>
-            <polyline points="12 19 5 12 12 5"></polyline>
-          </svg>
-        </button>
+
+
+      <!-- BOTÃO VOLTAR -->
+
+      <button
+        class="nav-icon-btn"
+        type="button"
+        onclick="voltarPagina()"
+        title="Voltar"
+        aria-label="Voltar"
+      >
+
+        <svg
+          class="top-icon-svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+
+          <line
+            x1="19"
+            y1="12"
+            x2="5"
+            y2="12"
+          ></line>
+
+          <polyline
+            points="12 19 5 12 12 5"
+          ></polyline>
+
+        </svg>
+
+      </button>
+
+
+      <!-- TÍTULO -->
+
+      <div class="navbar-title">
+
+        <span>Contratação</span>
+
       </div>
+
+
+      <!-- ESPAÇADOR -->
+
+      <div class="navbar-spacer"></div>
+
+
     </header>
 
-    <!-- Conteúdo Principal Dinâmico por ID -->
+
+    <!-- =====================================================
+         CONTEÚDO PRINCIPAL
+    ====================================================== -->
+
     <main class="main-content">
-      <div class="detail-container" id="detalhes-container">
-        <!-- O conteúdo será injetado via JavaScript com base no ID da URL -->
+
+
+      <div
+        class="detail-container"
+        id="detalhes-container"
+      >
+
+
+        <!-- =================================================
+             INTRODUÇÃO
+        ================================================== -->
+
+        <section class="page-intro">
+
+
+          <span class="step-indicator">
+            ETAPA 1 DE 3
+          </span>
+
+
+          <h1>
+            Escolha o serviço
+          </h1>
+
+
+          <p>
+            Selecione a apresentação que você deseja contratar.
+          </p>
+
+
+        </section>
+
+
+
+        <!-- =================================================
+             ARTISTA
+        ================================================== -->
+
+        <section class="profile-header-card">
+
+
+          <div class="profile-top-row">
+
+
+            <!-- AVATAR -->
+
+            <div
+              class="profile-avatar-large"
+              id="artistAvatar"
+            >
+              RM
+            </div>
+
+
+            <!-- INFORMAÇÕES DO ARTISTA -->
+
+            <div class="profile-title-info">
+
+
+              <div class="artist-name-row">
+
+
+                <h2 id="artistName">
+                  Rafael Melo
+                </h2>
+
+
+                <!-- SELO VERIFICADO -->
+
+                <span
+                  class="verified-badge"
+                  title="Perfil verificado"
+                >
+
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                  >
+
+                    <path
+                      d="M12 3l2.2 1.3 2.5-.1 1.4 2.1 2.2 1.2-.1 2.5 1.3 2.1-1.3 2.2.1 2.5-2.2 1.2-1.4 2.1-2.5-.1L12 21l-2.2-1.3-2.5.1-1.4-2.1-2.2-1.2.1-2.5L2.5 12l1.3-2.2-.1-2.5 2.2-1.2 1.4-2.1 2.5.1L12 3z"
+                    ></path>
+
+                    <polyline
+                      points="9 12 11 14 15 10"
+                    ></polyline>
+
+                  </svg>
+
+                </span>
+
+
+              </div>
+
+
+              <span
+                class="artist-category"
+                id="artistCategory"
+              >
+                Cantor e violonista
+              </span>
+
+
+            </div>
+
+
+          </div>
+
+
+          <!-- META DO ARTISTA -->
+
+          <div class="artist-meta">
+
+
+            <!-- LOCALIZAÇÃO -->
+
+            <span>
+
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+
+                <path
+                  d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0z"
+                ></path>
+
+                <circle
+                  cx="12"
+                  cy="10"
+                  r="2.5"
+                ></circle>
+
+              </svg>
+
+
+              <span id="artistLocation">
+                Goiânia, GO
+              </span>
+
+
+            </span>
+
+
+            <!-- AVALIAÇÃO -->
+
+            <span>
+
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+
+                <polygon
+                  points="12 2 15 9 22 9 17 14 19 21 12 17 5 21 7 14 2 9 9 9 12 2"
+                ></polygon>
+
+              </svg>
+
+
+              <span id="artistRating">
+                4.9
+              </span>
+
+
+            </span>
+
+
+          </div>
+
+
+        </section>
+
+
+
+        <!-- =================================================
+             SERVIÇOS
+        ================================================== -->
+
+        <section class="services-section">
+
+
+          <!-- TÍTULO DA SEÇÃO -->
+
+          <div class="section-heading">
+
+
+            <div>
+
+              <span class="section-label">
+                SERVIÇOS DISPONÍVEIS
+              </span>
+
+
+              <h2>
+                Qual apresentação você deseja?
+              </h2>
+
+            </div>
+
+
+          </div>
+
+
+          <!-- LISTA DE SERVIÇOS -->
+
+          <div
+            class="services-list"
+            id="servicesList"
+          >
+
+
+            <!-- =================================================
+                 SERVIÇO 1
+            ================================================== -->
+
+            <button
+              type="button"
+              class="service-option-card"
+              data-service="Voz e violão"
+              data-price="800"
+              onclick="selecionarServico(this)"
+            >
+
+
+              <!-- RADIO -->
+
+              <div class="service-radio">
+
+                <span class="radio-circle"></span>
+
+              </div>
+
+
+              <!-- INFORMAÇÕES -->
+
+              <div class="service-info">
+
+
+                <div class="service-name">
+                  Voz e violão
+                </div>
+
+
+                <div class="service-desc">
+                  Apresentação acústica
+                </div>
+
+
+                <div class="service-duration">
+
+
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                  >
+
+                    <circle
+                      cx="12"
+                      cy="12"
+                      r="9"
+                    ></circle>
+
+                    <polyline
+                      points="12 7 12 12 15 14"
+                    ></polyline>
+
+                  </svg>
+
+
+                  <span>
+                    Até 2 horas
+                  </span>
+
+
+                </div>
+
+
+              </div>
+
+
+              <!-- PREÇO -->
+
+              <div class="service-price">
+                R$ 800
+              </div>
+
+
+            </button>
+
+
+
+            <!-- =================================================
+                 SERVIÇO 2
+            ================================================== -->
+
+            <button
+              type="button"
+              class="service-option-card"
+              data-service="Show completo"
+              data-price="1500"
+              onclick="selecionarServico(this)"
+            >
+
+
+              <!-- RADIO -->
+
+              <div class="service-radio">
+
+                <span class="radio-circle"></span>
+
+              </div>
+
+
+              <!-- INFORMAÇÕES -->
+
+              <div class="service-info">
+
+
+                <div class="service-name">
+                  Show completo
+                </div>
+
+
+                <div class="service-desc">
+                  Repertório completo para seu evento
+                </div>
+
+
+                <div class="service-duration">
+
+
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                  >
+
+                    <circle
+                      cx="12"
+                      cy="12"
+                      r="9"
+                    ></circle>
+
+                    <polyline
+                      points="12 7 12 12 15 14"
+                    ></polyline>
+
+                  </svg>
+
+
+                  <span>
+                    Até 3 horas
+                  </span>
+
+
+                </div>
+
+
+              </div>
+
+
+              <!-- PREÇO -->
+
+              <div class="service-price">
+                R$ 1.500
+              </div>
+
+
+            </button>
+
+
+
+            <!-- =================================================
+                 SERVIÇO 3
+            ================================================== -->
+
+            <button
+              type="button"
+              class="service-option-card"
+              data-service="Banda completa"
+              data-price="2400"
+              onclick="selecionarServico(this)"
+            >
+
+
+              <!-- RADIO -->
+
+              <div class="service-radio">
+
+                <span class="radio-circle"></span>
+
+              </div>
+
+
+              <!-- INFORMAÇÕES -->
+
+              <div class="service-info">
+
+
+                <div class="service-name">
+                  Banda completa
+                </div>
+
+
+                <div class="service-desc">
+                  Formação completa para eventos
+                </div>
+
+
+                <div class="service-duration">
+
+
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                  >
+
+                    <circle
+                      cx="12"
+                      cy="12"
+                      r="9"
+                    ></circle>
+
+                    <polyline
+                      points="12 7 12 12 15 14"
+                    ></polyline>
+
+                  </svg>
+
+
+                  <span>
+                    Até 4 horas
+                  </span>
+
+
+                </div>
+
+
+              </div>
+
+
+              <!-- PREÇO -->
+
+              <div class="service-price">
+                R$ 2.400
+              </div>
+
+
+            </button>
+
+
+          </div>
+
+
+        </section>
+
+
+
+        <!-- =================================================
+             INFORMAÇÕES SOBRE A CONTRATAÇÃO
+        ================================================== -->
+
+        <section class="contract-info">
+
+
+          <div class="info-icon">
+
+
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+
+              <circle
+                cx="12"
+                cy="12"
+                r="9"
+              ></circle>
+
+              <line
+                x1="12"
+                y1="10"
+                x2="12"
+                y2="16"
+              ></line>
+
+              <circle
+                cx="12"
+                cy="7"
+                r="0.5"
+                fill="currentColor"
+              ></circle>
+
+            </svg>
+
+
+          </div>
+
+
+          <div>
+
+
+            <strong>
+              Como funciona?
+            </strong>
+
+
+            <p>
+              Depois de escolher o serviço, você poderá informar
+              a data, horário e local do evento antes de confirmar
+              a contratação.
+            </p>
+
+
+          </div>
+
+
+        </section>
+
+
       </div>
+
     </main>
 
-    <!-- Menu Inferior Fixo -->
-    <nav class="bottom-nav">
-      <button class="bottom-nav-item" onclick="window.location.href='index.html'">
-        <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-        <span class="nav-label">Início</span>
-      </button>
-      <button class="bottom-nav-item" onclick="window.location.href='index.html'">
-        <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
-        <span class="nav-label">Anunciar</span>
-      </button>
-      <button class="bottom-nav-item" onclick="window.location.href='index.html'">
-        <div class="profile-icon-wrapper">
-          <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-          <span class="profile-dot"></span>
+
+
+    <!-- =====================================================
+         ÁREA FIXA DE CONTRATAÇÃO
+    ====================================================== -->
+
+    <div class="bottom-action">
+
+
+      <!-- RESUMO -->
+
+      <div class="selected-summary">
+
+
+        <div>
+
+          <span class="summary-label">
+            Serviço selecionado
+          </span>
+
+
+          <strong id="selectedService">
+            Voz e violão
+          </strong>
+
         </div>
-        <span class="nav-label">Perfil</span>
+
+
+        <strong id="selectedPrice">
+          R$ 800
+        </strong>
+
+
+      </div>
+
+
+      <!-- CONTINUAR -->
+
+      <button
+        type="button"
+        class="btn-full-primary"
+        id="continueButton"
+        onclick="continuarContratacao()"
+      >
+
+        <span>
+          Continuar
+        </span>
+
+
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+
+          <line
+            x1="5"
+            y1="12"
+            x2="19"
+            y2="12"
+          ></line>
+
+          <polyline
+            points="13 6 19 12 13 18"
+          ></polyline>
+
+        </svg>
+
+
       </button>
+
+
+    </div>
+
+
+
+    <!-- =====================================================
+         MENU INFERIOR
+    ====================================================== -->
+
+    <nav class="bottom-nav">
+
+
+      <!-- INÍCIO -->
+
+      <button
+        type="button"
+        class="bottom-nav-item"
+        onclick="irParaInicio()"
+        aria-label="Ir para início"
+      >
+
+        <svg
+          class="nav-icon-svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+
+          <path
+            d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"
+          ></path>
+
+          <polyline
+            points="9 22 9 12 15 12 15 22"
+          ></polyline>
+
+        </svg>
+
+
+        <span class="nav-label">
+          Início
+        </span>
+
+
+      </button>
+
+
+
+      <!-- ANUNCIAR -->
+
+      <button
+        type="button"
+        class="bottom-nav-item"
+        onclick="irParaAnunciar()"
+        aria-label="Anunciar"
+      >
+
+        <svg
+          class="nav-icon-svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+
+          <circle
+            cx="12"
+            cy="12"
+            r="10"
+          ></circle>
+
+          <line
+            x1="12"
+            y1="8"
+            x2="12"
+            y2="16"
+          ></line>
+
+          <line
+            x1="8"
+            y1="12"
+            x2="16"
+            y2="12"
+          ></line>
+
+        </svg>
+
+
+        <span class="nav-label">
+          Anunciar
+        </span>
+
+
+      </button>
+
+
+
+      <!-- PERFIL -->
+
+      <button
+        type="button"
+        class="bottom-nav-item"
+        onclick="irParaPerfil()"
+        aria-label="Perfil"
+      >
+
+        <svg
+          class="nav-icon-svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+
+          <path
+            d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"
+          ></path>
+
+          <circle
+            cx="12"
+            cy="7"
+            r="4"
+          ></circle>
+
+        </svg>
+
+
+        <span class="nav-label">
+          Perfil
+        </span>
+
+
+      </button>
+
+
     </nav>
+
 
   </div>
 
-  <script src="js/detalhes.js"></script>
+
+  <!-- =======================================================
+       JAVASCRIPT
+  ======================================================== -->
+
+  <script src="js/selecao-servico.js"></script>
+
+
 </body>
+
 </html>
