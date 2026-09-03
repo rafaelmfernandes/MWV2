@@ -1,0 +1,1003 @@
+<!DOCTYPE html> <html lang="pt-BR"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>Criar anúncio de composição — MusicalWorld</title> <link rel="stylesheet" href="css/criar-anuncio-composicao.css"> </head> <body> <header class="topbar"> <div class="topbar-content">
+    <button class="btn-voltar" onclick="history.back()" aria-label="Voltar">
+        <svg viewBox="0 0 24 24">
+            <path d="M15 18l-6-6 6-6"/>
+        </svg>
+    </button>
+
+    <div class="brand">
+        <div class="brand-icon">
+            <svg viewBox="0 0 24 24">
+                <path d="M9 18V5l11-2v13"/>
+                <circle cx="6" cy="18" r="3"/>
+                <circle cx="17" cy="16" r="3"/>
+            </svg>
+        </div>
+
+        <span>MusicalWorld</span>
+    </div>
+
+    <button class="btn-fechar" onclick="window.location.href='index.html'" aria-label="Fechar">
+        <svg viewBox="0 0 24 24">
+            <path d="M18 6L6 18"/>
+            <path d="M6 6l12 12"/>
+        </svg>
+    </button>
+
+</div>
+</header> <main class="page-container">
+<section class="page-intro">
+
+    <span class="eyebrow">CRIAR ANÚNCIO</span>
+
+    <h1>Divulgue sua composição</h1>
+
+    <p>
+        Apresente sua música para cantores, artistas, produtores
+        e profissionais do mercado musical.
+    </p>
+
+</section>
+
+
+<div class="form-layout">
+
+    <form id="form-composicao" class="composition-form">
+
+
+        <!-- IDENTIFICAÇÃO -->
+
+        <section class="form-card">
+
+            <div class="section-header">
+
+                <div class="section-number">01</div>
+
+                <div>
+                    <h2>Informações da composição</h2>
+                    <p>Conte os principais detalhes da sua música.</p>
+                </div>
+
+            </div>
+
+
+            <div class="field-group">
+
+                <label for="titulo">
+                    Título da composição
+                    <span>*</span>
+                </label>
+
+                <input
+                    type="text"
+                    id="titulo"
+                    name="titulo"
+                    placeholder="Ex.: Quando o Sol Se Põe"
+                    required
+                >
+
+            </div>
+
+
+            <div class="grid-2">
+
+                <div class="field-group">
+
+                    <label for="genero">
+                        Gênero musical
+                        <span>*</span>
+                    </label>
+
+                    <select id="genero" name="genero" required>
+
+                        <option value="">Selecione</option>
+                        <option>Sertanejo</option>
+                        <option>Pop</option>
+                        <option>MPB</option>
+                        <option>Gospel</option>
+                        <option>Pagode</option>
+                        <option>Forró</option>
+                        <option>Funk</option>
+                        <option>Rock</option>
+                        <option>Reggae</option>
+                        <option>Eletrônica</option>
+                        <option>Outro</option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="field-group">
+
+                    <label for="subgenero">
+                        Subgênero
+                    </label>
+
+                    <input
+                        type="text"
+                        id="subgenero"
+                        name="subgenero"
+                        placeholder="Ex.: Sertanejo romântico"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="grid-3">
+
+                <div class="field-group">
+
+                    <label for="idioma">Idioma</label>
+
+                    <select id="idioma" name="idioma">
+                        <option>Português</option>
+                        <option>Inglês</option>
+                        <option>Espanhol</option>
+                        <option>Outro</option>
+                    </select>
+
+                </div>
+
+
+                <div class="field-group">
+
+                    <label for="duracao">Duração</label>
+
+                    <input
+                        type="text"
+                        id="duracao"
+                        name="duracao"
+                        placeholder="03:42"
+                        maxlength="5"
+                    >
+
+                </div>
+
+
+                <div class="field-group">
+
+                    <label for="tipo-obra">Tipo</label>
+
+                    <select id="tipo-obra" name="tipo-obra">
+                        <option>Canção</option>
+                        <option>Instrumental</option>
+                        <option>Trilha</option>
+                        <option>Outro</option>
+                    </select>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- AUDIO -->
+
+        <section class="form-card">
+
+            <div class="section-header">
+
+                <div class="section-number">02</div>
+
+                <div>
+                    <h2>Demonstração da música</h2>
+                    <p>Adicione um áudio para que as pessoas possam ouvir sua composição.</p>
+                </div>
+
+            </div>
+
+
+            <label class="upload-area" for="audio">
+
+                <div class="upload-icon">
+
+                    <svg viewBox="0 0 24 24">
+                        <path d="M9 18V5l11-2v13"/>
+                        <circle cx="6" cy="18" r="3"/>
+                        <circle cx="17" cy="16" r="3"/>
+                    </svg>
+
+                </div>
+
+                <strong>Adicionar demonstração</strong>
+
+                <span>
+                    Clique para selecionar um arquivo de áudio
+                </span>
+
+                <small>
+                    MP3, WAV ou M4A
+                </small>
+
+                <input
+                    type="file"
+                    id="audio"
+                    name="audio"
+                    accept=".mp3,.wav,.m4a,audio/*"
+                >
+
+            </label>
+
+
+            <div id="audio-preview" class="audio-preview hidden">
+
+                <div class="audio-info">
+
+                    <div class="audio-play">
+
+                        <svg viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+
+                    </div>
+
+                    <div>
+                        <strong id="audio-name">
+                            Minha composição
+                        </strong>
+
+                        <span id="audio-size">
+                            Arquivo selecionado
+                        </span>
+                    </div>
+
+                </div>
+
+                <button type="button" id="remove-audio">
+                    Remover
+                </button>
+
+            </div>
+
+
+            <div class="field-group audio-type">
+
+                <label>Tipo da demonstração</label>
+
+                <div class="radio-grid">
+
+                    <label class="radio-card">
+
+                        <input type="radio" name="demo" value="voz" checked>
+
+                        <div>
+                            <strong>Voz + instrumental</strong>
+                            <span>Demonstração cantada</span>
+                        </div>
+
+                    </label>
+
+
+                    <label class="radio-card">
+
+                        <input type="radio" name="demo" value="instrumental">
+
+                        <div>
+                            <strong>Instrumental</strong>
+                            <span>Somente instrumental</span>
+                        </div>
+
+                    </label>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- DESCRIÇÃO -->
+
+        <section class="form-card">
+
+            <div class="section-header">
+
+                <div class="section-number">03</div>
+
+                <div>
+                    <h2>Sobre a composição</h2>
+                    <p>Explique a proposta e o estilo da sua música.</p>
+                </div>
+
+            </div>
+
+
+            <div class="field-group">
+
+                <label for="descricao">
+                    Descrição
+                    <span>*</span>
+                </label>
+
+                <textarea
+                    id="descricao"
+                    name="descricao"
+                    rows="5"
+                    maxlength="1000"
+                    placeholder="Conte um pouco sobre sua composição..."
+                    required
+                ></textarea>
+
+                <div class="field-counter">
+                    <span>Descreva sua música de forma clara.</span>
+                    <span id="descricao-count">0/1000</span>
+                </div>
+
+            </div>
+
+
+            <div class="field-group">
+
+                <label for="tema">
+                    Tema da composição
+                </label>
+
+                <input
+                    type="text"
+                    id="tema"
+                    name="tema"
+                    placeholder="Ex.: Amor, superação, saudade..."
+                >
+
+            </div>
+
+
+            <div class="field-group">
+
+                <label>
+                    Para quem essa composição combina?
+                </label>
+
+                <div class="checkbox-grid">
+
+                    <label class="check-item">
+                        <input type="checkbox" name="publico" value="cantor">
+                        <span>Cantor</span>
+                    </label>
+
+                    <label class="check-item">
+                        <input type="checkbox" name="publico" value="dupla">
+                        <span>Dupla</span>
+                    </label>
+
+                    <label class="check-item">
+                        <input type="checkbox" name="publico" value="banda">
+                        <span>Banda</span>
+                    </label>
+
+                    <label class="check-item">
+                        <input type="checkbox" name="publico" value="grupo">
+                        <span>Grupo</span>
+                    </label>
+
+                    <label class="check-item">
+                        <input type="checkbox" name="publico" value="artista">
+                        <span>Artista solo</span>
+                    </label>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- MATERIAL -->
+
+        <section class="form-card">
+
+            <div class="section-header">
+
+                <div class="section-number">04</div>
+
+                <div>
+                    <h2>Material complementar</h2>
+                    <p>Adicione materiais que possam ajudar o interessado.</p>
+                </div>
+
+            </div>
+
+
+            <div class="material-grid">
+
+                <label class="material-upload" for="letra">
+
+                    <div class="material-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <path d="M14 2v6h6"/>
+                            <path d="M8 13h8"/>
+                            <path d="M8 17h6"/>
+                        </svg>
+                    </div>
+
+                    <strong>Letra da música</strong>
+                    <span>Adicionar arquivo</span>
+
+                    <input
+                        type="file"
+                        id="letra"
+                        accept=".pdf,.doc,.docx,.txt"
+                    >
+
+                </label>
+
+
+                <label class="material-upload" for="cifra">
+
+                    <div class="material-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M4 19V5"/>
+                            <path d="M4 5c5-3 11 3 16 0v14c-5 3-11-3-16 0"/>
+                            <path d="M8 9h8"/>
+                            <path d="M8 13h5"/>
+                        </svg>
+                    </div>
+
+                    <strong>Cifra</strong>
+                    <span>Adicionar arquivo</span>
+
+                    <input
+                        type="file"
+                        id="cifra"
+                        accept=".pdf,.doc,.docx,.txt"
+                    >
+
+                </label>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- NEGOCIAÇÃO -->
+
+        <section class="form-card">
+
+            <div class="section-header">
+
+                <div class="section-number">05</div>
+
+                <div>
+                    <h2>Negociação</h2>
+                    <p>Defina como deseja disponibilizar sua composição.</p>
+                </div>
+
+            </div>
+
+
+            <div class="field-group">
+
+                <label>
+                    O que você procura?
+                    <span>*</span>
+                </label>
+
+                <div class="option-list">
+
+                    <label class="option-item">
+
+                        <input type="radio" name="negociacao" value="venda" required>
+
+                        <div>
+                            <strong>Venda da composição</strong>
+                            <span>Negociar a aquisição da obra.</span>
+                        </div>
+
+                    </label>
+
+
+                    <label class="option-item">
+
+                        <input type="radio" name="negociacao" value="licenciamento">
+
+                        <div>
+                            <strong>Licenciamento</strong>
+                            <span>Permitir o uso da composição mediante acordo.</span>
+                        </div>
+
+                    </label>
+
+
+                    <label class="option-item">
+
+                        <input type="radio" name="negociacao" value="gravar">
+
+                        <div>
+                            <strong>Procuro artista para gravar</strong>
+                            <span>Encontrar um artista interessado em interpretar a música.</span>
+                        </div>
+
+                    </label>
+
+
+                    <label class="option-item">
+
+                        <input type="radio" name="negociacao" value="propostas">
+
+                        <div>
+                            <strong>Aceito propostas</strong>
+                            <span>Estou aberto a diferentes tipos de negociação.</span>
+                        </div>
+
+                    </label>
+
+
+                    <label class="option-item">
+
+                        <input type="radio" name="negociacao" value="divulgacao">
+
+                        <div>
+                            <strong>Apenas divulgação</strong>
+                            <span>Quero apenas apresentar minha composição.</span>
+                        </div>
+
+                    </label>
+
+                </div>
+
+            </div>
+
+
+            <div class="grid-2">
+
+                <div class="field-group">
+
+                    <label for="valor">
+                        Valor desejado
+                    </label>
+
+                    <div class="money-input">
+
+                        <span>R$</span>
+
+                        <input
+                            type="number"
+                            id="valor"
+                            name="valor"
+                            min="0"
+                            step="0.01"
+                            placeholder="0,00"
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <div class="field-group">
+
+                    <label>
+                        Condição
+                    </label>
+
+                    <label class="switch-item">
+
+                        <input type="checkbox" id="negociavel">
+
+                        <span class="switch"></span>
+
+                        <div>
+                            <strong>Aceito negociar</strong>
+                            <small>Permitir propostas de outros valores.</small>
+                        </div>
+
+                    </label>
+
+                </div>
+
+            </div>
+
+
+            <div class="field-group">
+
+                <label>Tipo de negociação</label>
+
+                <div class="checkbox-grid negotiation-grid">
+
+                    <label class="check-item">
+                        <input type="checkbox" name="tipo-negociacao" value="definitiva">
+                        <span>Venda definitiva</span>
+                    </label>
+
+                    <label class="check-item">
+                        <input type="checkbox" name="tipo-negociacao" value="exclusiva">
+                        <span>Exclusividade</span>
+                    </label>
+
+                    <label class="check-item">
+                        <input type="checkbox" name="tipo-negociacao" value="nao-exclusiva">
+                        <span>Não exclusiva</span>
+                    </label>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- DIREITOS -->
+
+        <section class="form-card">
+
+            <div class="section-header">
+
+                <div class="section-number">06</div>
+
+                <div>
+                    <h2>Direitos da composição</h2>
+                    <p>Informe a situação atual da sua obra.</p>
+                </div>
+
+            </div>
+
+
+            <div class="field-group">
+
+                <label>
+                    Situação do registro
+                </label>
+
+                <div class="registration-grid">
+
+                    <label class="registration-option">
+
+                        <input
+                            type="radio"
+                            name="registro"
+                            value="registrada"
+                        >
+
+                        <div>
+                            <strong>Registrada</strong>
+                            <span>A obra possui registro.</span>
+                        </div>
+
+                    </label>
+
+
+                    <label class="registration-option">
+
+                        <input
+                            type="radio"
+                            name="registro"
+                            value="processo"
+                        >
+
+                        <div>
+                            <strong>Em processo</strong>
+                            <span>Registro ainda está em andamento.</span>
+                        </div>
+
+                    </label>
+
+
+                    <label class="registration-option">
+
+                        <input
+                            type="radio"
+                            name="registro"
+                            value="nao-registrada"
+                            checked
+                        >
+
+                        <div>
+                            <strong>Não registrada</strong>
+                            <span>Ainda não possui registro.</span>
+                        </div>
+
+                    </label>
+
+                </div>
+
+            </div>
+
+
+            <label class="legal-confirmation">
+
+                <input type="checkbox" id="direitos" required>
+
+                <span class="check-box"></span>
+
+                <span>
+                    Confirmo que sou o autor ou possuo autorização
+                    para divulgar esta composição.
+                </span>
+
+            </label>
+
+
+            <div class="security-notice">
+
+                <div class="notice-icon">
+
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/>
+                        <path d="M9 12l2 2 4-4"/>
+                    </svg>
+
+                </div>
+
+                <div>
+                    <strong>Proteja sua obra</strong>
+
+                    <p>
+                        Recomendamos manter os documentos e registros
+                        da composição em local seguro. A negociação de
+                        direitos deve ser formalizada entre as partes.
+                    </p>
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- PUBLICAÇÃO -->
+
+        <section class="form-card">
+
+            <div class="section-header">
+
+                <div class="section-number">07</div>
+
+                <div>
+                    <h2>Publicação</h2>
+                    <p>Escolha como deseja apresentar seu anúncio.</p>
+                </div>
+
+            </div>
+
+
+            <div class="field-group">
+
+                <label>
+                    Tempo de divulgação
+                </label>
+
+                <div class="duration-grid">
+
+                    <label class="duration-option">
+
+                        <input
+                            type="radio"
+                            name="duracao-anuncio"
+                            value="7"
+                        >
+
+                        <strong>7 dias</strong>
+
+                    </label>
+
+
+                    <label class="duration-option">
+
+                        <input
+                            type="radio"
+                            name="duracao-anuncio"
+                            value="15"
+                        >
+
+                        <strong>15 dias</strong>
+
+                    </label>
+
+
+                    <label class="duration-option selected">
+
+                        <input
+                            type="radio"
+                            name="duracao-anuncio"
+                            value="30"
+                            checked
+                        >
+
+                        <strong>30 dias</strong>
+
+                    </label>
+
+
+                    <label class="duration-option">
+
+                        <input
+                            type="radio"
+                            name="duracao-anuncio"
+                            value="indeterminado"
+                        >
+
+                        <strong>Indeterminado</strong>
+
+                    </label>
+
+                </div>
+
+            </div>
+
+
+            <div class="publication-preview">
+
+                <div class="preview-icon">
+
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 3l9 4.5v5c0 5.5-3.8 8.5-9 9.5-5.2-1-9-4-9-9.5v-5z"/>
+                        <path d="M9 12l2 2 4-4"/>
+                    </svg>
+
+                </div>
+
+                <div>
+
+                    <strong>Seu anúncio será revisado</strong>
+
+                    <p>
+                        Após o envio, o anúncio poderá passar por uma
+                        análise antes de ficar disponível para outros usuários.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <div class="form-actions">
+
+            <button
+                type="button"
+                class="btn-secondary"
+                onclick="history.back()"
+            >
+                Cancelar
+            </button>
+
+            <button
+                type="submit"
+                class="btn-primary"
+            >
+                <span>Publicar composição</span>
+
+                <svg viewBox="0 0 24 24">
+                    <path d="M5 12h14"/>
+                    <path d="M13 6l6 6-6 6"/>
+                </svg>
+
+            </button>
+
+        </div>
+
+
+    </form>
+
+
+
+    <!-- RESUMO LATERAL -->
+
+    <aside class="preview-panel">
+
+        <div class="preview-sticky">
+
+            <div class="preview-title">
+                <span>PRÉVIA</span>
+                <strong>Seu anúncio</strong>
+            </div>
+
+
+            <div class="composition-preview-card">
+
+                <div class="preview-cover">
+
+                    <div class="cover-music-icon">
+
+                        <svg viewBox="0 0 24 24">
+                            <path d="M9 18V5l11-2v13"/>
+                            <circle cx="6" cy="18" r="3"/>
+                            <circle cx="17" cy="16" r="3"/>
+                        </svg>
+
+                    </div>
+
+                </div>
+
+
+                <div class="preview-card-content">
+
+                    <span class="preview-category">
+                        COMPOSIÇÃO
+                    </span>
+
+                    <h3 id="preview-title">
+                        Nome da composição
+                    </h3>
+
+                    <p id="preview-genre">
+                        Gênero musical
+                    </p>
+
+
+                    <div class="preview-audio">
+
+                        <button type="button">
+
+                            <svg viewBox="0 0 24 24">
+                                <path d="M8 5v14l11-7z"/>
+                            </svg>
+
+                        </button>
+
+                        <div class="audio-line">
+                            <span></span>
+                        </div>
+
+                        <small id="preview-duration">
+                            00:00
+                        </small>
+
+                    </div>
+
+
+                    <div class="preview-divider"></div>
+
+
+                    <div class="preview-author">
+
+                        <div class="author-avatar">
+                            RM
+                        </div>
+
+                        <div>
+                            <span>Compositor</span>
+                            <strong>Seu nome</strong>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="preview-tips">
+
+                <strong>Dicas para um bom anúncio</strong>
+
+                <ul>
+
+                    <li>
+                        Use um título claro e atrativo.
+                    </li>
+
+                    <li>
+                        Adicione uma boa demonstração em áudio.
+                    </li>
+
+                    <li>
+                        Explique o estilo e a proposta da música.
+                    </li>
+
+                    <li>
+                        Informe claramente suas condições.
+                    </li>
+
+                </ul>
+
+            </div>
+
+        </div>
+
+    </aside>
+
+</div>
+</main> <script src="js/criar-anuncio-composicao.js"></script> </body> </html>
