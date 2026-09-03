@@ -1,119 +1,578 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ArtistaShow - Forma de Pagamento</title>
-  <link rel="stylesheet" href="css/pagamento-servico.css">
-</head>
-<body>
+<!DOCTYPE html> <html lang="pt-BR"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Pagamento - MusicalWorld</title>
 
-  <div class="app-container">
-    
-    <!-- Top Bar -->
-    <div class="profile-top-actions">
-      <button class="icon-circle-btn" onclick="window.history.back()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-      </button>
-      <span class="top-bar-title">Contratação</span>
-      <div style="width: 36px;"></div>
+<link rel="stylesheet" href="css/pagamento-servico.css">
+</head> <body> <div class="app-container">
+<!-- =====================================================
+     TOPO
+====================================================== -->
+
+<header class="top-bar">
+
+    <button
+        type="button"
+        class="icon-circle-btn"
+        onclick="voltarPagina()"
+        aria-label="Voltar"
+    >
+        <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+        >
+            <path d="M19 12H5"></path>
+            <path d="M12 19l-7-7 7-7"></path>
+        </svg>
+    </button>
+
+    <div class="top-bar-title">
+        Contratação
     </div>
 
-    <div class="checkout-container" style="margin-top: 15px;">
-      
-      <!-- Stepper / Progresso -->
-      <div class="stepper-header">
+    <div class="top-bar-spacer"></div>
+
+</header>
+
+
+<!-- =====================================================
+     CONTEÚDO
+====================================================== -->
+
+<main class="checkout-container">
+
+    <!-- =================================================
+         STEPPER
+    ================================================== -->
+
+    <section class="stepper-card">
+
         <div class="step-info">
-          <span>Passo 2 de 2</span>
-          <strong>Pagamento</strong>
+
+            <span>ETAPA 3 DE 4</span>
+
+            <strong>Pagamento</strong>
+
         </div>
+
         <div class="stepper-bars">
-          <div class="bar active"></div>
-          <div class="bar active"></div>
-        </div>
-      </div>
 
-      <!-- Resumo do Pedido -->
-      <div class="checkout-card" style="background-color: #161619;">
-        <span class="checkout-etapa">Resumo da Contratação</span>
-        <h2 id="resumo-servico-nome" style="font-size: 15px; color: #fff; margin-top: 4px;">Serviço</h2>
-        <span id="resumo-local-data" style="font-size: 12px; color: #a1a1aa; margin-top: 2px; display: block;">Local e Data...</span>
-        <span id="resumo-servico-preco" style="font-size: 14px; color: #38bdf8; font-weight: 700; margin-top: 6px; display: block;">R$ 0,00</span>
-      </div>
+            <div class="bar active"></div>
+            <div class="bar active"></div>
+            <div class="bar active"></div>
+            <div class="bar"></div>
 
-      <!-- Seleção de Métodos de Pagamento -->
-      <div class="checkout-card">
-        <span class="checkout-etapa">Escolha a Forma de Pagamento</span>
-        
-        <!-- Opção PIX -->
-        <label class="payment-option">
-          <input type="radio" name="forma_pagamento" value="pix" checked onclick="mudarMetodoPagamento('pix')">
-          <div class="payment-info">
-            <strong>PIX</strong>
-            <span>Aprovação instantânea</span>
-          </div>
-        </label>
-
-        <!-- Opção Cartão de Crédito ou Débito -->
-        <label class="payment-option">
-          <input type="radio" name="forma_pagamento" value="cartao" onclick="mudarMetodoPagamento('cartao')">
-          <div class="payment-info">
-            <strong>Cartão de Crédito ou Débito</strong>
-            <span>Selecione ou cadastre um cartão</span>
-          </div>
-        </label>
-
-        <!-- Seção Dinâmica de Cartões -->
-        <div id="secao-cartoes" style="display: none; margin-top: 10px; flex-direction: column; gap: 8px;">
-          <span style="font-size: 12px; color: #a1a1aa; margin-top: 4px;">Seus Cartões Salvos:</span>
-          
-          <div id="lista-cartoes-salvos" style="display: flex; flex-direction: column; gap: 8px;">
-            <!-- Inserido via JavaScript -->
-          </div>
-
-          <button type="button" class="btn-novo-cartao" onclick="abrirModalNovoCartao()">+ Cadastrar Novo Cartão</button>
         </div>
 
-        <button class="btn-continuar-proximo" onclick="finalizarContratacao()" style="margin-top: 20px;">Confirmar e Contratar</button>
-      </div>
+    </section>
 
-    </div>
 
-  </div>
+    <!-- =================================================
+         RESUMO DO SERVIÇO
+    ================================================== -->
 
-  <!-- Modal para Cadastrar Novo Cartão -->
-  <div id="modal-cartao" class="modal-overlay" style="display: none;">
+    <section class="checkout-card">
+
+        <div class="section-label">
+            RESUMO DA CONTRATAÇÃO
+        </div>
+
+        <div class="service-summary">
+
+            <div class="service-icon">
+
+                <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                >
+                    <path d="M9 18V5l10-2v13"></path>
+                    <circle cx="6" cy="18" r="3"></circle>
+                    <circle cx="16" cy="16" r="3"></circle>
+                </svg>
+
+            </div>
+
+            <div class="service-summary-info">
+
+                <h2 id="resumo-servico-nome">
+                    Carregando...
+                </h2>
+
+                <span id="resumo-artista">
+                    Carregando artista...
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="summary-details">
+
+            <div class="summary-row">
+
+                <span>Local</span>
+
+                <strong id="resumo-local">
+                    —
+                </strong>
+
+            </div>
+
+
+            <div class="summary-row">
+
+                <span>Endereço</span>
+
+                <strong id="resumo-endereco">
+                    —
+                </strong>
+
+            </div>
+
+
+            <div class="summary-row">
+
+                <span>CEP</span>
+
+                <strong id="resumo-cep">
+                    —
+                </strong>
+
+            </div>
+
+
+            <div class="summary-row">
+
+                <span>Data</span>
+
+                <strong id="resumo-data">
+                    —
+                </strong>
+
+            </div>
+
+
+            <div class="summary-row">
+
+                <span>Horário</span>
+
+                <strong id="resumo-horario">
+                    —
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <div class="price-divider"></div>
+
+
+        <div class="price-row">
+
+            <span>
+                Valor do serviço
+            </span>
+
+            <strong id="resumo-servico-preco">
+                R$ 0,00
+            </strong>
+
+        </div>
+
+    </section>
+
+
+    <!-- =================================================
+         FORMA DE PAGAMENTO
+    ================================================== -->
+
+    <section class="checkout-card">
+
+        <div class="section-label">
+            FORMA DE PAGAMENTO
+        </div>
+
+        <div class="section-description">
+            Escolha como deseja realizar o pagamento da contratação.
+        </div>
+
+
+        <!-- PIX -->
+
+        <label
+            class="payment-option selected"
+            id="opcao-pix"
+        >
+
+            <input
+                type="radio"
+                name="formaPagamento"
+                value="pix"
+                checked
+                onchange="selecionarPagamento('pix')"
+            >
+
+            <div class="payment-icon pix-icon">
+
+                <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                >
+                    <path d="M7 3h10"></path>
+                    <path d="M7 21h10"></path>
+                    <path d="M5 5l14 14"></path>
+                    <path d="M19 5L5 19"></path>
+                </svg>
+
+            </div>
+
+
+            <div class="payment-info">
+
+                <strong>
+                    PIX
+                </strong>
+
+                <span>
+                    Pagamento instantâneo
+                </span>
+
+            </div>
+
+
+            <div class="radio-indicator"></div>
+
+        </label>
+
+
+        <!-- CARTÃO -->
+
+        <label
+            class="payment-option"
+            id="opcao-cartao"
+        >
+
+            <input
+                type="radio"
+                name="formaPagamento"
+                value="cartao"
+                onchange="selecionarPagamento('cartao')"
+            >
+
+            <div class="payment-icon card-icon">
+
+                <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                >
+                    <rect
+                        x="3"
+                        y="5"
+                        width="18"
+                        height="14"
+                        rx="2"
+                    ></rect>
+
+                    <path d="M3 10h18"></path>
+
+                </svg>
+
+            </div>
+
+
+            <div class="payment-info">
+
+                <strong>
+                    Cartão
+                </strong>
+
+                <span>
+                    Crédito ou débito
+                </span>
+
+            </div>
+
+
+            <div class="radio-indicator"></div>
+
+        </label>
+
+
+        <!-- =================================================
+             CARTÕES SALVOS
+        ================================================== -->
+
+        <div
+            class="saved-cards-section"
+            id="saved-cards-section"
+        >
+
+            <div class="saved-cards-title">
+                CARTÕES SALVOS
+            </div>
+
+
+            <div
+                class="saved-cards-list"
+                id="saved-cards-list"
+            ></div>
+
+
+            <button
+                type="button"
+                class="btn-novo-cartao"
+                onclick="abrirModalCartao()"
+            >
+
+                <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                >
+                    <path d="M12 5v14"></path>
+                    <path d="M5 12h14"></path>
+                </svg>
+
+                Cadastrar novo cartão
+
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- =================================================
+         SEGURANÇA
+    ================================================== -->
+
+    <section class="security-box">
+
+        <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+        >
+            <rect
+                x="5"
+                y="10"
+                width="14"
+                height="10"
+                rx="2"
+            ></rect>
+
+            <path d="M8 10V7a4 4 0 018 0v3"></path>
+
+            <path d="M12 14v2"></path>
+
+        </svg>
+
+
+        <div>
+
+            <strong>
+                Pagamento seguro
+            </strong>
+
+            <span>
+                Seus dados de pagamento são protegidos.
+            </span>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<!-- =====================================================
+     BOTÃO INFERIOR
+====================================================== -->
+
+<div class="bottom-action">
+
+    <button
+        type="button"
+        class="btn-continuar"
+        onclick="finalizarContratacao()"
+    >
+
+        Continuar
+
+        <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+        >
+            <path d="M5 12h14"></path>
+            <path d="M13 6l6 6-6 6"></path>
+        </svg>
+
+    </button>
+
+</div>
+
+
+<!-- =====================================================
+     MODAL NOVO CARTÃO
+====================================================== -->
+
+<div
+    class="modal-overlay"
+    id="modal-cartao"
+    style="display: none;"
+>
+
     <div class="modal-card">
-      <h3 style="font-size: 16px; color: #fff; margin-bottom: 12px;">Cadastrar Novo Cartão</h3>
-      
-      <div class="form-group">
-        <label>Número do Cartão</label>
-        <input type="text" id="novo-num-cartao" placeholder="0000 0000 0000 0000" class="input-custom">
-      </div>
-      
-      <div class="form-group" style="margin-top: 10px;">
-        <label>Nome no Cartão</label>
-        <input type="text" id="novo-nome-cartao" placeholder="Como está no cartão" class="input-custom">
-      </div>
 
-      <div style="display: flex; gap: 10px; margin-top: 10px;">
-        <div class="form-group" style="flex: 1;">
-          <label>Validade</label>
-          <input type="text" id="novo-val-cartao" placeholder="MM/AA" class="input-custom">
-        </div>
-        <div class="form-group" style="flex: 1;">
-          <label>CVV</label>
-          <input type="text" id="novo-cvv-cartao" placeholder="123" class="input-custom">
-        </div>
-      </div>
+        <div class="modal-header">
 
-      <div style="display: flex; gap: 10px; margin-top: 16px;">
-        <button class="btn-continuar-proximo" style="background-color: #27272a; margin-top:0;" onclick="fecharModalNovoCartao()">Cancelar</button>
-        <button class="btn-continuar-proximo" style="margin-top:0;" onclick="salvarNovoCartao()">Salvar Cartão</button>
-      </div>
+            <div>
+
+                <div class="modal-label">
+                    PAGAMENTO
+                </div>
+
+                <h3>
+                    Novo cartão
+                </h3>
+
+            </div>
+
+
+            <button
+                type="button"
+                class="modal-close"
+                onclick="fecharModalCartao()"
+                aria-label="Fechar"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label for="novo-num-cartao">
+                Número do cartão
+            </label>
+
+            <input
+                id="novo-num-cartao"
+                class="input-custom"
+                type="text"
+                inputmode="numeric"
+                maxlength="19"
+                placeholder="0000 0000 0000 0000"
+            >
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label for="novo-nome-cartao">
+                Nome no cartão
+            </label>
+
+            <input
+                id="novo-nome-cartao"
+                class="input-custom"
+                type="text"
+                maxlength="60"
+                placeholder="Nome completo"
+            >
+
+        </div>
+
+
+        <div class="form-row">
+
+            <div class="form-group">
+
+                <label for="novo-val-cartao">
+                    Validade
+                </label>
+
+                <input
+                    id="novo-val-cartao"
+                    class="input-custom"
+                    type="text"
+                    inputmode="numeric"
+                    maxlength="5"
+                    placeholder="MM/AA"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="novo-cvv-cartao">
+                    CVV
+                </label>
+
+                <input
+                    id="novo-cvv-cartao"
+                    class="input-custom"
+                    type="password"
+                    inputmode="numeric"
+                    maxlength="4"
+                    placeholder="123"
+                >
+
+            </div>
+
+        </div>
+
+
+        <div class="modal-actions">
+
+            <button
+                type="button"
+                class="btn-modal-secondary"
+                onclick="fecharModalCartao()"
+            >
+                Cancelar
+            </button>
+
+            <button
+                type="button"
+                class="btn-modal-primary"
+                onclick="salvarNovoCartao()"
+            >
+                Salvar cartão
+            </button>
+
+        </div>
+
     </div>
-  </div>
 
-  <script src="js/pagamento-servico.js"></script>
-</body>
-</html>
+</div>
+</div> <script src="js/pagamento-servico.js"></script> </body> </html>

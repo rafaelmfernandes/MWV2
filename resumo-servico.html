@@ -1,86 +1,522 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resumo</title>
-    <link rel="stylesheet" href="css/resumo-servico.css">
-</head>
-<body>
+<!DOCTYPE html> <html lang="pt-BR"> <head>
+<meta charset="UTF-8">
 
-    <div class="app-container">
-        <!-- Topbar -->
-        <header class="topbar">
-            <a href="hora-pagamento.html" class="btn-voltar">&lt;</a>
-            <span class="topbar-titulo">Resumo</span>
-            <button class="btn-cancelar vermelho">Cancelar</button>
-        </header>
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+>
 
-        <!-- Conteúdo Principal -->
-        <main class="conteudo sem-padding">
-            <!-- Banner do Artista -->
-            <div class="banner-artista">
-                <div class="overlay-artista">
-                    <span class="nome-artista">Luismar Peixe</span>
-                    <span class="cargo-artista">Produtor musical / Baterista</span>
-                </div>
-            </div>
+<meta
+    name="theme-color"
+    content="#ffffff"
+>
 
-            <div class="detalhes-resumo">
-                <!-- Seção O que você preencheu -->
-                <div class="bloco-preenchido">
-                    <h2>O que você preencheu?</h2>
-                    
-                    <div class="linha-resumo">
-                        <span class="rotulo">Data:</span>
-                        <span class="valor-info">25 de outubro de 2023</span>
-                    </div>
+<title>Resumo da contratação</title>
 
-                    <div class="linha-resumo">
-                        <span class="rotulo">Horário de inicio:</span>
-                        <span class="valor-info">22:30</span>
-                    </div>
+<link
+    rel="stylesheet"
+    href="css/resumo-servico.css"
+>
+</head> <body> <div class="app-container">
+<header class="topbar">
 
-                    <div class="linha-resumo local-bloco">
-                        <span class="rotulo">Local:</span>
-                        <div class="endereco-detalhe">
-                            <strong>Boteco do simpão</strong>
-                            <span>Av. Deputado Jamel Cecilio, 2410</span>
-                            <span>CEP 74810-100, Jardim Goiás, Goiania - GO</span>
-                            <span class="complemento-lugar">Em frente ao visage arena</span>
-                        </div>
-                    </div>
+    <button
+        class="btn-voltar"
+        type="button"
+        onclick="voltarPagina()"
+        aria-label="Voltar"
+    >
 
-                    <div class="linha-resumo">
-                        <span class="rotulo">Show/evento:</span>
-                        <span class="valor-info">R$ 800,00</span>
-                    </div>
+        <svg
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+        >
 
-                    <div class="linha-resumo">
-                        <span class="rotulo">Forma de pagamento:</span>
-                        <span class="valor-info">Debito / Credito</span>
-                    </div>
-                </div>
+            <path
+                d="M15 18l-6-6 6-6"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            />
 
-                <!-- Perfil do Anunciante -->
-                <div class="bloco-anunciante">
-                    <h3>Perfil do anunciante</h3>
-                    <div class="perfil-info">
-                        <div class="avatar-anunciante"></div>
-                        <div class="perfil-texto">
-                            <span class="perfil-nome">Luismar_peixe_</span>
-                            <span class="perfil-cargo">Baterista / Produtor Musical</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </main>
+        </svg>
 
-        <!-- Rodapé com botão -->
-        <footer class="footer-acao">
-            <button class="btn-avancar">Confirmar agendamento</button>
-        </footer>
+    </button>
+
+
+    <div class="topbar-titulo">
+        Resumo
     </div>
 
-</body>
-</html>
+
+    <button
+        class="btn-cancelar"
+        type="button"
+        onclick="cancelarContratacao()"
+    >
+        Cancelar
+    </button>
+
+</header>
+
+
+<main class="conteudo">
+
+    <section class="cabecalho-resumo">
+
+        <span class="etapa">
+            ETAPA 4 DE 4
+        </span>
+
+        <h1>
+            Confira os detalhes
+        </h1>
+
+        <p>
+            Revise as informações da contratação antes de confirmar o agendamento.
+        </p>
+
+    </section>
+
+
+    <!-- =================================================
+         ARTISTA
+    ================================================== -->
+
+    <section class="artista-card">
+
+        <div
+            class="artista-avatar"
+            id="artistAvatar"
+        >
+            RM
+        </div>
+
+
+        <div class="artista-info">
+
+            <div class="artista-nome-linha">
+
+                <h2 id="artistName">
+                    Carregando...
+                </h2>
+
+
+                <span
+                    class="selo-verificado"
+                    aria-label="Perfil verificado"
+                >
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                    >
+
+                        <path
+                            d="M12 3l2.1 1.2 2.4-.1 1.2 2.1 2.1 1.2-.1 2.4L21 12l-1.3 2.1.1 2.4-2.1 1.2-1.2 2.1-2.4-.1L12 21l-2.1-1.3-2.4.1-1.2-2.1-2.1-1.2.1-2.4L3 12l1.3-2.1-.1-2.4 2.1-1.2 1.2-2.1 2.4.1L12 3z"
+                            fill="currentColor"
+                        />
+
+                        <path
+                            d="M8.5 12.2l2.1 2.1 4.9-5"
+                            fill="none"
+                            stroke="#ffffff"
+                            stroke-width="1.8"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        />
+
+                    </svg>
+
+                </span>
+
+            </div>
+
+
+            <p id="artistCategory">
+                Artista
+            </p>
+
+
+            <div class="artista-meta">
+
+                <span id="artistRating">
+                    5.0
+                </span>
+
+                <span class="separador">
+                    •
+                </span>
+
+                <span id="artistLocation">
+                    Goiânia, GO
+                </span>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =================================================
+         SERVIÇO
+    ================================================== -->
+
+    <section class="resumo-card">
+
+        <div class="card-titulo">
+
+            <div class="titulo-icone">
+
+                <svg
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                >
+
+                    <path
+                        d="M7 3v4M17 3v4M4 9h16M5 5h14a1 1 0 011 1v13a1 1 0 01-1 1H5a1 1 0 01-1-1V6a1 1 0 011-1z"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    />
+
+                </svg>
+
+            </div>
+
+
+            <div>
+
+                <h2>
+                    Detalhes do serviço
+                </h2>
+
+                <p>
+                    Informações do seu agendamento
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="resumo-lista">
+
+            <div class="resumo-linha">
+
+                <span class="rotulo">
+                    Serviço
+                </span>
+
+                <strong
+                    class="valor destaque"
+                    id="serviceName"
+                >
+                    —
+                </strong>
+
+            </div>
+
+
+            <div class="resumo-linha">
+
+                <span class="rotulo">
+                    Data
+                </span>
+
+                <span
+                    class="valor"
+                    id="serviceDate"
+                >
+                    —
+                </span>
+
+            </div>
+
+
+            <div class="resumo-linha">
+
+                <span class="rotulo">
+                    Horário
+                </span>
+
+                <span
+                    class="valor"
+                    id="serviceTime"
+                >
+                    —
+                </span>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =================================================
+         LOCAL
+    ================================================== -->
+
+    <section class="resumo-card">
+
+        <div class="card-titulo">
+
+            <div class="titulo-icone">
+
+                <svg
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                >
+
+                    <path
+                        d="M12 21s7-6.1 7-12A7 7 0 005 9c0 5.9 7 12 7 12z"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    />
+
+                    <circle
+                        cx="12"
+                        cy="9"
+                        r="2.2"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                    />
+
+                </svg>
+
+            </div>
+
+
+            <div>
+
+                <h2>
+                    Local do evento
+                </h2>
+
+                <p>
+                    Onde o serviço será realizado
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="local-box">
+
+            <strong id="eventName">
+                Local do evento
+            </strong>
+
+
+            <span id="eventAddress">
+                Endereço não informado
+            </span>
+
+
+            <span id="eventCep">
+                CEP não informado
+            </span>
+
+        </div>
+
+    </section>
+
+
+    <!-- =================================================
+         PAGAMENTO
+    ================================================== -->
+
+    <section class="resumo-card pagamento-card">
+
+        <div class="card-titulo">
+
+            <div class="titulo-icone">
+
+                <svg
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                >
+
+                    <rect
+                        x="3"
+                        y="5"
+                        width="18"
+                        height="14"
+                        rx="2"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                    />
+
+                    <path
+                        d="M3 10h18"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                    />
+
+                    <path
+                        d="M7 15h3"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                    />
+
+                </svg>
+
+            </div>
+
+
+            <div>
+
+                <h2>
+                    Pagamento
+                </h2>
+
+                <p>
+                    Forma de pagamento escolhida
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="pagamento-info">
+
+            <span id="paymentMethod">
+                Não informado
+            </span>
+
+        </div>
+
+    </section>
+
+
+    <!-- =================================================
+         VALOR
+    ================================================== -->
+
+    <section class="valor-final-card">
+
+        <div class="valor-final-texto">
+
+            <span>
+                Valor do serviço
+            </span>
+
+            <small>
+                Pagamento protegido
+            </small>
+
+        </div>
+
+
+        <strong id="servicePrice">
+            R$ 0,00
+        </strong>
+
+    </section>
+
+
+    <!-- =================================================
+         SEGURANÇA
+    ================================================== -->
+
+    <section class="seguranca-box">
+
+        <div class="seguranca-icone">
+
+            <svg
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+            >
+
+                <path
+                    d="M12 3l7 3v5c0 4.6-3 8.5-7 10-4-1.5-7-5.4-7-10V6l7-3z"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linejoin="round"
+                />
+
+                <path
+                    d="M9 12l2 2 4-4"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                />
+
+            </svg>
+
+        </div>
+
+
+        <div>
+
+            <strong>
+                Contratação segura
+            </strong>
+
+            <p>
+                O pagamento fica protegido até que as condições do serviço sejam cumpridas.
+            </p>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<!-- =====================================================
+     BOTÃO
+====================================================== -->
+
+<footer class="footer-acao">
+
+    <button
+        class="btn-confirmar"
+        type="button"
+        onclick="confirmarAgendamento()"
+    >
+
+        <span>
+            Confirmar agendamento
+        </span>
+
+
+        <svg
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+        >
+
+            <path
+                d="M5 12h14M13 6l6 6-6 6"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            />
+
+        </svg>
+
+    </button>
+
+</footer>
+</div> <script src="js/resumo-servico.js"></script> </body> </html>

@@ -1,95 +1,511 @@
 <!DOCTYPE html>
+
 <html lang="pt-BR">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ArtistaShow - Local e Data</title>
-  <link rel="stylesheet" href="css/data-local.css">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>MusicalWorld - Local e Data</title>
+
+<link
+    rel="stylesheet"
+    href="css/data-local.css"
+>
+
+<!-- Leaflet -->
+<link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+>
+
+
 </head>
+
 <body>
 
-  <div class="app-container">
-    
-    <!-- Top Bar -->
-    <div class="profile-top-actions">
-      <button class="icon-circle-btn" onclick="window.history.back()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-      </button>
-      <span class="top-bar-title">Contratação</span>
-      <div style="width: 36px;"></div> <!-- Elemento invisível para centralizar o título -->
-    </div>
 
-    <!-- Conteúdo da Página Data e Local -->
-    <div class="checkout-container" style="margin-top: 15px;">
-      
-      <!-- Stepper / Progresso Padronizado -->
-      <div class="stepper-header">
-        <div class="step-info">
-          <span>Passo 1 de 2</span>
-          <strong>Local e Data</strong>
+<div class="app-container">
+
+    <!-- =====================================================
+         TOPO
+    ====================================================== -->
+
+    <header class="top-bar">
+
+        <button
+            type="button"
+            class="icon-circle-btn"
+            id="btn-voltar"
+            aria-label="Voltar"
+        >
+
+            <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.3"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            >
+
+                <line
+                    x1="19"
+                    y1="12"
+                    x2="5"
+                    y2="12"
+                ></line>
+
+                <polyline
+                    points="12 19 5 12 12 5"
+                ></polyline>
+
+            </svg>
+
+        </button>
+
+        <span class="top-bar-title">
+            Contratação
+        </span>
+
+        <button
+            type="button"
+            class="cancel-button"
+            id="btn-cancelar"
+        >
+            Cancelar
+        </button>
+
+    </header>
+
+
+    <!-- =====================================================
+         CONTEÚDO
+    ====================================================== -->
+
+    <main class="page-content">
+
+
+        <!-- =================================================
+             PROGRESSO
+        ================================================== -->
+
+        <section class="stepper-card">
+
+            <div class="step-info">
+
+                <span>
+                    ETAPA 2 DE 4
+                </span>
+
+                <strong>
+                    Local e data
+                </strong>
+
+            </div>
+
+            <div class="stepper-bars">
+
+                <div class="bar active"></div>
+                <div class="bar active"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             TÍTULO
+        ================================================== -->
+
+        <section class="page-heading">
+
+            <span class="eyebrow">
+                DETALHES DO EVENTO
+            </span>
+
+            <h1>
+                Onde e quando será o show?
+            </h1>
+
+            <p>
+                Informe os dados do evento para que o artista
+                possa se preparar corretamente.
+            </p>
+
+        </section>
+
+
+        <!-- =================================================
+             SERVIÇO SELECIONADO
+        ================================================== -->
+
+        <section class="service-card">
+
+            <div class="service-icon">
+
+                <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                >
+
+                    <path d="M9 18V5l12-2v13"></path>
+
+                    <circle
+                        cx="6"
+                        cy="18"
+                        r="3"
+                    ></circle>
+
+                    <circle
+                        cx="18"
+                        cy="16"
+                        r="3"
+                    ></circle>
+
+                </svg>
+
+            </div>
+
+            <div class="service-info">
+
+                <span class="service-label">
+                    SERVIÇO SELECIONADO
+                </span>
+
+                <strong id="resumo-servico-nome">
+                    Voz e violão
+                </strong>
+
+                <span id="resumo-servico-preco">
+                    R$ 800,00
+                </span>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             FORMULÁRIO
+        ================================================== -->
+
+        <section class="form-card">
+
+
+            <!-- =================================================
+                 LOCAL
+            ================================================== -->
+
+            <div class="section-header">
+
+                <span class="section-number">
+                    01
+                </span>
+
+                <div>
+
+                    <h2>
+                        Local do evento
+                    </h2>
+
+                    <p>
+                        Informe onde a apresentação será realizada.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- Nome do local -->
+
+            <div class="form-group">
+
+                <label for="input-titulo-local">
+                    Nome do local
+                </label>
+
+                <input
+                    type="text"
+                    id="input-titulo-local"
+                    class="input-custom"
+                    placeholder="Ex.: Chácara, salão, restaurante..."
+                    autocomplete="off"
+                >
+
+            </div>
+
+
+            <!-- CEP -->
+
+            <div class="form-group">
+
+                <label for="input-cep">
+                    CEP
+                </label>
+
+                <div class="input-action">
+
+                    <input
+                        type="text"
+                        id="input-cep"
+                        class="input-custom"
+                        placeholder="00000-000"
+                        maxlength="9"
+                        inputmode="numeric"
+                        autocomplete="postal-code"
+                    >
+
+                    <button
+                        type="button"
+                        class="btn-buscar"
+                        id="btn-buscar-cep"
+                    >
+                        Buscar
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- Endereço -->
+
+            <div class="form-group">
+
+                <label for="input-local">
+                    Endereço
+                </label>
+
+                <input
+                    type="text"
+                    id="input-local"
+                    class="input-custom"
+                    placeholder="Rua, número, bairro, cidade..."
+                    autocomplete="street-address"
+                >
+
+            </div>
+
+
+            <!-- =================================================
+                 MAPA
+            ================================================== -->
+
+            <div class="form-group">
+
+                <div class="map-label-row">
+
+                    <label>
+                        Localização no mapa
+                    </label>
+
+                    <span>
+                        Arraste o marcador
+                    </span>
+
+                </div>
+
+                <div
+                    id="map"
+                    class="map-container"
+                ></div>
+
+            </div>
+
+
+            <!-- =================================================
+                 DATA E HORÁRIO
+            ================================================== -->
+
+            <div class="section-header second-section">
+
+                <span class="section-number">
+                    02
+                </span>
+
+                <div>
+
+                    <h2>
+                        Data e horário
+                    </h2>
+
+                    <p>
+                        Defina quando o artista deverá se apresentar.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="form-row">
+
+                <div class="form-group">
+
+                    <label for="input-data">
+                        Data do evento
+                    </label>
+
+                    <input
+                        type="date"
+                        id="input-data"
+                        class="input-custom"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="input-horario">
+                        Horário
+                    </label>
+
+                    <input
+                        type="time"
+                        id="input-horario"
+                        class="input-custom"
+                    >
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             SEGURANÇA
+        ================================================== -->
+
+        <div class="security-box">
+
+            <div class="security-icon">
+
+                <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                >
+
+                    <rect
+                        x="4"
+                        y="10"
+                        width="16"
+                        height="11"
+                        rx="2"
+                    ></rect>
+
+                    <path
+                        d="M8 10V7a4 4 0 0 1 8 0v3"
+                    ></path>
+
+                    <circle
+                        cx="12"
+                        cy="15"
+                        r="1"
+                    ></circle>
+
+                </svg>
+
+            </div>
+
+            <div>
+
+                <strong>
+                    Seus dados estão protegidos
+                </strong>
+
+                <span>
+                    As informações do evento serão compartilhadas
+                    somente com o artista da contratação.
+                </span>
+
+            </div>
+
         </div>
-        <div class="stepper-bars">
-          <div class="bar active"></div>
-          <div class="bar"></div>
-        </div>
-      </div>
 
-      <!-- Resumo do Serviço Escolhido -->
-      <div class="checkout-card" style="background-color: #1f1f23;">
-        <span class="checkout-etapa">Serviço Selecionado</span>
-        <h2 id="resumo-servico-nome" style="font-size: 16px; color: #fff; margin-top: 2px;">Carregando...</h2>
-        <span id="resumo-servico-preco" style="font-size: 13px; color: #38bdf8; font-weight: 700;"></span>
-      </div>
+    </main>
 
-      <!-- Formulário de Informações para o Artista -->
-      <div class="checkout-card">
-        <span class="checkout-etapa">Detalhes do Evento</span>
-        <h2 style="font-size: 18px; color: #fff; margin-bottom: 6px;">Onde e quando será?</h2>
-        <p style="font-size: 12px; color: #a1a1aa; margin-bottom: 14px;">Informe o CEP ou arraste o pino no mapa para ajustar a localização exata do evento.</p>
 
-        <!-- TÍTULO DO LOCAL -->
-        <div class="form-group" style="margin-bottom: 14px;">
-          <label>Nome do Local (Ex: Bar do Zé, Chácara Recanto Feliz)</label>
-          <input type="text" id="input-titulo-local" placeholder="Ex: Chácara dos Ipês" class="input-custom">
-        </div>
+    <!-- =====================================================
+         BOTÃO INFERIOR
+    ====================================================== -->
 
-        <!-- CEP -->
-        <div class="form-group">
-          <label>CEP do Evento</label>
-          <input type="text" id="input-cep" placeholder="Digite o CEP (ex: 74000-000)" maxlength="9" class="input-custom" onblur="buscarCep()">
-        </div>
+    <footer class="bottom-action">
 
-        <!-- Endereço Completo -->
-        <div class="form-group" style="margin-top: 14px;">
-          <label>Endereço Completo</label>
-          <input type="text" id="input-local" placeholder="Rua, número, bairro, cidade - UF" class="input-custom">
-        </div>
+        <button
+            type="button"
+            class="btn-continuar"
+            id="btn-continuar"
+        >
 
-        <!-- MAPA INTERATIVO -->
-        <div class="form-group" style="margin-top: 14px;">
-          <label>Arraste o pino para o local exato:</label>
-          <div id="map"></div>
-        </div>
+            <span>
+                Continuar para pagamento
+            </span>
 
-        <div class="form-group" style="margin-top: 14px;">
-          <label>Data do Evento</label>
-          <input type="date" id="input-data" class="input-custom">
-        </div>
+            <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            >
 
-        <div class="form-group" style="margin-top: 14px;">
-          <label>Horário de Início</label>
-          <input type="time" id="input-horario" class="input-custom">
-        </div>
+                <line
+                    x1="5"
+                    y1="12"
+                    x2="19"
+                    y2="12"
+                ></line>
 
-        <button class="btn-continuar-proximo" onclick="salvarInformacoesArtista()">Salvar e Enviar para o Artista</button>
-      </div>
+                <polyline
+                    points="12 5 19 12 12 19"
+                ></polyline>
 
-    </div>
+            </svg>
 
-  </div>
+        </button>
 
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-  <script src="js/data-local.js"></script>
+    </footer>
+
+</div>
+
+
+<!-- =====================================================
+     LEAFLET
+====================================================== -->
+
+<script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+></script>
+
+
+<!-- =====================================================
+     JAVASCRIPT DA PÁGINA
+====================================================== -->
+
+<script src="js/data-local.js"></script>
+
+
 </body>
+
 </html>

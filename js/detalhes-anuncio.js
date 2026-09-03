@@ -678,7 +678,7 @@ function iniciarContratacao() {
    */
 
   const url =
-    `selecionao-servico.html` +
+    `selecao-servico.html` +
     `?id=${id}` +
     `&artista=${artista}` +
     `&servico=${servico}` +

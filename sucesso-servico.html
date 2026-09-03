@@ -1,60 +1,336 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ArtistaShow - Contratação Realizada</title>
-  <link rel="stylesheet" href="css/sucesso-servico.css">
-</head>
-<body>
+<!DOCTYPE html> 
+<html lang="pt-BR"> 
+  <head> <meta charset="UTF-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <meta name="theme-color" content="#ffffff"> 
+    <title>MusicalWorld - Contratação realizada</title> 
+    <link rel="stylesheet" href="css/sucesso-servico.css"> 
+  </head> 
+  <body> 
+<div class="app-container">
+<!-- TOPO -->
+<header class="topbar">
 
-  <div class="app-container" style="justify-content: center; align-items: center; padding: 24px;">
-    
-    <div class="checkout-card" style="width: 100%; max-width: 380px; align-items: center; text-align: center; gap: 14px; padding: 30px 20px;">
-      
-      <div class="success-icon-box">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 32px; height: 32px;"><polyline points="20 6 9 17 4 12"></polyline></svg>
-      </div>
+  <div class="topbar-spacer"></div>
 
-      <div>
-        <h1 style="font-size: 18px; color: #fff; margin-bottom: 4px;">Contratação Realizada!</h1>
-        <p style="font-size: 12px; color: #a1a1aa;">Seu pedido foi enviado com sucesso.</p>
-      </div>
+  <div class="topbar-title">
+    Contratação
+  </div>
 
-      <div class="status-badge-pendente">
-        <span class="dot-pulsing"></span>
-        <span>Aguardando a confirmação do artista</span>
-      </div>
+  <button class="topbar-close" onclick="voltarInicio()" aria-label="Voltar ao início">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+      <line x1="18" y1="6" x2="6" y2="18"></line>
+      <line x1="6" y1="6" x2="18" y2="18"></line>
+    </svg>
+  </button>
 
-      <div style="width: 100%; background-color: #121215; border: 1px solid #27272a; border-radius: 12px; padding: 14px; text-align: left; display: flex; flex-direction: column; gap: 8px; margin-top: 6px;">
-        <span style="font-size: 11px; color: #71717a; text-transform: uppercase; font-weight: 600;">Resumo do Pedido</span>
-        
-        <div style="display: flex; justify-content: space-between; font-size: 13px;">
-          <span style="color: #a1a1aa;">Serviço:</span>
-          <strong id="resumo-servico" style="color: #fff;">-</strong>
-        </div>
+</header>
 
-        <div style="display: flex; justify-content: space-between; font-size: 13px;">
-          <span style="color: #a1a1aa;">Local:</span>
-          <strong id="resumo-local" style="color: #fff; text-align: right; max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">-</strong>
-        </div>
 
-        <div style="display: flex; justify-content: space-between; font-size: 13px;">
-          <span style="color: #a1a1aa;">Data e Hora:</span>
-          <strong id="resumo-data" style="color: #fff;">-</strong>
-        </div>
+<!-- CONTEÚDO -->
+<main class="conteudo">
 
-        <div style="display: flex; justify-content: space-between; font-size: 13px; border-top: 1px solid #27272a; padding-top: 8px; margin-top: 2px;">
-          <span style="color: #a1a1aa;">Valor:</span>
-          <strong id="resumo-preco" style="color: #38bdf8;">-</strong>
-        </div>
-      </div>
+  <!-- ÍCONE DE SUCESSO -->
+  <div class="success-icon-box">
 
-      <button class="btn-continuar-proximo" onclick="window.location.href='index.html'" style="margin-top: 10px;">Voltar ao Início</button>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="20 6 9 17 4 12"></polyline>
+    </svg>
+
+  </div>
+
+
+  <!-- TÍTULO -->
+  <div class="success-header">
+
+    <span class="success-label">
+      SOLICITAÇÃO ENVIADA
+    </span>
+
+    <h1>
+      Contratação realizada!
+    </h1>
+
+    <p>
+      Sua solicitação foi enviada com sucesso.
+    </p>
+
+  </div>
+
+
+  <!-- STATUS -->
+  <div class="status-card">
+
+    <div class="status-icon">
+
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="9"></circle>
+        <polyline points="12 7 12 12 15 14"></polyline>
+      </svg>
+
+    </div>
+
+    <div class="status-content">
+
+      <strong>
+        Aguardando confirmação
+      </strong>
+
+      <span>
+        O artista ainda precisa confirmar sua contratação.
+      </span>
+
     </div>
 
   </div>
 
-  <script src="js/sucesso-servico.js"></script>
-</body>
-</html>
+
+  <!-- RESUMO -->
+  <section class="resumo-card">
+
+    <div class="section-title">
+      Resumo da contratação
+    </div>
+
+
+    <!-- ARTISTA -->
+    <div class="info-row">
+
+      <div class="info-icon">
+
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="8" r="4"></circle>
+          <path d="M4 21c0-4 3.5-7 8-7s8 3 8 7"></path>
+        </svg>
+
+      </div>
+
+      <div class="info-content">
+
+        <span class="info-label">
+          Artista
+        </span>
+
+        <strong id="resumo-artista">
+          -
+        </strong>
+
+      </div>
+
+    </div>
+
+
+    <!-- SERVIÇO -->
+    <div class="info-row">
+
+      <div class="info-icon">
+
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 18V5l12-2v13"></path>
+          <circle cx="6" cy="18" r="3"></circle>
+          <circle cx="18" cy="16" r="3"></circle>
+        </svg>
+
+      </div>
+
+      <div class="info-content">
+
+        <span class="info-label">
+          Serviço
+        </span>
+
+        <strong id="resumo-servico">
+          -
+        </strong>
+
+      </div>
+
+    </div>
+
+
+    <!-- LOCAL -->
+    <div class="info-row">
+
+      <div class="info-icon">
+
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"></path>
+          <circle cx="12" cy="10" r="2.5"></circle>
+        </svg>
+
+      </div>
+
+      <div class="info-content">
+
+        <span class="info-label">
+          Local
+        </span>
+
+        <strong id="resumo-local">
+          -
+        </strong>
+
+        <span id="resumo-endereco" class="info-secondary">
+          -
+        </span>
+
+      </div>
+
+    </div>
+
+
+    <!-- DATA -->
+    <div class="info-row">
+
+      <div class="info-icon">
+
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="4" width="18" height="18" rx="2"></rect>
+          <line x1="16" y1="2" x2="16" y2="6"></line>
+          <line x1="8" y1="2" x2="8" y2="6"></line>
+          <line x1="3" y1="10" x2="21" y2="10"></line>
+        </svg>
+
+      </div>
+
+      <div class="info-content">
+
+        <span class="info-label">
+          Data
+        </span>
+
+        <strong id="resumo-data">
+          -
+        </strong>
+
+      </div>
+
+    </div>
+
+
+    <!-- HORÁRIO -->
+    <div class="info-row">
+
+      <div class="info-icon">
+
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="9"></circle>
+          <polyline points="12 7 12 12 15 14"></polyline>
+        </svg>
+
+      </div>
+
+      <div class="info-content">
+
+        <span class="info-label">
+          Horário
+        </span>
+
+        <strong id="resumo-horario">
+          -
+        </strong>
+
+      </div>
+
+    </div>
+
+
+    <!-- PAGAMENTO -->
+    <div class="info-row">
+
+      <div class="info-icon">
+
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="5" width="18" height="14" rx="2"></rect>
+          <line x1="3" y1="10" x2="21" y2="10"></line>
+          <line x1="7" y1="15" x2="11" y2="15"></line>
+        </svg>
+
+      </div>
+
+      <div class="info-content">
+
+        <span class="info-label">
+          Pagamento
+        </span>
+
+        <strong id="resumo-pagamento">
+          -
+        </strong>
+
+      </div>
+
+    </div>
+
+
+    <!-- VALOR -->
+    <div class="valor-box">
+
+      <div>
+
+        <span>
+          Valor da contratação
+        </span>
+
+        <small>
+          Pagamento protegido pela plataforma
+        </small>
+
+      </div>
+
+      <strong id="resumo-preco">
+        -
+      </strong>
+
+    </div>
+
+  </section>
+
+
+  <!-- AVISO -->
+  <div class="security-card">
+
+    <div class="security-icon">
+
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7l8-4Z"></path>
+        <polyline points="9 12 11 14 15 10"></polyline>
+      </svg>
+
+    </div>
+
+    <div>
+
+      <strong>
+        Contratação segura
+      </strong>
+
+      <p>
+        O pagamento permanece protegido enquanto a contratação aguarda a confirmação do artista.
+      </p>
+
+    </div>
+
+  </div>
+
+
+  <!-- BOTÃO -->
+  <button class="btn-inicio" onclick="voltarInicio()">
+
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 10.5 12 3l9 7.5"></path>
+      <path d="M5 9.5V21h14V9.5"></path>
+      <path d="M9 21v-6h6v6"></path>
+    </svg>
+
+    Voltar ao início
+
+  </button>
+
+
+  <p class="footer-message">
+    Você poderá acompanhar o status da contratação pelo aplicativo.
+  </p>
+
+</main>
+</div> <script src="js/sucesso-servico.js"></script> </body> </html>

@@ -6,363 +6,438 @@ let servicoInicial = params.get("servico") || "Voz e violão";
 let precoInicial = Number(params.get("preco")) || 800;
 
 let servicoSelecionado = {
-  nome: servicoInicial,
-  preco: precoInicial
+nome: servicoInicial,
+preco: precoInicial
 };
 
-
 /* =========================================================
-   DADOS DOS ARTISTAS
+DADOS DOS ARTISTAS
 ========================================================= */
 
 const artistas = {
 
-  "rafael-melo": {
-    nome: "Rafael Melo",
-    iniciais: "RM",
-    categoria: "Cantor e violonista",
-    localizacao: "Goiânia, GO",
-    avaliacao: "4.9"
-  },
+"rafael-melo": {
+nome: "Rafael Melo",
+iniciais: "RM",
+categoria: "Cantor e violonista",
+localizacao: "Goiânia, GO",
+avaliacao: "4.9"
+},
 
-  "gabriel-tatu": {
-    nome: "Gabriel Tatu",
-    iniciais: "GT",
-    categoria: "Músico e guitarrista",
-    localizacao: "Goiânia, GO",
-    avaliacao: "4.8"
-  },
+"gabriel-tatu": {
+nome: "Gabriel Tatu",
+iniciais: "GT",
+categoria: "Músico e guitarrista",
+localizacao: "Goiânia, GO",
+avaliacao: "4.8"
+},
 
-  "marcos-lima": {
-    nome: "Marcos Lima",
-    iniciais: "ML",
-    categoria: "Compositor",
-    localizacao: "Goiânia, GO",
-    avaliacao: "4.9"
-  },
+"marcos-lima": {
+nome: "Marcos Lima",
+iniciais: "ML",
+categoria: "Compositor",
+localizacao: "Goiânia, GO",
+avaliacao: "4.9"
+},
 
-  "carlos-silva": {
-    nome: "Carlos Silva",
-    iniciais: "CS",
-    categoria: "Artista e produtor",
-    localizacao: "Goiânia, GO",
-    avaliacao: "4.7"
-  }
+"carlos-silva": {
+nome: "Carlos Silva",
+iniciais: "CS",
+categoria: "Artista e produtor",
+localizacao: "Goiânia, GO",
+avaliacao: "4.7"
+}
 
 };
 
-
 /* =========================================================
-   INICIALIZAÇÃO
+INICIALIZAÇÃO
 ========================================================= */
 
 document.addEventListener("DOMContentLoaded", function () {
 
-  carregarArtista();
+carregarArtista();
 
-  prepararServicos();
+prepararServicos();
 
-  selecionarServicoInicial();
+selecionarServicoInicial();
 
 });
 
-
 /* =========================================================
-   CARREGAR ARTISTA
+CARREGAR ARTISTA
 ========================================================= */
 
 function carregarArtista() {
 
-  const artista = artistas[artistaId];
+const artista = artistas[artistaId];
 
-  if (!artista) {
-    return;
-  }
+if (!artista) {
+return;
+}
 
-  const nome = document.getElementById("artistName");
-  const avatar = document.getElementById("artistAvatar");
-  const categoria = document.getElementById("artistCategory");
-  const localizacao = document.getElementById("artistLocation");
-  const avaliacao = document.getElementById("artistRating");
+const nome = document.getElementById("artistName");
+const avatar = document.getElementById("artistAvatar");
+const categoria = document.getElementById("artistCategory");
+const localizacao = document.getElementById("artistLocation");
+const avaliacao = document.getElementById("artistRating");
 
-  if (nome) {
-    nome.textContent = artista.nome;
-  }
+if (nome) {
+nome.textContent = artista.nome;
+}
 
-  if (avatar) {
-    avatar.textContent = artista.iniciais;
-  }
+if (avatar) {
+avatar.textContent = artista.iniciais;
+}
 
-  if (categoria) {
-    categoria.textContent = artista.categoria;
-  }
+if (categoria) {
+categoria.textContent = artista.categoria;
+}
 
-  if (localizacao) {
-    localizacao.textContent = artista.localizacao;
-  }
+if (localizacao) {
+localizacao.textContent = artista.localizacao;
+}
 
-  if (avaliacao) {
-    avaliacao.textContent = artista.avaliacao;
-  }
+if (avaliacao) {
+avaliacao.textContent = artista.avaliacao;
+}
 
-  artistaNome = artista.nome;
+artistaNome = artista.nome;
 
 }
 
-
 /* =========================================================
-   PREPARAR SERVIÇOS
+PREPARAR SERVIÇOS
 ========================================================= */
 
 function prepararServicos() {
 
-  const cards = document.querySelectorAll(
-    ".service-option-card"
-  );
+const cards = document.querySelectorAll(
+".service-option-card"
+);
 
-  cards.forEach(function (card) {
+cards.forEach(function (card) {
 
-    card.addEventListener("click", function () {
+card.addEventListener("click", function () {
 
-      selecionarServico(card);
+  selecionarServico(card);
 
-    });
+});
 
-  });
+});
 
 }
 
-
 /* =========================================================
-   SELECIONAR SERVIÇO
+SELECIONAR SERVIÇO
 ========================================================= */
 
 function selecionarServico(card) {
 
-  if (!card) {
-    return;
-  }
+if (!card) {
+return;
+}
 
-  const cards = document.querySelectorAll(
-    ".service-option-card"
-  );
+const cards = document.querySelectorAll(
+".service-option-card"
+);
 
-  cards.forEach(function (item) {
+cards.forEach(function (item) {
 
-    item.classList.remove("selecionado");
+item.classList.remove("selecionado");
 
-  });
+});
 
-  card.classList.add("selecionado");
+card.classList.add("selecionado");
 
-  const nome = card.dataset.service;
+const nome =
+card.dataset.service ||
+card.dataset.servico ||
+"";
 
-  const preco = Number(
-    card.dataset.price
-  );
+const preco =
+Number(
+card.dataset.price ||
+card.dataset.preco ||
+0
+);
 
-  servicoSelecionado = {
-    nome: nome,
-    preco: preco
-  };
+servicoSelecionado = {
+nome: nome,
+preco: preco
+};
 
-  atualizarResumo();
+atualizarResumo();
 
 }
 
-
 /* =========================================================
-   SELECIONAR SERVIÇO INICIAL
+SELECIONAR SERVIÇO INICIAL
 ========================================================= */
 
 function selecionarServicoInicial() {
 
-  const cards = document.querySelectorAll(
-    ".service-option-card"
+const cards = document.querySelectorAll(
+".service-option-card"
+);
+
+if (!cards.length) {
+return;
+}
+
+let cardEncontrado = null;
+
+cards.forEach(function (card) {
+
+const nome =
+  card.dataset.service ||
+  card.dataset.servico ||
+  "";
+
+const preco =
+  Number(
+    card.dataset.price ||
+    card.dataset.preco ||
+    0
   );
 
-  let cardEncontrado = null;
+if (
+  nome === servicoInicial ||
+  preco === precoInicial
+) {
 
-  cards.forEach(function (card) {
-
-    const nome = card.dataset.service;
-
-    const preco = Number(
-      card.dataset.price
-    );
-
-    if (
-      nome === servicoInicial ||
-      preco === precoInicial
-    ) {
-
-      cardEncontrado = card;
-
-    }
-
-  });
-
-  if (!cardEncontrado) {
-
-    cardEncontrado = cards[0];
-
-  }
-
-  if (cardEncontrado) {
-
-    selecionarServico(cardEncontrado);
-
-  }
+  cardEncontrado = card;
 
 }
 
+});
+
+if (!cardEncontrado) {
+
+cardEncontrado = cards[0];
+
+}
+
+if (cardEncontrado) {
+
+selecionarServico(cardEncontrado);
+
+}
+
+}
 
 /* =========================================================
-   ATUALIZAR RESUMO INFERIOR
+ATUALIZAR RESUMO INFERIOR
 ========================================================= */
 
 function atualizarResumo() {
 
-  const selectedService =
-    document.getElementById("selectedService");
+const selectedService =
+document.getElementById("selectedService");
 
-  const selectedPrice =
-    document.getElementById("selectedPrice");
+const selectedPrice =
+document.getElementById("selectedPrice");
 
-  if (selectedService) {
+if (selectedService) {
 
-    selectedService.textContent =
-      servicoSelecionado.nome;
-
-  }
-
-  if (selectedPrice) {
-
-    selectedPrice.textContent =
-      formatarPreco(
-        servicoSelecionado.preco
-      );
-
-  }
+selectedService.textContent =
+  servicoSelecionado.nome;
 
 }
 
+if (selectedPrice) {
 
-/* =========================================================
-   FORMATAR PREÇO
-========================================================= */
-
-function formatarPreco(valor) {
-
-  return Number(valor).toLocaleString(
-    "pt-BR",
-    {
-      style: "currency",
-      currency: "BRL"
-    }
+selectedPrice.textContent =
+  formatarPreco(
+    servicoSelecionado.preco
   );
 
 }
 
+}
 
 /* =========================================================
-   CONTINUAR CONTRATAÇÃO
+FORMATAR PREÇO
+========================================================= */
+
+function formatarPreco(valor) {
+
+return Number(valor).toLocaleString(
+"pt-BR",
+{
+style: "currency",
+currency: "BRL"
+}
+);
+
+}
+
+/* =========================================================
+CONTINUAR CONTRATAÇÃO
 ========================================================= */
 
 function continuarContratacao() {
 
-  if (!servicoSelecionado.nome) {
-    return;
-  }
+if (
+!servicoSelecionado ||
+!servicoSelecionado.nome
+) {
 
-  const id =
-    encodeURIComponent(artistaId);
+alert("Selecione um serviço para continuar.");
 
-  const artista =
-    encodeURIComponent(artistaNome);
-
-  const servico =
-    encodeURIComponent(
-      servicoSelecionado.nome
-    );
-
-  const preco =
-    encodeURIComponent(
-      servicoSelecionado.preco
-    );
-
-
-  /*
-   * Envia todas as informações
-   * para a próxima etapa.
-   */
-
-  const url =
-    `contratacao.html?id=${id}` +
-    `&artista=${artista}` +
-    `&servico=${servico}` +
-    `&preco=${preco}`;
-
-
-  window.location.href = url;
+return;
 
 }
 
+/*
+
+Cria os parâmetros que serão enviados
+para a página data-local.html
+*/
+
+const parametros =
+new URLSearchParams();
+
+parametros.set(
+"id",
+artistaId
+);
+
+parametros.set(
+"artista",
+artistaNome
+);
+
+parametros.set(
+"servico",
+servicoSelecionado.nome
+);
+
+parametros.set(
+"preco",
+servicoSelecionado.preco
+);
+
+/*
+
+PRÓXIMA ETAPA:
+selecao-servico.html
+     ↓
+data-local.html
+*/
+
+const url =
+"data-local.html?" +
+parametros.toString();
+
+console.log(
+"Avançando para data-local.html:",
+url
+);
+
+window.location.href = url;
+
+}
 
 /* =========================================================
-   VOLTAR PARA DETALHES DO ANÚNCIO
+VOLTAR PARA DETALHES DO ANÚNCIO
 ========================================================= */
 
 function voltarPagina() {
 
-  const id =
-    encodeURIComponent(artistaId);
+const parametros =
+new URLSearchParams();
 
-  const servico =
-    encodeURIComponent(
-      servicoSelecionado.nome
-    );
+parametros.set(
+"id",
+artistaId
+);
 
-  const preco =
-    encodeURIComponent(
-      servicoSelecionado.preco
-    );
+parametros.set(
+"artista",
+artistaNome
+);
 
+parametros.set(
+"servico",
+servicoSelecionado.nome
+);
 
-  const url =
-    `detalhes-anuncio.html?id=${id}` +
-    `&servico=${servico}` +
-    `&preco=${preco}`;
+parametros.set(
+"preco",
+servicoSelecionado.preco
+);
 
+const url =
+"detalhes-anuncio.html?" +
+parametros.toString();
 
-  window.location.href = url;
+window.location.href = url;
 
 }
 
+/* =========================================================
+CANCELAR CONTRATAÇÃO
+========================================================= */
+
+function cancelarContratacao() {
+
+localStorage.removeItem(
+"evento_artista_atual"
+);
+
+window.location.href =
+"index.html";
+
+}
 
 /* =========================================================
-   NAVEGAÇÃO — MENU INFERIOR
+NAVEGAÇÃO — MENU INFERIOR
 ========================================================= */
 
 function irParaInicio() {
 
-  window.location.href =
-    "index.html";
+window.location.href =
+"index.html";
 
 }
-
 
 function irParaAnunciar() {
 
-  window.location.href =
-    "anunciar.html";
+window.location.href =
+"anunciar.html";
 
 }
-
 
 function irParaPerfil() {
 
-  window.location.href =
-    `perfil-artista.html?id=${encodeURIComponent(artistaId)}`;
+window.location.href =
+"perfil-artista.html?id=" +
+encodeURIComponent(artistaId);
 
 }
+
+/* =========================================================
+DISPONIBILIZAR FUNÇÕES GLOBALMENTE
+========================================================= */
+
+window.selecionarServico =
+selecionarServico;
+
+window.continuarContratacao =
+continuarContratacao;
+
+window.voltarPagina =
+voltarPagina;
+
+window.cancelarContratacao =
+cancelarContratacao;
+
+window.irParaInicio =
+irParaInicio;
+
+window.irParaAnunciar =
+irParaAnunciar;
+
+window.irParaPerfil =
+irParaPerfil;
