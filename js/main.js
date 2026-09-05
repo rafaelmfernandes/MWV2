@@ -1,464 +1,360 @@
-// ==========================================
-// CONTROLE DE ABAS SUPERIORES (Conteúdo)
-// ==========================================
+/* =========================================================
+CONTROLE DE ABAS SUPERIORES — CONTEÚDO
+========================================================= */
+
 function mudarCategoria(categoriaId, elementoBtn) {
-  // Remove classe ativa de todas as abas
-  const abas = document.querySelectorAll('.cat-tab');
-  abas.forEach(tab => tab.classList.remove('ativo'));
-  
-  // Adiciona classe ativa na aba clicada
-  elementoBtn.classList.add('ativo');
+const abas = document.querySelectorAll('.cat-tab');
 
-  // Oculta todos os conteúdos
-  const conteudos = document.querySelectorAll('.cat-content');
-  conteudos.forEach(content => content.classList.remove('ativo'));
-
-  // Exibe o conteúdo correspondente
-  const conteudoAtivo = document.getElementById(`cat-${categoriaId}`);
-  if (conteudoAtivo) {
-    conteudoAtivo.classList.add('ativo');
-  }
-}
-
-// ==========================================
-// CONTROLE DO MENU INFERIOR
-// ==========================================
-function mudarAbaInferior(abaName, elementoBtn) {
-
-if (abaName === 'anunciar') {
-
-
-abrirModalAnuncio();
-
-return;
-
-
-}
-
-const itens =
-document.querySelectorAll('.bottom-nav-item');
-
-itens.forEach(item => {
-
-
-item.classList.remove('ativo');
-
-
+abas.forEach(tab => {
+tab.classList.remove('ativo');
 });
 
 if (elementoBtn) {
-
-
 elementoBtn.classList.add('ativo');
-
-
 }
 
-if (abaName === 'home') {
+const conteudos = document.querySelectorAll('.cat-content');
 
-
-window.scrollTo({
-
-  top: 0,
-
-  behavior: 'smooth'
-
+conteudos.forEach(content => {
+content.classList.remove('ativo');
 });
 
+const conteudoAtivo = document.getElementById(`cat-${categoriaId}`);
 
+if (conteudoAtivo) {
+conteudoAtivo.classList.add('ativo');
+}
 }
 
-if (abaName === 'perfil') {
+/* =========================================================
+MODAL — FILTROS
+========================================================= */
 
-
-abrirMeuPerfil();
-
-
-}
-
-}
-
-async function abrirMeuPerfil() {
-
-try {
-
-
-/*
- * Garante que o usuário esteja autenticado.
- */
-
-if (
-  typeof ControleSessao === 'undefined'
-) {
-
-  console.error(
-    '❌ ControleSessao não está disponível.'
-  );
-
-  window.location.href =
-    'login.html';
-
-  return;
-
-}
-
-
-const logado =
-  await ControleSessao.protegerPagina({
-
-    redirecionarPara:
-      'login.html',
-
-    salvarDestino:
-      true
-
-  });
-
-
-/*
- * Se não estiver logado, a própria função
- * já encaminha para o login.
- */
-
-if (!logado) {
-
-  return;
-
-}
-
-
-/*
- * Agora descobrimos qual é o tipo
- * de perfil do usuário.
- */
-
-let dadosUsuario = null;
-
-
-if (
-  typeof UsuarioAtual !== 'undefined'
-) {
-
-  dadosUsuario =
-    await UsuarioAtual.obter();
-
-}
-
-
-if (!dadosUsuario) {
-
-  console.error(
-    '❌ Não foi possível obter os dados do usuário.'
-  );
-
-
-  window.location.href =
-    'index.html';
-
-  return;
-
-}
-
-
-/*
- * O tipo vem de:
- *
- * dadosUsuario.tipoPerfil.nome
- */
-
-const tipoPerfil =
-  String(
-    dadosUsuario?.tipoPerfil?.nome || ''
-  )
-  .trim()
-  .toLowerCase();
-
-
-console.log(
-  '🎭 Tipo de perfil detectado:',
-  tipoPerfil
-);
-
-
-/*
- * ARTISTA
- */
-
-if (
-  tipoPerfil === 'artista'
-) {
-
-  window.location.href =
-    'meu-perfil-artista.html';
-
-  return;
-
-}
-
-
-/*
- * CONTRATANTE
- */
-
-if (
-  tipoPerfil === 'contratante'
-) {
-
-  window.location.href =
-    'meu-perfil-contratante.html';
-
-  return;
-
-}
-
-
-/*
- * OUTROS TIPOS
- *
- * Ainda vamos criar as páginas específicas.
- */
-
-if (
-  tipoPerfil === 'organizador_eventos'
-) {
-
-  console.log(
-    'ℹ️ Perfil de organizador ainda será implementado.'
-  );
-
-}
-
-
-if (
-  tipoPerfil === 'casa_shows'
-) {
-
-  console.log(
-    'ℹ️ Perfil de casa de shows ainda será implementado.'
-  );
-
-}
-
-
-if (
-  tipoPerfil === 'empresa_agencia'
-) {
-
-  console.log(
-    'ℹ️ Perfil de empresa/agência ainda será implementado.'
-  );
-
-}
-
-
-/*
- * Até criarmos as demais páginas,
- * retornamos para a home.
- */
-
-window.location.href =
-  'index.html';
-
-
-} catch (erro) {
-
-
-console.error(
-  '❌ Erro ao abrir perfil:',
-  erro
-);
-
-
-window.location.href =
-  'index.html';
-
-
-}
-
-}
-
-
-
-// ==========================================
-// MODAL DE CRIAR ANÚNCIO
-// ==========================================
-function abrirModalAnuncio() {
-  const modal = document.getElementById('modal-anunciar');
-  modal.classList.add('ativo');
-}
-
-function fecharModalAnuncio() {
-  const modal = document.getElementById('modal-anunciar');
-  modal.classList.remove('ativo');
-}
-
-function fecharModalAnuncioFora(event) {
-  const modal = document.getElementById('modal-anunciar');
-  if (event.target === modal) {
-    fecharModalAnuncio();
-  }
-}
-
-function selecionarTipoAnuncio(tipo) {
-  fecharModalAnuncio();
-  alert(`Redirecionando para o fluxo de cadastro de anúncio: ${tipo.toUpperCase()}`);
-}
-
-// ==========================================
-// MODAL DE FILTROS (Novo)
-// ==========================================
 function abrirModalFiltro() {
-  const modal = document.getElementById('modal-filtro');
-  modal.classList.add('ativo');
+const modal = document.getElementById('modal-filtro');
+
+if (!modal) {
+console.warn('⚠️ Modal de filtros não encontrado.');
+return;
+}
+
+modal.classList.add('ativo');
 }
 
 function fecharModalFiltro() {
-  const modal = document.getElementById('modal-filtro');
-  modal.classList.remove('ativo');
+const modal = document.getElementById('modal-filtro');
+
+if (!modal) {
+return;
+}
+
+modal.classList.remove('ativo');
 }
 
 function fecharModalFiltroFora(event) {
-  const modal = document.getElementById('modal-filtro');
-  if (event.target === modal) {
-    fecharModalFiltro();
-  }
+const modal = document.getElementById('modal-filtro');
+
+if (!modal) {
+return;
 }
 
-// Controla a exibição do seletor de instrumentos caso escolha "Músicos"
+if (event.target === modal) {
+fecharModalFiltro();
+}
+}
+
+/* =========================================================
+FILTROS — CONTROLE DE INSTRUMENTOS
+========================================================= */
+
 function tratarMudancaCategoriaFiltro() {
-  const categoriaSelect = document.getElementById('filtro-categoria');
-  const wrapperInstrumento = document.getElementById('wrapper-instrumento');
+const categoriaSelect =
+document.getElementById('filtro-categoria');
 
-  if (categoriaSelect.value === 'musicos') {
-    wrapperInstrumento.style.display = 'flex';
-  } else {
-    wrapperInstrumento.style.display = 'none';
-    document.getElementById('filtro-instrumento').value = ''; // Reseta campo
-  }
+const wrapperInstrumento =
+document.getElementById('wrapper-instrumento');
+
+const instrumentoSelect =
+document.getElementById('filtro-instrumento');
+
+if (!categoriaSelect || !wrapperInstrumento) {
+return;
 }
+
+if (categoriaSelect.value === 'musicos') {
+wrapperInstrumento.style.display = 'flex';
+} else {
+wrapperInstrumento.style.display = 'none';
+
+if (instrumentoSelect) {
+instrumentoSelect.value = '';
+}
+
+}
+}
+
+/* =========================================================
+FILTROS — LIMPAR
+========================================================= */
 
 function limparFiltros() {
-  document.getElementById('filtro-estado').value = '';
-  document.getElementById('filtro-cidade').value = '';
-  document.getElementById('filtro-categoria').value = '';
-  document.getElementById('filtro-instrumento').value = '';
-  document.getElementById('filtro-estilo').value = '';
-  document.getElementById('filtro-valor-min').value = '';
-  document.getElementById('filtro-valor-max').value = '';
-  tratarMudancaCategoriaFiltro();
+const campos = [
+'filtro-estado',
+'filtro-cidade',
+'filtro-categoria',
+'filtro-instrumento',
+'filtro-estilo',
+'filtro-valor-min',
+'filtro-valor-max'
+];
+
+campos.forEach(id => {
+const campo = document.getElementById(id);
+
+if (campo) {
+campo.value = '';
 }
+
+});
+
+tratarMudancaCategoriaFiltro();
+}
+
+/* =========================================================
+FILTROS — APLICAR
+========================================================= */
 
 function aplicarFiltros() {
-  const estado = document.getElementById('filtro-estado').value;
-  const cidade = document.getElementById('filtro-cidade').value;
-  const categoria = document.getElementById('filtro-categoria').value;
-  const instrumento = document.getElementById('filtro-instrumento').value;
-  const estilo = document.getElementById('filtro-estilo').value;
-  const vMin = document.getElementById('filtro-valor-min').value;
-  const vMax = document.getElementById('filtro-valor-max').value;
+const estado =
+document.getElementById('filtro-estado')?.value || '';
 
-  // Lógica de feedback ou requisição de listagem filtrada
-  console.log('Filtros aplicados:', { estado, cidade, categoria, instrumento, estilo, vMin, vMax });
-  
-  fecharModalFiltro();
-  alert('Filtros aplicados com sucesso! Atualizando resultados...');
+const cidade =
+document.getElementById('filtro-cidade')?.value || '';
+
+const categoria =
+document.getElementById('filtro-categoria')?.value || '';
+
+const instrumento =
+document.getElementById('filtro-instrumento')?.value || '';
+
+const estilo =
+document.getElementById('filtro-estilo')?.value || '';
+
+const vMin =
+document.getElementById('filtro-valor-min')?.value || '';
+
+const vMax =
+document.getElementById('filtro-valor-max')?.value || '';
+
+console.log('🔎 Filtros aplicados:', {
+estado,
+cidade,
+categoria,
+instrumento,
+estilo,
+vMin,
+vMax
+});
+
+fecharModalFiltro();
+
+alert(
+'Filtros aplicados com sucesso! Atualizando resultados...'
+);
 }
 
-// ==========================================
-// PAINEL DE BUSCA (desliza do topo)
-// ==========================================
-let cardsPesquisaveis = null; // cache dos cards, montado na primeira busca
-let itemNavPesquisaAtivo = null; // guarda o botão do menu pra remover o "ativo" ao fechar
+/* =========================================================
+PAINEL DE PESQUISA
+========================================================= */
 
-function abrirPesquisa(elementoBtn) {
-  itemNavPesquisaAtivo = elementoBtn;
+let cardsPesquisaveis = null;
 
-  const itens = document.querySelectorAll('.bottom-nav-item');
-  itens.forEach(item => item.classList.remove('ativo'));
-  elementoBtn.classList.add('ativo');
+/*
 
-  const painel = document.getElementById('painel-pesquisa');
-  const campo = document.getElementById('campo-pesquisa');
+* Abre o painel de pesquisa.
+*
+* A ativação do botão do menu inferior agora pertence
+* ao componente menu-inferior.js.
+  */
 
-  painel.classList.add('ativo');
-  campo.value = '';
-  filtrarPesquisa('');
+function abrirPesquisa() {
+const painel =
+document.getElementById('painel-pesquisa');
 
-  setTimeout(() => campo.focus(), 300);
+const campo =
+document.getElementById('campo-pesquisa');
+
+if (!painel || !campo) {
+console.warn(
+'⚠️ Elementos do painel de pesquisa não encontrados.'
+);
+
+return;
 }
+
+painel.classList.add('ativo');
+
+campo.value = '';
+
+filtrarPesquisa('');
+
+setTimeout(() => {
+campo.focus();
+}, 300);
+}
+
+/*
+
+* Fecha o painel de pesquisa.
+*
+* O controle visual do menu inferior pertence
+* ao menu-inferior.js.
+  */
 
 function fecharPesquisa() {
-  const painel = document.getElementById('painel-pesquisa');
-  painel.classList.remove('ativo');
+const painel =
+document.getElementById('painel-pesquisa');
 
-  if (itemNavPesquisaAtivo) {
-    itemNavPesquisaAtivo.classList.remove('ativo');
-  }
-
-  // devolve o destaque pro item Início, já que fechar a busca volta pra Home
-  const itemHome = document.getElementById('nav-item-home');
-  if (itemHome) itemHome.classList.add('ativo');
+if (!painel) {
+return;
 }
 
-// Junta todos os cards de anúncio (de todas as categorias, mesmo as escondidas)
-// com o texto neles pra poder comparar com o que a pessoa digitar.
+painel.classList.remove('ativo');
+}
+
+/* =========================================================
+PESQUISA — COLETAR CARDS
+========================================================= */
+
 function coletarCardsPesquisaveis() {
-  const cards = document.querySelectorAll('.cat-content .ad-card-novo');
-  const lista = [];
+const cards =
+document.querySelectorAll(
+'.cat-content .ad-card-novo'
+);
 
-  cards.forEach(card => {
-    const linkPai = card.closest('a');
-    const nome = card.querySelector('.ad-user-info h4');
-    const estilo = card.querySelector('.ad-estilo');
-    const tituloDesc = card.querySelector('.ad-descricao strong');
-    const textoDesc = card.querySelector('.ad-descricao p');
+const lista = [];
 
-    const textoBusca = [
-      nome ? nome.textContent : '',
-      estilo ? estilo.textContent : '',
-      tituloDesc ? tituloDesc.textContent : '',
-      textoDesc ? textoDesc.textContent : ''
-    ].join(' ').toLowerCase();
+cards.forEach(card => {
+const linkPai =
+card.closest('a');
 
-    lista.push({
-      href: linkPai ? linkPai.getAttribute('href') : '#',
-      html: card.outerHTML,
-      textoBusca
-    });
-  });
+const nome =
+card.querySelector('.ad-user-info h4');
 
-  return lista;
+const estilo =
+card.querySelector('.ad-estilo');
+
+const tituloDesc =
+card.querySelector(
+'.ad-descricao strong'
+);
+
+const textoDesc =
+card.querySelector(
+'.ad-descricao p'
+);
+
+const textoBusca = [
+nome?.textContent || '',
+estilo?.textContent || '',
+tituloDesc?.textContent || '',
+textoDesc?.textContent || ''
+]
+.join(' ')
+.toLowerCase();
+
+lista.push({
+href: linkPai
+? linkPai.getAttribute('href')
+: '#',
+
+html: card.outerHTML,
+
+textoBusca
+});
+
+});
+
+return lista;
 }
+
+/* =========================================================
+PESQUISA — FILTRAR
+========================================================= */
 
 function filtrarPesquisa(termo) {
-  if (!cardsPesquisaveis) {
-    cardsPesquisaveis = coletarCardsPesquisaveis();
-  }
-
-  const container = document.getElementById('resultados-pesquisa');
-  const termoLimpo = termo.trim().toLowerCase();
-
-  if (termoLimpo === '') {
-    container.innerHTML = '<p class="search-estado-vazio">Digite algo para buscar em todas as categorias.</p>';
-    return;
-  }
-
-  const encontrados = cardsPesquisaveis.filter(item => item.textoBusca.indexOf(termoLimpo) !== -1);
-
-  if (encontrados.length === 0) {
-    container.innerHTML = `<p class="search-estado-vazio">Nenhum resultado para "${termo}".</p>`;
-    return;
-  }
-
-  container.innerHTML = encontrados
-    .map(item => `<a href="${item.href}" style="text-decoration:none;color:inherit;display:block;">${item.html}</a>`)
-    .join('');
+if (!cardsPesquisaveis) {
+cardsPesquisaveis =
+coletarCardsPesquisaveis();
 }
 
-// Fecha o painel de busca com a tecla Esc
-document.addEventListener('keydown', (evento) => {
-  const painel = document.getElementById('painel-pesquisa');
-  if (evento.key === 'Escape' && painel && painel.classList.contains('ativo')) {
-    fecharPesquisa();
-  }
-});
+const container =
+document.getElementById(
+'resultados-pesquisa'
+);
+
+if (!container) {
+return;
+}
+
+const termoLimpo =
+String(termo || '')
+.trim()
+.toLowerCase();
+
+if (termoLimpo === '') {
+container.innerHTML =
+'<p class="search-estado-vazio">Digite algo para buscar em todas as categorias.</p>';
+
+return;
+}
+
+const encontrados =
+cardsPesquisaveis.filter(item =>
+item.textoBusca.includes(
+termoLimpo
+)
+);
+
+if (encontrados.length === 0) {
+container.innerHTML =
+`<p class="search-estado-vazio">Nenhum resultado para "${termo}".</p>`;
+
+return;
+}
+
+container.innerHTML =
+encontrados
+.map(item => `         <a
+          href="${item.href}"
+          style="text-decoration:none;color:inherit;display:block;"         >
+          ${item.html}         </a>
+      `)
+.join('');
+}
+
+/* =========================================================
+TECLA ESC — FECHAR PESQUISA
+========================================================= */
+
+document.addEventListener(
+'keydown',
+evento => {
+if (evento.key !== 'Escape') {
+return;
+}
+
+const painel =
+document.getElementById(
+'painel-pesquisa'
+);
+
+if (
+painel &&
+painel.classList.contains('ativo')
+) {
+fecharPesquisa();
+}
+
+}
+);

@@ -4,17 +4,18 @@
 
 <head>
 
-
 <meta charset="UTF-8">
 
 <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
+name="viewport"
+content="width=device-width, initial-scale=1.0"
+
 >
 
 <meta
-    name="theme-color"
-    content="#ffffff"
+name="theme-color"
+content="#ffffff"
+
 >
 
 <title>
@@ -26,705 +27,723 @@
     href="css/meu-perfil-contratante.css"
 >
 
+<link
+    rel="stylesheet"
+    href="css/menu-inferior.css"
+>
 
 </head>
 
 <body>
 
-
 <div class="app">
 
 
-    <!-- =====================================================
-         TOPO
-    ====================================================== -->
-
-    <header class="topbar">
-
-        <button
-            id="btnVoltar"
-            class="topbar-button"
-            type="button"
-            aria-label="Voltar"
-        >
-            <i data-lucide="arrow-left"></i>
-        </button>
-
-
-        <div class="topbar-title">
-
-            <span>
-                Meu perfil
-            </span>
-
-        </div>
-
-
-        <button
-            id="btnCompartilhar"
-            class="topbar-button"
-            type="button"
-            aria-label="Compartilhar perfil"
-        >
-            <i data-lucide="share-2"></i>
-        </button>
-
-    </header>
-
-
-
-    <!-- =====================================================
-         PERFIL
-    ====================================================== -->
-
-    <main class="profile-page">
-
-
-        <section class="profile-card">
-
-
-            <div class="profile-header">
-
-
-                <div class="avatar-wrapper">
-
-                    <div
-                        id="profileAvatar"
-                        class="profile-avatar"
-                    >
-
-                        <span id="profileInitials">
-                            U
-                        </span>
-
-                    </div>
-
-                    <span
-                        id="onlineIndicator"
-                        class="online-indicator"
-                    ></span>
-
-                </div>
-
-
-                <div class="profile-main-info">
-
-                    <div class="name-line">
-
-                        <h1 id="contractorName">
-                            Usuário
-                        </h1>
-
-                    </div>
-
-
-                    <p
-                        id="contractorType"
-                        class="profile-type"
-                    >
-                        Contratante
-                    </p>
-
-
-                    <div class="profile-location">
-
-                        <i data-lucide="map-pin"></i>
-
-                        <span id="contractorLocation">
-                            Localização não informada
-                        </span>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-
-            <!-- STATUS -->
-
-            <div class="status-row">
-
-                <span
-                    id="profileStatus"
-                    class="status-badge available"
-                >
-                    <span class="status-dot"></span>
-                    Perfil ativo
-                </span>
-
-            </div>
-
-
-
-            <!-- AÇÕES -->
-
-            <div class="profile-actions">
-
-                <button
-                    id="btnEditarPerfil"
-                    class="btn-primary"
-                    type="button"
-                >
-
-                    <i data-lucide="pencil"></i>
-
-                    <span>
-                        Editar perfil
-                    </span>
-
-                </button>
-
-            </div>
-
-        </section>
-
-
-
-        <!-- =================================================
-             ABAS
-        ================================================== -->
-
-        <nav class="profile-tabs">
-
-            <button
-                class="tab-button active"
-                data-tab="sobre"
-                type="button"
-            >
-                Sobre
-            </button>
-
-
-            <button
-                class="tab-button"
-                data-tab="contratacoes"
-                type="button"
-            >
-                Contratações
-            </button>
-
-
-            <button
-                class="tab-button"
-                data-tab="favoritos"
-                type="button"
-            >
-                Favoritos
-            </button>
-
-
-            <button
-                class="tab-button"
-                data-tab="avaliacoes"
-                type="button"
-            >
-                Avaliações
-            </button>
-
-
-            <button
-                class="tab-button"
-                data-tab="carteira"
-                type="button"
-            >
-                Pagamentos
-            </button>
-
-        </nav>
-
-
-
-        <!-- =================================================
-             SOBRE
-        ================================================== -->
-
-        <section
-            id="tab-sobre"
-            class="tab-content active"
-        >
-
-
-            <div class="section-card">
-
-                <div class="section-title">
-
-                    <div>
-
-                        <h2>
-                            Sobre mim
-                        </h2>
-
-                        <p>
-                            Informações sobre você
-                        </p>
-
-                    </div>
-
-                    <i data-lucide="user"></i>
-
-                </div>
-
-
-                <p
-                    id="contractorBio"
-                    class="bio-text"
-                >
-                    Adicione uma descrição sobre você,
-                    sua empresa ou sobre o tipo de evento
-                    que costuma realizar.
-                </p>
-
-            </div>
-
-
-
-            <!-- INFORMAÇÕES -->
-
-            <div class="section-card">
-
-                <div class="section-title">
-
-                    <div>
-
-                        <h2>
-                            Informações
-                        </h2>
-
-                        <p>
-                            Dados do contratante
-                        </p>
-
-                    </div>
-
-                    <i data-lucide="info"></i>
-
-                </div>
-
-
-                <div class="info-list">
-
-
-                    <div class="info-item">
-
-                        <div class="info-icon">
-
-                            <i data-lucide="briefcase"></i>
-
-                        </div>
-
-                        <div>
-
-                            <span>
-                                Tipo de contratante
-                            </span>
-
-                            <strong id="contractorCategory">
-                                Contratante
-                            </strong>
-
-                        </div>
-
-                    </div>
-
-
-
-                    <div class="info-item">
-
-                        <div class="info-icon">
-
-                            <i data-lucide="phone"></i>
-
-                        </div>
-
-                        <div>
-
-                            <span>
-                                Telefone
-                            </span>
-
-                            <strong id="contractorPhone">
-                                Não informado
-                            </strong>
-
-                        </div>
-
-                    </div>
-
-
-
-                    <div class="info-item">
-
-                        <div class="info-icon">
-
-                            <i data-lucide="mail"></i>
-
-                        </div>
-
-                        <div>
-
-                            <span>
-                                E-mail
-                            </span>
-
-                            <strong id="contractorEmail">
-                                Não informado
-                            </strong>
-
-                        </div>
-
-                    </div>
-
-
-
-                    <div class="info-item">
-
-                        <div class="info-icon">
-
-                            <i data-lucide="calendar"></i>
-
-                        </div>
-
-                        <div>
-
-                            <span>
-                                Membro desde
-                            </span>
-
-                            <strong id="contractorSince">
-                                —
-                            </strong>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-
-        <!-- =================================================
-             CONTRATAÇÕES
-        ================================================== -->
-
-        <section
-            id="tab-contratacoes"
-            class="tab-content"
-        >
-
-            <div class="section-card">
-
-                <div class="section-title">
-
-                    <div>
-
-                        <h2>
-                            Minhas contratações
-                        </h2>
-
-                        <p>
-                            Histórico dos serviços contratados
-                        </p>
-
-                    </div>
-
-                    <i data-lucide="calendar-check"></i>
-
-                </div>
-
-
-                <div
-                    id="contratacoesList"
-                    class="empty-state"
-                >
-
-                    <div class="empty-icon">
-
-                        <i data-lucide="music"></i>
-
-                    </div>
-
-                    <strong>
-                        Nenhuma contratação ainda
-                    </strong>
-
-                    <span>
-                        Quando você contratar um artista,
-                        suas contratações aparecerão aqui.
-                    </span>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-
-        <!-- =================================================
-             FAVORITOS
-        ================================================== -->
-
-        <section
-            id="tab-favoritos"
-            class="tab-content"
-        >
-
-            <div class="section-card">
-
-                <div class="section-title">
-
-                    <div>
-
-                        <h2>
-                            Meus favoritos
-                        </h2>
-
-                        <p>
-                            Artistas que você salvou
-                        </p>
-
-                    </div>
-
-                    <i data-lucide="heart"></i>
-
-                </div>
-
-
-                <div
-                    id="favoritosList"
-                    class="empty-state"
-                >
-
-                    <div class="empty-icon">
-
-                        <i data-lucide="heart"></i>
-
-                    </div>
-
-                    <strong>
-                        Nenhum artista favorito
-                    </strong>
-
-                    <span>
-                        Os artistas que você favoritar
-                        aparecerão aqui.
-                    </span>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-
-        <!-- =================================================
-             AVALIAÇÕES
-        ================================================== -->
-
-        <section
-            id="tab-avaliacoes"
-            class="tab-content"
-        >
-
-            <div class="section-card">
-
-                <div class="section-title">
-
-                    <div>
-
-                        <h2>
-                            Minhas avaliações
-                        </h2>
-
-                        <p>
-                            Avaliações feitas por você
-                        </p>
-
-                    </div>
-
-                    <i data-lucide="star"></i>
-
-                </div>
-
-
-                <div
-                    id="avaliacoesList"
-                    class="empty-state"
-                >
-
-                    <div class="empty-icon">
-
-                        <i data-lucide="star"></i>
-
-                    </div>
-
-                    <strong>
-                        Nenhuma avaliação ainda
-                    </strong>
-
-                    <span>
-                        Depois de contratar um artista,
-                        você poderá avaliar o serviço realizado.
-                    </span>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-
-        <!-- =================================================
-             PAGAMENTOS
-        ================================================== -->
-
-        <section
-            id="tab-carteira"
-            class="tab-content"
-        >
-
-
-            <div class="balance-card">
-
-                <div class="balance-header">
-
-                    <div>
-
-                        <span>
-                            Gastos com contratações
-                        </span>
-
-                        <h2 id="totalContratado">
-                            R$ 0,00
-                        </h2>
-
-                    </div>
-
-                    <div class="balance-icon">
-
-                        <i data-lucide="wallet"></i>
-
-                    </div>
-
-                </div>
-
-
-                <div class="balance-footer">
-
-                    <div>
-
-                        <span>
-                            Pagamentos pendentes
-                        </span>
-
-                        <strong id="pagamentosPendentes">
-                            R$ 0,00
-                        </strong>
-
-                    </div>
-
-
-                    <div>
-
-                        <span>
-                            Total pago
-                        </span>
-
-                        <strong id="totalPago">
-                            R$ 0,00
-                        </strong>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-
-            <div class="section-card">
-
-                <div class="section-title">
-
-                    <div>
-
-                        <h2>
-                            Histórico de pagamentos
-                        </h2>
-
-                        <p>
-                            Seus pagamentos no MusicalWorld
-                        </p>
-
-                    </div>
-
-                    <i data-lucide="receipt"></i>
-
-                </div>
-
-
-                <div
-                    id="pagamentosList"
-                    class="empty-state"
-                >
-
-                    <div class="empty-icon">
-
-                        <i data-lucide="receipt"></i>
-
-                    </div>
-
-                    <strong>
-                        Nenhum pagamento
-                    </strong>
-
-                    <span>
-                        Seus pagamentos aparecerão aqui
-                        quando você realizar uma contratação.
-                    </span>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-    </main>
-
-
-
-    <!-- =====================================================
-         TOAST
-    ====================================================== -->
-
-    <div
-        id="toast"
-        class="toast"
-        role="status"
-        aria-live="polite"
+<!-- =====================================================
+     TOPO
+====================================================== -->
+
+<header class="topbar">
+
+    <button
+        id="btnVoltar"
+        class="topbar-button"
+        type="button"
+        aria-label="Voltar"
     >
 
-        <i data-lucide="check-circle"></i>
+        <i data-lucide="arrow-left"></i>
 
-        <span id="toastMessage">
-            Concluído
+    </button>
+
+
+    <div class="topbar-title">
+
+        <span>
+            Meu perfil
         </span>
 
     </div>
 
 
+    <button
+        id="btnCompartilhar"
+        class="topbar-button"
+        type="button"
+        aria-label="Compartilhar perfil"
+    >
+
+        <i data-lucide="share-2"></i>
+
+    </button>
+
+</header>
+
+
+
+<!-- =====================================================
+     PERFIL
+====================================================== -->
+
+<main class="profile-page">
+
+
+    <section class="profile-card">
+
+
+        <div class="profile-header">
+
+
+            <div class="avatar-wrapper">
+
+                <div
+                    id="profileAvatar"
+                    class="profile-avatar"
+                >
+
+                    <span id="profileInitials">
+                        U
+                    </span>
+
+                </div>
+
+                <span
+                    id="onlineIndicator"
+                    class="online-indicator"
+                ></span>
+
+            </div>
+
+
+            <div class="profile-main-info">
+
+                <div class="name-line">
+
+                    <h1 id="contractorName">
+                        Usuário
+                    </h1>
+
+                </div>
+
+
+                <p
+                    id="contractorType"
+                    class="profile-type"
+                >
+                    Contratante
+                </p>
+
+
+                <div class="profile-location">
+
+                    <i data-lucide="map-pin"></i>
+
+                    <span id="contractorLocation">
+                        Localização não informada
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- STATUS -->
+
+        <div class="status-row">
+
+            <span
+                id="profileStatus"
+                class="status-badge available"
+            >
+
+                <span class="status-dot"></span>
+
+                Perfil ativo
+
+            </span>
+
+        </div>
+
+
+
+        <!-- AÇÕES -->
+
+        <div class="profile-actions">
+
+            <button
+                id="btnEditarPerfil"
+                class="btn-primary"
+                type="button"
+            >
+
+                <i data-lucide="pencil"></i>
+
+                <span>
+                    Editar perfil
+                </span>
+
+            </button>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =================================================
+         ABAS
+    ================================================== -->
+
+    <nav class="profile-tabs">
+
+        <button
+            class="tab-button active"
+            data-tab="sobre"
+            type="button"
+        >
+            Sobre
+        </button>
+
+
+        <button
+            class="tab-button"
+            data-tab="contratacoes"
+            type="button"
+        >
+            Contratações
+        </button>
+
+
+        <button
+            class="tab-button"
+            data-tab="favoritos"
+            type="button"
+        >
+            Favoritos
+        </button>
+
+
+        <button
+            class="tab-button"
+            data-tab="avaliacoes"
+            type="button"
+        >
+            Avaliações
+        </button>
+
+
+        <button
+            class="tab-button"
+            data-tab="carteira"
+            type="button"
+        >
+            Pagamentos
+        </button>
+
+    </nav>
+
+
+
+    <!-- =================================================
+         SOBRE
+    ================================================== -->
+
+    <section
+        id="tab-sobre"
+        class="tab-content active"
+    >
+
+
+        <div class="section-card">
+
+            <div class="section-title">
+
+                <div>
+
+                    <h2>
+                        Sobre mim
+                    </h2>
+
+                    <p>
+                        Informações sobre você
+                    </p>
+
+                </div>
+
+                <i data-lucide="user"></i>
+
+            </div>
+
+
+            <p
+                id="contractorBio"
+                class="bio-text"
+            >
+
+                Adicione uma descrição sobre você,
+                sua empresa ou sobre o tipo de evento
+                que costuma realizar.
+
+            </p>
+
+        </div>
+
+
+
+        <!-- INFORMAÇÕES -->
+
+        <div class="section-card">
+
+            <div class="section-title">
+
+                <div>
+
+                    <h2>
+                        Informações
+                    </h2>
+
+                    <p>
+                        Dados do contratante
+                    </p>
+
+                </div>
+
+                <i data-lucide="info"></i>
+
+            </div>
+
+
+            <div class="info-list">
+
+
+                <div class="info-item">
+
+                    <div class="info-icon">
+
+                        <i data-lucide="briefcase"></i>
+
+                    </div>
+
+                    <div>
+
+                        <span>
+                            Tipo de contratante
+                        </span>
+
+                        <strong id="contractorCategory">
+                            Contratante
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="info-item">
+
+                    <div class="info-icon">
+
+                        <i data-lucide="phone"></i>
+
+                    </div>
+
+                    <div>
+
+                        <span>
+                            Telefone
+                        </span>
+
+                        <strong id="contractorPhone">
+                            Não informado
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="info-item">
+
+                    <div class="info-icon">
+
+                        <i data-lucide="mail"></i>
+
+                    </div>
+
+                    <div>
+
+                        <span>
+                            E-mail
+                        </span>
+
+                        <strong id="contractorEmail">
+                            Não informado
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="info-item">
+
+                    <div class="info-icon">
+
+                        <i data-lucide="calendar"></i>
+
+                    </div>
+
+                    <div>
+
+                        <span>
+                            Membro desde
+                        </span>
+
+                        <strong id="contractorSince">
+                            —
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =================================================
+         CONTRATAÇÕES
+    ================================================== -->
+
+    <section
+        id="tab-contratacoes"
+        class="tab-content"
+    >
+
+        <div class="section-card">
+
+            <div class="section-title">
+
+                <div>
+
+                    <h2>
+                        Minhas contratações
+                    </h2>
+
+                    <p>
+                        Histórico dos serviços contratados
+                    </p>
+
+                </div>
+
+                <i data-lucide="calendar-check"></i>
+
+            </div>
+
+
+            <div
+                id="contratacoesList"
+                class="empty-state"
+            >
+
+                <div class="empty-icon">
+
+                    <i data-lucide="music"></i>
+
+                </div>
+
+                <strong>
+                    Nenhuma contratação ainda
+                </strong>
+
+                <span>
+                    Quando você contratar um artista,
+                    suas contratações aparecerão aqui.
+                </span>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =================================================
+         FAVORITOS
+    ================================================== -->
+
+    <section
+        id="tab-favoritos"
+        class="tab-content"
+    >
+
+        <div class="section-card">
+
+            <div class="section-title">
+
+                <div>
+
+                    <h2>
+                        Meus favoritos
+                    </h2>
+
+                    <p>
+                        Artistas que você salvou
+                    </p>
+
+                </div>
+
+                <i data-lucide="heart"></i>
+
+            </div>
+
+
+            <div
+                id="favoritosList"
+                class="empty-state"
+            >
+
+                <div class="empty-icon">
+
+                    <i data-lucide="heart"></i>
+
+                </div>
+
+                <strong>
+                    Nenhum artista favorito
+                </strong>
+
+                <span>
+                    Os artistas que você favoritar
+                    aparecerão aqui.
+                </span>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =================================================
+         AVALIAÇÕES
+    ================================================== -->
+
+    <section
+        id="tab-avaliacoes"
+        class="tab-content"
+    >
+
+        <div class="section-card">
+
+            <div class="section-title">
+
+                <div>
+
+                    <h2>
+                        Minhas avaliações
+                    </h2>
+
+                    <p>
+                        Avaliações feitas por você
+                    </p>
+
+                </div>
+
+                <i data-lucide="star"></i>
+
+            </div>
+
+
+            <div
+                id="avaliacoesList"
+                class="empty-state"
+            >
+
+                <div class="empty-icon">
+
+                    <i data-lucide="star"></i>
+
+                </div>
+
+                <strong>
+                    Nenhuma avaliação ainda
+                </strong>
+
+                <span>
+                    Depois de contratar um artista,
+                    você poderá avaliar o serviço realizado.
+                </span>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =================================================
+         PAGAMENTOS
+    ================================================== -->
+
+    <section
+        id="tab-carteira"
+        class="tab-content"
+    >
+
+
+        <div class="balance-card">
+
+            <div class="balance-header">
+
+                <div>
+
+                    <span>
+                        Gastos com contratações
+                    </span>
+
+                    <h2 id="totalContratado">
+                        R$ 0,00
+                    </h2>
+
+                </div>
+
+                <div class="balance-icon">
+
+                    <i data-lucide="wallet"></i>
+
+                </div>
+
+            </div>
+
+
+            <div class="balance-footer">
+
+                <div>
+
+                    <span>
+                        Pagamentos pendentes
+                    </span>
+
+                    <strong id="pagamentosPendentes">
+                        R$ 0,00
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Total pago
+                    </span>
+
+                    <strong id="totalPago">
+                        R$ 0,00
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="section-card">
+
+            <div class="section-title">
+
+                <div>
+
+                    <h2>
+                        Histórico de pagamentos
+                    </h2>
+
+                    <p>
+                        Seus pagamentos no MusicalWorld
+                    </p>
+
+                </div>
+
+                <i data-lucide="receipt"></i>
+
+            </div>
+
+
+            <div
+                id="pagamentosList"
+                class="empty-state"
+            >
+
+                <div class="empty-icon">
+
+                    <i data-lucide="receipt"></i>
+
+                </div>
+
+                <strong>
+                    Nenhum pagamento
+                </strong>
+
+                <span>
+                    Seus pagamentos aparecerão aqui
+                    quando você realizar uma contratação.
+                </span>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+</main>
+
+
+
+<!-- =====================================================
+     MENU INFERIOR
+====================================================== -->
+
+<div id="menu-inferior-container"></div>
+
+
+
+<!-- =====================================================
+     TOAST
+====================================================== -->
+
+<div
+    id="toast"
+    class="toast"
+    role="status"
+    aria-live="polite"
+>
+
+    <i data-lucide="check-circle"></i>
+
+    <span id="toastMessage">
+        Concluído
+    </span>
+
 </div>
 
 
+</div>
 
 <!-- =========================================================
      SUPABASE
@@ -740,22 +759,23 @@
 
 <script src="js/core/ControleSessao.js"></script>
 
-
-
 <!-- =========================================================
      LUCIDE
 ========================================================== -->
 
 <script src="https://unpkg.com/lucide@latest"></script>
 
+<!-- =========================================================
+     COMPONENTE — MENU INFERIOR
+========================================================== -->
 
+<script src="js/components/menu-inferior.js"></script>
 
 <!-- =========================================================
      PÁGINA
 ========================================================== -->
 
 <script src="js/meu-perfil-contratante.js"></script>
-
 
 <script>
 
@@ -776,7 +796,6 @@
     );
 
 </script>
-
 
 </body>
 

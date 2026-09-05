@@ -1,0 +1,257 @@
+/* =========================================================
+PAINEL DE PESQUISA — MUSICALWORLD
+CSS DO COMPONENTE REUTILIZÁVEL
+========================================================= */
+
+.search-overlay {
+position: fixed;
+inset: 0;
+
+
+width: 100%;
+max-width: 480px;
+
+margin: 0 auto;
+
+background: #ffffff;
+
+z-index: 10000;
+
+display: flex;
+flex-direction: column;
+
+opacity: 0;
+visibility: hidden;
+
+transform: translateY(8px);
+
+transition:
+    opacity 0.2s ease,
+    visibility 0.2s ease,
+    transform 0.2s ease;
+
+box-sizing: border-box;
+
+
+}
+
+.search-overlay.ativo {
+opacity: 1;
+visibility: visible;
+transform: translateY(0);
+}
+
+/* =========================================================
+CABEÇALHO
+========================================================= */
+
+.search-overlay-header {
+display: flex;
+align-items: center;
+gap: 10px;
+
+
+padding:
+    calc(12px + env(safe-area-inset-top))
+    16px
+    12px;
+
+border-bottom: 1px solid #e5e7eb;
+
+background: #ffffff;
+
+box-sizing: border-box;
+
+
+}
+
+/* =========================================================
+CAMPO DE PESQUISA
+========================================================= */
+
+.search-overlay-input-wrapper {
+flex: 1;
+
+
+min-width: 0;
+
+height: 42px;
+
+display: flex;
+align-items: center;
+
+gap: 9px;
+
+padding: 0 12px;
+
+background: #f3f4f6;
+
+border-radius: 12px;
+
+box-sizing: border-box;
+
+
+}
+
+.search-overlay-icon {
+width: 19px;
+height: 19px;
+
+
+flex-shrink: 0;
+
+color: #64748b;
+
+
+}
+
+.search-overlay-input {
+width: 100%;
+
+
+min-width: 0;
+
+border: 0;
+outline: none;
+
+background: transparent;
+
+color: #111827;
+
+font-family: inherit;
+
+font-size: 15px;
+
+line-height: 20px;
+
+
+}
+
+.search-overlay-input::placeholder {
+color: #94a3b8;
+}
+
+/* =========================================================
+BOTÃO CANCELAR
+========================================================= */
+
+.search-overlay-cancelar {
+appearance: none;
+-webkit-appearance: none;
+
+
+border: 0;
+outline: none;
+
+background: transparent;
+
+padding: 8px 0;
+
+color: #2563eb;
+
+font-family: inherit;
+
+font-size: 14px;
+
+font-weight: 600;
+
+white-space: nowrap;
+
+cursor: pointer;
+
+
+}
+
+.search-overlay-cancelar:active {
+opacity: 0.65;
+}
+
+/* =========================================================
+RESULTADOS
+========================================================= */
+
+.search-results {
+flex: 1;
+
+
+overflow-y: auto;
+
+padding: 16px;
+
+box-sizing: border-box;
+
+-webkit-overflow-scrolling: touch;
+
+
+}
+
+.search-estado-vazio {
+margin: 32px 16px;
+
+
+text-align: center;
+
+color: #94a3b8;
+
+font-size: 14px;
+
+line-height: 20px;
+
+
+}
+
+/* =========================================================
+RESULTADOS EM CARDS
+========================================================= */
+
+.search-results .ad-card-novo {
+margin-bottom: 12px;
+}
+
+.search-results a {
+text-decoration: none;
+color: inherit;
+}
+
+/* =========================================================
+MOBILE
+========================================================= */
+
+@media (max-width: 480px) {
+
+
+.search-overlay {
+    max-width: none;
+}
+
+.search-overlay-header {
+    padding-left: 14px;
+    padding-right: 14px;
+}
+
+.search-results {
+    padding-left: 14px;
+    padding-right: 14px;
+}
+
+
+}
+
+/* =========================================================
+TELAS MAIORES
+========================================================= */
+
+@media (min-width: 768px) {
+
+
+.search-overlay {
+    max-width: 430px;
+
+    left: 50%;
+    right: auto;
+
+    margin-left: -215px;
+}
+
+
+}

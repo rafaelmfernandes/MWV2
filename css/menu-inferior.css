@@ -1,0 +1,238 @@
+/* =========================================================
+MENU INFERIOR — MUSICALWORLD
+========================================================= */
+
+.bottom-nav {
+position: fixed;
+left: 50%;
+bottom: 0;
+transform: translateX(-50%);
+
+
+width: 100%;
+max-width: 480px;
+height: 70px;
+
+display: flex;
+align-items: center;
+justify-content: space-around;
+
+background: #ffffff;
+border-top: 1px solid #e5e7eb;
+
+box-shadow:
+    0 -2px 10px rgba(15, 23, 42, 0.06);
+
+z-index: 9999;
+
+padding:
+    0
+    0
+    env(safe-area-inset-bottom)
+    0;
+
+box-sizing: border-box;
+
+
+}
+
+/* =========================================================
+ITEM DO MENU
+========================================================= */
+
+.bottom-nav-item {
+appearance: none;
+-webkit-appearance: none;
+
+
+border: 0;
+outline: none;
+background: transparent;
+
+width: 25%;
+height: 100%;
+
+padding: 6px 4px;
+margin: 0;
+
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+
+gap: 4px;
+
+color: #94a3b8;
+
+cursor: pointer;
+
+font-family: inherit;
+
+box-sizing: border-box;
+
+transition:
+    color 0.2s ease,
+    transform 0.2s ease;
+
+
+}
+
+/* =========================================================
+ITEM ATIVO
+========================================================= */
+
+.bottom-nav-item.ativo {
+color: #2563eb;
+}
+
+/* =========================================================
+ÁREA DO ÍCONE
+========================================================= */
+
+.nav-icon-wrapper {
+position: relative;
+
+
+width: 24px;
+height: 24px;
+
+display: flex;
+align-items: center;
+justify-content: center;
+
+flex-shrink: 0;
+
+
+}
+
+/* =========================================================
+ÍCONE
+========================================================= */
+
+.nav-icon-svg {
+display: block;
+
+
+width: 22px;
+height: 22px;
+
+flex-shrink: 0;
+
+
+}
+
+/* =========================================================
+TEXTO
+========================================================= */
+
+.nav-label {
+display: block;
+
+
+font-size: 11px;
+line-height: 14px;
+font-weight: 500;
+
+white-space: nowrap;
+text-align: center;
+
+
+}
+
+/* =========================================================
+ÍCONE DE PERFIL
+========================================================= */
+
+.profile-icon-wrapper {
+position: relative;
+}
+
+/* =========================================================
+INDICADOR DO PERFIL
+========================================================= */
+
+.profile-dot {
+position: absolute;
+
+
+top: 0;
+right: -2px;
+
+width: 6px;
+height: 6px;
+
+background: #2563eb;
+
+border-radius: 50%;
+
+border: 1.5px solid #ffffff;
+
+box-sizing: border-box;
+
+
+}
+
+/* =========================================================
+EFEITO AO TOCAR
+========================================================= */
+
+.bottom-nav-item:active {
+transform: scale(0.96);
+}
+
+/* =========================================================
+ACESSIBILIDADE
+========================================================= */
+
+.bottom-nav-item:focus-visible {
+outline: 2px solid #2563eb;
+outline-offset: -3px;
+}
+
+/* =========================================================
+TELAS PEQUENAS
+========================================================= */
+
+@media (max-width: 360px) {
+
+
+.bottom-nav {
+    height: 66px;
+}
+
+.bottom-nav-item {
+    padding-left: 2px;
+    padding-right: 2px;
+}
+
+.nav-icon-svg {
+    width: 21px;
+    height: 21px;
+}
+
+.nav-label {
+    font-size: 10px;
+}
+
+
+}
+
+/* =========================================================
+TELAS MAIORES
+========================================================= */
+
+@media (min-width: 768px) {
+
+
+.bottom-nav {
+    width: 430px;
+    max-width: calc(100% - 20px);
+
+    border-left: 1px solid #e5e7eb;
+    border-right: 1px solid #e5e7eb;
+
+    border-radius: 14px 14px 0 0;
+}
+
+
+}

@@ -1,0 +1,365 @@
+body.modal-anunciar-aberto {
+overflow: hidden;
+}
+
+/* =========================================================
+FUNDO DO MODAL
+========================================================= */
+
+.modal-anunciar-overlay {
+position: fixed;
+inset: 0;
+z-index: 10001;
+
+
+display: flex;
+align-items: flex-end;
+justify-content: center;
+
+background: rgba(15, 23, 42, 0.45);
+
+opacity: 0;
+visibility: hidden;
+pointer-events: none;
+
+box-sizing: border-box;
+
+transition:
+    opacity 0.28s ease,
+    visibility 0s linear 0.36s;
+
+
+}
+
+.modal-anunciar-overlay.ativo {
+opacity: 1;
+visibility: visible;
+pointer-events: auto;
+
+
+transition:
+    opacity 0.28s ease,
+    visibility 0s linear 0s;
+
+
+}
+
+/* =========================================================
+PAINEL / SHEET
+========================================================= */
+
+.modal-anunciar-sheet {
+width: 100%;
+max-width: 480px;
+max-height: 90vh;
+
+
+overflow-y: auto;
+
+background: #ffffff;
+
+border-radius: 22px 22px 0 0;
+
+box-sizing: border-box;
+
+/*
+ * Estado inicial:
+ * completamente abaixo da tela.
+ */
+transform: translate3d(0, 100%, 0);
+
+will-change: transform;
+
+transition:
+    transform 0.38s cubic-bezier(0.22, 1, 0.36, 1);
+
+
+}
+
+/* =========================================================
+ABRIR — DE BAIXO PARA CIMA
+========================================================= */
+
+.modal-anunciar-overlay.ativo .modal-anunciar-sheet {
+transform: translate3d(0, 0, 0);
+}
+
+/* =========================================================
+FECHAR — DE CIMA PARA BAIXO
+========================================================= */
+
+.modal-anunciar-overlay.fechando .modal-anunciar-sheet {
+transform: translate3d(0, 100%, 0);
+}
+
+/* =========================================================
+HANDLE
+========================================================= */
+
+.modal-anunciar-sheet .modal-handle {
+width: 42px;
+height: 4px;
+
+
+margin: 10px auto 4px;
+
+border-radius: 999px;
+
+background: #cbd5e1;
+
+
+}
+
+/* =========================================================
+CABEÇALHO
+========================================================= */
+
+.modal-anunciar-sheet .modal-header {
+padding: 14px 20px 16px;
+}
+
+.modal-anunciar-sheet .modal-header h3 {
+margin: 0;
+
+
+color: #0f172a;
+
+font-size: 20px;
+font-weight: 700;
+
+
+}
+
+.modal-anunciar-sheet .modal-header p {
+margin: 5px 0 0;
+
+
+color: #64748b;
+
+font-size: 14px;
+line-height: 20px;
+
+
+}
+
+/* =========================================================
+LISTA DE OPÇÕES
+========================================================= */
+
+.modal-anunciar-sheet .modal-options-list {
+display: flex;
+flex-direction: column;
+
+
+gap: 8px;
+
+padding: 0 16px 12px;
+
+
+}
+
+/* =========================================================
+ITEM
+========================================================= */
+
+.modal-anunciar-sheet .modal-option-item {
+width: 100%;
+min-height: 72px;
+
+
+display: flex;
+align-items: center;
+
+gap: 13px;
+
+padding: 11px 12px;
+
+border: 1px solid #e5e7eb;
+border-radius: 14px;
+
+background: #ffffff;
+color: #0f172a;
+
+text-align: left;
+
+cursor: pointer;
+
+box-sizing: border-box;
+
+transition:
+    background 0.18s ease,
+    border-color 0.18s ease,
+    transform 0.18s ease;
+
+
+}
+
+.modal-anunciar-sheet .modal-option-item:hover {
+background: #f8fafc;
+border-color: #cbd5e1;
+}
+
+.modal-anunciar-sheet .modal-option-item:active {
+transform: scale(0.985);
+}
+
+/* =========================================================
+ÍCONES
+========================================================= */
+
+.modal-option-icon {
+width: 46px;
+height: 46px;
+
+
+flex-shrink: 0;
+
+display: flex;
+align-items: center;
+justify-content: center;
+
+border-radius: 13px;
+
+
+}
+
+.modal-option-icon svg {
+width: 23px;
+height: 23px;
+}
+
+.singer-icon {
+background: #eff6ff;
+color: #2563eb;
+}
+
+.musician-icon {
+background: #ecfdf5;
+color: #059669;
+}
+
+.event-icon {
+background: #fff7ed;
+color: #ea580c;
+}
+
+.song-icon {
+background: #faf5ff;
+color: #9333ea;
+}
+
+/* =========================================================
+TEXTO
+========================================================= */
+
+.modal-anunciar-sheet .modal-option-text {
+flex: 1;
+min-width: 0;
+}
+
+.modal-anunciar-sheet .modal-option-text h4 {
+margin: 0;
+
+
+color: #0f172a;
+
+font-size: 14px;
+font-weight: 700;
+
+line-height: 19px;
+
+
+}
+
+.modal-anunciar-sheet .modal-option-text p {
+margin: 3px 0 0;
+
+
+color: #64748b;
+
+font-size: 12px;
+line-height: 17px;
+
+
+}
+
+/* =========================================================
+SETA
+========================================================= */
+
+.modal-anunciar-sheet .modal-arrow {
+flex-shrink: 0;
+
+
+color: #94a3b8;
+
+font-size: 26px;
+line-height: 1;
+
+
+}
+
+/* =========================================================
+BOTÃO CANCELAR
+========================================================= */
+
+.modal-anunciar-sheet .modal-close-btn {
+width: calc(100% - 32px);
+min-height: 46px;
+
+
+margin:
+    4px
+    16px
+    calc(16px + env(safe-area-inset-bottom));
+
+border: 0;
+border-radius: 12px;
+
+background: #f1f5f9;
+color: #475569;
+
+font-family: inherit;
+
+font-size: 14px;
+font-weight: 600;
+
+cursor: pointer;
+
+transition:
+    background 0.18s ease,
+    transform 0.18s ease;
+
+
+}
+
+.modal-anunciar-sheet .modal-close-btn:active {
+transform: scale(0.98);
+
+
+background: #e2e8f0;
+
+
+}
+
+/* =========================================================
+DESKTOP
+========================================================= */
+
+@media (min-width: 768px) {
+
+
+.modal-anunciar-overlay {
+    padding: 20px;
+}
+
+.modal-anunciar-sheet {
+    max-width: 430px;
+
+    margin-bottom: 0;
+
+    border-radius: 22px;
+}
+
+
+}
