@@ -441,7 +441,7 @@ try {
         '➡️ Redirecionando para index.html...'
     );
 
-    const destinoSalvo = sessionStorage.getItem('musicalworld_destino_login');
+    const destinoSalvo = null;
 
         if (destinoSalvo) {
 

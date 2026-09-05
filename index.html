@@ -918,10 +918,7 @@ content="width=device-width, initial-scale=1.0"
   <!-- =====================================================
        SUPABASE
   ====================================================== -->
-
-  <script
-    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"
-  ></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 
   <script src="js/core/SupabaseClient.js"></script>
 
@@ -931,46 +928,27 @@ content="width=device-width, initial-scale=1.0"
 
   <script src="js/core/ControleSessao.js"></script>
 
-  <!-- =====================================================
-       CABEÇALHO
-  ====================================================== -->
+  <script src="js/core/RoteamentoPerfil.js"></script>
 
   <script src="js/components/Cabecalho.js"></script>
 
-  <!-- =====================================================
-       FUNÇÕES PRINCIPAIS DA PÁGINA
-  ====================================================== -->
   <script src="js/components/modal-filtro.js"></script>
-  <script src="js/main.js"></script>
 
-  <!-- =====================================================
-       MENU INFERIOR
-       O menu carrega automaticamente seus componentes:
-       - menu-inferior.css
-       - painel-pesquisa.css/js
-       - modal-anunciar.css/js
-  ====================================================== -->
+  <script src="js/main.js"></script>
 
   <script src="js/components/menu-inferior.js"></script>
 
-  <!-- =====================================================
-       INICIALIZAÇÃO DO CABEÇALHO
-  ====================================================== -->
-
-  
-
   <script>
 
-    window.addEventListener(
-      'load',
-      async function () {
+document.addEventListener('DOMContentLoaded', async function () {
 
-        await Cabecalho.iniciar();
+console.log('🚀 Iniciando cabeçalho do index...');
 
-      }
-    );
+await Cabecalho.iniciar();
 
-  </script>
+});
+
+</script>
 
 </body>
 

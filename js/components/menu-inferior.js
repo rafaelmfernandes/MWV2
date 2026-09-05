@@ -21,9 +21,7 @@ async iniciar() {
         return;
     }
 
-    /*
-     * Carrega automaticamente os componentes globais.
-     */
+
     await this.carregarRecursosPesquisa();
 
     await this.carregarRecursosAnunciar();
@@ -66,16 +64,8 @@ async iniciar() {
 
 async carregarRecursosPesquisa() {
 
-    /*
-     * 1. Carrega o CSS
-     */
-
     this.carregarCssPesquisa();
 
-
-    /*
-     * 2. Verifica se o JavaScript já foi carregado
-     */
 
     if (
         window.PainelPesquisa &&
@@ -85,19 +75,11 @@ async carregarRecursosPesquisa() {
 
         this.pesquisaCarregada = true;
 
-        /*
-         * Garante a inicialização do componente.
-         */
-
         window.PainelPesquisa.iniciar();
 
         return;
     }
 
-
-    /*
-     * 3. Verifica se já existe uma tag script
-     */
 
     const scriptExistente =
         document.querySelector(
@@ -113,10 +95,6 @@ async carregarRecursosPesquisa() {
     }
 
 
-    /*
-     * 4. Cria o script automaticamente
-     */
-
     const script =
         document.createElement('script');
 
@@ -129,7 +107,7 @@ async carregarRecursosPesquisa() {
         'true';
 
 
-    script.onload = async () => {
+    script.onload = () => {
 
         console.log(
             '🔎 JavaScript do painel de pesquisa carregado automaticamente.'
@@ -138,10 +116,6 @@ async carregarRecursosPesquisa() {
 
         this.pesquisaCarregada = true;
 
-
-        /*
-         * Inicializa o componente imediatamente.
-         */
 
         if (
             window.PainelPesquisa &&
@@ -167,10 +141,6 @@ async carregarRecursosPesquisa() {
 
     document.body.appendChild(script);
 
-
-    /*
-     * Aguarda o script terminar de carregar.
-     */
 
     await this.aguardarPainelPesquisa();
 },
@@ -198,10 +168,6 @@ aguardarPainelPesquisa() {
                 this.pesquisaCarregada = true;
 
 
-                /*
-                 * Garante que o componente esteja inicializado.
-                 */
-
                 window.PainelPesquisa.iniciar();
 
 
@@ -213,10 +179,6 @@ aguardarPainelPesquisa() {
 
             tentativas++;
 
-
-            /*
-             * Evita ficar aguardando indefinidamente.
-             */
 
             if (tentativas >= 50) {
 
@@ -250,10 +212,6 @@ aguardarPainelPesquisa() {
    ===================================================== */
 
 carregarCssPesquisa() {
-
-    /*
-     * Verifica se o CSS já foi carregado.
-     */
 
     const cssExistente =
         document.querySelector(
@@ -297,16 +255,8 @@ carregarCssPesquisa() {
 
 async carregarRecursosAnunciar() {
 
-    /*
-     * 1. Carrega o CSS automaticamente.
-     */
-
     this.carregarCssAnunciar();
 
-
-    /*
-     * 2. Verifica se o componente já existe.
-     */
 
     if (
         window.ModalAnunciar &&
@@ -317,20 +267,12 @@ async carregarRecursosAnunciar() {
         this.modalAnunciarCarregado = true;
 
 
-        /*
-         * Garante que o modal esteja criado.
-         */
-
         window.ModalAnunciar.iniciar();
 
 
         return;
     }
 
-
-    /*
-     * 3. Verifica se o script já está sendo carregado.
-     */
 
     const scriptExistente =
         document.querySelector(
@@ -345,10 +287,6 @@ async carregarRecursosAnunciar() {
         return;
     }
 
-
-    /*
-     * 4. Cria o script automaticamente.
-     */
 
     const script =
         document.createElement('script');
@@ -371,10 +309,6 @@ async carregarRecursosAnunciar() {
 
         this.modalAnunciarCarregado = true;
 
-
-        /*
-         * Inicializa imediatamente.
-         */
 
         if (
             window.ModalAnunciar &&
@@ -400,10 +334,6 @@ async carregarRecursosAnunciar() {
 
     document.body.appendChild(script);
 
-
-    /*
-     * Aguarda o componente ficar disponível.
-     */
 
     await this.aguardarModalAnunciar();
 },
@@ -431,10 +361,6 @@ aguardarModalAnunciar() {
                 this.modalAnunciarCarregado = true;
 
 
-                /*
-                 * Garante que o modal seja criado.
-                 */
-
                 window.ModalAnunciar.iniciar();
 
 
@@ -446,10 +372,6 @@ aguardarModalAnunciar() {
 
             tentativas++;
 
-
-            /*
-             * Evita espera infinita.
-             */
 
             if (tentativas >= 50) {
 
@@ -483,10 +405,6 @@ aguardarModalAnunciar() {
    ===================================================== */
 
 carregarCssAnunciar() {
-
-    /*
-     * Verifica se o CSS já foi carregado.
-     */
 
     const cssExistente =
         document.querySelector(
@@ -538,8 +456,6 @@ criarMenu(container) {
             aria-label="Navegação principal"
         >
 
-            <!-- INÍCIO -->
-
             <button
                 type="button"
                 class="bottom-nav-item"
@@ -583,8 +499,6 @@ criarMenu(container) {
 
             </button>
 
-
-            <!-- PESQUISAR -->
 
             <button
                 type="button"
@@ -630,8 +544,6 @@ criarMenu(container) {
 
             </button>
 
-
-            <!-- ANUNCIAR -->
 
             <button
                 type="button"
@@ -684,8 +596,6 @@ criarMenu(container) {
 
             </button>
 
-
-            <!-- PERFIL -->
 
             <button
                 type="button"
@@ -786,8 +696,6 @@ configurarEventos() {
 
 mudarAba(aba, elemento) {
 
-    /* INÍCIO */
-
     if (aba === 'home') {
 
         this.definirAtivo(elemento);
@@ -802,8 +710,6 @@ mudarAba(aba, elemento) {
         return;
     }
 
-
-    /* PESQUISAR */
 
     if (aba === 'pesquisar') {
 
@@ -838,8 +744,6 @@ mudarAba(aba, elemento) {
     }
 
 
-    /* ANUNCIAR */
-
     if (aba === 'anunciar') {
 
         this.definirAtivo(elemento);
@@ -872,8 +776,6 @@ mudarAba(aba, elemento) {
         return;
     }
 
-
-    /* PERFIL */
 
     if (aba === 'perfil') {
 
@@ -919,7 +821,7 @@ definirAtivo(elemento) {
 
 
 /* =====================================================
-   FECHAR PESQUISA
+   FECHAR PESQUISAfil
    ===================================================== */
 
 fecharPesquisa() {
@@ -953,136 +855,163 @@ fecharPesquisa() {
 
 async abrirMeuPerfil() {
 
-    if (
-        typeof window.ControleSessao ===
-        'undefined'
-    ) {
 
-        console.warn(
-            '⚠️ ControleSessao não está disponível.'
-        );
+console.log(
+    '👤 Abrindo perfil do usuário...'
+);
 
 
-        window.location.href =
-            'login.html';
+/*
+ * Verifica se o sistema de sessão está disponível.
+ */
+
+if (
+    typeof window.Sessao ===
+    'undefined'
+) {
+
+    console.error(
+        '❌ Sessao.js não está disponível.'
+    );
+
+    window.location.href =
+        'login.html';
+
+    return;
+}
 
 
-        return;
-    }
+/*
+ * Verifica diretamente a sessão no Supabase.
+ *
+ * Não usamos protegerPagina() aqui porque
+ * estamos apenas navegando para o perfil.
+ */
+
+const sessao =
+    await Sessao.obter();
 
 
-    const usuario =
-        await ControleSessao.protegerPagina({
-
-            redirecionarPara:
-                'login.html',
-
-            salvarDestino:
-                true
-
-        });
-
-
-    if (!usuario) {
-        return;
-    }
-
-
-    let dados = null;
-
-
-    if (
-        typeof window.UsuarioAtual !==
-        'undefined'
-    ) {
-
-        dados =
-            await UsuarioAtual.obter();
-
-    }
-
-
-    if (!dados) {
-
-        console.warn(
-            '⚠️ Não foi possível obter os dados do usuário.'
-        );
-
-        return;
-    }
-
-
-    const tipoPerfil =
-        dados.tipoPerfil?.nome ||
-        dados.perfil?.tipo_perfil?.nome ||
-        '';
-
-
-    if (tipoPerfil === 'artista') {
-
-        window.location.href =
-            'meu-perfil-artista.html';
-
-        return;
-    }
-
-
-    if (tipoPerfil === 'contratante') {
-
-        window.location.href =
-            'meu-perfil-contratante.html';
-
-        return;
-    }
-
-
-    if (
-        tipoPerfil ===
-        'organizador_eventos'
-    ) {
-
-        alert(
-            'O perfil de Organizador de Eventos está em desenvolvimento.'
-        );
-
-        return;
-    }
-
-
-    if (
-        tipoPerfil ===
-        'casa_shows'
-    ) {
-
-        alert(
-            'O perfil de Casa de Shows está em desenvolvimento.'
-        );
-
-        return;
-    }
-
-
-    if (
-        tipoPerfil ===
-        'empresa_agencia'
-    ) {
-
-        alert(
-            'O perfil de Empresa / Agência está em desenvolvimento.'
-        );
-
-        return;
-    }
-
+if (!sessao) {
 
     console.warn(
-        '⚠️ Tipo de perfil não reconhecido:',
-        tipoPerfil
+        '🚪 Nenhuma sessão ativa. Redirecionando para login.'
+    );
+
+
+    sessionStorage.setItem(
+        'musicalworld_destino_login',
+        'index.html'
     );
 
 
     window.location.href =
-        'index.html';
+        'login.html';
+
+    return;
+}
+
+
+console.log(
+    '✅ Sessão encontrada:',
+    sessao.user?.id
+);
+
+
+/*
+ * Verifica se UsuarioAtual está disponível.
+ */
+
+if (
+    typeof window.UsuarioAtual ===
+    'undefined'
+) {
+
+    console.error(
+        '❌ UsuarioAtual.js não está disponível.'
+    );
+
+    return;
+}
+
+
+/*
+ * Carrega os dados completos do usuário.
+ */
+
+const dados =
+    await UsuarioAtual.carregar();
+
+
+if (!dados) {
+
+    console.error(
+        '❌ Não foi possível carregar os dados do usuário.'
+    );
+
+    return;
+}
+
+
+console.log(
+    '👤 Dados do usuário carregados:',
+    dados
+);
+
+
+/*
+ * Verifica se o roteador está disponível.
+ */
+
+if (
+    typeof window.RoteamentoPerfil ===
+    'undefined'
+) {
+
+    console.error(
+        '❌ RoteamentoPerfil.js não foi carregado.'
+    );
+
+    return;
+}
+
+
+/*
+ * Descobre o tipo de perfil.
+ */
+
+const tipoPerfil =
+    RoteamentoPerfil.obterTipo(
+        dados
+    );
+
+
+console.log(
+    '🎯 Tipo de perfil:',
+    tipoPerfil
+);
+
+
+/*
+ * Abre a página correspondente.
+ */
+
+const abriu =
+    RoteamentoPerfil.abrir(
+        tipoPerfil
+    );
+
+
+if (!abriu) {
+
+    console.warn(
+        '⚠️ Não existe uma página cadastrada para este tipo de perfil:',
+        tipoPerfil
+    );
+
+}
+
+
 }
 
 
