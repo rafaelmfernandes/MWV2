@@ -1,0 +1,600 @@
+/* =========================================================
+MUSICALWORLD — MODAL FILTRO
+========================================================= */
+
+/* =========================================================
+OVERLAY
+========================================================= */
+
+.modal-filtro-overlay {
+
+position: fixed;
+
+inset: 0;
+
+z-index: 1000;
+
+display: flex;
+
+align-items: flex-end;
+
+justify-content: center;
+
+background: rgba(0, 0, 0, 0.45);
+
+backdrop-filter: blur(3px);
+
+-webkit-backdrop-filter: blur(3px);
+
+opacity: 0;
+
+visibility: hidden;
+
+pointer-events: none;
+
+transition:
+opacity 0.38s ease,
+visibility 0.38s ease;
+
+}
+
+/* =========================================================
+PAINEL
+========================================================= */
+
+.modal-filtro-sheet {
+
+width: 100%;
+
+max-width: 480px;
+
+max-height: 85vh;
+
+background: #ffffff;
+
+border-radius: 24px 24px 0 0;
+
+box-shadow:
+0 -8px 35px rgba(0, 0, 0, 0.18);
+
+padding:
+12px
+20px
+calc(20px + env(safe-area-inset-bottom));
+
+display: flex;
+
+flex-direction: column;
+
+overflow: hidden;
+
+transform:
+translate3d(0, 100%, 0);
+
+transition:
+transform 0.38s
+cubic-bezier(
+0.22,
+1,
+0.36,
+1
+);
+
+will-change: transform;
+
+}
+
+/* =========================================================
+MODAL ABERTO
+========================================================= */
+
+.modal-filtro-overlay.ativo {
+
+opacity: 1;
+
+visibility: visible;
+
+pointer-events: auto;
+
+}
+
+.modal-filtro-overlay.ativo
+.modal-filtro-sheet {
+
+transform:
+translate3d(0, 0, 0);
+
+}
+
+/* =========================================================
+MODAL FECHANDO
+========================================================= */
+
+.modal-filtro-overlay.fechando {
+
+opacity: 0;
+
+visibility: visible;
+
+pointer-events: none;
+
+}
+
+.modal-filtro-overlay.fechando
+.modal-filtro-sheet {
+
+transform:
+translate3d(0, 100%, 0);
+
+}
+
+/* =========================================================
+BLOQUEIO DO BODY
+========================================================= */
+
+body.modal-filtro-aberto {
+
+overflow: hidden;
+
+touch-action: none;
+
+}
+
+/* =========================================================
+ALÇA
+========================================================= */
+
+.modal-filtro-sheet
+.modal-handle {
+
+width: 42px;
+
+height: 5px;
+
+margin:
+0 auto 16px;
+
+flex-shrink: 0;
+
+border-radius: 999px;
+
+background: #d5d8de;
+
+}
+
+/* =========================================================
+CABEÇALHO
+========================================================= */
+
+.modal-filtro-sheet
+.modal-header {
+
+display: flex;
+
+align-items: flex-start;
+
+justify-content: space-between;
+
+gap: 16px;
+
+margin-bottom: 18px;
+
+}
+
+.modal-filtro-sheet
+.modal-header h2 {
+
+margin: 0;
+
+font-size: 21px;
+
+font-weight: 700;
+
+color: #171a21;
+
+}
+
+.modal-filtro-sheet
+.modal-header p {
+
+margin:
+5px 0 0;
+
+font-size: 13px;
+
+line-height: 1.4;
+
+color: #777d89;
+
+}
+
+/* =========================================================
+BOTÃO FECHAR
+========================================================= */
+
+.modal-filtro-sheet
+.modal-close-btn {
+
+width: 38px;
+
+height: 38px;
+
+flex-shrink: 0;
+
+display: flex;
+
+align-items: center;
+
+justify-content: center;
+
+border: none;
+
+border-radius: 50%;
+
+background: #f1f3f6;
+
+color: #4c5360;
+
+cursor: pointer;
+
+transition:
+background 0.2s ease,
+transform 0.2s ease;
+
+}
+
+.modal-filtro-sheet
+.modal-close-btn:hover {
+
+background: #e7e9ed;
+
+}
+
+.modal-filtro-sheet
+.modal-close-btn:active {
+
+transform: scale(0.92);
+
+}
+
+/* =========================================================
+ÁREA DOS FILTROS
+========================================================= */
+
+.modal-filter-content {
+
+flex: 1;
+
+min-height: 0;
+
+overflow-y: auto;
+
+overscroll-behavior: contain;
+
+padding-right: 2px;
+
+}
+
+/* =========================================================
+GRUPOS
+========================================================= */
+
+.filter-group {
+
+display: flex;
+
+flex-direction: column;
+
+gap: 7px;
+
+margin-bottom: 15px;
+
+}
+
+.filter-group label {
+
+font-size: 13px;
+
+font-weight: 600;
+
+color: #414752;
+
+}
+
+/* =========================================================
+SELECTS E INPUTS
+========================================================= */
+
+.filter-group select,
+.filter-group input {
+
+width: 100%;
+
+min-height: 46px;
+
+padding:
+0 13px;
+
+border:
+1px solid #dfe2e7;
+
+border-radius: 12px;
+
+background: #ffffff;
+
+color: #20242c;
+
+font-family: inherit;
+
+font-size: 14px;
+
+outline: none;
+
+transition:
+border-color 0.2s ease,
+box-shadow 0.2s ease;
+
+box-sizing: border-box;
+
+}
+
+.filter-group select:focus,
+.filter-group input:focus {
+
+border-color: #2878f0;
+
+box-shadow:
+0 0 0 3px
+rgba(40, 120, 240, 0.10);
+
+}
+
+/* =========================================================
+FAIXA DE VALOR
+========================================================= */
+
+.filter-price-row {
+
+display: flex;
+
+align-items: center;
+
+gap: 9px;
+
+}
+
+.filter-price-row input {
+
+min-width: 0;
+
+flex: 1;
+
+}
+
+.filter-price-row span {
+
+flex-shrink: 0;
+
+font-size: 13px;
+
+color: #777d89;
+
+}
+
+/* =========================================================
+ÁREA DOS BOTÕES
+========================================================= */
+
+.modal-filter-actions {
+
+display: flex;
+
+gap: 10px;
+
+padding-top: 14px;
+
+margin-top: 4px;
+
+border-top:
+1px solid #eef0f3;
+
+flex-shrink: 0;
+
+}
+
+/* =========================================================
+BOTÃO LIMPAR
+========================================================= */
+
+.btn-filter-clear {
+
+flex: 0 0 90px;
+
+min-height: 46px;
+
+border:
+1px solid #dfe2e7;
+
+border-radius: 12px;
+
+background: #ffffff;
+
+color: #555b66;
+
+font-family: inherit;
+
+font-size: 14px;
+
+font-weight: 600;
+
+cursor: pointer;
+
+transition:
+background 0.2s ease,
+transform 0.2s ease;
+
+}
+
+.btn-filter-clear:hover {
+
+background: #f5f6f8;
+
+}
+
+.btn-filter-clear:active {
+
+transform: scale(0.97);
+
+}
+
+/* =========================================================
+BOTÃO APLICAR
+========================================================= */
+
+.btn-filter-apply {
+
+flex: 1;
+
+min-height: 46px;
+
+border: none;
+
+border-radius: 12px;
+
+background: #2878f0;
+
+color: #ffffff;
+
+font-family: inherit;
+
+font-size: 14px;
+
+font-weight: 600;
+
+cursor: pointer;
+
+transition:
+background 0.2s ease,
+transform 0.2s ease;
+
+}
+
+.btn-filter-apply:hover {
+
+background: #1769df;
+
+}
+
+.btn-filter-apply:active {
+
+transform: scale(0.97);
+
+}
+
+/* =========================================================
+BARRA DE ROLAGEM
+========================================================= */
+
+.modal-filter-content::-webkit-scrollbar {
+
+width: 4px;
+
+}
+
+.modal-filter-content::-webkit-scrollbar-track {
+
+background: transparent;
+
+}
+
+.modal-filter-content::-webkit-scrollbar-thumb {
+
+background: #d7dae0;
+
+border-radius: 10px;
+
+}
+
+/* =========================================================
+CELULARES PEQUENOS
+========================================================= */
+
+@media (
+max-width: 380px
+) {
+
+.modal-filtro-sheet {
+
+
+max-height: 90vh;
+
+padding-left: 15px;
+
+padding-right: 15px;
+
+
+}
+
+.modal-filtro-sheet
+.modal-header h2 {
+
+
+font-size: 19px;
+
+
+}
+
+.filter-group {
+
+
+margin-bottom: 12px;
+
+
+}
+
+.filter-group select,
+.filter-group input {
+
+
+min-height: 44px;
+
+
+}
+
+.btn-filter-clear {
+
+
+flex-basis: 80px;
+
+
+}
+
+}
+
+/* =========================================================
+REDUÇÃO DE MOVIMENTO
+========================================================= */
+
+@media (
+prefers-reduced-motion: reduce
+) {
+
+.modal-filtro-overlay {
+
+
+transition:
+  opacity 0.15s ease;
+
+
+}
+
+.modal-filtro-sheet {
+
+
+transition:
+  transform 0.15s ease;
+
+
+}
+
+}

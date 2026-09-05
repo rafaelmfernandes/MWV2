@@ -1,0 +1,312 @@
+<div
+  id="modal-filtro"
+  class="modal-overlay modal-filtro-overlay"
+  aria-hidden="true"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="modal-filtro-titulo"
+  onclick="ModalFiltro.fecharFora(event)"
+>
+
+  <div
+    class="modal-sheet filter-sheet modal-filtro-sheet"
+    onclick="event.stopPropagation()"
+  >
+
+    <div class="modal-handle"></div>
+
+    <div class="modal-header">
+
+      <h3 id="modal-filtro-titulo">
+        Filtrar Anúncios
+      </h3>
+
+      <p>
+        Encontre exatamente o perfil musical que você procura
+      </p>
+
+    </div>
+
+
+    <div class="filter-form-scroll">
+
+      <!-- LOCALIZAÇÃO -->
+
+      <div class="filter-row">
+
+        <div class="filter-group">
+
+          <label>
+            Estado
+          </label>
+
+          <select
+            id="filtro-estado"
+            class="filter-select"
+          >
+
+            <option value="">
+              Selecione o Estado
+            </option>
+
+            <option value="GO" selected>
+              Goiás (GO)
+            </option>
+
+            <option value="SP">
+              São Paulo (SP)
+            </option>
+
+            <option value="MG">
+              Minas Gerais (MG)
+            </option>
+
+            <option value="DF">
+              Distrito Federal (DF)
+            </option>
+
+            <option value="BA">
+              Bahia (BA)
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <div class="filter-group">
+
+          <label>
+            Cidade
+          </label>
+
+          <select
+            id="filtro-cidade"
+            class="filter-select"
+          >
+
+            <option value="">
+              Selecione a Cidade
+            </option>
+
+            <option value="Goiania" selected>
+              Goiânia
+            </option>
+
+            <option value="Aparecida">
+              Aparecida de Goiânia
+            </option>
+
+            <option value="Anapolis">
+              Anápolis
+            </option>
+
+            <option value="Trindade">
+              Trindade
+            </option>
+
+          </select>
+
+        </div>
+
+      </div>
+
+
+      <!-- CATEGORIA -->
+
+      <div class="filter-group">
+
+        <label>
+          Categoria
+        </label>
+
+        <select
+          id="filtro-categoria"
+          class="filter-select"
+        >
+
+          <option value="">
+            Todas as categorias
+          </option>
+
+          <option value="cantores">
+            Cantores / Duplas
+          </option>
+
+          <option value="musicos">
+            Músicos / Instrumentistas
+          </option>
+
+          <option value="composicoes">
+            Composições Inéditas
+          </option>
+
+          <option value="eventos">
+            Shows / Eventos
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <!-- INSTRUMENTO -->
+
+      <div
+        id="wrapper-instrumento"
+        class="filter-group conditional-field"
+        style="display: none;"
+      >
+
+        <label>
+          Tipo de Serviço / Instrumento
+        </label>
+
+        <select
+          id="filtro-instrumento"
+          class="filter-select"
+        >
+
+          <option value="">
+            Qualquer instrumento
+          </option>
+
+          <option value="sanfoneiro">
+            Sanfoneiro
+          </option>
+
+          <option value="guitarrista">
+            Guitarrista
+          </option>
+
+          <option value="violonista">
+            Violinista
+          </option>
+
+          <option value="baterista">
+            Baterista
+          </option>
+
+          <option value="baixista">
+            Baixista
+          </option>
+
+          <option value="tecladista">
+            Tecladista
+          </option>
+
+          <option value="percussionista">
+            Percussionista
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <!-- ESTILO MUSICAL -->
+
+      <div class="filter-group">
+
+        <label>
+          Estilo Musical
+        </label>
+
+        <select
+          id="filtro-estilo"
+          class="filter-select"
+        >
+
+          <option value="">
+            Qualquer estilo
+          </option>
+
+          <option value="sertanejo">
+            Sertanejo / Modão
+          </option>
+
+          <option value="poprock">
+            Pop Rock
+          </option>
+
+          <option value="mpb">
+            MPB
+          </option>
+
+          <option value="forro">
+            Forró / Piseiro
+          </option>
+
+          <option value="samba">
+            Samba / Pagode
+          </option>
+
+          <option value="eletronica">
+            Eletrônica
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <!-- VALORES -->
+
+      <div class="filter-group">
+
+        <label>
+          Faixa de Valor (R$)
+        </label>
+
+        <div class="filter-row-prices">
+
+          <input
+            type="number"
+            id="filtro-valor-min"
+            class="filter-input"
+            placeholder="Mín (Ex: 300)"
+          >
+
+          <span class="price-separator">
+            até
+          </span>
+
+          <input
+            type="number"
+            id="filtro-valor-max"
+            class="filter-input"
+            placeholder="Máx (Ex: 3000)"
+          >
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- AÇÕES -->
+
+    <div class="filter-actions">
+
+      <button
+        type="button"
+        class="filter-btn-clear"
+        onclick="ModalFiltro.limpar()"
+      >
+        Limpar
+      </button>
+
+      <button
+        type="button"
+        class="filter-btn-apply"
+        onclick="ModalFiltro.aplicar()"
+      >
+        Aplicar Filtros
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
