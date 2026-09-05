@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+
+<head>
+
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>Teste de Página Protegida</title>
+
+
+</head>
+
+<body>
+
+
+<h1>Página Protegida</h1>
+
+<p id="mensagem">Verificando sessão...</p>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/core/SupabaseClient.js"></script>
+<script src="js/core/Sessao.js"></script>
+<script src="js/core/UsuarioAtual.js"></script>
+<script src="js/core/ControleSessao.js"></script>
+
+<script>
+
+    window.addEventListener('load', async function () {
+
+        const autorizado =
+            await ControleSessao.protegerPagina();
+
+        if (!autorizado) {
+            return;
+        }
+
+        const usuario =
+            ControleSessao.obter();
+
+        document.getElementById('mensagem').textContent =
+            'Usuário autorizado: ' +
+            usuario.usuario.nome +
+            ' — ' +
+            usuario.tipoPerfil.nome;
+
+    });
+
+</script>
+
+
+</body>
+
+</html>

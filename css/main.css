@@ -727,3 +727,167 @@ body {
   background-color: #2563eb;
   border-radius: 50%;
 }
+
+
+/* ==========================================
+ESTADO DO USUÁRIO — CABEÇALHO
+========================================== */
+
+.cabecalho-usuario {
+display: flex;
+align-items: center;
+justify-content: center;
+margin-left: 4px;
+}
+
+/* Estado de carregamento */
+.cabecalho-usuario-loading {
+width: 34px;
+height: 34px;
+display: flex;
+align-items: center;
+justify-content: center;
+}
+
+.cabecalho-usuario-loading span {
+width: 20px;
+height: 20px;
+border: 2px solid rgba(255, 255, 255, 0.15);
+border-top-color: currentColor;
+border-radius: 50%;
+animation: cabecalho-spin 0.8s linear infinite;
+}
+
+@keyframes cabecalho-spin {
+to {
+transform: rotate(360deg);
+}
+}
+
+/* Usuário deslogado */
+.cabecalho-usuario-estado {
+align-items: center;
+}
+
+.cabecalho-btn-entrar {
+border: 1px solid rgba(255, 255, 255, 0.25);
+background: transparent;
+color: inherit;
+padding: 7px 12px;
+border-radius: 10px;
+font-size: 13px;
+font-weight: 600;
+cursor: pointer;
+transition: all 0.2s ease;
+}
+
+.cabecalho-btn-entrar:hover {
+background: rgba(255, 255, 255, 0.08);
+}
+
+/* Usuário logado */
+.cabecalho-usuario-logado {
+display: flex;
+align-items: center;
+gap: 7px;
+}
+
+/* Botão do perfil */
+.cabecalho-perfil-btn {
+display: flex;
+align-items: center;
+gap: 7px;
+border: 0;
+background: transparent;
+color: inherit;
+padding: 2px;
+cursor: pointer;
+min-width: 0;
+}
+
+/* Avatar */
+.cabecalho-avatar {
+width: 34px;
+height: 34px;
+min-width: 34px;
+border-radius: 50%;
+background: rgba(255, 255, 255, 0.12);
+display: flex;
+align-items: center;
+justify-content: center;
+overflow: hidden;
+border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.cabecalho-avatar span {
+font-size: 11px;
+font-weight: 700;
+letter-spacing: 0.3px;
+}
+
+/* Nome e tipo */
+.cabecalho-info-usuario {
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+max-width: 90px;
+overflow: hidden;
+}
+
+.cabecalho-info-usuario strong {
+font-size: 12px;
+font-weight: 700;
+line-height: 1.2;
+white-space: nowrap;
+overflow: hidden;
+text-overflow: ellipsis;
+max-width: 90px;
+}
+
+.cabecalho-info-usuario small {
+font-size: 9px;
+opacity: 0.65;
+line-height: 1.2;
+white-space: nowrap;
+overflow: hidden;
+text-overflow: ellipsis;
+max-width: 90px;
+}
+
+/* Botão sair */
+.cabecalho-btn-sair {
+border: 0;
+background: transparent;
+color: inherit;
+opacity: 0.65;
+padding: 5px 2px;
+font-size: 10px;
+cursor: pointer;
+transition: opacity 0.2s ease;
+}
+
+.cabecalho-btn-sair:hover {
+opacity: 1;
+}
+
+/* Ajuste para telas menores */
+@media (max-width: 480px) {
+
+.cabecalho-info-usuario {
+display: none;
+}
+
+.cabecalho-usuario-logado {
+gap: 4px;
+}
+
+.cabecalho-btn-sair {
+font-size: 9px;
+}
+
+.cabecalho-btn-entrar {
+padding: 6px 9px;
+font-size: 12px;
+}
+
+}

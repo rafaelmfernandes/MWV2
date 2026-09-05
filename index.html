@@ -12,10 +12,13 @@
     
     <!-- Cabeçalho / Navbar Superior -->
     <header class="navbar">
+
       <div class="logo">Artista<span>Show</span></div>
-      
+
       <div class="navbar-icons">
-        <!-- Notificações (Direciona para a página de notificações) -->
+
+
+        <!-- Notificações -->
         <button class="nav-icon-btn" onclick="window.location.href='notificacoes.html'" title="Notificações">
           <svg class="top-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
@@ -43,14 +46,64 @@
             <line x1="12" y1="21" x2="12" y2="12"></line>
             <line x1="12" y1="8" x2="12" y2="3"></line>
             <line x1="20" y1="21" x2="20" y2="16"></line>
-            <line x1="20" y1="12" x2="20" y2="3"></line>
             <line x1="1" y1="14" x2="7" y2="14"></line>
             <line x1="9" y1="8" x2="15" y2="8"></line>
             <line x1="17" y1="16" x2="23" y2="16"></line>
           </svg>
         </button>
+
+    <!-- Estado do usuário -->
+    <div id="cabecalho-usuario" class="cabecalho-usuario">
+
+      <!-- Enquanto carrega -->
+      <div id="cabecalho-carregando" class="cabecalho-usuario-loading">
+        <span></span>
       </div>
+
+      <!-- Usuário deslogado -->
+      <div id="cabecalho-deslogado" class="cabecalho-usuario-estado" style="display: none;">
+        <button class="cabecalho-btn-entrar" onclick="window.location.href='login.html'">
+          Entrar
+        </button>
+      </div>
+
+      <!-- Usuário logado -->
+      <div id="cabecalho-logado" class="cabecalho-usuario-logado" style="display: none;">
+
+        <button
+          class="cabecalho-perfil-btn"
+          onclick="window.location.href='perfil-artista.html'"
+          title="Meu perfil"
+        >
+
+          <div id="cabecalho-avatar" class="cabecalho-avatar">
+            <span id="cabecalho-avatar-letras">U</span>
+          </div>
+
+          <div class="cabecalho-info-usuario">
+            <strong id="cabecalho-nome">Usuário</strong>
+            <small id="cabecalho-tipo">Perfil</small>
+          </div>
+
+        </button>
+
+        <button
+          class="cabecalho-btn-sair"
+          onclick="Cabecalho.sair()"
+          title="Sair"
+        >
+          Sair
+        </button>
+
+      </div>
+
+    </div>
+
+
+      </div>
+
     </header>
+
 
     <!-- Conteúdo Principal -->
     <main class="main-content">
@@ -394,6 +447,25 @@
 
   </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+
+  <script src="js/core/SupabaseClient.js"></script>
+
+  <script src="js/core/Sessao.js"></script>
+
+  <script src="js/core/UsuarioAtual.js"></script>
+
+  <script src="js/core/ControleSessao.js"></script>
+
+  <script src="js/core/Cabecalho.js"></script>
+
   <script src="js/main.js"></script>
+
+  <script>
+    window.addEventListener('load', async function () {
+      await Cabecalho.iniciar();
+    });
+  </script>
+
 </body>
 </html>
