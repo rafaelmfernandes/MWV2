@@ -1,0 +1,1104 @@
+<!DOCTYPE html> <html lang="pt-BR"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"> <meta name="theme-color" content="#ffffff"> <meta name="color-scheme" content="light"> <title>MusicalWorld - Divulgar evento</title> <link rel="stylesheet" href="css/criar-anuncio-evento.css"> </head> <body> <div class="app-container">
+<!-- ===================================================== -->
+<!-- NAVBAR -->
+<!-- ===================================================== -->
+
+<header class="navbar">
+
+  <div class="navbar-left">
+
+    <div class="brand-mark">
+
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round">
+
+        <path d="M9 18V5l12-2v13"></path>
+        <circle cx="6" cy="18" r="3"></circle>
+        <circle cx="18" cy="16" r="3"></circle>
+
+      </svg>
+
+    </div>
+
+    <div class="navbar-title">
+      <strong>MusicalWorld</strong>
+      <span>Divulgar evento</span>
+    </div>
+
+  </div>
+
+
+  <button
+    type="button"
+    class="nav-close-btn"
+    onclick="voltarPagina()"
+    aria-label="Fechar"
+    title="Fechar">
+
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round">
+
+      <line x1="18" y1="6" x2="6" y2="18"></line>
+      <line x1="6" y1="6" x2="18" y2="18"></line>
+
+    </svg>
+
+  </button>
+
+</header>
+
+
+<!-- ===================================================== -->
+<!-- CONTEÚDO -->
+<!-- ===================================================== -->
+
+<main class="main-content">
+
+  <div class="page-intro">
+
+    <span class="page-badge">
+
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round">
+
+        <path d="M8 2v4"></path>
+        <path d="M16 2v4"></path>
+        <rect x="3" y="4" width="18" height="18" rx="2"></rect>
+        <path d="M3 10h18"></path>
+        <path d="M8 14h.01"></path>
+        <path d="M12 14h.01"></path>
+        <path d="M16 14h.01"></path>
+        <path d="M8 18h.01"></path>
+        <path d="M12 18h.01"></path>
+
+      </svg>
+
+      EVENTO
+    </span>
+
+
+    <h1>Divulgar evento</h1>
+
+    <p>
+      Divulgue seu show, festa ou evento e alcance pessoas
+      interessadas em música e entretenimento.
+    </p>
+
+  </div>
+
+
+  <!-- =================================================== -->
+  <!-- FORMULÁRIO -->
+  <!-- =================================================== -->
+
+  <form
+    id="form-criar-anuncio-evento"
+    class="create-form"
+    novalidate>
+
+
+    <!-- ================================================= -->
+    <!-- 01 - INFORMAÇÕES DO EVENTO -->
+    <!-- ================================================= -->
+
+    <section class="form-section">
+
+      <div class="section-header">
+
+        <div class="section-number">
+          01
+        </div>
+
+        <div>
+
+          <h2>Informações do evento</h2>
+
+          <p>
+            Apresente as principais informações para o público.
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <div class="form-group">
+
+        <label for="titulo-evento">
+          Nome do evento
+          <span>*</span>
+        </label>
+
+        <input
+          type="text"
+          id="titulo-evento"
+          name="titulo_evento"
+          class="form-input"
+          placeholder="Ex.: Sexta Sertaneja"
+          maxlength="100"
+          required>
+
+      </div>
+
+
+      <div class="form-row">
+
+        <div class="form-group">
+
+          <label for="tipo-evento">
+            Tipo de evento
+            <span>*</span>
+          </label>
+
+          <select
+            id="tipo-evento"
+            name="tipo_evento"
+            class="form-select"
+            required>
+
+            <option value="">
+              Selecione
+            </option>
+
+            <option value="show">
+              Show
+            </option>
+
+            <option value="festa">
+              Festa
+            </option>
+
+            <option value="festival">
+              Festival
+            </option>
+
+            <option value="bar">
+              Evento em bar
+            </option>
+
+            <option value="casa-de-shows">
+              Casa de shows
+            </option>
+
+            <option value="evento-particular">
+              Evento particular
+            </option>
+
+            <option value="outro">
+              Outro
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label for="classificacao">
+            Classificação
+          </label>
+
+          <select
+            id="classificacao"
+            name="classificacao"
+            class="form-select">
+
+            <option value="">
+              Não informar
+            </option>
+
+            <option value="livre">
+              Livre
+            </option>
+
+            <option value="10">
+              10 anos
+            </option>
+
+            <option value="12">
+              12 anos
+            </option>
+
+            <option value="14">
+              14 anos
+            </option>
+
+            <option value="16">
+              16 anos
+            </option>
+
+            <option value="18">
+              18 anos
+            </option>
+
+          </select>
+
+        </div>
+
+      </div>
+
+
+      <div class="form-group">
+
+        <label for="descricao-evento">
+          Sobre o evento
+          <span>*</span>
+        </label>
+
+        <textarea
+          id="descricao-evento"
+          name="descricao_evento"
+          class="form-textarea"
+          rows="5"
+          maxlength="1000"
+          placeholder="Conte ao público o que vai acontecer, atrações, ambiente, programação e outras informações importantes."
+          required></textarea>
+
+
+        <div class="field-footer">
+
+          <span>
+            Explique por que as pessoas devem participar.
+          </span>
+
+          <strong>
+            <span id="contador-descricao">0</span>/1000
+          </strong>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================================================= -->
+    <!-- 02 - ARTISTAS -->
+    <!-- ================================================= -->
+
+    <section class="form-section">
+
+      <div class="section-header">
+
+        <div class="section-number">
+          02
+        </div>
+
+        <div>
+
+          <h2>Atrações</h2>
+
+          <p>
+            Informe os artistas que participarão do evento.
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <div class="form-group">
+
+        <label for="artistas-evento">
+          Artistas / atrações
+        </label>
+
+        <input
+          type="text"
+          id="artistas-evento"
+          name="artistas_evento"
+          class="form-input"
+          placeholder="Ex.: Rafael Melo, Gabriel Tatu e convidados"
+          maxlength="300">
+
+        <span class="field-help">
+          Você poderá adicionar mais atrações posteriormente.
+        </span>
+
+      </div>
+
+
+      <div class="featured-artist-box">
+
+        <div class="featured-artist-icon">
+
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round">
+
+            <path d="M9 18V5l12-2v13"></path>
+            <circle cx="6" cy="18" r="3"></circle>
+            <circle cx="18" cy="16" r="3"></circle>
+
+          </svg>
+
+        </div>
+
+
+        <div>
+
+          <strong>
+            Artistas do MusicalWorld
+          </strong>
+
+          <p>
+            No futuro será possível selecionar diretamente
+            artistas cadastrados na plataforma.
+          </p>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================================================= -->
+    <!-- 03 - DATA E HORÁRIO -->
+    <!-- ================================================= -->
+
+    <section class="form-section">
+
+      <div class="section-header">
+
+        <div class="section-number">
+          03
+        </div>
+
+        <div>
+
+          <h2>Data e horário</h2>
+
+          <p>
+            Defina quando o evento acontecerá.
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <div class="form-row">
+
+        <div class="form-group">
+
+          <label for="data-evento">
+            Data
+            <span>*</span>
+          </label>
+
+          <input
+            type="date"
+            id="data-evento"
+            name="data_evento"
+            class="form-input"
+            required>
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label for="horario-inicio">
+            Início
+            <span>*</span>
+          </label>
+
+          <input
+            type="time"
+            id="horario-inicio"
+            name="horario_inicio"
+            class="form-input"
+            required>
+
+        </div>
+
+      </div>
+
+
+      <div class="form-group">
+
+        <label for="horario-fim">
+          Término
+        </label>
+
+        <input
+          type="time"
+          id="horario-fim"
+          name="horario_fim"
+          class="form-input">
+
+      </div>
+
+    </section>
+
+
+    <!-- ================================================= -->
+    <!-- 04 - LOCALIZAÇÃO -->
+    <!-- ================================================= -->
+
+    <section class="form-section">
+
+      <div class="section-header">
+
+        <div class="section-number">
+          04
+        </div>
+
+        <div>
+
+          <h2>Localização</h2>
+
+          <p>
+            Informe onde o público deverá comparecer.
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <div class="form-group">
+
+        <label for="nome-local">
+          Nome do local
+          <span>*</span>
+        </label>
+
+        <input
+          type="text"
+          id="nome-local"
+          name="nome_local"
+          class="form-input"
+          placeholder="Ex.: Villa Music"
+          maxlength="100"
+          required>
+
+      </div>
+
+
+      <div class="form-row">
+
+        <div class="form-group">
+
+          <label for="cidade-evento">
+            Cidade
+            <span>*</span>
+          </label>
+
+          <input
+            type="text"
+            id="cidade-evento"
+            name="cidade"
+            class="form-input"
+            placeholder="Ex.: Goiânia"
+            value="Goiânia"
+            maxlength="60"
+            required>
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label for="estado-evento">
+            Estado
+            <span>*</span>
+          </label>
+
+          <select
+            id="estado-evento"
+            name="estado"
+            class="form-select"
+            required>
+
+            <option value="AC">AC</option>
+            <option value="AL">AL</option>
+            <option value="AP">AP</option>
+            <option value="AM">AM</option>
+            <option value="BA">BA</option>
+            <option value="CE">CE</option>
+            <option value="DF">DF</option>
+            <option value="ES">ES</option>
+            <option value="GO" selected>GO</option>
+            <option value="MA">MA</option>
+            <option value="MT">MT</option>
+            <option value="MS">MS</option>
+            <option value="MG">MG</option>
+            <option value="PA">PA</option>
+            <option value="PB">PB</option>
+            <option value="PR">PR</option>
+            <option value="PE">PE</option>
+            <option value="PI">PI</option>
+            <option value="RJ">RJ</option>
+            <option value="RN">RN</option>
+            <option value="RS">RS</option>
+            <option value="RO">RO</option>
+            <option value="RR">RR</option>
+            <option value="SC">SC</option>
+            <option value="SP">SP</option>
+            <option value="SE">SE</option>
+            <option value="TO">TO</option>
+
+          </select>
+
+        </div>
+
+      </div>
+
+
+      <div class="form-group">
+
+        <label for="endereco-evento">
+          Endereço
+          <span>*</span>
+        </label>
+
+        <input
+          type="text"
+          id="endereco-evento"
+          name="endereco"
+          class="form-input"
+          placeholder="Rua, número, bairro..."
+          maxlength="180"
+          required>
+
+      </div>
+
+
+      <div class="form-row">
+
+        <div class="form-group">
+
+          <label for="cep-evento">
+            CEP
+          </label>
+
+          <input
+            type="text"
+            id="cep-evento"
+            name="cep"
+            class="form-input"
+            placeholder="00000-000"
+            inputmode="numeric"
+            maxlength="9">
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label for="complemento-evento">
+            Complemento
+          </label>
+
+          <input
+            type="text"
+            id="complemento-evento"
+            name="complemento"
+            class="form-input"
+            placeholder="Ex.: Portão principal"
+            maxlength="100">
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================================================= -->
+    <!-- 05 - INGRESSOS -->
+    <!-- ================================================= -->
+
+    <section class="form-section">
+
+      <div class="section-header">
+
+        <div class="section-number">
+          05
+        </div>
+
+        <div>
+
+          <h2>Ingressos</h2>
+
+          <p>
+            Escolha como o público poderá participar do evento.
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <div class="ticket-toggle-card">
+
+        <div class="ticket-toggle-info">
+
+          <div class="ticket-icon">
+
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round">
+
+              <path d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v3a2 2 0 0 0 0 4v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-3a2 2 0 0 0 0-4Z"></path>
+              <path d="M13 5v14"></path>
+
+            </svg>
+
+          </div>
+
+          <div>
+
+            <strong>
+              Haverá venda de ingressos?
+            </strong>
+
+            <span>
+              Ative para configurar as informações.
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <label class="switch">
+
+          <input
+            type="checkbox"
+            id="possui-ingresso"
+            name="possui_ingresso">
+
+          <span class="switch-slider"></span>
+
+        </label>
+
+      </div>
+
+
+      <div
+        id="ticket-fields"
+        class="ticket-fields">
+
+
+        <div class="form-group">
+
+          <label for="tipo-ingresso">
+            Tipo de ingresso
+          </label>
+
+          <select
+            id="tipo-ingresso"
+            name="tipo_ingresso"
+            class="form-select">
+
+            <option value="gratuito">
+              Gratuito
+            </option>
+
+            <option value="pago">
+              Pago
+            </option>
+
+            <option value="doacao">
+              Entrada mediante doação
+            </option>
+
+            <option value="lista">
+              Lista / Nome na portaria
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <div
+          id="ticket-price-group"
+          class="form-group">
+
+          <label for="preco-ingresso">
+            Preço do ingresso
+          </label>
+
+          <div class="money-input">
+
+            <span>R$</span>
+
+            <input
+              type="text"
+              id="preco-ingresso"
+              name="preco_ingresso"
+              inputmode="numeric"
+              placeholder="0,00"
+              autocomplete="off">
+
+          </div>
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label for="link-ingresso">
+            Link para compra
+          </label>
+
+          <input
+            type="url"
+            id="link-ingresso"
+            name="link_ingresso"
+            class="form-input"
+            placeholder="https://..."
+            maxlength="500">
+
+          <span class="field-help">
+            Pode ser o link de uma plataforma externa.
+          </span>
+
+        </div>
+
+
+        <div class="musicalworld-ticket">
+
+          <div class="ticket-check-icon">
+
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round">
+
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="m8 12 2.5 2.5L16 9"></path>
+
+            </svg>
+
+          </div>
+
+          <div>
+
+            <strong>
+              Venda pelo MusicalWorld
+            </strong>
+
+            <p>
+              Em uma próxima versão, o público poderá comprar
+              ingressos diretamente pela plataforma.
+            </p>
+
+            <span class="coming-soon">
+              EM BREVE
+            </span>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================================================= -->
+    <!-- 06 - MÍDIA -->
+    <!-- ================================================= -->
+
+    <section class="form-section">
+
+      <div class="section-header">
+
+        <div class="section-number">
+          06
+        </div>
+
+        <div>
+
+          <h2>Imagem do evento</h2>
+
+          <p>
+            Adicione uma foto ou vídeo para divulgar seu evento.
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <div
+        class="media-dropzone"
+        id="dropzone-box"
+        role="button"
+        tabindex="0"
+        onclick="acionarSeletorMidia()">
+
+
+        <div
+          class="media-preview"
+          id="media-preview">
+
+          <div class="media-icon">
+
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round">
+
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="17 8 12 3 7 8"></polyline>
+              <line x1="12" y1="3" x2="12" y2="15"></line>
+
+            </svg>
+
+          </div>
+
+        </div>
+
+
+        <div class="dropzone-content">
+
+          <strong id="media-name-display">
+            Adicionar foto ou vídeo
+          </strong>
+
+          <span id="media-sub-display">
+            JPG, PNG, WEBP, MP4 ou WEBM
+          </span>
+
+        </div>
+
+
+        <button
+          type="button"
+          id="btn-remover"
+          class="btn-remove-media"
+          onclick="event.stopPropagation(); limparMidia();"
+          aria-label="Remover mídia">
+
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round">
+
+            <polyline points="3 6 5 6 21 6"></polyline>
+            <path d="M19 6l-1 14H6L5 6"></path>
+            <path d="M10 11v6"></path>
+            <path d="M14 11v6"></path>
+            <path d="M9 6V4h6v2"></path>
+
+          </svg>
+
+        </button>
+
+      </div>
+
+
+      <input
+        type="file"
+        id="input-midia-unica"
+        accept="image/jpeg,image/png,image/webp,video/mp4,video/webm"
+        hidden>
+
+
+      <div class="media-info">
+
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round">
+
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="16" x2="12" y2="12"></line>
+          <line x1="12" y1="8" x2="12.01" y2="8"></line>
+
+        </svg>
+
+        <span>
+          A mídia será enviada para o armazenamento do MusicalWorld
+          quando o banco e o Storage estiverem conectados.
+        </span>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================================================= -->
+    <!-- AVISO -->
+    <!-- ================================================= -->
+
+    <div class="publish-notice">
+
+      <div class="notice-icon">
+
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round">
+
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"></path>
+          <path d="m9 12 2 2 4-4"></path>
+
+        </svg>
+
+      </div>
+
+
+      <div>
+
+        <strong>
+          Publicação segura
+        </strong>
+
+        <p>
+          Você poderá editar ou desativar seu anúncio
+          posteriormente.
+        </p>
+
+      </div>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- ERRO -->
+    <!-- ================================================= -->
+
+    <div
+      id="form-error"
+      class="form-message error-message"
+      role="alert"
+      aria-live="polite">
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- BOTÃO -->
+    <!-- ================================================= -->
+
+    <button
+      type="submit"
+      id="btn-publicar"
+      class="btn-submit-ad">
+
+      <span class="btn-submit-content">
+
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round">
+
+          <path d="m22 2-7 20-4-9-9-4Z"></path>
+          <path d="M22 2 11 13"></path>
+
+        </svg>
+
+        Publicar evento
+
+      </span>
+
+
+      <span class="btn-loading-content">
+
+        <span class="loading-spinner"></span>
+
+        Publicando...
+
+      </span>
+
+    </button>
+
+
+    <p class="form-required">
+      * Campos obrigatórios
+    </p>
+
+  </form>
+
+</main>
+
+
+<!-- ===================================================== -->
+<!-- TOAST -->
+<!-- ===================================================== -->
+
+<div
+  id="success-toast"
+  class="success-toast"
+  role="status"
+  aria-live="polite">
+
+  <div class="toast-icon">
+
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round">
+
+      <path d="M20 6 9 17l-5-5"></path>
+
+    </svg>
+
+  </div>
+
+
+  <div>
+
+    <strong>
+      Evento publicado
+    </strong>
+
+    <span>
+      Seu anúncio foi salvo com sucesso.
+    </span>
+
+  </div>
+
+</div>
+</div> <script src="js/criar-anuncio-evento.js"></script> </body> </html>

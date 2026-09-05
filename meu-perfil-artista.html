@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+    <title>MusicalWorld - Meu Perfil</title>
+
+    <link rel="stylesheet" href="css/meu-perfil-artista.css">
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body>
+
+<div class="app-container">
+
+    <header class="topbar">
+
+        <button class="icon-button" id="btnVoltar" aria-label="Voltar">
+            <i data-lucide="arrow-left"></i>
+        </button>
+
+        <div class="topbar-title">
+            Meu perfil
+        </div>
+
+        <div class="topbar-actions">
+
+            <button class="icon-button" id="btnQrCode" aria-label="Compartilhar perfil">
+                <i data-lucide="qr-code"></i>
+            </button>
+
+        </div>
+
+    </header>
+
+
+    <main class="main-content">
+
+        <section class="profile-card">
+
+            <div class="profile-header">
+
+                <div class="avatar-wrapper">
+
+                    <div class="profile-avatar" id="profileAvatar">
+                        <span id="profileInitials">RM</span>
+                    </div>
+
+                    <span class="online-dot"></span>
+
+                </div>
+
+
+                <div class="profile-main-info">
+
+                    <div class="name-row">
+
+                        <h1 id="artistName">
+                            Rafael Melo
+                        </h1>
+
+                        <span class="verified-badge" id="verifiedBadge">
+                            <i data-lucide="badge-check"></i>
+                        </span>
+
+                    </div>
+
+                    <p class="artist-category" id="artistCategory">
+                        Cantor e violonista
+                    </p>
+
+                    <div class="location-row">
+
+                        <span>
+                            <i data-lucide="map-pin"></i>
+                            <span id="artistLocation">Goiânia, GO</span>
+                        </span>
+
+                        <span>
+                            <i data-lucide="star"></i>
+                            <strong id="artistRating">4.9</strong>
+                            <span id="artistReviews">128 avaliações</span>
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="genre-list" id="genreList">
+
+                <span class="genre-tag">MPB</span>
+                <span class="genre-tag">Pop</span>
+                <span class="genre-tag">Sertanejo</span>
+
+            </div>
+
+
+            <div class="profile-status">
+
+                <span class="status-badge">
+                    <i data-lucide="shield-check"></i>
+                    Perfil verificado
+                </span>
+
+                <span class="status-badge online-status">
+                    <span class="status-dot"></span>
+                    Disponível para contratar
+                </span>
+
+            </div>
+
+
+            <button class="edit-profile-button" id="btnEditarPerfil">
+                <i data-lucide="pencil"></i>
+                Editar perfil
+            </button>
+
+        </section>
+
+
+        <nav class="profile-tabs" id="profileTabs">
+
+            <button class="tab-button active" data-tab="sobre">
+                Sobre
+            </button>
+
+            <button class="tab-button" data-tab="portfolio">
+                Portfólio
+            </button>
+
+            <button class="tab-button" data-tab="agenda">
+                Agenda
+            </button>
+
+            <button class="tab-button" data-tab="avaliacoes">
+                Avaliações
+            </button>
+
+            <button class="tab-button wallet-tab" data-tab="carteira">
+                <i data-lucide="wallet"></i>
+                Carteira
+            </button>
+
+        </nav>
+
+
+        <section class="tab-content active" id="tab-sobre">
+
+            <div class="content-section">
+
+                <div class="section-heading">
+
+                    <div class="section-icon">
+                        <i data-lucide="user-round"></i>
+                    </div>
+
+                    <div>
+                        <h2>Sobre mim</h2>
+                        <p>Como os clientes veem meu perfil</p>
+                    </div>
+
+                </div>
+
+                <p class="bio" id="artistBio">
+                    10 anos de estrada, repertório autoral e covers.
+                    Toco em casamentos, aniversários, bares, restaurantes
+                    e eventos corporativos, sozinho ou com banda.
+                </p>
+
+            </div>
+
+
+            <div class="content-section">
+
+                <div class="section-heading">
+
+                    <div class="section-icon">
+                        <i data-lucide="music"></i>
+                    </div>
+
+                    <div>
+                        <h2>Meus serviços</h2>
+                        <p>Serviços oferecidos aos clientes</p>
+                    </div>
+
+                </div>
+
+
+                <div class="services-list" id="servicesList">
+
+                    <article class="service-card">
+
+                        <div class="service-icon">
+                            <i data-lucide="guitar"></i>
+                        </div>
+
+                        <div class="service-info">
+
+                            <strong>Voz e violão</strong>
+
+                            <span>2 horas</span>
+
+                            <small>
+                                Ideal para cerimônias e recepções
+                            </small>
+
+                        </div>
+
+                        <div class="service-price">
+                            R$ 800
+                        </div>
+
+                    </article>
+
+
+                    <article class="service-card">
+
+                        <div class="service-icon">
+                            <i data-lucide="users"></i>
+                        </div>
+
+                        <div class="service-info">
+
+                            <strong>Banda completa</strong>
+
+                            <span>4 horas</span>
+
+                            <small>
+                                4 músicos, som e iluminação inclusos
+                            </small>
+
+                        </div>
+
+                        <div class="service-price">
+                            R$ 2.400
+                        </div>
+
+                    </article>
+
+                </div>
+
+            </div>
+
+
+            <div class="content-section">
+
+                <div class="section-heading">
+
+                    <div class="section-icon">
+                        <i data-lucide="briefcase-business"></i>
+                    </div>
+
+                    <div>
+                        <h2>Informações profissionais</h2>
+                        <p>Informações exibidas no perfil</p>
+                    </div>
+
+                </div>
+
+
+                <div class="information-list">
+
+                    <div class="information-item">
+
+                        <div class="information-icon">
+                            <i data-lucide="clock-3"></i>
+                        </div>
+
+                        <div>
+                            <strong>Experiência</strong>
+                            <span>10 anos</span>
+                        </div>
+
+                    </div>
+
+
+                    <div class="information-item">
+
+                        <div class="information-icon">
+                            <i data-lucide="map"></i>
+                        </div>
+
+                        <div>
+                            <strong>Área de atendimento</strong>
+                            <span>Goiânia e região</span>
+                        </div>
+
+                    </div>
+
+
+                    <div class="information-item">
+
+                        <div class="information-icon">
+                            <i data-lucide="calendar-check"></i>
+                        </div>
+
+                        <div>
+                            <strong>Disponibilidade</strong>
+                            <span>Consulte minha agenda</span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <section class="tab-content" id="tab-portfolio">
+
+            <div class="content-section">
+
+                <div class="section-heading">
+
+                    <div class="section-icon">
+                        <i data-lucide="video"></i>
+                    </div>
+
+                    <div>
+                        <h2>Vídeos</h2>
+                        <p>Apresentações e trabalhos</p>
+                    </div>
+
+                </div>
+
+
+                <div class="portfolio-grid">
+
+                    <article class="portfolio-card">
+
+                        <div class="portfolio-thumb">
+                            <i data-lucide="play"></i>
+                        </div>
+
+                        <strong>Show ao vivo</strong>
+                        <span>Apresentação acústica</span>
+
+                    </article>
+
+
+                    <article class="portfolio-card">
+
+                        <div class="portfolio-thumb">
+                            <i data-lucide="play"></i>
+                        </div>
+
+                        <strong>Casamento</strong>
+                        <span>Recepção dos convidados</span>
+
+                    </article>
+
+                </div>
+
+            </div>
+
+
+            <div class="content-section">
+
+                <div class="section-heading">
+
+                    <div class="section-icon">
+                        <i data-lucide="headphones"></i>
+                    </div>
+
+                    <div>
+                        <h2>Áudios</h2>
+                        <p>Faixas e demonstrações</p>
+                    </div>
+
+                </div>
+
+
+                <div class="audio-list">
+
+                    <div class="audio-card">
+
+                        <button class="audio-play">
+                            <i data-lucide="play"></i>
+                        </button>
+
+                        <div>
+                            <strong>Caminho de volta</strong>
+                            <span>Composição própria · 3:45</span>
+                        </div>
+
+                    </div>
+
+
+                    <div class="audio-card">
+
+                        <button class="audio-play">
+                            <i data-lucide="play"></i>
+                        </button>
+
+                        <div>
+                            <strong>Manhã de domingo</strong>
+                            <span>Cover acústico · 2:58</span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <section class="tab-content" id="tab-agenda">
+
+            <div class="content-section">
+
+                <div class="section-heading">
+
+                    <div class="section-icon">
+                        <i data-lucide="calendar-days"></i>
+                    </div>
+
+                    <div>
+                        <h2>Minha agenda</h2>
+                        <p>Disponibilidade para serviços</p>
+                    </div>
+
+                </div>
+
+
+                <div class="availability-card">
+
+                    <div class="availability-icon">
+                        <i data-lucide="calendar-check"></i>
+                    </div>
+
+                    <div>
+
+                        <strong>Agenda disponível</strong>
+
+                        <p>
+                            Seus clientes poderão consultar sua disponibilidade
+                            antes de enviar uma solicitação.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="calendar-placeholder">
+
+                    <i data-lucide="calendar"></i>
+
+                    <strong>Calendário de disponibilidade</strong>
+
+                    <span>
+                        A integração completa da agenda será conectada ao Supabase.
+                    </span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <section class="tab-content" id="tab-avaliacoes">
+
+            <div class="content-section">
+
+                <div class="rating-summary">
+
+                    <div class="rating-number">
+                        4.9
+                    </div>
+
+                    <div class="rating-stars">
+                        <i data-lucide="star"></i>
+                        <i data-lucide="star"></i>
+                        <i data-lucide="star"></i>
+                        <i data-lucide="star"></i>
+                        <i data-lucide="star"></i>
+                    </div>
+
+                    <span>128 avaliações</span>
+
+                </div>
+
+
+                <div class="reviews-list">
+
+                    <article class="review-card">
+
+                        <div class="review-header">
+
+                            <div class="review-avatar">
+                                CS
+                            </div>
+
+                            <div>
+                                <strong>Camila S.</strong>
+                                <span>Evento particular</span>
+                            </div>
+
+                            <div class="review-rating">
+                                ★ 5.0
+                            </div>
+
+                        </div>
+
+                        <p>
+                            Excelente profissional. Muito pontual,
+                            educado e a apresentação foi maravilhosa.
+                        </p>
+
+                    </article>
+
+
+                    <article class="review-card">
+
+                        <div class="review-header">
+
+                            <div class="review-avatar">
+                                BA
+                            </div>
+
+                            <div>
+                                <strong>Bruno A.</strong>
+                                <span>Casamento</span>
+                            </div>
+
+                            <div class="review-rating">
+                                ★ 5.0
+                            </div>
+
+                        </div>
+
+                        <p>
+                            Repertório excelente e ótima interação
+                            com os convidados.
+                        </p>
+
+                    </article>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <section class="tab-content" id="tab-carteira">
+
+            <div class="wallet-header">
+
+                <div class="wallet-title">
+
+                    <div class="section-icon">
+                        <i data-lucide="wallet"></i>
+                    </div>
+
+                    <div>
+                        <h2>Minha carteira</h2>
+                        <p>Controle dos valores dos seus serviços</p>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="balance-card">
+
+                <div class="balance-label">
+                    Saldo disponível
+                </div>
+
+                <div class="balance-value" id="saldoDisponivel">
+                    R$ 0,00
+                </div>
+
+                <button class="withdraw-button" id="btnSacar">
+                    <i data-lucide="arrow-up-right"></i>
+                    Sacar dinheiro
+                </button>
+
+            </div>
+
+
+            <div class="wallet-summary">
+
+                <div class="wallet-summary-card">
+
+                    <span>
+                        <i data-lucide="clock-3"></i>
+                        A receber
+                    </span>
+
+                    <strong id="saldoReceber">
+                        R$ 0,00
+                    </strong>
+
+                </div>
+
+
+                <div class="wallet-summary-card">
+
+                    <span>
+                        <i data-lucide="circle-dollar-sign"></i>
+                        Total recebido
+                    </span>
+
+                    <strong id="totalRecebido">
+                        R$ 0,00
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="content-section wallet-transactions-section">
+
+                <div class="section-heading">
+
+                    <div class="section-icon">
+                        <i data-lucide="receipt-text"></i>
+                    </div>
+
+                    <div>
+                        <h2>Movimentações</h2>
+                        <p>Histórico financeiro</p>
+                    </div>
+
+                </div>
+
+
+                <div class="transaction-list" id="transactionList">
+
+                    <div class="empty-transactions">
+
+                        <i data-lucide="receipt"></i>
+
+                        <strong>Nenhuma movimentação ainda</strong>
+
+                        <span>
+                            Quando você receber pagamentos pelos seus serviços,
+                            eles aparecerão aqui.
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="wallet-info">
+
+                <i data-lucide="shield-check"></i>
+
+                <p>
+                    Seus valores e movimentações financeiras serão
+                    sincronizados futuramente com o sistema de pagamentos
+                    do MusicalWorld.
+                </p>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <div class="qr-modal" id="qrModal">
+
+        <div class="qr-overlay" id="qrOverlay"></div>
+
+        <div class="qr-card">
+
+            <button class="qr-close" id="btnFecharQr">
+                <i data-lucide="x"></i>
+            </button>
+
+            <div class="qr-icon">
+                <i data-lucide="qr-code"></i>
+            </div>
+
+            <h2>Compartilhe seu perfil</h2>
+
+            <p>
+                Escaneie o QR Code para abrir seu perfil público
+                no MusicalWorld.
+            </p>
+
+
+            <div class="qr-image-wrapper">
+
+                <img
+                    id="qrImage"
+                    src=""
+                    alt="QR Code do perfil"
+                >
+
+            </div>
+
+
+            <div class="profile-link" id="profileLink">
+                perfil-artista.html
+            </div>
+
+
+            <button class="whatsapp-button" id="btnWhatsApp">
+                <i data-lucide="message-circle"></i>
+                Compartilhar no WhatsApp
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <div class="toast" id="toast">
+        <i data-lucide="check-circle-2"></i>
+        <span id="toastMessage"></span>
+    </div>
+
+
+</div>
+
+
+<script src="js/meu-perfil-artista.js"></script>
+
+<script>
+    if (window.lucide) {
+        lucide.createIcons();
+    }
+</script>
+
+</body>
+</html>

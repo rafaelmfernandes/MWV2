@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+
+<head>
+
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<meta
+    name="description"
+    content="Detalhes do anúncio de músico no MusicalWorld"
+>
+
+<title>MusicalWorld - Anúncio de músico</title>
+
+<link
+    rel="stylesheet"
+    href="css/detalhes-anuncio-musico.css"
+>
+
+
+</head>
+
+<body>
+
+<div class="app-container">
+
+
+<!-- =====================================================
+     CABEÇALHO
+====================================================== -->
+
+<header class="topbar">
+
+    <button
+        type="button"
+        id="btn-voltar"
+        class="icon-button"
+        aria-label="Voltar"
+    >
+
+        <svg
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+        >
+
+            <path d="M15 18l-6-6 6-6"></path>
+
+        </svg>
+
+    </button>
+
+
+    <div class="topbar-title">
+
+        Anúncio de músico
+
+    </div>
+
+
+    <button
+        type="button"
+        id="favoriteButton"
+        class="icon-button"
+        aria-label="Favoritar anúncio"
+        aria-pressed="false"
+    >
+
+        <svg
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+        >
+
+            <path
+                d="M20.8 8.7c0 5.5-8.8 10.3-8.8 10.3S3.2 14.2 3.2 8.7A4.7 4.7 0 0 1 8 4c1.7 0 3.2.9 4 2.2A4.7 4.7 0 0 1 16 4a4.7 4.7 0 0 1 4.8 4.7Z"
+            ></path>
+
+        </svg>
+
+    </button>
+
+</header>
+
+
+
+<!-- =====================================================
+     CONTEÚDO
+====================================================== -->
+
+<main class="main-content">
+
+
+    <article
+        class="ad-details-card"
+        id="adDetailsCard"
+    >
+
+
+        <!-- =================================================
+             IDENTIFICAÇÃO DO MÚSICO
+        ================================================== -->
+
+        <section class="artist-header">
+
+
+            <div
+                class="artist-avatar"
+                id="artistAvatar"
+                aria-hidden="true"
+            >
+
+                <span id="artistInitials">
+                    M
+                </span>
+
+            </div>
+
+
+            <div class="artist-info">
+
+                <div class="artist-name-line">
+
+                    <h1 id="artistName">
+                        Nome do músico
+                    </h1>
+
+                </div>
+
+
+                <div
+                    class="artist-category"
+                    id="artistInstrument"
+                >
+                    Músico
+                </div>
+
+
+                <div class="artist-meta">
+
+
+                    <span class="meta-item">
+
+                        <svg
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                        >
+
+                            <path
+                                d="M12 21s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12Z"
+                            ></path>
+
+                            <circle
+                                cx="12"
+                                cy="9"
+                                r="2.2"
+                            ></circle>
+
+                        </svg>
+
+                        <strong id="artistLocation">
+                            Localização
+                        </strong>
+
+                    </span>
+
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             MÍDIA
+        ================================================== -->
+
+        <section class="presentation-media">
+
+
+            <img
+                id="artistImage"
+                class="artist-image"
+                alt="Imagem do músico"
+                hidden
+            >
+
+
+            <video
+                id="artistVideo"
+                class="artist-video"
+                controls
+                playsinline
+                preload="metadata"
+                hidden
+            ></video>
+
+
+            <div
+                id="mediaPlaceholder"
+                class="media-placeholder"
+            >
+
+                <div class="media-placeholder-icon">
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                    >
+
+                        <path
+                            d="M9 18V5l11-2v13"
+                        ></path>
+
+                        <circle
+                            cx="6"
+                            cy="18"
+                            r="3"
+                        ></circle>
+
+                        <circle
+                            cx="17"
+                            cy="16"
+                            r="3"
+                        ></circle>
+
+                    </svg>
+
+                </div>
+
+                <span>
+                    Mídia em destaque
+                </span>
+
+            </div>
+
+
+            <button
+                type="button"
+                id="playButton"
+                class="play-button"
+                aria-label="Reproduzir vídeo"
+                hidden
+            >
+
+                <svg
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                >
+
+                    <path d="M8 5v14l11-7z"></path>
+
+                </svg>
+
+            </button>
+
+        </section>
+
+
+
+        <!-- =================================================
+             SOBRE O TRABALHO
+        ================================================== -->
+
+        <section class="details-section">
+
+            <div class="section-heading">
+
+                <div class="section-icon">
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                    >
+
+                        <path d="M12 20h9"></path>
+
+                        <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"></path>
+
+                    </svg>
+
+                </div>
+
+
+                <h2>
+                    Sobre o trabalho
+                </h2>
+
+            </div>
+
+
+            <p
+                id="artistDescription"
+                class="description"
+            >
+                Descrição do trabalho do músico.
+            </p>
+
+        </section>
+
+
+
+        <!-- =================================================
+             ESPECIALIDADES
+        ================================================== -->
+
+        <section
+            class="details-section"
+            id="specialtiesSection"
+        >
+
+            <div class="section-heading">
+
+                <div class="section-icon">
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                    >
+
+                        <path d="M12 3v18"></path>
+
+                        <path d="M5 8h14"></path>
+
+                        <path d="M7 8l-4 7h8z"></path>
+
+                        <path d="M17 8l-4 7h8z"></path>
+
+                    </svg>
+
+                </div>
+
+
+                <h2>
+                    Especialidades
+                </h2>
+
+            </div>
+
+
+            <p
+                id="artistSpecialties"
+                class="description"
+            ></p>
+
+        </section>
+
+
+
+        <!-- =================================================
+             ESTILOS MUSICAIS
+        ================================================== -->
+
+        <section
+            class="details-section"
+            id="genresSection"
+        >
+
+            <div class="section-heading">
+
+                <div class="section-icon">
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                    >
+
+                        <path d="M9 18V5l11-2v13"></path>
+
+                        <circle
+                            cx="6"
+                            cy="18"
+                            r="3"
+                        ></circle>
+
+                        <circle
+                            cx="17"
+                            cy="16"
+                            r="3"
+                        ></circle>
+
+                    </svg>
+
+                </div>
+
+
+                <h2>
+                    Estilos musicais
+                </h2>
+
+            </div>
+
+
+            <div
+                id="genreList"
+                class="genre-list"
+            ></div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             SERVIÇOS E VALORES
+        ================================================== -->
+
+        <section class="details-section">
+
+            <div class="section-heading">
+
+                <div class="section-icon">
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                    >
+
+                        <path d="M12 3v18"></path>
+
+                        <path d="M5 8h14"></path>
+
+                        <path d="M7 8l-4 7h8z"></path>
+
+                        <path d="M17 8l-4 7h8z"></path>
+
+                    </svg>
+
+                </div>
+
+
+                <h2>
+                    Serviços e valores
+                </h2>
+
+            </div>
+
+
+            <div
+                id="servicesList"
+                class="services-list"
+            ></div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             DISPONIBILIDADE
+        ================================================== -->
+
+        <section class="details-section">
+
+            <div class="section-heading">
+
+                <div class="section-icon">
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                    >
+
+                        <circle
+                            cx="12"
+                            cy="12"
+                            r="9"
+                        ></circle>
+
+                        <path d="M12 7v5l3 2"></path>
+
+                    </svg>
+
+                </div>
+
+
+                <h2>
+                    Disponibilidade
+                </h2>
+
+            </div>
+
+
+            <div
+                id="availabilityList"
+                class="availability-list"
+            ></div>
+
+
+            <div
+                id="serviceArea"
+                class="availability-area"
+            ></div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             INFORMAÇÕES DO ANÚNCIO
+        ================================================== -->
+
+        <section class="details-section">
+
+            <div class="section-heading">
+
+                <div class="section-icon">
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                    >
+
+                        <circle
+                            cx="12"
+                            cy="12"
+                            r="9"
+                        ></circle>
+
+                        <path d="M12 10v6"></path>
+
+                        <circle
+                            cx="12"
+                            cy="7"
+                            r=".7"
+                            fill="currentColor"
+                            stroke="none"
+                        ></circle>
+
+                    </svg>
+
+                </div>
+
+
+                <h2>
+                    Informações do anúncio
+                </h2>
+
+            </div>
+
+
+            <div class="information-list">
+
+
+                <div class="information-item">
+
+                    <div class="information-icon">
+
+                        <svg
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                        >
+
+                            <path d="M12 3v18"></path>
+
+                            <path d="M5 8h14"></path>
+
+                            <path d="M7 8l-4 7h8z"></path>
+
+                            <path d="M17 8l-4 7h8z"></path>
+
+                        </svg>
+
+                    </div>
+
+
+                    <div>
+
+                        <strong>
+                            Instrumento / função
+                        </strong>
+
+                        <span id="informationInstrument">
+                            —
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="information-item">
+
+                    <div class="information-icon">
+
+                        <svg
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                        >
+
+                            <path
+                                d="M12 21s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12Z"
+                            ></path>
+
+                            <circle
+                                cx="12"
+                                cy="9"
+                                r="2.2"
+                            ></circle>
+
+                        </svg>
+
+                    </div>
+
+
+                    <div>
+
+                        <strong>
+                            Localização
+                        </strong>
+
+                        <span id="informationLocation">
+                            —
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="information-item">
+
+                    <div class="information-icon">
+
+                        <svg
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                        >
+
+                            <path d="M4 19h16"></path>
+
+                            <path d="M6 17V7"></path>
+
+                            <path d="M18 17V5"></path>
+
+                            <path d="M6 9h12"></path>
+
+                            <path d="M10 5v4"></path>
+
+                            <path d="M14 5v4"></path>
+
+                        </svg>
+
+                    </div>
+
+
+                    <div>
+
+                        <strong>
+                            Região de atendimento
+                        </strong>
+
+                        <span id="informationRegion">
+                            —
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="information-item">
+
+                    <div class="information-icon">
+
+                        <svg
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                        >
+
+                            <path d="M12 3l9 4.5v5c0 5.5-3.8 8.5-9 9.5-5.2-1-9-4-9-9.5v-5z"></path>
+
+                            <path d="M9 12l2 2 4-4"></path>
+
+                        </svg>
+
+                    </div>
+
+
+                    <div>
+
+                        <strong>
+                            Publicação
+                        </strong>
+
+                        <span id="informationStatus">
+                            Anúncio público
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             AUTOR
+        ================================================== -->
+
+        <section
+            class="profile-section"
+            id="profileSection"
+        >
+
+            <button
+                type="button"
+                id="viewProfileButton"
+                class="profile-button"
+            >
+
+                Ver perfil do músico
+
+                <svg
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                >
+
+                    <path d="M5 12h14"></path>
+
+                    <path d="M13 6l6 6-6 6"></path>
+
+                </svg>
+
+            </button>
+
+        </section>
+
+
+    </article>
+
+</main>
+
+
+
+<!-- =====================================================
+     BARRA DE CONTRATAÇÃO
+====================================================== -->
+
+<div
+    class="bottom-action-bar"
+    id="bottomActionBar"
+>
+
+    <div class="selected-service">
+
+        <span>
+            Serviço selecionado
+        </span>
+
+        <strong id="selectedServiceName">
+            Selecione um serviço
+        </strong>
+
+        <small id="selectedServicePrice">
+            —
+        </small>
+
+    </div>
+
+
+    <button
+        type="button"
+        id="primaryAction"
+        class="primary-action"
+        disabled
+    >
+
+        Solicitar contratação
+
+    </button>
+
+</div>
+
+
+
+<!-- =====================================================
+     MENSAGEM
+====================================================== -->
+
+<div
+    id="errorMessage"
+    class="error-message"
+    role="alert"
+    hidden
+>
+
+    <span id="errorText"></span>
+
+</div>
+
+
+</div>
+
+<script src="js/detalhes-anuncio-musico.js"></script>
+
+</body>
+
+</html>

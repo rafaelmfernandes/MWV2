@@ -1,0 +1,720 @@
+<!DOCTYPE html> <html lang="pt-BR"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"> <meta name="theme-color" content="#ffffff"> <meta name="color-scheme" content="light"> <title>MusicalWorld - Criar anúncio de artista</title> <link rel="stylesheet" href="css/criar-anuncio-cantor.css"> </head> <body> <div class="app-container">
+<!-- ===================================================== -->
+<!-- CABEÇALHO -->
+<!-- ===================================================== -->
+
+<header class="navbar">
+
+  <div class="navbar-left">
+
+    <div class="brand-mark">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M9 18V5l12-2v13"></path>
+        <circle cx="6" cy="18" r="3"></circle>
+        <circle cx="18" cy="16" r="3"></circle>
+      </svg>
+    </div>
+
+    <div class="navbar-title">
+      <strong>MusicalWorld</strong>
+      <span>Novo anúncio</span>
+    </div>
+
+  </div>
+
+  <button
+    type="button"
+    class="nav-close-btn"
+    onclick="voltarPagina()"
+    aria-label="Fechar"
+    title="Fechar">
+
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="18" y1="6" x2="6" y2="18"></line>
+      <line x1="6" y1="6" x2="18" y2="18"></line>
+    </svg>
+
+  </button>
+
+</header>
+
+
+<!-- ===================================================== -->
+<!-- CONTEÚDO -->
+<!-- ===================================================== -->
+
+<main class="main-content">
+
+  <div class="page-intro">
+
+    <span class="page-badge">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M9 18V5l12-2v13"></path>
+        <circle cx="6" cy="18" r="3"></circle>
+        <circle cx="18" cy="16" r="3"></circle>
+      </svg>
+
+      ARTISTA
+    </span>
+
+    <h1>Criar anúncio</h1>
+
+    <p>
+      Apresente seu trabalho para pessoas que procuram artistas
+      para shows, eventos e apresentações.
+    </p>
+
+  </div>
+
+
+  <!-- =================================================== -->
+  <!-- FORMULÁRIO -->
+  <!-- =================================================== -->
+
+  <form id="form-criar-anuncio-cantor" class="create-form" novalidate>
+
+
+    <!-- ================================================= -->
+    <!-- 01 - INFORMAÇÕES DO ARTISTA -->
+    <!-- ================================================= -->
+
+    <section class="form-section">
+
+      <div class="section-header">
+
+        <div class="section-number">01</div>
+
+        <div>
+          <h2>Informações do artista</h2>
+          <p>Como você será apresentado no MusicalWorld.</p>
+        </div>
+
+      </div>
+
+
+      <div class="form-group">
+
+        <label for="nome-artistico">
+          Nome artístico
+          <span>*</span>
+        </label>
+
+        <input
+          type="text"
+          id="nome-artistico"
+          name="nome_artistico"
+          class="form-input"
+          placeholder="Ex.: Rafael Melo"
+          maxlength="80"
+          autocomplete="name"
+          required>
+
+      </div>
+
+
+      <div class="form-row">
+
+        <div class="form-group">
+
+          <label for="estilo-musical">
+            Estilo musical
+            <span>*</span>
+          </label>
+
+          <select
+            id="estilo-musical"
+            name="estilo_musical"
+            class="form-select"
+            required>
+
+            <option value="">Selecione</option>
+            <option value="sertanejo">Sertanejo / Modão</option>
+            <option value="mpb">MPB</option>
+            <option value="pop">Pop</option>
+            <option value="pop-rock">Pop Rock</option>
+            <option value="rock">Rock</option>
+            <option value="forro">Forró / Piseiro</option>
+            <option value="pagode">Pagode</option>
+            <option value="samba">Samba</option>
+            <option value="gospel">Gospel</option>
+            <option value="eletronica">Eletrônica</option>
+            <option value="outro">Outro</option>
+
+          </select>
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label for="cidade">
+
+            Cidade
+            <span>*</span>
+
+          </label>
+
+          <input
+            type="text"
+            id="cidade"
+            name="cidade"
+            class="form-input"
+            placeholder="Ex.: Goiânia"
+            maxlength="60"
+            value="Goiânia"
+            required>
+
+        </div>
+
+      </div>
+
+
+      <div class="form-group">
+
+        <label for="estado">
+          Estado
+          <span>*</span>
+        </label>
+
+        <select
+          id="estado"
+          name="estado"
+          class="form-select"
+          required>
+
+          <option value="">Selecione o estado</option>
+          <option value="AC">Acre</option>
+          <option value="AL">Alagoas</option>
+          <option value="AP">Amapá</option>
+          <option value="AM">Amazonas</option>
+          <option value="BA">Bahia</option>
+          <option value="CE">Ceará</option>
+          <option value="DF">Distrito Federal</option>
+          <option value="ES">Espírito Santo</option>
+          <option value="GO" selected>Goiás</option>
+          <option value="MA">Maranhão</option>
+          <option value="MT">Mato Grosso</option>
+          <option value="MS">Mato Grosso do Sul</option>
+          <option value="MG">Minas Gerais</option>
+          <option value="PA">Pará</option>
+          <option value="PB">Paraíba</option>
+          <option value="PR">Paraná</option>
+          <option value="PE">Pernambuco</option>
+          <option value="PI">Piauí</option>
+          <option value="RJ">Rio de Janeiro</option>
+          <option value="RN">Rio Grande do Norte</option>
+          <option value="RS">Rio Grande do Sul</option>
+          <option value="RO">Rondônia</option>
+          <option value="RR">Roraima</option>
+          <option value="SC">Santa Catarina</option>
+          <option value="SP">São Paulo</option>
+          <option value="SE">Sergipe</option>
+          <option value="TO">Tocantins</option>
+
+        </select>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================================================= -->
+    <!-- 02 - SOBRE O ARTISTA -->
+    <!-- ================================================= -->
+
+    <section class="form-section">
+
+      <div class="section-header">
+
+        <div class="section-number">02</div>
+
+        <div>
+          <h2>Sobre o artista</h2>
+          <p>Conte um pouco sobre seu trabalho.</p>
+        </div>
+
+      </div>
+
+
+      <div class="form-group">
+
+        <label for="descricao">
+          Descrição do anúncio
+          <span>*</span>
+        </label>
+
+        <textarea
+          id="descricao"
+          name="descricao"
+          class="form-textarea"
+          rows="5"
+          maxlength="800"
+          placeholder="Conte sobre seu trabalho, repertório, experiência e o que o contratante pode esperar da sua apresentação."
+          required></textarea>
+
+        <div class="field-footer">
+
+          <span>
+            Seja claro e destaque seus diferenciais.
+          </span>
+
+          <strong>
+            <span id="contador-descricao">0</span>/800
+          </strong>
+
+        </div>
+
+      </div>
+
+
+      <div class="form-group">
+
+        <label for="experiencia">
+          Experiência profissional
+        </label>
+
+        <textarea
+          id="experiencia"
+          name="experiencia"
+          class="form-textarea"
+          rows="3"
+          maxlength="500"
+          placeholder="Ex.: 10 anos de experiência, apresentações em bares, casas de shows, eventos particulares..."
+        ></textarea>
+
+      </div>
+
+
+      <div class="form-group">
+
+        <label for="disponibilidade">
+          Disponibilidade
+        </label>
+
+        <select
+          id="disponibilidade"
+          name="disponibilidade"
+          class="form-select">
+
+          <option value="">Selecione</option>
+          <option value="flexivel">Flexível</option>
+          <option value="finais-de-semana">Principalmente finais de semana</option>
+          <option value="dias-uteis">Dias úteis</option>
+          <option value="noturno">Preferencialmente à noite</option>
+          <option value="sob-consulta">Sob consulta</option>
+
+        </select>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================================================= -->
+    <!-- 03 - MÍDIA -->
+    <!-- ================================================= -->
+
+    <section class="form-section">
+
+      <div class="section-header">
+
+        <div class="section-number">03</div>
+
+        <div>
+          <h2>Mídia de destaque</h2>
+          <p>Escolha uma foto ou vídeo para representar seu anúncio.</p>
+        </div>
+
+      </div>
+
+
+      <div
+        class="media-dropzone"
+        id="dropzone-box"
+        role="button"
+        tabindex="0"
+        onclick="acionarSeletorMidia()">
+
+        <div
+          class="media-preview"
+          id="media-preview">
+
+          <div class="media-icon">
+
+            <svg
+              id="dropzone-svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round">
+
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="17 8 12 3 7 8"></polyline>
+              <line x1="12" y1="3" x2="12" y2="15"></line>
+
+            </svg>
+
+          </div>
+
+        </div>
+
+
+        <div class="dropzone-content">
+
+          <strong id="media-name-display">
+            Adicionar foto ou vídeo
+          </strong>
+
+          <span id="media-sub-display">
+            JPG, PNG, WEBP ou MP4
+          </span>
+
+        </div>
+
+
+        <button
+          type="button"
+          id="btn-remover"
+          class="btn-remove-media"
+          onclick="event.stopPropagation(); limparMidia();"
+          aria-label="Remover mídia"
+          title="Remover mídia">
+
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="3 6 5 6 21 6"></polyline>
+            <path d="M19 6l-1 14H6L5 6"></path>
+            <path d="M10 11v6"></path>
+            <path d="M14 11v6"></path>
+            <path d="M9 6V4h6v2"></path>
+          </svg>
+
+        </button>
+
+      </div>
+
+
+      <input
+        type="file"
+        id="input-midia-unica"
+        accept="image/jpeg,image/png,image/webp,video/mp4,video/webm"
+        hidden>
+
+      <div class="media-info">
+
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="16" x2="12" y2="12"></line>
+          <line x1="12" y1="8" x2="12.01" y2="8"></line>
+        </svg>
+
+        <span>
+          No futuro, o arquivo será enviado para o armazenamento
+          do MusicalWorld. Por enquanto, o anúncio é salvo localmente
+          para teste.
+        </span>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================================================= -->
+    <!-- 04 - FORMATOS E VALORES -->
+    <!-- ================================================= -->
+
+    <section class="form-section">
+
+      <div class="section-header">
+
+        <div class="section-number">04</div>
+
+        <div>
+          <h2>Formatos e valores</h2>
+          <p>Informe os valores iniciais para seus principais serviços.</p>
+        </div>
+
+      </div>
+
+
+      <!-- ACÚSTICO -->
+
+      <div class="price-card">
+
+        <div class="price-info">
+
+          <div class="price-icon">
+
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 18V5l12-2v13"></path>
+              <circle cx="6" cy="18" r="3"></circle>
+              <circle cx="18" cy="16" r="3"></circle>
+            </svg>
+
+          </div>
+
+          <div>
+
+            <strong>Acústico</strong>
+
+            <span>Voz e violão</span>
+
+          </div>
+
+        </div>
+
+
+        <div class="price-input-wrapper">
+
+          <span>R$</span>
+
+          <input
+            type="text"
+            id="preco-acustico"
+            name="preco_acustico"
+            class="form-input-price"
+            inputmode="numeric"
+            placeholder="0,00"
+            autocomplete="off">
+
+        </div>
+
+      </div>
+
+
+      <!-- BANDA -->
+
+      <div class="price-card">
+
+        <div class="price-info">
+
+          <div class="price-icon">
+
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="6" cy="12" r="3"></circle>
+              <circle cx="18" cy="12" r="3"></circle>
+              <path d="M9 12h6"></path>
+              <path d="M6 9V5"></path>
+              <path d="M18 9V5"></path>
+            </svg>
+
+          </div>
+
+          <div>
+
+            <strong>Banda completa</strong>
+
+            <span>Show com banda</span>
+
+          </div>
+
+        </div>
+
+
+        <div class="price-input-wrapper">
+
+          <span>R$</span>
+
+          <input
+            type="text"
+            id="preco-banda"
+            name="preco_banda"
+            class="form-input-price"
+            inputmode="numeric"
+            placeholder="0,00"
+            autocomplete="off">
+
+        </div>
+
+      </div>
+
+
+      <!-- PARTICIPAÇÃO -->
+
+      <div class="price-card">
+
+        <div class="price-info">
+
+          <div class="price-icon">
+
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="7" r="4"></circle>
+              <path d="M5.5 21a6.5 6.5 0 0 1 13 0"></path>
+            </svg>
+
+          </div>
+
+          <div>
+
+            <strong>Participação especial</strong>
+
+            <span>Participações em eventos</span>
+
+          </div>
+
+        </div>
+
+
+        <div class="price-input-wrapper">
+
+          <span>R$</span>
+
+          <input
+            type="text"
+            id="preco-participacao"
+            name="preco_participacao"
+            class="form-input-price"
+            inputmode="numeric"
+            placeholder="0,00"
+            autocomplete="off">
+
+        </div>
+
+      </div>
+
+
+      <!-- PERSONALIZADO -->
+
+      <div class="price-card price-card-consulta">
+
+        <div class="price-info">
+
+          <div class="price-icon">
+
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-1.8 1.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6v.2h-2.6V20a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1-1.8-1.8.1-.1A1.7 1.7 0 0 0 8 15a1.7 1.7 0 0 0-1.6-1H6v-2.6h.4A1.7 1.7 0 0 0 8 10a1.7 1.7 0 0 0-.3-1.9l-.1-.1 1.8-1.8.1.1a1.7 1.7 0 0 0 1.9.3 1.7 1.7 0 0 0 1-1.6v-.2h2.6V5a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1 1.8 1.8-.1.1A1.7 1.7 0 0 0 19.4 10a1.7 1.7 0 0 0 1.6 1h.2v2.6H21a1.7 1.7 0 0 0-1.6 1.4Z"></path>
+            </svg>
+
+          </div>
+
+          <div>
+
+            <strong>Personalizado</strong>
+
+            <span>Projeto sob demanda</span>
+
+          </div>
+
+        </div>
+
+
+        <div class="consulta-value">
+          Sob consulta
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================================================= -->
+    <!-- AVISO -->
+    <!-- ================================================= -->
+
+    <div class="publish-notice">
+
+      <div class="notice-icon">
+
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"></path>
+          <path d="m9 12 2 2 4-4"></path>
+        </svg>
+
+      </div>
+
+      <div>
+
+        <strong>Publicação segura</strong>
+
+        <p>
+          Você poderá editar ou desativar seu anúncio
+          posteriormente.
+        </p>
+
+      </div>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- ERRO -->
+    <!-- ================================================= -->
+
+    <div
+      id="form-error"
+      class="form-message error-message"
+      role="alert"
+      aria-live="polite">
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- BOTÃO -->
+    <!-- ================================================= -->
+
+    <button
+      type="submit"
+      id="btn-publicar"
+      class="btn-submit-ad">
+
+      <span class="btn-submit-content">
+
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m22 2-7 20-4-9-9-4Z"></path>
+          <path d="M22 2 11 13"></path>
+        </svg>
+
+        Publicar anúncio
+
+      </span>
+
+      <span class="btn-loading-content">
+
+        <span class="loading-spinner"></span>
+
+        Publicando...
+
+      </span>
+
+    </button>
+
+
+    <p class="form-required">
+      * Campos obrigatórios
+    </p>
+
+  </form>
+
+</main>
+
+
+<!-- ===================================================== -->
+<!-- TOAST -->
+<!-- ===================================================== -->
+
+<div
+  id="success-toast"
+  class="success-toast"
+  role="status"
+  aria-live="polite">
+
+  <div class="toast-icon">
+
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M20 6 9 17l-5-5"></path>
+    </svg>
+
+  </div>
+
+  <div>
+
+    <strong>Anúncio publicado</strong>
+
+    <span>Seu anúncio foi salvo com sucesso.</span>
+
+  </div>
+
+</div>
+</div> <script src="js/criar-anuncio-cantor.js"></script> </body> </html>

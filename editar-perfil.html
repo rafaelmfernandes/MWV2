@@ -1,0 +1,1582 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f5f7fb">
+
+  <title>MusicalWorld - Editar perfil</title>
+
+  <link rel="stylesheet" href="css/editar-perfil.css">
+</head>
+
+<body>
+
+<div class="app-container">
+
+  <!-- =====================================================
+       TOPO
+  ====================================================== -->
+
+  <header class="topbar">
+
+
+<button
+  type="button"
+  class="icon-button"
+  id="btn-voltar"
+  aria-label="Voltar">
+
+  <svg viewBox="0 0 24 24"
+       fill="none"
+       stroke="currentColor"
+       stroke-width="2">
+
+    <path d="M19 12H5"></path>
+    <path d="M12 19l-7-7 7-7"></path>
+
+  </svg>
+
+</button>
+
+<div class="topbar-title">
+  Editar perfil
+</div>
+
+<button
+  type="button"
+  class="topbar-action"
+  id="btn-salvar-topo">
+
+  Salvar
+
+</button>
+
+
+  </header>
+
+  <!-- =====================================================
+       CONTEÚDO
+  ====================================================== -->
+
+  <main class="main-content">
+
+
+<!-- =================================================
+     INTRODUÇÃO
+================================================== -->
+
+<section class="page-intro">
+
+  <div class="intro-icon">
+
+    <svg viewBox="0 0 24 24"
+         fill="none"
+         stroke="currentColor"
+         stroke-width="2">
+
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+      <circle cx="12" cy="7" r="4"></circle>
+
+    </svg>
+
+  </div>
+
+  <div>
+
+    <h1>Seu perfil artístico</h1>
+
+    <p>
+      Mantenha suas informações atualizadas para que
+      contratantes e profissionais conheçam melhor o seu trabalho.
+    </p>
+
+  </div>
+
+</section>
+
+
+<!-- =================================================
+     FOTO E IDENTIDADE
+================================================== -->
+
+<section class="edit-card">
+
+  <div class="card-heading">
+
+    <div class="heading-icon">
+
+      <svg viewBox="0 0 24 24"
+           fill="none"
+           stroke="currentColor"
+           stroke-width="2">
+
+        <rect x="3" y="3" width="18" height="18" rx="3"></rect>
+        <circle cx="8.5" cy="8.5" r="1.5"></circle>
+        <path d="M21 15l-5-5L5 21"></path>
+
+      </svg>
+
+    </div>
+
+    <div>
+
+      <h2>Identidade artística</h2>
+
+      <span>Como você será apresentado no MusicalWorld</span>
+
+    </div>
+
+  </div>
+
+
+  <div class="profile-photo-area">
+
+    <div class="avatar-preview" id="avatar-preview">
+
+      <span id="avatar-initials">RM</span>
+
+      <img
+        id="avatar-image"
+        src=""
+        alt="Foto do perfil">
+
+    </div>
+
+    <div class="photo-actions">
+
+      <strong>Foto do perfil</strong>
+
+      <span>
+        Use uma foto clara e que represente seu trabalho artístico.
+      </span>
+
+      <div class="photo-buttons">
+
+        <label class="secondary-button">
+
+          <svg viewBox="0 0 24 24"
+               fill="none"
+               stroke="currentColor"
+               stroke-width="2">
+
+            <path d="M12 5v14"></path>
+            <path d="M5 12h14"></path>
+
+          </svg>
+
+          Alterar foto
+
+          <input
+            type="file"
+            id="foto-perfil"
+            accept="image/*"
+            hidden>
+
+        </label>
+
+        <button
+          type="button"
+          class="text-button danger"
+          id="btn-remover-foto">
+
+          Remover
+
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <div class="form-grid">
+
+    <div class="form-group full">
+
+      <label for="nome">
+        Nome artístico
+      </label>
+
+      <input
+        type="text"
+        id="nome"
+        maxlength="100"
+        placeholder="Ex.: Rafael Melo">
+
+    </div>
+
+
+    <div class="form-group">
+
+      <label for="categoria">
+        Categoria principal
+      </label>
+
+      <select id="categoria">
+
+        <option value="">Selecione</option>
+        <option value="Cantor">Cantor</option>
+        <option value="Músico">Músico</option>
+        <option value="Cantor e músico">Cantor e músico</option>
+        <option value="Banda">Banda</option>
+        <option value="Dupla">Dupla</option>
+        <option value="Compositor">Compositor</option>
+        <option value="Produtor musical">Produtor musical</option>
+        <option value="DJ">DJ</option>
+        <option value="Outro">Outro</option>
+
+      </select>
+
+    </div>
+
+
+    <div class="form-group">
+
+      <label for="nome-profissional">
+        Descrição profissional
+      </label>
+
+      <input
+        type="text"
+        id="nome-profissional"
+        maxlength="120"
+        placeholder="Ex.: Cantor e violonista">
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- =================================================
+     GÊNEROS
+================================================== -->
+
+<section class="edit-card">
+
+  <div class="card-heading">
+
+    <div class="heading-icon">
+
+      <svg viewBox="0 0 24 24"
+           fill="none"
+           stroke="currentColor"
+           stroke-width="2">
+
+        <path d="M9 18V5l12-2v13"></path>
+        <circle cx="6" cy="18" r="3"></circle>
+        <circle cx="18" cy="16" r="3"></circle>
+
+      </svg>
+
+    </div>
+
+    <div>
+
+      <h2>Estilos musicais</h2>
+
+      <span>Selecione os estilos que representam seu trabalho</span>
+
+    </div>
+
+  </div>
+
+
+  <div class="genre-selector" id="genre-selector">
+
+    <button type="button" class="genre-option" data-genre="MPB">
+      MPB
+    </button>
+
+    <button type="button" class="genre-option" data-genre="Pop">
+      Pop
+    </button>
+
+    <button type="button" class="genre-option" data-genre="Sertanejo">
+      Sertanejo
+    </button>
+
+    <button type="button" class="genre-option" data-genre="Rock">
+      Rock
+    </button>
+
+    <button type="button" class="genre-option" data-genre="Forró">
+      Forró
+    </button>
+
+    <button type="button" class="genre-option" data-genre="Pagode">
+      Pagode
+    </button>
+
+    <button type="button" class="genre-option" data-genre="Gospel">
+      Gospel
+    </button>
+
+    <button type="button" class="genre-option" data-genre="Jazz">
+      Jazz
+    </button>
+
+    <button type="button" class="genre-option" data-genre="Blues">
+      Blues
+    </button>
+
+    <button type="button" class="genre-option" data-genre="Reggae">
+      Reggae
+    </button>
+
+    <button type="button" class="genre-option" data-genre="Eletrônica">
+      Eletrônica
+    </button>
+
+    <button type="button" class="genre-option" data-genre="Outro">
+      Outro
+    </button>
+
+  </div>
+
+  <div class="field-helper">
+    Você pode selecionar mais de um estilo.
+  </div>
+
+</section>
+
+
+<!-- =================================================
+     LOCALIZAÇÃO
+================================================== -->
+
+<section class="edit-card">
+
+  <div class="card-heading">
+
+    <div class="heading-icon">
+
+      <svg viewBox="0 0 24 24"
+           fill="none"
+           stroke="currentColor"
+           stroke-width="2">
+
+        <path d="M12 21s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12z"></path>
+        <circle cx="12" cy="9" r="2.5"></circle>
+
+      </svg>
+
+    </div>
+
+    <div>
+
+      <h2>Localização</h2>
+
+      <span>Onde você está disponível</span>
+
+    </div>
+
+  </div>
+
+
+  <div class="form-grid">
+
+    <div class="form-group">
+
+      <label for="cidade">
+        Cidade
+      </label>
+
+      <input
+        type="text"
+        id="cidade"
+        maxlength="80"
+        placeholder="Ex.: Goiânia">
+
+    </div>
+
+
+    <div class="form-group">
+
+      <label for="estado">
+        Estado
+      </label>
+
+      <select id="estado">
+
+        <option value="">Selecione</option>
+
+        <option value="AC">Acre</option>
+        <option value="AL">Alagoas</option>
+        <option value="AP">Amapá</option>
+        <option value="AM">Amazonas</option>
+        <option value="BA">Bahia</option>
+        <option value="CE">Ceará</option>
+        <option value="DF">Distrito Federal</option>
+        <option value="ES">Espírito Santo</option>
+        <option value="GO">Goiás</option>
+        <option value="MA">Maranhão</option>
+        <option value="MT">Mato Grosso</option>
+        <option value="MS">Mato Grosso do Sul</option>
+        <option value="MG">Minas Gerais</option>
+        <option value="PA">Pará</option>
+        <option value="PB">Paraíba</option>
+        <option value="PR">Paraná</option>
+        <option value="PE">Pernambuco</option>
+        <option value="PI">Piauí</option>
+        <option value="RJ">Rio de Janeiro</option>
+        <option value="RN">Rio Grande do Norte</option>
+        <option value="RS">Rio Grande do Sul</option>
+        <option value="RO">Rondônia</option>
+        <option value="RR">Roraima</option>
+        <option value="SC">Santa Catarina</option>
+        <option value="SP">São Paulo</option>
+        <option value="SE">Sergipe</option>
+        <option value="TO">Tocantins</option>
+
+      </select>
+
+    </div>
+
+
+    <div class="form-group full">
+
+      <label for="area-atendimento">
+        Área de atendimento
+      </label>
+
+      <input
+        type="text"
+        id="area-atendimento"
+        maxlength="150"
+        placeholder="Ex.: Goiânia e região metropolitana">
+
+      <div class="field-helper">
+        Informe as cidades ou regiões onde você aceita trabalhos.
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- =================================================
+     SOBRE
+================================================== -->
+
+<section class="edit-card">
+
+  <div class="card-heading">
+
+    <div class="heading-icon">
+
+      <svg viewBox="0 0 24 24"
+           fill="none"
+           stroke="currentColor"
+           stroke-width="2">
+
+        <circle cx="12" cy="12" r="9"></circle>
+        <path d="M12 11v5"></path>
+        <path d="M12 8h.01"></path>
+
+      </svg>
+
+    </div>
+
+    <div>
+
+      <h2>Sobre você</h2>
+
+      <span>Conte sua história e experiência musical</span>
+
+    </div>
+
+  </div>
+
+
+  <div class="form-group">
+
+    <label for="biografia">
+      Biografia
+    </label>
+
+    <textarea
+      id="biografia"
+      maxlength="1000"
+      rows="6"
+      placeholder="Conte um pouco sobre sua trajetória, experiência, repertório e estilo de trabalho..."></textarea>
+
+    <div class="textarea-footer">
+
+      <span>
+        Uma boa apresentação ajuda contratantes a conhecerem seu trabalho.
+      </span>
+
+      <strong id="contador-biografia">
+        0/1000
+      </strong>
+
+    </div>
+
+  </div>
+
+
+  <div class="form-grid experience-grid">
+
+    <div class="form-group">
+
+      <label for="experiencia">
+        Experiência
+      </label>
+
+      <select id="experiencia">
+
+        <option value="">Selecione</option>
+        <option value="Iniciante">Iniciante</option>
+        <option value="1 a 3 anos">1 a 3 anos</option>
+        <option value="3 a 5 anos">3 a 5 anos</option>
+        <option value="5 a 10 anos">5 a 10 anos</option>
+        <option value="Mais de 10 anos">Mais de 10 anos</option>
+
+      </select>
+
+    </div>
+
+
+    <div class="form-group">
+
+      <label for="tempo-atuacao">
+        Tempo de atuação
+      </label>
+
+      <input
+        type="text"
+        id="tempo-atuacao"
+        maxlength="60"
+        placeholder="Ex.: 10 anos de estrada">
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- =================================================
+     SERVIÇOS
+================================================== -->
+
+<section class="edit-card">
+
+  <div class="card-heading card-heading-with-action">
+
+    <div class="heading-left">
+
+      <div class="heading-icon">
+
+        <svg viewBox="0 0 24 24"
+             fill="none"
+             stroke="currentColor"
+             stroke-width="2">
+
+          <circle cx="12" cy="12" r="9"></circle>
+          <path d="M8 12h8"></path>
+          <path d="M12 8v8"></path>
+
+        </svg>
+
+      </div>
+
+      <div>
+
+        <h2>Serviços</h2>
+
+        <span>Apresentações que você oferece</span>
+
+      </div>
+
+    </div>
+
+    <button
+      type="button"
+      class="add-button"
+      id="btn-adicionar-servico">
+
+      + Adicionar
+
+    </button>
+
+  </div>
+
+
+  <div class="services-editor" id="services-editor"></div>
+
+  <div
+    class="empty-state"
+    id="services-empty">
+
+    <div class="empty-icon">
+
+      <svg viewBox="0 0 24 24"
+           fill="none"
+           stroke="currentColor"
+           stroke-width="2">
+
+        <path d="M12 5v14"></path>
+        <path d="M5 12h14"></path>
+
+      </svg>
+
+    </div>
+
+    <strong>Nenhum serviço cadastrado</strong>
+
+    <span>
+      Adicione os serviços que você oferece para seus clientes.
+    </span>
+
+  </div>
+
+</section>
+
+
+<!-- =================================================
+     PORTFÓLIO
+================================================== -->
+
+<section class="edit-card">
+
+  <div class="card-heading card-heading-with-action">
+
+    <div class="heading-left">
+
+      <div class="heading-icon">
+
+        <svg viewBox="0 0 24 24"
+             fill="none"
+             stroke="currentColor"
+             stroke-width="2">
+
+          <rect x="3" y="3" width="18" height="18" rx="3"></rect>
+          <path d="M8 14l2.5-3 2 2 2.5-3 3 4"></path>
+
+        </svg>
+
+      </div>
+
+      <div>
+
+        <h2>Portfólio</h2>
+
+        <span>Mostre apresentações e trabalhos</span>
+
+      </div>
+
+    </div>
+
+    <button
+      type="button"
+      class="add-button"
+      id="btn-adicionar-portfolio">
+
+      + Adicionar
+
+    </button>
+
+  </div>
+
+
+  <div
+    class="portfolio-editor"
+    id="portfolio-editor"></div>
+
+
+  <div
+    class="empty-state"
+    id="portfolio-empty">
+
+    <div class="empty-icon">
+
+      <svg viewBox="0 0 24 24"
+           fill="none"
+           stroke="currentColor"
+           stroke-width="2">
+
+        <path d="M8 5v14l11-7z"></path>
+
+      </svg>
+
+    </div>
+
+    <strong>Nenhum trabalho adicionado</strong>
+
+    <span>
+      Adicione vídeos, fotos ou apresentações ao seu portfólio.
+    </span>
+
+  </div>
+
+</section>
+
+
+<!-- =================================================
+     ÁUDIOS
+================================================== -->
+
+<section class="edit-card">
+
+  <div class="card-heading card-heading-with-action">
+
+    <div class="heading-left">
+
+      <div class="heading-icon">
+
+        <svg viewBox="0 0 24 24"
+             fill="none"
+             stroke="currentColor"
+             stroke-width="2">
+
+          <path d="M9 18V5l12-2v13"></path>
+          <circle cx="6" cy="18" r="3"></circle>
+          <circle cx="18" cy="16" r="3"></circle>
+
+        </svg>
+
+      </div>
+
+      <div>
+
+        <h2>Áudios e composições</h2>
+
+        <span>Apresente seu repertório musical</span>
+
+      </div>
+
+    </div>
+
+    <button
+      type="button"
+      class="add-button"
+      id="btn-adicionar-audio">
+
+      + Adicionar
+
+    </button>
+
+  </div>
+
+
+  <div
+    class="audio-editor"
+    id="audio-editor"></div>
+
+
+  <div
+    class="empty-state"
+    id="audio-empty">
+
+    <div class="empty-icon">
+
+      ♪
+
+    </div>
+
+    <strong>Nenhum áudio adicionado</strong>
+
+    <span>
+      Adicione músicas, composições ou gravações ao seu perfil.
+    </span>
+
+  </div>
+
+</section>
+
+
+<!-- =================================================
+     AGENDA
+================================================== -->
+
+<section class="edit-card">
+
+  <div class="card-heading">
+
+    <div class="heading-icon">
+
+      <svg viewBox="0 0 24 24"
+           fill="none"
+           stroke="currentColor"
+           stroke-width="2">
+
+        <rect x="3" y="4" width="18" height="17" rx="2"></rect>
+        <path d="M16 2v4"></path>
+        <path d="M8 2v4"></path>
+        <path d="M3 10h18"></path>
+
+      </svg>
+
+    </div>
+
+    <div>
+
+      <h2>Disponibilidade</h2>
+
+      <span>Informe como funciona sua agenda</span>
+
+    </div>
+
+  </div>
+
+
+  <div class="availability-box">
+
+    <div class="availability-toggle">
+
+      <div>
+
+        <strong>Receber solicitações de contratação</strong>
+
+        <span>
+          Permite que clientes solicitem datas pelo seu perfil.
+        </span>
+
+      </div>
+
+      <label class="switch">
+
+        <input
+          type="checkbox"
+          id="receber-solicitacoes"
+          checked>
+
+        <span class="slider"></span>
+
+      </label>
+
+    </div>
+
+
+    <div class="form-group">
+
+      <label for="horario-atendimento">
+        Horário preferencial para contato
+      </label>
+
+      <input
+        type="text"
+        id="horario-atendimento"
+        maxlength="100"
+        placeholder="Ex.: Segunda a sexta, das 9h às 18h">
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- =================================================
+     REDES E CONTATO
+================================================== -->
+
+<section class="edit-card">
+
+  <div class="card-heading">
+
+    <div class="heading-icon">
+
+      <svg viewBox="0 0 24 24"
+           fill="none"
+           stroke="currentColor"
+           stroke-width="2">
+
+        <path d="M4 4h16v16H4z"></path>
+        <path d="M8 12h8"></path>
+        <path d="M12 8v8"></path>
+
+      </svg>
+
+    </div>
+
+    <div>
+
+      <h2>Contato e redes</h2>
+
+      <span>Facilite o contato profissional</span>
+
+    </div>
+
+  </div>
+
+
+  <div class="form-grid">
+
+    <div class="form-group">
+
+      <label for="instagram">
+        Instagram
+      </label>
+
+      <div class="input-prefix">
+
+        <span>@</span>
+
+        <input
+          type="text"
+          id="instagram"
+          maxlength="80"
+          placeholder="seuinstagram">
+
+      </div>
+
+    </div>
+
+
+    <div class="form-group">
+
+      <label for="youtube">
+        YouTube
+      </label>
+
+      <input
+        type="url"
+        id="youtube"
+        maxlength="250"
+        placeholder="Link do canal">
+
+    </div>
+
+
+    <div class="form-group">
+
+      <label for="spotify">
+        Spotify
+      </label>
+
+      <input
+        type="url"
+        id="spotify"
+        maxlength="250"
+        placeholder="Link do artista">
+
+    </div>
+
+
+    <div class="form-group">
+
+      <label for="site">
+        Site
+      </label>
+
+      <input
+        type="url"
+        id="site"
+        maxlength="250"
+        placeholder="https://seusite.com">
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- =================================================
+     VISIBILIDADE
+================================================== -->
+
+<section class="edit-card">
+
+  <div class="card-heading">
+
+    <div class="heading-icon">
+
+      <svg viewBox="0 0 24 24"
+           fill="none"
+           stroke="currentColor"
+           stroke-width="2">
+
+        <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12z"></path>
+        <circle cx="12" cy="12" r="3"></circle>
+
+      </svg>
+
+    </div>
+
+    <div>
+
+      <h2>Visibilidade do perfil</h2>
+
+      <span>Controle como seu perfil aparece para outras pessoas</span>
+
+    </div>
+
+  </div>
+
+
+  <div class="visibility-options">
+
+    <label class="visibility-option">
+
+      <input
+        type="radio"
+        name="visibilidade"
+        value="publico"
+        checked>
+
+      <div class="visibility-icon">
+
+        <svg viewBox="0 0 24 24"
+             fill="none"
+             stroke="currentColor"
+             stroke-width="2">
+
+          <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12z"></path>
+          <circle cx="12" cy="12" r="3"></circle>
+
+        </svg>
+
+      </div>
+
+      <div>
+
+        <strong>Público</strong>
+
+        <span>
+          Seu perfil pode ser encontrado por outros usuários.
+        </span>
+
+      </div>
+
+    </label>
+
+
+    <label class="visibility-option">
+
+      <input
+        type="radio"
+        name="visibilidade"
+        value="privado">
+
+      <div class="visibility-icon">
+
+        <svg viewBox="0 0 24 24"
+             fill="none"
+             stroke="currentColor"
+             stroke-width="2">
+
+          <rect x="5" y="10" width="14" height="10" rx="2"></rect>
+          <path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
+
+        </svg>
+
+      </div>
+
+      <div>
+
+        <strong>Privado</strong>
+
+        <span>
+          Somente você poderá visualizar o perfil.
+        </span>
+
+      </div>
+
+    </label>
+
+  </div>
+
+</section>
+
+
+<!-- =================================================
+     AVISO
+================================================== -->
+
+<div class="save-info">
+
+  <div class="save-info-icon">
+
+    <svg viewBox="0 0 24 24"
+         fill="none"
+         stroke="currentColor"
+         stroke-width="2">
+
+      <circle cx="12" cy="12" r="9"></circle>
+      <path d="M12 11v5"></path>
+      <path d="M12 8h.01"></path>
+
+    </svg>
+
+  </div>
+
+  <div>
+
+    <strong>Suas alterações são salvas no seu perfil</strong>
+
+    <span>
+      Algumas informações poderão passar por análise antes de serem
+      exibidas publicamente.
+    </span>
+
+  </div>
+
+</div>
+
+
+<!-- =================================================
+     BOTÕES
+================================================== -->
+
+<div class="form-actions">
+
+  <button
+    type="button"
+    class="cancel-button"
+    id="btn-cancelar">
+
+    Cancelar
+
+  </button>
+
+  <button
+    type="button"
+    class="save-button"
+    id="btn-salvar">
+
+    <svg viewBox="0 0 24 24"
+         fill="none"
+         stroke="currentColor"
+         stroke-width="2">
+
+      <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+      <path d="M17 21v-8H7v8"></path>
+      <path d="M7 3v5h8"></path>
+
+    </svg>
+
+    Salvar alterações
+
+  </button>
+
+</div>
+
+
+  </main>
+
+  <!-- =====================================================
+       TOAST
+  ====================================================== -->
+
+  <div
+    class="toast"
+    id="toast"
+    role="status">
+
+
+<div class="toast-icon">
+
+  <svg viewBox="0 0 24 24"
+       fill="none"
+       stroke="currentColor"
+       stroke-width="2">
+
+    <path d="M20 6L9 17l-5-5"></path>
+
+  </svg>
+
+</div>
+
+<div>
+
+  <strong id="toast-title">
+    Alterações salvas
+  </strong>
+
+  <span id="toast-message">
+    Seu perfil foi atualizado.
+  </span>
+
+</div>
+
+
+  </div>
+
+  <!-- =====================================================
+       MODAL SERVIÇO
+  ====================================================== -->
+
+  <div
+    class="modal-overlay"
+    id="service-modal">
+
+
+<div class="modal-card">
+
+  <div class="modal-header">
+
+    <div>
+
+      <h3>Novo serviço</h3>
+
+      <span>Adicione uma opção de contratação</span>
+
+    </div>
+
+    <button
+      type="button"
+      class="modal-close"
+      data-close-modal="service-modal">
+
+      ×
+
+    </button>
+
+  </div>
+
+
+  <div class="modal-body">
+
+    <div class="form-group">
+
+      <label for="service-name">
+        Nome do serviço
+      </label>
+
+      <input
+        type="text"
+        id="service-name"
+        placeholder="Ex.: Voz e violão">
+
+    </div>
+
+
+    <div class="form-grid">
+
+      <div class="form-group">
+
+        <label for="service-duration">
+          Duração
+        </label>
+
+        <input
+          type="text"
+          id="service-duration"
+          placeholder="Ex.: 2 horas">
+
+      </div>
+
+
+      <div class="form-group">
+
+        <label for="service-price">
+          Valor
+        </label>
+
+        <input
+          type="text"
+          id="service-price"
+          placeholder="Ex.: R$ 800">
+
+      </div>
+
+    </div>
+
+
+    <div class="form-group">
+
+      <label for="service-description">
+        Descrição
+      </label>
+
+      <textarea
+        id="service-description"
+        rows="3"
+        placeholder="Descreva o que está incluído nesse serviço"></textarea>
+
+    </div>
+
+  </div>
+
+
+  <div class="modal-actions">
+
+    <button
+      type="button"
+      class="cancel-button"
+      data-close-modal="service-modal">
+
+      Cancelar
+
+    </button>
+
+    <button
+      type="button"
+      class="save-button"
+      id="btn-confirmar-servico">
+
+      Adicionar serviço
+
+    </button>
+
+  </div>
+
+</div>
+
+
+  </div>
+
+  <!-- =====================================================
+       MODAL PORTFÓLIO
+  ====================================================== -->
+
+  <div
+    class="modal-overlay"
+    id="portfolio-modal">
+
+
+<div class="modal-card">
+
+  <div class="modal-header">
+
+    <div>
+
+      <h3>Novo trabalho</h3>
+
+      <span>Adicione um item ao seu portfólio</span>
+
+    </div>
+
+    <button
+      type="button"
+      class="modal-close"
+      data-close-modal="portfolio-modal">
+
+      ×
+
+    </button>
+
+  </div>
+
+
+  <div class="modal-body">
+
+    <div class="form-group">
+
+      <label for="portfolio-title">
+        Título
+      </label>
+
+      <input
+        type="text"
+        id="portfolio-title"
+        placeholder="Ex.: Show acústico">
+
+    </div>
+
+
+    <div class="form-group">
+
+      <label for="portfolio-type">
+        Tipo
+      </label>
+
+      <select id="portfolio-type">
+
+        <option value="video">Vídeo</option>
+        <option value="foto">Foto</option>
+        <option value="apresentacao">Apresentação</option>
+
+      </select>
+
+    </div>
+
+
+    <div class="form-group">
+
+      <label for="portfolio-url">
+        Link do conteúdo
+      </label>
+
+      <input
+        type="url"
+        id="portfolio-url"
+        placeholder="Cole o link do vídeo ou conteúdo">
+
+    </div>
+
+  </div>
+
+
+  <div class="modal-actions">
+
+    <button
+      type="button"
+      class="cancel-button"
+      data-close-modal="portfolio-modal">
+
+      Cancelar
+
+    </button>
+
+    <button
+      type="button"
+      class="save-button"
+      id="btn-confirmar-portfolio">
+
+      Adicionar
+
+    </button>
+
+  </div>
+
+</div>
+
+
+  </div>
+
+  <!-- =====================================================
+       MODAL ÁUDIO
+  ====================================================== -->
+
+  <div
+    class="modal-overlay"
+    id="audio-modal">
+
+
+<div class="modal-card">
+
+  <div class="modal-header">
+
+    <div>
+
+      <h3>Novo áudio</h3>
+
+      <span>Adicione uma música ao seu perfil</span>
+
+    </div>
+
+    <button
+      type="button"
+      class="modal-close"
+      data-close-modal="audio-modal">
+
+      ×
+
+    </button>
+
+  </div>
+
+
+  <div class="modal-body">
+
+    <div class="form-group">
+
+      <label for="audio-title">
+        Nome da música
+      </label>
+
+      <input
+        type="text"
+        id="audio-title"
+        placeholder="Ex.: Caminho de volta">
+
+    </div>
+
+
+    <div class="form-group">
+
+      <label for="audio-description">
+        Descrição
+      </label>
+
+      <input
+        type="text"
+        id="audio-description"
+        placeholder="Ex.: Composição própria">
+
+    </div>
+
+
+    <div class="form-group">
+
+      <label for="audio-url">
+        Link do áudio
+      </label>
+
+      <input
+        type="url"
+        id="audio-url"
+        placeholder="Link para o áudio">
+
+      <div class="field-helper">
+        Futuramente o arquivo poderá ser enviado diretamente pelo aplicativo.
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <div class="modal-actions">
+
+    <button
+      type="button"
+      class="cancel-button"
+      data-close-modal="audio-modal">
+
+      Cancelar
+
+    </button>
+
+    <button
+      type="button"
+      class="save-button"
+      id="btn-confirmar-audio">
+
+      Adicionar
+
+    </button>
+
+  </div>
+
+</div>
+
+
+  </div>
+
+  <!-- =====================================================
+       BARRA MOBILE
+  ====================================================== -->
+
+  <div class="mobile-save-bar">
+
+
+<button
+  type="button"
+  class="mobile-cancel"
+  id="btn-cancelar-mobile">
+
+  Cancelar
+
+</button>
+
+<button
+  type="button"
+  class="mobile-save"
+  id="btn-salvar-mobile">
+
+  Salvar alterações
+
+</button>
+
+
+  </div>
+
+</div>
+
+<script src="js/editar-perfil.js"></script>
+
+</body>
+</html>

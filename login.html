@@ -33,7 +33,15 @@
     </div>
 
   </div>
-
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/core/SupabaseClient.js"></script>
+  <script src="js/core/Sessao.js"></script>
+  <script src="js/auth/Perfil.js"></script>
+  <script src="js/auth/Cadastro.js"></script>
   <script src="js/login.js"></script>
+
+  <script>
+    Sessao.observar((evento, sessao) => { console.log('🔐 Sessão:', evento, sessao); });
+  </script>
 </body>
 </html>

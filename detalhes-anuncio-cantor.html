@@ -1,0 +1,703 @@
+<!DOCTYPE html> <html lang="pt-BR"> <head>
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+>
+
+<meta
+    name="theme-color"
+    content="#f7f9fc"
+>
+
+<meta
+    name="description"
+    content="Detalhes do anúncio de cantor no MusicalWorld"
+>
+
+<title>Detalhes do cantor | MusicalWorld</title>
+
+<link
+    rel="stylesheet"
+    href="css/detalhes-anuncio-cantor.css"
+>
+</head> <body> <div class="app-container">
+<!-- =====================================================
+     TOPO
+====================================================== -->
+
+<header class="topbar">
+
+    <button
+        class="icon-button"
+        id="backButton"
+        type="button"
+        aria-label="Voltar"
+    >
+
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+
+            <path
+                d="M15 18L9 12L15 6"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            />
+
+        </svg>
+
+    </button>
+
+
+    <div class="topbar-title">
+        Detalhes do anúncio
+    </div>
+
+
+    <button
+        class="icon-button"
+        id="favoriteButton"
+        type="button"
+        aria-label="Adicionar aos favoritos"
+        aria-pressed="false"
+    >
+
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+
+            <path
+                id="favoriteIcon"
+                d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67L10.94 4.61a5.5 5.5 0 0 0-7.78 7.78L12 21.23L20.84 12.39a5.5 5.5 0 0 0 0-7.78Z"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            />
+
+        </svg>
+
+    </button>
+
+</header>
+
+
+<!-- =====================================================
+     CONTEÚDO
+====================================================== -->
+
+<main class="main-content">
+
+    <article
+        class="ad-details-card"
+        id="adDetailsCard"
+    >
+
+        <!-- =================================================
+             CABEÇALHO DO CANTOR
+        ================================================== -->
+
+        <section class="artist-header">
+
+            <div
+                class="artist-avatar"
+                id="artistAvatar"
+            >
+                RM
+            </div>
+
+
+            <div class="artist-info">
+
+                <div class="artist-name-line">
+
+                    <h1 id="artistName">
+                        Rafael Melo
+                    </h1>
+
+
+                    <span
+                        class="verified-badge"
+                        id="verifiedBadge"
+                        title="Perfil verificado"
+                        aria-label="Perfil verificado"
+                    >
+
+                        <svg
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                        >
+
+                            <path
+                                d="M12 3L14.1 4.5L16.7 4.4L17.65 6.77L19.85 8.07L19.3 10.57L19.85 13.07L17.65 14.37L16.7 16.74L14.1 16.64L12 18.15L9.9 16.64L7.3 16.74L6.35 14.37L4.15 13.07L4.7 10.57L4.15 8.07L6.35 6.77L7.3 4.4L9.9 4.5L12 3Z"
+                                fill="currentColor"
+                            />
+
+                            <path
+                                d="M8.5 10.8L10.8 13.1L15.5 8.7"
+                                fill="none"
+                                stroke="#ffffff"
+                                stroke-width="1.8"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            />
+
+                        </svg>
+
+                    </span>
+
+                </div>
+
+
+                <p
+                    class="artist-category"
+                    id="artistCategory"
+                >
+                    Cantor e violonista
+                </p>
+
+
+                <div class="artist-meta">
+
+                    <span class="meta-item">
+
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+
+                            <path
+                                d="M12 3L14.8 8.6L21 9.5L16.5 13.8L17.6 20L12 17.1L6.4 20L7.5 13.8L3 9.5L9.2 8.6L12 3Z"
+                                fill="currentColor"
+                            />
+
+                        </svg>
+
+                        <strong id="artistRating">
+                            4.9
+                        </strong>
+
+                        <span id="artistReviews">
+                            (128 avaliações)
+                        </span>
+
+                    </span>
+
+
+                    <span class="meta-item">
+
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+
+                            <path
+                                d="M12 21C12 21 19 15.2 19 9C19 5.13 15.87 2 12 2C8.13 2 5 5.13 5 9C5 15.2 12 21 12 21Z"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.8"
+                            />
+
+                            <circle
+                                cx="12"
+                                cy="9"
+                                r="2.5"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.8"
+                            />
+
+                        </svg>
+
+                        <span id="artistLocation">
+                            Goiânia, GO
+                        </span>
+
+                    </span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             MÍDIA
+        ================================================== -->
+
+        <section
+            class="presentation-media"
+            id="presentationMedia"
+        >
+
+            <img
+                id="artistImage"
+                class="artist-image"
+                src=""
+                alt="Imagem do cantor"
+                hidden
+            >
+
+
+            <video
+                id="artistVideo"
+                class="artist-video"
+                controls
+                playsinline
+                preload="metadata"
+                hidden
+            ></video>
+
+
+            <div
+                class="media-placeholder"
+                id="mediaPlaceholder"
+            >
+
+                <div class="media-placeholder-icon">
+
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+
+                        <path
+                            d="M9 18V5L21 3V16"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.8"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        />
+
+                        <circle
+                            cx="6"
+                            cy="18"
+                            r="3"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.8"
+                        />
+
+                        <circle
+                            cx="18"
+                            cy="16"
+                            r="3"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.8"
+                        />
+
+                    </svg>
+
+                </div>
+
+
+                <strong>
+                    Apresentação do cantor
+                </strong>
+
+                <span>
+                    Conheça o estilo e o trabalho deste artista
+                </span>
+
+            </div>
+
+
+            <button
+                class="play-button"
+                id="playVideoButton"
+                type="button"
+                aria-label="Reproduzir vídeo"
+                hidden
+            >
+
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+
+                    <path
+                        d="M9 6.5V17.5L18 12L9 6.5Z"
+                        fill="currentColor"
+                    />
+
+                </svg>
+
+            </button>
+
+        </section>
+
+
+        <!-- =================================================
+             SOBRE
+        ================================================== -->
+
+        <section class="details-section">
+
+            <div class="section-heading">
+
+                <div class="section-icon">
+
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+
+                        <circle
+                            cx="12"
+                            cy="12"
+                            r="9"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.8"
+                        />
+
+                        <path
+                            d="M12 11V16"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.8"
+                            stroke-linecap="round"
+                        />
+
+                        <circle
+                            cx="12"
+                            cy="8"
+                            r="1"
+                            fill="currentColor"
+                        />
+
+                    </svg>
+
+                </div>
+
+
+                <h2>
+                    Sobre o cantor
+                </h2>
+
+            </div>
+
+
+            <p
+                class="description"
+                id="artistDescription"
+            >
+                Cantor e violonista com repertório de MPB,
+                pop e sertanejo. Ideal para casamentos,
+                aniversários, bares, restaurantes, eventos
+                corporativos e celebrações especiais.
+            </p>
+
+        </section>
+
+
+        <!-- =================================================
+             ESTILOS
+        ================================================== -->
+
+        <section class="details-section">
+
+            <div class="section-heading">
+
+                <div class="section-icon">
+
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+
+                        <path
+                            d="M9 18V5L21 3V16"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.8"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        />
+
+                        <circle
+                            cx="6"
+                            cy="18"
+                            r="3"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.8"
+                        />
+
+                        <circle
+                            cx="18"
+                            cy="16"
+                            r="3"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.8"
+                        />
+
+                    </svg>
+
+                </div>
+
+
+                <h2>
+                    Estilos musicais
+                </h2>
+
+            </div>
+
+
+            <div
+                class="genre-list"
+                id="genreList"
+            ></div>
+
+        </section>
+
+
+        <!-- =================================================
+             SERVIÇOS
+        ================================================== -->
+
+        <section class="details-section">
+
+            <div class="section-heading">
+
+                <div class="section-icon">
+
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+
+                        <rect
+                            x="4"
+                            y="5"
+                            width="16"
+                            height="14"
+                            rx="2"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.8"
+                        />
+
+                        <path
+                            d="M8 9H16M8 13H14M8 17H12"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.8"
+                            stroke-linecap="round"
+                        />
+
+                    </svg>
+
+                </div>
+
+
+                <h2>
+                    Formatos e valores
+                </h2>
+
+            </div>
+
+
+            <div
+                class="services-list"
+                id="servicesList"
+            ></div>
+
+        </section>
+
+
+        <!-- =================================================
+             INFORMAÇÕES
+        ================================================== -->
+
+        <section class="details-section">
+
+            <div class="section-heading">
+
+                <div class="section-icon">
+
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+
+                        <path
+                            d="M12 21C12 21 19 15.2 19 9C19 5.13 15.87 2 12 2C8.13 2 5 5.13 5 9C5 15.2 12 21 12 21Z"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.8"
+                        />
+
+                        <circle
+                            cx="12"
+                            cy="9"
+                            r="2.5"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.8"
+                        />
+
+                    </svg>
+
+                </div>
+
+
+                <h2>
+                    Informações adicionais
+                </h2>
+
+            </div>
+
+
+            <div
+                class="information-list"
+                id="informationList"
+            ></div>
+
+        </section>
+
+
+        <!-- =================================================
+             PERFIL
+        ================================================== -->
+
+        <section class="profile-section">
+
+            <button
+                type="button"
+                class="profile-button"
+                id="profileButton"
+            >
+
+                <span>
+                    Ver perfil completo
+                </span>
+
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+
+                    <path
+                        d="M5 12H19"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                    />
+
+                    <path
+                        d="M13 6L19 12L13 18"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    />
+
+                </svg>
+
+            </button>
+
+        </section>
+
+    </article>
+
+</main>
+
+
+<!-- =====================================================
+     BARRA DE CONTRATAÇÃO
+====================================================== -->
+
+<div class="bottom-action-bar">
+
+    <div class="selected-service">
+
+        <span>
+            Serviço selecionado
+        </span>
+
+        <strong id="selectedService">
+            Voz e violão
+        </strong>
+
+        <small id="selectedServicePrice">
+            R$ 800,00
+        </small>
+
+    </div>
+
+
+    <button
+        class="primary-action"
+        id="contractButton"
+        type="button"
+    >
+
+        <span>
+            Contratar
+        </span>
+
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+
+            <path
+                d="M5 12H19"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+            />
+
+            <path
+                d="M13 6L19 12L13 18"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            />
+
+        </svg>
+
+    </button>
+
+</div>
+
+
+<!-- =====================================================
+     MENSAGEM DE ERRO
+====================================================== -->
+
+<div
+    class="error-message"
+    id="errorMessage"
+    hidden
+>
+
+    <div class="error-icon">
+
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+
+            <circle
+                cx="12"
+                cy="12"
+                r="9"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+            />
+
+            <path
+                d="M12 8V13"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+            />
+
+            <circle
+                cx="12"
+                cy="16.5"
+                r="1"
+                fill="currentColor"
+            />
+
+        </svg>
+
+    </div>
+
+
+    <div>
+
+        <strong>
+            Anúncio indisponível
+        </strong>
+
+        <span>
+            Não foi possível carregar os dados deste anúncio.
+        </span>
+
+    </div>
+
+</div>
+</div> <script src="js/detalhes-anuncio-cantor.js"></script> </body> </html>

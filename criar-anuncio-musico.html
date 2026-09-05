@@ -1,128 +1,977 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ArtistaShow - Criar Anúncio (Músico)</title>
-  <link rel="stylesheet" href="css/criar-anuncio-musico.css">
-</head>
-<body>
+<!DOCTYPE html> <html lang="pt-BR"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Criar anúncio de músico — MusicalWorld</title>
 
-  <div class="app-container">
-    
-    <!-- Cabeçalho / Navbar -->
-    <header class="navbar">
-      <div class="logo">Novo Anúncio <span>(Músico)</span></div>
-      
-      <div class="navbar-icons">
-        <button class="nav-icon-btn" onclick="window.history.back()" title="Fechar">
-          <svg class="top-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
-          </svg>
+<link rel="stylesheet" href="css/criar-anuncio-musico.css">
+</head> <body> <div class="app-container">
+<!-- =========================================
+     CABEÇALHO
+========================================== -->
+
+<header class="navbar">
+
+    <div class="navbar-left">
+
+        <button
+            type="button"
+            class="nav-icon-btn"
+            onclick="voltarPagina()"
+            aria-label="Voltar"
+        >
+
+            <svg viewBox="0 0 24 24">
+                <path d="M15 18l-6-6 6-6"></path>
+            </svg>
+
         </button>
-      </div>
-    </header>
 
-    <!-- Formulário de Criação para Músico -->
-    <main class="main-content">
-      <form class="create-form" onsubmit="event.preventDefault(); alert('Anúncio de músico criado com sucesso!');">
-        
-        <!-- Seção 1: Informações Profissionais -->
-        <div class="form-section">
-          <h3>Informações Profissionais</h3>
-          
-          <div class="form-group">
-            <label>Seu Nome / Nome Artístico</label>
-            <input type="text" class="form-input" placeholder="Ex: Gabriel Tatu (Sanfoneiro)" required>
-          </div>
+        <div class="page-title">
 
-          <div class="form-row">
+            <span>NOVO ANÚNCIO</span>
+
+            <strong>Músico</strong>
+
+        </div>
+
+    </div>
+
+
+    <button
+        type="button"
+        class="nav-icon-btn"
+        onclick="fecharPagina()"
+        aria-label="Fechar"
+    >
+
+        <svg viewBox="0 0 24 24">
+            <path d="M18 6L6 18"></path>
+            <path d="M6 6l12 12"></path>
+        </svg>
+
+    </button>
+
+</header>
+
+
+
+<!-- =========================================
+     CONTEÚDO
+========================================== -->
+
+<main class="main-content">
+
+    <div class="page-intro">
+
+        <div class="intro-icon">
+
+            <svg viewBox="0 0 24 24">
+                <path d="M9 18V5l11-2v13"></path>
+                <circle cx="6" cy="18" r="3"></circle>
+                <circle cx="17" cy="16" r="3"></circle>
+            </svg>
+
+        </div>
+
+        <div>
+
+            <span class="intro-label">
+                DIVULGUE SEU TRABALHO
+            </span>
+
+            <h1>
+                Crie seu anúncio de músico
+            </h1>
+
+            <p>
+                Apresente seu trabalho, seus instrumentos e os serviços
+                que você oferece para artistas, bandas, eventos e produtores.
+            </p>
+
+        </div>
+
+    </div>
+
+
+
+    <form
+        id="form-anuncio-musico"
+        class="create-form"
+        novalidate
+    >
+
+
+        <!-- =========================================
+             SEÇÃO 01
+        ========================================== -->
+
+        <section class="form-section">
+
+            <div class="section-header">
+
+                <div class="section-number">
+                    01
+                </div>
+
+                <div>
+
+                    <h2>
+                        Informações profissionais
+                    </h2>
+
+                    <p>
+                        Como você será apresentado no anúncio.
+                    </p>
+
+                </div>
+
+            </div>
+
+
             <div class="form-group">
-              <label>Instrumento / Função</label>
-              <select class="form-select" required>
-                <option value="">Selecione</option>
-                <option value="sanfoneiro">Sanfoneiro</option>
-                <option value="guitarrista">Guitarrista</option>
-                <option value="violonista">Violonista</option>
-                <option value="baterista">Baterista</option>
-                <option value="baixista">Baixista</option>
-                <option value="tecladista">Tecladista</option>
-                <option value="percussionista">Percussionista</option>
-              </select>
+
+                <label for="nome-artista">
+                    Nome / Nome artístico
+                    <span>*</span>
+                </label>
+
+                <input
+                    type="text"
+                    id="nome-artista"
+                    name="nome-artista"
+                    class="form-input"
+                    placeholder="Ex.: Gabriel Tatu"
+                    maxlength="100"
+                    required
+                >
+
             </div>
+
+
+            <div class="form-row">
+
+                <div class="form-group">
+
+                    <label for="instrumento">
+                        Instrumento / função
+                        <span>*</span>
+                    </label>
+
+                    <select
+                        id="instrumento"
+                        name="instrumento"
+                        class="form-select"
+                        required
+                    >
+
+                        <option value="">
+                            Selecione
+                        </option>
+
+                        <option value="sanfoneiro">
+                            Sanfoneiro
+                        </option>
+
+                        <option value="guitarrista">
+                            Guitarrista
+                        </option>
+
+                        <option value="violonista">
+                            Violinista / Violonista
+                        </option>
+
+                        <option value="baterista">
+                            Baterista
+                        </option>
+
+                        <option value="baixista">
+                            Baixista
+                        </option>
+
+                        <option value="tecladista">
+                            Tecladista
+                        </option>
+
+                        <option value="percussionista">
+                            Percussionista
+                        </option>
+
+                        <option value="violinista">
+                            Violinista
+                        </option>
+
+                        <option value="trompetista">
+                            Trompetista
+                        </option>
+
+                        <option value="saxofonista">
+                            Saxofonista
+                        </option>
+
+                        <option value="flautista">
+                            Flautista
+                        </option>
+
+                        <option value="outro">
+                            Outro
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="localizacao">
+                        Localização
+                        <span>*</span>
+                    </label>
+
+                    <input
+                        type="text"
+                        id="localizacao"
+                        name="localizacao"
+                        class="form-input"
+                        value="Goiânia, GO"
+                        placeholder="Cidade, Estado"
+                        maxlength="100"
+                        required
+                    >
+
+                </div>
+
+            </div>
+
+
             <div class="form-group">
-              <label>Localização</label>
-              <input type="text" class="form-input" value="Goiânia, GO" required>
-            </div>
-          </div>
-        </div>
 
-        <!-- Seção 2: Descrição e Mídia Única -->
-        <div class="form-section">
-          <h3>Sobre o Seu Trabalho e Mídia</h3>
-          
-          <div class="form-group">
-            <label>Descrição e Experiência</label>
-            <textarea class="form-textarea" rows="4" placeholder="Fale sobre sua experiência em palcos, estúdios, bandas que já acompanhou e estilos que domina..." required></textarea>
-          </div>
+                <label for="especialidades">
+                    Especialidades
+                </label>
 
-          <!-- Botão Único de Mídia (Foto ou Vídeo) -->
-          <div class="form-group">
-            <label>Mídia em Destaque (Escolha 1: Foto ou Vídeo)</label>
-            
-            <div class="media-dropzone" id="dropzone-box" onclick="acionarSeletorMidia()">
-              <div class="dropzone-icon-wrapper">
-                <svg id="dropzone-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-              </div>
-              <div class="dropzone-text">
-                <span id="media-name-display" class="main-text">Clique para enviar Foto ou Vídeo</span>
-                <span id="media-sub-display" class="sub-text">Aceita imagens (JPG, PNG) ou vídeos (MP4)</span>
-              </div>
-              
-              <button type="button" id="btn-remover" class="btn-remove-media" style="display: none;" onclick="event.stopPropagation(); limparMidia();" title="Remover mídia">✕</button>
+                <input
+                    type="text"
+                    id="especialidades"
+                    name="especialidades"
+                    class="form-input"
+                    placeholder="Ex.: Sertanejo, forró, pop, gravações..."
+                    maxlength="200"
+                >
+
+                <span class="field-hint">
+                    Separe as especialidades por vírgula.
+                </span>
+
             </div>
 
-            <input type="file" id="input-midia-unica" accept="image/*,video/*" style="display: none;" onchange="processarMidiaUnica(this)">
-          </div>
+        </section>
+
+
+
+        <!-- =========================================
+             SEÇÃO 02
+        ========================================== -->
+
+        <section class="form-section">
+
+            <div class="section-header">
+
+                <div class="section-number">
+                    02
+                </div>
+
+                <div>
+
+                    <h2>
+                        Sobre seu trabalho
+                    </h2>
+
+                    <p>
+                        Conte sua experiência para quem está procurando um músico.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="descricao">
+                    Descrição e experiência
+                    <span>*</span>
+                </label>
+
+                <textarea
+                    id="descricao"
+                    name="descricao"
+                    class="form-textarea"
+                    rows="6"
+                    maxlength="1200"
+                    placeholder="Fale sobre sua experiência em shows, bandas, estúdios, artistas que já acompanhou e estilos que domina..."
+                    required
+                ></textarea>
+
+
+                <div class="textarea-footer">
+
+                    <span>
+                        Seja claro e destaque seus diferenciais.
+                    </span>
+
+                    <span id="descricao-count">
+                        0/1200
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    Estilos musicais
+                </label>
+
+
+                <div class="tag-grid">
+
+                    <label class="tag-option">
+                        <input type="checkbox" name="estilos" value="sertanejo">
+                        <span>Sertanejo</span>
+                    </label>
+
+                    <label class="tag-option">
+                        <input type="checkbox" name="estilos" value="forro">
+                        <span>Forró</span>
+                    </label>
+
+                    <label class="tag-option">
+                        <input type="checkbox" name="estilos" value="pop">
+                        <span>Pop</span>
+                    </label>
+
+                    <label class="tag-option">
+                        <input type="checkbox" name="estilos" value="mpb">
+                        <span>MPB</span>
+                    </label>
+
+                    <label class="tag-option">
+                        <input type="checkbox" name="estilos" value="rock">
+                        <span>Rock</span>
+                    </label>
+
+                    <label class="tag-option">
+                        <input type="checkbox" name="estilos" value="gospel">
+                        <span>Gospel</span>
+                    </label>
+
+                    <label class="tag-option">
+                        <input type="checkbox" name="estilos" value="pagode">
+                        <span>Pagode</span>
+                    </label>
+
+                    <label class="tag-option">
+                        <input type="checkbox" name="estilos" value="outros">
+                        <span>Outros</span>
+                    </label>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================================
+             SEÇÃO 03
+        ========================================== -->
+
+        <section class="form-section">
+
+            <div class="section-header">
+
+                <div class="section-number">
+                    03
+                </div>
+
+                <div>
+
+                    <h2>
+                        Mídia em destaque
+                    </h2>
+
+                    <p>
+                        Adicione uma foto ou um vídeo para apresentar seu trabalho.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <label
+                class="media-dropzone"
+                id="media-dropzone"
+                for="input-midia"
+            >
+
+                <div
+                    class="dropzone-icon"
+                    id="dropzone-icon"
+                >
+
+                    <svg viewBox="0 0 24 24">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="17 8 12 3 7 8"></polyline>
+                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+
+                </div>
+
+
+                <div class="dropzone-content">
+
+                    <strong id="media-title">
+                        Adicionar foto ou vídeo
+                    </strong>
+
+                    <span id="media-description">
+                        Clique para selecionar uma mídia em destaque
+                    </span>
+
+                    <small>
+                        JPG, PNG, WEBP ou MP4 • até 20 MB
+                    </small>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    id="btn-remover-media"
+                    class="btn-remove-media"
+                    aria-label="Remover mídia"
+                >
+
+                    <svg viewBox="0 0 24 24">
+                        <path d="M18 6L6 18"></path>
+                        <path d="M6 6l12 12"></path>
+                    </svg>
+
+                </button>
+
+            </label>
+
+
+            <input
+                type="file"
+                id="input-midia"
+                name="midia"
+                accept="image/jpeg,image/png,image/webp,video/mp4"
+                hidden
+            >
+
+
+            <div
+                id="media-preview"
+                class="media-preview"
+                hidden
+            >
+
+                <img
+                    id="image-preview"
+                    alt="Prévia da mídia"
+                >
+
+                <video
+                    id="video-preview"
+                    controls
+                    playsinline
+                ></video>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================================
+             SEÇÃO 04
+        ========================================== -->
+
+        <section class="form-section">
+
+            <div class="section-header">
+
+                <div class="section-number">
+                    04
+                </div>
+
+                <div>
+
+                    <h2>
+                        Serviços e valores
+                    </h2>
+
+                    <p>
+                        Informe os principais tipos de trabalho que você oferece.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="price-list">
+
+
+                <div class="price-item">
+
+                    <div class="price-info">
+
+                        <div class="service-icon">
+
+                            <svg viewBox="0 0 24 24">
+                                <path d="M9 18V5l11-2v13"></path>
+                                <circle cx="6" cy="18" r="3"></circle>
+                                <circle cx="17" cy="16" r="3"></circle>
+                            </svg>
+
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Freelancer / Show
+                            </strong>
+
+                            <span>
+                                Participação em apresentações e eventos
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="price-input">
+
+                        <span>R$</span>
+
+                        <input
+                            type="number"
+                            name="preco-show"
+                            min="0"
+                            step="0.01"
+                            placeholder="0,00"
+                        >
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="price-item">
+
+                    <div class="price-info">
+
+                        <div class="service-icon">
+
+                            <svg viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="9"></circle>
+                                <path d="M9 9.5a3 3 0 0 1 6 0c0 1.5-1.2 2.5-3 2.5s-3 1-3 2.5a3 3 0 0 0 6 0"></path>
+                            </svg>
+
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Gravação em estúdio
+                            </strong>
+
+                            <span>
+                                Participação em gravações musicais
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="price-input">
+
+                        <span>R$</span>
+
+                        <input
+                            type="number"
+                            name="preco-estudio"
+                            min="0"
+                            step="0.01"
+                            placeholder="0,00"
+                        >
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="price-item">
+
+                    <div class="price-info">
+
+                        <div class="service-icon">
+
+                            <svg viewBox="0 0 24 24">
+                                <circle cx="8" cy="8" r="3"></circle>
+                                <circle cx="16" cy="16" r="3"></circle>
+                                <path d="M13 5l6 6"></path>
+                                <path d="M5 13l6 6"></path>
+                            </svg>
+
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Acompanhamento de artistas
+                            </strong>
+
+                            <span>
+                                Shows, turnês e apresentações
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="price-input">
+
+                        <span>R$</span>
+
+                        <input
+                            type="number"
+                            name="preco-acompanhamento"
+                            min="0"
+                            step="0.01"
+                            placeholder="0,00"
+                        >
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="price-item">
+
+                    <div class="price-info">
+
+                        <div class="service-icon">
+
+                            <svg viewBox="0 0 24 24">
+                                <path d="M12 3v18"></path>
+                                <path d="M5 8h14"></path>
+                                <path d="M7 8l-4 7h8z"></path>
+                                <path d="M17 8l-4 7h8z"></path>
+                            </svg>
+
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Projeto personalizado
+                            </strong>
+
+                            <span>
+                                Serviços que dependem do projeto
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <label class="consult-toggle">
+
+                        <input
+                            type="checkbox"
+                            name="projeto-consulta"
+                            checked
+                        >
+
+                        <span>
+                            Sob consulta
+                        </span>
+
+                    </label>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================================
+             SEÇÃO 05
+        ========================================== -->
+
+        <section class="form-section">
+
+            <div class="section-header">
+
+                <div class="section-number">
+                    05
+                </div>
+
+                <div>
+
+                    <h2>
+                        Disponibilidade
+                    </h2>
+
+                    <p>
+                        Informe onde e como você aceita trabalhar.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    Formato de trabalho
+                </label>
+
+
+                <div class="availability-grid">
+
+                    <label class="availability-option">
+
+                        <input
+                            type="checkbox"
+                            name="formato"
+                            value="presencial"
+                        >
+
+                        <div>
+
+                            <strong>
+                                Presencial
+                            </strong>
+
+                            <span>
+                                Shows e eventos presenciais
+                            </span>
+
+                        </div>
+
+                    </label>
+
+
+                    <label class="availability-option">
+
+                        <input
+                            type="checkbox"
+                            name="formato"
+                            value="estudio"
+                        >
+
+                        <div>
+
+                            <strong>
+                                Estúdio
+                            </strong>
+
+                            <span>
+                                Gravações e sessões
+                            </span>
+
+                        </div>
+
+                    </label>
+
+
+                    <label class="availability-option">
+
+                        <input
+                            type="checkbox"
+                            name="formato"
+                            value="remoto"
+                        >
+
+                        <div>
+
+                            <strong>
+                                Remoto
+                            </strong>
+
+                            <span>
+                                Trabalhos à distância
+                            </span>
+
+                        </div>
+
+                    </label>
+
+                </div>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="raio-atendimento">
+                    Região de atendimento
+                </label>
+
+                <select
+                    id="raio-atendimento"
+                    name="raio-atendimento"
+                    class="form-select"
+                >
+
+                    <option value="cidade">
+                        Apenas minha cidade
+                    </option>
+
+                    <option value="estado">
+                        Todo o meu estado
+                    </option>
+
+                    <option value="regional">
+                        Região próxima
+                    </option>
+
+                    <option value="brasil">
+                        Todo o Brasil
+                    </option>
+
+                </select>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================================
+             SEÇÃO 06
+        ========================================== -->
+
+        <section class="form-section">
+
+            <div class="section-header">
+
+                <div class="section-number">
+                    06
+                </div>
+
+                <div>
+
+                    <h2>
+                        Publicação
+                    </h2>
+
+                    <p>
+                        Revise as informações antes de publicar.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="publication-info">
+
+                <div class="publication-icon">
+
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 3l9 4.5v5c0 5.5-3.8 8.5-9 9.5-5.2-1-9-4-9-9.5v-5z"></path>
+                        <path d="M9 12l2 2 4-4"></path>
+                    </svg>
+
+                </div>
+
+                <div>
+
+                    <strong>
+                        Seu anúncio ficará disponível no MusicalWorld
+                    </strong>
+
+                    <p>
+                        Outros usuários poderão encontrar seu perfil,
+                        conhecer seu trabalho e entrar em contato.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <label class="terms-check">
+
+                <input
+                    type="checkbox"
+                    id="confirmacao-anuncio"
+                    required
+                >
+
+                <span>
+                    Confirmo que as informações fornecidas são verdadeiras
+                    e autorizo a publicação deste anúncio.
+                </span>
+
+            </label>
+
+        </section>
+
+
+
+        <!-- =========================================
+             BOTÕES
+        ========================================== -->
+
+        <div class="form-actions">
+
+            <button
+                type="button"
+                class="btn-secondary"
+                onclick="voltarPagina()"
+            >
+                Cancelar
+            </button>
+
+
+            <button
+                type="submit"
+                class="btn-primary"
+            >
+
+                <span>
+                    Publicar anúncio
+                </span>
+
+                <svg viewBox="0 0 24 24">
+                    <path d="M5 12h14"></path>
+                    <path d="M13 6l6 6-6 6"></path>
+                </svg>
+
+            </button>
+
         </div>
 
-        <!-- Seção 3: Formatos de Serviço e Valores -->
-        <div class="form-section">
-          <h3>Formatos de Serviço e Valores</h3>
-          <p class="section-desc">Defina quanto cobra pelos diferentes tipos de atuação:</p>
-          
-          <div class="price-input-group">
-            <span class="format-label">🎸 Freelancer / Diária em Show</span>
-            <input type="text" class="form-input-price" placeholder="R$ 0,00">
-          </div>
+    </form>
 
-          <div class="price-input-group">
-            <span class="format-label">🎙️ Gravação em Estúdio</span>
-            <input type="text" class="form-input-price" placeholder="R$ 0,00">
-          </div>
-
-          <div class="price-input-group">
-            <span class="format-label">🤝 Acompanhamento de Artistas</span>
-            <input type="text" class="form-input-price" placeholder="R$ 0,00">
-          </div>
-
-          <div class="price-input-group">
-            <span class="format-label">⚙️ Projeto Personalizado</span>
-            <input type="text" class="form-input-price" value="Sob Consulta" disabled>
-          </div>
-        </div>
-
-        <!-- Botão Salvar -->
-        <button type="submit" class="btn-submit-ad">Publicar Anúncio de Músico</button>
-
-      </form>
-    </main>
-
-  </div>
-
-  <!-- Script vinculado -->
-  <script src="js/criar-anuncio-musico.js"></script>
-
-</body>
-</html>
+</main>
+</div> <script src="js/criar-anuncio-musico.js"></script> </body> </html>

@@ -1,0 +1,944 @@
+<!DOCTYPE html> <html lang="pt-BR"> <head>
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+<meta
+    name="theme-color"
+    content="#ffffff">
+
+<meta
+    name="color-scheme"
+    content="light">
+
+<title>MusicalWorld - Detalhes do evento</title>
+
+<link
+    rel="stylesheet"
+    href="css/detalhes-anuncio-evento.css">
+</head> <body> <div class="app-container">
+<!-- =====================================================
+     TOPBAR
+====================================================== -->
+
+<header class="topbar">
+
+    <button
+        type="button"
+        id="btn-voltar"
+        class="icon-button"
+        aria-label="Voltar"
+        title="Voltar">
+
+        <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round">
+
+            <path d="M19 12H5"></path>
+            <path d="m12 19-7-7 7-7"></path>
+
+        </svg>
+
+    </button>
+
+
+    <div class="topbar-title">
+        Detalhes do evento
+    </div>
+
+
+    <button
+        type="button"
+        id="favoriteButton"
+        class="icon-button favorite-button"
+        aria-label="Favoritar evento"
+        title="Favoritar evento">
+
+        <svg
+            class="favorite-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round">
+
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78Z"></path>
+
+        </svg>
+
+    </button>
+
+</header>
+
+
+
+<!-- =====================================================
+     CONTEÚDO
+====================================================== -->
+
+<main class="main-content">
+
+
+    <article class="event-details-card">
+
+
+        <!-- =================================================
+             CABEÇALHO DO EVENTO
+        ================================================== -->
+
+        <section class="event-header">
+
+            <div class="event-category-icon">
+
+                <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round">
+
+                    <path d="M8 2v4"></path>
+                    <path d="M16 2v4"></path>
+
+                    <rect
+                        x="3"
+                        y="4"
+                        width="18"
+                        height="18"
+                        rx="2"></rect>
+
+                    <path d="M3 10h18"></path>
+
+                    <path d="M8 14h.01"></path>
+                    <path d="M12 14h.01"></path>
+                    <path d="M16 14h.01"></path>
+
+                    <path d="M8 18h.01"></path>
+                    <path d="M12 18h.01"></path>
+
+                </svg>
+
+            </div>
+
+
+            <div class="event-header-content">
+
+                <span class="event-category">
+                    EVENTO
+                </span>
+
+
+                <h1 id="eventTitle">
+                    Evento Musical
+                </h1>
+
+
+                <div class="event-meta">
+
+                    <span
+                        class="meta-item"
+                        id="eventType">
+
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round">
+
+                            <path d="M9 18V5l12-2v13"></path>
+                            <circle cx="6" cy="18" r="3"></circle>
+                            <circle cx="18" cy="16" r="3"></circle>
+
+                        </svg>
+
+                        <span>Show</span>
+
+                    </span>
+
+
+                    <span
+                        class="meta-item"
+                        id="eventClassification">
+
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round">
+
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <path d="M12 16v-4"></path>
+                            <path d="M12 8h.01"></path>
+
+                        </svg>
+
+                        <span>Classificação livre</span>
+
+                    </span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             MÍDIA
+        ================================================== -->
+
+        <section class="event-media">
+
+            <img
+                id="eventImage"
+                class="event-image"
+                src=""
+                alt="Imagem do evento"
+                hidden>
+
+
+            <video
+                id="eventVideo"
+                class="event-video"
+                controls
+                playsinline
+                preload="metadata"
+                hidden>
+            </video>
+
+
+            <div
+                id="mediaPlaceholder"
+                class="media-placeholder">
+
+                <div class="media-placeholder-icon">
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                        stroke-linejoin="round">
+
+                        <path d="M15 8h.01"></path>
+
+                        <rect
+                            x="3"
+                            y="3"
+                            width="18"
+                            height="18"
+                            rx="2"></rect>
+
+                        <circle
+                            cx="8.5"
+                            cy="8.5"
+                            r="1.5"></circle>
+
+                        <path d="m21 15-5-5L5 21"></path>
+
+                    </svg>
+
+                </div>
+
+                <span>
+                    Imagem do evento
+                </span>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             DATA DO EVENTO
+        ================================================== -->
+
+        <section class="highlight-date-section">
+
+            <div class="date-calendar">
+
+                <span id="eventMonth">
+                    SET
+                </span>
+
+                <strong id="eventDay">
+                    04
+                </strong>
+
+            </div>
+
+
+            <div class="date-content">
+
+                <span class="date-label">
+                    DATA DO EVENTO
+                </span>
+
+                <strong id="eventDate">
+                    04 de setembro de 2026
+                </strong>
+
+                <span id="eventTime">
+                    A partir das 20:00
+                </span>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             DESCRIÇÃO
+        ================================================== -->
+
+        <section class="details-section">
+
+            <div class="section-heading">
+
+                <div class="section-icon">
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round">
+
+                        <path d="M4 6h16"></path>
+                        <path d="M4 12h16"></path>
+                        <path d="M4 18h11"></path>
+
+                    </svg>
+
+                </div>
+
+                <h2>
+                    Sobre o evento
+                </h2>
+
+            </div>
+
+
+            <p
+                id="eventDescription"
+                class="description">
+
+                Informações sobre o evento.
+                
+            </p>
+
+        </section>
+
+
+
+        <!-- =================================================
+             ATRAÇÕES
+        ================================================== -->
+
+        <section
+            id="artistsSection"
+            class="details-section">
+
+            <div class="section-heading">
+
+                <div class="section-icon">
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round">
+
+                        <path d="M9 18V5l12-2v13"></path>
+                        <circle cx="6" cy="18" r="3"></circle>
+                        <circle cx="18" cy="16" r="3"></circle>
+
+                    </svg>
+
+                </div>
+
+                <h2>
+                    Atrações
+                </h2>
+
+            </div>
+
+
+            <div
+                id="artistsList"
+                class="artists-list">
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             LOCALIZAÇÃO
+        ================================================== -->
+
+        <section class="details-section">
+
+            <div class="section-heading">
+
+                <div class="section-icon">
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round">
+
+                        <path
+                            d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0Z"></path>
+
+                        <circle
+                            cx="12"
+                            cy="10"
+                            r="2.5"></circle>
+
+                    </svg>
+
+                </div>
+
+                <h2>
+                    Localização
+                </h2>
+
+            </div>
+
+
+            <div class="location-card">
+
+                <div class="location-icon">
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round">
+
+                        <path
+                            d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0Z"></path>
+
+                        <circle
+                            cx="12"
+                            cy="10"
+                            r="2.5"></circle>
+
+                    </svg>
+
+                </div>
+
+
+                <div class="location-content">
+
+                    <strong id="eventVenue">
+                        Local do evento
+                    </strong>
+
+                    <span id="eventAddress">
+                        Endereço não informado
+                    </span>
+
+                    <span id="eventCity">
+                        Goiânia - GO
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <button
+                type="button"
+                id="mapButton"
+                class="secondary-button">
+
+                <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round">
+
+                    <path
+                        d="M9 18 3 21V6l6-3 6 3 6-3v15l-6 3-6-3Z"></path>
+
+                    <path d="M9 3v15"></path>
+                    <path d="M15 6v15"></path>
+
+                </svg>
+
+                Ver localização
+
+            </button>
+
+        </section>
+
+
+
+        <!-- =================================================
+             INGRESSOS
+        ================================================== -->
+
+        <section
+            id="ticketsSection"
+            class="details-section">
+
+            <div class="section-heading">
+
+                <div class="section-icon">
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round">
+
+                        <path
+                            d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v3a2 2 0 0 0 0 4v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-3a2 2 0 0 0 0-4Z"></path>
+
+                        <path d="M13 5v14"></path>
+
+                    </svg>
+
+                </div>
+
+                <h2>
+                    Ingressos
+                </h2>
+
+            </div>
+
+
+            <div class="ticket-card">
+
+                <div class="ticket-main-icon">
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round">
+
+                        <path
+                            d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v3a2 2 0 0 0 0 4v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-3a2 2 0 0 0 0-4Z"></path>
+
+                        <path d="M13 5v14"></path>
+
+                    </svg>
+
+                </div>
+
+
+                <div class="ticket-content">
+
+                    <span class="ticket-label">
+                        PARTICIPAÇÃO
+                    </span>
+
+                    <strong id="ticketType">
+                        Entrada gratuita
+                    </strong>
+
+                    <span id="ticketPrice">
+                        Não é necessário comprar ingresso.
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <button
+                type="button"
+                id="ticketButton"
+                class="ticket-button"
+                hidden>
+
+                <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round">
+
+                    <path
+                        d="M15 3h6v6"></path>
+
+                    <path
+                        d="M10 14 21 3"></path>
+
+                    <path
+                        d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+
+                </svg>
+
+                Comprar ingresso
+
+            </button>
+
+        </section>
+
+
+
+        <!-- =================================================
+             INFORMAÇÕES ADICIONAIS
+        ================================================== -->
+
+        <section class="details-section">
+
+            <div class="section-heading">
+
+                <div class="section-icon">
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round">
+
+                        <circle
+                            cx="12"
+                            cy="12"
+                            r="10"></circle>
+
+                        <path d="M12 16v-4"></path>
+
+                        <path d="M12 8h.01"></path>
+
+                    </svg>
+
+                </div>
+
+                <h2>
+                    Informações
+                </h2>
+
+            </div>
+
+
+            <div class="information-list">
+
+
+                <div class="information-item">
+
+                    <div class="information-icon">
+
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round">
+
+                            <path d="M8 2v4"></path>
+                            <path d="M16 2v4"></path>
+
+                            <rect
+                                x="3"
+                                y="4"
+                                width="18"
+                                height="18"
+                                rx="2"></rect>
+
+                            <path d="M3 10h18"></path>
+
+                        </svg>
+
+                    </div>
+
+
+                    <div>
+
+                        <strong>
+                            Data
+                        </strong>
+
+                        <span id="infoDate">
+                            Não informada
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="information-item">
+
+                    <div class="information-icon">
+
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round">
+
+                            <circle
+                                cx="12"
+                                cy="12"
+                                r="9"></circle>
+
+                            <polyline
+                                points="12 7 12 12 15 14"></polyline>
+
+                        </svg>
+
+                    </div>
+
+
+                    <div>
+
+                        <strong>
+                            Horário
+                        </strong>
+
+                        <span id="infoTime">
+                            Não informado
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="information-item">
+
+                    <div class="information-icon">
+
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round">
+
+                            <circle
+                                cx="12"
+                                cy="12"
+                                r="10"></circle>
+
+                            <path d="M8 12h8"></path>
+
+                        </svg>
+
+                    </div>
+
+
+                    <div>
+
+                        <strong>
+                            Classificação
+                        </strong>
+
+                        <span id="infoClassification">
+                            Não informada
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             PUBLICADO POR
+        ================================================== -->
+
+        <section class="profile-section">
+
+            <div class="publisher-card">
+
+                <div
+                    id="publisherAvatar"
+                    class="publisher-avatar">
+
+                    <span id="publisherInitials">
+                        MW
+                    </span>
+
+                    <img
+                        id="publisherAvatarImage"
+                        src=""
+                        alt=""
+                        hidden>
+
+                </div>
+
+
+                <div class="publisher-content">
+
+                    <span>
+                        PUBLICADO POR
+                    </span>
+
+                    <strong id="publisherName">
+                        MusicalWorld
+                    </strong>
+
+                    <small id="publisherType">
+                        Organizador do evento
+                    </small>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    id="publisherButton"
+                    class="publisher-button"
+                    aria-label="Ver perfil">
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round">
+
+                        <path d="m9 18 6-6-6-6"></path>
+
+                    </svg>
+
+                </button>
+
+            </div>
+
+        </section>
+
+
+
+    </article>
+
+</main>
+
+
+
+<!-- =====================================================
+     BARRA INFERIOR
+====================================================== -->
+
+<div class="bottom-action-bar">
+
+    <div class="event-action-info">
+
+        <span>
+            Você pretende participar?
+        </span>
+
+        <strong id="eventActionTitle">
+            Demonstrar interesse
+        </strong>
+
+    </div>
+
+
+    <button
+        type="button"
+        id="primaryAction"
+        class="primary-action">
+
+        <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round">
+
+            <path
+                d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78Z"></path>
+
+        </svg>
+
+        Tenho interesse
+
+    </button>
+
+</div>
+
+
+
+<!-- =====================================================
+     MENSAGEM
+====================================================== -->
+
+<div
+    id="errorMessage"
+    class="message-toast"
+    role="alert"
+    aria-live="polite">
+
+    <div class="message-icon">
+
+        <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round">
+
+            <circle
+                cx="12"
+                cy="12"
+                r="10"></circle>
+
+            <path d="M12 8v4"></path>
+
+            <path d="M12 16h.01"></path>
+
+        </svg>
+
+    </div>
+
+    <span id="errorText">
+        Não foi possível carregar o evento.
+    </span>
+
+</div>
+</div> <script src="js/detalhes-anuncio-evento.js"></script> </body> </html>
