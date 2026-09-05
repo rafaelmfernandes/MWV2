@@ -2,6 +2,7 @@ const Cabecalho = {
 
 
 inicializado: false,
+menuUsuarioAberto: false,
 
 async iniciar() {
 
@@ -47,42 +48,69 @@ async iniciar() {
 
 },
 
+
 mostrarCarregando() {
 
+    const logo = document.getElementById('cabecalho-logo');
     const carregando = document.getElementById('cabecalho-carregando');
     const deslogado = document.getElementById('cabecalho-deslogado');
     const logado = document.getElementById('cabecalho-logado');
 
-    if (carregando) carregando.style.display = 'flex';
-    if (deslogado) deslogado.style.display = 'none';
-    if (logado) logado.style.display = 'none';
+    if (logo) {
+        logo.style.display = 'none';
+    }
+
+    if (carregando) {
+        carregando.style.display = 'flex';
+    }
+
+    if (deslogado) {
+        deslogado.style.display = 'none';
+    }
+
+    if (logado) {
+        logado.style.display = 'none';
+    }
 
 },
+
 
 mostrarDeslogado() {
 
+    const logo = document.getElementById('cabecalho-logo');
     const carregando = document.getElementById('cabecalho-carregando');
     const deslogado = document.getElementById('cabecalho-deslogado');
     const logado = document.getElementById('cabecalho-logado');
 
-    if (carregando) carregando.style.display = 'none';
-    if (deslogado) deslogado.style.display = 'flex';
-    if (logado) logado.style.display = 'none';
+    this.fecharMenuUsuario();
+
+    if (logo) {
+        logo.style.display = 'block';
+    }
+
+    if (carregando) {
+        carregando.style.display = 'none';
+    }
+
+    if (deslogado) {
+        deslogado.style.display = 'flex';
+    }
+
+    if (logado) {
+        logado.style.display = 'none';
+    }
 
 },
 
+
 mostrarUsuario(dados) {
 
+    const logo = document.getElementById('cabecalho-logo');
     const carregando = document.getElementById('cabecalho-carregando');
     const deslogado = document.getElementById('cabecalho-deslogado');
     const logado = document.getElementById('cabecalho-logado');
 
-    if (carregando) carregando.style.display = 'none';
-    if (deslogado) deslogado.style.display = 'none';
-    if (logado) logado.style.display = 'flex';
-
     const usuario = dados?.usuario;
-
     const tipoPerfil = dados?.tipoPerfil;
 
     if (!usuario) {
@@ -90,8 +118,23 @@ mostrarUsuario(dados) {
         return;
     }
 
-    const nome = usuario.nome || 'Usuário';
+    if (logo) {
+        logo.style.display = 'none';
+    }
 
+    if (carregando) {
+        carregando.style.display = 'none';
+    }
+
+    if (deslogado) {
+        deslogado.style.display = 'none';
+    }
+
+    if (logado) {
+        logado.style.display = 'flex';
+    }
+
+    const nome = usuario.nome || 'Usuário';
     const tipo = tipoPerfil?.nome || 'Perfil';
 
     const nomeElemento = document.getElementById('cabecalho-nome');
@@ -113,6 +156,7 @@ mostrarUsuario(dados) {
             avatar.style.backgroundImage = `url("${usuario.foto_url}")`;
             avatar.style.backgroundSize = 'cover';
             avatar.style.backgroundPosition = 'center';
+            avatar.style.backgroundRepeat = 'no-repeat';
         }
 
         if (letras) {
@@ -132,7 +176,102 @@ mostrarUsuario(dados) {
 
     }
 
+    this.fecharMenuUsuario();
+
 },
+
+
+alternarMenuUsuario() {
+
+    const menu = document.getElementById('cabecalho-menu-usuario');
+    const botao = document.querySelector('.cabecalho-usuario-btn');
+
+    if (!menu) {
+        return;
+    }
+
+    this.menuUsuarioAberto = !this.menuUsuarioAberto;
+
+    if (this.menuUsuarioAberto) {
+
+        menu.style.display = 'block';
+
+        if (botao) {
+            botao.setAttribute('aria-expanded', 'true');
+        }
+
+    } else {
+
+        this.fecharMenuUsuario();
+
+    }
+
+},
+
+
+fecharMenuUsuario() {
+
+    const menu = document.getElementById('cabecalho-menu-usuario');
+    const botao = document.querySelector('.cabecalho-usuario-btn');
+
+    this.menuUsuarioAberto = false;
+
+    if (menu) {
+        menu.style.display = 'none';
+    }
+
+    if (botao) {
+        botao.setAttribute('aria-expanded', 'false');
+    }
+
+},
+
+
+trocarConta() {
+
+    console.log('🔄 Usuário solicitou troca de conta.');
+
+    this.fecharMenuUsuario();
+
+    const confirmou = confirm(
+        'Para trocar de conta, sua sessão atual será encerrada. Deseja continuar?'
+    );
+
+    if (!confirmou) {
+        return;
+    }
+
+    ControleSessao.sair('login.html');
+
+},
+
+
+async sair() {
+
+    console.log('🚪 Usuário solicitou logout pelo cabeçalho.');
+
+    this.fecharMenuUsuario();
+
+    const confirmou = confirm(
+        'Deseja realmente sair da sua conta?'
+    );
+
+    if (!confirmou) {
+        return;
+    }
+
+    const sucesso = await ControleSessao.sair('login.html');
+
+    if (!sucesso) {
+
+        alert(
+            'Não foi possível encerrar a sessão. Tente novamente.'
+        );
+
+    }
+
+},
+
 
 obterIniciais(nome) {
 
@@ -156,6 +295,7 @@ obterIniciais(nome) {
 
 },
 
+
 formatarTipoPerfil(tipo) {
 
     const tipos = {
@@ -174,33 +314,26 @@ formatarTipoPerfil(tipo) {
 
     return tipos[tipo] || tipo;
 
-},
-
-async sair() {
-
-    console.log('🚪 Usuário solicitou logout pelo cabeçalho.');
-
-    const confirmou = confirm(
-        'Deseja realmente sair da sua conta?'
-    );
-
-    if (!confirmou) {
-        return;
-    }
-
-    const sucesso = await ControleSessao.sair('login.html');
-
-    if (!sucesso) {
-
-        alert(
-            'Não foi possível encerrar a sessão. Tente novamente.'
-        );
-
-    }
-
 }
 
 
 };
 
 window.Cabecalho = Cabecalho;
+
+/* Fecha o menu quando o usuário clica fora dele */
+document.addEventListener('click', function (evento) {
+
+
+const areaUsuario = document.getElementById('cabecalho-logado');
+
+if (!areaUsuario) {
+    return;
+}
+
+if (!areaUsuario.contains(evento.target)) {
+    Cabecalho.fecharMenuUsuario();
+}
+
+
+});

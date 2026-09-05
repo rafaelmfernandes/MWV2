@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+
+<head>
+
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>Editar Perfil - MusicalWorld</title>
+
+<link
+    rel="stylesheet"
+    href="css/editar-perfil-contratante.css"
+>
+
+
+</head>
+
+<body>
+
+
+<main class="pagina-editar">
+
+    <header class="topbar-editar">
+
+        <button
+            type="button"
+            class="btn-voltar"
+            id="btnVoltar"
+            aria-label="Voltar"
+        >
+            ←
+        </button>
+
+        <div class="topbar-titulo">
+
+            <span>Editar perfil</span>
+
+            <small>Contratante</small>
+
+        </div>
+
+        <button
+            type="button"
+            class="btn-salvar-topo"
+            id="btnSalvarTopo"
+        >
+            Salvar
+        </button>
+
+    </header>
+
+
+    <section class="conteudo-editar">
+
+
+        <!-- FOTO -->
+
+        <section class="card-edicao card-foto">
+
+            <div class="titulo-secao">
+
+                <h2>Foto do perfil</h2>
+
+                <p>
+                    Escolha uma foto para representar seu perfil.
+                </p>
+
+            </div>
+
+
+            <div class="foto-editor">
+
+                <div
+                    class="avatar-editar"
+                    id="avatarEditar"
+                >
+
+                    <span id="avatarLetras">
+                        U
+                    </span>
+
+                </div>
+
+
+                <div class="foto-acoes">
+
+                    <button
+                        type="button"
+                        class="btn-secundario"
+                        id="btnAlterarFoto"
+                    >
+                        Alterar foto
+                    </button>
+
+                    <button
+                        type="button"
+                        class="btn-remover-foto"
+                        id="btnRemoverFoto"
+                    >
+                        Remover
+                    </button>
+
+                    <input
+                        type="file"
+                        id="inputFoto"
+                        accept="image/*"
+                        hidden
+                    >
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- DADOS BÁSICOS -->
+
+        <section class="card-edicao">
+
+            <div class="titulo-secao">
+
+                <h2>Informações básicas</h2>
+
+                <p>
+                    Essas informações serão exibidas no seu perfil.
+                </p>
+
+            </div>
+
+
+            <div class="form-grid">
+
+
+                <div class="campo">
+
+                    <label for="nome">
+                        Nome
+                    </label>
+
+                    <input
+                        type="text"
+                        id="nome"
+                        name="nome"
+                        placeholder="Digite seu nome"
+                        maxlength="100"
+                    >
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label for="telefone">
+                        Telefone
+                    </label>
+
+                    <input
+                        type="tel"
+                        id="telefone"
+                        name="telefone"
+                        placeholder="(00) 00000-0000"
+                        maxlength="20"
+                    >
+
+                </div>
+
+
+                <div class="campo campo-completo">
+
+                    <label for="cidade">
+                        Cidade
+                    </label>
+
+                    <input
+                        type="text"
+                        id="cidade"
+                        name="cidade"
+                        placeholder="Ex.: Goiânia - GO"
+                        maxlength="120"
+                    >
+
+                </div>
+
+
+                <div class="campo campo-completo">
+
+                    <label for="tipoContratante">
+                        Tipo de contratante
+                    </label>
+
+                    <select
+                        id="tipoContratante"
+                        name="tipoContratante"
+                    >
+
+                        <option value="">
+                            Selecione uma opção
+                        </option>
+
+                        <option value="pessoa_fisica">
+                            Pessoa física
+                        </option>
+
+                        <option value="empresa">
+                            Empresa
+                        </option>
+
+                        <option value="produtor_eventos">
+                            Produtor de eventos
+                        </option>
+
+                        <option value="casa_de_eventos">
+                            Casa de eventos
+                        </option>
+
+                        <option value="organizacao">
+                            Organização / Instituição
+                        </option>
+
+                        <option value="outro">
+                            Outro
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="campo campo-completo">
+
+                    <label for="descricao">
+                        Sobre você
+                    </label>
+
+                    <textarea
+                        id="descricao"
+                        name="descricao"
+                        rows="6"
+                        maxlength="1000"
+                        placeholder="Conte um pouco sobre você e o tipo de trabalho que costuma contratar..."
+                    ></textarea>
+
+                    <div class="contador">
+
+                        <span id="contadorDescricao">
+                            0
+                        </span>
+
+                        / 1000
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- CONTATO -->
+
+        <section class="card-edicao">
+
+            <div class="titulo-secao">
+
+                <h2>Contato</h2>
+
+                <p>
+                    Seu e-mail de acesso não pode ser alterado aqui.
+                </p>
+
+            </div>
+
+
+            <div class="campo campo-completo">
+
+                <label for="email">
+                    E-mail
+                </label>
+
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    readonly
+                >
+
+                <small class="texto-ajuda">
+                    O e-mail está vinculado à sua conta.
+                </small>
+
+            </div>
+
+        </section>
+
+
+        <!-- STATUS -->
+
+        <section class="card-edicao">
+
+            <div class="titulo-secao">
+
+                <h2>Visibilidade do perfil</h2>
+
+                <p>
+                    Controle se seu perfil poderá ser encontrado
+                    por outros usuários.
+                </p>
+
+            </div>
+
+
+            <label class="switch-linha">
+
+                <div>
+
+                    <strong>
+                        Perfil ativo
+                    </strong>
+
+                    <span>
+                        Seu perfil poderá aparecer nas buscas.
+                    </span>
+
+                </div>
+
+
+                <div class="switch">
+
+                    <input
+                        type="checkbox"
+                        id="perfilAtivo"
+                        checked
+                    >
+
+                    <span class="slider"></span>
+
+                </div>
+
+            </label>
+
+        </section>
+
+
+        <div
+            class="mensagem-formulario"
+            id="mensagemFormulario"
+        ></div>
+
+
+        <button
+            type="button"
+            class="btn-salvar-principal"
+            id="btnSalvar"
+        >
+            Salvar alterações
+        </button>
+
+
+        <button
+            type="button"
+            class="btn-cancelar"
+            id="btnCancelar"
+        >
+            Cancelar
+        </button>
+
+
+    </section>
+
+</main>
+
+
+<div
+    class="toast"
+    id="toast"
+></div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+
+<script src="js/core/SupabaseClient.js"></script>
+
+<script src="js/core/Sessao.js"></script>
+
+<script src="js/core/UsuarioAtual.js"></script>
+
+<script src="js/core/ControleSessao.js"></script>
+
+<script src="js/editar-perfil-contratante.js"></script>
+
+
+</body>
+
+</html>

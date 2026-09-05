@@ -13,96 +13,257 @@
     <!-- Cabeçalho / Navbar Superior -->
     <header class="navbar">
 
-      <div class="logo">Artista<span>Show</span></div>
+  <!-- Marca / Usuário -->
 
-      <div class="navbar-icons">
+      <div class="navbar-brand-area">
 
 
-        <!-- Notificações -->
-        <button class="nav-icon-btn" onclick="window.location.href='notificacoes.html'" title="Notificações">
-          <svg class="top-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-          </svg>
-          <span class="notification-badge">5</span>
-        </button>
+    <!-- Logo: aparece somente quando estiver deslogado -->
+    <div id="cabecalho-logo" class="logo">
+      Artista<span>Show</span>
+    </div>
 
-        <!-- Mensagens -->
-        <button class="nav-icon-btn" onclick="window.location.href='mensagens.html'" title="Mensagens">
-          <div class="msg-icon-wrapper">
-            <svg class="top-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-            </svg>
-            <span class="msg-letter">M</span>
-          </div>
-          <span class="notification-badge">10</span>
-        </button>
+    <!-- Usuário logado: substitui a logo -->
+    <div id="cabecalho-logado" class="cabecalho-logado" style="display: none;">
 
-        <!-- Filtro -->
-        <button class="nav-icon-btn" onclick="abrirModalFiltro()" title="Filtros">
-          <svg class="top-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="4" y1="21" x2="4" y2="14"></line>
-            <line x1="4" y1="10" x2="4" y2="3"></line>
-            <line x1="12" y1="21" x2="12" y2="12"></line>
-            <line x1="12" y1="8" x2="12" y2="3"></line>
-            <line x1="20" y1="21" x2="20" y2="16"></line>
-            <line x1="1" y1="14" x2="7" y2="14"></line>
-            <line x1="9" y1="8" x2="15" y2="8"></line>
-            <line x1="17" y1="16" x2="23" y2="16"></line>
-          </svg>
-        </button>
+<button
+type="button"
+class="cabecalho-usuario-btn"
+onclick="Cabecalho.alternarMenuUsuario()"
+title="Opções da conta"
+aria-haspopup="true"
+aria-expanded="false"
 
-    <!-- Estado do usuário -->
-    <div id="cabecalho-usuario" class="cabecalho-usuario">
+>
 
-      <!-- Enquanto carrega -->
-      <div id="cabecalho-carregando" class="cabecalho-usuario-loading">
-        <span></span>
-      </div>
 
-      <!-- Usuário deslogado -->
-      <div id="cabecalho-deslogado" class="cabecalho-usuario-estado" style="display: none;">
-        <button class="cabecalho-btn-entrar" onclick="window.location.href='login.html'">
-          Entrar
-        </button>
-      </div>
+<div id="cabecalho-avatar" class="cabecalho-avatar">
+  <span id="cabecalho-avatar-letras">U</span>
+</div>
 
-      <!-- Usuário logado -->
-      <div id="cabecalho-logado" class="cabecalho-usuario-logado" style="display: none;">
+<div class="cabecalho-info-usuario">
+  <strong id="cabecalho-nome">Usuário</strong>
+  <small id="cabecalho-tipo">Perfil</small>
+</div>
 
-        <button
-          class="cabecalho-perfil-btn"
-          onclick="window.location.href='perfil-artista.html'"
-          title="Meu perfil"
-        >
+<svg
+  class="cabecalho-chevron"
+  viewBox="0 0 24 24"
+  width="16"
+  height="16"
+  aria-hidden="true"
+>
+  <path
+    d="M6 9l6 6 6-6"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+</svg>
 
-          <div id="cabecalho-avatar" class="cabecalho-avatar">
-            <span id="cabecalho-avatar-letras">U</span>
-          </div>
 
-          <div class="cabecalho-info-usuario">
-            <strong id="cabecalho-nome">Usuário</strong>
-            <small id="cabecalho-tipo">Perfil</small>
-          </div>
+  </button>
 
-        </button>
+  <div
+    id="cabecalho-menu-usuario"
+    class="cabecalho-menu-usuario"
+    style="display: none;"
+  >
 
-        <button
-          class="cabecalho-btn-sair"
-          onclick="Cabecalho.sair()"
-          title="Sair"
-        >
-          Sair
-        </button>
 
-      </div>
+<button
+  type="button"
+  onclick="Cabecalho.trocarConta()"
+>
+  <svg
+    viewBox="0 0 24 24"
+    width="18"
+    height="18"
+    aria-hidden="true"
+  >
+    <path
+      d="M16 3h5v5"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+    <path
+      d="M21 3l-7 7"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+    <path
+      d="M20 14v4a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3h4"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+  </svg>
 
+  <span>Trocar de conta</span>
+</button>
+
+
+<button
+  type="button"
+  onclick="Cabecalho.sair()"
+>
+  <svg
+    viewBox="0 0 24 24"
+    width="18"
+    height="18"
+    aria-hidden="true"
+  >
+    <path
+      d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+    <path
+      d="M16 17l5-5-5-5"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+    <path
+      d="M21 12H9"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+  </svg>
+
+  <span>Sair</span>
+</button>
+
+
+  </div>
+
+</div>
+
+
+    <!-- Enquanto verifica a sessão -->
+    <div id="cabecalho-carregando" class="cabecalho-usuario-loading">
+      <span></span>
     </div>
 
 
       </div>
 
+      <!-- Área dos ícones -->
+
+      <div class="navbar-icons">
+
+
+    <!-- Usuário deslogado -->
+    <div id="cabecalho-deslogado" class="cabecalho-usuario-estado" style="display: none;">
+      <button
+        class="cabecalho-btn-entrar"
+        onclick="window.location.href='login.html'"
+      >
+        Entrar
+      </button>
+    </div>
+
+
+    <!-- Notificações -->
+    <button
+      class="nav-icon-btn"
+      onclick="window.location.href='notificacoes.html'"
+      title="Notificações"
+    >
+      <svg
+        class="top-icon-svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+        <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+      </svg>
+
+      <span class="notification-badge">5</span>
+    </button>
+
+
+    <!-- Mensagens -->
+    <button
+      class="nav-icon-btn"
+      onclick="window.location.href='mensagens.html'"
+      title="Mensagens"
+    >
+      <div class="msg-icon-wrapper">
+
+        <svg
+          class="top-icon-svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+        </svg>
+
+        <span class="msg-letter">M</span>
+
+      </div>
+
+      <span class="notification-badge">10</span>
+    </button>
+
+
+    <!-- Filtro -->
+    <button
+      class="nav-icon-btn"
+      onclick="abrirModalFiltro()"
+      title="Filtros"
+    >
+      <svg
+        class="top-icon-svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <line x1="4" y1="21" x2="4" y2="14"></line>
+        <line x1="4" y1="10" x2="4" y2="3"></line>
+        <line x1="12" y1="21" x2="12" y2="12"></line>
+        <line x1="12" y1="8" x2="12" y2="3"></line>
+        <line x1="20" y1="21" x2="20" y2="16"></line>
+        <line x1="1" y1="14" x2="7" y2="14"></line>
+        <line x1="9" y1="8" x2="15" y2="8"></line>
+        <line x1="17" y1="16" x2="23" y2="16"></line>
+      </svg>
+    </button>
+
+
+      </div>
+
     </header>
+
 
 
     <!-- Conteúdo Principal -->

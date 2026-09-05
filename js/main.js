@@ -24,22 +24,260 @@ function mudarCategoria(categoriaId, elementoBtn) {
 // CONTROLE DO MENU INFERIOR
 // ==========================================
 function mudarAbaInferior(abaName, elementoBtn) {
-  if (abaName === 'anunciar') {
-    abrirModalAnuncio();
-    return; // Não altera o botão ativo inferior se for pra abrir modal
-  }
 
-  const itens = document.querySelectorAll('.bottom-nav-item');
-  itens.forEach(item => item.classList.remove('ativo'));
-  elementoBtn.classList.add('ativo');
+if (abaName === 'anunciar') {
 
-  if (abaName === 'home') {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-  if (abaName === 'perfil') {
-    window.location='perfil-artista.html';
-  }
+
+abrirModalAnuncio();
+
+return;
+
+
 }
+
+const itens =
+document.querySelectorAll('.bottom-nav-item');
+
+itens.forEach(item => {
+
+
+item.classList.remove('ativo');
+
+
+});
+
+if (elementoBtn) {
+
+
+elementoBtn.classList.add('ativo');
+
+
+}
+
+if (abaName === 'home') {
+
+
+window.scrollTo({
+
+  top: 0,
+
+  behavior: 'smooth'
+
+});
+
+
+}
+
+if (abaName === 'perfil') {
+
+
+abrirMeuPerfil();
+
+
+}
+
+}
+
+async function abrirMeuPerfil() {
+
+try {
+
+
+/*
+ * Garante que o usuário esteja autenticado.
+ */
+
+if (
+  typeof ControleSessao === 'undefined'
+) {
+
+  console.error(
+    '❌ ControleSessao não está disponível.'
+  );
+
+  window.location.href =
+    'login.html';
+
+  return;
+
+}
+
+
+const logado =
+  await ControleSessao.protegerPagina({
+
+    redirecionarPara:
+      'login.html',
+
+    salvarDestino:
+      true
+
+  });
+
+
+/*
+ * Se não estiver logado, a própria função
+ * já encaminha para o login.
+ */
+
+if (!logado) {
+
+  return;
+
+}
+
+
+/*
+ * Agora descobrimos qual é o tipo
+ * de perfil do usuário.
+ */
+
+let dadosUsuario = null;
+
+
+if (
+  typeof UsuarioAtual !== 'undefined'
+) {
+
+  dadosUsuario =
+    await UsuarioAtual.obter();
+
+}
+
+
+if (!dadosUsuario) {
+
+  console.error(
+    '❌ Não foi possível obter os dados do usuário.'
+  );
+
+
+  window.location.href =
+    'index.html';
+
+  return;
+
+}
+
+
+/*
+ * O tipo vem de:
+ *
+ * dadosUsuario.tipoPerfil.nome
+ */
+
+const tipoPerfil =
+  String(
+    dadosUsuario?.tipoPerfil?.nome || ''
+  )
+  .trim()
+  .toLowerCase();
+
+
+console.log(
+  '🎭 Tipo de perfil detectado:',
+  tipoPerfil
+);
+
+
+/*
+ * ARTISTA
+ */
+
+if (
+  tipoPerfil === 'artista'
+) {
+
+  window.location.href =
+    'meu-perfil-artista.html';
+
+  return;
+
+}
+
+
+/*
+ * CONTRATANTE
+ */
+
+if (
+  tipoPerfil === 'contratante'
+) {
+
+  window.location.href =
+    'meu-perfil-contratante.html';
+
+  return;
+
+}
+
+
+/*
+ * OUTROS TIPOS
+ *
+ * Ainda vamos criar as páginas específicas.
+ */
+
+if (
+  tipoPerfil === 'organizador_eventos'
+) {
+
+  console.log(
+    'ℹ️ Perfil de organizador ainda será implementado.'
+  );
+
+}
+
+
+if (
+  tipoPerfil === 'casa_shows'
+) {
+
+  console.log(
+    'ℹ️ Perfil de casa de shows ainda será implementado.'
+  );
+
+}
+
+
+if (
+  tipoPerfil === 'empresa_agencia'
+) {
+
+  console.log(
+    'ℹ️ Perfil de empresa/agência ainda será implementado.'
+  );
+
+}
+
+
+/*
+ * Até criarmos as demais páginas,
+ * retornamos para a home.
+ */
+
+window.location.href =
+  'index.html';
+
+
+} catch (erro) {
+
+
+console.error(
+  '❌ Erro ao abrir perfil:',
+  erro
+);
+
+
+window.location.href =
+  'index.html';
+
+
+}
+
+}
+
+
 
 // ==========================================
 // MODAL DE CRIAR ANÚNCIO
