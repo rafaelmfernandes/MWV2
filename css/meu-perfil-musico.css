@@ -483,7 +483,6 @@ svg {
    ========================================================= */
 
 .edit-profile-button,
-.preview-profile-button,
 .whatsapp-button {
     width: 100%;
     min-height: 44px;
@@ -505,7 +504,6 @@ svg {
         border-color 0.2s ease,
         transform 0.15s ease;
 }
-
 
 /* =========================================================
    BOTÃO EDITAR
@@ -529,21 +527,69 @@ svg {
    ========================================================= */
 
 .preview-profile-button {
-    margin-top: 9px;
+    position: fixed;
+
+    right: 16px;
+    bottom: 82px;
+
+    z-index: 900;
+
+    width: 36px;
+    height: 36px;
+
+    min-width: 36px;
+    min-height: 36px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin: 0;
+    padding: 0;
+
+    border: 1px solid #e4e8ef;
+
+    border-radius: 50%;
 
     background: #ffffff;
 
-    color: #526078;
+    color: #8a94a7;
 
-    border: 1px solid #e1e6ef;
+    box-shadow:
+        0 2px 8px rgba(22, 34, 55, 0.10);
+
+    font-size: 0;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.15s ease,
+        box-shadow 0.2s ease;
 }
 
 .preview-profile-button:hover {
     background: #f8faff;
 
-    border-color: #d5dce8;
+    border-color: #d7deea;
 
     color: #315edb;
+
+    box-shadow:
+        0 4px 12px rgba(22, 34, 55, 0.14);
+
+    transform: scale(1.05);
+}
+
+.preview-profile-button:active {
+    transform: scale(0.94);
+}
+
+.preview-profile-button svg {
+    width: 16px;
+    height: 16px;
+
+    stroke-width: 1.8;
 }
 
 
@@ -569,13 +615,11 @@ svg {
    ========================================================= */
 
 .edit-profile-button:active,
-.preview-profile-button:active,
 .whatsapp-button:active {
     transform: scale(0.985);
 }
 
 .edit-profile-button svg,
-.preview-profile-button svg,
 .whatsapp-button svg {
     width: 17px;
     height: 17px;
@@ -744,7 +788,7 @@ svg {
 
 
 /* =========================================================
-   GRID DE INFORMAÇÕES
+   INFORMAÇÕES PROFISSIONAIS
    ========================================================= */
 
 .info-grid {
@@ -755,37 +799,37 @@ svg {
     grid-template-columns:
         repeat(2, minmax(0, 1fr));
 
-    gap: 9px;
+    gap: 7px;
 }
 
 .info-card {
     min-width: 0;
 
-    padding: 12px;
+    padding: 9px 10px;
 
     background: #f8faff;
 
     border: 1px solid #edf0f6;
 
-    border-radius: 12px;
+    border-radius: 10px;
 }
 
 .info-card-label {
     display: block;
 
-    margin-bottom: 5px;
+    margin-bottom: 3px;
 
     color: #8a94a7;
 
-    font-size: 10px;
+    font-size: 9px;
 
-    line-height: 1.3;
+    line-height: 1.2;
 
     font-weight: 700;
 
     text-transform: uppercase;
 
-    letter-spacing: 0.04em;
+    letter-spacing: 0.03em;
 }
 
 .info-card-value {
@@ -793,9 +837,9 @@ svg {
 
     color: #29344a;
 
-    font-size: 12px;
+    font-size: 11px;
 
-    line-height: 1.4;
+    line-height: 1.3;
 
     font-weight: 700;
 
@@ -815,7 +859,7 @@ svg {
     grid-template-columns:
         repeat(2, minmax(0, 1fr));
 
-    gap: 9px;
+    gap: 7px;
 }
 
 .instrument-card {
@@ -824,28 +868,28 @@ svg {
     display: flex;
     align-items: center;
 
-    gap: 10px;
+    gap: 8px;
 
-    padding: 12px;
+    padding: 9px 10px;
 
     background: #f8faff;
 
     border: 1px solid #e8edf7;
 
-    border-radius: 13px;
+    border-radius: 11px;
 }
 
 .instrument-icon {
-    width: 38px;
-    height: 38px;
+    width: 32px;
+    height: 32px;
 
-    flex: 0 0 38px;
+    flex: 0 0 32px;
 
     display: flex;
     align-items: center;
     justify-content: center;
 
-    border-radius: 10px;
+    border-radius: 8px;
 
     background: #eaf0ff;
 
@@ -853,8 +897,8 @@ svg {
 }
 
 .instrument-icon svg {
-    width: 18px;
-    height: 18px;
+    width: 15px;
+    height: 15px;
 }
 
 .instrument-info {
@@ -866,8 +910,9 @@ svg {
 
     color: #29344a;
 
-    font-size: 12px;
-    line-height: 1.3;
+    font-size: 11px;
+
+    line-height: 1.25;
 
     font-weight: 800;
 
@@ -877,12 +922,13 @@ svg {
 .instrument-info span {
     display: block;
 
-    margin-top: 3px;
+    margin-top: 2px;
 
     color: #8992a4;
 
-    font-size: 10px;
-    line-height: 1.3;
+    font-size: 9px;
+
+    line-height: 1.25;
 }
 
 
@@ -944,86 +990,70 @@ svg {
     width: 100%;
 
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
 
-    gap: 9px;
+    gap: 7px;
 }
 
 .service-card {
     min-width: 0;
 
-    display: flex;
+    display: inline-flex;
     align-items: center;
 
-    gap: 10px;
+    gap: 5px;
 
-    padding: 12px;
+    padding: 7px 10px;
 
-    background: #f8faff;
+    background: #f0f4ff;
 
-    border: 1px solid #e8edf7;
+    border: 1px solid #dce5ff;
 
-    border-radius: 13px;
+    border-radius: 999px;
+
+    color: #315edb;
 }
 
 .service-icon {
-    width: 40px;
-    height: 40px;
+    width: 13px;
+    height: 13px;
 
-    flex: 0 0 40px;
+    flex: 0 0 13px;
 
     display: flex;
     align-items: center;
     justify-content: center;
 
-    border-radius: 11px;
-
-    background: #edf2ff;
+    background: transparent;
 
     color: #315edb;
 }
 
 .service-icon svg {
-    width: 19px;
-    height: 19px;
+    width: 13px;
+    height: 13px;
 }
 
 .service-info {
     min-width: 0;
-    flex: 1;
 }
 
 .service-info strong {
-    display: block;
-
-    color: #273248;
-
-    font-size: 12px;
-    line-height: 1.3;
-
-    font-weight: 800;
-}
-
-.service-info span,
-.service-info small {
-    display: block;
-
-    margin-top: 3px;
-
-    color: #8992a4;
-
-    font-size: 10px;
-    line-height: 1.35;
-}
-
-.service-price {
-    flex-shrink: 0;
+    display: inline;
 
     color: #315edb;
 
-    font-size: 12px;
+    font-size: 11px;
 
-    font-weight: 800;
+    line-height: 1.2;
+
+    font-weight: 700;
+}
+
+.service-info span,
+.service-info small,
+.service-price {
+    display: none;
 }
 
 
@@ -1039,14 +1069,16 @@ svg {
     grid-template-columns:
         repeat(2, minmax(0, 1fr));
 
-    gap: 10px;
+    gap: 7px;
 }
 
 .portfolio-card {
     position: relative;
 
     min-width: 0;
-    min-height: 145px;
+
+    height: 125px;
+    min-height: 125px;
 
     overflow: hidden;
 
@@ -1054,7 +1086,7 @@ svg {
 
     border: 1px solid #e5e9f1;
 
-    border-radius: 14px;
+    border-radius: 11px;
 }
 
 .portfolio-card img,
@@ -1074,7 +1106,7 @@ svg {
     right: 0;
     bottom: 0;
 
-    padding: 25px 11px 11px;
+    padding: 22px 8px 8px;
 
     background:
         linear-gradient(
@@ -1086,17 +1118,19 @@ svg {
 }
 
 .portfolio-card-title {
-    font-size: 12px;
-    line-height: 1.3;
+    font-size: 10px;
+
+    line-height: 1.25;
 
     font-weight: 800;
 }
 
 .portfolio-card-subtitle {
-    margin-top: 3px;
+    margin-top: 2px;
 
-    font-size: 10px;
-    line-height: 1.3;
+    font-size: 8px;
+
+    line-height: 1.25;
 
     opacity: 0.82;
 }
@@ -1109,30 +1143,35 @@ svg {
 .video-list {
     width: 100%;
 
-    display: flex;
-    flex-direction: column;
+    display: grid;
 
-    gap: 10px;
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 7px;
 }
 
 .video-item,
 .video-portfolio {
     width: 100%;
 
+    height: 125px;
+
     overflow: hidden;
 
     background: #111827;
 
-    border-radius: 14px;
+    border-radius: 11px;
 }
 
 .video-item video,
 .video-portfolio video {
     width: 100%;
+    height: 100%;
 
     display: block;
 
-    max-height: 340px;
+    max-height: none;
 
     object-fit: cover;
 }
@@ -1145,10 +1184,12 @@ svg {
 .audio-list {
     width: 100%;
 
-    display: flex;
-    flex-direction: column;
+    display: grid;
 
-    gap: 9px;
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 7px;
 }
 
 .audio-card {
@@ -1157,22 +1198,22 @@ svg {
     display: flex;
     align-items: center;
 
-    gap: 10px;
+    gap: 7px;
 
-    padding: 11px;
+    padding: 9px;
 
     background: #f8faff;
 
     border: 1px solid #e8edf7;
 
-    border-radius: 13px;
+    border-radius: 11px;
 }
 
 .audio-icon {
-    width: 40px;
-    height: 40px;
+    width: 34px;
+    height: 34px;
 
-    flex: 0 0 40px;
+    flex: 0 0 34px;
 
     display: flex;
     align-items: center;
@@ -1186,8 +1227,8 @@ svg {
 }
 
 .audio-icon svg {
-    width: 18px;
-    height: 18px;
+    width: 15px;
+    height: 15px;
 }
 
 .audio-info {
@@ -1205,8 +1246,9 @@ svg {
 
     color: #273248;
 
-    font-size: 12px;
-    line-height: 1.3;
+    font-size: 10px;
+
+    line-height: 1.25;
 
     font-weight: 800;
 }
@@ -1214,17 +1256,19 @@ svg {
 .audio-info span {
     display: block;
 
-    margin-top: 3px;
+    margin-top: 2px;
 
     color: #8992a4;
 
-    font-size: 10px;
+    font-size: 8px;
 }
 
 .audio-player {
     width: 100%;
 
-    margin-top: 8px;
+    height: 30px;
+
+    margin-top: 6px;
 }
 
 
@@ -2042,18 +2086,38 @@ svg {
     }
 
 
-    /* BOTÕES */
+    /* BOTÃO EDITAR */
 
-    .edit-profile-button,
-    .preview-profile-button,
-    .whatsapp-button {
+    .edit-profile-button {
         min-height: 43px;
 
         font-size: 12px;
     }
 
+
+    /* ÍCONE DE VISUALIZAÇÃO */
+
     .preview-profile-button {
-        margin-top: 8px;
+        right: 14px;
+        bottom: 82px;
+
+        width: 35px;
+        height: 35px;
+
+        min-width: 35px;
+        min-height: 35px;
+    }
+
+    .preview-profile-button svg {
+        width: 16px;
+        height: 16px;
+    }
+
+
+    .whatsapp-button {
+        min-height: 43px;
+
+        font-size: 12px;
     }
 
 
@@ -2103,10 +2167,6 @@ svg {
     }
 
     .instrument-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .portfolio-grid {
         grid-template-columns: 1fr;
     }
 
@@ -2186,11 +2246,21 @@ svg {
     }
 
     .edit-profile-button,
-    .preview-profile-button,
     .whatsapp-button {
         min-height: 42px;
 
         font-size: 11px;
+    }
+
+    .preview-profile-button {
+        right: 12px;
+        bottom: 80px;
+
+        width: 34px;
+        height: 34px;
+
+        min-width: 34px;
+        min-height: 34px;
     }
 
 }
@@ -2214,6 +2284,14 @@ svg {
         bottom:
             calc(
                 92px +
+                env(safe-area-inset-bottom)
+            );
+    }
+
+    .preview-profile-button {
+        bottom:
+            calc(
+                82px +
                 env(safe-area-inset-bottom)
             );
     }

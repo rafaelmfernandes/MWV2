@@ -4,7 +4,6 @@
 
 <head>
 
-
 <meta charset="UTF-8">
 
 <meta
@@ -28,10 +27,11 @@
 
 <script src="https://unpkg.com/lucide@latest"></script>
 
-
 </head>
 
 <body>
+
+
 
 <div class="app">
 
@@ -94,8 +94,26 @@
     <!-- =================================================
          CARD PRINCIPAL DO PERFIL
          ================================================= -->
+         
 
     <section class="profile-card">
+
+        <!-- =================================================
+             VISUALIZAR PERFIL
+             ================================================= -->
+
+        <button
+            type="button"
+            class="preview-profile-button"
+            id="btnVisualizarPerfil"
+            title="Ver meu perfil"
+            aria-label="Ver meu perfil"
+        >
+
+            <i data-lucide="eye"></i>
+
+        </button>
+        
 
         <div class="profile-header">
 
@@ -153,6 +171,7 @@
                     <span>
                         Localização não informada
                     </span>
+
                 </div>
 
 
@@ -200,13 +219,16 @@
         </div>
 
 
-        <!-- EDITAR -->
+        <!-- =================================================
+             EDITAR PERFIL
+             ================================================= -->
 
         <button
             type="button"
             class="edit-profile-button"
             id="btnEditarPerfil"
         >
+
             <i data-lucide="pencil"></i>
 
             <span>
@@ -215,31 +237,20 @@
 
         </button>
 
-        <!-- VISUALIZAR PERFIL -->
 
-        <button
-            type="button"
-            class="preview-profile-button"
-            id="btnVisualizarPerfil"
-            aria-label="Ver como os outros veem"
-            title="Ver como os outros veem"
-        >
-            <i data-lucide="eye"></i>
-
-            <span>
-                Ver como os outros veem
-            </span>
-
-        </button>
+        
 
 
-        <!-- WHATSAPP -->
+        <!-- =================================================
+             WHATSAPP
+             ================================================= -->
 
         <button
             type="button"
             class="whatsapp-button"
             id="btnWhatsApp"
         >
+
             <i data-lucide="message-circle"></i>
 
             <span>
@@ -437,7 +448,9 @@
 
 
 
-        <!-- INSTRUMENTOS -->
+        <!-- =================================================
+             INSTRUMENTOS
+             ================================================= -->
 
         <article class="profile-section">
 
@@ -483,7 +496,9 @@
 
 
 
-        <!-- GÊNEROS -->
+        <!-- =================================================
+             GÊNEROS
+             ================================================= -->
 
         <article class="profile-section">
 
@@ -519,7 +534,9 @@
 
 
 
-        <!-- SERVIÇOS -->
+        <!-- =================================================
+             SERVIÇOS
+             ================================================= -->
 
         <article class="profile-section">
 
@@ -983,7 +1000,9 @@
                 id="btnFecharQR"
                 aria-label="Fechar"
             >
+
                 <i data-lucide="x"></i>
+
             </button>
 
         </div>
@@ -1041,7 +1060,13 @@
 ></div>
 
 
+<!-- =====================================================
+     MENU INFERIOR
+     ===================================================== -->
+
 <div id="menu-inferior-container"></div>
+
+
 <!-- =====================================================
      SCRIPTS
      ===================================================== -->
@@ -1058,14 +1083,20 @@
 
 <script src="js/components/menu-inferior.js"></script>
 
+
+
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
 
-        if (window.lucide) {
-            lucide.createIcons();
-        }
+document.addEventListener('DOMContentLoaded', function () {
 
-    });
+    if (window.lucide) {
+
+        lucide.createIcons();
+
+    }
+
+});
+
 </script>
 
 

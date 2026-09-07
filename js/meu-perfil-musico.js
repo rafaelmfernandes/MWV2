@@ -571,12 +571,6 @@ const MusicalWorldMeuPerfilMusico = (() => {
                 total: 0
             },
 
-            /*
-            |------------------------------------------------------------------
-            | PORTFÓLIO
-            |------------------------------------------------------------------
-            */
-
             portfolio:
                 imagens,
 
@@ -586,19 +580,7 @@ const MusicalWorldMeuPerfilMusico = (() => {
             audios:
                 audios,
 
-            /*
-            |------------------------------------------------------------------
-            | AGENDA
-            |------------------------------------------------------------------
-            */
-
             agenda: [],
-
-            /*
-            |------------------------------------------------------------------
-            | AVALIAÇÕES
-            |------------------------------------------------------------------
-            */
 
             avaliacoes: []
         };
@@ -2119,27 +2101,53 @@ const MusicalWorldMeuPerfilMusico = (() => {
     |--------------------------------------------------------------------------
     */
 
-    const btnVisualizarPerfil = document.getElementById("btnVisualizarPerfil");
-
-    if (btnVisualizarPerfil) {
-        btnVisualizarPerfil.addEventListener("click", () => {
-            if (!perfilAtual || !perfilAtual.id) {
-                mostrarToast(
-                    "Não foi possível identificar seu perfil.",
-                    "erro"
-                );
-
-                return;
-            }
-
-            const idPerfil = encodeURIComponent(perfilAtual.id);
-
-            window.location.href =
-                `apresentar-perfil-musico.html?id=${idPerfil}`;
-        });
-    }
-
     function inicializarBotoes() {
+
+        /*
+        |--------------------------------------------------------------------------
+        | VISUALIZAR PERFIL
+        |--------------------------------------------------------------------------
+        */
+
+        const btnVisualizarPerfil =
+            document.getElementById(
+                "btnVisualizarPerfil"
+            );
+
+        if (btnVisualizarPerfil) {
+            btnVisualizarPerfil.addEventListener(
+                "click",
+                () => {
+
+                    if (
+                        !perfilAtual ||
+                        !perfilAtual.id
+                    ) {
+                        mostrarToast(
+                            "Não foi possível identificar seu perfil.",
+                            "erro"
+                        );
+
+                        return;
+                    }
+
+                    const idPerfil =
+                        encodeURIComponent(
+                            perfilAtual.id
+                        );
+
+                    window.location.href =
+                        `apresentar-perfil-musico.html?id=${idPerfil}`;
+                }
+            );
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | VOLTAR
+        |--------------------------------------------------------------------------
+        */
+
         const btnVoltar =
             document.getElementById(
                 "btnVoltar"
@@ -2163,6 +2171,12 @@ const MusicalWorldMeuPerfilMusico = (() => {
             );
         }
 
+        /*
+        |--------------------------------------------------------------------------
+        | EDITAR PERFIL
+        |--------------------------------------------------------------------------
+        */
+
         const btnEditar =
             document.getElementById(
                 "btnEditarPerfil"
@@ -2178,6 +2192,12 @@ const MusicalWorldMeuPerfilMusico = (() => {
             );
         }
 
+        /*
+        |--------------------------------------------------------------------------
+        | WHATSAPP
+        |--------------------------------------------------------------------------
+        */
+
         const btnWhatsApp =
             document.getElementById(
                 "btnWhatsApp"
@@ -2189,6 +2209,12 @@ const MusicalWorldMeuPerfilMusico = (() => {
                 compartilharWhatsApp
             );
         }
+
+        /*
+        |--------------------------------------------------------------------------
+        | QR CODE
+        |--------------------------------------------------------------------------
+        */
 
         const btnQRCode =
             document.getElementById(
@@ -2244,6 +2270,12 @@ const MusicalWorldMeuPerfilMusico = (() => {
                 compartilharQRCode
             );
         }
+
+        /*
+        |--------------------------------------------------------------------------
+        | SAQUE
+        |--------------------------------------------------------------------------
+        */
 
         const btnSacar =
             document.getElementById(
@@ -2812,4 +2844,5 @@ const MusicalWorldMeuPerfilMusico = (() => {
         carregarCarteiraReal,
         preencherPerfil
     };
+
 })();
