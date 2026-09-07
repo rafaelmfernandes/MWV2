@@ -9,6 +9,7 @@ const MusicalWorldMeuPerfilMusico = (() => {
             perfis: "perfis",
             tiposPerfil: "tipos_perfil",
             perfisArtistas: "perfis_artistas",
+            portfolio: "portfolio_musicos",
             carteiras: "carteiras_musicos",
             transacoes: "transacoes_carteira"
         },
@@ -52,6 +53,7 @@ const MusicalWorldMeuPerfilMusico = (() => {
             await carregarDoSupabase();
 
             preencherPerfil(dadosPerfil);
+
             await carregarCarteiraReal();
 
             inicializarTabs();
@@ -59,7 +61,10 @@ const MusicalWorldMeuPerfilMusico = (() => {
             atualizarIcones();
 
         } catch (erro) {
-            console.error("Erro ao inicializar meu perfil:", erro);
+            console.error(
+                "Erro ao inicializar meu perfil:",
+                erro
+            );
 
             mostrarToast(
                 "Não foi possível carregar seu perfil.",
@@ -110,7 +115,9 @@ const MusicalWorldMeuPerfilMusico = (() => {
         const cliente = obterSupabase();
 
         if (!cliente) {
-            throw new Error("Cliente Supabase não encontrado.");
+            throw new Error(
+                "Cliente Supabase não encontrado."
+            );
         }
 
         if (
@@ -118,19 +125,25 @@ const MusicalWorldMeuPerfilMusico = (() => {
             typeof UsuarioAtual.obterId === "function"
         ) {
             try {
-                const id = await UsuarioAtual.obterId();
+                const id =
+                    await UsuarioAtual.obterId();
 
                 if (id) {
-                    const resultado = await cliente
-                        .from(CONFIG.tabelas.usuarios)
-                        .select("*")
-                        .eq("id", id)
-                        .maybeSingle();
+                    const resultado =
+                        await cliente
+                            .from(CONFIG.tabelas.usuarios)
+                            .select("*")
+                            .eq("id", id)
+                            .maybeSingle();
 
-                    if (!resultado.error && resultado.data) {
+                    if (
+                        !resultado.error &&
+                        resultado.data
+                    ) {
                         return resultado.data;
                     }
                 }
+
             } catch (erro) {
                 console.warn(
                     "Não foi possível obter usuário pelo UsuarioAtual:",
@@ -139,23 +152,29 @@ const MusicalWorldMeuPerfilMusico = (() => {
             }
         }
 
-        const respostaAuth = await cliente.auth.getUser();
+        const respostaAuth =
+            await cliente.auth.getUser();
 
         if (respostaAuth.error) {
             throw respostaAuth.error;
         }
 
-        if (!respostaAuth.data || !respostaAuth.data.user) {
+        if (
+            !respostaAuth.data ||
+            !respostaAuth.data.user
+        ) {
             return null;
         }
 
-        const authUser = respostaAuth.data.user;
+        const authUser =
+            respostaAuth.data.user;
 
-        const resultado = await cliente
-            .from(CONFIG.tabelas.usuarios)
-            .select("*")
-            .eq("id", authUser.id)
-            .maybeSingle();
+        const resultado =
+            await cliente
+                .from(CONFIG.tabelas.usuarios)
+                .select("*")
+                .eq("id", authUser.id)
+                .maybeSingle();
 
         if (resultado.error) {
             throw resultado.error;
@@ -172,9 +191,14 @@ const MusicalWorldMeuPerfilMusico = (() => {
 
     async function verificarAcessoMusico() {
         try {
-            const dados = await carregarDadosUsuario();
+            const dados =
+                await carregarDadosUsuario();
 
-            if (!dados || !dados.usuario || !dados.perfil) {
+            if (
+                !dados ||
+                !dados.usuario ||
+                !dados.perfil
+            ) {
                 mostrarToast(
                     "Perfil de músico não encontrado.",
                     "erro"
@@ -183,17 +207,26 @@ const MusicalWorldMeuPerfilMusico = (() => {
                 return false;
             }
 
-            usuarioAtual = dados.usuario;
-            perfilAtual = dados.perfil;
-            perfilArtistaAtual = dados.perfilArtista;
+            usuarioAtual =
+                dados.usuario;
 
-            const tipoNome = String(
-                dados.tipoPerfil?.nome || ""
-            )
-                .trim()
-                .toLowerCase();
+            perfilAtual =
+                dados.perfil;
 
-            if (tipoNome !== CONFIG.tipoPerfilEsperado) {
+            perfilArtistaAtual =
+                dados.perfilArtista;
+
+            const tipoNome =
+                String(
+                    dados.tipoPerfil?.nome || ""
+                )
+                    .trim()
+                    .toLowerCase();
+
+            if (
+                tipoNome !==
+                CONFIG.tipoPerfilEsperado
+            ) {
                 mostrarToast(
                     "Este perfil não é um perfil de artista.",
                     "erro"
@@ -220,13 +253,17 @@ const MusicalWorldMeuPerfilMusico = (() => {
     }
 
     async function carregarDadosUsuario() {
-        const cliente = obterSupabase();
+        const cliente =
+            obterSupabase();
 
         if (!cliente) {
-            throw new Error("Cliente Supabase não encontrado.");
+            throw new Error(
+                "Cliente Supabase não encontrado."
+            );
         }
 
-        const usuario = await obterUsuarioAutenticado();
+        const usuario =
+            await obterUsuarioAutenticado();
 
         if (!usuario) {
             redirecionarLogin();
@@ -239,38 +276,56 @@ const MusicalWorldMeuPerfilMusico = (() => {
         |--------------------------------------------------------------------------
         */
 
-        const respostaPerfis = await cliente
-            .from(CONFIG.tabelas.perfis)
-            .select(`
-                *,
-                tipos_perfil (
-                    id,
-                    nome,
-                    descricao,
-                    ativo
+        const respostaPerfis =
+            await cliente
+                .from(CONFIG.tabelas.perfis)
+                .select(`
+                    *,
+                    tipos_perfil (
+                        id,
+                        nome,
+                        descricao,
+                        ativo
+                    )
+                `)
+                .eq(
+                    "usuario_id",
+                    usuario.id
                 )
-            `)
-            .eq("usuario_id", usuario.id)
-            .eq("ativo", true)
-            .order("id", {
-                ascending: false
-            });
+                .eq(
+                    "ativo",
+                    true
+                )
+                .order(
+                    "id",
+                    {
+                        ascending: false
+                    }
+                );
 
         if (respostaPerfis.error) {
             throw respostaPerfis.error;
         }
 
-        const perfis = respostaPerfis.data || [];
+        const perfis =
+            respostaPerfis.data || [];
 
-        const perfil = perfis.find((item) => {
-            const tipo = Array.isArray(item.tipos_perfil)
-                ? item.tipos_perfil[0]
-                : item.tipos_perfil;
+        const perfil =
+            perfis.find((item) => {
+                const tipo =
+                    Array.isArray(
+                        item.tipos_perfil
+                    )
+                        ? item.tipos_perfil[0]
+                        : item.tipos_perfil;
 
-            return String(tipo?.nome || "")
-                .trim()
-                .toLowerCase() === CONFIG.tipoPerfilEsperado;
-        });
+                return String(
+                    tipo?.nome || ""
+                )
+                    .trim()
+                    .toLowerCase() ===
+                    CONFIG.tipoPerfilEsperado;
+            });
 
         if (!perfil) {
             return {
@@ -281,9 +336,12 @@ const MusicalWorldMeuPerfilMusico = (() => {
             };
         }
 
-        const tipoPerfil = Array.isArray(perfil.tipos_perfil)
-            ? perfil.tipos_perfil[0]
-            : perfil.tipos_perfil;
+        const tipoPerfil =
+            Array.isArray(
+                perfil.tipos_perfil
+            )
+                ? perfil.tipos_perfil[0]
+                : perfil.tipos_perfil;
 
         /*
         |--------------------------------------------------------------------------
@@ -291,11 +349,17 @@ const MusicalWorldMeuPerfilMusico = (() => {
         |--------------------------------------------------------------------------
         */
 
-        const respostaArtista = await cliente
-            .from(CONFIG.tabelas.perfisArtistas)
-            .select("*")
-            .eq("perfil_id", perfil.id)
-            .maybeSingle();
+        const respostaArtista =
+            await cliente
+                .from(
+                    CONFIG.tabelas.perfisArtistas
+                )
+                .select("*")
+                .eq(
+                    "perfil_id",
+                    perfil.id
+                )
+                .maybeSingle();
 
         if (respostaArtista.error) {
             throw respostaArtista.error;
@@ -304,7 +368,8 @@ const MusicalWorldMeuPerfilMusico = (() => {
         return {
             usuario,
             perfil,
-            perfilArtista: respostaArtista.data,
+            perfilArtista:
+                respostaArtista.data,
             tipoPerfil
         };
     }
@@ -316,14 +381,134 @@ const MusicalWorldMeuPerfilMusico = (() => {
     */
 
     async function carregarDoSupabase() {
-        if (!usuarioAtual || !perfilAtual) {
-            throw new Error("Perfil ainda não carregado.");
+        if (
+            !usuarioAtual ||
+            !perfilAtual
+        ) {
+            throw new Error(
+                "Perfil ainda não carregado."
+            );
         }
 
-        const artista = perfilArtistaAtual || {};
+        const cliente =
+            obterSupabase();
+
+        if (!cliente) {
+            throw new Error(
+                "Cliente Supabase não encontrado."
+            );
+        }
+
+        const artista =
+            perfilArtistaAtual || {};
+
+        /*
+        |--------------------------------------------------------------------------
+        | PORTFÓLIO REAL
+        |--------------------------------------------------------------------------
+        */
+
+        let portfolio = [];
+
+        try {
+            const respostaPortfolio =
+                await cliente
+                    .from(
+                        CONFIG.tabelas.portfolio
+                    )
+                    .select("*")
+                    .eq(
+                        "perfil_id",
+                        perfilAtual.id
+                    )
+                    .eq(
+                        "ativo",
+                        true
+                    )
+                    .order(
+                        "ordem",
+                        {
+                            ascending: true
+                        }
+                    )
+                    .order(
+                        "created_at",
+                        {
+                            ascending: true
+                        }
+                    );
+
+            if (
+                respostaPortfolio.error
+            ) {
+                throw respostaPortfolio.error;
+            }
+
+            portfolio =
+                respostaPortfolio.data || [];
+
+            console.log(
+                "Portfólio carregado:",
+                portfolio
+            );
+
+        } catch (erro) {
+            console.error(
+                "Erro ao carregar portfólio:",
+                erro
+            );
+
+            portfolio = [];
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | SEPARAÇÃO DO PORTFÓLIO
+        |--------------------------------------------------------------------------
+        */
+
+        const imagens =
+            portfolio.filter(
+                (item) =>
+                    String(
+                        item.tipo || ""
+                    )
+                        .trim()
+                        .toLowerCase() ===
+                    "imagem"
+            );
+
+        const videos =
+            portfolio.filter(
+                (item) =>
+                    String(
+                        item.tipo || ""
+                    )
+                        .trim()
+                        .toLowerCase() ===
+                    "video"
+            );
+
+        const audios =
+            portfolio.filter(
+                (item) =>
+                    String(
+                        item.tipo || ""
+                    )
+                        .trim()
+                        .toLowerCase() ===
+                    "audio"
+            );
+
+        /*
+        |--------------------------------------------------------------------------
+        | DADOS DO PERFIL
+        |--------------------------------------------------------------------------
+        */
 
         dadosPerfil = {
-            id: perfilAtual.id,
+            id:
+                perfilAtual.id,
 
             nome:
                 perfilAtual.nome_exibicao ||
@@ -354,13 +539,19 @@ const MusicalWorldMeuPerfilMusico = (() => {
                 artista.disponivel !== false,
 
             instrumentos:
-                normalizarArray(artista.instrumentos),
+                normalizarArray(
+                    artista.instrumentos
+                ),
 
             generos:
-                normalizarArray(artista.estilos),
+                normalizarArray(
+                    artista.estilos
+                ),
 
             servicos:
-                normalizarArray(artista.servicos),
+                normalizarArray(
+                    artista.servicos
+                ),
 
             foto:
                 artista.foto_url ||
@@ -380,16 +571,42 @@ const MusicalWorldMeuPerfilMusico = (() => {
                 total: 0
             },
 
-            portfolio: [],
+            /*
+            |------------------------------------------------------------------
+            | PORTFÓLIO
+            |------------------------------------------------------------------
+            */
 
-            videos: [],
+            portfolio:
+                imagens,
 
-            audios: [],
+            videos:
+                videos,
+
+            audios:
+                audios,
+
+            /*
+            |------------------------------------------------------------------
+            | AGENDA
+            |------------------------------------------------------------------
+            */
 
             agenda: [],
 
+            /*
+            |------------------------------------------------------------------
+            | AVALIAÇÕES
+            |------------------------------------------------------------------
+            */
+
             avaliacoes: []
         };
+
+        console.log(
+            "Dados do perfil carregados:",
+            dadosPerfil
+        );
 
         return dadosPerfil;
     }
@@ -489,7 +706,9 @@ const MusicalWorldMeuPerfilMusico = (() => {
             dados.avaliacoes
         );
 
-        atualizarBotoesContato(dados);
+        atualizarBotoesContato(
+            dados
+        );
 
         atualizarIcones();
     }
@@ -501,25 +720,33 @@ const MusicalWorldMeuPerfilMusico = (() => {
     */
 
     function preencherAvatar(dados) {
-        const avatar = document.getElementById(
-            "profileAvatar"
-        );
+        const avatar =
+            document.getElementById(
+                "profileAvatar"
+            );
 
-        const initials = document.getElementById(
-            "profileInitials"
-        );
+        const initials =
+            document.getElementById(
+                "profileInitials"
+            );
 
         if (!avatar) {
             return;
         }
 
-        let imagem = avatar.querySelector("img");
+        let imagem =
+            avatar.querySelector("img");
 
         if (dados.foto) {
             if (!imagem) {
-                imagem = document.createElement("img");
+                imagem =
+                    document.createElement(
+                        "img"
+                    );
 
-                imagem.alt = dados.nome || "Perfil";
+                imagem.alt =
+                    dados.nome ||
+                    "Perfil";
 
                 avatar.insertBefore(
                     imagem,
@@ -527,24 +754,35 @@ const MusicalWorldMeuPerfilMusico = (() => {
                 );
             }
 
-            imagem.src = dados.foto;
-            imagem.alt = dados.nome || "Perfil";
-            imagem.style.display = "block";
+            imagem.src =
+                dados.foto;
+
+            imagem.alt =
+                dados.nome ||
+                "Perfil";
+
+            imagem.style.display =
+                "block";
 
             if (initials) {
-                initials.style.display = "none";
+                initials.style.display =
+                    "none";
             }
 
         } else {
             if (imagem) {
-                imagem.style.display = "none";
+                imagem.style.display =
+                    "none";
             }
 
             if (initials) {
                 initials.textContent =
-                    gerarIniciais(dados.nome);
+                    gerarIniciais(
+                        dados.nome
+                    );
 
-                initials.style.display = "flex";
+                initials.style.display =
+                    "flex";
             }
         }
     }
@@ -556,19 +794,22 @@ const MusicalWorldMeuPerfilMusico = (() => {
     */
 
     function preencherStatus(dados) {
-        const elemento = document.getElementById(
-            "profileStatus"
-        );
+        const elemento =
+            document.getElementById(
+                "profileStatus"
+            );
 
         if (!elemento) {
             return;
         }
 
-        const disponivel = dados.disponibilidade;
+        const disponivel =
+            dados.disponibilidade;
 
-        elemento.textContent = disponivel
-            ? "Disponível"
-            : "Indisponível";
+        elemento.textContent =
+            disponivel
+                ? "Disponível"
+                : "Indisponível";
 
         elemento.classList.toggle(
             "available",
@@ -588,13 +829,17 @@ const MusicalWorldMeuPerfilMusico = (() => {
     */
 
     function preencherAvaliacao(dados) {
-        const media = Number(
-            dados.avaliacao?.media || 0
-        );
+        const media =
+            Number(
+                dados.avaliacao?.media ||
+                0
+            );
 
-        const total = Number(
-            dados.avaliacao?.total || 0
-        );
+        const total =
+            Number(
+                dados.avaliacao?.total ||
+                0
+            );
 
         definirTexto(
             "ratingValue",
@@ -610,29 +855,37 @@ const MusicalWorldMeuPerfilMusico = (() => {
                 : `${total} avaliações`
         );
 
-        const container = document.getElementById(
-            "profileRating"
-        );
+        const container =
+            document.getElementById(
+                "profileRating"
+            );
 
         if (container) {
             container.style.display =
                 "flex";
         }
 
-        const stars = document.querySelector(
-            "#profileRating .rating-stars"
-        );
+        const stars =
+            document.querySelector(
+                "#profileRating .rating-stars"
+            );
 
         if (stars) {
             stars.innerHTML =
-                gerarEstrelas(media);
+                gerarEstrelas(
+                    media
+                );
         }
     }
 
     function gerarEstrelas(media) {
         let html = "";
 
-        for (let i = 1; i <= 5; i++) {
+        for (
+            let i = 1;
+            i <= 5;
+            i++
+        ) {
             const preenchida =
                 media >= i;
 
@@ -652,10 +905,13 @@ const MusicalWorldMeuPerfilMusico = (() => {
     |--------------------------------------------------------------------------
     */
 
-    function preencherInstrumentos(instrumentos) {
-        const container = document.getElementById(
-            "instrumentGrid"
-        );
+    function preencherInstrumentos(
+        instrumentos
+    ) {
+        const container =
+            document.getElementById(
+                "instrumentGrid"
+            );
 
         if (!container) {
             return;
@@ -663,7 +919,10 @@ const MusicalWorldMeuPerfilMusico = (() => {
 
         container.innerHTML = "";
 
-        if (!instrumentos.length) {
+        if (
+            !instrumentos ||
+            !instrumentos.length
+        ) {
             container.innerHTML = `
                 <div class="empty-inline">
                     Nenhum instrumento informado.
@@ -673,28 +932,35 @@ const MusicalWorldMeuPerfilMusico = (() => {
             return;
         }
 
-        instrumentos.forEach((instrumento) => {
-            const card = document.createElement(
-                "div"
-            );
+        instrumentos.forEach(
+            (instrumento) => {
+                const card =
+                    document.createElement(
+                        "div"
+                    );
 
-            card.className =
-                "instrument-card";
+                card.className =
+                    "instrument-card";
 
-            card.innerHTML = `
-                <div class="instrument-icon">
-                    <i data-lucide="music-2"></i>
-                </div>
+                card.innerHTML = `
+                    <div class="instrument-icon">
+                        <i data-lucide="music-2"></i>
+                    </div>
 
-                <div class="instrument-info">
-                    <strong>
-                        ${escaparHtml(instrumento)}
-                    </strong>
-                </div>
-            `;
+                    <div class="instrument-info">
+                        <strong>
+                            ${escaparHtml(
+                                instrumento
+                            )}
+                        </strong>
+                    </div>
+                `;
 
-            container.appendChild(card);
-        });
+                container.appendChild(
+                    card
+                );
+            }
+        );
 
         atualizarIcones();
     }
@@ -705,10 +971,13 @@ const MusicalWorldMeuPerfilMusico = (() => {
     |--------------------------------------------------------------------------
     */
 
-    function preencherGeneros(generos) {
-        const container = document.getElementById(
-            "genreList"
-        );
+    function preencherGeneros(
+        generos
+    ) {
+        const container =
+            document.getElementById(
+                "genreList"
+            );
 
         if (!container) {
             return;
@@ -716,7 +985,10 @@ const MusicalWorldMeuPerfilMusico = (() => {
 
         container.innerHTML = "";
 
-        if (!generos.length) {
+        if (
+            !generos ||
+            !generos.length
+        ) {
             container.innerHTML = `
                 <span class="empty-inline">
                     Nenhum estilo informado.
@@ -726,18 +998,24 @@ const MusicalWorldMeuPerfilMusico = (() => {
             return;
         }
 
-        generos.forEach((genero) => {
-            const tag = document.createElement(
-                "span"
-            );
+        generos.forEach(
+            (genero) => {
+                const tag =
+                    document.createElement(
+                        "span"
+                    );
 
-            tag.className =
-                "genre-tag";
+                tag.className =
+                    "genre-tag";
 
-            tag.textContent = genero;
+                tag.textContent =
+                    genero;
 
-            container.appendChild(tag);
-        });
+                container.appendChild(
+                    tag
+                );
+            }
+        );
     }
 
     /*
@@ -746,10 +1024,13 @@ const MusicalWorldMeuPerfilMusico = (() => {
     |--------------------------------------------------------------------------
     */
 
-    function preencherServicos(servicos) {
-        const container = document.getElementById(
-            "servicesList"
-        );
+    function preencherServicos(
+        servicos
+    ) {
+        const container =
+            document.getElementById(
+                "servicesList"
+            );
 
         if (!container) {
             return;
@@ -757,7 +1038,10 @@ const MusicalWorldMeuPerfilMusico = (() => {
 
         container.innerHTML = "";
 
-        if (!servicos.length) {
+        if (
+            !servicos ||
+            !servicos.length
+        ) {
             container.innerHTML = `
                 <div class="empty-inline">
                     Nenhum serviço informado.
@@ -767,28 +1051,35 @@ const MusicalWorldMeuPerfilMusico = (() => {
             return;
         }
 
-        servicos.forEach((servico) => {
-            const card = document.createElement(
-                "div"
-            );
+        servicos.forEach(
+            (servico) => {
+                const card =
+                    document.createElement(
+                        "div"
+                    );
 
-            card.className =
-                "service-card";
+                card.className =
+                    "service-card";
 
-            card.innerHTML = `
-                <div class="service-icon">
-                    <i data-lucide="briefcase"></i>
-                </div>
+                card.innerHTML = `
+                    <div class="service-icon">
+                        <i data-lucide="briefcase"></i>
+                    </div>
 
-                <div class="service-info">
-                    <strong>
-                        ${escaparHtml(servico)}
-                    </strong>
-                </div>
-            `;
+                    <div class="service-info">
+                        <strong>
+                            ${escaparHtml(
+                                servico
+                            )}
+                        </strong>
+                    </div>
+                `;
 
-            container.appendChild(card);
-        });
+                container.appendChild(
+                    card
+                );
+            }
+        );
 
         atualizarIcones();
     }
@@ -799,10 +1090,13 @@ const MusicalWorldMeuPerfilMusico = (() => {
     |--------------------------------------------------------------------------
     */
 
-    function preencherPortfolio(portfolio) {
-        const container = document.getElementById(
-            "portfolioGrid"
-        );
+    function preencherPortfolio(
+        portfolio
+    ) {
+        const container =
+            document.getElementById(
+                "portfolioGrid"
+            );
 
         if (!container) {
             return;
@@ -810,11 +1104,18 @@ const MusicalWorldMeuPerfilMusico = (() => {
 
         container.innerHTML = "";
 
-        if (!portfolio || !portfolio.length) {
+        if (
+            !portfolio ||
+            !portfolio.length
+        ) {
             container.innerHTML = `
                 <div class="empty-state">
                     <i data-lucide="images"></i>
-                    <h3>Nenhum trabalho no portfólio</h3>
+
+                    <h3>
+                        Nenhum trabalho no portfólio
+                    </h3>
+
                     <p>
                         Os trabalhos adicionados pelo músico
                         aparecerão aqui.
@@ -827,44 +1128,35 @@ const MusicalWorldMeuPerfilMusico = (() => {
             return;
         }
 
-        portfolio.forEach((item) => {
-            const card = document.createElement(
-                "div"
-            );
+        portfolio.forEach(
+            (item) => {
+                const card =
+                    document.createElement(
+                        "div"
+                    );
 
-            card.className =
-                "portfolio-card";
+                card.className =
+                    "portfolio-card";
 
-            const titulo =
-                item.titulo ||
-                "Trabalho";
+                const titulo =
+                    item.titulo ||
+                    "Trabalho";
 
-            const descricao =
-                item.descricao ||
-                "";
+                const descricao =
+                    item.descricao ||
+                    "";
 
-            if (item.tipo === "video") {
-                card.innerHTML = `
-                    <video
-                        src="${escaparAtributo(item.arquivo_url)}"
-                        controls
-                        preload="metadata"
-                    ></video>
+                const url =
+                    item.arquivo_url ||
+                    "";
 
-                    <div class="portfolio-card-overlay">
-                        <div class="portfolio-card-title">
-                            ${escaparHtml(titulo)}
-                        </div>
+                if (!url) {
+                    return;
+                }
 
-                        <div class="portfolio-card-subtitle">
-                            ${escaparHtml(descricao)}
-                        </div>
-                    </div>
-                `;
-            } else {
                 card.innerHTML = `
                     <img
-                        src="${escaparAtributo(item.arquivo_url)}"
+                        src="${escaparAtributo(url)}"
                         alt="${escaparAtributo(titulo)}"
                         loading="lazy"
                     >
@@ -874,15 +1166,27 @@ const MusicalWorldMeuPerfilMusico = (() => {
                             ${escaparHtml(titulo)}
                         </div>
 
-                        <div class="portfolio-card-subtitle">
-                            ${escaparHtml(descricao)}
-                        </div>
+                        ${
+                            descricao
+                                ? `
+                                    <div class="portfolio-card-subtitle">
+                                        ${escaparHtml(
+                                            descricao
+                                        )}
+                                    </div>
+                                `
+                                : ""
+                        }
                     </div>
                 `;
-            }
 
-            container.appendChild(card);
-        });
+                container.appendChild(
+                    card
+                );
+            }
+        );
+
+        atualizarIcones();
     }
 
     /*
@@ -891,10 +1195,13 @@ const MusicalWorldMeuPerfilMusico = (() => {
     |--------------------------------------------------------------------------
     */
 
-    function preencherVideos(videos) {
-        const container = document.getElementById(
-            "videoList"
-        );
+    function preencherVideos(
+        videos
+    ) {
+        const container =
+            document.getElementById(
+                "videoList"
+            );
 
         if (!container) {
             return;
@@ -902,11 +1209,18 @@ const MusicalWorldMeuPerfilMusico = (() => {
 
         container.innerHTML = "";
 
-        if (!videos || !videos.length) {
+        if (
+            !videos ||
+            !videos.length
+        ) {
             container.innerHTML = `
                 <div class="empty-state">
                     <i data-lucide="video"></i>
-                    <h3>Nenhum vídeo</h3>
+
+                    <h3>
+                        Nenhum vídeo
+                    </h3>
+
                     <p>
                         Os vídeos adicionados ao portfólio
                         aparecerão aqui.
@@ -919,36 +1233,56 @@ const MusicalWorldMeuPerfilMusico = (() => {
             return;
         }
 
-        videos.forEach((video) => {
-            const item = document.createElement(
-                "div"
-            );
+        videos.forEach(
+            (video) => {
+                const item =
+                    document.createElement(
+                        "div"
+                    );
 
-            item.className =
-                "video-item";
+                item.className =
+                    "video-item";
 
-            item.innerHTML = `
-                <div class="video-portfolio">
-                    <video
-                        src="${escaparAtributo(video.arquivo_url)}"
-                        controls
-                        preload="metadata"
-                    ></video>
-                </div>
+                item.innerHTML = `
+                    <div class="video-portfolio">
+                        <video
+                            src="${escaparAtributo(
+                                video.arquivo_url
+                            )}"
+                            controls
+                            preload="metadata"
+                        ></video>
+                    </div>
 
-                <div>
-                    <strong>
-                        ${escaparHtml(video.titulo || "Vídeo")}
-                    </strong>
+                    <div>
+                        <strong>
+                            ${escaparHtml(
+                                video.titulo ||
+                                "Vídeo"
+                            )}
+                        </strong>
 
-                    <p>
-                        ${escaparHtml(video.descricao || "")}
-                    </p>
-                </div>
-            `;
+                        ${
+                            video.descricao
+                                ? `
+                                    <p>
+                                        ${escaparHtml(
+                                            video.descricao
+                                        )}
+                                    </p>
+                                `
+                                : ""
+                        }
+                    </div>
+                `;
 
-            container.appendChild(item);
-        });
+                container.appendChild(
+                    item
+                );
+            }
+        );
+
+        atualizarIcones();
     }
 
     /*
@@ -957,10 +1291,13 @@ const MusicalWorldMeuPerfilMusico = (() => {
     |--------------------------------------------------------------------------
     */
 
-    function preencherAudios(audios) {
-        const container = document.getElementById(
-            "audioList"
-        );
+    function preencherAudios(
+        audios
+    ) {
+        const container =
+            document.getElementById(
+                "audioList"
+            );
 
         if (!container) {
             return;
@@ -968,11 +1305,18 @@ const MusicalWorldMeuPerfilMusico = (() => {
 
         container.innerHTML = "";
 
-        if (!audios || !audios.length) {
+        if (
+            !audios ||
+            !audios.length
+        ) {
             container.innerHTML = `
                 <div class="empty-state">
                     <i data-lucide="headphones"></i>
-                    <h3>Nenhum áudio</h3>
+
+                    <h3>
+                        Nenhum áudio
+                    </h3>
+
                     <p>
                         Os áudios adicionados ao portfólio
                         aparecerão aqui.
@@ -985,39 +1329,57 @@ const MusicalWorldMeuPerfilMusico = (() => {
             return;
         }
 
-        audios.forEach((audio) => {
-            const item = document.createElement(
-                "div"
-            );
+        audios.forEach(
+            (audio) => {
+                const item =
+                    document.createElement(
+                        "div"
+                    );
 
-            item.className =
-                "audio-card";
+                item.className =
+                    "audio-card";
 
-            item.innerHTML = `
-                <div class="audio-icon">
-                    <i data-lucide="music"></i>
-                </div>
+                item.innerHTML = `
+                    <div class="audio-icon">
+                        <i data-lucide="music"></i>
+                    </div>
 
-                <div class="audio-info">
-                    <strong>
-                        ${escaparHtml(audio.titulo || "Áudio")}
-                    </strong>
+                    <div class="audio-info">
+                        <strong>
+                            ${escaparHtml(
+                                audio.titulo ||
+                                "Áudio"
+                            )}
+                        </strong>
 
-                    <span>
-                        ${escaparHtml(audio.descricao || "")}
-                    </span>
-                </div>
+                        ${
+                            audio.descricao
+                                ? `
+                                    <span>
+                                        ${escaparHtml(
+                                            audio.descricao
+                                        )}
+                                    </span>
+                                `
+                                : ""
+                        }
+                    </div>
 
-                <audio
-                    class="audio-player"
-                    controls
-                    preload="metadata"
-                    src="${escaparAtributo(audio.arquivo_url)}"
-                ></audio>
-            `;
+                    <audio
+                        class="audio-player"
+                        controls
+                        preload="metadata"
+                        src="${escaparAtributo(
+                            audio.arquivo_url
+                        )}"
+                    ></audio>
+                `;
 
-            container.appendChild(item);
-        });
+                container.appendChild(
+                    item
+                );
+            }
+        );
 
         atualizarIcones();
     }
@@ -1028,10 +1390,13 @@ const MusicalWorldMeuPerfilMusico = (() => {
     |--------------------------------------------------------------------------
     */
 
-    function preencherAgenda(agenda) {
-        const container = document.getElementById(
-            "agendaList"
-        );
+    function preencherAgenda(
+        agenda
+    ) {
+        const container =
+            document.getElementById(
+                "agendaList"
+            );
 
         if (!container) {
             return;
@@ -1039,11 +1404,18 @@ const MusicalWorldMeuPerfilMusico = (() => {
 
         container.innerHTML = "";
 
-        if (!agenda || !agenda.length) {
+        if (
+            !agenda ||
+            !agenda.length
+        ) {
             container.innerHTML = `
                 <div class="empty-state">
                     <i data-lucide="calendar-days"></i>
-                    <h3>Nenhum compromisso na agenda</h3>
+
+                    <h3>
+                        Nenhum compromisso na agenda
+                    </h3>
+
                     <p>
                         Os eventos e apresentações
                         aparecerão aqui.
@@ -1056,81 +1428,107 @@ const MusicalWorldMeuPerfilMusico = (() => {
             return;
         }
 
-        agenda.forEach((evento) => {
-            const dataInicio =
-                evento.data_inicio
-                    ? new Date(evento.data_inicio)
-                    : null;
+        agenda.forEach(
+            (evento) => {
+                const dataInicio =
+                    evento.data_inicio
+                        ? new Date(
+                            evento.data_inicio
+                        )
+                        : null;
 
-            const dataFim =
-                evento.data_fim
-                    ? new Date(evento.data_fim)
-                    : null;
+                const dataFim =
+                    evento.data_fim
+                        ? new Date(
+                            evento.data_fim
+                        )
+                        : null;
 
-            const card = document.createElement(
-                "div"
-            );
+                const card =
+                    document.createElement(
+                        "div"
+                    );
 
-            card.className =
-                "agenda-card";
+                card.className =
+                    "agenda-card";
 
-            card.innerHTML = `
-                <div class="agenda-date">
-                    <strong>
+                card.innerHTML = `
+                    <div class="agenda-date">
+                        <strong>
+                            ${
+                                dataInicio
+                                    ? formatarDia(
+                                        dataInicio
+                                    )
+                                    : "--"
+                            }
+                        </strong>
+
+                        <span>
+                            ${
+                                dataInicio
+                                    ? formatarMes(
+                                        dataInicio
+                                    )
+                                    : ""
+                            }
+                        </span>
+                    </div>
+
+                    <div class="agenda-info">
+                        <h3>
+                            ${escaparHtml(
+                                evento.titulo ||
+                                "Evento"
+                            )}
+                        </h3>
+
                         ${
-                            dataInicio
-                                ? formatarDia(dataInicio)
-                                : "--"
-                        }
-                    </strong>
-
-                    <span>
-                        ${
-                            dataInicio
-                                ? formatarMes(dataInicio)
+                            evento.descricao
+                                ? `
+                                    <p>
+                                        ${escaparHtml(
+                                            evento.descricao
+                                        )}
+                                    </p>
+                                `
                                 : ""
                         }
-                    </span>
-                </div>
 
-                <div class="agenda-info">
-                    <h3>
-                        ${escaparHtml(evento.titulo || "Evento")}
-                    </h3>
+                        ${
+                            evento.localizacao
+                                ? `
+                                    <span>
+                                        <i data-lucide="map-pin"></i>
+                                        ${escaparHtml(
+                                            evento.localizacao
+                                        )}
+                                    </span>
+                                `
+                                : ""
+                        }
 
-                    <p>
-                        ${escaparHtml(evento.descricao || "")}
-                    </p>
+                        ${
+                            dataInicio
+                                ? `
+                                    <span>
+                                        <i data-lucide="clock-3"></i>
+                                        ${formatarHorario(
+                                            dataInicio,
+                                            dataFim
+                                        )}
+                                    </span>
+                                `
+                                : ""
+                        }
+                    </div>
+                `;
 
-                    ${
-                        evento.localizacao
-                            ? `
-                                <span>
-                                    <i data-lucide="map-pin"></i>
-                                    ${escaparHtml(evento.localizacao)}
-                                </span>
-                            `
-                            : ""
-                    }
-
-                    ${
-                        dataInicio
-                            ? `
-                                <span>
-                                    <i data-lucide="clock-3"></i>
-                                    ${formatarHorario(
-                                        dataInicio,
-                                        dataFim
-                                    )}
-                                </span>
-                            `
-                            : ""
-                    }
-                </div>
-            `;
-
-            container.appendChild(card);
-        });
+                container.appendChild(
+                    card
+                );
+            }
+        );
 
         atualizarIcones();
     }
@@ -1141,10 +1539,13 @@ const MusicalWorldMeuPerfilMusico = (() => {
     |--------------------------------------------------------------------------
     */
 
-    function preencherAvaliacoes(avaliacoes) {
-        const container = document.getElementById(
-            "reviewsList"
-        );
+    function preencherAvaliacoes(
+        avaliacoes
+    ) {
+        const container =
+            document.getElementById(
+                "reviewsList"
+            );
 
         if (!container) {
             return;
@@ -1152,11 +1553,18 @@ const MusicalWorldMeuPerfilMusico = (() => {
 
         container.innerHTML = "";
 
-        if (!avaliacoes || !avaliacoes.length) {
+        if (
+            !avaliacoes ||
+            !avaliacoes.length
+        ) {
             container.innerHTML = `
                 <div class="empty-reviews">
                     <i data-lucide="star"></i>
-                    <h3>Nenhuma avaliação ainda</h3>
+
+                    <h3>
+                        Nenhuma avaliação ainda
+                    </h3>
+
                     <p>
                         As avaliações recebidas aparecerão aqui.
                     </p>
@@ -1168,67 +1576,85 @@ const MusicalWorldMeuPerfilMusico = (() => {
             return;
         }
 
-        avaliacoes.forEach((avaliacao) => {
-            const card = document.createElement(
-                "article"
-            );
+        avaliacoes.forEach(
+            (avaliacao) => {
+                const card =
+                    document.createElement(
+                        "article"
+                    );
 
-            card.className =
-                "review-card";
+                card.className =
+                    "review-card";
 
-            const nome =
-                avaliacao.usuario?.nome ||
-                "Usuário";
+                const nome =
+                    avaliacao.usuario?.nome ||
+                    "Usuário";
 
-            const foto =
-                avaliacao.usuario?.foto_url ||
-                "";
+                const foto =
+                    avaliacao.usuario?.foto_url ||
+                    "";
 
-            const iniciais =
-                gerarIniciais(nome);
+                const iniciais =
+                    gerarIniciais(
+                        nome
+                    );
 
-            card.innerHTML = `
-                <div class="review-header">
-                    <div class="review-avatar">
-                        ${
-                            foto
-                                ? `
-                                    <img
-                                        src="${escaparAtributo(foto)}"
-                                        alt="${escaparAtributo(nome)}"
-                                    >
-                                `
-                                : `
-                                    <span>
-                                        ${escaparHtml(iniciais)}
-                                    </span>
-                                `
-                        }
-                    </div>
+                card.innerHTML = `
+                    <div class="review-header">
+                        <div class="review-avatar">
+                            ${
+                                foto
+                                    ? `
+                                        <img
+                                            src="${escaparAtributo(
+                                                foto
+                                            )}"
+                                            alt="${escaparAtributo(
+                                                nome
+                                            )}"
+                                        >
+                                    `
+                                    : `
+                                        <span>
+                                            ${escaparHtml(
+                                                iniciais
+                                            )}
+                                        </span>
+                                    `
+                            }
+                        </div>
 
-                    <div class="review-author">
-                        <strong>
-                            ${escaparHtml(nome)}
-                        </strong>
+                        <div class="review-author">
+                            <strong>
+                                ${escaparHtml(
+                                    nome
+                                )}
+                            </strong>
 
-                        <div class="review-rating">
-                            ${gerarEstrelas(
-                                Number(avaliacao.nota || 0)
-                            )}
+                            <div class="review-rating">
+                                ${gerarEstrelas(
+                                    Number(
+                                        avaliacao.nota ||
+                                        0
+                                    )
+                                )}
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <p class="review-text">
-                    ${escaparHtml(
-                        avaliacao.comentario ||
-                        "Sem comentário."
-                    )}
-                </p>
-            `;
+                    <p class="review-text">
+                        ${escaparHtml(
+                            avaliacao.comentario ||
+                            "Sem comentário."
+                        )}
+                    </p>
+                `;
 
-            container.appendChild(card);
-        });
+                container.appendChild(
+                    card
+                );
+            }
+        );
 
         atualizarIcones();
     }
@@ -1240,96 +1666,135 @@ const MusicalWorldMeuPerfilMusico = (() => {
     */
 
     async function carregarCarteiraReal() {
-    const cliente = obterSupabase();
+        const cliente =
+            obterSupabase();
 
-    if (!cliente || !perfilAtual) {
-        preencherCarteiraVazia();
-        return;
-    }
-
-    try {
-        const respostaCarteira = await cliente
-            .from(CONFIG.tabelas.carteiras)
-            .select("*")
-            .eq("perfil_id", perfilAtual.id)
-            .maybeSingle();
-
-        if (respostaCarteira.error) {
-            throw respostaCarteira.error;
+        if (
+            !cliente ||
+            !perfilAtual
+        ) {
+            preencherCarteiraVazia();
+            return;
         }
 
-        carteiraAtual = respostaCarteira.data;
+        try {
+            const respostaCarteira =
+                await cliente
+                    .from(
+                        CONFIG.tabelas.carteiras
+                    )
+                    .select("*")
+                    .eq(
+                        "perfil_id",
+                        perfilAtual.id
+                    )
+                    .maybeSingle();
 
-        if (!carteiraAtual) {
-            console.warn(
-                "Nenhuma carteira encontrada para o perfil:",
-                perfilAtual.id
+            if (
+                respostaCarteira.error
+            ) {
+                throw respostaCarteira.error;
+            }
+
+            carteiraAtual =
+                respostaCarteira.data;
+
+            if (!carteiraAtual) {
+                console.warn(
+                    "Nenhuma carteira encontrada para o perfil:",
+                    perfilAtual.id
+                );
+
+                preencherCarteiraVazia();
+
+                return;
+            }
+
+            const respostaTransacoes =
+                await cliente
+                    .from(
+                        CONFIG.tabelas.transacoes
+                    )
+                    .select("*")
+                    .eq(
+                        "carteira_id",
+                        carteiraAtual.id
+                    )
+                    .order(
+                        "created_at",
+                        {
+                            ascending: false
+                        }
+                    );
+
+            if (
+                respostaTransacoes.error
+            ) {
+                throw respostaTransacoes.error;
+            }
+
+            const transacoes =
+                respostaTransacoes.data ||
+                [];
+
+            preencherCarteira(
+                carteiraAtual,
+                transacoes
+            );
+
+            try {
+                localStorage.setItem(
+                    CONFIG.carteiraStorageKey,
+                    JSON.stringify({
+                        carteira:
+                            carteiraAtual,
+                        transacoes
+                    })
+                );
+
+            } catch (erroCache) {
+                console.warn(
+                    "Não foi possível salvar cache da carteira:",
+                    erroCache
+                );
+            }
+
+        } catch (erro) {
+            console.error(
+                "Erro ao carregar carteira:",
+                erro
             );
 
             preencherCarteiraVazia();
 
-            return;
-        }
-
-        const respostaTransacoes = await cliente
-            .from(CONFIG.tabelas.transacoes)
-            .select("*")
-            .eq("carteira_id", carteiraAtual.id)
-            .order("created_at", {
-                ascending: false
-            });
-
-        if (respostaTransacoes.error) {
-            throw respostaTransacoes.error;
-        }
-
-        const transacoes =
-            respostaTransacoes.data || [];
-
-        preencherCarteira(
-            carteiraAtual,
-            transacoes
-        );
-
-        try {
-            localStorage.setItem(
-                CONFIG.carteiraStorageKey,
-                JSON.stringify({
-                    carteira: carteiraAtual,
-                    transacoes
-                })
-            );
-        } catch (erroCache) {
-            console.warn(
-                "Não foi possível salvar cache da carteira:",
-                erroCache
+            mostrarToast(
+                "Não foi possível carregar a carteira.",
+                "erro"
             );
         }
-
-    } catch (erro) {
-        console.error(
-            "Erro ao carregar carteira:",
-            erro
-        );
-
-        preencherCarteiraVazia();
-
-        mostrarToast(
-            "Não foi possível carregar a carteira.",
-            "erro"
-        );
     }
-}
 
-    function preencherCarteira(carteira, transacoes) {
+    function preencherCarteira(
+        carteira,
+        transacoes
+    ) {
         const total =
-            Number(carteira?.saldo_total || 0);
+            Number(
+                carteira?.saldo_total ||
+                0
+            );
 
         const disponivel =
-            Number(carteira?.saldo_disponivel || 0);
+            Number(
+                carteira?.saldo_disponivel ||
+                0
+            );
 
         const pendente =
-            Number(carteira?.saldo_pendente || 0);
+            Number(
+                carteira?.saldo_pendente ||
+                0
+            );
 
         definirTexto(
             "walletTotal",
@@ -1367,7 +1832,9 @@ const MusicalWorldMeuPerfilMusico = (() => {
             formatarMoeda(0)
         );
 
-        preencherTransacoes([]);
+        preencherTransacoes(
+            []
+        );
     }
 
     /*
@@ -1376,10 +1843,13 @@ const MusicalWorldMeuPerfilMusico = (() => {
     |--------------------------------------------------------------------------
     */
 
-    function preencherTransacoes(transacoes) {
-        const container = document.getElementById(
-            "transactionList"
-        );
+    function preencherTransacoes(
+        transacoes
+    ) {
+        const container =
+            document.getElementById(
+                "transactionList"
+            );
 
         if (!container) {
             return;
@@ -1387,7 +1857,10 @@ const MusicalWorldMeuPerfilMusico = (() => {
 
         container.innerHTML = "";
 
-        if (!transacoes || !transacoes.length) {
+        if (
+            !transacoes ||
+            !transacoes.length
+        ) {
             container.innerHTML = `
                 <div class="empty-transactions">
                     <i data-lucide="wallet-cards"></i>
@@ -1408,95 +1881,114 @@ const MusicalWorldMeuPerfilMusico = (() => {
             return;
         }
 
-        transacoes.forEach((transacao) => {
-            const card = document.createElement(
-                "div"
-            );
+        transacoes.forEach(
+            (transacao) => {
+                const card =
+                    document.createElement(
+                        "div"
+                    );
 
-            card.className =
-                "transaction-card";
+                card.className =
+                    "transaction-card";
 
-            const valor =
-                Number(transacao.valor || 0);
+                const valor =
+                    Number(
+                        transacao.valor ||
+                        0
+                    );
 
-            const tipo =
-                String(transacao.tipo || "")
-                    .toLowerCase();
+                const tipo =
+                    String(
+                        transacao.tipo ||
+                        ""
+                    )
+                        .toLowerCase();
 
-            const positivo =
-                [
-                    "pagamento",
-                    "liberacao",
-                    "ajuste"
-                ].includes(tipo);
+                const positivo =
+                    [
+                        "pagamento",
+                        "liberacao",
+                        "ajuste"
+                    ].includes(
+                        tipo
+                    );
 
-            const classeValor =
-                positivo
-                    ? "positive"
-                    : "negative";
+                const classeValor =
+                    positivo
+                        ? "positive"
+                        : "negative";
 
-            const sinal =
-                positivo
-                    ? "+"
-                    : "-";
+                const sinal =
+                    positivo
+                        ? "+"
+                        : "-";
 
-            const icone =
-                obterIconeTransacao(tipo);
+                const icone =
+                    obterIconeTransacao(
+                        tipo
+                    );
 
-            card.innerHTML = `
-                <div class="transaction-item">
+                card.innerHTML = `
+                    <div class="transaction-item">
 
-                    <div class="transaction-icon">
-                        <i data-lucide="${icone}"></i>
-                    </div>
+                        <div class="transaction-icon">
+                            <i data-lucide="${icone}"></i>
+                        </div>
 
-                    <div class="transaction-info">
-                        <strong>
-                            ${escaparHtml(
-                                transacao.descricao ||
-                                formatarTipoTransacao(tipo)
-                            )}
-                        </strong>
-
-                        <span>
-                            ${
-                                transacao.created_at
-                                    ? formatarData(
-                                        transacao.created_at
+                        <div class="transaction-info">
+                            <strong>
+                                ${escaparHtml(
+                                    transacao.descricao ||
+                                    formatarTipoTransacao(
+                                        tipo
                                     )
+                                )}
+                            </strong>
+
+                            <span>
+                                ${
+                                    transacao.created_at
+                                        ? formatarData(
+                                            transacao.created_at
+                                        )
+                                        : ""
+                                }
+                            </span>
+
+                            ${
+                                transacao.status
+                                    ? `
+                                        <small>
+                                            ${escaparHtml(
+                                                formatarStatusTransacao(
+                                                    transacao.status
+                                                )
+                                            )}
+                                        </small>
+                                    `
                                     : ""
                             }
-                        </span>
+                        </div>
 
-                        ${
-                            transacao.status
-                                ? `
-                                    <small>
-                                        ${escaparHtml(
-                                            formatarStatusTransacao(
-                                                transacao.status
-                                            )
-                                        )}
-                                    </small>
-                                `
-                                : ""
-                        }
+                        <div class="transaction-value ${classeValor}">
+                            ${sinal} ${formatarMoeda(valor)}
+                        </div>
+
                     </div>
+                `;
 
-                    <div class="transaction-value ${classeValor}">
-                        ${sinal} ${formatarMoeda(valor)}
-                    </div>
-
-                </div>
-            `;
-
-            container.appendChild(card);
-        });
+                container.appendChild(
+                    card
+                );
+            }
+        );
 
         atualizarIcones();
     }
 
-    function obterIconeTransacao(tipo) {
+    function obterIconeTransacao(
+        tipo
+    ) {
         switch (tipo) {
             case "pagamento":
                 return "arrow-down-left";
@@ -1521,7 +2013,9 @@ const MusicalWorldMeuPerfilMusico = (() => {
         }
     }
 
-    function formatarTipoTransacao(tipo) {
+    function formatarTipoTransacao(
+        tipo
+    ) {
         const nomes = {
             pagamento: "Pagamento",
             liberacao: "Pagamento liberado",
@@ -1531,10 +2025,15 @@ const MusicalWorldMeuPerfilMusico = (() => {
             ajuste: "Ajuste"
         };
 
-        return nomes[tipo] || "Movimentação";
+        return (
+            nomes[tipo] ||
+            "Movimentação"
+        );
     }
 
-    function formatarStatusTransacao(status) {
+    function formatarStatusTransacao(
+        status
+    ) {
         const nomes = {
             pendente: "Pendente",
             processando: "Processando",
@@ -1542,7 +2041,10 @@ const MusicalWorldMeuPerfilMusico = (() => {
             cancelada: "Cancelada"
         };
 
-        return nomes[status] || status;
+        return (
+            nomes[status] ||
+            status
+        );
     }
 
     /*
@@ -1552,52 +2054,63 @@ const MusicalWorldMeuPerfilMusico = (() => {
     */
 
     function inicializarTabs() {
-        const botoes = document.querySelectorAll(
-            ".tab-button"
-        );
+        const botoes =
+            document.querySelectorAll(
+                ".tab-button"
+            );
 
-        const conteudos = document.querySelectorAll(
-            ".tab-content"
-        );
+        const conteudos =
+            document.querySelectorAll(
+                ".tab-content"
+            );
 
         if (!botoes.length) {
             return;
         }
 
-        botoes.forEach((botao) => {
-            botao.addEventListener(
-                "click",
-                async () => {
-                    const tab =
-                        botao.dataset.tab;
+        botoes.forEach(
+            (botao) => {
+                botao.addEventListener(
+                    "click",
+                    async () => {
+                        const tab =
+                            botao.dataset.tab;
 
-                    if (!tab) {
-                        return;
-                    }
+                        if (!tab) {
+                            return;
+                        }
 
-                    botoes.forEach((item) => {
-                        item.classList.toggle(
-                            "active",
-                            item === botao
+                        botoes.forEach(
+                            (item) => {
+                                item.classList.toggle(
+                                    "active",
+                                    item === botao
+                                );
+                            }
                         );
-                    });
 
-                    conteudos.forEach((conteudo) => {
-                        conteudo.classList.toggle(
-                            "active",
-                            conteudo.id ===
-                            `tab-${tab}`
+                        conteudos.forEach(
+                            (conteudo) => {
+                                conteudo.classList.toggle(
+                                    "active",
+                                    conteudo.id ===
+                                    `tab-${tab}`
+                                );
+                            }
                         );
-                    });
 
-                    if (tab === "carteira") {
-                        await carregarCarteiraReal();
+                        if (
+                            tab ===
+                            "carteira"
+                        ) {
+                            await carregarCarteiraReal();
+                        }
+
+                        atualizarIcones();
                     }
-
-                    atualizarIcones();
-                }
-            );
-        });
+                );
+            }
+        );
     }
 
     /*
@@ -1617,9 +2130,11 @@ const MusicalWorldMeuPerfilMusico = (() => {
                 "click",
                 () => {
                     if (
-                        window.history.length > 1
+                        window.history.length >
+                        1
                     ) {
                         window.history.back();
+
                     } else {
                         window.location.href =
                             "index.html";
@@ -1689,7 +2204,8 @@ const MusicalWorldMeuPerfilMusico = (() => {
                 "click",
                 (evento) => {
                     if (
-                        evento.target === overlay
+                        evento.target ===
+                        overlay
                     ) {
                         fecharQRCode();
                     }
@@ -1728,7 +2244,9 @@ const MusicalWorldMeuPerfilMusico = (() => {
     |--------------------------------------------------------------------------
     */
 
-    function atualizarBotoesContato(dados) {
+    function atualizarBotoesContato(
+        dados
+    ) {
         const btnWhatsApp =
             document.getElementById(
                 "btnWhatsApp"
@@ -1824,7 +2342,8 @@ const MusicalWorldMeuPerfilMusico = (() => {
             )}`;
 
         if (link) {
-            link.textContent = url;
+            link.textContent =
+                url;
         }
 
         if (imagem) {
@@ -1931,22 +2450,29 @@ const MusicalWorldMeuPerfilMusico = (() => {
     |--------------------------------------------------------------------------
     */
 
-    function normalizarArray(valor) {
+    function normalizarArray(
+        valor
+    ) {
         if (Array.isArray(valor)) {
             return valor
-                .map((item) =>
-                    String(item || "").trim()
+                .map(
+                    (item) =>
+                        String(
+                            item || ""
+                        ).trim()
                 )
                 .filter(Boolean);
         }
 
         if (
-            typeof valor === "string"
+            typeof valor ===
+            "string"
         ) {
             return valor
                 .split(",")
-                .map((item) =>
-                    item.trim()
+                .map(
+                    (item) =>
+                        item.trim()
                 )
                 .filter(Boolean);
         }
@@ -1954,31 +2480,32 @@ const MusicalWorldMeuPerfilMusico = (() => {
         return [];
     }
 
-    function normalizarTelefone(telefone) {
+    function normalizarTelefone(
+        telefone
+    ) {
         if (!telefone) {
             return "";
         }
 
         let numero =
-            String(telefone)
-                .replace(/\D/g, "");
+            String(
+                telefone
+            ).replace(
+                /\D/g,
+                ""
+            );
 
         if (!numero) {
             return "";
         }
-
-        /*
-        |--------------------------------------------------------------------------
-        | Brasil
-        |--------------------------------------------------------------------------
-        */
 
         if (
             numero.length === 10 ||
             numero.length === 11
         ) {
             numero =
-                "55" + numero;
+                "55" +
+                numero;
         }
 
         return numero;
@@ -1989,7 +2516,9 @@ const MusicalWorldMeuPerfilMusico = (() => {
         texto
     ) {
         const elemento =
-            document.getElementById(id);
+            document.getElementById(
+                id
+            );
 
         if (!elemento) {
             return;
@@ -1999,7 +2528,9 @@ const MusicalWorldMeuPerfilMusico = (() => {
             texto ?? "";
     }
 
-    function formatarMoeda(valor) {
+    function formatarMoeda(
+        valor
+    ) {
         return new Intl.NumberFormat(
             "pt-BR",
             {
@@ -2007,15 +2538,21 @@ const MusicalWorldMeuPerfilMusico = (() => {
                 currency: "BRL"
             }
         ).format(
-            Number(valor || 0)
+            Number(
+                valor || 0
+            )
         );
     }
 
-    function formatarData(valor) {
+    function formatarData(
+        valor
+    ) {
         const data =
             valor instanceof Date
                 ? valor
-                : new Date(valor);
+                : new Date(
+                    valor
+                );
 
         if (
             Number.isNaN(
@@ -2035,7 +2572,9 @@ const MusicalWorldMeuPerfilMusico = (() => {
         );
     }
 
-    function formatarDia(data) {
+    function formatarDia(
+        data
+    ) {
         return data.toLocaleDateString(
             "pt-BR",
             {
@@ -2044,7 +2583,9 @@ const MusicalWorldMeuPerfilMusico = (() => {
         );
     }
 
-    function formatarMes(data) {
+    function formatarMes(
+        data
+    ) {
         return data
             .toLocaleDateString(
                 "pt-BR",
@@ -2052,7 +2593,10 @@ const MusicalWorldMeuPerfilMusico = (() => {
                     month: "short"
                 }
             )
-            .replace(".", "");
+            .replace(
+                ".",
+                ""
+            );
     }
 
     function formatarHorario(
@@ -2084,46 +2628,86 @@ const MusicalWorldMeuPerfilMusico = (() => {
         return `${horarioInicio} - ${horarioFim}`;
     }
 
-    function gerarIniciais(nome) {
+    function gerarIniciais(
+        nome
+    ) {
         const partes =
-            String(nome || "")
+            String(
+                nome || ""
+            )
                 .trim()
-                .split(/\s+/)
+                .split(
+                    /\s+/
+                )
                 .filter(Boolean);
 
-        if (!partes.length) {
+        if (
+            !partes.length
+        ) {
             return "MW";
         }
 
-        if (partes.length === 1) {
+        if (
+            partes.length === 1
+        ) {
             return partes[0]
-                .substring(0, 2)
+                .substring(
+                    0,
+                    2
+                )
                 .toUpperCase();
         }
 
         return (
             partes[0][0] +
-            partes[partes.length - 1][0]
+            partes[
+                partes.length - 1
+            ][0]
         ).toUpperCase();
     }
 
-    function escaparHtml(valor) {
-        return String(valor ?? "")
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&quot;")
-            .replace(/'/g, "&#039;");
+    function escaparHtml(
+        valor
+    ) {
+        return String(
+            valor ?? ""
+        )
+            .replace(
+                /&/g,
+                "&amp;"
+            )
+            .replace(
+                /</g,
+                "&lt;"
+            )
+            .replace(
+                />/g,
+                "&gt;"
+            )
+            .replace(
+                /"/g,
+                "&quot;"
+            )
+            .replace(
+                /'/g,
+                "&#039;"
+            );
     }
 
-    function escaparAtributo(valor) {
-        return escaparHtml(valor);
+    function escaparAtributo(
+        valor
+    ) {
+        return escaparHtml(
+            valor
+        );
     }
 
     function atualizarIcones() {
         if (
-            typeof lucide !== "undefined" &&
-            typeof lucide.createIcons === "function"
+            typeof lucide !==
+                "undefined" &&
+            typeof lucide.createIcons ===
+                "function"
         ) {
             lucide.createIcons();
         }
@@ -2148,28 +2732,36 @@ const MusicalWorldMeuPerfilMusico = (() => {
         toast.className =
             "toast";
 
-        if (tipo === "erro") {
+        if (
+            tipo ===
+            "erro"
+        ) {
             toast.classList.add(
                 "erro"
             );
         }
 
-        requestAnimationFrame(() => {
-            toast.classList.add(
-                "show"
-            );
-        });
+        requestAnimationFrame(
+            () => {
+                toast.classList.add(
+                    "show"
+                );
+            }
+        );
 
         clearTimeout(
             mostrarToast.timer
         );
 
         mostrarToast.timer =
-            setTimeout(() => {
-                toast.classList.remove(
-                    "show"
-                );
-            }, 3500);
+            setTimeout(
+                () => {
+                    toast.classList.remove(
+                        "show"
+                    );
+                },
+                3500
+            );
     }
 
     function redirecionarLogin() {
