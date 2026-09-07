@@ -1,430 +1,248 @@
 const MusicalWorldMeuPerfilMusico = (() => {
+    "use strict";
 
+    const CONFIG = {
+        usarSupabase: true,
 
-const CONFIG = {
+        tabelas: {
+            usuarios: "usuarios",
+            perfis: "perfis",
+            tiposPerfil: "tipos_perfil",
+            perfisArtistas: "perfis_artistas",
+            carteiras: "carteiras_musicos",
+            transacoes: "transacoes_carteira"
+        },
 
-    usarSupabase: true,
+        storageKey: "musicalworld_perfil_musico",
+        carteiraStorageKey: "musicalworld_carteira_musico",
+        tipoPerfilEsperado: "artista"
+    };
 
-    tabelaUsuarios: "usuarios",
-    tabelaPerfis: "perfis",
-    tabelaTiposPerfil: "tipos_perfil",
+    let usuarioAtual = null;
+    let perfilAtual = null;
+    let perfilArtistaAtual = null;
+    let carteiraAtual = null;
+    let dadosPerfil = null;
 
-    storageKey: "musicalworld_perfil_musico",
-    carteiraStorageKey: "musicalworld_carteira_musico",
+    /*
+    |--------------------------------------------------------------------------
+    | INICIALIZAÇÃO
+    |--------------------------------------------------------------------------
+    */
 
-    tipoPerfilEsperado: "artista"
+    async function inicializar() {
+        try {
+            if (typeof ControleSessao !== "undefined") {
+                const sessao = await ControleSessao.iniciar({
+                    exigirLogin: true,
+                    redirecionarPara: "login.html"
+                });
 
-};
-
-
-const carteiraDemo = {
-
-    saldoDisponivel: 0,
-    saldoReceber: 0,
-    totalRecebido: 0,
-    transacoes: []
-
-};
-
-
-let usuarioAtual = null;
-let perfilAtual = null;
-let dadosPerfil = null;
-
-
-/*
- * =========================================================
- * INICIALIZAÇÃO
- * =========================================================
- */
-
-async function inicializar() {
-
-    try {
-
-        console.log(
-            "🎸 Inicializando Meu Perfil de Músico..."
-        );
-
-
-        if (
-            typeof ControleSessao === "undefined"
-        ) {
-
-            console.error(
-                "❌ ControleSessao não está disponível."
-            );
-
-            redirecionarLogin();
-
-            return;
-
-        }
-
-
-        const usuarioSessao =
-            await ControleSessao.iniciar({
-
-                exigirLogin: true,
-
-                redirecionarPara:
-                    "login.html"
-
-            });
-
-
-        if (!usuarioSessao) {
-
-            console.warn(
-                "🔒 Usuário não autenticado."
-            );
-
-            return;
-
-        }
-
-
-        /*
-         * Verifica se o usuário possui o tipo
-         * de perfil ARTISTA.
-         *
-         * No MusicalWorld, músicos e cantores
-         * pertencem ao mesmo tipo "artista".
-         */
-
-        const autorizado =
-            await verificarAcessoMusico();
-
-
-        if (!autorizado) {
-
-            return;
-
-        }
-
-
-        /*
-         * Carrega os dados reais.
-         */
-
-        if (CONFIG.usarSupabase) {
-
-            const dados =
-                await carregarDoSupabase();
-
-
-            if (dados) {
-
-                dadosPerfil =
-                    dados;
-
-
-                preencherPerfil(
-                    dados.perfil
-                );
-
+                if (sessao === false) {
+                    return;
+                }
             }
 
-        }
+            const acesso = await verificarAcessoMusico();
 
+            if (!acesso) {
+                return;
+            }
 
-        /*
-         * Carteira ainda é demonstrativa.
-         */
+            await carregarDoSupabase();
 
-        preencherCarteira();
+            preencherPerfil(dadosPerfil);
+            await carregarCarteiraReal();
 
+            inicializarTabs();
+            inicializarBotoes();
+            atualizarIcones();
 
-        inicializarTabs();
-
-        inicializarBotoes();
-
-        atualizarIcones();
-
-
-        console.log(
-            "✅ Meu Perfil de Músico carregado."
-        );
-
-
-    } catch (error) {
-
-        console.error(
-            "❌ Erro ao inicializar Meu Perfil de Músico:",
-            error
-        );
-
-
-        mostrarToast(
-            "Não foi possível carregar seu perfil."
-        );
-
-    }
-
-}
-
-
-/*
- * =========================================================
- * VERIFICAÇÃO DE ACESSO
- * =========================================================
- *
- * Músicos utilizam o tipo de perfil "artista".
- */
-
-async function verificarAcessoMusico() {
-
-    try {
-
-        const dados =
-            await carregarDadosUsuario();
-
-
-        if (!dados) {
-
-            console.error(
-                "❌ Não foi possível identificar o usuário."
-            );
-
-            redirecionarLogin();
-
-            return false;
-
-        }
-
-
-        usuarioAtual =
-            dados.usuario;
-
-
-        perfilAtual =
-            dados.perfil;
-
-
-        const tipoPerfil =
-            dados.tipoPerfil;
-
-
-        console.log(
-            "👤 Usuário:",
-            usuarioAtual
-        );
-
-
-        console.log(
-            "🎭 Tipo de perfil:",
-            tipoPerfil
-        );
-
-
-        if (!perfilAtual) {
-
-            console.warn(
-                "⚠️ Usuário não possui perfil cadastrado."
-            );
-
+        } catch (erro) {
+            console.error("Erro ao inicializar meu perfil:", erro);
 
             mostrarToast(
-                "Seu perfil ainda não foi configurado."
+                "Não foi possível carregar seu perfil.",
+                "erro"
             );
-
-
-            setTimeout(() => {
-
-                window.location.href =
-                    "index.html";
-
-            }, 1500);
-
-
-            return false;
-
         }
+    }
 
+    /*
+    |--------------------------------------------------------------------------
+    | SUPABASE
+    |--------------------------------------------------------------------------
+    */
 
-        const nomeTipo =
-            String(
-                tipoPerfil?.nome || ""
-            )
-            .trim()
-            .toLowerCase();
-
-
-        /*
-         * IMPORTANTE:
-         *
-         * O banco não possui "musico".
-         *
-         * O tipo "artista" inclui:
-         * cantores, músicos, instrumentistas,
-         * DJs, bandas, duplas e grupos musicais.
-         */
+    function obterSupabase() {
+        if (
+            typeof supabaseClient !== "undefined" &&
+            supabaseClient
+        ) {
+            return supabaseClient;
+        }
 
         if (
-            nomeTipo !==
-            CONFIG.tipoPerfilEsperado
+            typeof window !== "undefined" &&
+            window.supabaseClient
         ) {
-
-            console.warn(
-                "🚫 Acesso negado. Tipo de perfil:",
-                nomeTipo
-            );
-
-
-            mostrarToast(
-                "Esta área é exclusiva para artistas e músicos."
-            );
-
-
-            setTimeout(() => {
-
-                window.location.href =
-                    "index.html";
-
-            }, 1600);
-
-
-            return false;
-
+            return window.supabaseClient;
         }
 
+        if (
+            typeof window !== "undefined" &&
+            window._supabase
+        ) {
+            return window._supabase;
+        }
 
-        console.log(
-            "✅ Acesso autorizado para perfil musical."
-        );
-
-
-        return true;
-
-
-    } catch (error) {
-
-        console.error(
-            "❌ Erro ao verificar acesso:",
-            error
-        );
-
-
-        redirecionarLogin();
-
-        return false;
-
-    }
-
-}
-
-
-/*
- * =========================================================
- * CARREGAR DADOS DO USUÁRIO
- * =========================================================
- */
-
-async function carregarDadosUsuario() {
-
-    if (
-        typeof supabaseClient === "undefined"
-    ) {
-
-        console.error(
-            "❌ supabaseClient não está disponível."
-        );
+        if (
+            typeof window !== "undefined" &&
+            window.supabase
+        ) {
+            return window.supabase;
+        }
 
         return null;
-
     }
 
+    async function obterUsuarioAutenticado() {
+        const cliente = obterSupabase();
 
-    const {
-        data: {
-            user
-        },
-        error: erroSessao
-    } =
-        await supabaseClient.auth.getUser();
+        if (!cliente) {
+            throw new Error("Cliente Supabase não encontrado.");
+        }
 
+        if (
+            typeof UsuarioAtual !== "undefined" &&
+            typeof UsuarioAtual.obterId === "function"
+        ) {
+            try {
+                const id = await UsuarioAtual.obterId();
 
-    if (erroSessao) {
+                if (id) {
+                    const resultado = await cliente
+                        .from(CONFIG.tabelas.usuarios)
+                        .select("*")
+                        .eq("id", id)
+                        .maybeSingle();
 
-        console.error(
-            "❌ Erro ao obter usuário autenticado:",
-            erroSessao
-        );
+                    if (!resultado.error && resultado.data) {
+                        return resultado.data;
+                    }
+                }
+            } catch (erro) {
+                console.warn(
+                    "Não foi possível obter usuário pelo UsuarioAtual:",
+                    erro
+                );
+            }
+        }
 
-        return null;
+        const respostaAuth = await cliente.auth.getUser();
 
-    }
+        if (respostaAuth.error) {
+            throw respostaAuth.error;
+        }
 
+        if (!respostaAuth.data || !respostaAuth.data.user) {
+            return null;
+        }
 
-    if (!user) {
+        const authUser = respostaAuth.data.user;
 
-        return null;
-
-    }
-
-
-    /*
-     * Usuário.
-     */
-
-    const {
-        data: usuario,
-        error: erroUsuario
-    } =
-        await supabaseClient
-            .from(CONFIG.tabelaUsuarios)
+        const resultado = await cliente
+            .from(CONFIG.tabelas.usuarios)
             .select("*")
-            .eq("id", user.id)
+            .eq("id", authUser.id)
             .maybeSingle();
 
+        if (resultado.error) {
+            throw resultado.error;
+        }
 
-    if (erroUsuario) {
-
-        console.error(
-            "❌ Erro ao carregar usuarios:",
-            erroUsuario
-        );
-
-        throw erroUsuario;
-
+        return resultado.data;
     }
-
-
-    if (!usuario) {
-
-        console.error(
-            "❌ Registro do usuário não encontrado em usuarios."
-        );
-
-        return null;
-
-    }
-
 
     /*
-     * Perfil.
-     *
-     * Aqui filtramos explicitamente o tipo "artista".
-     *
-     * Isso é importante porque no futuro um usuário
-     * poderá possuir outros tipos de perfil.
-     */
+    |--------------------------------------------------------------------------
+    | VERIFICAÇÃO DO PERFIL
+    |--------------------------------------------------------------------------
+    */
 
-    const {
-        data: perfis,
-        error: erroPerfil
-    } =
-        await supabaseClient
-            .from(CONFIG.tabelaPerfis)
+    async function verificarAcessoMusico() {
+        try {
+            const dados = await carregarDadosUsuario();
+
+            if (!dados || !dados.usuario || !dados.perfil) {
+                mostrarToast(
+                    "Perfil de músico não encontrado.",
+                    "erro"
+                );
+
+                return false;
+            }
+
+            usuarioAtual = dados.usuario;
+            perfilAtual = dados.perfil;
+            perfilArtistaAtual = dados.perfilArtista;
+
+            const tipoNome = String(
+                dados.tipoPerfil?.nome || ""
+            )
+                .trim()
+                .toLowerCase();
+
+            if (tipoNome !== CONFIG.tipoPerfilEsperado) {
+                mostrarToast(
+                    "Este perfil não é um perfil de artista.",
+                    "erro"
+                );
+
+                return false;
+            }
+
+            return true;
+
+        } catch (erro) {
+            console.error(
+                "Erro ao verificar acesso do músico:",
+                erro
+            );
+
+            mostrarToast(
+                "Não foi possível verificar seu perfil.",
+                "erro"
+            );
+
+            return false;
+        }
+    }
+
+    async function carregarDadosUsuario() {
+        const cliente = obterSupabase();
+
+        if (!cliente) {
+            throw new Error("Cliente Supabase não encontrado.");
+        }
+
+        const usuario = await obterUsuarioAutenticado();
+
+        if (!usuario) {
+            redirecionarLogin();
+            return null;
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | PERFIL
+        |--------------------------------------------------------------------------
+        */
+
+        const respostaPerfis = await cliente
+            .from(CONFIG.tabelas.perfis)
             .select(`
-                id,
-                usuario_id,
-                tipo_perfil_id,
-                nome_exibicao,
-                descricao,
-                ativo,
-                created_at,
-                updated_at,
+                *,
                 tipos_perfil (
                     id,
                     nome,
@@ -432,2770 +250,1954 @@ async function carregarDadosUsuario() {
                     ativo
                 )
             `)
-            .eq(
-                "usuario_id",
-                user.id
-            )
-            .eq(
-                "ativo",
-                true
-            );
-
-
-    if (erroPerfil) {
-
-        console.error(
-            "❌ Erro ao carregar perfis:",
-            erroPerfil
-        );
-
-        throw erroPerfil;
-
-    }
-
-
-    /*
-     * Localiza especificamente o perfil artista.
-     */
-
-    const perfil =
-        (perfis || []).find(
-            item =>
-                String(
-                    item?.tipos_perfil?.nome || ""
-                )
-                .trim()
-                .toLowerCase() ===
-                "artista"
-        ) || null;
-
-
-    if (!perfil) {
-
-        return {
-
-            usuario,
-
-            perfil: null,
-
-            tipoPerfil: null
-
-        };
-
-    }
-
-
-    return {
-
-        usuario,
-
-        perfil,
-
-        tipoPerfil:
-            perfil.tipos_perfil || null
-
-    };
-
-}
-
-
-/*
- * =========================================================
- * CARREGAR PERFIL DO SUPABASE
- * =========================================================
- */
-
-async function carregarDoSupabase() {
-
-    const dados =
-        await carregarDadosUsuario();
-
-
-    if (!dados) {
-
-        return null;
-
-    }
-
-
-    usuarioAtual =
-        dados.usuario;
-
-
-    perfilAtual =
-        dados.perfil;
-
-
-    const usuario =
-        dados.usuario || {};
-
-
-    const perfil =
-        dados.perfil || {};
-
-
-    const tipoPerfil =
-        dados.tipoPerfil || {};
-
-
-    /*
-     * Nome principal.
-     */
-
-    const nome =
-        perfil.nome_exibicao ||
-        usuario.nome ||
-        "Músico";
-
-
-    /*
-     * Descrição.
-     */
-
-    const descricao =
-        perfil.descricao ||
-        "Adicione uma descrição ao seu perfil.";
-
-
-    /*
-     * Dados que a interface já consegue utilizar.
-     *
-     * Os campos específicos do músico ficam preparados
-     * para futuras tabelas.
-     */
-
-    const dadosFormatados = {
-
-        id:
-            perfil.id || null,
-
-        usuarioId:
-            usuario.id || null,
-
-        nome,
-
-        iniciais:
-            gerarIniciais(nome),
-
-        categoria:
-            "Músico / Instrumentista",
-
-        tipoPerfil:
-            tipoPerfil.nome ||
-            "artista",
-
-        localizacao:
-            "Localização não informada",
-
-        fotoUrl:
-            usuario.foto_url || "",
-
-        avaliacao:
-            0,
-
-        avaliacoes:
-            0,
-
-        verificado:
-            false,
-
-        disponivel:
-            true,
-
-        /*
-         * Dados específicos do músico.
-         */
-
-        instrumentos:
-            [],
-
-        generos:
-            [],
-
-        estilos:
-            [],
-
-        experiencia:
-            "Não informada",
-
-        areaAtendimento:
-            "Não informada",
-
-        bio:
-            descricao,
-
-        servicos:
-            [],
-
-        portfolio:
-            [],
-
-        videos:
-            [],
-
-        audios:
-            [],
-
-        agenda:
-            [],
-
-        avaliacoesLista:
-            []
-
-    };
-
-
-    salvarPerfilLocal(
-        dadosFormatados
-    );
-
-
-    return {
-
-        usuario,
-
-        perfil:
-            dadosFormatados,
-
-        tipoPerfil
-
-    };
-
-}
-
-
-/*
- * =========================================================
- * PERFIL LOCAL
- * =========================================================
- */
-
-function obterPerfilLocal() {
-
-    try {
-
-        const dados =
-            localStorage.getItem(
-                CONFIG.storageKey
-            );
-
-
-        if (!dados) {
-
-            const nome =
-                perfilAtual?.nome_exibicao ||
-                usuarioAtual?.nome ||
-                "Músico";
-
-
-            return {
-
-                id:
-                    perfilAtual?.id ||
-                    null,
-
-                usuarioId:
-                    usuarioAtual?.id ||
-                    null,
-
-                nome,
-
-                iniciais:
-                    gerarIniciais(nome),
-
-                categoria:
-                    "Músico / Instrumentista",
-
-                localizacao:
-                    "Localização não informada",
-
-                avaliacao:
-                    0,
-
-                avaliacoes:
-                    0,
-
-                verificado:
-                    false,
-
-                disponivel:
-                    true,
-
-                instrumentos:
-                    [],
-
-                generos:
-                    [],
-
-                estilos:
-                    [],
-
-                experiencia:
-                    "Não informada",
-
-                areaAtendimento:
-                    "Não informada",
-
-                bio:
-                    perfilAtual?.descricao ||
-                    "Adicione uma descrição ao seu perfil.",
-
-                servicos:
-                    [],
-
-                portfolio:
-                    [],
-
-                videos:
-                    [],
-
-                audios:
-                    [],
-
-                agenda:
-                    [],
-
-                avaliacoesLista:
-                    []
-
-            };
-
+            .eq("usuario_id", usuario.id)
+            .eq("ativo", true)
+            .order("id", {
+                ascending: false
+            });
+
+        if (respostaPerfis.error) {
+            throw respostaPerfis.error;
         }
 
+        const perfis = respostaPerfis.data || [];
 
-        return JSON.parse(dados);
+        const perfil = perfis.find((item) => {
+            const tipo = Array.isArray(item.tipos_perfil)
+                ? item.tipos_perfil[0]
+                : item.tipos_perfil;
 
+            return String(tipo?.nome || "")
+                .trim()
+                .toLowerCase() === CONFIG.tipoPerfilEsperado;
+        });
 
-    } catch (error) {
+        if (!perfil) {
+            return {
+                usuario,
+                perfil: null,
+                perfilArtista: null,
+                tipoPerfil: null
+            };
+        }
 
-        console.warn(
-            "⚠️ Não foi possível carregar perfil local.",
-            error
-        );
+        const tipoPerfil = Array.isArray(perfil.tipos_perfil)
+            ? perfil.tipos_perfil[0]
+            : perfil.tipos_perfil;
 
+        /*
+        |--------------------------------------------------------------------------
+        | DADOS ESPECÍFICOS DO ARTISTA
+        |--------------------------------------------------------------------------
+        */
+
+        const respostaArtista = await cliente
+            .from(CONFIG.tabelas.perfisArtistas)
+            .select("*")
+            .eq("perfil_id", perfil.id)
+            .maybeSingle();
+
+        if (respostaArtista.error) {
+            throw respostaArtista.error;
+        }
 
         return {
+            usuario,
+            perfil,
+            perfilArtista: respostaArtista.data,
+            tipoPerfil
+        };
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | CARREGAMENTO PRINCIPAL
+    |--------------------------------------------------------------------------
+    */
+
+    async function carregarDoSupabase() {
+        if (!usuarioAtual || !perfilAtual) {
+            throw new Error("Perfil ainda não carregado.");
+        }
+
+        const artista = perfilArtistaAtual || {};
+
+        dadosPerfil = {
+            id: perfilAtual.id,
 
             nome:
-                usuarioAtual?.nome ||
+                perfilAtual.nome_exibicao ||
+                usuarioAtual.nome ||
                 "Músico",
 
-            iniciais:
-                gerarIniciais(
-                    usuarioAtual?.nome ||
-                    "Músico"
-                ),
+            descricao:
+                perfilAtual.descricao ||
+                "",
 
             categoria:
+                artista.tipo_artista ||
                 "Músico / Instrumentista",
 
             localizacao:
+                artista.localizacao ||
                 "Localização não informada",
 
-            avaliacao:
-                0,
+            experiencia:
+                artista.experiencia ||
+                "",
 
-            avaliacoes:
-                0,
+            area:
+                artista.area_atendimento ||
+                "",
 
-            verificado:
-                false,
-
-            disponivel:
-                true,
+            disponibilidade:
+                artista.disponivel !== false,
 
             instrumentos:
-                [],
+                normalizarArray(artista.instrumentos),
 
             generos:
-                [],
-
-            estilos:
-                [],
-
-            experiencia:
-                "Não informada",
-
-            areaAtendimento:
-                "Não informada",
-
-            bio:
-                "Adicione uma descrição ao seu perfil.",
+                normalizarArray(artista.estilos),
 
             servicos:
-                [],
+                normalizarArray(artista.servicos),
 
-            portfolio:
-                [],
+            foto:
+                artista.foto_url ||
+                usuarioAtual.foto_url ||
+                "",
 
-            videos:
-                [],
+            telefone:
+                usuarioAtual.telefone ||
+                "",
 
-            audios:
-                [],
+            email:
+                usuarioAtual.email ||
+                "",
 
-            agenda:
-                [],
+            avaliacao: {
+                media: 0,
+                total: 0
+            },
 
-            avaliacoesLista:
-                []
+            portfolio: [],
 
+            videos: [],
+
+            audios: [],
+
+            agenda: [],
+
+            avaliacoes: []
         };
 
+        return dadosPerfil;
     }
 
-}
+    /*
+    |--------------------------------------------------------------------------
+    | PREENCHER PERFIL
+    |--------------------------------------------------------------------------
+    */
 
+    function preencherPerfil(dados) {
+        if (!dados) {
+            return;
+        }
 
-function salvarPerfilLocal(perfil) {
-
-    try {
-
-        localStorage.setItem(
-            CONFIG.storageKey,
-            JSON.stringify(perfil)
+        definirTexto(
+            "profileName",
+            dados.nome
         );
 
-    } catch (error) {
-
-        console.error(
-            "❌ Erro ao salvar perfil local.",
-            error
+        definirTexto(
+            "profileCategory",
+            dados.categoria
         );
 
+        definirTexto(
+            "profileLocation",
+            dados.localizacao
+        );
+
+        definirTexto(
+            "profileBio",
+            dados.descricao ||
+            "Este músico ainda não adicionou uma descrição."
+        );
+
+        definirTexto(
+            "profileExperience",
+            dados.experiencia ||
+            "Não informado"
+        );
+
+        definirTexto(
+            "profileArea",
+            dados.area ||
+            "Não informado"
+        );
+
+        definirTexto(
+            "profileType",
+            dados.categoria ||
+            "Artista"
+        );
+
+        definirTexto(
+            "profileAvailability",
+            dados.disponibilidade
+                ? "Disponível para contratar"
+                : "Indisponível no momento"
+        );
+
+        preencherAvatar(dados);
+
+        preencherStatus(dados);
+
+        preencherAvaliacao(dados);
+
+        preencherInstrumentos(
+            dados.instrumentos
+        );
+
+        preencherGeneros(
+            dados.generos
+        );
+
+        preencherServicos(
+            dados.servicos
+        );
+
+        preencherPortfolio(
+            dados.portfolio
+        );
+
+        preencherVideos(
+            dados.videos
+        );
+
+        preencherAudios(
+            dados.audios
+        );
+
+        preencherAgenda(
+            dados.agenda
+        );
+
+        preencherAvaliacoes(
+            dados.avaliacoes
+        );
+
+        atualizarBotoesContato(dados);
+
+        atualizarIcones();
     }
 
-}
-
-
-/*
- * =========================================================
- * PREENCHER PERFIL
- * =========================================================
- */
-
-function preencherPerfil(perfil) {
-
-
-if (!perfil) {
-    return;
-}
-
-
-/*
- * Nome
- */
-
-definirTexto(
-    "profileName",
-    perfil.nome || "Músico"
-);
-
-
-/*
- * Iniciais
- */
-
-definirTexto(
-    "profileInitials",
-    perfil.iniciais ||
-    gerarIniciais(perfil.nome)
-);
-
-
-/*
- * Categoria
- */
-
-definirTexto(
-    "profileCategory",
-    perfil.categoria ||
-    "Músico / Instrumentista"
-);
-
-
-/*
- * Localização
- */
-
-const locationElement =
-    document.getElementById(
-        "profileLocation"
-    );
-
-if (locationElement) {
-
-    const locationText =
-        locationElement.querySelector(
-            "span"
-        );
-
-    if (locationText) {
-
-        locationText.textContent =
-            perfil.localizacao ||
-            "Localização não informada";
-
-    }
-
-}
-
-
-/*
- * Avaliação
- */
-
-definirTexto(
-    "ratingValue",
-    Number(
-        perfil.avaliacao || 0
-    ).toFixed(1)
-);
-
-
-/*
- * Avaliações
- */
-
-definirTexto(
-    "ratingReviews",
-    `(${perfil.avaliacoes || 0} avaliações)`
-);
-
-
-/*
- * Biografia
- */
-
-definirTexto(
-    "profileBio",
-    perfil.bio ||
-    "Adicione uma descrição ao seu perfil."
-);
-
-
-/*
- * Experiência
- */
-
-definirTexto(
-    "profileExperience",
-    perfil.experiencia ||
-    "Não informada"
-);
-
-
-/*
- * Área de atuação
- */
-
-definirTexto(
-    "profileArea",
-    perfil.areaAtendimento ||
-    "Não informada"
-);
-
-
-/*
- * Tipo de perfil
- */
-
-definirTexto(
-    "profileType",
-    perfil.tipoPerfil ||
-    "Artista"
-);
-
-
-/*
- * Status
-
- */
-
-definirTexto(
-    "profileAvailability",
-    perfil.disponivel
-        ? "Disponível"
-        : "Indisponível"
-);
-
-
-/*
- * Status principal do perfil
- */
-
-definirTexto(
-    "profileStatus",
-    perfil.disponivel
-        ? "Disponível para contratação"
-        : "Indisponível para contratação"
-);
-
-
-/*
- * Foto
- */
-
-preencherAvatar(
-    perfil
-);
-
-
-/*
- * Badge de verificação
- */
-
-const verifiedBadge =
-    document.getElementById(
-        "verifiedBadge"
-    );
-
-if (verifiedBadge) {
-
-    verifiedBadge.style.display =
-        perfil.verificado
-            ? "flex"
-            : "none";
-
-}
-
-
-/*
- * Instrumentos
- */
-
-preencherInstrumentos(
-    perfil.instrumentos
-);
-
-
-/*
- * Gêneros musicais
- */
-
-preencherEstilos(
-    perfil.estilos?.length
-        ? perfil.estilos
-        : perfil.generos
-);
-
-
-/*
- * Serviços
- */
-
-preencherServicos(
-    perfil.servicos
-);
-
-
-/*
- * Portfólio
- */
-
-preencherPortfolio(
-    perfil.portfolio
-);
-
-
-/*
- * Vídeos
- */
-
-preencherVideos(
-    perfil.videos
-);
-
-
-/*
- * Áudios
- */
-
-preencherAudios(
-    perfil.audios
-);
-
-
-/*
- * Agenda
- */
-
-preencherAgenda(
-    perfil.agenda
-);
-
-
-/*
- * Avaliações
- */
-
-preencherAvaliacoes(
-    perfil.avaliacoesLista
-);
-
-
-atualizarIcones();
-
-
-}
-
-
-
-/*
- * =========================================================
- * AVATAR
- * =========================================================
- */
-
-function preencherAvatar(perfil) {
-
-    const avatar =
-        document.getElementById(
+    /*
+    |--------------------------------------------------------------------------
+    | AVATAR
+    |--------------------------------------------------------------------------
+    */
+
+    function preencherAvatar(dados) {
+        const avatar = document.getElementById(
             "profileAvatar"
         );
 
-
-    const iniciais =
-        document.getElementById(
+        const initials = document.getElementById(
             "profileInitials"
         );
 
-
-    if (!avatar) {
-
-        return;
-
-    }
-
-
-    if (perfil.fotoUrl) {
-
-        avatar.style.backgroundImage =
-            `url("${perfil.fotoUrl}")`;
-
-        avatar.style.backgroundSize =
-            "cover";
-
-        avatar.style.backgroundPosition =
-            "center";
-
-        avatar.style.backgroundRepeat =
-            "no-repeat";
-
-
-        if (iniciais) {
-
-            iniciais.style.display =
-                "none";
-
+        if (!avatar) {
+            return;
         }
 
-    } else {
+        let imagem = avatar.querySelector("img");
 
-        avatar.style.backgroundImage =
-            "";
+        if (dados.foto) {
+            if (!imagem) {
+                imagem = document.createElement("img");
 
+                imagem.alt = dados.nome || "Perfil";
 
-        if (iniciais) {
+                avatar.insertBefore(
+                    imagem,
+                    avatar.firstChild
+                );
+            }
 
-            iniciais.style.display =
-                "flex";
+            imagem.src = dados.foto;
+            imagem.alt = dados.nome || "Perfil";
+            imagem.style.display = "block";
 
+            if (initials) {
+                initials.style.display = "none";
+            }
+
+        } else {
+            if (imagem) {
+                imagem.style.display = "none";
+            }
+
+            if (initials) {
+                initials.textContent =
+                    gerarIniciais(dados.nome);
+
+                initials.style.display = "flex";
+            }
         }
-
     }
 
-}
+    /*
+    |--------------------------------------------------------------------------
+    | STATUS
+    |--------------------------------------------------------------------------
+    */
 
-
-/*
- * =========================================================
- * INSTRUMENTOS
- * =========================================================
- */
-
-function preencherInstrumentos(instrumentos) {
-
-    const container =
-        document.getElementById(
-            "instrumentList"
+    function preencherStatus(dados) {
+        const elemento = document.getElementById(
+            "profileStatus"
         );
 
+        if (!elemento) {
+            return;
+        }
 
-    if (!container) {
+        const disponivel = dados.disponibilidade;
 
-        return;
+        elemento.textContent = disponivel
+            ? "Disponível"
+            : "Indisponível";
 
+        elemento.classList.toggle(
+            "available",
+            disponivel
+        );
+
+        elemento.classList.toggle(
+            "unavailable",
+            !disponivel
+        );
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | AVALIAÇÃO
+    |--------------------------------------------------------------------------
+    */
 
-    container.innerHTML =
-        "";
+    function preencherAvaliacao(dados) {
+        const media = Number(
+            dados.avaliacao?.media || 0
+        );
 
+        const total = Number(
+            dados.avaliacao?.total || 0
+        );
 
-    if (
-        !Array.isArray(instrumentos) ||
-        instrumentos.length === 0
-    ) {
+        definirTexto(
+            "ratingValue",
+            media > 0
+                ? media.toFixed(1)
+                : "0,0"
+        );
 
-        container.innerHTML = `
+        definirTexto(
+            "ratingReviews",
+            total === 1
+                ? "1 avaliação"
+                : `${total} avaliações`
+        );
 
-            <div class="empty-state">
+        const container = document.getElementById(
+            "profileRating"
+        );
 
-                <i data-lucide="music-2"></i>
+        if (container) {
+            container.style.display =
+                "flex";
+        }
 
-                <strong>
-                    Nenhum instrumento informado
-                </strong>
+        const stars = document.querySelector(
+            "#profileRating .rating-stars"
+        );
 
-                <span>
-                    Adicione seus instrumentos no seu perfil.
+        if (stars) {
+            stars.innerHTML =
+                gerarEstrelas(media);
+        }
+    }
+
+    function gerarEstrelas(media) {
+        let html = "";
+
+        for (let i = 1; i <= 5; i++) {
+            const preenchida =
+                media >= i;
+
+            html += `
+                <span class="rating-star ${preenchida ? "filled" : ""}">
+                    ★
                 </span>
+            `;
+        }
 
-            </div>
-
-        `;
-
-
-        atualizarIcones();
-
-        return;
-
+        return html;
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | INSTRUMENTOS
+    |--------------------------------------------------------------------------
+    */
 
-    instrumentos.forEach(
-        instrumento => {
+    function preencherInstrumentos(instrumentos) {
+        const container = document.getElementById(
+            "instrumentGrid"
+        );
 
-            const card =
-                document.createElement(
-                    "div"
-                );
+        if (!container) {
+            return;
+        }
 
+        container.innerHTML = "";
+
+        if (!instrumentos.length) {
+            container.innerHTML = `
+                <div class="empty-inline">
+                    Nenhum instrumento informado.
+                </div>
+            `;
+
+            return;
+        }
+
+        instrumentos.forEach((instrumento) => {
+            const card = document.createElement(
+                "div"
+            );
 
             card.className =
                 "instrument-card";
 
-
-            const nome =
-                typeof instrumento ===
-                "string"
-                    ? instrumento
-                    : instrumento.nome;
-
-
-            const nivel =
-                typeof instrumento ===
-                "object"
-                    ? instrumento.nivel || ""
-                    : "";
-
-
             card.innerHTML = `
-
                 <div class="instrument-icon">
-
-                    <i data-lucide="music"></i>
-
+                    <i data-lucide="music-2"></i>
                 </div>
 
                 <div class="instrument-info">
-
                     <strong>
-                        ${escaparHtml(nome)}
+                        ${escaparHtml(instrumento)}
+                    </strong>
+                </div>
+            `;
+
+            container.appendChild(card);
+        });
+
+        atualizarIcones();
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | GÊNEROS / ESTILOS
+    |--------------------------------------------------------------------------
+    */
+
+    function preencherGeneros(generos) {
+        const container = document.getElementById(
+            "genreList"
+        );
+
+        if (!container) {
+            return;
+        }
+
+        container.innerHTML = "";
+
+        if (!generos.length) {
+            container.innerHTML = `
+                <span class="empty-inline">
+                    Nenhum estilo informado.
+                </span>
+            `;
+
+            return;
+        }
+
+        generos.forEach((genero) => {
+            const tag = document.createElement(
+                "span"
+            );
+
+            tag.className =
+                "genre-tag";
+
+            tag.textContent = genero;
+
+            container.appendChild(tag);
+        });
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | SERVIÇOS
+    |--------------------------------------------------------------------------
+    */
+
+    function preencherServicos(servicos) {
+        const container = document.getElementById(
+            "servicesList"
+        );
+
+        if (!container) {
+            return;
+        }
+
+        container.innerHTML = "";
+
+        if (!servicos.length) {
+            container.innerHTML = `
+                <div class="empty-inline">
+                    Nenhum serviço informado.
+                </div>
+            `;
+
+            return;
+        }
+
+        servicos.forEach((servico) => {
+            const card = document.createElement(
+                "div"
+            );
+
+            card.className =
+                "service-card";
+
+            card.innerHTML = `
+                <div class="service-icon">
+                    <i data-lucide="briefcase"></i>
+                </div>
+
+                <div class="service-info">
+                    <strong>
+                        ${escaparHtml(servico)}
+                    </strong>
+                </div>
+            `;
+
+            container.appendChild(card);
+        });
+
+        atualizarIcones();
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | PORTFÓLIO
+    |--------------------------------------------------------------------------
+    */
+
+    function preencherPortfolio(portfolio) {
+        const container = document.getElementById(
+            "portfolioGrid"
+        );
+
+        if (!container) {
+            return;
+        }
+
+        container.innerHTML = "";
+
+        if (!portfolio || !portfolio.length) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <i data-lucide="images"></i>
+                    <h3>Nenhum trabalho no portfólio</h3>
+                    <p>
+                        Os trabalhos adicionados pelo músico
+                        aparecerão aqui.
+                    </p>
+                </div>
+            `;
+
+            atualizarIcones();
+
+            return;
+        }
+
+        portfolio.forEach((item) => {
+            const card = document.createElement(
+                "div"
+            );
+
+            card.className =
+                "portfolio-card";
+
+            const titulo =
+                item.titulo ||
+                "Trabalho";
+
+            const descricao =
+                item.descricao ||
+                "";
+
+            if (item.tipo === "video") {
+                card.innerHTML = `
+                    <video
+                        src="${escaparAtributo(item.arquivo_url)}"
+                        controls
+                        preload="metadata"
+                    ></video>
+
+                    <div class="portfolio-card-overlay">
+                        <div class="portfolio-card-title">
+                            ${escaparHtml(titulo)}
+                        </div>
+
+                        <div class="portfolio-card-subtitle">
+                            ${escaparHtml(descricao)}
+                        </div>
+                    </div>
+                `;
+            } else {
+                card.innerHTML = `
+                    <img
+                        src="${escaparAtributo(item.arquivo_url)}"
+                        alt="${escaparAtributo(titulo)}"
+                        loading="lazy"
+                    >
+
+                    <div class="portfolio-card-overlay">
+                        <div class="portfolio-card-title">
+                            ${escaparHtml(titulo)}
+                        </div>
+
+                        <div class="portfolio-card-subtitle">
+                            ${escaparHtml(descricao)}
+                        </div>
+                    </div>
+                `;
+            }
+
+            container.appendChild(card);
+        });
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | VÍDEOS
+    |--------------------------------------------------------------------------
+    */
+
+    function preencherVideos(videos) {
+        const container = document.getElementById(
+            "videoList"
+        );
+
+        if (!container) {
+            return;
+        }
+
+        container.innerHTML = "";
+
+        if (!videos || !videos.length) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <i data-lucide="video"></i>
+                    <h3>Nenhum vídeo</h3>
+                    <p>
+                        Os vídeos adicionados ao portfólio
+                        aparecerão aqui.
+                    </p>
+                </div>
+            `;
+
+            atualizarIcones();
+
+            return;
+        }
+
+        videos.forEach((video) => {
+            const item = document.createElement(
+                "div"
+            );
+
+            item.className =
+                "video-item";
+
+            item.innerHTML = `
+                <div class="video-portfolio">
+                    <video
+                        src="${escaparAtributo(video.arquivo_url)}"
+                        controls
+                        preload="metadata"
+                    ></video>
+                </div>
+
+                <div>
+                    <strong>
+                        ${escaparHtml(video.titulo || "Vídeo")}
                     </strong>
 
+                    <p>
+                        ${escaparHtml(video.descricao || "")}
+                    </p>
+                </div>
+            `;
+
+            container.appendChild(item);
+        });
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | ÁUDIOS
+    |--------------------------------------------------------------------------
+    */
+
+    function preencherAudios(audios) {
+        const container = document.getElementById(
+            "audioList"
+        );
+
+        if (!container) {
+            return;
+        }
+
+        container.innerHTML = "";
+
+        if (!audios || !audios.length) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <i data-lucide="headphones"></i>
+                    <h3>Nenhum áudio</h3>
+                    <p>
+                        Os áudios adicionados ao portfólio
+                        aparecerão aqui.
+                    </p>
+                </div>
+            `;
+
+            atualizarIcones();
+
+            return;
+        }
+
+        audios.forEach((audio) => {
+            const item = document.createElement(
+                "div"
+            );
+
+            item.className =
+                "audio-card";
+
+            item.innerHTML = `
+                <div class="audio-icon">
+                    <i data-lucide="music"></i>
+                </div>
+
+                <div class="audio-info">
+                    <strong>
+                        ${escaparHtml(audio.titulo || "Áudio")}
+                    </strong>
+
+                    <span>
+                        ${escaparHtml(audio.descricao || "")}
+                    </span>
+                </div>
+
+                <audio
+                    class="audio-player"
+                    controls
+                    preload="metadata"
+                    src="${escaparAtributo(audio.arquivo_url)}"
+                ></audio>
+            `;
+
+            container.appendChild(item);
+        });
+
+        atualizarIcones();
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | AGENDA
+    |--------------------------------------------------------------------------
+    */
+
+    function preencherAgenda(agenda) {
+        const container = document.getElementById(
+            "agendaList"
+        );
+
+        if (!container) {
+            return;
+        }
+
+        container.innerHTML = "";
+
+        if (!agenda || !agenda.length) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <i data-lucide="calendar-days"></i>
+                    <h3>Nenhum compromisso na agenda</h3>
+                    <p>
+                        Os eventos e apresentações
+                        aparecerão aqui.
+                    </p>
+                </div>
+            `;
+
+            atualizarIcones();
+
+            return;
+        }
+
+        agenda.forEach((evento) => {
+            const dataInicio =
+                evento.data_inicio
+                    ? new Date(evento.data_inicio)
+                    : null;
+
+            const dataFim =
+                evento.data_fim
+                    ? new Date(evento.data_fim)
+                    : null;
+
+            const card = document.createElement(
+                "div"
+            );
+
+            card.className =
+                "agenda-card";
+
+            card.innerHTML = `
+                <div class="agenda-date">
+                    <strong>
+                        ${
+                            dataInicio
+                                ? formatarDia(dataInicio)
+                                : "--"
+                        }
+                    </strong>
+
+                    <span>
+                        ${
+                            dataInicio
+                                ? formatarMes(dataInicio)
+                                : ""
+                        }
+                    </span>
+                </div>
+
+                <div class="agenda-info">
+                    <h3>
+                        ${escaparHtml(evento.titulo || "Evento")}
+                    </h3>
+
+                    <p>
+                        ${escaparHtml(evento.descricao || "")}
+                    </p>
+
                     ${
-                        nivel
+                        evento.localizacao
                             ? `
                                 <span>
-                                    ${escaparHtml(nivel)}
+                                    <i data-lucide="map-pin"></i>
+                                    ${escaparHtml(evento.localizacao)}
                                 </span>
                             `
                             : ""
                     }
 
-                </div>
-
-            `;
-
-
-            container.appendChild(
-                card
-            );
-
-        }
-    );
-
-
-    atualizarIcones();
-
-}
-
-
-/*
- * =========================================================
- * ESTILOS / GÊNEROS
- * =========================================================
- */
-
-function preencherEstilos(estilos) {
-
-    const container =
-        document.getElementById(
-            "genreList"
-        );
-
-
-    if (!container) {
-
-        return;
-
-    }
-
-
-    container.innerHTML =
-        "";
-
-
-    if (
-        !Array.isArray(estilos) ||
-        estilos.length === 0
-    ) {
-
-        const tag =
-            document.createElement(
-                "span"
-            );
-
-
-        tag.className =
-            "genre-tag";
-
-
-        tag.textContent =
-            "Estilos não informados";
-
-
-        container.appendChild(
-            tag
-        );
-
-
-        return;
-
-    }
-
-
-    estilos.forEach(
-        estilo => {
-
-            const tag =
-                document.createElement(
-                    "span"
-                );
-
-
-            tag.className =
-                "genre-tag";
-
-
-            tag.textContent =
-                typeof estilo ===
-                "string"
-                    ? estilo
-                    : estilo.nome || "";
-
-
-            container.appendChild(
-                tag
-            );
-
-        }
-    );
-
-}
-
-
-/*
- * =========================================================
- * SERVIÇOS
- * =========================================================
- */
-
-function preencherServicos(servicos) {
-
-    const container =
-        document.getElementById(
-            "servicesList"
-        );
-
-
-    if (!container) {
-
-        return;
-
-    }
-
-
-    container.innerHTML =
-        "";
-
-
-    if (
-        !Array.isArray(servicos) ||
-        servicos.length === 0
-    ) {
-
-        container.innerHTML = `
-
-            <div class="empty-transactions">
-
-                <i data-lucide="music-2"></i>
-
-                <strong>
-                    Nenhum serviço cadastrado
-                </strong>
-
-                <span>
-                    Adicione seus serviços no seu perfil.
-                </span>
-
-            </div>
-
-        `;
-
-
-        atualizarIcones();
-
-        return;
-
-    }
-
-
-    servicos.forEach(
-        (servico, index) => {
-
-            const card =
-                document.createElement(
-                    "article"
-                );
-
-
-            card.className =
-                "service-card";
-
-
-            card.innerHTML = `
-
-                <div class="service-icon">
-
-                    <i data-lucide="${
-                        index % 2 === 0
-                            ? "music"
-                            : "users"
-                    }"></i>
-
-                </div>
-
-                <div class="service-info">
-
-                    <strong>
-                        ${escaparHtml(
-                            servico.nome ||
-                            "Serviço musical"
-                        )}
-                    </strong>
-
-                    <span>
-                        ${escaparHtml(
-                            servico.duracao ||
-                            ""
-                        )}
-                    </span>
-
-                    <small>
-                        ${escaparHtml(
-                            servico.descricao ||
-                            ""
-                        )}
-                    </small>
-
-                </div>
-
-                <div class="service-price">
-
-                    ${formatarMoeda(
-                        servico.preco
-                    )}
-
-                </div>
-
-            `;
-
-
-            container.appendChild(
-                card
-            );
-
-        }
-    );
-
-
-    atualizarIcones();
-
-}
-
-
-/*
- * =========================================================
- * PORTFÓLIO
- * =========================================================
- */
-
-function preencherPortfolio(portfolio) {
-
-    const container =
-        document.getElementById(
-            "portfolioGrid"
-        );
-
-
-    if (!container) {
-
-        return;
-
-    }
-
-
-    container.innerHTML =
-        "";
-
-
-    if (
-        !Array.isArray(portfolio) ||
-        portfolio.length === 0
-    ) {
-
-        container.innerHTML = `
-
-            <div class="empty-state">
-
-                <i data-lucide="images"></i>
-
-                <strong>
-                    Portfólio vazio
-                </strong>
-
-                <span>
-                    Seus trabalhos e apresentações aparecerão aqui.
-                </span>
-
-            </div>
-
-        `;
-
-
-        atualizarIcones();
-
-        return;
-
-    }
-
-
-    portfolio.forEach(
-        item => {
-
-            const card =
-                document.createElement(
-                    "article"
-                );
-
-
-            card.className =
-                "portfolio-card";
-
-
-            card.innerHTML = `
-
-                ${
-                    item.imagem
-                        ? `
-                            <img
-                                src="${escaparHtml(
-                                    item.imagem
-                                )}"
-                                alt="${escaparHtml(
-                                    item.titulo ||
-                                    "Trabalho musical"
-                                )}"
-                            >
-                        `
-                        : `
-                            <div class="empty-state">
-                                <i data-lucide="music"></i>
-                            </div>
-                        `
-                }
-
-                <div class="portfolio-card-overlay">
-
-                    <div class="portfolio-card-title">
-                        ${escaparHtml(
-                            item.titulo ||
-                            "Trabalho musical"
-                        )}
-                    </div>
-
                     ${
-                        item.descricao
+                        dataInicio
                             ? `
-                                <div class="portfolio-card-subtitle">
-                                    ${escaparHtml(
-                                        item.descricao
+                                <span>
+                                    <i data-lucide="clock-3"></i>
+                                    ${formatarHorario(
+                                        dataInicio,
+                                        dataFim
                                     )}
-                                </div>
+                                </span>
                             `
                             : ""
                     }
-
                 </div>
-
             `;
 
-
-            container.appendChild(
-                card
-            );
-
-        }
-    );
-
-
-    atualizarIcones();
-
-}
-
-
-/*
- * =========================================================
- * VÍDEOS
- * =========================================================
- */
-
-function preencherVideos(videos) {
-
-    const container =
-        document.getElementById(
-            "videoPortfolio"
-        );
-
-
-    if (!container) {
-
-        return;
-
-    }
-
-
-    container.innerHTML =
-        "";
-
-
-    if (
-        !Array.isArray(videos) ||
-        videos.length === 0
-    ) {
-
-        container.innerHTML = `
-
-            <div class="empty-state">
-
-                <i data-lucide="video"></i>
-
-                <strong>
-                    Nenhum vídeo no portfólio
-                </strong>
-
-                <span>
-                    Adicione vídeos das suas apresentações.
-                </span>
-
-            </div>
-
-        `;
-
+            container.appendChild(card);
+        });
 
         atualizarIcones();
-
-        return;
-
     }
 
-
-    videos.forEach(
-        video => {
-
-            const wrapper =
-                document.createElement(
-                    "div"
-                );
-
-
-            wrapper.className =
-                "video-portfolio";
-
-
-            wrapper.innerHTML = `
-
-                <video
-                    controls
-                    preload="metadata"
-                    src="${escaparHtml(
-                        video.url || ""
-                    )}"
-                ></video>
-
-            `;
-
-
-            container.appendChild(
-                wrapper
-            );
-
-        }
-    );
-
-}
-
-
-/*
- * =========================================================
- * ÁUDIOS
- * =========================================================
- */
-
-function preencherAudios(audios) {
-
-    const container =
-        document.getElementById(
-            "audioList"
-        );
-
-
-    if (!container) {
-
-        return;
-
-    }
-
-
-    container.innerHTML =
-        "";
-
-
-    if (
-        !Array.isArray(audios) ||
-        audios.length === 0
-    ) {
-
-        container.innerHTML = `
-
-            <div class="empty-state">
-
-                <i data-lucide="headphones"></i>
-
-                <strong>
-                    Nenhum áudio cadastrado
-                </strong>
-
-                <span>
-                    Suas gravações aparecerão aqui.
-                </span>
-
-            </div>
-
-        `;
-
-
-        atualizarIcones();
-
-        return;
-
-    }
-
-
-    audios.forEach(
-        audio => {
-
-            const card =
-                document.createElement(
-                    "article"
-                );
-
-
-            card.className =
-                "audio-card";
-
-
-            card.innerHTML = `
-
-                <div class="audio-icon">
-
-                    <i data-lucide="music-2"></i>
-
-                </div>
-
-                <div class="audio-info">
-
-                    <strong>
-                        ${escaparHtml(
-                            audio.titulo ||
-                            "Gravação musical"
-                        )}
-                    </strong>
-
-                    <span>
-                        ${escaparHtml(
-                            audio.descricao ||
-                            ""
-                        )}
-                    </span>
-
-                    <audio
-                        class="audio-player"
-                        controls
-                        preload="none"
-                        src="${escaparHtml(
-                            audio.url || ""
-                        )}"
-                    ></audio>
-
-                </div>
-
-            `;
-
-
-            container.appendChild(
-                card
-            );
-
-        }
-    );
-
-
-    atualizarIcones();
-
-}
-
-
-/*
- * =========================================================
- * AGENDA
- * =========================================================
- */
-
-function preencherAgenda(agenda) {
-
-    const container =
-        document.getElementById(
-            "agendaList"
-        );
-
-
-    if (!container) {
-
-        return;
-
-    }
-
-
-    container.innerHTML =
-        "";
-
-
-    if (
-        !Array.isArray(agenda) ||
-        agenda.length === 0
-    ) {
-
-        container.innerHTML = `
-
-            <div class="empty-state">
-
-                <i data-lucide="calendar-days"></i>
-
-                <strong>
-                    Nenhum compromisso na agenda
-                </strong>
-
-                <span>
-                    Seus próximos eventos aparecerão aqui.
-                </span>
-
-            </div>
-
-        `;
-
-
-        atualizarIcones();
-
-        return;
-
-    }
-
-
-    agenda.forEach(
-        evento => {
-
-            const card =
-                document.createElement(
-                    "article"
-                );
-
-
-            card.className =
-                "agenda-card";
-
-
-            const data =
-                evento.data
-                    ? new Date(
-                        evento.data
-                    )
-                    : null;
-
-
-            const dia =
-                data &&
-                !isNaN(data.getTime())
-                    ? String(
-                        data.getDate()
-                    ).padStart(2, "0")
-                    : "--";
-
-
-            const mes =
-                data &&
-                !isNaN(data.getTime())
-                    ? data.toLocaleDateString(
-                        "pt-BR",
-                        {
-                            month: "short"
-                        }
-                    )
-                    : "---";
-
-
-            card.innerHTML = `
-
-                <div class="agenda-date">
-
-                    <strong>
-                        ${dia}
-                    </strong>
-
-                    <span>
-                        ${mes}
-                    </span>
-
-                </div>
-
-                <div class="agenda-info">
-
-                    <strong>
-                        ${escaparHtml(
-                            evento.titulo ||
-                            "Evento"
-                        )}
-                    </strong>
-
-                    <span>
-                        ${escaparHtml(
-                            evento.local ||
-                            "Local não informado"
-                        )}
-                    </span>
-
-                </div>
-
-            `;
-
-
-            container.appendChild(
-                card
-            );
-
-        }
-    );
-
-
-    atualizarIcones();
-
-}
-
-
-/*
- * =========================================================
- * AVALIAÇÕES
- * =========================================================
- */
-
-function preencherAvaliacoes(avaliacoes) {
-
-    const container =
-        document.getElementById(
+    /*
+    |--------------------------------------------------------------------------
+    | AVALIAÇÕES
+    |--------------------------------------------------------------------------
+    */
+
+    function preencherAvaliacoes(avaliacoes) {
+        const container = document.getElementById(
             "reviewsList"
         );
 
+        if (!container) {
+            return;
+        }
 
-    if (!container) {
+        container.innerHTML = "";
 
-        return;
+        if (!avaliacoes || !avaliacoes.length) {
+            container.innerHTML = `
+                <div class="empty-reviews">
+                    <i data-lucide="star"></i>
+                    <h3>Nenhuma avaliação ainda</h3>
+                    <p>
+                        As avaliações recebidas aparecerão aqui.
+                    </p>
+                </div>
+            `;
 
-    }
+            atualizarIcones();
 
+            return;
+        }
 
-    container.innerHTML =
-        "";
-
-
-    if (
-        !Array.isArray(avaliacoes) ||
-        avaliacoes.length === 0
-    ) {
-
-        container.innerHTML = `
-
-            <div class="empty-reviews">
-
-                <i data-lucide="star"></i>
-
-                <strong>
-                    Nenhuma avaliação ainda
-                </strong>
-
-                <span>
-                    As avaliações recebidas pelos seus trabalhos
-                    aparecerão aqui.
-                </span>
-
-            </div>
-
-        `;
-
-
-        atualizarIcones();
-
-        return;
-
-    }
-
-
-    avaliacoes.forEach(
-        avaliacao => {
-
-            const card =
-                document.createElement(
-                    "article"
-                );
-
+        avaliacoes.forEach((avaliacao) => {
+            const card = document.createElement(
+                "article"
+            );
 
             card.className =
                 "review-card";
 
+            const nome =
+                avaliacao.usuario?.nome ||
+                "Usuário";
 
-            const nota =
-                Math.max(
-                    0,
-                    Math.min(
-                        5,
-                        Number(
-                            avaliacao.nota
-                        ) || 0
-                    )
-                );
+            const foto =
+                avaliacao.usuario?.foto_url ||
+                "";
 
-
-            const estrelas =
-                Array.from(
-                    {
-                        length: 5
-                    },
-                    (_, index) =>
-                        `
-                            <i
-                                data-lucide="${
-                                    index < nota
-                                        ? "star"
-                                        : "star"
-                                }"
-                            ></i>
-                        `
-                ).join("");
-
+            const iniciais =
+                gerarIniciais(nome);
 
             card.innerHTML = `
-
                 <div class="review-header">
-
                     <div class="review-avatar">
-
-                        ${escaparHtml(
-                            gerarIniciais(
-                                avaliacao.nome ||
-                                "Usuário"
-                            )
-                        )}
-
+                        ${
+                            foto
+                                ? `
+                                    <img
+                                        src="${escaparAtributo(foto)}"
+                                        alt="${escaparAtributo(nome)}"
+                                    >
+                                `
+                                : `
+                                    <span>
+                                        ${escaparHtml(iniciais)}
+                                    </span>
+                                `
+                        }
                     </div>
 
                     <div class="review-author">
+                        <strong>
+                            ${escaparHtml(nome)}
+                        </strong>
 
+                        <div class="review-rating">
+                            ${gerarEstrelas(
+                                Number(avaliacao.nota || 0)
+                            )}
+                        </div>
+                    </div>
+                </div>
+
+                <p class="review-text">
+                    ${escaparHtml(
+                        avaliacao.comentario ||
+                        "Sem comentário."
+                    )}
+                </p>
+            `;
+
+            container.appendChild(card);
+        });
+
+        atualizarIcones();
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | CARTEIRA REAL
+    |--------------------------------------------------------------------------
+    */
+
+    async function carregarCarteiraReal() {
+    const cliente = obterSupabase();
+
+    if (!cliente || !perfilAtual) {
+        preencherCarteiraVazia();
+        return;
+    }
+
+    try {
+        const respostaCarteira = await cliente
+            .from(CONFIG.tabelas.carteiras)
+            .select("*")
+            .eq("perfil_id", perfilAtual.id)
+            .maybeSingle();
+
+        if (respostaCarteira.error) {
+            throw respostaCarteira.error;
+        }
+
+        carteiraAtual = respostaCarteira.data;
+
+        if (!carteiraAtual) {
+            console.warn(
+                "Nenhuma carteira encontrada para o perfil:",
+                perfilAtual.id
+            );
+
+            preencherCarteiraVazia();
+
+            return;
+        }
+
+        const respostaTransacoes = await cliente
+            .from(CONFIG.tabelas.transacoes)
+            .select("*")
+            .eq("carteira_id", carteiraAtual.id)
+            .order("created_at", {
+                ascending: false
+            });
+
+        if (respostaTransacoes.error) {
+            throw respostaTransacoes.error;
+        }
+
+        const transacoes =
+            respostaTransacoes.data || [];
+
+        preencherCarteira(
+            carteiraAtual,
+            transacoes
+        );
+
+        try {
+            localStorage.setItem(
+                CONFIG.carteiraStorageKey,
+                JSON.stringify({
+                    carteira: carteiraAtual,
+                    transacoes
+                })
+            );
+        } catch (erroCache) {
+            console.warn(
+                "Não foi possível salvar cache da carteira:",
+                erroCache
+            );
+        }
+
+    } catch (erro) {
+        console.error(
+            "Erro ao carregar carteira:",
+            erro
+        );
+
+        preencherCarteiraVazia();
+
+        mostrarToast(
+            "Não foi possível carregar a carteira.",
+            "erro"
+        );
+    }
+}
+
+    function preencherCarteira(carteira, transacoes) {
+        const total =
+            Number(carteira?.saldo_total || 0);
+
+        const disponivel =
+            Number(carteira?.saldo_disponivel || 0);
+
+        const pendente =
+            Number(carteira?.saldo_pendente || 0);
+
+        definirTexto(
+            "walletTotal",
+            formatarMoeda(total)
+        );
+
+        definirTexto(
+            "walletAvailable",
+            formatarMoeda(disponivel)
+        );
+
+        definirTexto(
+            "walletPending",
+            formatarMoeda(pendente)
+        );
+
+        preencherTransacoes(
+            transacoes
+        );
+    }
+
+    function preencherCarteiraVazia() {
+        definirTexto(
+            "walletTotal",
+            formatarMoeda(0)
+        );
+
+        definirTexto(
+            "walletAvailable",
+            formatarMoeda(0)
+        );
+
+        definirTexto(
+            "walletPending",
+            formatarMoeda(0)
+        );
+
+        preencherTransacoes([]);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | TRANSAÇÕES
+    |--------------------------------------------------------------------------
+    */
+
+    function preencherTransacoes(transacoes) {
+        const container = document.getElementById(
+            "transactionList"
+        );
+
+        if (!container) {
+            return;
+        }
+
+        container.innerHTML = "";
+
+        if (!transacoes || !transacoes.length) {
+            container.innerHTML = `
+                <div class="empty-transactions">
+                    <i data-lucide="wallet-cards"></i>
+
+                    <h3>
+                        Nenhuma movimentação
+                    </h3>
+
+                    <p>
+                        Suas movimentações financeiras
+                        aparecerão aqui.
+                    </p>
+                </div>
+            `;
+
+            atualizarIcones();
+
+            return;
+        }
+
+        transacoes.forEach((transacao) => {
+            const card = document.createElement(
+                "div"
+            );
+
+            card.className =
+                "transaction-card";
+
+            const valor =
+                Number(transacao.valor || 0);
+
+            const tipo =
+                String(transacao.tipo || "")
+                    .toLowerCase();
+
+            const positivo =
+                [
+                    "pagamento",
+                    "liberacao",
+                    "ajuste"
+                ].includes(tipo);
+
+            const classeValor =
+                positivo
+                    ? "positive"
+                    : "negative";
+
+            const sinal =
+                positivo
+                    ? "+"
+                    : "-";
+
+            const icone =
+                obterIconeTransacao(tipo);
+
+            card.innerHTML = `
+                <div class="transaction-item">
+
+                    <div class="transaction-icon">
+                        <i data-lucide="${icone}"></i>
+                    </div>
+
+                    <div class="transaction-info">
                         <strong>
                             ${escaparHtml(
-                                avaliacao.nome ||
-                                "Usuário"
+                                transacao.descricao ||
+                                formatarTipoTransacao(tipo)
                             )}
                         </strong>
 
                         <span>
-                            ${escaparHtml(
-                                avaliacao.data ||
-                                ""
-                            )}
+                            ${
+                                transacao.created_at
+                                    ? formatarData(
+                                        transacao.created_at
+                                    )
+                                    : ""
+                            }
                         </span>
 
+                        ${
+                            transacao.status
+                                ? `
+                                    <small>
+                                        ${escaparHtml(
+                                            formatarStatusTransacao(
+                                                transacao.status
+                                            )
+                                        )}
+                                    </small>
+                                `
+                                : ""
+                        }
                     </div>
 
-                    <div class="review-rating">
-
-                        ${estrelas}
-
+                    <div class="transaction-value ${classeValor}">
+                        ${sinal} ${formatarMoeda(valor)}
                     </div>
 
                 </div>
-
-                <div class="review-text">
-
-                    ${escaparHtml(
-                        avaliacao.comentario ||
-                        ""
-                    )}
-
-                </div>
-
             `;
 
-
-            container.appendChild(
-                card
-            );
-
-        }
-    );
-
-
-    atualizarIcones();
-
-}
-
-
-/*
- * =========================================================
- * CARTEIRA
- * =========================================================
- */
-
-function obterCarteiraLocal() {
-
-    try {
-
-        const dados =
-            localStorage.getItem(
-                CONFIG.carteiraStorageKey
-            );
-
-
-        if (!dados) {
-
-            return {
-                ...carteiraDemo
-            };
-
-        }
-
-
-        return {
-
-            ...carteiraDemo,
-
-            ...JSON.parse(dados)
-
-        };
-
-
-    } catch (error) {
-
-        console.warn(
-            "⚠️ Não foi possível carregar carteira.",
-            error
-        );
-
-
-        return {
-            ...carteiraDemo
-        };
-
-    }
-
-}
-
-
-function preencherCarteira() {
-
-    const carteira =
-        obterCarteiraLocal();
-
-
-    definirTexto(
-        "saldoDisponivel",
-        formatarMoeda(
-            carteira.saldoDisponivel
-        )
-    );
-
-
-    definirTexto(
-        "saldoReceber",
-        formatarMoeda(
-            carteira.saldoReceber
-        )
-    );
-
-
-    definirTexto(
-        "totalRecebido",
-        formatarMoeda(
-            carteira.totalRecebido
-        )
-    );
-
-
-    preencherTransacoes(
-        carteira.transacoes
-    );
-
-}
-
-
-function preencherTransacoes(transacoes) {
-
-    const container =
-        document.getElementById(
-            "transactionList"
-        );
-
-
-    if (!container) {
-
-        return;
-
-    }
-
-
-    if (
-        !Array.isArray(transacoes) ||
-        transacoes.length === 0
-    ) {
-
-        container.innerHTML = `
-
-            <div class="empty-transactions">
-
-                <i data-lucide="receipt"></i>
-
-                <strong>
-                    Nenhuma movimentação ainda
-                </strong>
-
-                <span>
-                    Quando você receber pagamentos pelos
-                    seus serviços, eles aparecerão aqui.
-                </span>
-
-            </div>
-
-        `;
-
+            container.appendChild(card);
+        });
 
         atualizarIcones();
-
-        return;
-
     }
 
+    function obterIconeTransacao(tipo) {
+        switch (tipo) {
+            case "pagamento":
+                return "arrow-down-left";
 
-    container.innerHTML =
-        "";
+            case "liberacao":
+                return "circle-check";
 
+            case "saque":
+                return "arrow-up-right";
 
-    transacoes.forEach(
-        transacao => {
+            case "estorno":
+                return "rotate-ccw";
 
-            const card =
-                document.createElement(
-                    "div"
-                );
+            case "comissao":
+                return "percent";
 
+            case "ajuste":
+                return "sliders-horizontal";
 
-            const tipo =
-                transacao.tipo ||
-                "recebimento";
-
-
-            card.className =
-                `transaction-card ${
-                    tipo === "saque"
-                        ? "withdrawal"
-                        : "received"
-                }`;
-
-
-            const valor =
-                Number(
-                    transacao.valor
-                ) || 0;
-
-
-            const negativo =
-                tipo === "saque";
-
-
-            card.innerHTML = `
-
-                <div class="transaction-icon">
-
-                    <i data-lucide="${
-                        negativo
-                            ? "arrow-up-right"
-                            : "arrow-down-left"
-                    }"></i>
-
-                </div>
-
-                <div class="transaction-info">
-
-                    <strong>
-                        ${escaparHtml(
-                            transacao.descricao ||
-                            (
-                                negativo
-                                    ? "Saque"
-                                    : "Pagamento recebido"
-                            )
-                        )}
-                    </strong>
-
-                    <span>
-                        ${escaparHtml(
-                            transacao.data ||
-                            ""
-                        )}
-                    </span>
-
-                </div>
-
-                <div class="transaction-value ${
-                    negativo
-                        ? "negative"
-                        : "positive"
-                }">
-
-                    ${negativo ? "-" : "+"}
-                    ${formatarMoeda(valor)}
-
-                </div>
-
-            `;
-
-
-            container.appendChild(
-                card
-            );
-
+            default:
+                return "wallet";
         }
-    );
+    }
 
+    function formatarTipoTransacao(tipo) {
+        const nomes = {
+            pagamento: "Pagamento",
+            liberacao: "Pagamento liberado",
+            saque: "Saque",
+            estorno: "Estorno",
+            comissao: "Comissão",
+            ajuste: "Ajuste"
+        };
 
-    atualizarIcones();
+        return nomes[tipo] || "Movimentação";
+    }
 
-}
+    function formatarStatusTransacao(status) {
+        const nomes = {
+            pendente: "Pendente",
+            processando: "Processando",
+            concluida: "Concluída",
+            cancelada: "Cancelada"
+        };
 
+        return nomes[status] || status;
+    }
 
-/*
- * =========================================================
- * ABAS
- * =========================================================
- */
+    /*
+    |--------------------------------------------------------------------------
+    | TABS
+    |--------------------------------------------------------------------------
+    */
 
-function inicializarTabs() {
-
-    const botoes =
-        document.querySelectorAll(
+    function inicializarTabs() {
+        const botoes = document.querySelectorAll(
             ".tab-button"
         );
 
-
-    const abas =
-        document.querySelectorAll(
+        const conteudos = document.querySelectorAll(
             ".tab-content"
         );
 
+        if (!botoes.length) {
+            return;
+        }
 
-    botoes.forEach(
-        botao => {
-
+        botoes.forEach((botao) => {
             botao.addEventListener(
                 "click",
-                () => {
-
+                async () => {
                     const tab =
                         botao.dataset.tab;
 
+                    if (!tab) {
+                        return;
+                    }
 
-                    botoes.forEach(
-                        item => {
+                    botoes.forEach((item) => {
+                        item.classList.toggle(
+                            "active",
+                            item === botao
+                        );
+                    });
 
-                            item.classList.remove(
-                                "active"
-                            );
-
-                        }
-                    );
-
-
-                    abas.forEach(
-                        aba => {
-
-                            aba.classList.remove(
-                                "active"
-                            );
-
-                        }
-                    );
-
-
-                    botao.classList.add(
-                        "active"
-                    );
-
-
-                    const destino =
-                        document.getElementById(
+                    conteudos.forEach((conteudo) => {
+                        conteudo.classList.toggle(
+                            "active",
+                            conteudo.id ===
                             `tab-${tab}`
                         );
+                    });
 
-
-                    if (destino) {
-
-                        destino.classList.add(
-                            "active"
-                        );
-
+                    if (tab === "carteira") {
+                        await carregarCarteiraReal();
                     }
 
-
-                    if (
-                        tab ===
-                        "carteira"
-                    ) {
-
-                        preencherCarteira();
-
-                    }
-
+                    atualizarIcones();
                 }
             );
-
-        }
-    );
-
-}
-
-
-/*
- * =========================================================
- * BOTÕES
- * =========================================================
- */
-
-function inicializarBotoes() {
-
-    const voltar =
-        document.getElementById(
-            "btnVoltar"
-        );
-
-
-    if (voltar) {
-
-        voltar.addEventListener(
-            "click",
-            voltarPagina
-        );
-
+        });
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | BOTÕES
+    |--------------------------------------------------------------------------
+    */
 
-    const editar =
-        document.getElementById(
-            "btnEditarPerfil"
-        );
+    function inicializarBotoes() {
+        const btnVoltar =
+            document.getElementById(
+                "btnVoltar"
+            );
 
-
-    if (editar) {
-
-        editar.addEventListener(
-            "click",
-            () => {
-
-                const id =
-                    perfilAtual?.id ||
-                    "";
-
-
-                if (!id) {
-
-                    mostrarToast(
-                        "Seu perfil ainda não possui um ID válido."
-                    );
-
-
-                    return;
-
+        if (btnVoltar) {
+            btnVoltar.addEventListener(
+                "click",
+                () => {
+                    if (
+                        window.history.length > 1
+                    ) {
+                        window.history.back();
+                    } else {
+                        window.location.href =
+                            "index.html";
+                    }
                 }
+            );
+        }
 
+        const btnEditar =
+            document.getElementById(
+                "btnEditarPerfil"
+            );
 
-                window.location.href =
-                    `editar-perfil-musico.html?id=${encodeURIComponent(id)}`;
+        if (btnEditar) {
+            btnEditar.addEventListener(
+                "click",
+                () => {
+                    window.location.href =
+                        "editar-perfil-musico.html";
+                }
+            );
+        }
 
-            }
-        );
+        const btnWhatsApp =
+            document.getElementById(
+                "btnWhatsApp"
+            );
 
+        if (btnWhatsApp) {
+            btnWhatsApp.addEventListener(
+                "click",
+                compartilharWhatsApp
+            );
+        }
+
+        const btnQRCode =
+            document.getElementById(
+                "btnQRCode"
+            );
+
+        if (btnQRCode) {
+            btnQRCode.addEventListener(
+                "click",
+                abrirQRCode
+            );
+        }
+
+        const btnFecharQR =
+            document.getElementById(
+                "btnFecharQR"
+            );
+
+        if (btnFecharQR) {
+            btnFecharQR.addEventListener(
+                "click",
+                fecharQRCode
+            );
+        }
+
+        const overlay =
+            document.getElementById(
+                "qrOverlay"
+            );
+
+        if (overlay) {
+            overlay.addEventListener(
+                "click",
+                (evento) => {
+                    if (
+                        evento.target === overlay
+                    ) {
+                        fecharQRCode();
+                    }
+                }
+            );
+        }
+
+        const btnCompartilharQR =
+            document.getElementById(
+                "btnCompartilharQR"
+            );
+
+        if (btnCompartilharQR) {
+            btnCompartilharQR.addEventListener(
+                "click",
+                compartilharQRCode
+            );
+        }
+
+        const btnSacar =
+            document.getElementById(
+                "btnSacar"
+            );
+
+        if (btnSacar) {
+            btnSacar.addEventListener(
+                "click",
+                solicitarSaque
+            );
+        }
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | CONTATO
+    |--------------------------------------------------------------------------
+    */
 
-    const qr =
-        document.getElementById(
-            "btnQrCode"
-        );
+    function atualizarBotoesContato(dados) {
+        const btnWhatsApp =
+            document.getElementById(
+                "btnWhatsApp"
+            );
 
+        if (!btnWhatsApp) {
+            return;
+        }
 
-    if (qr) {
+        const telefone =
+            normalizarTelefone(
+                dados.telefone
+            );
 
-        qr.addEventListener(
-            "click",
-            abrirQrCode
-        );
+        if (!telefone) {
+            btnWhatsApp.style.display =
+                "none";
 
+            return;
+        }
+
+        btnWhatsApp.style.display =
+            "inline-flex";
     }
 
+    function compartilharWhatsApp() {
+        if (!dadosPerfil) {
+            return;
+        }
 
-    const fecharQr =
-        document.getElementById(
-            "btnFecharQr"
+        const telefone =
+            normalizarTelefone(
+                dadosPerfil.telefone
+            );
+
+        if (!telefone) {
+            mostrarToast(
+                "Telefone não informado.",
+                "erro"
+            );
+
+            return;
+        }
+
+        const urlPerfil =
+            `${window.location.origin}/perfil-musico.html?id=${encodeURIComponent(
+                perfilAtual?.id || ""
+            )}`;
+
+        const mensagem =
+            `Olá! Encontrei o perfil de ${dadosPerfil.nome} no MusicalWorld. ${urlPerfil}`;
+
+        const url =
+            `https://wa.me/${telefone}?text=${encodeURIComponent(
+                mensagem
+            )}`;
+
+        window.open(
+            url,
+            "_blank"
         );
-
-
-    if (fecharQr) {
-
-        fecharQr.addEventListener(
-            "click",
-            fecharQrCode
-        );
-
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | QR CODE
+    |--------------------------------------------------------------------------
+    */
 
-    const overlay =
-        document.getElementById(
-            "qrOverlay"
+    function abrirQRCode() {
+        const overlay =
+            document.getElementById(
+                "qrOverlay"
+            );
+
+        const imagem =
+            document.getElementById(
+                "qrImage"
+            );
+
+        const link =
+            document.getElementById(
+                "profileLink"
+            );
+
+        if (!overlay) {
+            return;
+        }
+
+        const url =
+            `${window.location.origin}/perfil-musico.html?id=${encodeURIComponent(
+                perfilAtual?.id || ""
+            )}`;
+
+        if (link) {
+            link.textContent = url;
+        }
+
+        if (imagem) {
+            imagem.src =
+                `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(
+                    url
+                )}`;
+        }
+
+        overlay.classList.add(
+            "active"
         );
+    }
 
+    function fecharQRCode() {
+        const overlay =
+            document.getElementById(
+                "qrOverlay"
+            );
 
-    if (overlay) {
+        if (overlay) {
+            overlay.classList.remove(
+                "active"
+            );
+        }
+    }
 
-        overlay.addEventListener(
-            "click",
-            event => {
+    async function compartilharQRCode() {
+        const url =
+            `${window.location.origin}/perfil-musico.html?id=${encodeURIComponent(
+                perfilAtual?.id || ""
+            )}`;
 
+        if (
+            navigator.share
+        ) {
+            try {
+                await navigator.share({
+                    title:
+                        `Perfil de ${dadosPerfil?.nome || "Músico"}`,
+                    text:
+                        "Confira meu perfil no MusicalWorld.",
+                    url
+                });
+
+                return;
+
+            } catch (erro) {
                 if (
-                    event.target ===
-                    overlay
+                    erro?.name ===
+                    "AbortError"
                 ) {
-
-                    fecharQrCode();
-
+                    return;
                 }
-
             }
-        );
-
-    }
-
-
-    const whatsapp =
-        document.getElementById(
-            "btnWhatsApp"
-        );
-
-
-    if (whatsapp) {
-
-        whatsapp.addEventListener(
-            "click",
-            compartilharWhatsApp
-        );
-
-    }
-
-
-    const sacar =
-        document.getElementById(
-            "btnSacar"
-        );
-
-
-    if (sacar) {
-
-        sacar.addEventListener(
-            "click",
-            solicitarSaque
-        );
-
-    }
-
-
-    document.addEventListener(
-        "keydown",
-        event => {
-
-            if (
-                event.key === "Escape"
-            ) {
-
-                fecharQrCode();
-
-            }
-
         }
-    );
 
-}
+        try {
+            await navigator.clipboard.writeText(
+                url
+            );
 
+            mostrarToast(
+                "Link do perfil copiado."
+            );
 
-/*
- * =========================================================
- * VOLTAR
- * =========================================================
- */
-
-function voltarPagina() {
-
-    if (
-        window.history.length > 1
-    ) {
-
-        window.history.back();
-
-    } else {
-
-        window.location.href =
-            "index.html";
-
+        } catch (erro) {
+            mostrarToast(
+                "Não foi possível copiar o link.",
+                "erro"
+            );
+        }
     }
 
-}
+    /*
+    |--------------------------------------------------------------------------
+    | SAQUE
+    |--------------------------------------------------------------------------
+    */
 
+    function solicitarSaque() {
+        const disponivel =
+            Number(
+                carteiraAtual?.saldo_disponivel ||
+                0
+            );
 
-/*
- * =========================================================
- * QR CODE
- * =========================================================
- */
+        if (disponivel <= 0) {
+            mostrarToast(
+                "Você não possui saldo disponível para saque."
+            );
 
-function obterIdMusico() {
-
-    return (
-        perfilAtual?.id ||
-        dadosPerfil?.perfil?.id ||
-        ""
-    );
-
-}
-
-
-function obterUrlPublicaPerfil() {
-
-    const id =
-        obterIdMusico();
-
-
-    if (!id) {
-
-        return "";
-
-    }
-
-
-    const diretorio =
-        window.location.pathname
-            .split("/")
-            .slice(
-                0,
-                -1
-            )
-            .join("/");
-
-
-    return (
-        `${window.location.origin}` +
-        `${diretorio}` +
-        `/perfil-musico.html?id=${encodeURIComponent(id)}`
-    );
-
-}
-
-
-function abrirQrCode() {
-
-    const modal =
-        document.getElementById(
-            "qrModal"
-        );
-
-
-    const qrImage =
-        document.getElementById(
-            "qrImage"
-        );
-
-
-    const profileLink =
-        document.getElementById(
-            "profileLink"
-        );
-
-
-    if (
-        !modal ||
-        !qrImage
-    ) {
-
-        return;
-
-    }
-
-
-    const url =
-        obterUrlPublicaPerfil();
-
-
-    if (!url) {
+            return;
+        }
 
         mostrarToast(
-            "Não foi possível gerar o link do perfil."
+            "O sistema de saque será disponibilizado nesta etapa."
         );
-
-
-        return;
-
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | HELPERS
+    |--------------------------------------------------------------------------
+    */
 
-    const qrUrl =
-        `https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=${encodeURIComponent(url)}`;
+    function normalizarArray(valor) {
+        if (Array.isArray(valor)) {
+            return valor
+                .map((item) =>
+                    String(item || "").trim()
+                )
+                .filter(Boolean);
+        }
 
+        if (
+            typeof valor === "string"
+        ) {
+            return valor
+                .split(",")
+                .map((item) =>
+                    item.trim()
+                )
+                .filter(Boolean);
+        }
 
-    qrImage.src =
-        qrUrl;
-
-
-    if (profileLink) {
-
-        profileLink.textContent =
-            url;
-
+        return [];
     }
 
+    function normalizarTelefone(telefone) {
+        if (!telefone) {
+            return "";
+        }
 
-    modal.classList.add(
-        "active"
-    );
+        let numero =
+            String(telefone)
+                .replace(/\D/g, "");
 
+        if (!numero) {
+            return "";
+        }
 
-    document.body.style.overflow =
-        "hidden";
+        /*
+        |--------------------------------------------------------------------------
+        | Brasil
+        |--------------------------------------------------------------------------
+        */
 
-}
+        if (
+            numero.length === 10 ||
+            numero.length === 11
+        ) {
+            numero =
+                "55" + numero;
+        }
 
-
-function fecharQrCode() {
-
-    const modal =
-        document.getElementById(
-            "qrModal"
-        );
-
-
-    if (!modal) {
-
-        return;
-
+        return numero;
     }
 
-
-    modal.classList.remove(
-        "active"
-    );
-
-
-    document.body.style.overflow =
-        "";
-
-}
-
-
-/*
- * =========================================================
- * WHATSAPP
- * =========================================================
- */
-
-function compartilharWhatsApp() {
-
-    const perfil =
-        dadosPerfil?.perfil ||
-        obterPerfilLocal();
-
-
-    const url =
-        obterUrlPublicaPerfil();
-
-
-    if (!url) {
-
-        mostrarToast(
-            "Não foi possível obter o link do perfil."
-        );
-
-
-        return;
-
-    }
-
-
-    const mensagem =
-        `Olá! Confira meu perfil de músico no MusicalWorld:\n\n` +
-        `${perfil.nome || "Músico"}\n` +
-        `${perfil.categoria || "Músico / Instrumentista"}\n\n` +
-        `${url}`;
-
-
-    const whatsappUrl =
-        `https://wa.me/?text=${encodeURIComponent(
-            mensagem
-        )}`;
-
-
-    window.open(
-        whatsappUrl,
-        "_blank",
-        "noopener,noreferrer"
-    );
-
-}
-
-
-/*
- * =========================================================
- * SAQUE
- * =========================================================
- */
-
-function solicitarSaque() {
-
-    const carteira =
-        obterCarteiraLocal();
-
-
-    if (
-        Number(
-            carteira.saldoDisponivel
-        ) <= 0
+    function definirTexto(
+        id,
+        texto
     ) {
+        const elemento =
+            document.getElementById(id);
 
-        mostrarToast(
-            "Você ainda não possui saldo disponível para saque."
-        );
-
-
-        return;
-
-    }
-
-
-    mostrarToast(
-        "A área de saques será conectada ao sistema financeiro."
-    );
-
-}
-
-
-/*
- * =========================================================
- * TOAST
- * =========================================================
- */
-
-function mostrarToast(mensagem) {
-
-    const toast =
-        document.getElementById(
-            "toast"
-        );
-
-
-    const texto =
-        document.getElementById(
-            "toastMessage"
-        );
-
-
-    if (
-        !toast ||
-        !texto
-    ) {
-
-        return;
-
-    }
-
-
-    texto.textContent =
-        mensagem;
-
-
-    toast.classList.add(
-        "active"
-    );
-
-
-    clearTimeout(
-        mostrarToast.timeout
-    );
-
-
-    mostrarToast.timeout =
-        setTimeout(
-            () => {
-
-                toast.classList.remove(
-                    "active"
-                );
-
-            },
-            3500
-        );
-
-}
-
-
-/*
- * =========================================================
- * UTILITÁRIOS
- * =========================================================
- */
-
-function definirTexto(id, texto) {
-
-    const elemento =
-        document.getElementById(id);
-
-
-    if (elemento) {
+        if (!elemento) {
+            return;
+        }
 
         elemento.textContent =
             texto ?? "";
-
     }
 
-}
+    function formatarMoeda(valor) {
+        return new Intl.NumberFormat(
+            "pt-BR",
+            {
+                style: "currency",
+                currency: "BRL"
+            }
+        ).format(
+            Number(valor || 0)
+        );
+    }
 
+    function formatarData(valor) {
+        const data =
+            valor instanceof Date
+                ? valor
+                : new Date(valor);
 
-function formatarMoeda(valor) {
-
-    return new Intl.NumberFormat(
-        "pt-BR",
-        {
-            style: "currency",
-            currency: "BRL"
+        if (
+            Number.isNaN(
+                data.getTime()
+            )
+        ) {
+            return "";
         }
-    ).format(
-        Number(valor) || 0
-    );
 
-}
-
-
-function gerarIniciais(nome) {
-
-    if (!nome) {
-
-        return "MW";
-
+        return data.toLocaleDateString(
+            "pt-BR",
+            {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric"
+            }
+        );
     }
 
+    function formatarDia(data) {
+        return data.toLocaleDateString(
+            "pt-BR",
+            {
+                day: "2-digit"
+            }
+        );
+    }
 
-    return String(nome)
-        .trim()
-        .split(/\s+/)
-        .filter(Boolean)
-        .slice(0, 2)
-        .map(
-            palavra =>
-                palavra
-                    .charAt(0)
-                    .toUpperCase()
-        )
-        .join("");
+    function formatarMes(data) {
+        return data
+            .toLocaleDateString(
+                "pt-BR",
+                {
+                    month: "short"
+                }
+            )
+            .replace(".", "");
+    }
 
-}
+    function formatarHorario(
+        inicio,
+        fim
+    ) {
+        const horarioInicio =
+            inicio.toLocaleTimeString(
+                "pt-BR",
+                {
+                    hour: "2-digit",
+                    minute: "2-digit"
+                }
+            );
 
+        if (!fim) {
+            return horarioInicio;
+        }
 
-function escaparHtml(valor) {
+        const horarioFim =
+            fim.toLocaleTimeString(
+                "pt-BR",
+                {
+                    hour: "2-digit",
+                    minute: "2-digit"
+                }
+            );
 
-    return String(
-        valor ?? ""
-    )
-        .replace(
-            /&/g,
-            "&amp;"
-        )
-        .replace(
-            /</g,
-            "&lt;"
-        )
-        .replace(
-            />/g,
-            "&gt;"
-        )
-        .replace(
-            /"/g,
-            "&quot;"
-        )
-        .replace(
-            /'/g,
-            "&#039;"
+        return `${horarioInicio} - ${horarioFim}`;
+    }
+
+    function gerarIniciais(nome) {
+        const partes =
+            String(nome || "")
+                .trim()
+                .split(/\s+/)
+                .filter(Boolean);
+
+        if (!partes.length) {
+            return "MW";
+        }
+
+        if (partes.length === 1) {
+            return partes[0]
+                .substring(0, 2)
+                .toUpperCase();
+        }
+
+        return (
+            partes[0][0] +
+            partes[partes.length - 1][0]
+        ).toUpperCase();
+    }
+
+    function escaparHtml(valor) {
+        return String(valor ?? "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+    function escaparAtributo(valor) {
+        return escaparHtml(valor);
+    }
+
+    function atualizarIcones() {
+        if (
+            typeof lucide !== "undefined" &&
+            typeof lucide.createIcons === "function"
+        ) {
+            lucide.createIcons();
+        }
+    }
+
+    function mostrarToast(
+        mensagem,
+        tipo = "sucesso"
+    ) {
+        const toast =
+            document.getElementById(
+                "toast"
+            );
+
+        if (!toast) {
+            return;
+        }
+
+        toast.textContent =
+            mensagem;
+
+        toast.className =
+            "toast";
+
+        if (tipo === "erro") {
+            toast.classList.add(
+                "erro"
+            );
+        }
+
+        requestAnimationFrame(() => {
+            toast.classList.add(
+                "show"
+            );
+        });
+
+        clearTimeout(
+            mostrarToast.timer
         );
 
-}
-
-
-function atualizarIcones() {
-
-    if (
-        window.lucide &&
-        typeof lucide.createIcons ===
-            "function"
-    ) {
-
-        lucide.createIcons();
-
+        mostrarToast.timer =
+            setTimeout(() => {
+                toast.classList.remove(
+                    "show"
+                );
+            }, 3500);
     }
 
-}
+    function redirecionarLogin() {
+        window.location.href =
+            "login.html";
+    }
 
+    /*
+    |--------------------------------------------------------------------------
+    | INICIALIZAÇÃO DO DOM
+    |--------------------------------------------------------------------------
+    */
 
-function redirecionarLogin() {
-
-    const paginaAtual =
-        window.location.pathname
-            .split("/")
-            .pop();
-
-
-    const query =
-        window.location.search ||
-        "";
-
-
-    sessionStorage.setItem(
-        "musicalworld_destino_login",
-        `${paginaAtual}${query}`
+    document.addEventListener(
+        "DOMContentLoaded",
+        inicializar
     );
 
+    /*
+    |--------------------------------------------------------------------------
+    | API PÚBLICA
+    |--------------------------------------------------------------------------
+    */
 
-    window.location.href =
-        "login.html";
-
-}
-
-
-/*
- * =========================================================
- * DOM
- * =========================================================
- */
-
-document.addEventListener(
-    "DOMContentLoaded",
-    inicializar
-);
-
-
-/*
- * =========================================================
- * API PÚBLICA
- * =========================================================
- */
-
-return {
-
-    obterPerfilLocal,
-
-    obterCarteiraLocal,
-
-    preencherPerfil,
-
-    preencherCarteira,
-
-    preencherInstrumentos,
-
-    preencherEstilos,
-
-    preencherServicos,
-
-    preencherPortfolio,
-
-    preencherVideos,
-
-    preencherAudios,
-
-    preencherAgenda,
-
-    preencherAvaliacoes,
-
-    abrirQrCode,
-
-    fecharQrCode,
-
-    verificarAcessoMusico,
-
-    carregarDoSupabase
-
-};
-
-
+    return {
+        inicializar,
+        carregarDoSupabase,
+        carregarCarteiraReal,
+        preencherPerfil
+    };
 })();
