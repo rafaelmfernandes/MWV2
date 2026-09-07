@@ -2119,6 +2119,26 @@ const MusicalWorldMeuPerfilMusico = (() => {
     |--------------------------------------------------------------------------
     */
 
+    const btnVisualizarPerfil = document.getElementById("btnVisualizarPerfil");
+
+    if (btnVisualizarPerfil) {
+        btnVisualizarPerfil.addEventListener("click", () => {
+            if (!perfilAtual || !perfilAtual.id) {
+                mostrarToast(
+                    "Não foi possível identificar seu perfil.",
+                    "erro"
+                );
+
+                return;
+            }
+
+            const idPerfil = encodeURIComponent(perfilAtual.id);
+
+            window.location.href =
+                `apresentar-perfil-musico.html?id=${idPerfil}`;
+        });
+    }
+
     function inicializarBotoes() {
         const btnVoltar =
             document.getElementById(

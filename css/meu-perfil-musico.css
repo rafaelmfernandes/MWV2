@@ -483,6 +483,7 @@ svg {
    ========================================================= */
 
 .edit-profile-button,
+.preview-profile-button,
 .whatsapp-button {
     width: 100%;
     min-height: 44px;
@@ -501,8 +502,14 @@ svg {
 
     transition:
         background 0.2s ease,
+        border-color 0.2s ease,
         transform 0.15s ease;
 }
+
+
+/* =========================================================
+   BOTÃO EDITAR
+   ========================================================= */
 
 .edit-profile-button {
     margin-top: 18px;
@@ -516,6 +523,34 @@ svg {
     background: #e4ebff;
 }
 
+
+/* =========================================================
+   BOTÃO VER COMO OS OUTROS VEEM
+   ========================================================= */
+
+.preview-profile-button {
+    margin-top: 9px;
+
+    background: #ffffff;
+
+    color: #526078;
+
+    border: 1px solid #e1e6ef;
+}
+
+.preview-profile-button:hover {
+    background: #f8faff;
+
+    border-color: #d5dce8;
+
+    color: #315edb;
+}
+
+
+/* =========================================================
+   BOTÃO WHATSAPP
+   ========================================================= */
+
 .whatsapp-button {
     margin-top: 9px;
 
@@ -528,12 +563,19 @@ svg {
     background: #e1faea;
 }
 
+
+/* =========================================================
+   EFEITO DOS BOTÕES
+   ========================================================= */
+
 .edit-profile-button:active,
+.preview-profile-button:active,
 .whatsapp-button:active {
     transform: scale(0.985);
 }
 
 .edit-profile-button svg,
+.preview-profile-button svg,
 .whatsapp-button svg {
     width: 17px;
     height: 17px;
@@ -1999,6 +2041,22 @@ svg {
         height: 13px;
     }
 
+
+    /* BOTÕES */
+
+    .edit-profile-button,
+    .preview-profile-button,
+    .whatsapp-button {
+        min-height: 43px;
+
+        font-size: 12px;
+    }
+
+    .preview-profile-button {
+        margin-top: 8px;
+    }
+
+
     .profile-tabs {
         margin-top: 12px;
 
@@ -2128,6 +2186,7 @@ svg {
     }
 
     .edit-profile-button,
+    .preview-profile-button,
     .whatsapp-button {
         min-height: 42px;
 
