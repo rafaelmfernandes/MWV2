@@ -860,37 +860,28 @@ console.log(
     '👤 Abrindo perfil do usuário...'
 );
 
-
 /*
  * Verifica se o sistema de sessão está disponível.
  */
 
 if (
-    typeof window.Sessao ===
-    'undefined'
+    typeof window.Sessao === 'undefined'
 ) {
 
     console.error(
         '❌ Sessao.js não está disponível.'
     );
 
-    window.location.href =
-        'login.html';
+    window.location.href = 'login.html';
 
     return;
 }
 
-
 /*
  * Verifica diretamente a sessão no Supabase.
- *
- * Não usamos protegerPagina() aqui porque
- * estamos apenas navegando para o perfil.
  */
 
-const sessao =
-    await Sessao.obter();
-
+const sessao = await Sessao.obter();
 
 if (!sessao) {
 
@@ -898,33 +889,27 @@ if (!sessao) {
         '🚪 Nenhuma sessão ativa. Redirecionando para login.'
     );
 
-
     sessionStorage.setItem(
         'musicalworld_destino_login',
         'index.html'
     );
 
-
-    window.location.href =
-        'login.html';
+    window.location.href = 'login.html';
 
     return;
 }
-
 
 console.log(
     '✅ Sessão encontrada:',
     sessao.user?.id
 );
 
-
 /*
- * Verifica se UsuarioAtual está disponível.
+ * Verifica UsuarioAtual.
  */
 
 if (
-    typeof window.UsuarioAtual ===
-    'undefined'
+    typeof window.UsuarioAtual === 'undefined'
 ) {
 
     console.error(
@@ -934,14 +919,11 @@ if (
     return;
 }
 
-
 /*
  * Carrega os dados completos do usuário.
  */
 
-const dados =
-    await UsuarioAtual.carregar();
-
+const dados = await UsuarioAtual.carregar();
 
 if (!dados) {
 
@@ -952,20 +934,17 @@ if (!dados) {
     return;
 }
 
-
 console.log(
     '👤 Dados do usuário carregados:',
     dados
 );
 
-
 /*
- * Verifica se o roteador está disponível.
+ * Verifica o roteador.
  */
 
 if (
-    typeof window.RoteamentoPerfil ===
-    'undefined'
+    typeof window.RoteamentoPerfil === 'undefined'
 ) {
 
     console.error(
@@ -975,44 +954,193 @@ if (
     return;
 }
 
-
 /*
- * Descobre o tipo de perfil.
+ * =====================================================
+ * DESCOBRIR TIPO PRINCIPAL
+ * =====================================================
  */
 
 const tipoPerfil =
-    RoteamentoPerfil.obterTipo(
-        dados
-    );
+    dados.tipoPerfil?.nome ||
+    dados.perfil?.tipo_perfil?.nome ||
+    dados.perfil?.tipos_perfil?.nome ||
+    '';
 
+/*
+ * =====================================================
+ * DESCOBRIR SUBTIPO DO ARTISTA
+ * =====================================================
+ *
+ * Para artista:
+ *
+ * artista + Cantor
+ * artista + Músico
+ *
+ * O subtipo vem de perfis_artistas.tipo_artista.
+ */
+
+let tipoArtista =
+    dados.tipoArtista ||
+    dados.perfilArtista?.tipo_artista ||
+    dados.perfil_artista?.tipo_artista ||
+    dados.perfis_artistas?.tipo_artista ||
+    dados.perfil?.tipo_artista ||
+    '';
+
+/*
+ * =====================================================
+ * SE FOR ARTISTA, BUSCAR DIRETAMENTE NO SUPABASE
+ * =====================================================
+ *
+ * Isso garante que o roteamento não dependa de
+ * UsuarioAtual.carregar() trazer o relacionamento.
+ */
+
+if (
+    String(tipoPerfil).trim().toLowerCase() === 'artista'
+) {
+
+    try {
+
+        const supabase =
+            window.supabaseClient ||
+            window._supabase ||
+            window.supabase;
+
+        if (!supabase) {
+
+            console.warn(
+                '⚠️ Cliente Supabase não encontrado.'
+            );
+
+        } else {
+
+            /*
+             * Descobre o perfil do usuário.
+             */
+
+            const usuarioId =
+                dados.usuario?.id ||
+                dados.id ||
+                sessao.user?.id;
+
+            if (usuarioId) {
+
+                const { data: perfil, error: erroPerfil } =
+                    await supabase
+                        .from('perfis')
+                        .select('id')
+                        .eq('usuario_id', usuarioId)
+                        .eq('ativo', true)
+                        .order('id', { ascending: false })
+                        .limit(1)
+                        .maybeSingle();
+
+                if (erroPerfil) {
+
+                    console.error(
+                        '❌ Erro ao buscar perfil:',
+                        erroPerfil
+                    );
+
+                } else if (perfil?.id) {
+
+                    console.log(
+                        '🆔 Perfil encontrado:',
+                        perfil.id
+                    );
+
+                    /*
+                     * Busca o subtipo do artista.
+                     */
+
+                    const { data: perfilArtista, error: erroArtista } =
+                        await supabase
+                            .from('perfis_artistas')
+                            .select('tipo_artista')
+                            .eq('perfil_id', perfil.id)
+                            .maybeSingle();
+
+                    if (erroArtista) {
+
+                        console.error(
+                            '❌ Erro ao buscar tipo do artista:',
+                            erroArtista
+                        );
+
+                    } else if (perfilArtista) {
+
+                        tipoArtista =
+                            perfilArtista.tipo_artista ||
+                            '';
+
+                        console.log(
+                            '🎤 Tipo de artista encontrado:',
+                            tipoArtista
+                        );
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    } catch (erro) {
+
+        console.error(
+            '❌ Erro ao consultar subtipo do perfil:',
+            erro
+        );
+
+    }
+
+}
+
+/*
+ * =====================================================
+ * RESULTADO FINAL
+ * =====================================================
+ */
 
 console.log(
     '🎯 Tipo de perfil:',
     tipoPerfil
 );
 
+console.log(
+    '🎤 Tipo de artista:',
+    tipoArtista
+);
 
 /*
- * Abre a página correspondente.
+ * =====================================================
+ * ABRIR PÁGINA CORRETA
+ * =====================================================
  */
 
 const abriu =
     RoteamentoPerfil.abrir(
-        tipoPerfil
+        tipoPerfil,
+        tipoArtista
     );
-
 
 if (!abriu) {
 
     console.warn(
         '⚠️ Não existe uma página cadastrada para este tipo de perfil:',
-        tipoPerfil
+        {
+            tipoPerfil,
+            tipoArtista
+        }
     );
 
 }
 
 
 }
+
 
 
 };

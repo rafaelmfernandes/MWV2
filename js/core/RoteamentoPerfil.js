@@ -1,7 +1,7 @@
 /* =========================================================
 ROTEAMENTO DE PERFIS — MUSICALWORLD
 Responsável por definir qual página pertence a cada
-tipo de perfil do usuário.
+tipo e subtipo de perfil do usuário.
 ========================================================= */
 
 const RoteamentoPerfil = {
@@ -13,8 +13,11 @@ const RoteamentoPerfil = {
 
 paginas: {
 
-    artista:
-        'meu-perfil-musico.html',
+    artista: {
+        cantor: 'meu-perfil-cantor.html',
+        músico: 'meu-perfil-musico.html',
+        musico: 'meu-perfil-musico.html'
+    },
 
     contratante:
         'meu-perfil-contratante.html',
@@ -27,31 +30,73 @@ paginas: {
 
     empresa_agencia:
         'meu-perfil-empresa.html'
-
 },
 
 
 /* =====================================================
-   OBTER PÁGINA PELO TIPO DE PERFIL
+   NORMALIZAR TEXTO
    ===================================================== */
 
-obterPagina(tipoPerfil) {
+normalizar(valor) {
 
-    if (!tipoPerfil) {
+    if (!valor) {
+        return '';
+    }
+
+    return String(valor)
+        .trim()
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '');
+},
+
+
+/* =====================================================
+   OBTER PÁGINA PELO TIPO E SUBTIPO
+   ===================================================== */
+
+obterPagina(tipoPerfil, tipoArtista) {
+
+    const tipo =
+        this.normalizar(tipoPerfil);
+
+    const artista =
+        this.normalizar(tipoArtista);
+
+
+    /* =============================================
+       ARTISTA
+       ============================================= */
+
+    if (tipo === 'artista') {
+
+        if (artista === 'cantor') {
+
+            return this.paginas.artista.cantor;
+        }
+
+
+        if (
+            artista === 'musico' ||
+            artista === 'músico'
+        ) {
+
+            return this.paginas.artista.musico;
+        }
+
 
         console.warn(
-            '⚠️ Tipo de perfil não informado.'
+            '⚠️ Tipo de artista não reconhecido:',
+            tipoArtista
         );
 
         return null;
     }
 
 
-    const tipo =
-        String(tipoPerfil)
-            .trim()
-            .toLowerCase();
-
+    /* =============================================
+       OUTROS TIPOS DE PERFIL
+       ============================================= */
 
     const pagina =
         this.paginas[tipo];
@@ -60,8 +105,8 @@ obterPagina(tipoPerfil) {
     if (!pagina) {
 
         console.warn(
-            '⚠️ Nenhuma página cadastrada para o tipo de perfil:',
-            tipo
+            '⚠️ Nenhuma página cadastrada para o tipo:',
+            tipoPerfil
         );
 
         return null;
@@ -73,13 +118,15 @@ obterPagina(tipoPerfil) {
 
 
 /* =====================================================
-   VERIFICAR SE O TIPO DE PERFIL EXISTE
+   VERIFICAR SE O TIPO EXISTE
    ===================================================== */
 
-existe(tipoPerfil) {
+existe(tipoPerfil, tipoArtista) {
 
-    return !!this.obterPagina(tipoPerfil);
-
+    return !!this.obterPagina(
+        tipoPerfil,
+        tipoArtista
+    );
 },
 
 
@@ -87,17 +134,23 @@ existe(tipoPerfil) {
    ABRIR PERFIL
    ===================================================== */
 
-abrir(tipoPerfil) {
+abrir(tipoPerfil, tipoArtista) {
 
     const pagina =
-        this.obterPagina(tipoPerfil);
+        this.obterPagina(
+            tipoPerfil,
+            tipoArtista
+        );
 
 
     if (!pagina) {
 
         console.warn(
             '⚠️ Não foi possível abrir o perfil:',
-            tipoPerfil
+            {
+                tipoPerfil,
+                tipoArtista
+            }
         );
 
         return false;
@@ -106,7 +159,8 @@ abrir(tipoPerfil) {
 
     console.log(
         '👤 Abrindo perfil:',
-        tipoPerfil
+        tipoPerfil,
+        tipoArtista
     );
 
 
@@ -131,15 +185,31 @@ abrir(tipoPerfil) {
 obterTipo(dados) {
 
     if (!dados) {
-        return '';
+        return {
+            tipoPerfil: '',
+            tipoArtista: ''
+        };
     }
 
 
-    return (
+    const tipoPerfil =
         dados.tipoPerfil?.nome ||
         dados.perfil?.tipo_perfil?.nome ||
-        ''
-    );
+        '';
+
+
+    const tipoArtista =
+        dados.tipoArtista ||
+        dados.perfilArtista?.tipo_artista ||
+        dados.perfil_artista?.tipo_artista ||
+        dados.perfil?.tipo_artista ||
+        '';
+
+
+    return {
+        tipoPerfil,
+        tipoArtista
+    };
 },
 
 
@@ -149,11 +219,11 @@ obterTipo(dados) {
 
 abrirDadosUsuario(dados) {
 
-    const tipoPerfil =
+    const tipos =
         this.obterTipo(dados);
 
 
-    if (!tipoPerfil) {
+    if (!tipos.tipoPerfil) {
 
         console.warn(
             '⚠️ Não foi possível identificar o tipo de perfil do usuário.'
@@ -163,7 +233,10 @@ abrirDadosUsuario(dados) {
     }
 
 
-    return this.abrir(tipoPerfil);
+    return this.abrir(
+        tipos.tipoPerfil,
+        tipos.tipoArtista
+    );
 }
 
 
