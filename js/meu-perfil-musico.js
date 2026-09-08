@@ -10,6 +10,7 @@ const MusicalWorldMeuPerfilMusico = (() => {
             tiposPerfil: "tipos_perfil",
             perfisArtistas: "perfis_artistas",
             portfolio: "portfolio_musicos",
+            agenda: "agenda_musicos",
             carteiras: "carteiras_musicos",
             transacoes: "transacoes_carteira"
         },
@@ -24,6 +25,13 @@ const MusicalWorldMeuPerfilMusico = (() => {
     let perfilArtistaAtual = null;
     let carteiraAtual = null;
     let dadosPerfil = null;
+
+    let agendaMesAtual =
+        new Date(
+            new Date().getFullYear(),
+            new Date().getMonth(),
+            1
+        );
 
     /*
     |--------------------------------------------------------------------------
@@ -463,6 +471,62 @@ const MusicalWorldMeuPerfilMusico = (() => {
 
         /*
         |--------------------------------------------------------------------------
+        | AGENDA REAL
+        |--------------------------------------------------------------------------
+        */
+
+        let agenda = [];
+
+        try {
+            const respostaAgenda =
+                await cliente
+                    .from(
+                        CONFIG.tabelas.agenda
+                    )
+                    .select("*")
+                    .eq(
+                        "perfil_id",
+                        perfilAtual.id
+                    )
+                    .in(
+                        "status",
+                        [
+                            "agendado",
+                            "confirmado"
+                        ]
+                    )
+                    .order(
+                        "data_inicio",
+                        {
+                            ascending: true
+                        }
+                    );
+
+            if (
+                respostaAgenda.error
+            ) {
+                throw respostaAgenda.error;
+            }
+
+            agenda =
+                respostaAgenda.data || [];
+
+            console.log(
+                "Agenda carregada:",
+                agenda
+            );
+
+        } catch (erro) {
+            console.error(
+                "Erro ao carregar agenda:",
+                erro
+            );
+
+            agenda = [];
+        }
+
+        /*
+        |--------------------------------------------------------------------------
         | SEPARAÇÃO DO PORTFÓLIO
         |--------------------------------------------------------------------------
         */
@@ -580,7 +644,8 @@ const MusicalWorldMeuPerfilMusico = (() => {
             audios:
                 audios,
 
-            agenda: [],
+            agenda:
+                agenda,
 
             avaliacoes: []
         };
@@ -1384,135 +1449,562 @@ const MusicalWorldMeuPerfilMusico = (() => {
             return;
         }
 
-        container.innerHTML = "";
-
         if (
-            !agenda ||
-            !agenda.length
+            !container.querySelector(
+                ".agenda-calendar"
+            )
         ) {
             container.innerHTML = `
-                <div class="empty-state">
-                    <i data-lucide="calendar-days"></i>
+                <div class="agenda-calendar">
 
-                    <h3>
-                        Nenhum compromisso na agenda
-                    </h3>
+                    <div class="agenda-calendar-header">
 
-                    <p>
-                        Os eventos e apresentações
-                        aparecerão aqui.
-                    </p>
+                        <button
+                            type="button"
+                            class="agenda-month-button"
+                            id="btnAgendaMesAnterior"
+                            aria-label="Mês anterior"
+                        >
+                            <i data-lucide="chevron-left"></i>
+                        </button>
+
+                        <strong
+                            class="agenda-month-title"
+                            id="agendaMesTitulo"
+                        ></strong>
+
+                        <button
+                            type="button"
+                            class="agenda-month-button"
+                            id="btnAgendaMesProximo"
+                            aria-label="Próximo mês"
+                        >
+                            <i data-lucide="chevron-right"></i>
+                        </button>
+
+                    </div>
+
+                    <div class="agenda-weekdays">
+                        <span>SEG</span>
+                        <span>TER</span>
+                        <span>QUA</span>
+                        <span>QUI</span>
+                        <span>SEX</span>
+                        <span>SÁB</span>
+                        <span>DOM</span>
+                    </div>
+
+                    <div
+                        class="agenda-calendar-grid"
+                        id="agendaCalendarGrid"
+                    ></div>
+
+                    <div class="agenda-legend">
+
+                        <span class="agenda-legend-item">
+                            <span class="agenda-legend-dot disponivel"></span>
+                            <span>Disponível</span>
+                        </span>
+
+                        <span class="agenda-legend-item">
+                            <span class="agenda-legend-dot agendado"></span>
+                            <span>Agendado</span>
+                        </span>
+
+                        <span class="agenda-legend-item">
+                            <span class="agenda-legend-dot indisponivel"></span>
+                            <span>Indisponível</span>
+                        </span>
+
+                    </div>
+
                 </div>
             `;
 
-            atualizarIcones();
+            inicializarControlesAgenda();
+        }
 
+        renderizarCalendarioAgenda(
+            Array.isArray(agenda)
+                ? agenda
+                : []
+        );
+    }
+
+    function inicializarControlesAgenda() {
+        const anterior =
+            document.getElementById(
+                "btnAgendaMesAnterior"
+            );
+
+        const proximo =
+            document.getElementById(
+                "btnAgendaMesProximo"
+            );
+
+        if (
+            anterior &&
+            !anterior.dataset.agendaInicializado
+        ) {
+            anterior.dataset.agendaInicializado =
+                "true";
+
+            anterior.addEventListener(
+                "click",
+                () => {
+                    agendaMesAtual =
+                        new Date(
+                            agendaMesAtual.getFullYear(),
+                            agendaMesAtual.getMonth() - 1,
+                            1
+                        );
+
+                    renderizarCalendarioAgenda(
+                        dadosPerfil?.agenda || []
+                    );
+                }
+            );
+        }
+
+        if (
+            proximo &&
+            !proximo.dataset.agendaInicializado
+        ) {
+            proximo.dataset.agendaInicializado =
+                "true";
+
+            proximo.addEventListener(
+                "click",
+                () => {
+                    agendaMesAtual =
+                        new Date(
+                            agendaMesAtual.getFullYear(),
+                            agendaMesAtual.getMonth() + 1,
+                            1
+                        );
+
+                    renderizarCalendarioAgenda(
+                        dadosPerfil?.agenda || []
+                    );
+                }
+            );
+        }
+    }
+
+    function renderizarCalendarioAgenda(
+        agenda
+    ) {
+        const titulo =
+            document.getElementById(
+                "agendaMesTitulo"
+            );
+
+        const grid =
+            document.getElementById(
+                "agendaCalendarGrid"
+            );
+
+        if (
+            !titulo ||
+            !grid
+        ) {
             return;
         }
 
-        agenda.forEach(
-            (evento) => {
-                const dataInicio =
-                    evento.data_inicio
-                        ? new Date(
-                            evento.data_inicio
-                        )
-                        : null;
+        const ano =
+            agendaMesAtual.getFullYear();
 
-                const dataFim =
-                    evento.data_fim
-                        ? new Date(
-                            evento.data_fim
-                        )
-                        : null;
+        const mes =
+            agendaMesAtual.getMonth();
 
-                const card =
+        titulo.textContent =
+            agendaMesAtual.toLocaleDateString(
+                "pt-BR",
+                {
+                    month: "long",
+                    year: "numeric"
+                }
+            );
+
+        const primeiroDia =
+            new Date(
+                ano,
+                mes,
+                1
+            );
+
+        const ultimoDia =
+            new Date(
+                ano,
+                mes + 1,
+                0
+            );
+
+        let diaSemana =
+            primeiroDia.getDay();
+
+        /*
+        Domingo = 0
+        Segunda = 1
+
+        O calendário começa na segunda-feira.
+        */
+
+        diaSemana =
+            diaSemana === 0
+                ? 6
+                : diaSemana - 1;
+
+        const quantidadeDias =
+            ultimoDia.getDate();
+
+        grid.innerHTML = "";
+
+        /*
+        |--------------------------------------------------------------------------
+        | ESPAÇOS ANTES DO PRIMEIRO DIA
+        |--------------------------------------------------------------------------
+        */
+
+        for (
+            let i = 0;
+            i < diaSemana;
+            i++
+        ) {
+            const vazio =
+                document.createElement(
+                    "div"
+                );
+
+            vazio.className =
+                "agenda-day outro-mes";
+
+            grid.appendChild(
+                vazio
+            );
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | DIAS DO MÊS
+        |--------------------------------------------------------------------------
+        */
+
+        for (
+            let dia = 1;
+            dia <= quantidadeDias;
+            dia++
+        ) {
+            const data =
+                new Date(
+                    ano,
+                    mes,
+                    dia
+                );
+
+            const estadoDia =
+                obterEstadoDiaAgenda(
+                    data,
+                    agenda
+                );
+
+            const elemento =
+                document.createElement(
+                    "div"
+                );
+
+            elemento.className =
+                `agenda-day ${estadoDia.classe}`;
+
+            const numero =
+                document.createElement(
+                    "span"
+                );
+
+            numero.className =
+                "agenda-day-number";
+
+            numero.textContent =
+                String(dia);
+
+            elemento.appendChild(
+                numero
+            );
+
+            if (
+                estadoDia.mostrarStatus
+            ) {
+                const indicador =
                     document.createElement(
-                        "div"
+                        "span"
                     );
 
-                card.className =
-                    "agenda-card";
+                indicador.className =
+                    "agenda-day-status";
 
-                card.innerHTML = `
-                    <div class="agenda-date">
-                        <strong>
-                            ${
-                                dataInicio
-                                    ? formatarDia(
-                                        dataInicio
-                                    )
-                                    : "--"
-                            }
-                        </strong>
+                elemento.appendChild(
+                    indicador
+                );
+            }
 
-                        <span>
-                            ${
-                                dataInicio
-                                    ? formatarMes(
-                                        dataInicio
-                                    )
-                                    : ""
-                            }
-                        </span>
-                    </div>
+            if (
+                estadoDia.hoje
+            ) {
+                elemento.classList.add(
+                    "hoje"
+                );
+            }
 
-                    <div class="agenda-info">
-                        <h3>
-                            ${escaparHtml(
-                                evento.titulo ||
-                                "Evento"
-                            )}
-                        </h3>
+            elemento.title =
+                estadoDia.label;
 
-                        ${
-                            evento.descricao
-                                ? `
-                                    <p>
-                                        ${escaparHtml(
-                                            evento.descricao
-                                        )}
-                                    </p>
-                                `
-                                : ""
-                        }
+            grid.appendChild(
+                elemento
+            );
+        }
 
-                        ${
-                            evento.localizacao
-                                ? `
-                                    <span>
-                                        <i data-lucide="map-pin"></i>
-                                        ${escaparHtml(
-                                            evento.localizacao
-                                        )}
-                                    </span>
-                                `
-                                : ""
-                        }
+        /*
+        |--------------------------------------------------------------------------
+        | COMPLETAR ÚLTIMA SEMANA
+        |--------------------------------------------------------------------------
+        */
 
-                        ${
-                            dataInicio
-                                ? `
-                                    <span>
-                                        <i data-lucide="clock-3"></i>
-                                        ${formatarHorario(
-                                            dataInicio,
-                                            dataFim
-                                        )}
-                                    </span>
-                                `
-                                : ""
-                        }
-                    </div>
-                `;
+        const totalCelulas =
+            diaSemana +
+            quantidadeDias;
 
-                container.appendChild(
-                    card
+        const faltantes =
+            (
+                7 -
+                (
+                    totalCelulas % 7
+                )
+            ) % 7;
+
+        for (
+            let i = 0;
+            i < faltantes;
+            i++
+        ) {
+            const vazio =
+                document.createElement(
+                    "div"
+                );
+
+            vazio.className =
+                "agenda-day outro-mes";
+
+            grid.appendChild(
+                vazio
+            );
+        }
+
+        atualizarIcones();
+    }
+
+    function obterEstadoDiaAgenda(
+        data,
+        agenda
+    ) {
+        const hoje =
+            normalizarData(
+                new Date()
+            );
+
+        const dataNormalizada =
+            normalizarData(
+                data
+            );
+
+        /*
+        |--------------------------------------------------------------------------
+        | DATA PASSADA
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            dataNormalizada < hoje
+        ) {
+            return {
+                classe: "passado",
+                label: "Data passada",
+                mostrarStatus: false,
+                hoje: false
+            };
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | VERIFICAR COMPROMISSO
+        |--------------------------------------------------------------------------
+        */
+
+        const agendado =
+            existeCompromissoNoDia(
+                dataNormalizada,
+                agenda
+            );
+
+        if (agendado) {
+            return {
+                classe: "agendado",
+                label: "Agendado",
+                mostrarStatus: true,
+                hoje:
+                    datasIguais(
+                        dataNormalizada,
+                        hoje
+                    )
+            };
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | INDISPONÍVEL
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            dadosPerfil?.disponibilidade ===
+            false
+        ) {
+            return {
+                classe: "indisponivel",
+                label: "Indisponível",
+                mostrarStatus: true,
+                hoje:
+                    datasIguais(
+                        dataNormalizada,
+                        hoje
+                    )
+            };
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | DISPONÍVEL
+        |--------------------------------------------------------------------------
+        */
+
+        return {
+            classe: "disponivel",
+            label: "Disponível",
+            mostrarStatus: true,
+            hoje:
+                datasIguais(
+                    dataNormalizada,
+                    hoje
+                )
+        };
+    }
+
+    function existeCompromissoNoDia(
+        data,
+        agenda
+    ) {
+        if (
+            !Array.isArray(agenda) ||
+            !agenda.length
+        ) {
+            return false;
+        }
+
+        return agenda.some(
+            (evento) => {
+                if (
+                    !evento?.data_inicio
+                ) {
+                    return false;
+                }
+
+                const inicio =
+                    normalizarData(
+                        converterDataEvento(
+                            evento.data_inicio
+                        )
+                    );
+
+                const fim =
+                    evento.data_fim
+                        ? normalizarData(
+                            converterDataEvento(
+                                evento.data_fim
+                            )
+                        )
+                        : inicio;
+
+                if (
+                    Number.isNaN(
+                        inicio.getTime()
+                    )
+                ) {
+                    return false;
+                }
+
+                if (
+                    Number.isNaN(
+                        fim.getTime()
+                    )
+                ) {
+                    return datasIguais(
+                        data,
+                        inicio
+                    );
+                }
+
+                return (
+                    data >= inicio &&
+                    data <= fim
                 );
             }
         );
+    }
 
-        atualizarIcones();
+    function converterDataEvento(
+        valor
+    ) {
+        const data =
+            new Date(
+                valor
+            );
+
+        if (
+            Number.isNaN(
+                data.getTime()
+            )
+        ) {
+            return new Date(
+                "invalid"
+            );
+        }
+
+        return data;
+    }
+
+    function normalizarData(
+        data
+    ) {
+        return new Date(
+            data.getFullYear(),
+            data.getMonth(),
+            data.getDate()
+        );
+    }
+
+    function datasIguais(
+        primeira,
+        segunda
+    ) {
+        return (
+            primeira.getFullYear() ===
+                segunda.getFullYear() &&
+
+            primeira.getMonth() ===
+                segunda.getMonth() &&
+
+            primeira.getDate() ===
+                segunda.getDate()
+        );
     }
 
     /*
