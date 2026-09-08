@@ -2488,7 +2488,10 @@ const MusicalWorldMeuPerfilMusico = (() => {
 
     async function compartilharQRCode() {
         const url =
-        `${window.location.origin}/apresentar-perfil-musico.html?id=${encodeURIComponent(
+        `${window.location.origin}${window.location.pathname.substring(
+            0,
+            window.location.pathname.lastIndexOf("/")
+        )}/apresentar-perfil-musico.html?id=${encodeURIComponent(
             perfilAtual?.id || ""
         )}`;
 
