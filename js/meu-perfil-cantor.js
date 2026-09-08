@@ -1,1602 +1,1956 @@
-const MusicalWorldMeuPerfilCantor = (() => {
+(function () {
+    "use strict";
 
-    const CONFIG = {
-        usarSupabase: true,
+    const MusicalWorldMeuPerfilCantor = {
 
-        tabelas: {
-            usuarios: "usuarios",
-            perfis: "perfis",
-            tiposPerfil: "tipos_perfil",
-            perfisArtistas: "perfis_artistas",
-            portfolio: "portfolio_musicos",
-            agenda: "agenda_musicos",
-            avaliacoes: "avaliacoes_musicos",
-            carteiras: "carteiras_musicos",
-            transacoes: "transacoes_carteira"
+        CONFIG: {
+            tabelas: {
+                usuarios: "usuarios",
+                perfis: "perfis",
+                tiposPerfil: "tipos_perfil",
+                perfisArtistas: "perfis_artistas",
+                portfolio: "portfolio_musicos",
+                agenda: "agenda_musicos",
+                avaliacoes: "avaliacoes_musicos",
+                carteira: "carteiras_musicos",
+                transacoes: "transacoes_carteira"
+            },
+
+            storage: {
+                perfil: "musicalworld_perfil_cantor",
+                carteira: "musicalworld_carteira_cantor"
+            },
+
+            tipoPerfilEsperado: "artista",
+            tipoArtistaEsperado: "Cantor"
         },
 
-        storageKey: "musicalworld_perfil_cantor",
-        carteiraStorageKey: "musicalworld_carteira_cantor",
-
-        // Cantor continua sendo tratado como ARTISTA no modelo atual
-        tipoPerfilEsperado: "artista"
-    };
-
-
-    let usuarioAtual = null;
-    let perfilAtual = null;
-    let perfilArtistaAtual = null;
-    let carteiraAtual = null;
-
-    let dadosPerfil = {
-        id: null,
-        nome: "Cantor",
-        descricao: "",
-        categoria: "Cantor",
-        localizacao: "Localização não informada",
-        experiencia: "",
-        area: "",
-        disponibilidade: true,
-        generos: [],
-        servicos: [],
-        foto: "",
-        telefone: "",
-        email: "",
-        avaliacao: {
-            media: 0,
-            total: 0
+        estado: {
+            usuarioId: null,
+            perfil: null,
+            perfilArtista: null,
+            portfolio: [],
+            agenda: [],
+            avaliacoes: [],
+            carteira: null,
+            transacoes: [],
+            mesAtual: new Date(),
+            perfilId: null
         },
-        portfolio: [],
-        videos: [],
-        audios: [],
-        agenda: [],
-        avaliacoes: []
-    };
 
 
-    let agendaMesAtual = new Date(
-        new Date().getFullYear(),
-        new Date().getMonth(),
-        1
-    );
+        /* =====================================================
+           INICIALIZAÇÃO
+           ===================================================== */
+
+        async inicializar() {
+
+            try {
+
+                this.configurarEventos();
+
+                this.renderizarIcones();
+
+                const usuarioId = await this.obterUsuarioId();
+
+                if (!usuarioId) {
+                    this.mostrarToast("Faça login para acessar seu perfil.");
+                    this.redirecionarLogin();
+                    return;
+                }
+
+                this.estado.usuarioId = usuarioId;
+
+                const acesso = await this.verificarPerfilCantor(usuarioId);
+
+                if (!acesso) {
+                    this.mostrarToast("Perfil de cantor não encontrado.");
+                    return;
+                }
+
+                await this.carregarDoSupabase();
+
+                await this.carregarCarteiraReal();
+
+                this.preencherPerfil();
+
+                this.inicializarAbas();
+
+                this.renderizarIcones();
+
+            } catch (erro) {
+
+                console.error(
+                    "Erro ao inicializar perfil de cantor:",
+                    erro
+                );
+
+                this.mostrarToast(
+                    "Não foi possível carregar seu perfil."
+                );
+            }
+        },
 
 
-    /* =========================================================
-       SUPABASE
-    ========================================================= */
+        /* =====================================================
+           SUPABASE
+           ===================================================== */
 
-    function obterSupabase() {
+        obterClienteSupabase() {
 
-        if (typeof supabaseClient !== "undefined" && supabaseClient) {
-            return supabaseClient;
-        }
+            if (window.supabaseClient) {
+                return window.supabaseClient;
+            }
 
-        if (window.supabaseClient) {
-            return window.supabaseClient;
-        }
+            if (window._supabase) {
+                return window._supabase;
+            }
 
-        if (window._supabase) {
-            return window._supabase;
-        }
+            if (window.supabase) {
+                return window.supabase;
+            }
 
-        if (window.supabase) {
-            return window.supabase;
-        }
+            console.error(
+                "Cliente Supabase não encontrado."
+            );
 
-        return null;
-    }
+            return null;
+        },
 
 
-    async function obterUsuarioAutenticado() {
+        async obterUsuarioId() {
 
-        try {
+            try {
 
-            if (
-                window.UsuarioAtual &&
-                typeof window.UsuarioAtual.obterId === "function"
-            ) {
+                if (
+                    window.UsuarioAtual &&
+                    typeof window.UsuarioAtual.obterId === "function"
+                ) {
 
-                const usuarioId = await window.UsuarioAtual.obterId();
+                    const id = await window.UsuarioAtual.obterId();
 
-                if (usuarioId) {
-
-                    const client = obterSupabase();
-
-                    if (!client) {
-                        return null;
-                    }
-
-                    const { data, error } = await client
-                        .from(CONFIG.tabelas.usuarios)
-                        .select("*")
-                        .eq("id", usuarioId)
-                        .maybeSingle();
-
-                    if (!error && data) {
-                        return data;
+                    if (id) {
+                        return id;
                     }
                 }
-            }
 
+                const supabase = this.obterClienteSupabase();
 
-            const client = obterSupabase();
+                if (!supabase) {
+                    return null;
+                }
 
-            if (!client) {
-                return null;
-            }
-
-            const {
-                data: authData,
-                error: authError
-            } = await client.auth.getUser();
-
-
-            if (authError || !authData?.user) {
-                return null;
-            }
-
-
-            const {
-                data,
-                error
-            } = await client
-                .from(CONFIG.tabelas.usuarios)
-                .select("*")
-                .eq("id", authData.user.id)
-                .maybeSingle();
-
-
-            if (error) {
-                console.error(
-                    "Erro ao buscar usuário:",
+                const {
+                    data,
                     error
+                } = await supabase.auth.getUser();
+
+                if (error) {
+                    console.error(
+                        "Erro ao obter usuário autenticado:",
+                        error
+                    );
+
+                    return null;
+                }
+
+                return data?.user?.id || null;
+
+            } catch (erro) {
+
+                console.error(
+                    "Erro ao obter usuário:",
+                    erro
                 );
 
                 return null;
             }
+        },
 
-            return data || null;
 
-        } catch (error) {
+        /* =====================================================
+           VERIFICAR PERFIL DO CANTOR
+           ===================================================== */
 
-            console.error(
-                "Erro ao obter usuário autenticado:",
-                error
+        async verificarPerfilCantor(usuarioId) {
+
+            const supabase = this.obterClienteSupabase();
+
+            if (!supabase) {
+                return false;
+            }
+
+            try {
+
+                const {
+                    data: perfis,
+                    error
+                } = await supabase
+                    .from(this.CONFIG.tabelas.perfis)
+                    .select(`
+                        *,
+                        tipos_perfil (
+                            id,
+                            nome
+                        )
+                    `)
+                    .eq("usuario_id", usuarioId);
+
+                if (error) {
+                    throw error;
+                }
+
+                if (!Array.isArray(perfis) || perfis.length === 0) {
+                    console.warn(
+                        "Nenhum perfil encontrado para o usuário."
+                    );
+
+                    return false;
+                }
+
+                const perfilArtista = perfis.find(
+                    perfil =>
+                        String(
+                            perfil?.tipos_perfil?.nome || ""
+                        ).toLowerCase() ===
+                        this.CONFIG.tipoPerfilEsperado.toLowerCase()
+                );
+
+                if (!perfilArtista) {
+
+                    console.warn(
+                        "Perfil do tipo artista não encontrado."
+                    );
+
+                    return false;
+                }
+
+                this.estado.perfil = perfilArtista;
+                this.estado.perfilId = perfilArtista.id;
+
+                const {
+                    data: perfilArtistaDados,
+                    error: erroArtista
+                } = await supabase
+                    .from(this.CONFIG.tabelas.perfisArtistas)
+                    .select("*")
+                    .eq("perfil_id", perfilArtista.id)
+                    .maybeSingle();
+
+                if (erroArtista) {
+                    throw erroArtista;
+                }
+
+                if (!perfilArtistaDados) {
+
+                    console.warn(
+                        "Registro em perfis_artistas não encontrado."
+                    );
+
+                    return false;
+                }
+
+                this.estado.perfilArtista = perfilArtistaDados;
+
+                const tipoArtista = String(
+                    perfilArtistaDados.tipo_artista || ""
+                ).trim().toLowerCase();
+
+                if (
+                    tipoArtista &&
+                    tipoArtista !==
+                    this.CONFIG.tipoArtistaEsperado.toLowerCase()
+                ) {
+
+                    console.warn(
+                        "O perfil encontrado não é do tipo Cantor."
+                    );
+
+                    return false;
+                }
+
+                return true;
+
+            } catch (erro) {
+
+                console.error(
+                    "Erro ao verificar perfil do cantor:",
+                    erro
+                );
+
+                return false;
+            }
+        },
+
+
+        /* =====================================================
+           CARREGAR DADOS DO SUPABASE
+           ===================================================== */
+
+        async carregarDoSupabase() {
+
+            const supabase = this.obterClienteSupabase();
+
+            if (!supabase || !this.estado.perfilId) {
+                return;
+            }
+
+            const perfilId = this.estado.perfilId;
+
+
+            /* -------------------------------------------------
+               PORTFÓLIO
+               ------------------------------------------------- */
+
+            try {
+
+                const {
+                    data,
+                    error
+                } = await supabase
+                    .from(this.CONFIG.tabelas.portfolio)
+                    .select("*")
+                    .eq("perfil_id", perfilId)
+                    .order("created_at", {
+                        ascending: false
+                    });
+
+                if (error) {
+                    console.error(
+                        "Erro ao carregar portfólio:",
+                        error
+                    );
+
+                    this.estado.portfolio = [];
+
+                } else {
+
+                    this.estado.portfolio =
+                        Array.isArray(data)
+                            ? data
+                            : [];
+                }
+
+            } catch (erro) {
+
+                console.error(
+                    "Erro no portfólio:",
+                    erro
+                );
+
+                this.estado.portfolio = [];
+            }
+
+
+            /* -------------------------------------------------
+               AGENDA
+               ------------------------------------------------- */
+
+            try {
+
+                const {
+                    data,
+                    error
+                } = await supabase
+                    .from(this.CONFIG.tabelas.agenda)
+                    .select("*")
+                    .eq("perfil_id", perfilId)
+                    .order("data", {
+                        ascending: true
+                    });
+
+                if (error) {
+
+                    console.error(
+                        "Erro ao carregar agenda:",
+                        error
+                    );
+
+                    this.estado.agenda = [];
+
+                } else {
+
+                    this.estado.agenda =
+                        Array.isArray(data)
+                            ? data
+                            : [];
+                }
+
+            } catch (erro) {
+
+                console.error(
+                    "Erro na agenda:",
+                    erro
+                );
+
+                this.estado.agenda = [];
+            }
+
+
+            /* -------------------------------------------------
+               AVALIAÇÕES
+               ------------------------------------------------- */
+
+            try {
+
+                const {
+                    data,
+                    error
+                } = await supabase
+                    .from(this.CONFIG.tabelas.avaliacoes)
+                    .select("*")
+                    .eq("perfil_id", perfilId)
+                    .order("created_at", {
+                        ascending: false
+                    });
+
+                if (error) {
+
+                    console.error(
+                        "Erro ao carregar avaliações:",
+                        error
+                    );
+
+                    this.estado.avaliacoes = [];
+
+                } else {
+
+                    this.estado.avaliacoes =
+                        Array.isArray(data)
+                            ? data
+                            : [];
+                }
+
+            } catch (erro) {
+
+                console.error(
+                    "Erro nas avaliações:",
+                    erro
+                );
+
+                this.estado.avaliacoes = [];
+            }
+
+
+            /* -------------------------------------------------
+               CACHE LOCAL
+               ------------------------------------------------- */
+
+            try {
+
+                localStorage.setItem(
+                    this.CONFIG.storage.perfil,
+                    JSON.stringify({
+                        perfil: this.estado.perfil,
+                        perfilArtista:
+                            this.estado.perfilArtista
+                    })
+                );
+
+            } catch (erro) {
+
+                console.warn(
+                    "Não foi possível salvar cache local:",
+                    erro
+                );
+            }
+        },
+
+
+        /* =====================================================
+           CARTEIRA
+           ===================================================== */
+
+        async carregarCarteiraReal() {
+
+            const supabase = this.obterClienteSupabase();
+
+            if (!supabase || !this.estado.perfilId) {
+                return;
+            }
+
+            try {
+
+                const {
+                    data: carteira,
+                    error
+                } = await supabase
+                    .from(this.CONFIG.tabelas.carteira)
+                    .select("*")
+                    .eq("perfil_id", this.estado.perfilId)
+                    .maybeSingle();
+
+                if (error) {
+
+                    console.error(
+                        "Erro ao carregar carteira:",
+                        error
+                    );
+
+                    this.estado.carteira = null;
+
+                } else {
+
+                    this.estado.carteira = carteira || null;
+                }
+
+
+                if (this.estado.carteira?.id) {
+
+                    const {
+                        data: transacoes,
+                        error: erroTransacoes
+                    } = await supabase
+                        .from(this.CONFIG.tabelas.transacoes)
+                        .select("*")
+                        .eq(
+                            "carteira_id",
+                            this.estado.carteira.id
+                        )
+                        .order("created_at", {
+                            ascending: false
+                        });
+
+                    if (erroTransacoes) {
+
+                        console.error(
+                            "Erro ao carregar transações:",
+                            erroTransacoes
+                        );
+
+                        this.estado.transacoes = [];
+
+                    } else {
+
+                        this.estado.transacoes =
+                            Array.isArray(transacoes)
+                                ? transacoes
+                                : [];
+                    }
+
+                } else {
+
+                    this.estado.transacoes = [];
+                }
+
+
+                try {
+
+                    localStorage.setItem(
+                        this.CONFIG.storage.carteira,
+                        JSON.stringify({
+                            carteira: this.estado.carteira,
+                            transacoes: this.estado.transacoes
+                        })
+                    );
+
+                } catch (erro) {
+
+                    console.warn(
+                        "Erro ao salvar carteira local:",
+                        erro
+                    );
+                }
+
+
+                this.renderizarCarteira();
+
+            } catch (erro) {
+
+                console.error(
+                    "Erro geral ao carregar carteira:",
+                    erro
+                );
+            }
+        },
+
+
+        /* =====================================================
+           PREENCHER PERFIL
+           ===================================================== */
+
+        preencherPerfil() {
+
+            const perfil = this.estado.perfil || {};
+            const artista = this.estado.perfilArtista || {};
+
+
+            /* -------------------------------------------------
+               NOME
+               ------------------------------------------------- */
+
+            const nome =
+                perfil.nome ||
+                perfil.nome_completo ||
+                perfil.nome_artistico ||
+                "Cantor";
+
+            this.definirTexto(
+                "profileName",
+                nome
             );
 
-            return null;
-        }
-    }
 
+            /* -------------------------------------------------
+               CATEGORIA
+               ------------------------------------------------- */
 
-    /* =========================================================
-       ACESSO
-    ========================================================= */
-
-    async function carregarDadosUsuario() {
-
-        const client = obterSupabase();
-
-        if (!client) {
-            throw new Error(
-                "Conexão com o Supabase não encontrada."
-            );
-        }
-
-
-        usuarioAtual = await obterUsuarioAutenticado();
-
-
-        if (!usuarioAtual) {
-            throw new Error(
-                "Usuário autenticado não encontrado."
-            );
-        }
-
-
-        const {
-            data: perfis,
-            error: perfilError
-        } = await client
-            .from(CONFIG.tabelas.perfis)
-            .select(`
-                *,
-                tipos_perfil (
-                    id,
-                    nome,
-                    descricao,
-                    ativo
-                )
-            `)
-            .eq("usuario_id", usuarioAtual.id)
-            .eq("ativo", true)
-            .order("id", {
-                ascending: false
-            });
-
-
-        if (perfilError) {
-
-            console.error(
-                "Erro ao buscar perfis:",
-                perfilError
+            this.definirTexto(
+                "profileCategory",
+                artista.tipo_artista || "Cantor"
             );
 
-            throw perfilError;
-        }
 
+            /* -------------------------------------------------
+               LOCALIZAÇÃO
+               ------------------------------------------------- */
 
-        perfilAtual = (perfis || []).find(
-            perfil =>
-                perfil.tipos_perfil &&
-                perfil.tipos_perfil.nome === CONFIG.tipoPerfilEsperado
-        );
-
-
-        if (!perfilAtual) {
-
-            throw new Error(
-                "Perfil de artista não encontrado para este usuário."
-            );
-        }
-
-
-        const {
-            data: artista,
-            error: artistaError
-        } = await client
-            .from(CONFIG.tabelas.perfisArtistas)
-            .select("*")
-            .eq("perfil_id", perfilAtual.id)
-            .maybeSingle();
-
-
-        if (artistaError) {
-
-            console.error(
-                "Erro ao buscar perfil do cantor:",
-                artistaError
+            this.definirLocalizacao(
+                artista.localizacao
             );
 
-            throw artistaError;
-        }
 
+            /* -------------------------------------------------
+               BIO
+               ------------------------------------------------- */
 
-        perfilArtistaAtual = artista || {};
+            const bio =
+                perfil.bio ||
+                perfil.descricao ||
+                perfil.apresentacao ||
+                artista.apresentacao ||
+                "Nenhuma apresentação cadastrada.";
 
-        return {
-            usuario: usuarioAtual,
-            perfil: perfilAtual,
-            artista: perfilArtistaAtual
-        };
-    }
-
-
-    async function verificarAcessoCantor() {
-
-        const dados = await carregarDadosUsuario();
-
-
-        if (!dados.usuario) {
-            throw new Error(
-                "Usuário não encontrado."
+            this.definirTexto(
+                "profileBio",
+                bio
             );
-        }
 
 
-        if (!dados.perfil) {
-            throw new Error(
-                "Perfil não encontrado."
+            /* -------------------------------------------------
+               EXPERIÊNCIA
+               ------------------------------------------------- */
+
+            this.definirTexto(
+                "profileExperience",
+                artista.experiencia || "Não informado"
             );
-        }
 
 
-        if (
-            !dados.perfil.tipos_perfil ||
-            dados.perfil.tipos_perfil.nome !== CONFIG.tipoPerfilEsperado
-        ) {
+            /* -------------------------------------------------
+               ÁREA DE ATENDIMENTO
+               ------------------------------------------------- */
 
-            throw new Error(
-                "Este perfil não possui permissão de artista."
+            this.definirTexto(
+                "profileArea",
+                artista.area_atendimento || "Não informado"
             );
-        }
 
 
-        return true;
-    }
+            /* -------------------------------------------------
+               TIPO
+               ------------------------------------------------- */
 
-
-    /* =========================================================
-       CARREGAMENTO PRINCIPAL
-    ========================================================= */
-
-    async function carregarDoSupabase() {
-
-        const client = obterSupabase();
-
-        if (!client || !perfilAtual) {
-            return;
-        }
-
-
-        /* PORTFÓLIO */
-
-        const {
-            data: portfolio,
-            error: portfolioError
-        } = await client
-            .from(CONFIG.tabelas.portfolio)
-            .select("*")
-            .eq("perfil_id", perfilAtual.id)
-            .eq("ativo", true)
-            .order("ordem", {
-                ascending: true
-            })
-            .order("created_at", {
-                ascending: true
-            });
-
-
-        if (portfolioError) {
-
-            console.warn(
-                "Não foi possível carregar o portfólio:",
-                portfolioError
+            this.definirTexto(
+                "profileType",
+                artista.tipo_artista || "Cantor"
             );
-        }
 
 
-        /* AGENDA */
+            /* -------------------------------------------------
+               DISPONIBILIDADE
+               ------------------------------------------------- */
 
-        const {
-            data: agenda,
-            error: agendaError
-        } = await client
-            .from(CONFIG.tabelas.agenda)
-            .select("*")
-            .eq("perfil_id", perfilAtual.id)
-            .in("status", [
-                "agendado",
-                "confirmado"
-            ])
-            .order("data_inicio", {
-                ascending: true
-            });
-
-
-        if (agendaError) {
-
-            console.warn(
-                "Não foi possível carregar a agenda:",
-                agendaError
+            this.definirDisponibilidade(
+                artista.disponivel
             );
-        }
 
 
-        const itensPortfolio = portfolio || [];
+            /* -------------------------------------------------
+               FOTO
+               ------------------------------------------------- */
 
-
-        const imagens = itensPortfolio.filter(
-            item =>
-                String(item.tipo || "").toLowerCase() === "imagem"
-        );
-
-
-        const videos = itensPortfolio.filter(
-            item =>
-                String(item.tipo || "").toLowerCase() === "video"
-        );
-
-
-        const audios = itensPortfolio.filter(
-            item =>
-                String(item.tipo || "").toLowerCase() === "audio"
-        );
-
-
-        const artista = perfilArtistaAtual || {};
-
-
-        dadosPerfil = {
-
-            id: perfilAtual.id,
-
-            nome:
-                perfilAtual.nome_exibicao ||
-                usuarioAtual?.nome ||
-                "Cantor",
-
-            descricao:
-                perfilAtual.descricao ||
-                "",
-
-            categoria:
-                artista.tipo_artista ||
-                "Cantor",
-
-            localizacao:
-                artista.localizacao ||
-                "Localização não informada",
-
-            experiencia:
-                artista.experiencia ||
-                "",
-
-            area:
-                artista.area_atendimento ||
-                "",
-
-            disponibilidade:
-                artista.disponivel !== false,
-
-            generos:
-                normalizarArray(artista.estilos),
-
-            servicos:
-                normalizarArray(artista.servicos),
-
-            foto:
-                artista.foto_url ||
-                usuarioAtual?.foto_url ||
-                "",
-
-            telefone:
-                usuarioAtual?.telefone ||
-                "",
-
-            email:
-                usuarioAtual?.email ||
-                "",
-
-            avaliacao: {
-                media: 0,
-                total: 0
-            },
-
-            portfolio: imagens,
-
-            videos,
-
-            audios,
-
-            agenda:
-                agenda || [],
-
-            avaliacoes: []
-        };
-
-
-        try {
-            localStorage.setItem(
-                CONFIG.storageKey,
-                JSON.stringify(dadosPerfil)
+            this.definirAvatar(
+                artista.foto_url,
+                nome
             );
-        } catch (error) {
-            console.warn(
-                "Não foi possível salvar o perfil localmente:",
-                error
+
+
+            /* -------------------------------------------------
+               GÊNEROS
+               ------------------------------------------------- */
+
+            this.renderizarGeneros(
+                artista.estilos
             );
-        }
 
 
-        return dadosPerfil;
-    }
+            /* -------------------------------------------------
+               SERVIÇOS
+               ------------------------------------------------- */
+
+            this.renderizarServicos(
+                artista.servicos
+            );
 
 
-    /* =========================================================
-       PREENCHIMENTO DO PERFIL
-    ========================================================= */
+            /* -------------------------------------------------
+               PORTFÓLIO
+               ------------------------------------------------- */
 
-    function preencherPerfil(dados = dadosPerfil) {
-
-        definirTexto(
-            "profileName",
-            dados.nome || "Cantor"
-        );
+            this.renderizarPortfolio();
 
 
-        definirTexto(
-            "profileCategory",
-            dados.categoria || "Cantor"
-        );
+            /* -------------------------------------------------
+               AGENDA
+               ------------------------------------------------- */
+
+            this.renderizarAgenda();
 
 
-        definirTexto(
-            "profileLocation",
-            dados.localizacao || "Localização não informada"
-        );
+            /* -------------------------------------------------
+               AVALIAÇÕES
+               ------------------------------------------------- */
+
+            this.renderizarAvaliacoes();
 
 
-        definirTexto(
-            "profileBio",
-            dados.descricao || "Nenhuma descrição informada."
-        );
+            /* -------------------------------------------------
+               CARTEIRA
+               ------------------------------------------------- */
+
+            this.renderizarCarteira();
 
 
-        definirTexto(
-            "profileExperience",
-            dados.experiencia || "Não informada"
-        );
+            /* -------------------------------------------------
+               LINK DO PERFIL
+               ------------------------------------------------- */
+
+            this.atualizarLinkPerfil();
 
 
-        definirTexto(
-            "profileArea",
-            dados.area || "Não informada"
-        );
+            /* -------------------------------------------------
+               RATING
+               ------------------------------------------------- */
+
+            this.atualizarRating();
+        },
 
 
-        definirTexto(
-            "profileType",
-            dados.categoria || "Cantor"
-        );
+        /* =====================================================
+           TEXTO
+           ===================================================== */
+
+        definirTexto(id, texto) {
+
+            const elemento =
+                document.getElementById(id);
+
+            if (!elemento) {
+                return;
+            }
+
+            elemento.textContent =
+                texto === null ||
+                texto === undefined ||
+                texto === ""
+                    ? "Não informado"
+                    : String(texto);
+        },
 
 
-        definirTexto(
-            "profileAvailability",
-            dados.disponibilidade
-                ? "Disponível"
-                : "Indisponível"
-        );
+        /* =====================================================
+           LOCALIZAÇÃO
+           ===================================================== */
+
+        definirLocalizacao(localizacao) {
+
+            const elemento =
+                document.getElementById(
+                    "profileLocation"
+                );
+
+            if (!elemento) {
+                return;
+            }
+
+            const span =
+                elemento.querySelector("span");
+
+            if (!span) {
+                return;
+            }
+
+            span.textContent =
+                localizacao ||
+                "Localização não informada";
+        },
 
 
-        preencherAvatar(dados);
+        /* =====================================================
+           DISPONIBILIDADE
+           ===================================================== */
+
+        definirDisponibilidade(disponivel) {
+
+            const elemento =
+                document.getElementById(
+                    "profileStatus"
+                );
+
+            if (!elemento) {
+                return;
+            }
+
+            const texto =
+                elemento.querySelector(".status-text");
+
+            const estaDisponivel =
+                disponivel === true ||
+                disponivel === "true" ||
+                disponivel === 1;
+
+            elemento.classList.toggle(
+                "available",
+                estaDisponivel
+            );
+
+            elemento.classList.toggle(
+                "unavailable",
+                !estaDisponivel
+            );
+
+            if (texto) {
+
+                texto.textContent =
+                    estaDisponivel
+                        ? "Disponível"
+                        : "Indisponível";
+            }
+
+            this.definirTexto(
+                "profileAvailability",
+                estaDisponivel
+                    ? "Disponível"
+                    : "Indisponível"
+            );
+        },
 
 
-        preencherStatus(
-            dados.disponibilidade
-        );
+        /* =====================================================
+           AVATAR
+           ===================================================== */
+
+        definirAvatar(url, nome) {
+
+            const avatar =
+                document.getElementById(
+                    "profileAvatar"
+                );
+
+            const iniciais =
+                document.getElementById(
+                    "profileInitials"
+                );
+
+            if (!avatar) {
+                return;
+            }
+
+            avatar.innerHTML = "";
 
 
-        preencherAvaliacao(
-            dados.avaliacao
-        );
-
-
-        preencherGeneros(
-            dados.generos
-        );
-
-
-        preencherServicos(
-            dados.servicos
-        );
-
-
-        preencherPortfolio(
-            dados.portfolio
-        );
-
-
-        preencherVideos(
-            dados.videos
-        );
-
-
-        preencherAudios(
-            dados.audios
-        );
-
-
-        preencherAgenda(
-            dados.agenda
-        );
-
-
-        preencherAvaliacoes(
-            dados.avaliacoes
-        );
-
-
-        definirTexto(
-            "profileLink",
-            gerarLinkPerfil()
-        );
-
-
-        atualizarIcones();
-    }
-
-
-    /* =========================================================
-       AVATAR
-    ========================================================= */
-
-    function preencherAvatar(dados) {
-
-        const container =
-            document.getElementById("profileAvatar");
-
-        const initials =
-            document.getElementById("profileInitials");
-
-
-        if (!container) {
-            return;
-        }
-
-
-        const imagem =
-            dados.foto ||
-            "";
-
-
-        const imagemExistente =
-            container.querySelector("img");
-
-
-        if (imagem) {
-
-            if (imagemExistente) {
-
-                imagemExistente.src = imagem;
-                imagemExistente.alt =
-                    dados.nome || "Cantor";
-
-            } else {
+            if (url) {
 
                 const img =
                     document.createElement("img");
 
-                img.src = imagem;
-                img.alt =
-                    dados.nome || "Cantor";
+                img.src = url;
+                img.alt = `Foto de ${nome || "Cantor"}`;
 
                 img.addEventListener(
                     "error",
                     () => {
 
-                        img.remove();
+                        avatar.innerHTML = "";
 
-                        if (initials) {
-                            initials.textContent =
-                                gerarIniciais(dados.nome);
-                            initials.style.display = "inline";
-                        }
+                        const span =
+                            document.createElement("span");
+
+                        span.id = "profileInitials";
+
+                        span.textContent =
+                            this.obterIniciais(nome);
+
+                        avatar.appendChild(span);
                     }
                 );
 
-                container.appendChild(img);
+                avatar.appendChild(img);
+
+                return;
             }
 
-
-            if (initials) {
-                initials.style.display = "none";
-            }
-
-        } else {
-
-            if (imagemExistente) {
-                imagemExistente.remove();
-            }
-
-            if (initials) {
-
-                initials.textContent =
-                    gerarIniciais(dados.nome);
-
-                initials.style.display =
-                    "inline";
-            }
-        }
-    }
-
-
-    /* =========================================================
-       STATUS
-    ========================================================= */
-
-    function preencherStatus(disponivel) {
-
-        const status =
-            document.getElementById("profileStatus");
-
-        const statusDot =
-            document.getElementById("profileStatusDot");
-
-
-        if (!status) {
-            return;
-        }
-
-
-        const texto =
-            status.querySelector(".status-text");
-
-
-        status.classList.toggle(
-            "available",
-            disponivel
-        );
-
-
-        status.classList.toggle(
-            "unavailable",
-            !disponivel
-        );
-
-
-        if (texto) {
-
-            texto.textContent =
-                disponivel
-                    ? "Disponível"
-                    : "Indisponível";
-        }
-
-
-        if (statusDot) {
-
-            statusDot.classList.toggle(
-                "unavailable",
-                !disponivel
-            );
-        }
-    }
-
-
-    /* =========================================================
-       AVALIAÇÃO
-    ========================================================= */
-
-    function preencherAvaliacao(avaliacao) {
-
-        const container =
-            document.getElementById("profileRating");
-
-        if (!container) {
-            return;
-        }
-
-
-        const media =
-            Number(avaliacao?.media || 0);
-
-
-        const total =
-            Number(avaliacao?.total || 0);
-
-
-        container.innerHTML = "";
-
-
-        for (let i = 1; i <= 5; i++) {
 
             const span =
                 document.createElement("span");
 
-            const icon =
-                document.createElement("i");
+            span.id = "profileInitials";
 
-            icon.setAttribute(
-                "data-lucide",
-                "star"
-            );
+            span.textContent =
+                this.obterIniciais(nome);
+
+            avatar.appendChild(span);
+        },
 
 
-            if (i <= Math.round(media)) {
-                icon.style.fill = "currentColor";
+        obterIniciais(nome) {
+
+            if (!nome) {
+                return "C";
             }
 
-
-            span.appendChild(icon);
-            container.appendChild(span);
-        }
-
-
-        definirTexto(
-            "ratingValue",
-            media.toFixed(1).replace(".", ",")
-        );
-
-
-        definirTexto(
-            "ratingReviews",
-            `(${total} ${total === 1 ? "avaliação" : "avaliações"})`
-        );
-
-
-        atualizarIcones();
-    }
-
-
-    /* =========================================================
-       GÊNEROS
-    ========================================================= */
-
-    function preencherGeneros(generos) {
-
-        const container =
-            document.getElementById("genreList");
-
-
-        if (!container) {
-            return;
-        }
-
-
-        container.innerHTML = "";
-
-
-        const lista =
-            normalizarArray(generos);
-
-
-        if (!lista.length) {
-
-            container.innerHTML = `
-                <span class="empty-message">
-                    Nenhum gênero informado.
-                </span>
-            `;
-
-            return;
-        }
-
-
-        lista.forEach(genero => {
-
-            const tag =
-                document.createElement("span");
-
-            tag.className =
-                "genre-tag";
-
-            tag.textContent =
-                genero;
-
-            container.appendChild(tag);
-        });
-    }
-
-
-    /* =========================================================
-       SERVIÇOS
-    ========================================================= */
-
-    function preencherServicos(servicos) {
-
-        const container =
-            document.getElementById("servicesList");
-
-
-        if (!container) {
-            return;
-        }
-
-
-        container.innerHTML = "";
-
-
-        const lista =
-            normalizarArray(servicos);
-
-
-        if (!lista.length) {
-
-            container.innerHTML = `
-                <span class="empty-message">
-                    Nenhum serviço informado.
-                </span>
-            `;
-
-            return;
-        }
-
-
-        lista.forEach(servico => {
-
-            const card =
-                document.createElement("div");
-
-            card.className =
-                "service-card";
-
-
-            card.innerHTML = `
-                <div class="service-card-icon">
-                    <i data-lucide="briefcase"></i>
-                </div>
-
-                <span>
-                    ${escaparHtml(servico)}
-                </span>
-            `;
-
-
-            container.appendChild(card);
-        });
-
-
-        atualizarIcones();
-    }
-
-
-    /* =========================================================
-       PORTFÓLIO
-    ========================================================= */
-
-    function preencherPortfolio(itens) {
-
-        const container =
-            document.getElementById("portfolioGrid");
-
-
-        if (!container) {
-            return;
-        }
-
-
-        container.innerHTML = "";
-
-
-        const lista =
-            Array.isArray(itens)
-                ? itens
-                : [];
-
-
-        if (!lista.length) {
-
-            container.innerHTML = `
-                <span class="empty-message">
-                    Nenhum trabalho adicionado.
-                </span>
-            `;
-
-            return;
-        }
-
-
-        lista.forEach(item => {
-
-            if (!item.arquivo_url) {
+            const partes =
+                String(nome)
+                    .trim()
+                    .split(/\s+/)
+                    .filter(Boolean);
+
+            if (partes.length === 1) {
+
+                return partes[0]
+                    .substring(0, 2)
+                    .toUpperCase();
+            }
+
+            return (
+                partes[0][0] +
+                partes[partes.length - 1][0]
+            ).toUpperCase();
+        },
+
+
+        /* =====================================================
+           RATING
+           ===================================================== */
+
+        atualizarRating() {
+
+            const avaliacoes =
+                this.estado.avaliacoes || [];
+
+            let media = 0;
+
+            if (avaliacoes.length > 0) {
+
+                const valores =
+                    avaliacoes
+                        .map(avaliacao =>
+                            Number(
+                                avaliacao.nota ??
+                                avaliacao.rating ??
+                                avaliacao.estrelas ??
+                                0
+                            )
+                        )
+                        .filter(valor =>
+                            Number.isFinite(valor)
+                        );
+
+                if (valores.length > 0) {
+
+                    media =
+                        valores.reduce(
+                            (total, valor) =>
+                                total + valor,
+                            0
+                        ) / valores.length;
+                }
+            }
+
+            const ratingValue =
+                document.getElementById(
+                    "ratingValue"
+                );
+
+            const ratingReviews =
+                document.getElementById(
+                    "ratingReviews"
+                );
+
+            if (ratingValue) {
+
+                ratingValue.textContent =
+                    media.toFixed(1).replace(".", ",");
+            }
+
+            if (ratingReviews) {
+
+                ratingReviews.textContent =
+                    `(${avaliacoes.length} ${
+                        avaliacoes.length === 1
+                            ? "avaliação"
+                            : "avaliações"
+                    })`;
+            }
+        },
+
+
+        /* =====================================================
+           GÊNEROS
+           ===================================================== */
+
+        renderizarGeneros(estilos) {
+
+            const container =
+                document.getElementById(
+                    "genreList"
+                );
+
+            if (!container) {
                 return;
             }
 
+            container.innerHTML = "";
 
-            const card =
-                document.createElement("article");
+            const lista =
+                this.normalizarArray(estilos);
 
-            card.className =
-                "portfolio-card";
+            if (lista.length === 0) {
+
+                const vazio =
+                    document.createElement("span");
+
+                vazio.className =
+                    "empty-inline";
+
+                vazio.textContent =
+                    "Nenhum estilo cadastrado.";
+
+                container.appendChild(vazio);
+
+                return;
+            }
+
+            lista.forEach(estilo => {
+
+                const tag =
+                    document.createElement("span");
+
+                tag.className =
+                    "genre-tag";
+
+                tag.textContent =
+                    estilo;
+
+                container.appendChild(tag);
+            });
+        },
 
 
-            const titulo =
-                item.titulo ||
-                "Trabalho";
+        /* =====================================================
+           SERVIÇOS
+           ===================================================== */
 
+        renderizarServicos(servicos) {
 
-            const descricao =
-                item.descricao ||
-                "";
+            const container =
+                document.getElementById(
+                    "servicesList"
+                );
 
+            if (!container) {
+                return;
+            }
 
-            card.innerHTML = `
-                <img
-                    class="portfolio-image"
-                    src="${escaparAtributo(item.arquivo_url)}"
-                    alt="${escaparAtributo(titulo)}"
-                    loading="lazy"
-                >
+            container.innerHTML = "";
 
-                <div class="portfolio-info">
-                    <div class="portfolio-title">
-                        ${escaparHtml(titulo)}
+            const lista =
+                this.normalizarArray(servicos);
+
+            if (lista.length === 0) {
+
+                const vazio =
+                    document.createElement("div");
+
+                vazio.className =
+                    "empty-state";
+
+                vazio.innerHTML = `
+                    <i data-lucide="music-2"></i>
+                    <p>Nenhum serviço cadastrado.</p>
+                `;
+
+                container.appendChild(vazio);
+
+                this.renderizarIcones();
+
+                return;
+            }
+
+            lista.forEach(servico => {
+
+                const card =
+                    document.createElement("div");
+
+                card.className =
+                    "service-card";
+
+                card.innerHTML = `
+                    <div class="service-card-icon">
+                        <i data-lucide="mic-2"></i>
                     </div>
 
-                    ${
-                        descricao
-                            ? `
-                                <div class="portfolio-description">
-                                    ${escaparHtml(descricao)}
-                                </div>
-                              `
-                            : ""
-                    }
-                </div>
-            `;
+                    <div class="service-card-content">
+                        <div class="service-card-title"></div>
+                    </div>
+                `;
 
+                const titulo =
+                    card.querySelector(
+                        ".service-card-title"
+                    );
 
-            container.appendChild(card);
-        });
+                if (titulo) {
+                    titulo.textContent = servico;
+                }
 
+                container.appendChild(card);
+            });
 
-        if (!container.children.length) {
+            this.renderizarIcones();
+        },
 
-            container.innerHTML = `
-                <span class="empty-message">
-                    Nenhum trabalho adicionado.
-                </span>
-            `;
-        }
-    }
 
+        /* =====================================================
+           PORTFÓLIO
+           ===================================================== */
 
-    /* =========================================================
-       VÍDEOS
-    ========================================================= */
+        renderizarPortfolio() {
 
-    function preencherVideos(itens) {
+            const portfolio =
+                this.estado.portfolio || [];
 
-        const container =
-            document.getElementById("videoList");
-
-
-        if (!container) {
-            return;
-        }
-
-
-        container.innerHTML = "";
-
-
-        const lista =
-            Array.isArray(itens)
-                ? itens
-                : [];
-
-
-        if (!lista.length) {
-
-            container.innerHTML = `
-                <span class="empty-message">
-                    Nenhum vídeo adicionado.
-                </span>
-            `;
-
-            return;
-        }
-
-
-        lista.forEach(item => {
-
-            if (!item.arquivo_url) {
-                return;
-            }
-
-
-            const card =
-                document.createElement("article");
-
-            card.className =
-                "video-card";
-
-
-            const titulo =
-                item.titulo ||
-                "Apresentação";
-
-
-            card.innerHTML = `
-                <video
-                    controls
-                    preload="metadata"
-                    src="${escaparAtributo(item.arquivo_url)}"
-                ></video>
-
-                <div class="video-title">
-                    ${escaparHtml(titulo)}
-                </div>
-            `;
-
-
-            container.appendChild(card);
-        });
-
-
-        if (!container.children.length) {
-
-            container.innerHTML = `
-                <span class="empty-message">
-                    Nenhum vídeo adicionado.
-                </span>
-            `;
-        }
-    }
-
-
-    /* =========================================================
-       ÁUDIOS
-    ========================================================= */
-
-    function preencherAudios(itens) {
-
-        const container =
-            document.getElementById("audioList");
-
-
-        if (!container) {
-            return;
-        }
-
-
-        container.innerHTML = "";
-
-
-        const lista =
-            Array.isArray(itens)
-                ? itens
-                : [];
-
-
-        if (!lista.length) {
-
-            container.innerHTML = `
-                <span class="empty-message">
-                    Nenhum áudio adicionado.
-                </span>
-            `;
-
-            return;
-        }
-
-
-        lista.forEach(item => {
-
-            if (!item.arquivo_url) {
-                return;
-            }
-
-
-            const card =
-                document.createElement("article");
-
-            card.className =
-                "audio-card";
-
-
-            const titulo =
-                item.titulo ||
-                "Áudio";
-
-
-            card.innerHTML = `
-                <div class="audio-icon">
-                    <i data-lucide="music-2"></i>
-                </div>
-
-                <div class="audio-content">
-
-                    <span class="audio-title">
-                        ${escaparHtml(titulo)}
-                    </span>
-
-                    <audio
-                        controls
-                        preload="metadata"
-                        src="${escaparAtributo(item.arquivo_url)}"
-                    ></audio>
-
-                </div>
-            `;
-
-
-            container.appendChild(card);
-        });
-
-
-        if (!container.children.length) {
-
-            container.innerHTML = `
-                <span class="empty-message">
-                    Nenhum áudio adicionado.
-                </span>
-            `;
-        }
-
-
-        atualizarIcones();
-    }
-
-
-    /* =========================================================
-       AGENDA
-    ========================================================= */
-
-    function preencherAgenda(agenda) {
-
-        const container =
-            document.getElementById("agendaList");
-
-
-        if (!container) {
-            return;
-        }
-
-
-        container.innerHTML = "";
-
-
-        const ano =
-            agendaMesAtual.getFullYear();
-
-        const mes =
-            agendaMesAtual.getMonth();
-
-
-        const primeiroDia =
-            new Date(
-                ano,
-                mes,
-                1
-            );
-
-
-        const ultimoDia =
-            new Date(
-                ano,
-                mes + 1,
-                0
-            );
-
-
-        let inicioSemana =
-            primeiroDia.getDay();
-
-
-        // Domingo = 0
-        // Segunda = 0
-        inicioSemana =
-            inicioSemana === 0
-                ? 6
-                : inicioSemana - 1;
-
-
-        const diasNoMes =
-            ultimoDia.getDate();
-
-
-        const nomesMeses = [
-            "Janeiro",
-            "Fevereiro",
-            "Março",
-            "Abril",
-            "Maio",
-            "Junho",
-            "Julho",
-            "Agosto",
-            "Setembro",
-            "Outubro",
-            "Novembro",
-            "Dezembro"
-        ];
-
-
-        const nomesSemana = [
-            "SEG",
-            "TER",
-            "QUA",
-            "QUI",
-            "SEX",
-            "SÁB",
-            "DOM"
-        ];
-
-
-        const hoje =
-            new Date();
-
-
-        const agendaLista =
-            Array.isArray(agenda)
-                ? agenda
-                : [];
-
-
-        const diasAgendados =
-            new Set();
-
-
-        agendaLista.forEach(item => {
-
-            if (!item.data_inicio) {
-                return;
-            }
-
-
-            const data =
-                new Date(item.data_inicio);
-
-
-            if (
-                data.getFullYear() === ano &&
-                data.getMonth() === mes
-            ) {
-
-                diasAgendados.add(
-                    data.getDate()
+            const imagens =
+                portfolio.filter(item =>
+                    String(item.tipo || "")
+                        .toLowerCase() === "imagem"
                 );
+
+            const videos =
+                portfolio.filter(item =>
+                    String(item.tipo || "")
+                        .toLowerCase() === "video"
+                );
+
+            const audios =
+                portfolio.filter(item =>
+                    String(item.tipo || "")
+                        .toLowerCase() === "audio"
+                );
+
+
+            this.renderizarImagens(
+                imagens
+            );
+
+            this.renderizarVideos(
+                videos
+            );
+
+            this.renderizarAudios(
+                audios
+            );
+        },
+
+
+        /* =====================================================
+           IMAGENS
+           ===================================================== */
+
+        renderizarImagens(imagens) {
+
+            const container =
+                document.getElementById(
+                    "portfolioGrid"
+                );
+
+            if (!container) {
+                return;
             }
-        });
+
+            container.innerHTML = "";
+
+            if (!imagens.length) {
+
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i data-lucide="image"></i>
+                        <p>Nenhuma imagem adicionada ao portfólio.</p>
+                    </div>
+                `;
+
+                this.renderizarIcones();
+
+                return;
+            }
+
+            imagens.forEach(item => {
+
+                const card =
+                    document.createElement("div");
+
+                card.className =
+                    "portfolio-card";
+
+                const url =
+                    item.url ||
+                    item.arquivo_url ||
+                    item.media_url ||
+                    item.foto_url;
+
+                const titulo =
+                    item.titulo ||
+                    item.nome ||
+                    "Imagem do portfólio";
+
+                const descricao =
+                    item.descricao ||
+                    "";
+
+                card.innerHTML = `
+                    <div class="portfolio-image">
+                        ${
+                            url
+                                ? `<img src="${this.escaparHtml(url)}" alt="${this.escaparHtml(titulo)}">`
+                                : `<div class="empty-state"><i data-lucide="image"></i></div>`
+                        }
+                    </div>
+
+                    <div class="portfolio-info">
+
+                        <div class="portfolio-title">
+                            ${this.escaparHtml(titulo)}
+                        </div>
+
+                        ${
+                            descricao
+                                ? `<div class="portfolio-description">${this.escaparHtml(descricao)}</div>`
+                                : ""
+                        }
+
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+
+            this.renderizarIcones();
+        },
 
 
-        let html = `
-            <div class="calendar">
+        /* =====================================================
+           VÍDEOS
+           ===================================================== */
 
+        renderizarVideos(videos) {
+
+            const container =
+                document.getElementById(
+                    "videoList"
+                );
+
+            if (!container) {
+                return;
+            }
+
+            container.innerHTML = "";
+
+            if (!videos.length) {
+
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i data-lucide="video"></i>
+                        <p>Nenhum vídeo adicionado.</p>
+                    </div>
+                `;
+
+                this.renderizarIcones();
+
+                return;
+            }
+
+            videos.forEach(item => {
+
+                const card =
+                    document.createElement("div");
+
+                card.className =
+                    "video-card";
+
+                const url =
+                    item.url ||
+                    item.arquivo_url ||
+                    item.media_url;
+
+                const titulo =
+                    item.titulo ||
+                    item.nome ||
+                    "Vídeo";
+
+                if (url) {
+
+                    const video =
+                        document.createElement("video");
+
+                    video.src = url;
+
+                    video.controls = true;
+
+                    video.preload = "metadata";
+
+                    video.playsInline = true;
+
+                    card.appendChild(video);
+
+                } else {
+
+                    const vazio =
+                        document.createElement("div");
+
+                    vazio.className =
+                        "empty-state";
+
+                    vazio.innerHTML = `
+                        <i data-lucide="video"></i>
+                        <p>Vídeo indisponível.</p>
+                    `;
+
+                    card.appendChild(vazio);
+                }
+
+                const tituloElemento =
+                    document.createElement("div");
+
+                tituloElemento.className =
+                    "video-title";
+
+                tituloElemento.textContent =
+                    titulo;
+
+                card.appendChild(
+                    tituloElemento
+                );
+
+                container.appendChild(card);
+            });
+
+            this.renderizarIcones();
+        },
+
+
+        /* =====================================================
+           ÁUDIOS
+           ===================================================== */
+
+        renderizarAudios(audios) {
+
+            const container =
+                document.getElementById(
+                    "audioList"
+                );
+
+            if (!container) {
+                return;
+            }
+
+            container.innerHTML = "";
+
+            if (!audios.length) {
+
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i data-lucide="headphones"></i>
+                        <p>Nenhum áudio adicionado.</p>
+                    </div>
+                `;
+
+                this.renderizarIcones();
+
+                return;
+            }
+
+            audios.forEach(item => {
+
+                const card =
+                    document.createElement("div");
+
+                card.className =
+                    "audio-card";
+
+                const url =
+                    item.url ||
+                    item.arquivo_url ||
+                    item.media_url;
+
+                const titulo =
+                    item.titulo ||
+                    item.nome ||
+                    "Áudio";
+
+                card.innerHTML = `
+                    <div class="audio-icon">
+                        <i data-lucide="headphones"></i>
+                    </div>
+
+                    <div class="audio-content">
+
+                        <div class="audio-title">
+                            ${this.escaparHtml(titulo)}
+                        </div>
+
+                        ${
+                            url
+                                ? `<audio controls preload="metadata" src="${this.escaparHtml(url)}"></audio>`
+                                : `<div class="audio-unavailable">Áudio indisponível.</div>`
+                        }
+
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+
+            this.renderizarIcones();
+        },
+
+
+        /* =====================================================
+           AGENDA
+           ===================================================== */
+
+        renderizarAgenda() {
+
+            const container =
+                document.getElementById(
+                    "agendaList"
+                );
+
+            if (!container) {
+                return;
+            }
+
+            container.innerHTML = "";
+
+            const calendario =
+                document.createElement("div");
+
+            calendario.className =
+                "calendar";
+
+            calendario.innerHTML = `
                 <div class="calendar-header">
 
-                    <div class="calendar-title">
-                        ${nomesMeses[mes]} ${ano}
+                    <div
+                        id="calendarTitle"
+                        class="calendar-title">
                     </div>
 
                     <div class="calendar-navigation">
 
                         <button
-                            type="button"
                             id="btnMesAnterior"
-                            aria-label="Mês anterior"
-                        >
+                            type="button"
+                            aria-label="Mês anterior">
+
                             <i data-lucide="chevron-left"></i>
+
                         </button>
 
                         <button
-                            type="button"
                             id="btnMesProximo"
-                            aria-label="Próximo mês"
-                        >
+                            type="button"
+                            aria-label="Próximo mês">
+
                             <i data-lucide="chevron-right"></i>
+
                         </button>
 
                     </div>
 
                 </div>
 
-
                 <div class="calendar-weekdays">
-        `;
 
+                    <span>Dom</span>
+                    <span>Seg</span>
+                    <span>Ter</span>
+                    <span>Qua</span>
+                    <span>Qui</span>
+                    <span>Sex</span>
+                    <span>Sáb</span>
 
-        nomesSemana.forEach(dia => {
-
-            html += `
-                <span>${dia}</span>
-            `;
-        });
-
-
-        html += `
                 </div>
 
-                <div class="calendar-days">
-        `;
+                <div
+                    id="calendarDays"
+                    class="calendar-days">
+                </div>
 
-
-        for (
-            let i = 0;
-            i < inicioSemana;
-            i++
-        ) {
-
-            html += `
-                <div class="calendar-day vazio"></div>
             `;
-        }
+
+            const legenda =
+                document.createElement("div");
+
+            legenda.className =
+                "agenda-legend";
+
+            legenda.innerHTML = `
+                <div class="agenda-legend-item">
+                    <span class="agenda-legend-dot available"></span>
+                    Disponível
+                </div>
+
+                <div class="agenda-legend-item">
+                    <span class="agenda-legend-dot unavailable"></span>
+                    Indisponível
+                </div>
+
+                <div class="agenda-legend-item">
+                    <span class="agenda-legend-dot today"></span>
+                    Hoje
+                </div>
+            `;
+
+            container.appendChild(calendario);
+            container.appendChild(legenda);
+
+            this.configurarCalendario();
+
+            this.renderizarCalendario();
+
+            this.renderizarIcones();
+        },
 
 
-        for (
-            let dia = 1;
-            dia <= diasNoMes;
-            dia++
-        ) {
+        configurarCalendario() {
 
-            const dataDia =
+            const anterior =
+                document.getElementById(
+                    "btnMesAnterior"
+                );
+
+            const proximo =
+                document.getElementById(
+                    "btnMesProximo"
+                );
+
+            if (anterior) {
+
+                anterior.onclick = () => {
+
+                    this.estado.mesAtual =
+                        new Date(
+                            this.estado.mesAtual.getFullYear(),
+                            this.estado.mesAtual.getMonth() - 1,
+                            1
+                        );
+
+                    this.renderizarCalendario();
+                };
+            }
+
+            if (proximo) {
+
+                proximo.onclick = () => {
+
+                    this.estado.mesAtual =
+                        new Date(
+                            this.estado.mesAtual.getFullYear(),
+                            this.estado.mesAtual.getMonth() + 1,
+                            1
+                        );
+
+                    this.renderizarCalendario();
+                };
+            }
+        },
+
+
+        renderizarCalendario() {
+
+            const daysContainer =
+                document.getElementById(
+                    "calendarDays"
+                );
+
+            const title =
+                document.getElementById(
+                    "calendarTitle"
+                );
+
+            if (!daysContainer || !title) {
+                return;
+            }
+
+            const ano =
+                this.estado.mesAtual.getFullYear();
+
+            const mes =
+                this.estado.mesAtual.getMonth();
+
+            const nomesMeses = [
+                "Janeiro",
+                "Fevereiro",
+                "Março",
+                "Abril",
+                "Maio",
+                "Junho",
+                "Julho",
+                "Agosto",
+                "Setembro",
+                "Outubro",
+                "Novembro",
+                "Dezembro"
+            ];
+
+            title.textContent =
+                `${nomesMeses[mes]} ${ano}`;
+
+            daysContainer.innerHTML = "";
+
+            const primeiroDia =
                 new Date(
                     ano,
                     mes,
-                    dia
-                );
+                    1
+                ).getDay();
 
-
-            const inicioHoje =
+            const quantidadeDias =
                 new Date(
-                    hoje.getFullYear(),
-                    hoje.getMonth(),
-                    hoje.getDate()
-                );
+                    ano,
+                    mes + 1,
+                    0
+                ).getDate();
+
+            const quantidadeDiasMesAnterior =
+                new Date(
+                    ano,
+                    mes,
+                    0
+                ).getDate();
 
 
-            const passado =
-                dataDia < inicioHoje;
-
-
-            const agendado =
-                diasAgendados.has(dia);
-
-
-            const eHoje =
-                dataDia.getTime() ===
-                inicioHoje.getTime();
-
-
-            let classe =
-                "calendar-day";
-
-
-            if (passado) {
-                classe += " passado";
-            }
-
-
-            if (agendado) {
-                classe += " agendado";
-            } else if (
-                !passado &&
-                !dadosPerfil.disponibilidade
+            for (
+                let i = primeiroDia - 1;
+                i >= 0;
+                i--
             ) {
-                classe += " indisponivel";
-            } else if (!passado) {
-                classe += " disponivel";
+
+                const dia =
+                    quantidadeDiasMesAnterior - i;
+
+                const elemento =
+                    document.createElement("div");
+
+                elemento.className =
+                    "calendar-day other-month";
+
+                elemento.textContent =
+                    dia;
+
+                daysContainer.appendChild(
+                    elemento
+                );
             }
 
 
-            if (eHoje) {
-                classe += " hoje";
+            for (
+                let dia = 1;
+                dia <= quantidadeDias;
+                dia++
+            ) {
+
+                const elemento =
+                    document.createElement("div");
+
+                elemento.className =
+                    "calendar-day";
+
+                elemento.textContent =
+                    dia;
+
+                const dataAtual =
+                    new Date(
+                        ano,
+                        mes,
+                        dia
+                    );
+
+                if (
+                    this.ehHoje(dataAtual)
+                ) {
+
+                    elemento.classList.add(
+                        "today"
+                    );
+                }
+
+                const status =
+                    this.obterStatusAgenda(
+                        dataAtual
+                    );
+
+                if (status === "available") {
+
+                    elemento.classList.add(
+                        "available"
+                    );
+
+                } else if (
+                    status === "unavailable"
+                ) {
+
+                    elemento.classList.add(
+                        "unavailable"
+                    );
+                }
+
+                daysContainer.appendChild(
+                    elemento
+                );
             }
 
 
-            html += `
-                <div class="${classe}">
-                    ${dia}
-                </div>
-            `;
-        }
+            const totalCelulas =
+                primeiroDia +
+                quantidadeDias;
+
+            const restantes =
+                totalCelulas % 7 === 0
+                    ? 0
+                    : 7 - (totalCelulas % 7);
+
+            for (
+                let dia = 1;
+                dia <= restantes;
+                dia++
+            ) {
+
+                const elemento =
+                    document.createElement("div");
+
+                elemento.className =
+                    "calendar-day other-month";
+
+                elemento.textContent =
+                    dia;
+
+                daysContainer.appendChild(
+                    elemento
+                );
+            }
+        },
 
 
-        html += `
-                </div>
+        obterStatusAgenda(data) {
 
-                <div class="agenda-legend">
+            const agenda =
+                this.estado.agenda || [];
 
-                    <div class="legend-item">
-                        <span class="legend-dot disponivel"></span>
-                        Disponível
-                    </div>
+            const chave =
+                this.formatarDataISO(data);
 
-                    <div class="legend-item">
-                        <span class="legend-dot agendado"></span>
-                        Agendado
-                    </div>
+            const item =
+                agenda.find(registro => {
 
-                    <div class="legend-item">
-                        <span class="legend-dot indisponivel"></span>
-                        Indisponível
-                    </div>
+                    const dataRegistro =
+                        registro.data ||
+                        registro.data_evento ||
+                        registro.data_agenda;
 
-                </div>
+                    if (!dataRegistro) {
+                        return false;
+                    }
 
-            </div>
-        `;
+                    return String(
+                        dataRegistro
+                    ).substring(0, 10) === chave;
+                });
+
+            if (!item) {
+                return null;
+            }
+
+            const disponivel =
+                item.disponivel ??
+                item.disponibilidade;
+
+            if (
+                disponivel === true ||
+                disponivel === "true" ||
+                disponivel === 1
+            ) {
+                return "available";
+            }
+
+            return "unavailable";
+        },
 
 
-        container.innerHTML =
-            html;
+        formatarDataISO(data) {
+
+            const ano =
+                data.getFullYear();
+
+            const mes =
+                String(
+                    data.getMonth() + 1
+                ).padStart(2, "0");
+
+            const dia =
+                String(
+                    data.getDate()
+                ).padStart(2, "0");
+
+            return `${ano}-${mes}-${dia}`;
+        },
 
 
-        const anterior =
-            document.getElementById(
-                "btnMesAnterior"
+        ehHoje(data) {
+
+            const hoje =
+                new Date();
+
+            return (
+                data.getDate() === hoje.getDate() &&
+                data.getMonth() === hoje.getMonth() &&
+                data.getFullYear() === hoje.getFullYear()
             );
+        },
 
 
-        const proximo =
-            document.getElementById(
-                "btnMesProximo"
-            );
+        /* =====================================================
+           AVALIAÇÕES
+           ===================================================== */
 
+        renderizarAvaliacoes() {
 
-        if (anterior) {
-
-            anterior.addEventListener(
-                "click",
-                () => {
-
-                    agendaMesAtual =
-                        new Date(
-                            ano,
-                            mes - 1,
-                            1
-                        );
-
-                    preencherAgenda(
-                        dadosPerfil.agenda
-                    );
-                }
-            );
-        }
-
-
-        if (proximo) {
-
-            proximo.addEventListener(
-                "click",
-                () => {
-
-                    agendaMesAtual =
-                        new Date(
-                            ano,
-                            mes + 1,
-                            1
-                        );
-
-                    preencherAgenda(
-                        dadosPerfil.agenda
-                    );
-                }
-            );
-        }
-
-
-        atualizarIcones();
-    }
-
-
-    /* =========================================================
-       AVALIAÇÕES
-    ========================================================= */
-
-    function preencherAvaliacoes(avaliacoes) {
-
-        const container =
-            document.getElementById("reviewsList");
-
-
-        if (!container) {
-            return;
-        }
-
-
-        container.innerHTML = "";
-
-
-        const lista =
-            Array.isArray(avaliacoes)
-                ? avaliacoes
-                : [];
-
-
-        if (!lista.length) {
-
-            container.innerHTML = `
-                <span class="empty-message">
-                    Nenhuma avaliação recebida.
-                </span>
-            `;
-
-            return;
-        }
-
-
-        lista.forEach(avaliacao => {
-
-            const usuario =
-                avaliacao.usuario || {};
-
-
-            const nome =
-                usuario.nome ||
-                "Usuário";
-
-
-            const nota =
-                Number(
-                    avaliacao.nota || 0
+            const container =
+                document.getElementById(
+                    "reviewsList"
                 );
 
+            if (!container) {
+                return;
+            }
 
-            const comentario =
-                avaliacao.comentario ||
-                "";
+            container.innerHTML = "";
+
+            const avaliacoes =
+                this.estado.avaliacoes || [];
+
+            if (!avaliacoes.length) {
+
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i data-lucide="star"></i>
+                        <p>Você ainda não possui avaliações.</p>
+                    </div>
+                `;
+
+                this.renderizarIcones();
+
+                return;
+            }
+
+            avaliacoes.forEach(avaliacao => {
+
+                const card =
+                    document.createElement("div");
+
+                card.className =
+                    "review-card";
+
+                const nome =
+                    avaliacao.nome_cliente ||
+                    avaliacao.nome_usuario ||
+                    avaliacao.usuario_nome ||
+                    "Cliente";
+
+                const comentario =
+                    avaliacao.comentario ||
+                    avaliacao.comentarios ||
+                    avaliacao.descricao ||
+                    "Sem comentário.";
+
+                const nota =
+                    Number(
+                        avaliacao.nota ??
+                        avaliacao.rating ??
+                        avaliacao.estrelas ??
+                        0
+                    );
+
+                const data =
+                    avaliacao.created_at ||
+                    avaliacao.data ||
+                    null;
+
+                const iniciais =
+                    this.obterIniciais(nome);
+
+                card.innerHTML = `
+                    <div class="review-header">
+
+                        <div class="review-avatar">
+                            ${this.escaparHtml(iniciais)}
+                        </div>
+
+                        <div class="review-user">
+
+                            <div class="review-user-name">
+                                ${this.escaparHtml(nome)}
+                            </div>
+
+                            ${
+                                data
+                                    ? `<div class="review-date">${this.formatarData(data)}</div>`
+                                    : ""
+                            }
+
+                        </div>
+
+                        <div class="review-stars">
+                            ${this.criarEstrelas(nota)}
+                        </div>
+
+                    </div>
+
+                    <div class="review-comment">
+                        ${this.escaparHtml(comentario)}
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+
+            this.renderizarIcones();
+        },
 
 
-            const card =
-                document.createElement("article");
+        criarEstrelas(nota) {
 
-            card.className =
-                "review-card";
+            let html = "";
 
-
-            let estrelas = "";
-
+            const valor =
+                Math.max(
+                    0,
+                    Math.min(
+                        5,
+                        Math.round(Number(nota) || 0)
+                    )
+                );
 
             for (
                 let i = 1;
@@ -1604,1296 +1958,917 @@ const MusicalWorldMeuPerfilCantor = (() => {
                 i++
             ) {
 
-                estrelas += `
-                    <span>
-                        <i
-                            data-lucide="star"
-                            ${
-                                i <= Math.round(nota)
-                                    ? 'style="fill:currentColor"'
-                                    : ""
-                            }
-                        ></i>
-                    </span>
+                html += `
+                    <i
+                        data-lucide="star"
+                        ${i <= valor ? 'fill="currentColor"' : ""}>
+                    </i>
                 `;
             }
 
+            return html;
+        },
 
-            card.innerHTML = `
-                <div class="review-header">
 
-                    <div class="review-avatar">
+        /* =====================================================
+           CARTEIRA — RENDERIZAÇÃO
+           ===================================================== */
+
+        renderizarCarteira() {
+
+            const carteira =
+                this.estado.carteira || {};
+
+            const total =
+                this.obterValorMonetario(
+                    carteira.saldo_total ??
+                    carteira.total ??
+                    carteira.saldo
+                );
+
+            const disponivel =
+                this.obterValorMonetario(
+                    carteira.saldo_disponivel ??
+                    carteira.disponivel ??
+                    carteira.saldo
+                );
+
+            const pendente =
+                this.obterValorMonetario(
+                    carteira.saldo_pendente ??
+                    carteira.pendente
+                );
+
+            this.definirTexto(
+                "walletTotal",
+                this.formatarMoeda(total)
+            );
+
+            this.definirTexto(
+                "walletAvailable",
+                this.formatarMoeda(disponivel)
+            );
+
+            this.definirTexto(
+                "walletPending",
+                this.formatarMoeda(pendente)
+            );
+
+            this.renderizarTransacoes();
+        },
+
+
+        renderizarTransacoes() {
+
+            const container =
+                document.getElementById(
+                    "transactionList"
+                );
+
+            if (!container) {
+                return;
+            }
+
+            container.innerHTML = "";
+
+            const transacoes =
+                this.estado.transacoes || [];
+
+            if (!transacoes.length) {
+
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i data-lucide="receipt"></i>
+                        <p>Nenhuma transação encontrada.</p>
+                    </div>
+                `;
+
+                this.renderizarIcones();
+
+                return;
+            }
+
+            transacoes.forEach(transacao => {
+
+                const item =
+                    document.createElement("div");
+
+                item.className =
+                    "transaction-item";
+
+                const valor =
+                    this.obterValorMonetario(
+                        transacao.valor ??
+                        transacao.valor_transacao ??
+                        transacao.amount
+                    );
+
+                const tipo =
+                    String(
+                        transacao.tipo ||
+                        transacao.tipo_transacao ||
+                        ""
+                    ).toLowerCase();
+
+                const negativo =
+                    tipo.includes("saque") ||
+                    tipo.includes("debito") ||
+                    tipo.includes("débito") ||
+                    tipo.includes("pagamento") ||
+                    valor < 0;
+
+                const valorFinal =
+                    negativo
+                        ? -Math.abs(valor)
+                        : Math.abs(valor);
+
+                const titulo =
+                    transacao.descricao ||
+                    transacao.titulo ||
+                    transacao.tipo ||
+                    "Transação";
+
+                const data =
+                    transacao.created_at ||
+                    transacao.data ||
+                    null;
+
+                item.innerHTML = `
+                    <div class="transaction-icon">
+                        <i data-lucide="${
+                            negativo
+                                ? "arrow-down-left"
+                                : "arrow-up-right"
+                        }"></i>
+                    </div>
+
+                    <div class="transaction-content">
+
+                        <div class="transaction-title">
+                            ${this.escaparHtml(titulo)}
+                        </div>
 
                         ${
-                            usuario.foto_url
-                                ? `
-                                    <img
-                                        src="${escaparAtributo(usuario.foto_url)}"
-                                        alt="${escaparAtributo(nome)}"
-                                    >
-                                  `
-                                : `
-                                    ${escaparHtml(
-                                        gerarIniciais(nome)
-                                    )}
-                                  `
+                            data
+                                ? `<div class="transaction-date">${this.formatarData(data)}</div>`
+                                : ""
                         }
 
                     </div>
 
-
-                    <div class="review-user">
-
-                        <strong>
-                            ${escaparHtml(nome)}
-                        </strong>
-
-                        <div class="review-stars">
-                            ${estrelas}
-                        </div>
-
+                    <div class="transaction-value ${
+                        negativo
+                            ? "negative"
+                            : "positive"
+                    }">
+                        ${
+                            negativo
+                                ? "-"
+                                : "+"
+                        } ${this.formatarMoeda(
+                            Math.abs(valorFinal)
+                        )}
                     </div>
+                `;
 
-                </div>
+                container.appendChild(item);
+            });
 
-
-                ${
-                    comentario
-                        ? `
-                            <p class="review-comment">
-                                ${escaparHtml(comentario)}
-                            </p>
-                          `
-                        : ""
-                }
-            `;
+            this.renderizarIcones();
+        },
 
 
-            container.appendChild(card);
-        });
+        /* =====================================================
+           BOTÕES / EVENTOS
+           ===================================================== */
 
+        configurarEventos() {
 
-        atualizarIcones();
-    }
-
-
-    /* =========================================================
-       CARTEIRA
-    ========================================================= */
-
-    async function carregarCarteiraReal() {
-
-        const client =
-            obterSupabase();
-
-
-        if (
-            !client ||
-            !perfilAtual
-        ) {
-            return;
-        }
-
-
-        try {
-
-            const {
-                data: carteira,
-                error: carteiraError
-            } = await client
-                .from(CONFIG.tabelas.carteiras)
-                .select("*")
-                .eq(
-                    "perfil_id",
-                    perfilAtual.id
-                )
-                .maybeSingle();
-
-
-            if (carteiraError) {
-
-                console.warn(
-                    "Erro ao carregar carteira:",
-                    carteiraError
+            const btnVoltar =
+                document.getElementById(
+                    "btnVoltar"
                 );
 
-                carteiraAtual = null;
+            if (btnVoltar) {
 
-                preencherCarteira(
-                    null,
-                    []
-                );
+                btnVoltar.addEventListener(
+                    "click",
+                    () => {
 
-                return;
-            }
+                        if (
+                            window.history.length > 1
+                        ) {
 
+                            window.history.back();
 
-            if (!carteira) {
+                        } else {
 
-                carteiraAtual = null;
-
-                preencherCarteira(
-                    null,
-                    []
-                );
-
-                return;
-            }
-
-
-            carteiraAtual =
-                carteira;
-
-
-            const {
-                data: transacoes,
-                error: transacoesError
-            } = await client
-                .from(CONFIG.tabelas.transacoes)
-                .select("*")
-                .eq(
-                    "carteira_id",
-                    carteira.id
-                )
-                .order(
-                    "created_at",
-                    {
-                        ascending: false
+                            window.location.href =
+                                "index.html";
+                        }
                     }
                 );
-
-
-            if (transacoesError) {
-
-                console.warn(
-                    "Erro ao carregar transações:",
-                    transacoesError
-                );
             }
 
 
-            preencherCarteira(
-                carteira,
-                transacoes || []
-            );
-
-
-            try {
-
-                localStorage.setItem(
-                    CONFIG.carteiraStorageKey,
-                    JSON.stringify({
-                        carteira,
-                        transacoes:
-                            transacoes || []
-                    })
+            const btnVisualizarPerfil =
+                document.getElementById(
+                    "btnVisualizarPerfil"
                 );
 
-            } catch (error) {
-
-                console.warn(
-                    "Não foi possível salvar carteira localmente:",
-                    error
-                );
-            }
-
-        } catch (error) {
-
-            console.error(
-                "Erro ao carregar carteira:",
-                error
-            );
-
-            preencherCarteira(
-                null,
-                []
-            );
-        }
-    }
-
-
-    function preencherCarteira(
-        carteira,
-        transacoes
-    ) {
-
-        const dados =
-            carteira || {};
-
-
-        definirTexto(
-            "walletTotal",
-            formatarMoeda(
-                dados.saldo_total || 0
-            )
-        );
-
-
-        definirTexto(
-            "walletAvailable",
-            formatarMoeda(
-                dados.saldo_disponivel || 0
-            )
-        );
-
-
-        definirTexto(
-            "walletPending",
-            formatarMoeda(
-                dados.saldo_pendente || 0
-            )
-        );
-
-
-        preencherTransacoes(
-            transacoes || []
-        );
-    }
-
-
-    function preencherTransacoes(transacoes) {
-
-        const container =
-            document.getElementById(
-                "transactionList"
-            );
-
-
-        if (!container) {
-            return;
-        }
-
-
-        container.innerHTML = "";
-
-
-        if (!transacoes.length) {
-
-            container.innerHTML = `
-                <span class="empty-message">
-                    Nenhuma movimentação encontrada.
-                </span>
-            `;
-
-            return;
-        }
-
-
-        const tiposPositivos = [
-            "pagamento",
-            "liberacao",
-            "ajuste"
-        ];
-
-
-        transacoes.forEach(transacao => {
-
-            const tipo =
-                String(
-                    transacao.tipo || ""
-                ).toLowerCase();
-
-
-            const valor =
-                Number(
-                    transacao.valor || 0
-                );
-
-
-            const positivo =
-                tiposPositivos.includes(
-                    tipo
-                );
-
-
-            let icone =
-                "arrow-down-left";
-
-
-            if (tipo === "pagamento") {
-                icone = "credit-card";
-            }
-
-            if (tipo === "liberacao") {
-                icone = "unlock";
-            }
-
-            if (tipo === "saque") {
-                icone = "arrow-up-right";
-            }
-
-            if (tipo === "estorno") {
-                icone = "rotate-ccw";
-            }
-
-            if (tipo === "comissao") {
-                icone = "percent";
-            }
-
-            if (tipo === "ajuste") {
-                icone = "settings-2";
-            }
-
-
-            const titulo =
-                transacao.descricao ||
-                formatarTipoTransacao(tipo);
-
-
-            const data =
-                transacao.created_at ||
-                transacao.data ||
-                null;
-
-
-            const card =
-                document.createElement("div");
-
-            card.className =
-                "transaction-card";
-
-
-            card.innerHTML = `
-                <div class="transaction-icon ${positivo ? "" : "negative"}">
-                    <i data-lucide="${icone}"></i>
-                </div>
-
-                <div class="transaction-info">
-
-                    <span class="transaction-title">
-                        ${escaparHtml(titulo)}
-                    </span>
-
-                    <span class="transaction-date">
-                        ${formatarData(data)}
-                    </span>
-
-                </div>
-
-                <div class="transaction-value ${positivo ? "positive" : "negative"}">
-                    ${positivo ? "+" : "-"} ${formatarMoeda(Math.abs(valor))}
-                </div>
-            `;
-
-
-            container.appendChild(card);
-        });
-
-
-        atualizarIcones();
-    }
-
-
-    function formatarTipoTransacao(tipo) {
-
-        const mapa = {
-            pagamento: "Pagamento",
-            liberacao: "Pagamento liberado",
-            saque: "Saque",
-            estorno: "Estorno",
-            comissao: "Comissão",
-            ajuste: "Ajuste"
-        };
-
-
-        return mapa[tipo] ||
-            "Movimentação";
-    }
-
-
-    /* =========================================================
-       ABAS
-    ========================================================= */
-
-    function inicializarTabs() {
-
-        const tabs =
-            document.querySelectorAll(
-                ".profile-tab"
-            );
-
-
-        const contents =
-            document.querySelectorAll(
-                ".tab-content"
-            );
-
-
-        tabs.forEach(tab => {
-
-            tab.addEventListener(
-                "click",
-                async () => {
-
-                    const nome =
-                        tab.dataset.tab;
-
-
-                    tabs.forEach(item => {
-
-                        item.classList.toggle(
-                            "active",
-                            item === tab
-                        );
-                    });
-
-
-                    contents.forEach(content => {
-
-                        content.classList.toggle(
-                            "active",
-                            content.id ===
-                                `tab-${nome}`
-                        );
-                    });
-
-
-                    if (
-                        nome === "carteira"
-                    ) {
-
-                        await carregarCarteiraReal();
-                    }
-
-
-                    atualizarIcones();
-                }
-            );
-        });
-    }
-
-
-    /* =========================================================
-       BOTÕES
-    ========================================================= */
-
-    function inicializarBotoes() {
-
-        const btnVoltar =
-            document.getElementById(
-                "btnVoltar"
-            );
-
-
-        if (btnVoltar) {
-
-            btnVoltar.addEventListener(
-                "click",
-                () => {
-
-                    if (
-                        window.history.length > 1
-                    ) {
-
-                        window.history.back();
-
-                    } else {
+            if (btnVisualizarPerfil) {
+
+                btnVisualizarPerfil.addEventListener(
+                    "click",
+                    () => {
+
+                        if (!this.estado.perfilId) {
+                            return;
+                        }
 
                         window.location.href =
-                            "index.html";
+                            `apresentar-perfil-cantor.html?id=${encodeURIComponent(
+                                this.estado.perfilId
+                            )}`;
                     }
-                }
-            );
-        }
+                );
+            }
 
 
-        const btnVisualizar =
-            document.getElementById(
-                "btnVisualizarPerfil"
-            );
+            const btnEditarPerfil =
+                document.getElementById(
+                    "btnEditarPerfil"
+                );
 
+            if (btnEditarPerfil) {
 
-        if (btnVisualizar) {
+                btnEditarPerfil.addEventListener(
+                    "click",
+                    () => {
 
-            btnVisualizar.addEventListener(
-                "click",
-                () => {
-
-                    if (!dadosPerfil.id) {
-                        mostrarToast(
-                            "Perfil ainda não carregado."
-                        );
-
-                        return;
+                        window.location.href =
+                            "editar-perfil-cantor.html";
                     }
+                );
+            }
 
 
-                    window.location.href =
-                        `apresentar-perfil-cantor.html?id=${encodeURIComponent(dadosPerfil.id)}`;
-                }
-            );
-        }
+            const btnWhatsApp =
+                document.getElementById(
+                    "btnWhatsApp"
+                );
+
+            if (btnWhatsApp) {
+
+                btnWhatsApp.addEventListener(
+                    "click",
+                    () => {
+
+                        this.compartilharWhatsApp();
+                    }
+                );
+            }
 
 
-        const btnEditar =
-            document.getElementById(
-                "btnEditarPerfil"
-            );
+            const btnQRCode =
+                document.getElementById(
+                    "btnQRCode"
+                );
+
+            if (btnQRCode) {
+
+                btnQRCode.addEventListener(
+                    "click",
+                    () => {
+
+                        this.abrirQRCode();
+                    }
+                );
+            }
 
 
-        if (btnEditar) {
+            const btnFecharQR =
+                document.getElementById(
+                    "btnFecharQR"
+                );
 
-            btnEditar.addEventListener(
-                "click",
-                () => {
+            if (btnFecharQR) {
 
-                    window.location.href =
-                        "editar-perfil-cantor.html";
-                }
-            );
-        }
+                btnFecharQR.addEventListener(
+                    "click",
+                    () => {
 
-
-        const btnWhatsApp =
-            document.getElementById(
-                "btnWhatsApp"
-            );
+                        this.fecharQRCode();
+                    }
+                );
+            }
 
 
-        if (btnWhatsApp) {
+            const qrOverlay =
+                document.getElementById(
+                    "qrOverlay"
+                );
 
-            btnWhatsApp.addEventListener(
-                "click",
-                compartilharWhatsApp
-            );
-        }
+            if (qrOverlay) {
 
+                qrOverlay.addEventListener(
+                    "click",
+                    evento => {
 
-        const btnQRCode =
-            document.getElementById(
-                "btnQRCode"
-            );
+                        if (
+                            evento.target ===
+                            qrOverlay
+                        ) {
 
-
-        if (btnQRCode) {
-
-            btnQRCode.addEventListener(
-                "click",
-                abrirQRCode
-            );
-        }
-
-
-        const btnFecharQR =
-            document.getElementById(
-                "btnFecharQR"
-            );
+                            this.fecharQRCode();
+                        }
+                    }
+                );
+            }
 
 
-        if (btnFecharQR) {
+            const btnCompartilharQR =
+                document.getElementById(
+                    "btnCompartilharQR"
+                );
 
-            btnFecharQR.addEventListener(
-                "click",
-                fecharQRCode
-            );
-        }
+            if (btnCompartilharQR) {
+
+                btnCompartilharQR.addEventListener(
+                    "click",
+                    () => {
+
+                        this.compartilharPerfil();
+                    }
+                );
+            }
 
 
-        const qrOverlay =
-            document.getElementById(
-                "qrOverlay"
-            );
+            const btnSacar =
+                document.getElementById(
+                    "btnSacar"
+                );
+
+            if (btnSacar) {
+
+                btnSacar.addEventListener(
+                    "click",
+                    () => {
+
+                        this.solicitarSaque();
+                    }
+                );
+            }
 
 
-        if (qrOverlay) {
-
-            qrOverlay.addEventListener(
-                "click",
-                event => {
+            document.addEventListener(
+                "keydown",
+                evento => {
 
                     if (
-                        event.target ===
-                        qrOverlay
+                        evento.key === "Escape"
                     ) {
 
-                        fecharQRCode();
+                        this.fecharQRCode();
                     }
                 }
             );
-        }
+        },
 
 
-        const btnCompartilharQR =
-            document.getElementById(
-                "btnCompartilharQR"
-            );
+        /* =====================================================
+           ABAS
+           ===================================================== */
 
+        inicializarAbas() {
 
-        if (btnCompartilharQR) {
+            const tabs =
+                document.querySelectorAll(
+                    ".tab-button"
+                );
 
-            btnCompartilharQR.addEventListener(
-                "click",
-                compartilharQR
-            );
-        }
+            const contents =
+                document.querySelectorAll(
+                    ".tab-content"
+                );
 
-
-        const btnSacar =
-            document.getElementById(
-                "btnSacar"
-            );
-
-
-        if (btnSacar) {
-
-            btnSacar.addEventListener(
-                "click",
-                solicitarSaque
-            );
-        }
-
-
-        document.addEventListener(
-            "keydown",
-            event => {
-
-                if (
-                    event.key === "Escape"
-                ) {
-
-                    fecharQRCode();
-                }
+            if (!tabs.length) {
+                return;
             }
-        );
-    }
+
+            tabs.forEach(tab => {
+
+                tab.addEventListener(
+                    "click",
+                    () => {
+
+                        const nome =
+                            tab.dataset.tab;
+
+                        tabs.forEach(
+                            outraTab => {
+
+                                outraTab.classList.toggle(
+                                    "active",
+                                    outraTab === tab
+                                );
+                            }
+                        );
+
+                        contents.forEach(
+                            content => {
+
+                                content.classList.toggle(
+                                    "active",
+                                    content.id ===
+                                    `tab-${nome}`
+                                );
+                            }
+                        );
+
+                        this.renderizarIcones();
+                    }
+                );
+            });
+        },
 
 
-    /* =========================================================
-       WHATSAPP
-    ========================================================= */
+        /* =====================================================
+           WHATSAPP
+           ===================================================== */
 
-    function compartilharWhatsApp() {
+        compartilharWhatsApp() {
 
-        const telefone =
-            normalizarTelefone(
-                dadosPerfil.telefone
+            const url =
+                this.obterUrlPerfil();
+
+            const nome =
+                this.estado.perfil?.nome ||
+                this.estado.perfil?.nome_completo ||
+                "Cantor";
+
+            const mensagem =
+                `Confira o perfil de ${nome} no MusicalWorld: ${url}`;
+
+            const whatsapp =
+                `https://wa.me/?text=${encodeURIComponent(
+                    mensagem
+                )}`;
+
+            window.open(
+                whatsapp,
+                "_blank",
+                "noopener,noreferrer"
+            );
+        },
+
+
+        /* =====================================================
+           QR CODE
+           ===================================================== */
+
+        abrirQRCode() {
+
+            const overlay =
+                document.getElementById(
+                    "qrOverlay"
+                );
+
+            const imagem =
+                document.getElementById(
+                    "qrImage"
+                );
+
+            if (!overlay || !imagem) {
+                return;
+            }
+
+            const url =
+                this.obterUrlPerfil();
+
+            imagem.src =
+                `https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=${encodeURIComponent(
+                    url
+                )}`;
+
+            this.atualizarLinkPerfil();
+
+            overlay.classList.add(
+                "active"
             );
 
-
-        if (!telefone) {
-
-            mostrarToast(
-                "Telefone do perfil não informado."
+            overlay.setAttribute(
+                "aria-hidden",
+                "false"
             );
 
-            return;
-        }
+            document.body.style.overflow =
+                "hidden";
+        },
 
 
-        const link =
-            gerarLinkPerfil();
+        fecharQRCode() {
 
+            const overlay =
+                document.getElementById(
+                    "qrOverlay"
+                );
 
-        const mensagem =
-            `Olá! Quero conhecer o perfil de ${dadosPerfil.nome} no MusicalWorld: ${link}`;
-
-
-        const url =
-            `https://wa.me/${telefone}?text=${encodeURIComponent(mensagem)}`;
-
-
-        window.open(
-            url,
-            "_blank",
-            "noopener,noreferrer"
-        );
-    }
-
-
-    /* =========================================================
-       QR CODE
-    ========================================================= */
-
-    function gerarLinkPerfil() {
-
-        return (
-            `${window.location.origin}/apresentar-perfil-cantor.html?id=${encodeURIComponent(dadosPerfil.id || "")}`
-        );
-    }
-
-
-    function abrirQRCode() {
-
-        const overlay =
-            document.getElementById(
-                "qrOverlay"
-            );
-
-
-        const imagem =
-            document.getElementById(
-                "qrImage"
-            );
-
-
-        const link =
-            gerarLinkPerfil();
-
-
-        const campo =
-            document.getElementById(
-                "profileLink"
-            );
-
-
-        if (!overlay || !imagem) {
-            return;
-        }
-
-
-        const qrUrl =
-            `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(link)}`;
-
-
-        imagem.src =
-            qrUrl;
-
-
-        if (campo) {
-            campo.value = link;
-        }
-
-
-        overlay.classList.add(
-            "active"
-        );
-
-
-        atualizarIcones();
-    }
-
-
-    function fecharQRCode() {
-
-        const overlay =
-            document.getElementById(
-                "qrOverlay"
-            );
-
-
-        if (overlay) {
+            if (!overlay) {
+                return;
+            }
 
             overlay.classList.remove(
                 "active"
             );
-        }
-    }
+
+            overlay.setAttribute(
+                "aria-hidden",
+                "true"
+            );
+
+            document.body.style.overflow =
+                "";
+        },
 
 
-    async function compartilharQR() {
+        atualizarLinkPerfil() {
 
-        const link =
-            gerarLinkPerfil();
-
-
-        try {
-
-            if (
-                navigator.share
-            ) {
-
-                await navigator.share({
-                    title:
-                        `Perfil de ${dadosPerfil.nome}`,
-                    text:
-                        "Confira meu perfil no MusicalWorld.",
-                    url:
-                        link
-                });
-
-                return;
-            }
-
-
-            if (
-                navigator.clipboard
-            ) {
-
-                await navigator.clipboard.writeText(
-                    link
+            const elemento =
+                document.getElementById(
+                    "profileLink"
                 );
 
-
-                mostrarToast(
-                    "Link do perfil copiado."
-                );
-
+            if (!elemento) {
                 return;
             }
 
+            elemento.textContent =
+                this.obterUrlPerfil();
+        },
 
-            mostrarToast(
-                "Não foi possível compartilhar o perfil."
-            );
 
-        } catch (error) {
+        obterUrlPerfil() {
 
-            if (
-                error?.name ===
-                "AbortError"
-            ) {
-                return;
+            const id =
+                this.estado.perfilId;
+
+            const base =
+                window.location.origin &&
+                window.location.origin !== "null"
+                    ? window.location.origin
+                    : "";
+
+            if (base) {
+
+                return `${base}/apresentar-perfil-cantor.html?id=${encodeURIComponent(
+                    id || ""
+                )}`;
             }
 
-
-            console.error(
-                "Erro ao compartilhar:",
-                error
-            );
-
-
-            mostrarToast(
-                "Não foi possível compartilhar o perfil."
-            );
-        }
-    }
+            return `apresentar-perfil-cantor.html?id=${encodeURIComponent(
+                id || ""
+            )}`;
+        },
 
 
-    /* =========================================================
-       SAQUE
-    ========================================================= */
+        async compartilharPerfil() {
 
-    function solicitarSaque() {
+            const url =
+                this.obterUrlPerfil();
 
-        mostrarToast(
-            "O sistema de saque será disponibilizado nesta etapa."
-        );
-    }
+            const nome =
+                this.estado.perfil?.nome ||
+                this.estado.perfil?.nome_completo ||
+                "Cantor";
 
-
-    /* =========================================================
-       HELPERS
-    ========================================================= */
-
-    function normalizarArray(valor) {
-
-        if (Array.isArray(valor)) {
-
-            return valor
-                .filter(Boolean)
-                .map(item => {
-
-                    if (
-                        typeof item ===
-                        "object"
-                    ) {
-
-                        return (
-                            item.nome ||
-                            item.name ||
-                            item.valor ||
-                            ""
-                        );
-                    }
-
-                    return String(item);
-                })
-                .filter(Boolean);
-        }
-
-
-        if (
-            typeof valor ===
-            "string"
-        ) {
-
-            const texto =
-                valor.trim();
-
-
-            if (!texto) {
-                return [];
-            }
-
+            const dados = {
+                title:
+                    `${nome} | MusicalWorld`,
+                text:
+                    `Confira o perfil de ${nome} no MusicalWorld.`,
+                url
+            };
 
             try {
 
-                const parsed =
-                    JSON.parse(texto);
-
-
                 if (
-                    Array.isArray(parsed)
+                    navigator.share
                 ) {
 
-                    return normalizarArray(
-                        parsed
+                    await navigator.share(
+                        dados
                     );
+
+                    return;
                 }
 
-            } catch (error) {
-                // Não é JSON; continua como texto.
+                if (
+                    navigator.clipboard
+                ) {
+
+                    await navigator.clipboard.writeText(
+                        url
+                    );
+
+                    this.mostrarToast(
+                        "Link copiado."
+                    );
+
+                    return;
+                }
+
+                this.mostrarToast(
+                    "Não foi possível compartilhar o perfil."
+                );
+
+            } catch (erro) {
+
+                if (
+                    erro?.name !==
+                    "AbortError"
+                ) {
+
+                    console.error(
+                        "Erro ao compartilhar:",
+                        erro
+                    );
+                }
+            }
+        },
+
+
+        /* =====================================================
+           SAQUE
+           ===================================================== */
+
+        solicitarSaque() {
+
+            const disponivel =
+                this.obterValorMonetario(
+                    this.estado.carteira?.saldo_disponivel ??
+                    this.estado.carteira?.disponivel ??
+                    this.estado.carteira?.saldo
+                );
+
+            if (disponivel <= 0) {
+
+                this.mostrarToast(
+                    "Você não possui saldo disponível para saque."
+                );
+
+                return;
             }
 
-
-            return texto
-                .split(",")
-                .map(item => item.trim())
-                .filter(Boolean);
-        }
+            this.mostrarToast(
+                "A solicitação de saque será disponibilizada em breve."
+            );
+        },
 
 
-        return [];
-    }
+        /* =====================================================
+           UTILITÁRIOS
+           ===================================================== */
 
+        normalizarArray(valor) {
 
-    function normalizarTelefone(telefone) {
+            if (Array.isArray(valor)) {
 
-        if (!telefone) {
-            return "";
-        }
-
-
-        let numero =
-            String(telefone)
-                .replace(/\D/g, "");
-
-
-        if (
-            numero.length === 10 ||
-            numero.length === 11
-        ) {
-
-            numero =
-                "55" + numero;
-        }
-
-
-        return numero;
-    }
-
-
-    function definirTexto(
-        id,
-        texto
-    ) {
-
-        const elemento =
-            document.getElementById(id);
-
-
-        if (elemento) {
-
-            elemento.textContent =
-                texto ?? "";
-        }
-    }
-
-
-    function formatarMoeda(valor) {
-
-        const numero =
-            Number(valor || 0);
-
-
-        return numero.toLocaleString(
-            "pt-BR",
-            {
-                style: "currency",
-                currency: "BRL"
+                return valor
+                    .map(item =>
+                        String(item).trim()
+                    )
+                    .filter(Boolean);
             }
-        );
-    }
 
+            if (
+                typeof valor === "string"
+            ) {
 
-    function formatarData(data) {
+                const texto =
+                    valor.trim();
 
-        if (!data) {
-            return "Data não informada";
-        }
+                if (!texto) {
+                    return [];
+                }
 
+                try {
 
-        const dataObj =
-            new Date(data);
+                    const parsed =
+                        JSON.parse(texto);
 
+                    if (
+                        Array.isArray(parsed)
+                    ) {
 
-        if (
-            Number.isNaN(
-                dataObj.getTime()
-            )
-        ) {
+                        return parsed
+                            .map(item =>
+                                String(item).trim()
+                            )
+                            .filter(Boolean);
+                    }
 
-            return "Data não informada";
-        }
+                } catch (erro) {
+                    // Não é JSON.
+                }
 
-
-        return dataObj.toLocaleDateString(
-            "pt-BR",
-            {
-                day: "2-digit",
-                month: "2-digit",
-                year: "numeric"
+                return texto
+                    .split(",")
+                    .map(item =>
+                        item.trim()
+                    )
+                    .filter(Boolean);
             }
-        );
-    }
+
+            return [];
+        },
 
 
-    function formatarDia(data) {
+        obterValorMonetario(valor) {
 
-        if (!data) {
-            return "";
-        }
-
-
-        const dataObj =
-            new Date(data);
-
-
-        return dataObj.toLocaleDateString(
-            "pt-BR",
-            {
-                day: "2-digit"
+            if (
+                valor === null ||
+                valor === undefined ||
+                valor === ""
+            ) {
+                return 0;
             }
-        );
-    }
 
+            if (
+                typeof valor === "number"
+            ) {
 
-    function formatarMes(data) {
-
-        if (!data) {
-            return "";
-        }
-
-
-        const dataObj =
-            new Date(data);
-
-
-        return dataObj.toLocaleDateString(
-            "pt-BR",
-            {
-                month: "long"
+                return Number.isFinite(valor)
+                    ? valor
+                    : 0;
             }
-        );
-    }
+
+            const numero =
+                Number(
+                    String(valor)
+                        .replace("R$", "")
+                        .replace(/\./g, "")
+                        .replace(",", ".")
+                        .trim()
+                );
+
+            return Number.isFinite(numero)
+                ? numero
+                : 0;
+        },
 
 
-    function formatarHorario(data) {
+        formatarMoeda(valor) {
 
-        if (!data) {
-            return "";
-        }
+            return new Intl.NumberFormat(
+                "pt-BR",
+                {
+                    style: "currency",
+                    currency: "BRL"
+                }
+            ).format(
+                Number(valor) || 0
+            );
+        },
 
 
-        const dataObj =
-            new Date(data);
+        formatarData(data) {
 
+            try {
 
-        return dataObj.toLocaleTimeString(
-            "pt-BR",
-            {
-                hour: "2-digit",
-                minute: "2-digit"
+                const objeto =
+                    new Date(data);
+
+                if (
+                    Number.isNaN(
+                        objeto.getTime()
+                    )
+                ) {
+                    return "";
+                }
+
+                return objeto.toLocaleDateString(
+                    "pt-BR"
+                );
+
+            } catch (erro) {
+
+                return "";
             }
-        );
-    }
+        },
 
 
-    function gerarIniciais(nome) {
+        escaparHtml(valor) {
 
-        if (!nome) {
-            return "C";
-        }
+            const div =
+                document.createElement("div");
 
+            div.textContent =
+                valor === null ||
+                valor === undefined
+                    ? ""
+                    : String(valor);
 
-        const partes =
-            String(nome)
-                .trim()
-                .split(/\s+/)
-                .filter(Boolean);
-
-
-        if (!partes.length) {
-            return "C";
-        }
+            return div.innerHTML;
+        },
 
 
-        if (partes.length === 1) {
+        renderizarIcones() {
 
-            return partes[0]
-                .substring(0, 2)
-                .toUpperCase();
-        }
-
-
-        return (
-            partes[0].charAt(0) +
-            partes[partes.length - 1].charAt(0)
-        ).toUpperCase();
-    }
-
-
-    function escaparHtml(valor) {
-
-        return String(valor ?? "")
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&quot;")
-            .replace(/'/g, "&#039;");
-    }
-
-
-    function escaparAtributo(valor) {
-
-        return escaparHtml(valor);
-    }
-
-
-    function atualizarIcones() {
-
-        if (
-            window.lucide &&
-            typeof window.lucide.createIcons ===
+            if (
+                window.lucide &&
+                typeof window.lucide.createIcons ===
                 "function"
-        ) {
+            ) {
 
-            window.lucide.createIcons();
-        }
-    }
+                requestAnimationFrame(
+                    () => {
+
+                        window.lucide.createIcons();
+                    }
+                );
+            }
+        },
 
 
-    function mostrarToast(mensagem) {
+        mostrarToast(mensagem) {
 
-        const toast =
-            document.getElementById(
-                "toast"
+            const toast =
+                document.getElementById(
+                    "toast"
+                );
+
+            const mensagemElemento =
+                document.getElementById(
+                    "toastMessage"
+                );
+
+            if (!toast) {
+                return;
+            }
+
+            if (mensagemElemento) {
+
+                mensagemElemento.textContent =
+                    mensagem;
+            }
+
+            toast.classList.add(
+                "show"
             );
 
-
-        const texto =
-            document.getElementById(
-                "toastMessage"
+            clearTimeout(
+                this._toastTimeout
             );
 
+            this._toastTimeout =
+                setTimeout(
+                    () => {
 
-        if (!toast || !texto) {
-            return;
-        }
+                        toast.classList.remove(
+                            "show"
+                        );
 
-
-        texto.textContent =
-            mensagem;
-
-
-        toast.classList.add(
-            "active"
-        );
-
-
-        clearTimeout(
-            mostrarToast.timeout
-        );
+                    },
+                    3000
+                );
+        },
 
 
-        mostrarToast.timeout =
+        redirecionarLogin() {
+
             setTimeout(
                 () => {
 
-                    toast.classList.remove(
-                        "active"
-                    );
+                    window.location.href =
+                        "login.html";
 
                 },
-                3000
-            );
-    }
-
-
-    function redirecionarLogin() {
-
-        window.location.href =
-            "login.html";
-    }
-
-
-    /* =========================================================
-       INICIALIZAÇÃO
-    ========================================================= */
-
-    async function inicializar() {
-
-        try {
-
-            if (
-                window.ControleSessao &&
-                typeof window.ControleSessao.iniciar ===
-                    "function"
-            ) {
-
-                await window.ControleSessao.iniciar({
-                    exigirLogin: true,
-                    redirecionarPara: "login.html"
-                });
-            }
-
-
-            if (CONFIG.usarSupabase) {
-
-                await verificarAcessoCantor();
-
-                await carregarDoSupabase();
-
-                preencherPerfil(
-                    dadosPerfil
-                );
-
-                await carregarCarteiraReal();
-
-            } else {
-
-                preencherPerfil(
-                    dadosPerfil
-                );
-            }
-
-
-            inicializarTabs();
-
-            inicializarBotoes();
-
-            atualizarIcones();
-
-        } catch (error) {
-
-            console.error(
-                "Erro ao inicializar meu perfil de cantor:",
-                error
-            );
-
-
-            mostrarToast(
-                error?.message ||
-                "Não foi possível carregar seu perfil."
+                800
             );
         }
-    }
+    };
 
 
     /* =========================================================
-       API PÚBLICA
-    ========================================================= */
+       EXPOR API GLOBAL
+       ========================================================= */
 
-    return {
+    window.MusicalWorldMeuPerfilCantor =
+        MusicalWorldMeuPerfilCantor;
 
-        inicializar,
 
-        carregarDoSupabase,
+    /* =========================================================
+       INICIAR
+       ========================================================= */
 
-        carregarCarteiraReal,
+    document.addEventListener(
+        "DOMContentLoaded",
+        () => {
 
-        preencherPerfil
+            MusicalWorldMeuPerfilCantor.inicializar();
 
-    };
+        }
+    );
 
 })();
-
-
-document.addEventListener(
-    "DOMContentLoaded",
-    () => {
-
-        MusicalWorldMeuPerfilCantor.inicializar();
-
-    }
-);
