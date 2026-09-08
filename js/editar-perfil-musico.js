@@ -75,7 +75,7 @@ const EditarPerfilMusico = (() => {
     };
 
 
-    const BUCKET_FOTOS = "fotos-perfil";
+    const BUCKET_FOTOS = "perfil-musico";
     const BUCKET_PORTFOLIO = "portfolio-musicos";
 
 
