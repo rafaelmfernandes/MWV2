@@ -2736,3 +2736,236 @@ svg {
     }
 
 }
+
+/* =========================================================
+DESTAQUE NO CATÁLOGO
+========================================================= */
+
+/*
+
+* Garante que o selo fique posicionado
+* dentro do próprio card.
+  */
+  .portfolio-card {
+  position: relative;
+  }
+
+/*
+
+* Card selecionado como destaque
+  */
+  .portfolio-card-destaque {
+  border-color: #f2c94c;
+
+  box-shadow:
+  0 0 0 2px rgba(245, 158, 11, 0.14),
+  0 5px 16px rgba(22, 34, 55, 0.08);
+  }
+
+/* =========================================================
+SELO "DESTAQUE"
+========================================================= */
+
+.portfolio-destaque-badge {
+position: absolute;
+
+
+top: 7px;
+left: 7px;
+
+z-index: 5;
+
+display: inline-flex;
+align-items: center;
+
+gap: 4px;
+
+padding: 5px 7px;
+
+border-radius: 7px;
+
+background: rgba(255, 255, 255, 0.94);
+
+color: #a66b00;
+
+box-shadow:
+    0 2px 7px rgba(0, 0, 0, 0.12);
+
+backdrop-filter: blur(4px);
+-webkit-backdrop-filter: blur(4px);
+
+font-size: 8px;
+line-height: 1;
+
+font-weight: 800;
+
+text-transform: uppercase;
+
+letter-spacing: 0.02em;
+
+
+}
+
+/*
+
+* Ícone de estrela
+  */
+  .portfolio-destaque-badge svg {
+  width: 12px;
+  height: 12px;
+
+  stroke-width: 2.3;
+
+  fill: rgba(245, 158, 11, 0.18);
+  }
+
+/* =========================================================
+MOBILE
+========================================================= */
+
+@media (max-width: 520px) {
+
+
+.portfolio-destaque-badge {
+    top: 6px;
+    left: 6px;
+
+    padding: 4px 6px;
+
+    gap: 3px;
+
+    font-size: 7px;
+}
+
+.portfolio-destaque-badge svg {
+    width: 11px;
+    height: 11px;
+}
+
+
+}
+
+.portfolio-card {
+    position: relative;
+}
+
+.portfolio-card-destaque {
+    border: 2px solid #f2c94c !important;
+    box-shadow:
+        0 0 0 2px rgba(245, 158, 11, 0.14),
+        0 5px 16px rgba(22, 34, 55, 0.08);
+}
+
+.portfolio-destaque-badge {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    z-index: 10;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+
+    padding: 6px 8px;
+
+    border-radius: 7px;
+
+    background: rgba(255, 255, 255, 0.95);
+
+    color: #a66b00;
+
+    box-shadow:
+        0 2px 8px rgba(0, 0, 0, 0.15);
+
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+
+    font-size: 8px;
+    line-height: 1;
+    font-weight: 800;
+
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+}
+
+.portfolio-destaque-badge svg {
+    width: 12px;
+    height: 12px;
+
+    stroke-width: 2.3;
+
+    fill: rgba(245, 158, 11, 0.18);
+}
+.video-portfolio {
+    position: relative;
+}
+
+.video-item-destaque .video-portfolio {
+    border: 2px solid #f2c94c;
+    border-radius: inherit;
+    box-shadow:
+        0 0 0 2px rgba(245, 158, 11, 0.14),
+        0 5px 16px rgba(22, 34, 55, 0.08);
+}
+
+.video-item-destaque .video-portfolio video {
+    display: block;
+}
+
+.portfolio-destaque-badge {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    z-index: 10;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+
+    padding: 6px 8px;
+
+    border-radius: 7px;
+
+    background: rgba(255, 255, 255, 0.95);
+
+    color: #a66b00;
+
+    box-shadow:
+        0 2px 8px rgba(0, 0, 0, 0.15);
+
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+
+    font-size: 8px;
+    line-height: 1;
+    font-weight: 800;
+
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+
+    pointer-events: none;
+}
+
+.portfolio-destaque-badge svg {
+    width: 12px;
+    height: 12px;
+
+    stroke-width: 2.3;
+
+    fill: rgba(245, 158, 11, 0.18);
+}
+
+@media (max-width: 520px) {
+    .portfolio-destaque-badge {
+        top: 6px;
+        left: 6px;
+        padding: 5px 7px;
+        gap: 3px;
+        font-size: 7px;
+    }
+
+    .portfolio-destaque-badge svg {
+        width: 11px;
+        height: 11px;
+    }
+}
