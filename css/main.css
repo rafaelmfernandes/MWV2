@@ -32,10 +32,14 @@ box-shadow: 0 0 25px rgba(15, 23, 42, 0.08);
 }
 
 @media (min-width: 481px) {
+
+
 .app-container {
-border: 1px solid #e2e8f0;
-border-radius: 24px;
+    border: 1px solid #e2e8f0;
+    border-radius: 24px;
 }
+
+
 }
 
 /* =========================================================
@@ -1055,16 +1059,17 @@ flex-shrink: 0;
 
 
 }
+
 .icone-localizacao {
-    width: 15px;
-    height: 15px;
-    flex: 0 0 15px;
-    display: inline-block;
-    fill: none;
-    stroke: #6366f1;
-    stroke-width: 1.8;
-    stroke-linecap: round;
-    stroke-linejoin: round;
+width: 15px;
+height: 15px;
+flex: 0 0 15px;
+display: inline-block;
+fill: none;
+stroke: #6366f1;
+stroke-width: 1.8;
+stroke-linecap: round;
+stroke-linejoin: round;
 }
 
 .ad-footer span,
@@ -1781,148 +1786,665 @@ opacity: 0.9;
 PAINEL DE BUSCA
 ========================================================= */
 
+/*
+O painel é criado diretamente no BODY pelo
+painel-pesquisa.js.
+
+Não usamos position:absolute aqui porque o
+.app-container possui overflow:hidden.
+*/
+
 .search-overlay {
-position: absolute;
+position: fixed;
 
 
-top: 0;
-left: 0;
+inset: 0;
 
 width: 100%;
 height: 100%;
 
 background-color: #ffffff;
 
-z-index: 20;
+z-index: 9999;
 
 display: flex;
 
 flex-direction: column;
 
-transform: translateY(-100%);
+opacity: 0;
+
+visibility: hidden;
+
+pointer-events: none;
+
+transform: translateY(8px);
 
 transition:
-    transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    opacity 0.2s ease,
+    visibility 0.2s ease,
+    transform 0.2s ease;
 
 
 }
 
 .search-overlay.ativo {
+opacity: 1;
+
+
+visibility: visible;
+
+pointer-events: auto;
+
 transform: translateY(0);
+
+
 }
 
-.search-overlay-header {
-display: flex;
+/* =========================================================
+CABEÇALHO DA BUSCA
+========================================================= */
 
+.search-overlay-header {
+width: 100%;
+
+
+display: flex;
 
 align-items: center;
 
 gap: 10px;
 
-padding: 16px 20px;
+padding: 10px 14px;
 
-border-bottom: 1px solid #e5e7eb;
+background-color: #ffffff;
+
+border-bottom: 1px solid #eeeeee;
 
 flex-shrink: 0;
 
 
 }
 
+/* =========================================================
+WRAPPER DO INPUT
+========================================================= */
+
+/*
+IMPORTANTE:
+Não existe mais uma segunda caixa aqui.
+
+O wrapper serve somente para posicionar
+o ícone dentro do input.
+*/
+
 .search-overlay-input-wrapper {
+position: relative;
+
+
 flex: 1;
 
+min-width: 0;
 
 display: flex;
 
 align-items: center;
 
-gap: 8px;
+background: transparent;
 
-background-color: #f1f5f9;
+border: 0;
 
-border: 1px solid #e2e8f0;
+border-radius: 0;
 
-border-radius: 12px;
+padding: 0;
 
-padding: 10px 14px;
+box-shadow: none;
 
 
 }
 
+/* =========================================================
+ÍCONE DA BUSCA
+========================================================= */
+
 .search-overlay-icon {
-width: 18px;
-height: 18px;
+position: absolute;
 
 
-color: #94a3b8;
+left: 12px;
+
+width: 16px;
+height: 16px;
+
+color: #999eaa;
+
+pointer-events: none;
 
 flex-shrink: 0;
 
 
 }
 
+/* =========================================================
+INPUT DA BUSCA
+========================================================= */
+
 .search-overlay-input {
-flex: 1;
+width: 100%;
 
 
-background: none;
+height: 38px;
 
-border: none;
+padding: 0 12px 0 36px;
+
+border: 1px solid #e5e5e8;
+
+border-radius: 9px;
 
 outline: none;
 
-color: #0f172a;
+background-color: #ffffff;
 
-font-size: 14px;
+color: #20222b;
+
+font-family: inherit;
+
+font-size: 13px;
+
+font-weight: 500;
+
+transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
 
 
 }
 
 .search-overlay-input::placeholder {
-color: #94a3b8;
+color: #a0a4ae;
 }
 
+.search-overlay-input:hover {
+border-color: #dddddf;
+}
+
+.search-overlay-input:focus {
+border-color: #d5d0e8;
+
+
+box-shadow:
+    0 0 0 2px rgba(109, 74, 255, 0.05);
+
+
+}
+
+/* =========================================================
+BOTÃO CANCELAR
+========================================================= */
+
 .search-overlay-cancelar {
-background: none;
+flex: 0 0 auto;
 
 
-border: none;
+height: 38px;
 
-color: #2563eb;
+padding: 0 2px;
+
+border: 0;
+
+background: transparent;
+
+color: #6d4aff;
+
+font-family: inherit;
+
+font-size: 12px;
+
+font-weight: 700;
+
+cursor: pointer;
+
+white-space: nowrap;
+
+transition: opacity 0.18s ease;
+
+
+}
+
+.search-overlay-cancelar:hover {
+opacity: 0.7;
+}
+
+.search-overlay-cancelar:active {
+opacity: 0.5;
+}
+
+/* =========================================================
+RESULTADOS
+========================================================= */
+
+.search-results {
+flex: 1;
+
+
+width: 100%;
+
+overflow-y: auto;
+
+overflow-x: hidden;
+
+padding: 0;
+
+background-color: #ffffff;
+
+-webkit-overflow-scrolling: touch;
+
+
+}
+
+/* =========================================================
+ITEM DO RESULTADO
+========================================================= */
+
+.search-result-item {
+display: flex;
+
+
+align-items: center;
+
+width: 100%;
+
+min-height: 68px;
+
+padding: 9px 16px;
+
+gap: 12px;
+
+border-bottom: 1px solid #eeeeee;
+
+background-color: #ffffff;
+
+color: inherit;
+
+text-decoration: none;
+
+cursor: pointer;
+
+transition:
+    background-color 0.15s ease;
+
+
+}
+
+.search-result-item:hover {
+background-color: #fafafa;
+}
+
+.search-result-item:active {
+background-color: #f5f5f7;
+}
+
+/* =========================================================
+AVATAR DO RESULTADO
+========================================================= */
+
+.search-result-avatar-wrapper {
+width: 46px;
+height: 46px;
+
+
+min-width: 46px;
+min-height: 46px;
+
+flex: 0 0 46px;
+
+overflow: hidden;
+
+border-radius: 50%;
+
+background-color: #f0edff;
+
+
+}
+
+.search-result-avatar {
+display: block;
+
+
+width: 100%;
+height: 100%;
+
+object-fit: cover;
+
+
+}
+
+.search-result-avatar-fallback {
+width: 100%;
+height: 100%;
+
+
+display: flex;
+
+align-items: center;
+justify-content: center;
+
+border-radius: 50%;
+
+background-color: #f0edff;
+
+color: #6d4aff;
 
 font-size: 13px;
 
-font-weight: 600;
+font-weight: 800;
 
-cursor: pointer;
+
+}
+
+/* =========================================================
+INFORMAÇÕES DO RESULTADO
+========================================================= */
+
+.search-result-info {
+flex: 1;
+
+
+min-width: 0;
+
+overflow: hidden;
+
+
+}
+
+.search-result-name {
+margin: 0 0 4px 0;
+
+
+color: #20222b;
+
+font-size: 13px;
+
+font-weight: 800;
+
+line-height: 1.2;
+
+white-space: nowrap;
+
+overflow: hidden;
+
+text-overflow: ellipsis;
+
+
+}
+
+.search-result-location,
+.search-result-genre {
+display: flex;
+
+
+align-items: center;
+
+min-width: 0;
+
+width: 100%;
+
+gap: 5px;
+
+color: #858a96;
+
+font-size: 10px;
+
+font-weight: 500;
+
+line-height: 1.35;
+
+overflow: hidden;
+
+
+}
+
+.search-result-location {
+margin-bottom: 2px;
+}
+
+.search-result-location svg,
+.search-result-genre svg {
+width: 12px;
+height: 12px;
+
+
+min-width: 12px;
+
+flex: 0 0 12px;
+
+color: #999da7;
+
+
+}
+
+.search-result-location span,
+.search-result-genre span {
+display: block;
+
+
+min-width: 0;
+
+overflow: hidden;
+
+text-overflow: ellipsis;
 
 white-space: nowrap;
 
 
 }
 
-.search-results {
-flex: 1;
+/* =========================================================
+SETA DO RESULTADO
+========================================================= */
+
+.search-result-arrow {
+width: 16px;
+height: 16px;
 
 
-overflow-y: auto;
+min-width: 16px;
 
-padding: 16px 20px 90px 20px;
+flex: 0 0 16px;
 
-background-color: #f8fafc;
+color: #a5a9b4;
+
+transition:
+    transform 0.15s ease,
+    color 0.15s ease;
 
 
 }
 
+.search-result-item:hover .search-result-arrow {
+color: #6d4aff;
+
+
+transform: translateX(2px);
+
+
+}
+
+/* =========================================================
+ESTADO VAZIO
+========================================================= */
+
 .search-estado-vazio {
+width: 100%;
+
+
+margin: 0;
+
+padding: 38px 24px;
+
+color: #9296a3;
+
+font-size: 12px;
+
+font-weight: 500;
+
+line-height: 1.5;
+
 text-align: center;
 
 
-color: #94a3b8;
+}
 
-font-size: 13px;
+/* =========================================================
+SEM RESULTADOS
+========================================================= */
 
-margin-top: 40px;
+.search-estado-sem-resultados {
+width: 100%;
+
+
+min-height: 180px;
+
+display: flex;
+
+flex-direction: column;
+
+align-items: center;
+
+justify-content: center;
+
+padding: 30px 24px;
+
+text-align: center;
+
+
+}
+
+.search-estado-sem-resultados svg {
+width: 28px;
+height: 28px;
+
+
+margin-bottom: 10px;
+
+color: #b1b4be;
+
+
+}
+
+.search-estado-sem-resultados p {
+margin: 0;
+
+
+color: #8b909c;
+
+font-size: 12px;
+
+font-weight: 600;
+
+
+}
+
+/* =========================================================
+CARREGANDO
+========================================================= */
+
+.search-estado-carregando {
+width: 100%;
+
+
+min-height: 180px;
+
+display: flex;
+
+flex-direction: column;
+
+align-items: center;
+
+justify-content: center;
+
+padding: 30px 24px;
+
+text-align: center;
+
+
+}
+
+.search-estado-carregando p {
+margin: 11px 0 0;
+
+
+color: #8b909c;
+
+font-size: 11px;
+
+font-weight: 600;
+
+
+}
+
+.search-loading-spinner {
+width: 23px;
+height: 23px;
+
+
+border: 2px solid #e6e4ef;
+
+border-top-color: #6d4aff;
+
+border-radius: 50%;
+
+animation:
+    search-spinner 0.7s linear infinite;
+
+
+}
+
+@keyframes search-spinner {
+
+
+from {
+    transform: rotate(0deg);
+}
+
+to {
+    transform: rotate(360deg);
+}
+
+
+}
+
+/* =========================================================
+ERRO
+========================================================= */
+
+.search-estado-erro {
+width: 100%;
+
+
+min-height: 180px;
+
+display: flex;
+
+align-items: center;
+
+justify-content: center;
+
+padding: 30px 24px;
+
+text-align: center;
+
+
+}
+
+.search-estado-erro p {
+margin: 0;
+
+
+color: #8b909c;
+
+font-size: 12px;
+
+font-weight: 600;
 
 
 }
@@ -2022,6 +2544,96 @@ RESPONSIVIDADE — CELULAR
 
 .ad-footer {
     min-height: 37px;
+}
+
+
+/* =====================================================
+   PESQUISA — CELULAR
+   ===================================================== */
+
+.search-overlay-header {
+    min-height: 54px;
+
+    padding: 7px 11px;
+
+    gap: 8px;
+}
+
+.search-overlay-input {
+    height: 36px;
+
+    padding-left: 34px;
+
+    font-size: 12px;
+
+    border-radius: 8px;
+}
+
+.search-overlay-icon {
+    left: 11px;
+
+    width: 15px;
+    height: 15px;
+}
+
+.search-overlay-cancelar {
+    height: 36px;
+
+    font-size: 11px;
+}
+
+.search-result-item {
+    min-height: 64px;
+
+    padding: 8px 13px;
+
+    gap: 10px;
+}
+
+.search-result-avatar-wrapper {
+    width: 44px;
+    height: 44px;
+
+    min-width: 44px;
+    min-height: 44px;
+
+    flex-basis: 44px;
+}
+
+.search-result-avatar-fallback {
+    font-size: 12px;
+}
+
+.search-result-name {
+    font-size: 12px;
+
+    margin-bottom: 3px;
+}
+
+.search-result-location,
+.search-result-genre {
+    font-size: 9px;
+
+    gap: 4px;
+}
+
+.search-result-location svg,
+.search-result-genre svg {
+    width: 11px;
+    height: 11px;
+
+    min-width: 11px;
+
+    flex-basis: 11px;
+}
+
+.search-result-arrow {
+    width: 15px;
+    height: 15px;
+
+    min-width: 15px;
+
+    flex-basis: 15px;
 }
 
 
@@ -2138,6 +2750,44 @@ TELAS MUITO PEQUENAS
 }
 
 
+/* =====================================================
+   PESQUISA — TELA MUITO PEQUENA
+   ===================================================== */
+
+.search-overlay-header {
+    padding-left: 9px;
+    padding-right: 9px;
+}
+
+.search-result-item {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.search-result-avatar-wrapper {
+    width: 42px;
+    height: 42px;
+
+    min-width: 42px;
+    min-height: 42px;
+
+    flex-basis: 42px;
+}
+
+.search-result-name {
+    font-size: 11px;
+}
+
+.search-result-location,
+.search-result-genre {
+    font-size: 8px;
+}
+
+.search-overlay-cancelar {
+    font-size: 10px;
+}
+
+
 }
 
 /* =========================================================
@@ -2145,81 +2795,157 @@ BOTÃO DE TELA CHEIA DO VÍDEO
 ========================================================= */
 
 .ad-video-container {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
+position: relative;
+width: 100%;
+height: 100%;
+overflow: hidden;
 }
 
 .ad-video-container .ad-media-video {
-    width: 100%;
-    height: 100%;
-    display: block;
-    object-fit: cover;
+width: 100%;
+height: 100%;
+display: block;
+object-fit: cover;
 }
 
 .btn-video-tela-cheia {
-    position: absolute;
-    right: 10px;
-    bottom: 10px;
-    width: 34px;
-    height: 34px;
-    display: grid;
-    place-items: center;
-    padding: 0;
-    border: 1px solid rgba(255, 255, 255, 0.45);
-    border-radius: 9px;
-    background: rgba(15, 23, 42, 0.62);
-    color: #ffffff;
-    cursor: pointer;
-    z-index: 5;
-    backdrop-filter: blur(5px);
-    -webkit-backdrop-filter: blur(5px);
-    transition:
-        background .18s ease,
-        transform .12s ease,
-        border-color .18s ease;
+position: absolute;
+right: 10px;
+bottom: 10px;
+
+
+width: 34px;
+height: 34px;
+
+display: grid;
+place-items: center;
+
+padding: 0;
+
+border: 1px solid rgba(255, 255, 255, 0.45);
+
+border-radius: 9px;
+
+background: rgba(15, 23, 42, 0.62);
+
+color: #ffffff;
+
+cursor: pointer;
+
+z-index: 5;
+
+backdrop-filter: blur(5px);
+-webkit-backdrop-filter: blur(5px);
+
+transition:
+    background 0.18s ease,
+    transform 0.12s ease,
+    border-color 0.18s ease;
+
+
 }
 
 .btn-video-tela-cheia:hover {
-    background: rgba(15, 23, 42, 0.82);
-    border-color: rgba(255, 255, 255, 0.7);
+background: rgba(15, 23, 42, 0.82);
+
+
+border-color: rgba(255, 255, 255, 0.7);
+
+
 }
 
 .btn-video-tela-cheia:active {
-    transform: scale(.92);
+transform: scale(0.92);
 }
 
 .btn-video-tela-cheia:focus-visible {
-    outline: none;
-    border-color: #ffffff;
-    box-shadow: 0 0 0 3px rgba(255, 255, 255, .18);
+outline: none;
+
+
+border-color: #ffffff;
+
+box-shadow:
+    0 0 0 3px rgba(255, 255, 255, 0.18);
+
+
 }
 
 .btn-video-tela-cheia svg {
-    width: 17px;
-    height: 17px;
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 1.9;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    pointer-events: none;
+width: 17px;
+height: 17px;
+
+
+fill: none;
+
+stroke: currentColor;
+
+stroke-width: 1.9;
+
+stroke-linecap: round;
+stroke-linejoin: round;
+
+pointer-events: none;
+
+
 }
 
 @media (max-width: 520px) {
 
-    .btn-video-tela-cheia {
-        right: 8px;
-        bottom: 8px;
-        width: 32px;
-        height: 32px;
-        border-radius: 8px;
-    }
 
-    .btn-video-tela-cheia svg {
-        width: 16px;
-        height: 16px;
-    }
+.btn-video-tela-cheia {
+    right: 8px;
+    bottom: 8px;
+
+    width: 32px;
+    height: 32px;
+
+    border-radius: 8px;
+}
+
+.btn-video-tela-cheia svg {
+    width: 16px;
+    height: 16px;
+}
+
+
+}
+
+/* =========================================================
+ACESSIBILIDADE DA PESQUISA
+========================================================= */
+
+.search-result-item:focus-visible,
+.search-overlay-cancelar:focus-visible {
+outline: 2px solid #6d4aff;
+
+
+outline-offset: -2px;
+
+
+}
+
+.search-overlay-input:focus-visible {
+outline: none;
+}
+
+/* =========================================================
+REDUÇÃO DE MOVIMENTO
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+
+.search-overlay,
+.search-overlay-input,
+.search-result-item,
+.search-result-arrow,
+.search-overlay-cancelar {
+    transition: none;
+}
+
+.search-loading-spinner {
+    animation: none;
+}
+
 
 }

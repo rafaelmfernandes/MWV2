@@ -1,36 +1,35 @@
 /* =========================================================
 PAINEL DE PESQUISA — MUSICALWORLD
-CSS DO COMPONENTE REUTILIZÁVEL
+========================================================= */
+
+/* =========================================================
+OVERLAY
 ========================================================= */
 
 .search-overlay {
 position: fixed;
 inset: 0;
+z-index: 9999;
 
-
-width: 100%;
-max-width: 480px;
-
-margin: 0 auto;
-
-background: #ffffff;
-
-z-index: 10000;
 
 display: flex;
 flex-direction: column;
 
+width: 100%;
+height: 100%;
+
+background: #ffffff;
+
 opacity: 0;
 visibility: hidden;
+pointer-events: none;
 
-transform: translateY(8px);
+transform: translateY(10px);
 
 transition:
-    opacity 0.2s ease,
-    visibility 0.2s ease,
-    transform 0.2s ease;
-
-box-sizing: border-box;
+    opacity .20s ease,
+    visibility .20s ease,
+    transform .20s ease;
 
 
 }
@@ -38,97 +37,116 @@ box-sizing: border-box;
 .search-overlay.ativo {
 opacity: 1;
 visibility: visible;
+pointer-events: auto;
 transform: translateY(0);
 }
 
 /* =========================================================
-CABEÇALHO
+HEADER DA PESQUISA
 ========================================================= */
 
 .search-overlay-header {
 display: flex;
 align-items: center;
+
+
+width: 100%;
+min-height: 58px;
+
+padding: 8px 14px;
 gap: 10px;
 
-
-padding:
-    calc(12px + env(safe-area-inset-top))
-    16px
-    12px;
-
-border-bottom: 1px solid #e5e7eb;
+border-bottom: 1px solid #eeeeee;
 
 background: #ffffff;
-
-box-sizing: border-box;
 
 
 }
 
 /* =========================================================
-CAMPO DE PESQUISA
+ÁREA DO INPUT
 ========================================================= */
 
 .search-overlay-input-wrapper {
-flex: 1;
+position: relative;
 
-
-min-width: 0;
-
-height: 42px;
 
 display: flex;
 align-items: center;
 
-gap: 9px;
-
-padding: 0 12px;
-
-background: #f3f4f6;
-
-border-radius: 12px;
-
-box-sizing: border-box;
+flex: 1;
+min-width: 0;
 
 
 }
+
+/* =========================================================
+ÍCONE DE PESQUISA
+========================================================= */
 
 .search-overlay-icon {
-width: 19px;
-height: 19px;
+position: absolute;
 
 
-flex-shrink: 0;
+left: 12px;
 
-color: #64748b;
+width: 16px;
+height: 16px;
+
+color: #999eaa;
+
+pointer-events: none;
 
 
 }
+
+/* =========================================================
+INPUT
+========================================================= */
 
 .search-overlay-input {
 width: 100%;
+height: 38px;
 
 
-min-width: 0;
+padding: 0 12px 0 36px;
 
-border: 0;
+border: 1px solid #e5e5e8;
+border-radius: 9px;
+
 outline: none;
 
-background: transparent;
+background: #ffffff;
 
-color: #111827;
+color: #20222b;
 
 font-family: inherit;
+font-size: 13px;
+font-weight: 500;
 
-font-size: 15px;
-
-line-height: 20px;
+transition:
+    border-color .18s ease,
+    box-shadow .18s ease;
 
 
 }
 
 .search-overlay-input::placeholder {
-color: #94a3b8;
+color: #a0a4ae;
+}
+
+.search-overlay-input:hover {
+border-color: #dddddf;
+}
+
+.search-overlay-input:focus {
+border-color: #d5d0e8;
+
+
+box-shadow:
+    0 0 0 2px rgba(109, 74, 255, .05);
+
+
 }
 
 /* =========================================================
@@ -136,121 +154,632 @@ BOTÃO CANCELAR
 ========================================================= */
 
 .search-overlay-cancelar {
-appearance: none;
--webkit-appearance: none;
+flex: 0 0 auto;
 
+
+height: 38px;
+
+padding: 0 2px;
 
 border: 0;
-outline: none;
 
 background: transparent;
 
-padding: 8px 0;
-
-color: #2563eb;
+color: #6d4aff;
 
 font-family: inherit;
-
-font-size: 14px;
-
-font-weight: 600;
-
-white-space: nowrap;
+font-size: 12px;
+font-weight: 700;
 
 cursor: pointer;
 
+white-space: nowrap;
 
+transition: opacity .18s ease;
+
+
+}
+
+.search-overlay-cancelar:hover {
+opacity: .70;
 }
 
 .search-overlay-cancelar:active {
-opacity: 0.65;
+opacity: .50;
 }
 
 /* =========================================================
-RESULTADOS
+ÁREA DOS RESULTADOS
 ========================================================= */
 
 .search-results {
 flex: 1;
 
 
+width: 100%;
+
 overflow-y: auto;
+overflow-x: hidden;
 
-padding: 16px;
-
-box-sizing: border-box;
+background: #ffffff;
 
 -webkit-overflow-scrolling: touch;
 
 
 }
 
-.search-estado-vazio {
-margin: 32px 16px;
+/* =========================================================
+ITEM DE RESULTADO
+========================================================= */
 
+.search-result-item {
+display: flex;
+align-items: center;
+
+
+width: 100%;
+min-height: 68px;
+
+padding: 9px 16px;
+
+gap: 12px;
+
+border-bottom: 1px solid #eeeeee;
+
+background: #ffffff;
+
+color: inherit;
+text-decoration: none;
+
+cursor: pointer;
+
+transition:
+    background .15s ease;
+
+
+}
+
+.search-result-item:hover {
+background: #fafafa;
+}
+
+.search-result-item:active {
+background: #f5f5f7;
+}
+
+/* =========================================================
+FOTO / AVATAR
+========================================================= */
+
+.search-result-avatar-wrapper {
+width: 46px;
+height: 46px;
+
+
+flex: 0 0 46px;
+
+overflow: hidden;
+
+border-radius: 50%;
+
+background: var(
+    --mw-primary-soft,
+    #f0edff
+);
+
+
+}
+
+.search-result-avatar {
+display: block;
+
+
+width: 100%;
+height: 100%;
+
+object-fit: cover;
+
+
+}
+
+.search-result-avatar-fallback {
+display: flex;
+align-items: center;
+justify-content: center;
+
+
+width: 100%;
+height: 100%;
+
+border-radius: 50%;
+
+background: var(
+    --mw-primary-soft,
+    #f0edff
+);
+
+color: var(
+    --mw-primary,
+    #6d4aff
+);
+
+font-size: 13px;
+font-weight: 800;
+
+
+}
+
+/* =========================================================
+INFORMAÇÕES DO RESULTADO
+========================================================= */
+
+.search-result-info {
+flex: 1;
+min-width: 0;
+
+
+overflow: hidden;
+
+
+}
+
+/* =========================================================
+NOME
+========================================================= */
+
+.search-result-name {
+margin: 0 0 4px;
+
+
+overflow: hidden;
+
+color: #20222b;
+
+font-size: 13px;
+font-weight: 800;
+
+line-height: 1.2;
+
+text-overflow: ellipsis;
+white-space: nowrap;
+
+
+}
+
+/* =========================================================
+LOCALIZAÇÃO E GÊNERO
+========================================================= */
+
+.search-result-location,
+.search-result-genre {
+display: flex;
+align-items: center;
+
+
+min-width: 0;
+
+gap: 5px;
+
+color: #858a96;
+
+font-size: 10px;
+font-weight: 500;
+
+line-height: 1.35;
+
+
+}
+
+.search-result-location {
+margin-bottom: 2px;
+}
+
+/* =========================================================
+ÍCONES DAS INFORMAÇÕES
+========================================================= */
+
+.search-result-location svg,
+.search-result-genre svg {
+width: 12px;
+height: 12px;
+
+
+flex: 0 0 12px;
+
+color: #999da7;
+
+
+}
+
+.search-result-location span,
+.search-result-genre span {
+display: block;
+
+
+min-width: 0;
+
+overflow: hidden;
+
+text-overflow: ellipsis;
+
+white-space: nowrap;
+
+
+}
+
+/* =========================================================
+SETA
+========================================================= */
+
+.search-result-arrow {
+width: 16px;
+height: 16px;
+
+
+flex: 0 0 16px;
+
+color: #a5a9b4;
+
+transition:
+    transform .15s ease,
+    color .15s ease;
+
+
+}
+
+.search-result-item:hover .search-result-arrow {
+color: var(
+--mw-primary,
+#6d4aff
+);
+
+
+transform: translateX(2px);
+
+
+}
+
+/* =========================================================
+ESTADO INICIAL
+========================================================= */
+
+.search-estado-vazio {
+margin: 0;
+
+
+padding: 38px 24px;
+
+color: #9296a3;
+
+font-size: 12px;
+font-weight: 500;
+
+line-height: 1.5;
 
 text-align: center;
 
-color: #94a3b8;
 
-font-size: 14px;
+}
 
-line-height: 20px;
+/* =========================================================
+SEM RESULTADOS
+========================================================= */
+
+.search-estado-sem-resultados {
+display: flex;
+flex-direction: column;
+
+
+align-items: center;
+justify-content: center;
+
+min-height: 180px;
+
+padding: 30px 24px;
+
+text-align: center;
+
+
+}
+
+.search-estado-sem-resultados svg {
+width: 28px;
+height: 28px;
+
+
+margin-bottom: 10px;
+
+color: #b1b4be;
+
+
+}
+
+.search-estado-sem-resultados p {
+margin: 0;
+
+
+color: #8b909c;
+
+font-size: 12px;
+font-weight: 600;
 
 
 }
 
 /* =========================================================
-RESULTADOS EM CARDS
+CARREGANDO
 ========================================================= */
 
-.search-results .ad-card-novo {
-margin-bottom: 12px;
+.search-estado-carregando {
+display: flex;
+flex-direction: column;
+
+
+align-items: center;
+justify-content: center;
+
+min-height: 180px;
+
+padding: 30px 24px;
+
+text-align: center;
+
+
 }
 
-.search-results a {
-text-decoration: none;
-color: inherit;
+.search-estado-carregando p {
+margin: 11px 0 0;
+
+
+color: #8b909c;
+
+font-size: 11px;
+font-weight: 600;
+
+
 }
 
 /* =========================================================
-MOBILE
+SPINNER
 ========================================================= */
 
-@media (max-width: 480px) {
+.search-loading-spinner {
+width: 23px;
+height: 23px;
 
 
-.search-overlay {
-    max-width: none;
+border: 2px solid #e6e4ef;
+
+border-top-color: var(
+    --mw-primary,
+    #6d4aff
+);
+
+border-radius: 50%;
+
+animation:
+    search-spinner .7s linear infinite;
+
+
 }
+
+@keyframes search-spinner {
+
+
+from {
+    transform: rotate(0deg);
+}
+
+to {
+    transform: rotate(360deg);
+}
+
+
+}
+
+/* =========================================================
+ERRO
+========================================================= */
+
+.search-estado-erro {
+display: flex;
+align-items: center;
+justify-content: center;
+
+
+min-height: 180px;
+
+padding: 30px 24px;
+
+text-align: center;
+
+
+}
+
+.search-estado-erro p {
+margin: 0;
+
+
+color: #8b909c;
+
+font-size: 12px;
+font-weight: 600;
+
+
+}
+
+/* =========================================================
+RESPONSIVO — MOBILE
+========================================================= */
+
+@media (max-width: 520px) {
+
 
 .search-overlay-header {
-    padding-left: 14px;
-    padding-right: 14px;
+    min-height: 54px;
+
+    padding: 7px 11px;
+
+    gap: 8px;
 }
 
-.search-results {
-    padding-left: 14px;
-    padding-right: 14px;
+.search-overlay-input {
+    height: 36px;
+
+    padding-left: 34px;
+
+    font-size: 12px;
+
+    border-radius: 8px;
+}
+
+.search-overlay-icon {
+    left: 11px;
+
+    width: 15px;
+    height: 15px;
+}
+
+.search-overlay-cancelar {
+    height: 36px;
+
+    font-size: 11px;
+}
+
+.search-result-item {
+    min-height: 64px;
+
+    padding: 8px 13px;
+
+    gap: 10px;
+}
+
+.search-result-avatar-wrapper {
+    width: 44px;
+    height: 44px;
+
+    flex-basis: 44px;
+}
+
+.search-result-avatar-fallback {
+    font-size: 12px;
+}
+
+.search-result-name {
+    font-size: 12px;
+
+    margin-bottom: 3px;
+}
+
+.search-result-location,
+.search-result-genre {
+    font-size: 9px;
+
+    gap: 4px;
+}
+
+.search-result-location svg,
+.search-result-genre svg {
+    width: 11px;
+    height: 11px;
+
+    flex-basis: 11px;
+}
+
+.search-result-arrow {
+    width: 15px;
+    height: 15px;
+
+    flex-basis: 15px;
+}
+
+.search-estado-vazio {
+    padding: 34px 20px;
+
+    font-size: 11px;
 }
 
 
 }
 
 /* =========================================================
-TELAS MAIORES
+MOBILE MUITO PEQUENO
 ========================================================= */
 
-@media (min-width: 768px) {
+@media (max-width: 360px) {
 
 
-.search-overlay {
-    max-width: 430px;
+.search-overlay-header {
+    padding-left: 9px;
+    padding-right: 9px;
+}
 
-    left: 50%;
-    right: auto;
+.search-result-item {
+    padding-left: 10px;
+    padding-right: 10px;
+}
 
-    margin-left: -215px;
+.search-result-avatar-wrapper {
+    width: 42px;
+    height: 42px;
+
+    flex-basis: 42px;
+}
+
+.search-result-name {
+    font-size: 11px;
+}
+
+.search-result-location,
+.search-result-genre {
+    font-size: 8px;
+}
+
+.search-overlay-cancelar {
+    font-size: 10px;
+}
+
+
+}
+
+/* =========================================================
+ACESSIBILIDADE
+========================================================= */
+
+.search-result-item:focus-visible,
+.search-overlay-cancelar:focus-visible {
+outline: 2px solid var(
+--mw-primary,
+#6d4aff
+);
+
+
+outline-offset: -2px;
+
+
+}
+
+.search-overlay-input:focus-visible {
+outline: none;
+}
+
+/* =========================================================
+REDUÇÃO DE MOVIMENTO
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+
+.search-overlay,
+.search-overlay-input,
+.search-result-item,
+.search-result-arrow,
+.search-overlay-cancelar {
+    transition: none;
+}
+
+.search-loading-spinner {
+    animation: none;
 }
 
 

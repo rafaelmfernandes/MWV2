@@ -4,1047 +4,1060 @@ MUSICALWORLD — MODAL DE FILTRO
 
 window.ModalFiltro = {
 
+
 inicializado: false,
 modalCriado: false,
 animacaoEmAndamento: false,
 
 /* =======================================================
-INICIALIZAÇÃO
+   INICIALIZAÇÃO
 ======================================================= */
 
 iniciar() {
 
+    if (this.inicializado) {
+        return;
+    }
 
-if (this.inicializado) {
-  return;
-}
+    this.criarModal();
+    this.configurarEventos();
 
-this.criarModal();
+    this.inicializado = true;
 
-this.configurarEventos();
-
-this.inicializado = true;
-
-console.log(
-  '🔎 Modal Filtro inicializado corretamente'
-);
-
+    console.log(
+        '🔎 Modal Filtro inicializado corretamente'
+    );
 
 },
 
+
 /* =======================================================
-CRIAR MODAL
+   CRIAR MODAL
 ======================================================= */
 
 criarModal() {
 
+    if (
+        document.getElementById('modal-filtro')
+    ) {
 
-if (
-  document.getElementById('modal-filtro')
-) {
+        this.modalCriado = true;
 
-  this.modalCriado = true;
+        return;
 
-  return;
+    }
 
-}
+    const container =
+        document.getElementById(
+            'modal-filtro-container'
+        );
 
+    if (!container) {
 
-const container =
-  document.getElementById(
-    'modal-filtro-container'
-  );
+        console.warn(
+            '⚠️ Container #modal-filtro-container não encontrado.'
+        );
 
+        return;
 
-if (!container) {
+    }
 
-  console.warn(
-    '⚠️ Container #modal-filtro-container não encontrado.'
-  );
-
-  return;
-
-}
-
-
-container.innerHTML = `
-
-  <div
-    id="modal-filtro"
-    class="modal-overlay modal-filtro-overlay"
-    aria-hidden="true"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="modal-filtro-titulo"
-  >
-
-    <div
-      class="modal-sheet modal-filtro-sheet"
-      role="document"
-    >
-
-      <div class="modal-handle"></div>
-
-
-      <!-- CABEÇALHO -->
-
-      <div class="modal-header">
-
-        <div>
-
-          <h2 id="modal-filtro-titulo">
-            Filtrar Anúncios
-          </h2>
-
-          <p>
-            Encontre exatamente o que você procura
-          </p>
-
-        </div>
-
-
-        <button
-          type="button"
-          class="modal-close-btn"
-          id="modal-filtro-fechar"
-          aria-label="Fechar filtros"
-        >
-
-          <i data-lucide="x"></i>
-
-        </button>
-
-      </div>
-
-
-      <!-- CONTEÚDO -->
-
-      <div class="modal-filter-content">
-
-
-        <!-- ESTADO -->
-
-        <div class="filter-group">
-
-          <label for="filtro-estado">
-            Estado
-          </label>
-
-          <select id="filtro-estado">
-
-            <option value="GO" selected>
-              Goiás
-            </option>
-
-            <option value="SP">
-              São Paulo
-            </option>
-
-            <option value="MG">
-              Minas Gerais
-            </option>
-
-            <option value="DF">
-              Distrito Federal
-            </option>
-
-            <option value="BA">
-              Bahia
-            </option>
-
-          </select>
-
-        </div>
-
-
-        <!-- CIDADE -->
-
-        <div class="filter-group">
-
-          <label for="filtro-cidade">
-            Cidade
-          </label>
-
-          <select id="filtro-cidade">
-
-            <option value="goiania" selected>
-              Goiânia
-            </option>
-
-            <option value="aparecida">
-              Aparecida de Goiânia
-            </option>
-
-            <option value="anapolis">
-              Anápolis
-            </option>
-
-            <option value="trindade">
-              Trindade
-            </option>
-
-          </select>
-
-        </div>
-
-
-        <!-- CATEGORIA -->
-
-        <div class="filter-group">
-
-          <label for="filtro-categoria">
-            Categoria
-          </label>
-
-          <select id="filtro-categoria">
-
-            <option value="">
-              Todas as categorias
-            </option>
-
-            <option value="cantores">
-              Cantores
-            </option>
-
-            <option value="musicos">
-              Músicos / Instrumentistas
-            </option>
-
-            <option value="composicoes">
-              Composições Inéditas
-            </option>
-
-            <option value="eventos">
-              Shows / Eventos
-            </option>
-
-          </select>
-
-        </div>
-
-
-        <!-- INSTRUMENTO -->
+    container.innerHTML = `
 
         <div
-          class="filter-group"
-          id="wrapper-instrumento"
-          style="display: none;"
+            id="modal-filtro"
+            class="modal-overlay modal-filtro-overlay"
+            aria-hidden="true"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="modal-filtro-titulo"
         >
 
-          <label for="filtro-instrumento">
-            Instrumento
-          </label>
-
-          <select id="filtro-instrumento">
-
-            <option value="">
-              Todos os instrumentos
-            </option>
-
-            <option value="violao">
-              Violão
-            </option>
-
-            <option value="guitarra">
-              Guitarra
-            </option>
-
-            <option value="baixo">
-              Baixo
-            </option>
-
-            <option value="teclado">
-              Teclado
-            </option>
-
-            <option value="bateria">
-              Bateria
-            </option>
-
-            <option value="saxofone">
-              Saxofone
-            </option>
-
-            <option value="outros">
-              Outros
-            </option>
-
-          </select>
-
-        </div>
-
-
-        <!-- ESTILO MUSICAL -->
-
-        <div class="filter-group">
-
-          <label for="filtro-estilo">
-            Estilo musical
-          </label>
-
-          <select id="filtro-estilo">
-
-            <option value="">
-              Todos os estilos
-            </option>
-
-            <option value="sertanejo">
-              Sertanejo
-            </option>
-
-            <option value="pagode">
-              Pagode
-            </option>
-
-            <option value="rock">
-              Rock
-            </option>
-
-            <option value="pop">
-              Pop
-            </option>
-
-            <option value="mpb">
-              MPB
-            </option>
-
-            <option value="gospel">
-              Gospel
-            </option>
-
-            <option value="forro">
-              Forró
-            </option>
-
-            <option value="eletronica">
-              Eletrônica
-            </option>
-
-          </select>
-
-        </div>
-
-
-        <!-- FAIXA DE VALOR -->
-
-        <div class="filter-group">
-
-          <label>
-            Faixa de valor
-          </label>
-
-
-          <div class="filter-price-row">
-
-            <input
-              type="number"
-              id="filtro-valor-min"
-              placeholder="Valor mínimo"
-              min="0"
+            <div
+                class="modal-sheet modal-filtro-sheet"
+                role="document"
             >
 
-
-            <span>
-              até
-            </span>
+                <div class="modal-handle"></div>
 
 
-            <input
-              type="number"
-              id="filtro-valor-max"
-              placeholder="Valor máximo"
-              min="0"
-            >
+                <div class="modal-header">
 
-          </div>
+                    <div>
+
+                        <h2 id="modal-filtro-titulo">
+                            Filtrar Anúncios
+                        </h2>
+
+                        <p>
+                            Encontre exatamente o que você procura
+                        </p>
+
+                    </div>
+
+
+                    <button
+                        type="button"
+                        class="modal-close-btn"
+                        id="modal-filtro-fechar"
+                        aria-label="Fechar filtros"
+                    >
+
+                        <i data-lucide="x"></i>
+
+                    </button>
+
+                </div>
+
+
+                <div class="modal-filter-content">
+
+
+                    <!-- ESTADO -->
+
+                    <div class="filter-group">
+
+                        <label for="filtro-estado">
+                            Estado
+                        </label>
+
+                        <select id="filtro-estado">
+
+                            <option value="">
+                                Todos os estados
+                            </option>
+
+                            <option value="GO">
+                                Goiás
+                            </option>
+
+                            <option value="SP">
+                                São Paulo
+                            </option>
+
+                            <option value="MG">
+                                Minas Gerais
+                            </option>
+
+                            <option value="DF">
+                                Distrito Federal
+                            </option>
+
+                            <option value="BA">
+                                Bahia
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- CIDADE -->
+
+                    <div class="filter-group">
+
+                        <label for="filtro-cidade">
+                            Cidade
+                        </label>
+
+                        <select id="filtro-cidade">
+
+                            <option value="">
+                                Todas as cidades
+                            </option>
+
+                            <option value="goiania">
+                                Goiânia
+                            </option>
+
+                            <option value="aparecida">
+                                Aparecida de Goiânia
+                            </option>
+
+                            <option value="anapolis">
+                                Anápolis
+                            </option>
+
+                            <option value="trindade">
+                                Trindade
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- CATEGORIA -->
+
+                    <div class="filter-group">
+
+                        <label for="filtro-categoria">
+                            Categoria
+                        </label>
+
+                        <select id="filtro-categoria">
+
+                            <option value="">
+                                Todas as categorias
+                            </option>
+
+                            <option value="cantores">
+                                Cantores / Duplas
+                            </option>
+
+                            <option value="musicos">
+                                Músicos / Instrumentistas
+                            </option>
+
+                            <option value="composicoes">
+                                Composições Inéditas
+                            </option>
+
+                            <option value="eventos">
+                                Shows / Eventos
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- INSTRUMENTO -->
+
+                    <div
+                        class="filter-group"
+                        id="wrapper-instrumento"
+                        style="display: none;"
+                    >
+
+                        <label for="filtro-instrumento">
+                            Instrumento
+                        </label>
+
+                        <select id="filtro-instrumento">
+
+                            <option value="">
+                                Todos os instrumentos
+                            </option>
+
+                            <option value="violao">
+                                Violão
+                            </option>
+
+                            <option value="guitarra">
+                                Guitarra
+                            </option>
+
+                            <option value="baixo">
+                                Baixo
+                            </option>
+
+                            <option value="teclado">
+                                Teclado
+                            </option>
+
+                            <option value="bateria">
+                                Bateria
+                            </option>
+
+                            <option value="saxofone">
+                                Saxofone
+                            </option>
+
+                            <option value="outros">
+                                Outros
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- ESTILO MUSICAL -->
+
+                    <div class="filter-group">
+
+                        <label for="filtro-estilo">
+                            Estilo musical
+                        </label>
+
+                        <select id="filtro-estilo">
+
+                            <option value="">
+                                Todos os estilos
+                            </option>
+
+                            <option value="sertanejo">
+                                Sertanejo
+                            </option>
+
+                            <option value="pagode">
+                                Pagode
+                            </option>
+
+                            <option value="rock">
+                                Rock
+                            </option>
+
+                            <option value="pop">
+                                Pop
+                            </option>
+
+                            <option value="mpb">
+                                MPB
+                            </option>
+
+                            <option value="gospel">
+                                Gospel
+                            </option>
+
+                            <option value="forro">
+                                Forró
+                            </option>
+
+                            <option value="eletronica">
+                                Eletrônica
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- FAIXA DE VALOR -->
+
+                    <div class="filter-group">
+
+                        <label>
+                            Faixa de valor
+                        </label>
+
+                        <div class="filter-price-row">
+
+                            <input
+                                type="number"
+                                id="filtro-valor-min"
+                                placeholder="Valor mínimo"
+                                min="0"
+                            >
+
+                            <span>
+                                até
+                            </span>
+
+                            <input
+                                type="number"
+                                id="filtro-valor-max"
+                                placeholder="Valor máximo"
+                                min="0"
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+
+                <div class="modal-filter-actions">
+
+                    <button
+                        type="button"
+                        class="btn-filter-clear"
+                        id="modal-filtro-limpar"
+                    >
+                        Limpar
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="btn-filter-apply"
+                        id="modal-filtro-aplicar"
+                    >
+                        Aplicar filtros
+                    </button>
+
+                </div>
+
+            </div>
 
         </div>
 
+    `;
 
-      </div>
+    this.modalCriado = true;
 
+    if (
+        window.lucide &&
+        typeof window.lucide.createIcons === 'function'
+    ) {
 
-      <!-- BOTÕES -->
+        window.lucide.createIcons();
 
-      <div class="modal-filter-actions">
-
-        <button
-          type="button"
-          class="btn-filter-clear"
-          id="modal-filtro-limpar"
-        >
-          Limpar
-        </button>
-
-
-        <button
-          type="button"
-          class="btn-filter-apply"
-          id="modal-filtro-aplicar"
-        >
-          Aplicar filtros
-        </button>
-
-      </div>
-
-    </div>
-
-  </div>
-
-`;
-
-
-this.modalCriado = true;
-
-
-/* Cria os ícones Lucide */
-
-if (
-  window.lucide &&
-  typeof window.lucide.createIcons === 'function'
-) {
-
-  window.lucide.createIcons();
-
-}
-
+    }
 
 },
 
+
 /* =======================================================
-CONFIGURAR EVENTOS
+   CONFIGURAR EVENTOS
 ======================================================= */
 
 configurarEventos() {
 
+    const modal =
+        document.getElementById(
+            'modal-filtro'
+        );
 
-const modal =
-  document.getElementById(
-    'modal-filtro'
-  );
+    if (!modal) {
+        return;
+    }
 
+    const sheet =
+        modal.querySelector(
+            '.modal-filtro-sheet'
+        );
 
-if (!modal) {
-  return;
-}
+    const fechar =
+        document.getElementById(
+            'modal-filtro-fechar'
+        );
 
+    const categoria =
+        document.getElementById(
+            'filtro-categoria'
+        );
 
-const sheet =
-  modal.querySelector(
-    '.modal-filtro-sheet'
-  );
+    const limpar =
+        document.getElementById(
+            'modal-filtro-limpar'
+        );
 
-
-const fechar =
-  document.getElementById(
-    'modal-filtro-fechar'
-  );
-
-
-const categoria =
-  document.getElementById(
-    'filtro-categoria'
-  );
-
-
-const limpar =
-  document.getElementById(
-    'modal-filtro-limpar'
-  );
-
-
-const aplicar =
-  document.getElementById(
-    'modal-filtro-aplicar'
-  );
+    const aplicar =
+        document.getElementById(
+            'modal-filtro-aplicar'
+        );
 
 
-/* =====================================================
-   CLIQUE FORA
-===================================================== */
+    if (modal.dataset.eventosConfigurados === 'true') {
+        return;
+    }
 
-modal.addEventListener(
-  'click',
-  (event) => {
+    modal.dataset.eventosConfigurados = 'true';
 
-    if (
-      event.target === modal
-    ) {
 
-      this.fechar();
+    /* =====================================================
+       CLIQUE FORA
+    ===================================================== */
+
+    modal.addEventListener(
+        'click',
+        event => {
+
+            if (event.target === modal) {
+
+                this.fechar();
+
+            }
+
+        }
+    );
+
+
+    /* =====================================================
+       CLIQUE DENTRO
+    ===================================================== */
+
+    if (sheet) {
+
+        sheet.addEventListener(
+            'click',
+            event => {
+
+                event.stopPropagation();
+
+            }
+        );
 
     }
 
-  }
-);
 
+    /* =====================================================
+       FECHAR
+    ===================================================== */
 
-/* =====================================================
-   CLIQUE DENTRO
-===================================================== */
+    if (fechar) {
 
-if (sheet) {
+        fechar.addEventListener(
+            'click',
+            () => {
 
-  sheet.addEventListener(
-    'click',
-    (event) => {
+                this.fechar();
 
-      event.stopPropagation();
-
-    }
-  );
-
-}
-
-
-/* =====================================================
-   BOTÃO FECHAR
-===================================================== */
-
-if (fechar) {
-
-  fechar.addEventListener(
-    'click',
-    () => {
-
-      this.fechar();
+            }
+        );
 
     }
-  );
-
-}
 
 
-/* =====================================================
-   CATEGORIA
-===================================================== */
+    /* =====================================================
+       CATEGORIA
+    ===================================================== */
 
-if (categoria) {
+    if (categoria) {
 
-  categoria.addEventListener(
-    'change',
-    () => {
+        categoria.addEventListener(
+            'change',
+            () => {
 
-      this.tratarMudancaCategoria();
+                this.tratarMudancaCategoria();
 
-    }
-  );
-
-}
-
-
-/* =====================================================
-   LIMPAR
-===================================================== */
-
-if (limpar) {
-
-  limpar.addEventListener(
-    'click',
-    () => {
-
-      this.limpar();
+            }
+        );
 
     }
-  );
-
-}
 
 
-/* =====================================================
-   APLICAR
-===================================================== */
+    /* =====================================================
+       LIMPAR
+    ===================================================== */
 
-if (aplicar) {
+    if (limpar) {
 
-  aplicar.addEventListener(
-    'click',
-    () => {
+        limpar.addEventListener(
+            'click',
+            () => {
 
-      this.aplicar();
+                this.limpar();
+
+            }
+        );
 
     }
-  );
 
-}
 
+    /* =====================================================
+       APLICAR
+    ===================================================== */
+
+    if (aplicar) {
+
+        aplicar.addEventListener(
+            'click',
+            () => {
+
+                this.aplicar();
+
+            }
+        );
+
+    }
 
 },
 
+
 /* =======================================================
-ABRIR
+   ABRIR
 ======================================================= */
 
 abrir() {
 
+    if (!this.modalCriado) {
 
-const modal =
-  document.getElementById(
-    'modal-filtro'
-  );
+        this.criarModal();
+        this.configurarEventos();
 
+    }
 
-if (!modal) {
+    const modal =
+        document.getElementById(
+            'modal-filtro'
+        );
 
-  console.warn(
-    '⚠️ ModalFiltro ainda não foi criado.'
-  );
+    if (!modal) {
 
-  return;
+        console.warn(
+            '⚠️ ModalFiltro não foi criado.'
+        );
 
-}
+        return;
 
+    }
 
-if (
-  this.animacaoEmAndamento
-) {
+    if (this.animacaoEmAndamento) {
+        return;
+    }
 
-  return;
+    this.animacaoEmAndamento = true;
 
-}
-
-
-this.animacaoEmAndamento = true;
-
-
-/*
-  Remove qualquer estado
-  anterior de fechamento.
-*/
-
-modal.classList.remove(
-  'fechando'
-);
-
-
-/*
-  Torna o modal acessível.
-*/
-
-modal.setAttribute(
-  'aria-hidden',
-  'false'
-);
-
-
-/*
-  Bloqueia o scroll da página.
-*/
-
-document.body.classList.add(
-  'modal-filtro-aberto'
-);
-
-
-/*
-  Força o navegador a registrar
-  o estado inicial do painel.
-*/
-
-void modal.offsetHeight;
-
-
-/*
-  Inicia a animação.
-*/
-
-requestAnimationFrame(
-  () => {
-
-    modal.classList.add(
-      'ativo'
+    modal.classList.remove(
+        'fechando'
     );
 
-  }
-);
+    modal.setAttribute(
+        'aria-hidden',
+        'false'
+    );
 
+    document.body.classList.add(
+        'modal-filtro-aberto'
+    );
 
-/*
-  Libera novas ações depois
-  do tempo da animação.
-*/
+    void modal.offsetHeight;
 
-setTimeout(
-  () => {
+    requestAnimationFrame(
+        () => {
 
-    this.animacaoEmAndamento = false;
+            modal.classList.add(
+                'ativo'
+            );
 
-  },
-  400
-);
+        }
+    );
 
+    setTimeout(
+        () => {
+
+            this.animacaoEmAndamento = false;
+
+        },
+        400
+    );
 
 },
 
+
 /* =======================================================
-FECHAR
+   FECHAR
 ======================================================= */
 
 fechar() {
 
+    const modal =
+        document.getElementById(
+            'modal-filtro'
+        );
 
-const modal =
-  document.getElementById(
-    'modal-filtro'
-  );
+    if (!modal) {
+        return;
+    }
 
+    if (this.animacaoEmAndamento) {
+        return;
+    }
 
-if (!modal) {
-  return;
-}
+    this.animacaoEmAndamento = true;
 
+    const elementoFocado =
+        document.activeElement;
 
-if (
-  this.animacaoEmAndamento
-) {
+    if (
+        elementoFocado &&
+        modal.contains(elementoFocado) &&
+        typeof elementoFocado.blur === 'function'
+    ) {
 
-  return;
+        elementoFocado.blur();
 
-}
-
-
-this.animacaoEmAndamento = true;
-
-
-/*
-  IMPORTANTE:
-
-  Retira o foco do elemento que estiver
-  dentro do modal antes de colocar
-  aria-hidden="true".
-
-  Isso evita o aviso do navegador
-  relacionado ao foco dentro de
-  elementos aria-hidden.
-*/
-
-const elementoFocado =
-  document.activeElement;
-
-
-if (
-  elementoFocado &&
-  modal.contains(elementoFocado) &&
-  typeof elementoFocado.blur === 'function'
-) {
-
-  elementoFocado.blur();
-
-}
-
-
-/*
-  Inicia o fechamento.
-
-  O CSS fará o painel deslizar
-  de cima para baixo.
-*/
-
-modal.classList.remove(
-  'ativo'
-);
-
-
-modal.classList.add(
-  'fechando'
-);
-
-
-/*
-  Agora podemos esconder o modal
-  da tecnologia assistiva.
-*/
-
-modal.setAttribute(
-  'aria-hidden',
-  'true'
-);
-
-
-/*
-  Mantém o modal no DOM durante
-  toda a animação.
-*/
-
-setTimeout(
-  () => {
+    }
 
     modal.classList.remove(
-      'fechando'
+        'ativo'
     );
 
-
-    document.body.classList.remove(
-      'modal-filtro-aberto'
+    modal.classList.add(
+        'fechando'
     );
 
+    modal.setAttribute(
+        'aria-hidden',
+        'true'
+    );
 
-    this.animacaoEmAndamento = false;
+    setTimeout(
+        () => {
 
-  },
-  400
-);
+            modal.classList.remove(
+                'fechando'
+            );
 
+            document.body.classList.remove(
+                'modal-filtro-aberto'
+            );
+
+            this.animacaoEmAndamento = false;
+
+        },
+        400
+    );
 
 },
 
+
 /* =======================================================
-FECHAR CLICANDO FORA
+   FECHAR FORA
 ======================================================= */
 
 fecharFora(event) {
 
+    const modal =
+        document.getElementById(
+            'modal-filtro'
+        );
 
-const modal =
-  document.getElementById(
-    'modal-filtro'
-  );
+    if (
+        modal &&
+        event.target === modal
+    ) {
 
+        this.fechar();
 
-if (
-  modal &&
-  event.target === modal
-) {
-
-  this.fechar();
-
-}
-
+    }
 
 },
 
+
 /* =======================================================
-MUDAR CATEGORIA
+   MUDANÇA DE CATEGORIA
 ======================================================= */
 
 tratarMudancaCategoria() {
 
+    const categoria =
+        document.getElementById(
+            'filtro-categoria'
+        );
 
-const categoria =
-  document.getElementById(
-    'filtro-categoria'
-  );
+    const wrapper =
+        document.getElementById(
+            'wrapper-instrumento'
+        );
 
+    if (!categoria || !wrapper) {
+        return;
+    }
 
-const wrapper =
-  document.getElementById(
-    'wrapper-instrumento'
-  );
+    const mostrar =
+        categoria.value === 'musicos';
 
+    wrapper.style.display =
+        mostrar
+            ? 'flex'
+            : 'none';
 
-if (
-  !categoria ||
-  !wrapper
-) {
+    if (!mostrar) {
 
-  return;
+        const instrumento =
+            document.getElementById(
+                'filtro-instrumento'
+            );
 
-}
+        if (instrumento) {
+            instrumento.value = '';
+        }
 
-
-if (
-  categoria.value === 'musicos'
-) {
-
-  wrapper.style.display = 'flex';
-
-} else {
-
-  wrapper.style.display = 'none';
-
-}
-
+    }
 
 },
 
+
 /* =======================================================
-LIMPAR FILTROS
+   OBTER FILTROS
 ======================================================= */
 
-limpar() {
+obterFiltros() {
+
+    const valorMinElemento =
+        document.getElementById(
+            'filtro-valor-min'
+        );
+
+    const valorMaxElemento =
+        document.getElementById(
+            'filtro-valor-max'
+        );
+
+    const valorMin =
+        valorMinElemento?.value !== ''
+            ? Number(valorMinElemento.value)
+            : null;
+
+    const valorMax =
+        valorMaxElemento?.value !== ''
+            ? Number(valorMaxElemento.value)
+            : null;
 
 
-const estado =
-  document.getElementById(
-    'filtro-estado'
-  );
+    return {
 
+        estado:
+            document.getElementById(
+                'filtro-estado'
+            )?.value || '',
 
-const cidade =
-  document.getElementById(
-    'filtro-cidade'
-  );
+        cidade:
+            document.getElementById(
+                'filtro-cidade'
+            )?.value || '',
 
+        categoria:
+            document.getElementById(
+                'filtro-categoria'
+            )?.value || '',
 
-const categoria =
-  document.getElementById(
-    'filtro-categoria'
-  );
+        instrumento:
+            document.getElementById(
+                'filtro-instrumento'
+            )?.value || '',
 
+        estilo:
+            document.getElementById(
+                'filtro-estilo'
+            )?.value || '',
 
-const instrumento =
-  document.getElementById(
-    'filtro-instrumento'
-  );
+        valorMin:
+            Number.isFinite(valorMin)
+                ? valorMin
+                : null,
 
+        valorMax:
+            Number.isFinite(valorMax)
+                ? valorMax
+                : null
 
-const estilo =
-  document.getElementById(
-    'filtro-estilo'
-  );
-
-
-const valorMin =
-  document.getElementById(
-    'filtro-valor-min'
-  );
-
-
-const valorMax =
-  document.getElementById(
-    'filtro-valor-max'
-  );
-
-
-const wrapper =
-  document.getElementById(
-    'wrapper-instrumento'
-  );
-
-
-if (estado) {
-
-  estado.value = 'GO';
-
-}
-
-
-if (cidade) {
-
-  cidade.value = 'goiania';
-
-}
-
-
-if (categoria) {
-
-  categoria.value = '';
-
-}
-
-
-if (instrumento) {
-
-  instrumento.value = '';
-
-}
-
-
-if (estilo) {
-
-  estilo.value = '';
-
-}
-
-
-if (valorMin) {
-
-  valorMin.value = '';
-
-}
-
-
-if (valorMax) {
-
-  valorMax.value = '';
-
-}
-
-
-if (wrapper) {
-
-  wrapper.style.display = 'none';
-
-}
-
+    };
 
 },
 
+
 /* =======================================================
-APLICAR FILTROS
+   VALIDAR FILTROS
+======================================================= */
+
+validarFiltros(filtros) {
+
+    if (
+        filtros.valorMin !== null &&
+        filtros.valorMin < 0
+    ) {
+
+        filtros.valorMin = 0;
+
+    }
+
+    if (
+        filtros.valorMax !== null &&
+        filtros.valorMax < 0
+    ) {
+
+        filtros.valorMax = 0;
+
+    }
+
+    if (
+        filtros.valorMin !== null &&
+        filtros.valorMax !== null &&
+        filtros.valorMin > filtros.valorMax
+    ) {
+
+        const temporario =
+            filtros.valorMin;
+
+        filtros.valorMin =
+            filtros.valorMax;
+
+        filtros.valorMax =
+            temporario;
+
+    }
+
+    return filtros;
+
+},
+
+
+/* =======================================================
+   APLICAR FILTROS
 ======================================================= */
 
 aplicar() {
 
+    let filtros =
+        this.obterFiltros();
 
-const filtros = {
-
-  estado:
-    document.getElementById(
-      'filtro-estado'
-    )?.value || '',
-
-
-  cidade:
-    document.getElementById(
-      'filtro-cidade'
-    )?.value || '',
+    filtros =
+        this.validarFiltros(
+            filtros
+        );
 
 
-  categoria:
-    document.getElementById(
-      'filtro-categoria'
-    )?.value || '',
+    const valorMin =
+        document.getElementById(
+            'filtro-valor-min'
+        );
+
+    const valorMax =
+        document.getElementById(
+            'filtro-valor-max'
+        );
 
 
-  instrumento:
-    document.getElementById(
-      'filtro-instrumento'
-    )?.value || '',
+    if (valorMin) {
+
+        valorMin.value =
+            filtros.valorMin !== null
+                ? filtros.valorMin
+                : '';
+
+    }
+
+    if (valorMax) {
+
+        valorMax.value =
+            filtros.valorMax !== null
+                ? filtros.valorMax
+                : '';
+
+    }
 
 
-  estilo:
-    document.getElementById(
-      'filtro-estilo'
-    )?.value || '',
+    console.log(
+        '🔎 Filtros aplicados:',
+        filtros
+    );
 
 
-  valorMin:
-    document.getElementById(
-      'filtro-valor-min'
-    )?.value || '',
+    window.dispatchEvent(
+        new CustomEvent(
+            'musicalworld:filtros-aplicados',
+            {
+                detail: {
+                    filtros
+                }
+            }
+        )
+    );
 
 
-  valorMax:
-    document.getElementById(
-      'filtro-valor-max'
-    )?.value || ''
+    this.fechar();
 
-};
+},
 
 
-console.log(
-  '🔎 Filtros aplicados:',
-  filtros
-);
+/* =======================================================
+   LIMPAR FILTROS
+======================================================= */
+
+limpar() {
+
+    const estado =
+        document.getElementById(
+            'filtro-estado'
+        );
+
+    const cidade =
+        document.getElementById(
+            'filtro-cidade'
+        );
+
+    const categoria =
+        document.getElementById(
+            'filtro-categoria'
+        );
+
+    const instrumento =
+        document.getElementById(
+            'filtro-instrumento'
+        );
+
+    const estilo =
+        document.getElementById(
+            'filtro-estilo'
+        );
+
+    const valorMin =
+        document.getElementById(
+            'filtro-valor-min'
+        );
+
+    const valorMax =
+        document.getElementById(
+            'filtro-valor-max'
+        );
+
+    const wrapper =
+        document.getElementById(
+            'wrapper-instrumento'
+        );
 
 
-/*
-  FUTURO:
+    if (estado) {
+        estado.value = '';
+    }
 
-  Aqui vamos conectar os filtros
-  diretamente às consultas do Supabase.
-*/
+    if (cidade) {
+        cidade.value = '';
+    }
 
-alert(
-  'Filtros aplicados com sucesso!'
-);
+    if (categoria) {
+        categoria.value = '';
+    }
+
+    if (instrumento) {
+        instrumento.value = '';
+    }
+
+    if (estilo) {
+        estilo.value = '';
+    }
+
+    if (valorMin) {
+        valorMin.value = '';
+    }
+
+    if (valorMax) {
+        valorMax.value = '';
+    }
+
+    if (wrapper) {
+        wrapper.style.display = 'none';
+    }
 
 
-this.fechar();
+    const filtros = {
 
+        estado: '',
+        cidade: '',
+        categoria: '',
+        instrumento: '',
+        estilo: '',
+        valorMin: null,
+        valorMax: null
+
+    };
+
+
+    console.log(
+        '🧹 Filtros limpos.'
+    );
+
+
+    window.dispatchEvent(
+        new CustomEvent(
+            'musicalworld:filtros-aplicados',
+            {
+                detail: {
+                    filtros
+                }
+            }
+        )
+    );
 
 }
+
 
 };
 
@@ -1052,50 +1065,39 @@ this.fechar();
 FUNÇÕES GLOBAIS DE COMPATIBILIDADE
 ========================================================= */
 
-/*
-O botão do index.html utiliza:
-
-onclick="abrirModalFiltro()"
-
-Por isso mantemos esta função global.
-
-O funcionamento real continua
-dentro de ModalFiltro.
-*/
-
 window.abrirModalFiltro = function () {
 
+
 if (
-window.ModalFiltro &&
-typeof window.ModalFiltro.abrir === 'function'
+    window.ModalFiltro &&
+    typeof window.ModalFiltro.abrir === 'function'
 ) {
 
+    window.ModalFiltro.abrir();
 
-window.ModalFiltro.abrir();
-
-return;
-
+    return;
 
 }
 
 console.warn(
-'⚠️ ModalFiltro ainda não foi carregado.'
+    '⚠️ ModalFiltro ainda não foi carregado.'
 );
+
 
 };
 
 window.fecharModalFiltro = function () {
 
+
 if (
-window.ModalFiltro &&
-typeof window.ModalFiltro.fechar === 'function'
+    window.ModalFiltro &&
+    typeof window.ModalFiltro.fechar === 'function'
 ) {
 
-
-window.ModalFiltro.fechar();
-
+    window.ModalFiltro.fechar();
 
 }
+
 
 };
 
@@ -1103,63 +1105,63 @@ window.fecharModalFiltroFora = function (
 event
 ) {
 
+
 if (
-window.ModalFiltro &&
-typeof window.ModalFiltro.fecharFora === 'function'
+    window.ModalFiltro &&
+    typeof window.ModalFiltro.fecharFora === 'function'
 ) {
 
-
-window.ModalFiltro.fecharFora(
-  event
-);
-
+    window.ModalFiltro.fecharFora(
+        event
+    );
 
 }
+
 
 };
 
 window.tratarMudancaCategoriaFiltro = function () {
 
+
 if (
-window.ModalFiltro &&
-typeof window.ModalFiltro.tratarMudancaCategoria === 'function'
+    window.ModalFiltro &&
+    typeof window.ModalFiltro.tratarMudancaCategoria === 'function'
 ) {
 
-
-window.ModalFiltro.tratarMudancaCategoria();
-
+    window.ModalFiltro.tratarMudancaCategoria();
 
 }
+
 
 };
 
 window.limparFiltros = function () {
 
+
 if (
-window.ModalFiltro &&
-typeof window.ModalFiltro.limpar === 'function'
+    window.ModalFiltro &&
+    typeof window.ModalFiltro.limpar === 'function'
 ) {
 
-
-window.ModalFiltro.limpar();
-
+    window.ModalFiltro.limpar();
 
 }
+
 
 };
 
 window.aplicarFiltros = function () {
 
+
 if (
-window.ModalFiltro &&
-typeof window.ModalFiltro.aplicar === 'function'
+    window.ModalFiltro &&
+    typeof window.ModalFiltro.aplicar === 'function'
 ) {
 
-
-window.ModalFiltro.aplicar();
-
+    window.ModalFiltro.aplicar();
 
 }
+
 
 };
 
@@ -1171,20 +1173,21 @@ if (
 document.readyState === 'loading'
 ) {
 
+
 document.addEventListener(
-'DOMContentLoaded',
-() => {
+    'DOMContentLoaded',
+    () => {
 
+        ModalFiltro.iniciar();
 
-  ModalFiltro.iniciar();
-
-}
-
-
+    }
 );
+
 
 } else {
 
+
 ModalFiltro.iniciar();
+
 
 }
