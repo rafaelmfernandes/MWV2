@@ -1,38 +1,29 @@
 /* =========================================================
-MUSICALWORLD — FUNÇÕES PRINCIPAIS DA PÁGINA INICIAL
+MUSICALWORLD — PÁGINA INICIAL
+FEED DE PROFISSIONAIS
 ========================================================= */
 
 /* =========================================================
-CONTROLE DE ABAS DE CATEGORIAS
+CONFIGURAÇÃO DO FEED
 ========================================================= */
 
-function mudarCategoria(categoriaId, elementoBtn) {
+const FEED_CONFIG = {
 
 
-const abas = document.querySelectorAll('.cat-tab');
+limitePorPagina: 12,
 
-abas.forEach(tab => {
-    tab.classList.remove('ativo');
-});
+paginaAtual: 0,
 
-if (elementoBtn) {
-    elementoBtn.classList.add('ativo');
-}
+carregando: false,
 
-const conteudos = document.querySelectorAll('.cat-content');
+acabou: false,
 
-conteudos.forEach(content => {
-    content.classList.remove('ativo');
-});
+totalCarregado: 0,
 
-const conteudoAtivo = document.getElementById(`cat-${categoriaId}`);
-
-if (conteudoAtivo) {
-    conteudoAtivo.classList.add('ativo');
-}
+observer: null
 
 
-}
+};
 
 /* =========================================================
 NORMALIZAÇÃO DE TEXTO
@@ -51,7 +42,36 @@ return String(valor || '')
 }
 
 /* =========================================================
-OBTER ARTISTA DO PERFIL
+NORMALIZAR LISTAS
+========================================================= */
+
+function normalizarLista(valor) {
+
+
+if (Array.isArray(valor)) {
+
+    return valor
+        .map(item => String(item || '').trim())
+        .filter(Boolean);
+
+}
+
+if (typeof valor === 'string') {
+
+    return valor
+        .split(',')
+        .map(item => item.trim())
+        .filter(Boolean);
+
+}
+
+return [];
+
+
+}
+
+/* =========================================================
+OBTER ARTISTA
 ========================================================= */
 
 function obterArtistaPerfil(perfil) {
@@ -62,462 +82,12 @@ if (!perfil || !perfil.perfis_artistas) {
 }
 
 if (Array.isArray(perfil.perfis_artistas)) {
+
     return perfil.perfis_artistas[0] || null;
+
 }
 
 return perfil.perfis_artistas;
-
-
-}
-
-/* =========================================================
-NORMALIZAR LISTA DE DADOS
-========================================================= */
-
-function normalizarLista(valor) {
-
-
-if (Array.isArray(valor)) {
-    return valor
-        .map(item => String(item || '').trim())
-        .filter(Boolean);
-}
-
-if (typeof valor === 'string') {
-    return valor
-        .split(',')
-        .map(item => item.trim())
-        .filter(Boolean);
-}
-
-return [];
-
-
-}
-
-/* =========================================================
-CARREGAR PROFISSIONAIS PUBLICADOS
-========================================================= */
-
-async function carregarProfissionaisIndex(tipo) {
-
-
-const tipoNormalizado = normalizarTexto(tipo);
-
-const containerId = tipoNormalizado === 'cantor'
-    ? 'cat-cantores'
-    : 'cat-musicos';
-
-const container = document.getElementById(containerId);
-
-if (!container) {
-
-    console.warn(
-        `⚠️ Container ${containerId} não encontrado.`
-    );
-
-    return;
-}
-
-container.innerHTML = `
-    <div class="carregando-profissionais">
-        Carregando profissionais...
-    </div>
-`;
-
-try {
-
-    if (!window.supabaseClient) {
-
-        console.error(
-            '❌ SupabaseClient não encontrado.'
-        );
-
-        container.innerHTML = `
-            <div class="estado-vazio">
-                Não foi possível conectar ao banco de dados.
-            </div>
-        `;
-
-        return;
-    }
-
-    console.log(
-        `🔎 Buscando perfis publicados do tipo: ${tipo}`
-    );
-
-    const { data, error } = await window.supabaseClient
-        .from('perfis')
-        .select(`
-            id,
-            usuario_id,
-            tipo_perfil_id,
-            nome_exibicao,
-            descricao,
-            ativo,
-            perfil_publicado,
-            perfis_artistas (
-                id,
-                perfil_id,
-                tipo_artista,
-                localizacao,
-                experiencia,
-                area_atendimento,
-                disponivel,
-                instrumentos,
-                estilos,
-                servicos,
-                foto_url
-            )
-        `)
-        .eq('ativo', true)
-        .eq('perfil_publicado', true);
-
-    if (error) {
-
-        console.error(
-            '❌ Erro ao carregar profissionais:',
-            error
-        );
-
-        container.innerHTML = `
-            <div class="estado-vazio">
-                Não foi possível carregar os profissionais.
-            </div>
-        `;
-
-        return;
-    }
-
-    console.log(
-        `📦 Perfis publicados encontrados: ${(data || []).length}`
-    );
-
-    const profissionais = (data || []).filter(perfil => {
-
-        const artista = obterArtistaPerfil(perfil);
-
-        if (!artista) {
-            return false;
-        }
-
-        const tipoBanco = normalizarTexto(
-            artista.tipo_artista
-        );
-
-        console.log(
-            `👤 Perfil ${perfil.id}: ${perfil.nome_exibicao} | tipo=${artista.tipo_artista}`
-        );
-
-        return tipoBanco === tipoNormalizado;
-    });
-
-    console.log(
-        `🎵 ${tipo}: ${profissionais.length} perfil(is) encontrado(s).`
-    );
-
-    if (profissionais.length === 0) {
-
-        const nomeTipo = tipoNormalizado === 'musico'
-            ? 'músicos'
-            : 'cantores';
-
-        container.innerHTML = `
-            <div class="estado-vazio">
-                <strong>
-                    Nenhum ${nomeTipo} encontrado.
-                </strong>
-
-                <p>
-                    Novos profissionais aparecerão aqui
-                    quando completarem e publicarem seus perfis.
-                </p>
-            </div>
-        `;
-
-        return;
-    }
-
-    container.innerHTML = '';
-
-    profissionais.forEach(perfil => {
-
-        const artista = obterArtistaPerfil(perfil);
-
-        if (!artista) {
-            return;
-        }
-
-        const card = criarCardProfissional(
-            perfil,
-            artista
-        );
-
-        container.appendChild(card);
-    });
-
-} catch (erro) {
-
-    console.error(
-        '❌ Erro inesperado ao carregar profissionais:',
-        erro
-    );
-
-    container.innerHTML = `
-        <div class="estado-vazio">
-            Ocorreu um erro ao carregar os profissionais.
-        </div>
-    `;
-}
-
-
-}
-
-/* =========================================================
-CRIAR CARD DO PROFISSIONAL
-========================================================= */
-
-function criarCardProfissional(perfil, artista) {
-
-
-const tipoArtista = normalizarTexto(
-    artista.tipo_artista
-);
-
-const paginaPerfil = tipoArtista === 'musico'
-    ? 'apresentar-perfil-musico.html'
-    : 'apresentar-perfil-cantor.html';
-
-const link = document.createElement('a');
-
-link.href =
-    `${paginaPerfil}?id=${encodeURIComponent(perfil.id)}`;
-
-link.className = 'profissional-card-link';
-
-const card = document.createElement('div');
-
-card.className = 'ad-card-novo';
-
-/* =====================================================
-   DADOS DO PERFIL
-===================================================== */
-
-const nome =
-    String(perfil.nome_exibicao || '').trim() ||
-    'Profissional';
-
-const descricao =
-    String(perfil.descricao || '').trim() ||
-    'Perfil profissional do MusicalWorld.';
-
-const localizacao =
-    String(artista.localizacao || '').trim() ||
-    'Localização não informada';
-
-const tipo =
-    String(artista.tipo_artista || '').trim() ||
-    'Profissional';
-
-const estilosLista =
-    normalizarLista(artista.estilos);
-
-const estilosTexto =
-    estilosLista.length > 0
-        ? estilosLista.join(' / ')
-        : 'Estilos musicais não informados';
-
-const fotoUrl =
-    String(artista.foto_url || '').trim();
-
-const iniciais =
-    gerarIniciais(nome);
-
-/* =====================================================
-   AVATAR
-===================================================== */
-
-const avatarHtml = fotoUrl
-    ? `
-        <img
-            src="${escaparHtml(fotoUrl)}"
-            alt="${escaparHtml(nome)}"
-            class="ad-avatar-img"
-            onerror="
-                this.style.display='none';
-                this.nextElementSibling.style.display='flex';
-            "
-        >
-
-        <div
-            class="ad-avatar-user"
-            style="display:none;"
-        >
-            ${escaparHtml(iniciais)}
-        </div>
-    `
-    : `
-        <div class="ad-avatar-user">
-            ${escaparHtml(iniciais)}
-        </div>
-    `;
-
-/* =====================================================
-   CONTEÚDO DO CARD
-===================================================== */
-
-card.innerHTML = `
-
-    <div class="ad-header">
-
-        ${avatarHtml}
-
-        <div class="ad-user-info">
-
-            <h4>
-                ${escaparHtml(nome)}
-            </h4>
-
-            <div class="ad-meta-row">
-
-                <span class="ad-estilo">
-                    ${escaparHtml(estilosTexto)}
-                </span>
-
-            </div>
-
-        </div>
-
-    </div>
-
-    <div class="ad-media-box">
-
-        ${
-            fotoUrl
-                ? `
-                    <img
-                        src="${escaparHtml(fotoUrl)}"
-                        alt="Foto de ${escaparHtml(nome)}"
-                        class="ad-media-img"
-                        loading="lazy"
-                        onerror="
-                            this.style.display='none';
-                            this.parentElement.classList.add('photo-bg');
-                        "
-                    >
-                `
-                : `
-                    <div class="ad-media-sem-foto">
-                        <span>
-                            ${escaparHtml(iniciais)}
-                        </span>
-                    </div>
-                `
-        }
-
-    </div>
-
-    <div class="ad-descricao">
-
-        <strong>
-            ${escaparHtml(tipo)}
-        </strong>
-
-        <p>
-            ${escaparHtml(descricao)}
-        </p>
-
-    </div>
-
-    <div class="ad-footer">
-
-        <span class="ad-localizacao">
-            📍 ${escaparHtml(localizacao)}
-        </span>
-
-        <button
-            class="btn-detalhes"
-            type="button"
-        >
-            Ver perfil
-        </button>
-
-    </div>
-`;
-
-/* =====================================================
-   BOTÃO VER PERFIL
-===================================================== */
-
-const botaoDetalhes =
-    card.querySelector('.btn-detalhes');
-
-if (botaoDetalhes) {
-
-    botaoDetalhes.addEventListener(
-        'click',
-        function(event) {
-
-            event.preventDefault();
-            event.stopPropagation();
-
-            window.location.href =
-                `${paginaPerfil}?id=${encodeURIComponent(perfil.id)}`;
-        }
-    );
-}
-
-/* =====================================================
-   ERRO DA FOTO PRINCIPAL
-===================================================== */
-
-const imagemMedia =
-    card.querySelector('.ad-media-img');
-
-if (imagemMedia) {
-
-    imagemMedia.addEventListener(
-        'error',
-        function() {
-
-            this.style.display = 'none';
-
-            const mediaBox =
-                this.parentElement;
-
-            if (mediaBox) {
-
-                mediaBox.classList.add(
-                    'photo-bg'
-                );
-
-                if (
-                    !mediaBox.querySelector(
-                        '.ad-media-fallback'
-                    )
-                ) {
-
-                    const fallback =
-                        document.createElement('div');
-
-                    fallback.className =
-                        'ad-media-fallback';
-
-                    fallback.textContent =
-                        iniciais;
-
-                    mediaBox.appendChild(
-                        fallback
-                    );
-                }
-            }
-        }
-    );
-}
-
-link.appendChild(card);
-
-return link;
 
 
 }
@@ -543,6 +113,7 @@ if (partes.length === 1) {
     return partes[0]
         .substring(0, 2)
         .toUpperCase();
+
 }
 
 return (
@@ -571,47 +142,920 @@ return String(valor || '')
 }
 
 /* =========================================================
-CARREGAR CANTORES E MÚSICOS
+NOME DO TIPO DE PERFIL
 ========================================================= */
 
-async function carregarProfissionaisInicio() {
+function obterNomeTipo(tipo) {
 
 
-console.log(
-    '🎵 Carregando profissionais publicados...'
-);
+const valor = String(tipo || '').trim();
 
-await Promise.all([
-    carregarProfissionaisIndex('Cantor'),
-    carregarProfissionaisIndex('Músico')
-]);
+if (!valor) {
+    return 'Profissional';
+}
+
+return valor;
 
 
 }
 
 /* =========================================================
-COMPATIBILIDADE COM O BOTÃO DE FILTRO
+PÁGINA PÚBLICA DO PROFISSIONAL
 ========================================================= */
 
-window.abrirModalFiltro = function () {
+function obterPaginaPerfil(tipo) {
 
+
+const tipoNormalizado = normalizarTexto(tipo);
 
 if (
-    window.ModalFiltro &&
-    typeof window.ModalFiltro.abrir === 'function'
+    tipoNormalizado === 'musico' ||
+    tipoNormalizado === 'musica'
 ) {
 
-    window.ModalFiltro.abrir();
+    return 'apresentar-perfil-musico.html';
 
+}
+
+if (
+    tipoNormalizado === 'cantor' ||
+    tipoNormalizado === 'cantora'
+) {
+
+    return 'apresentar-perfil-cantor.html';
+
+}
+
+/*
+ * Para novos tipos que ainda não possuírem
+ * uma página pública própria, usamos uma
+ * página genérica futuramente.
+ */
+
+return 'apresentar-perfil-profissional.html';
+
+
+}
+
+/* =========================================================
+CARREGAR PRIMEIRA PÁGINA
+========================================================= */
+
+async function carregarProfissionaisInicio() {
+
+
+console.log('🎵 Iniciando feed de profissionais...');
+
+FEED_CONFIG.paginaAtual = 0;
+FEED_CONFIG.carregando = false;
+FEED_CONFIG.acabou = false;
+FEED_CONFIG.totalCarregado = 0;
+
+const container =
+    document.getElementById('feed-profissionais');
+
+const vazio =
+    document.getElementById('feed-vazio');
+
+const fim =
+    document.getElementById('feed-fim');
+
+const carregandoMais =
+    document.getElementById('feed-carregando-mais');
+
+const contador =
+    document.getElementById('contador-profissionais');
+
+if (!container) {
+
+    console.warn(
+        '⚠️ Container do feed não encontrado.'
+    );
+
+    return;
+
+}
+
+container.innerHTML = `
+    <div class="carregando-profissionais">
+
+        <div class="feed-spinner"></div>
+
+        <span>
+            Carregando profissionais...
+        </span>
+
+    </div>
+`;
+
+if (vazio) {
+    vazio.style.display = 'none';
+}
+
+if (fim) {
+    fim.style.display = 'none';
+}
+
+if (carregandoMais) {
+    carregandoMais.style.display = 'none';
+}
+
+if (contador) {
+    contador.textContent = '';
+}
+
+configurarInfiniteScroll();
+
+await carregarProximaPagina();
+
+
+}
+
+/* =========================================================
+CARREGAR PRÓXIMA PÁGINA
+========================================================= */
+
+async function carregarProximaPagina() {
+
+
+if (FEED_CONFIG.carregando) {
     return;
 }
 
-console.warn(
-    '⚠️ ModalFiltro ainda não foi carregado.'
+if (FEED_CONFIG.acabou) {
+    return;
+}
+
+if (!window.supabaseClient) {
+
+    console.error(
+        '❌ SupabaseClient não encontrado.'
+    );
+
+    mostrarErroFeed(
+        'Não foi possível conectar ao banco de dados.'
+    );
+
+    return;
+
+}
+
+FEED_CONFIG.carregando = true;
+
+const primeiraPagina =
+    FEED_CONFIG.paginaAtual === 0;
+
+mostrarCarregamentoMais(
+    !primeiraPagina
+);
+
+try {
+
+    const inicio =
+        FEED_CONFIG.paginaAtual *
+        FEED_CONFIG.limitePorPagina;
+
+    const fim =
+        inicio +
+        FEED_CONFIG.limitePorPagina -
+        1;
+
+
+    console.log(
+        `🔎 Buscando profissionais ${inicio} até ${fim}`
+    );
+
+
+    const { data, error } =
+        await window.supabaseClient
+
+            .from('perfis')
+
+            .select(`
+                id,
+                usuario_id,
+                tipo_perfil_id,
+                nome_exibicao,
+                descricao,
+                ativo,
+                perfil_publicado,
+                created_at,
+
+                perfis_artistas (
+                    id,
+                    perfil_id,
+                    tipo_artista,
+                    localizacao,
+                    experiencia,
+                    area_atendimento,
+                    disponivel,
+                    instrumentos,
+                    estilos,
+                    servicos,
+                    foto_url
+                )
+            `)
+
+            .eq('ativo', true)
+
+            .eq('perfil_publicado', true)
+
+            .order(
+                'created_at',
+                {
+                    ascending: false
+                }
+            )
+
+            .range(
+                inicio,
+                fim
+            );
+
+
+    if (error) {
+
+        console.error(
+            '❌ Erro ao carregar profissionais:',
+            error
+        );
+
+        mostrarErroFeed(
+            'Não foi possível carregar os profissionais.'
+        );
+
+        return;
+
+    }
+
+
+    const profissionais =
+        (data || []).filter(perfil => {
+
+            const artista =
+                obterArtistaPerfil(perfil);
+
+            return !!artista;
+
+        });
+
+
+    console.log(
+        `📦 ${profissionais.length} profissional(is) recebido(s).`
+    );
+
+
+    /*
+     * Se vier menos profissionais que o limite,
+     * sabemos que chegamos ao fim.
+     */
+
+    if (
+        !data ||
+        data.length <
+        FEED_CONFIG.limitePorPagina
+    ) {
+
+        FEED_CONFIG.acabou = true;
+
+    }
+
+
+    if (profissionais.length === 0) {
+
+        if (
+            FEED_CONFIG.paginaAtual === 0
+        ) {
+
+            mostrarFeedVazio();
+
+        } else {
+
+            mostrarFimFeed();
+
+        }
+
+        return;
+
+    }
+
+
+    const container =
+        document.getElementById(
+            'feed-profissionais'
+        );
+
+
+    if (
+        primeiraPagina &&
+        container
+    ) {
+
+        container.innerHTML = '';
+
+    }
+
+
+    profissionais.forEach(perfil => {
+
+        const artista =
+            obterArtistaPerfil(perfil);
+
+        if (!artista) {
+            return;
+        }
+
+        const card =
+            criarCardProfissional(
+                perfil,
+                artista
+            );
+
+        if (container) {
+            container.appendChild(card);
+        }
+
+    });
+
+
+    FEED_CONFIG.totalCarregado +=
+        profissionais.length;
+
+    FEED_CONFIG.paginaAtual++;
+
+
+    atualizarContador();
+
+
+    if (FEED_CONFIG.acabou) {
+        mostrarFimFeed();
+    }
+
+
+} catch (erro) {
+
+    console.error(
+        '❌ Erro inesperado no feed:',
+        erro
+    );
+
+    mostrarErroFeed(
+        'Ocorreu um erro ao carregar os profissionais.'
+    );
+
+} finally {
+
+    FEED_CONFIG.carregando = false;
+
+    mostrarCarregamentoMais(false);
+
+}
+
+
+}
+
+/* =========================================================
+CRIAR CARD
+========================================================= */
+
+function criarCardProfissional(
+perfil,
+artista
+) {
+
+
+const tipoArtista =
+    String(
+        artista.tipo_artista || ''
+    ).trim();
+
+const paginaPerfil =
+    obterPaginaPerfil(tipoArtista);
+
+
+const link =
+    document.createElement('a');
+
+link.href =
+    `${paginaPerfil}?id=${encodeURIComponent(perfil.id)}`;
+
+link.className =
+    'profissional-card-link';
+
+
+const card =
+    document.createElement('div');
+
+card.className =
+    'ad-card-novo';
+
+
+const nome =
+    String(
+        perfil.nome_exibicao || ''
+    ).trim() ||
+    'Profissional';
+
+
+const descricao =
+    String(
+        perfil.descricao || ''
+    ).trim() ||
+    'Perfil profissional do MusicalWorld.';
+
+
+const localizacao =
+    String(
+        artista.localizacao || ''
+    ).trim() ||
+    'Localização não informada';
+
+
+const tipo =
+    obterNomeTipo(tipoArtista);
+
+
+const estilosLista =
+    normalizarLista(
+        artista.estilos
+    );
+
+
+const estilosTexto =
+    estilosLista.length > 0
+        ? estilosLista.join(' / ')
+        : 'Estilos musicais não informados';
+
+
+const fotoUrl =
+    String(
+        artista.foto_url || ''
+    ).trim();
+
+
+const iniciais =
+    gerarIniciais(nome);
+
+
+/*
+ * Avatar
+ */
+
+const avatarHtml =
+    fotoUrl
+
+        ? `
+            <img
+                src="${escaparHtml(fotoUrl)}"
+                alt="${escaparHtml(nome)}"
+                class="ad-avatar-img"
+                onerror="
+                    this.style.display='none';
+                    this.nextElementSibling.style.display='flex';
+                "
+            >
+
+            <div
+                class="ad-avatar-user"
+                style="display:none;"
+            >
+                ${escaparHtml(iniciais)}
+            </div>
+          `
+
+        : `
+            <div class="ad-avatar-user">
+                ${escaparHtml(iniciais)}
+            </div>
+          `;
+
+
+/*
+ * Área principal da foto
+ */
+
+const mediaHtml =
+    fotoUrl
+
+        ? `
+            <img
+                src="${escaparHtml(fotoUrl)}"
+                alt="Foto de ${escaparHtml(nome)}"
+                class="ad-media-img"
+                loading="lazy"
+            >
+          `
+
+        : `
+            <div class="ad-media-sem-foto">
+                <span>
+                    ${escaparHtml(iniciais)}
+                </span>
+            </div>
+          `;
+
+
+card.innerHTML = `
+
+    <div class="ad-header">
+
+        ${avatarHtml}
+
+        <div class="ad-user-info">
+
+            <h4>
+                ${escaparHtml(nome)}
+            </h4>
+
+            <div class="ad-meta-row">
+
+                <span class="ad-estilo">
+                    ${escaparHtml(estilosTexto)}
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="ad-media-box">
+
+        ${mediaHtml}
+
+    </div>
+
+
+    <div class="ad-descricao">
+
+        <strong>
+            ${escaparHtml(tipo)}
+        </strong>
+
+        <p>
+            ${escaparHtml(descricao)}
+        </p>
+
+    </div>
+
+
+    <div class="ad-footer">
+
+        <span class="ad-localizacao">
+
+            📍 ${escaparHtml(localizacao)}
+
+        </span>
+
+
+        <button
+            class="btn-detalhes"
+            type="button"
+        >
+            Ver perfil
+        </button>
+
+    </div>
+
+`;
+
+
+/*
+ * Botão Ver perfil
+ */
+
+const botaoDetalhes =
+    card.querySelector(
+        '.btn-detalhes'
+    );
+
+
+if (botaoDetalhes) {
+
+    botaoDetalhes.addEventListener(
+        'click',
+        function (event) {
+
+            event.preventDefault();
+
+            event.stopPropagation();
+
+            window.location.href =
+                `${paginaPerfil}?id=${encodeURIComponent(perfil.id)}`;
+
+        }
+    );
+
+}
+
+
+/*
+ * Tratamento de erro da foto
+ */
+
+const imagemMedia =
+    card.querySelector(
+        '.ad-media-img'
+    );
+
+
+if (imagemMedia) {
+
+    imagemMedia.addEventListener(
+        'error',
+        function () {
+
+            this.style.display =
+                'none';
+
+
+            const mediaBox =
+                this.parentElement;
+
+
+            if (!mediaBox) {
+                return;
+            }
+
+
+            mediaBox.classList.add(
+                'photo-bg'
+            );
+
+
+            if (
+                !mediaBox.querySelector(
+                    '.ad-media-fallback'
+                )
+            ) {
+
+                const fallback =
+                    document.createElement(
+                        'div'
+                    );
+
+                fallback.className =
+                    'ad-media-fallback';
+
+                fallback.textContent =
+                    iniciais;
+
+                mediaBox.appendChild(
+                    fallback
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+link.appendChild(card);
+
+return link;
+
+
+}
+
+/* =========================================================
+CONTADOR
+========================================================= */
+
+function atualizarContador() {
+
+
+const contador =
+    document.getElementById(
+        'contador-profissionais'
+    );
+
+if (!contador) {
+    return;
+}
+
+if (
+    FEED_CONFIG.totalCarregado > 0
+) {
+
+    contador.textContent =
+        `${FEED_CONFIG.totalCarregado} carregados`;
+
+}
+
+
+}
+
+/* =========================================================
+INFINITE SCROLL
+========================================================= */
+
+function configurarInfiniteScroll() {
+
+
+if (
+    FEED_CONFIG.observer
+) {
+
+    FEED_CONFIG.observer.disconnect();
+
+}
+
+
+const sentinela =
+    document.getElementById(
+        'feed-sentinela'
+    );
+
+
+if (!sentinela) {
+    return;
+}
+
+
+FEED_CONFIG.observer =
+    new IntersectionObserver(
+
+        function (entries) {
+
+            const entrada =
+                entries[0];
+
+            if (
+                entrada &&
+                entrada.isIntersecting
+            ) {
+
+                carregarProximaPagina();
+
+            }
+
+        },
+
+        {
+            root: document.querySelector(
+                '.main-content'
+            ),
+
+            rootMargin:
+                '500px 0px',
+
+            threshold: 0
+
+        }
+
+    );
+
+
+FEED_CONFIG.observer.observe(
+    sentinela
 );
 
 
+}
+
+/* =========================================================
+CARREGAMENTO MAIS
+========================================================= */
+
+function mostrarCarregamentoMais(
+mostrar
+) {
+
+
+const elemento =
+    document.getElementById(
+        'feed-carregando-mais'
+    );
+
+if (!elemento) {
+    return;
+}
+
+elemento.style.display =
+    mostrar
+        ? 'flex'
+        : 'none';
+
+
+}
+
+/* =========================================================
+FIM DO FEED
+========================================================= */
+
+function mostrarFimFeed() {
+
+
+const elemento =
+    document.getElementById(
+        'feed-fim'
+    );
+
+if (!elemento) {
+    return;
+}
+
+elemento.style.display =
+    'block';
+
+
+}
+
+/* =========================================================
+FEED VAZIO
+========================================================= */
+
+function mostrarFeedVazio() {
+
+
+const container =
+    document.getElementById(
+        'feed-profissionais'
+    );
+
+const vazio =
+    document.getElementById(
+        'feed-vazio'
+    );
+
+if (container) {
+    container.innerHTML = '';
+}
+
+if (vazio) {
+    vazio.style.display = 'block';
+}
+
+
+}
+
+/* =========================================================
+ERRO DO FEED
+========================================================= */
+
+function mostrarErroFeed(
+mensagem
+) {
+
+
+const container =
+    document.getElementById(
+        'feed-profissionais'
+    );
+
+if (!container) {
+    return;
+}
+
+container.innerHTML = `
+
+    <div class="estado-vazio">
+
+        <strong>
+            Não foi possível carregar
+        </strong>
+
+        <p>
+            ${escaparHtml(mensagem)}
+        </p>
+
+    </div>
+
+`;
+
+
+}
+
+/* =========================================================
+COMPATIBILIDADE COM O FILTRO
+========================================================= */
+
+window.abrirModalFiltro =
+function () {
+
+
+    if (
+        window.ModalFiltro &&
+        typeof window.ModalFiltro.abrir ===
+            'function'
+    ) {
+
+        window.ModalFiltro.abrir();
+
+        return;
+
+    }
+
+
+    console.warn(
+        '⚠️ ModalFiltro ainda não foi carregado.'
+    );
+
 };
+
 
 /* =========================================================
 INICIALIZAÇÃO
@@ -619,8 +1063,12 @@ INICIALIZAÇÃO
 
 document.addEventListener(
 'DOMContentLoaded',
-function() {
+function () {
 
+
+    console.log(
+        '🚀 Inicializando feed MusicalWorld...'
+    );
 
     carregarProfissionaisInicio();
 

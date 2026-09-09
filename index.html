@@ -19,9 +19,17 @@ content="width=device-width, initial-scale=1.0"
   <link
     rel="stylesheet"
     href="css/main.css"
- >
-  <link rel="stylesheet" href="css/menu-inferior.css">
-  <link rel="stylesheet" href="css/modal-filtro.css">
+  >
+
+  <link
+    rel="stylesheet"
+    href="css/menu-inferior.css"
+  >
+
+  <link
+    rel="stylesheet"
+    href="css/modal-filtro.css"
+  >
 
 </head>
 
@@ -36,15 +44,7 @@ content="width=device-width, initial-scale=1.0"
 
 <header class="navbar">
 
-
-  <!-- =================================================
-       MARCA / USUÁRIO
-  ================================================== -->
-
   <div class="navbar-brand-area">
-
-
-    <!-- Logo: aparece somente quando estiver deslogado -->
 
     <div
       id="cabecalho-logo"
@@ -52,9 +52,6 @@ content="width=device-width, initial-scale=1.0"
     >
       Artista<span>Show</span>
     </div>
-
-
-    <!-- Usuário logado: substitui a logo -->
 
     <div
       id="cabecalho-logado"
@@ -80,7 +77,6 @@ content="width=device-width, initial-scale=1.0"
           </span>
         </div>
 
-
         <div class="cabecalho-info-usuario">
 
           <strong id="cabecalho-nome">
@@ -92,7 +88,6 @@ content="width=device-width, initial-scale=1.0"
           </small>
 
         </div>
-
 
         <svg
           class="cabecalho-chevron"
@@ -115,15 +110,11 @@ content="width=device-width, initial-scale=1.0"
 
       </button>
 
-
-      <!-- Menu da conta -->
-
       <div
         id="cabecalho-menu-usuario"
         class="cabecalho-menu-usuario"
         style="display: none;"
       >
-
 
         <button
           type="button"
@@ -172,7 +163,6 @@ content="width=device-width, initial-scale=1.0"
 
         </button>
 
-
         <button
           type="button"
           onclick="Cabecalho.sair()"
@@ -220,13 +210,9 @@ content="width=device-width, initial-scale=1.0"
 
         </button>
 
-
       </div>
 
     </div>
-
-
-    <!-- Enquanto verifica a sessão -->
 
     <div
       id="cabecalho-carregando"
@@ -237,18 +223,13 @@ content="width=device-width, initial-scale=1.0"
 
     </div>
 
-
   </div>
 
-
   <!-- =================================================
-       ÁREA DOS ÍCONES
+       ÍCONES DO CABEÇALHO
   ================================================== -->
 
   <div class="navbar-icons">
-
-
-    <!-- Usuário deslogado -->
 
     <div
       id="cabecalho-deslogado"
@@ -264,7 +245,6 @@ content="width=device-width, initial-scale=1.0"
       </button>
 
     </div>
-
 
     <!-- Notificações -->
 
@@ -299,7 +279,6 @@ content="width=device-width, initial-scale=1.0"
       </span>
 
     </button>
-
 
     <!-- Mensagens -->
 
@@ -338,7 +317,6 @@ content="width=device-width, initial-scale=1.0"
       </span>
 
     </button>
-
 
     <!-- Filtro -->
 
@@ -418,7 +396,6 @@ content="width=device-width, initial-scale=1.0"
 
     </button>
 
-
   </div>
 
 </header>
@@ -430,468 +407,136 @@ content="width=device-width, initial-scale=1.0"
 
 <main class="main-content">
 
-
-  <!-- Hero Section -->
+  <!-- Hero -->
 
   <section class="hero-section">
 
     <h1 class="hero-title">
-      O som certo para o seu evento
+      Encontre profissionais
     </h1>
 
     <p class="hero-subtitle">
-      Conecte-se com talentos, obras e oportunidades em Goiânia.
+      Conecte-se com talentos, artistas e profissionais da cena musical.
     </p>
 
   </section>
 
 
   <!-- =================================================
-       ABAS DE CATEGORIAS
+       FEED DE PROFISSIONAIS
   ================================================== -->
 
-  <section class="section">
+  <section class="section profissionais-section">
 
+    <div class="feed-header">
 
-    <div class="categories-tabs">
+      <div>
+        <h2 class="feed-title">
+          Profissionais
+        </h2>
 
-      <button
-        class="cat-tab ativo"
-        onclick="mudarCategoria('cantores', this)"
+        <p class="feed-subtitle">
+          Descubra novos talentos
+        </p>
+      </div>
+
+      <span
+        id="contador-profissionais"
+        class="feed-contador"
       >
-        Cantores
-      </button>
-
-      <button
-        class="cat-tab"
-        onclick="mudarCategoria('musicos', this)"
-      >
-        Músicos
-      </button>
-
-      <button
-        class="cat-tab"
-        onclick="mudarCategoria('composicoes', this)"
-      >
-        Composições
-      </button>
-
-      <button
-        class="cat-tab"
-        onclick="mudarCategoria('eventos', this)"
-      >
-        Shows/Eventos
-      </button>
+      </span>
 
     </div>
 
 
     <!-- =================================================
-         CANTORES
+         LISTA DO FEED
     ================================================== -->
 
     <div
-      id="cat-cantores"
-      class="cat-content ativo"
+      id="feed-profissionais"
+      class="feed-profissionais"
     >
 
-      <a
-        href="detalhes-anuncio.html?id=rafael-melo"
-        style="text-decoration: none; color: inherit; display: block;"
-      >
+      <div class="carregando-profissionais">
 
-        <div class="ad-card-novo">
+        <div class="feed-spinner"></div>
 
+        <span>
+          Carregando profissionais...
+        </span>
 
-          <div class="ad-header">
-
-            <div class="ad-avatar-user">
-              RM
-            </div>
-
-            <div class="ad-user-info">
-
-              <h4>
-                Rafael Melo
-              </h4>
-
-              <div class="ad-meta-row">
-
-                <span class="ad-estilo">
-                  MPB / Sertanejo
-                </span>
-
-                <span class="rating">
-                  ⭐ 4.9 (128)
-                </span>
-
-              </div>
-
-            </div>
-
-          </div>
-
-
-          <div class="ad-media-box">
-
-            <span>
-              ▶ Vídeo de Apresentação (Ao Vivo)
-            </span>
-
-          </div>
-
-
-          <div class="ad-descricao">
-
-            <strong>
-              Show Completo
-            </strong>
-
-            <p>
-              10 anos de estrada, repertório autoral e covers para casamentos, aniversários e eventos corporativos.
-            </p>
-
-          </div>
-
-
-          <div class="ad-precos-lista">
-
-            <div class="preco-item">
-
-              <span class="preco-formato">
-                🎵 Acústico (Voz e Violão)
-              </span>
-
-              <span class="preco-valor">
-                R$ 800
-              </span>
-
-            </div>
-
-          </div>
-
-
-          <div class="ad-footer">
-
-            <span>
-              📍 Goiânia, GO
-            </span>
-
-            <button
-              class="btn-detalhes"
-              onclick="event.preventDefault(); window.location.href='detalhes-anuncio.html?id=rafael-melo';"
-            >
-              Contratar
-            </button>
-
-          </div>
-
-
-        </div>
-
-      </a>
+      </div>
 
     </div>
 
 
     <!-- =================================================
-         MÚSICOS
+         INDICADOR DE CARREGAMENTO
     ================================================== -->
 
     <div
-      id="cat-musicos"
-      class="cat-content"
+      id="feed-carregando-mais"
+      class="feed-carregando-mais"
+      style="display: none;"
     >
 
-      <a
-        href="detalhes-anuncio.html?id=gabriel-tatu"
-        style="text-decoration: none; color: inherit; display: block;"
-      >
+      <div class="feed-spinner"></div>
 
-        <div class="ad-card-novo">
-
-
-          <div class="ad-header">
-
-            <div
-              class="ad-avatar-user"
-              style="background-color: #047857;"
-            >
-              GT
-            </div>
-
-            <div class="ad-user-info">
-
-              <h4>
-                Gabriel Tatu
-              </h4>
-
-              <div class="ad-meta-row">
-
-                <span class="ad-estilo">
-                  Sanfoneiro
-                </span>
-
-                <span class="rating">
-                  ⭐ 5.0 (42)
-                </span>
-
-              </div>
-
-            </div>
-
-          </div>
-
-
-          <div class="ad-media-box">
-
-            <span>
-              ▶ Solo de Sanfona em Estúdio
-            </span>
-
-          </div>
-
-
-          <div class="ad-descricao">
-
-            <strong>
-              Acompanhamento para Bandas e Gravações
-            </strong>
-
-            <p>
-              Sanfoneiro profissional com alta versatilidade para forró, sertanejo universitário e piseiro.
-            </p>
-
-          </div>
-
-
-          <div class="ad-precos-lista">
-
-            <div class="preco-item">
-
-              <span class="preco-formato">
-                🎸 Show / Diária em Banda
-              </span>
-
-              <span class="preco-valor">
-                R$ 1.200
-              </span>
-
-            </div>
-
-          </div>
-
-
-          <div class="ad-footer">
-
-            <span>
-              📍 Goiânia, GO
-            </span>
-
-            <button
-              class="btn-detalhes"
-              onclick="event.preventDefault(); window.location.href='detalhes-anuncio.html?id=gabriel-tatu';"
-            >
-              Contratar Músico
-            </button>
-
-          </div>
-
-
-        </div>
-
-      </a>
+      <span>
+        Carregando mais profissionais...
+      </span>
 
     </div>
 
 
     <!-- =================================================
-         COMPOSIÇÕES
+         FIM DO FEED
     ================================================== -->
 
     <div
-      id="cat-composicoes"
-      class="cat-content"
+      id="feed-fim"
+      class="feed-fim"
+      style="display: none;"
     >
 
-      <a
-        href="detalhes-anuncio.html?id=marcos-lima"
-        style="text-decoration: none; color: inherit; display: block;"
-      >
-
-        <div class="ad-card-novo">
-
-
-          <div class="ad-header">
-
-            <div
-              class="ad-avatar-user"
-              style="background-color: #7c2d12;"
-            >
-              ML
-            </div>
-
-            <div class="ad-user-info">
-
-              <h4>
-                Marcos Lima
-              </h4>
-
-              <div class="ad-meta-row">
-
-                <span class="ad-estilo">
-                  Compositor / Modão
-                </span>
-
-                <span class="rating">
-                  ⭐ 4.9 (56)
-                </span>
-
-              </div>
-
-            </div>
-
-          </div>
-
-
-          <div class="ad-media-box">
-
-            <span>
-              ▶ Áudio Guia da Composição Inédita
-            </span>
-
-          </div>
-
-
-          <div class="ad-descricao">
-
-            <strong>
-              Modão Apaixonado (Inédita)
-            </strong>
-
-            <p>
-              Letra e Melodia sertaneja romântica disponíveis para gravação.
-            </p>
-
-          </div>
-
-
-          <div class="ad-footer">
-
-            <span>
-              📍 Goiânia, GO
-            </span>
-
-            <button
-              class="btn-detalhes"
-              onclick="event.preventDefault(); window.location.href='detalhes-anuncio.html?id=marcos-lima';"
-            >
-              Ver Detalhes
-            </button>
-
-          </div>
-
-
-        </div>
-
-      </a>
+      <span>
+        Você chegou ao fim dos profissionais disponíveis.
+      </span>
 
     </div>
 
 
     <!-- =================================================
-         SHOWS / EVENTOS
+         ESTADO VAZIO
     ================================================== -->
 
     <div
-      id="cat-eventos"
-      class="cat-content"
+      id="feed-vazio"
+      class="estado-vazio"
+      style="display: none;"
     >
 
-      <a
-        href="detalhes-anuncio.html?id=carlos-silva"
-        style="text-decoration: none; color: inherit; display: block;"
-      >
+      <strong>
+        Nenhum profissional encontrado.
+      </strong>
 
-        <div class="ad-card-novo">
-
-
-          <div class="ad-header">
-
-            <div
-              class="ad-avatar-user"
-              style="background-color: #b45309;"
-            >
-              CS
-            </div>
-
-            <div class="ad-user-info">
-
-              <h4>
-                Carlos Silva
-              </h4>
-
-              <div class="ad-meta-row">
-
-                <span class="ad-estilo">
-                  Contratante
-                </span>
-
-                <span class="rating">
-                  ⭐ 5.0 (12)
-                </span>
-
-              </div>
-
-            </div>
-
-          </div>
-
-
-          <div class="ad-media-box photo-bg">
-
-            <span>
-              🖼 Foto do Local do Evento
-            </span>
-
-          </div>
-
-
-          <div class="ad-descricao">
-
-            <strong>
-              Aniversário no Setor Bueno
-            </strong>
-
-            <p>
-              Preciso de dupla sertaneja para tocar 3h em festa particular para 80 pessoas.
-            </p>
-
-          </div>
-
-
-          <div class="ad-footer">
-
-            <span>
-              📍 Goiânia, GO
-            </span>
-
-            <button
-              class="btn-detalhes"
-              onclick="event.preventDefault(); window.location.href='detalhes-anuncio.html?id=carlos-silva';"
-            >
-              Candidatar-se
-            </button>
-
-          </div>
-
-
-        </div>
-
-      </a>
+      <p>
+        Novos profissionais aparecerão aqui quando completarem e publicarem seus perfis.
+      </p>
 
     </div>
 
+
+    <!-- =================================================
+         SENTINELA DO INFINITE SCROLL
+    ================================================== -->
+
+    <div
+      id="feed-sentinela"
+      class="feed-sentinela"
+      aria-hidden="true"
+    ></div>
 
   </section>
 
@@ -903,7 +548,6 @@ content="width=device-width, initial-scale=1.0"
 ====================================================== -->
 
 <div id="modal-filtro-container"></div>
-
 
 
 <!-- =====================================================
@@ -918,6 +562,7 @@ content="width=device-width, initial-scale=1.0"
   <!-- =====================================================
        SUPABASE
   ====================================================== -->
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 
   <script src="js/core/SupabaseClient.js"></script>
@@ -940,15 +585,15 @@ content="width=device-width, initial-scale=1.0"
 
   <script>
 
-document.addEventListener('DOMContentLoaded', async function () {
+    document.addEventListener('DOMContentLoaded', async function () {
 
-console.log('🚀 Iniciando cabeçalho do index...');
+      console.log('🚀 Iniciando cabeçalho do index...');
 
-await Cabecalho.iniciar();
+      await Cabecalho.iniciar();
 
-});
+    });
 
-</script>
+  </script>
 
 </body>
 

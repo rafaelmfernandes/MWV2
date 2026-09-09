@@ -429,48 +429,746 @@ color: #64748b;
 }
 
 /* =========================================================
-CATEGORIAS
+FEED DE PROFISSIONAIS
 ========================================================= */
 
-.categories-tabs {
+.profissionais-section {
+width: 100%;
+}
+
+.feed-header {
 display: flex;
-gap: 8px;
-overflow-x: auto;
-padding-bottom: 8px;
+align-items: flex-end;
+justify-content: space-between;
+gap: 12px;
 margin-bottom: 16px;
-scrollbar-width: none;
 }
 
-.categories-tabs::-webkit-scrollbar {
-display: none;
+.feed-title {
+font-size: 18px;
+font-weight: 700;
+color: #0f172a;
+margin: 0 0 3px 0;
 }
 
-.cat-tab {
-background-color: #ffffff;
-border: 1px solid #e2e8f0;
+.feed-subtitle {
+font-size: 12px;
 color: #64748b;
-padding: 8px 16px;
-border-radius: 20px;
-font-size: 13px;
+margin: 0;
+}
+
+.feed-contador {
+flex-shrink: 0;
+font-size: 11px;
 font-weight: 600;
-cursor: pointer;
-white-space: nowrap;
-transition: all 0.2s ease;
+color: #64748b;
 }
 
-.cat-tab.ativo {
-background-color: #2563eb;
-color: #ffffff;
-border-color: #2563eb;
+/* =========================================================
+CONTAINER DO FEED
+========================================================= */
+
+.feed-profissionais {
+width: 100%;
+display: grid;
+grid-template-columns: 1fr;
+gap: 16px;
 }
 
-.cat-content {
-display: none;
-}
+/* =========================================================
+LINK DO PROFISSIONAL
+========================================================= */
 
-.cat-content.ativo {
+.profissional-card-link {
 display: block;
+width: 100%;
+text-decoration: none;
+color: inherit;
 }
+
+/* =========================================================
+CARD DO PROFISSIONAL
+========================================================= */
+
+.ad-card-novo {
+width: 100%;
+height: 430px;
+min-height: 430px;
+max-height: 430px;
+
+
+background-color: #ffffff;
+
+border: 1px solid #e2e8f0;
+
+border-radius: 16px;
+
+padding: 16px;
+
+display: flex;
+flex-direction: column;
+
+gap: 12px;
+
+box-shadow:
+    0 1px 3px rgba(15, 23, 42, 0.04);
+
+overflow: hidden;
+
+transition:
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+
+
+}
+
+.ad-card-novo:hover {
+box-shadow:
+0 5px 16px rgba(15, 23, 42, 0.09);
+
+
+transform: translateY(-1px);
+
+
+}
+
+/* =========================================================
+CABEÇALHO DO CARD
+========================================================= */
+
+.ad-header {
+width: 100%;
+
+
+display: flex;
+align-items: center;
+
+gap: 12px;
+
+flex-shrink: 0;
+
+
+}
+
+.ad-avatar-user {
+width: 44px;
+height: 44px;
+
+
+min-width: 44px;
+min-height: 44px;
+
+background-color: #0284c7;
+
+color: #ffffff;
+
+font-weight: 700;
+
+border-radius: 12px;
+
+display: flex;
+align-items: center;
+justify-content: center;
+
+font-size: 15px;
+
+flex-shrink: 0;
+
+overflow: hidden;
+
+
+}
+
+.ad-avatar-img {
+width: 44px;
+height: 44px;
+
+
+min-width: 44px;
+min-height: 44px;
+
+max-width: 44px;
+max-height: 44px;
+
+display: block;
+
+object-fit: cover;
+object-position: center;
+
+border-radius: 12px;
+
+flex-shrink: 0;
+
+
+}
+
+/* =========================================================
+INFORMAÇÕES DO PROFISSIONAL
+========================================================= */
+
+.ad-user-info {
+flex: 1;
+
+
+min-width: 0;
+
+overflow: hidden;
+
+
+}
+
+.ad-user-info h4 {
+font-size: 15px;
+
+
+color: #0f172a;
+
+font-weight: 600;
+
+margin-bottom: 4px;
+
+white-space: nowrap;
+
+overflow: hidden;
+
+text-overflow: ellipsis;
+
+
+}
+
+.ad-meta-row {
+display: flex;
+
+
+align-items: center;
+
+min-width: 0;
+
+width: 100%;
+
+overflow: hidden;
+
+
+}
+
+.ad-estilo {
+display: block;
+
+
+width: 100%;
+
+font-size: 12px;
+
+color: #2563eb;
+
+font-weight: 500;
+
+white-space: nowrap;
+
+overflow: hidden;
+
+text-overflow: ellipsis;
+
+
+}
+
+/* =========================================================
+ÁREA DA FOTO / MÍDIA
+========================================================= */
+
+.ad-media-box {
+width: 100%;
+
+
+height: 220px;
+
+min-height: 220px;
+max-height: 220px;
+
+flex-shrink: 0;
+
+overflow: hidden;
+
+position: relative;
+
+background-color: #f1f5f9;
+
+border: 1px solid #e2e8f0;
+
+border-radius: 12px;
+
+display: flex;
+
+align-items: center;
+justify-content: center;
+
+color: #64748b;
+
+font-size: 13px;
+
+font-weight: 500;
+
+
+}
+
+.ad-media-box.photo-bg {
+background:
+linear-gradient(
+135deg,
+#e2e8f0,
+#f1f5f9
+);
+}
+
+.ad-media-img {
+width: 100%;
+height: 100%;
+
+
+max-width: 100%;
+max-height: 100%;
+
+display: block;
+
+object-fit: cover;
+
+object-position: center;
+
+
+}
+
+/* =========================================================
+FALLBACK SEM FOTO
+========================================================= */
+
+.ad-media-sem-foto {
+width: 100%;
+height: 100%;
+
+
+display: flex;
+
+align-items: center;
+justify-content: center;
+
+background:
+    linear-gradient(
+        135deg,
+        #f1f5f9,
+        #e2e8f0
+    );
+
+
+}
+
+.ad-media-sem-foto span,
+.ad-media-fallback {
+width: 64px;
+height: 64px;
+
+
+display: flex;
+
+align-items: center;
+justify-content: center;
+
+border-radius: 18px;
+
+background-color: #0284c7;
+
+color: #ffffff;
+
+font-size: 20px;
+
+font-weight: 700;
+
+
+}
+
+/* =========================================================
+DESCRIÇÃO
+========================================================= */
+
+.ad-descricao {
+font-size: 12px;
+
+
+color: #475569;
+
+display: flex;
+
+flex-direction: column;
+
+gap: 4px;
+
+flex-shrink: 0;
+
+min-height: 52px;
+max-height: 52px;
+
+overflow: hidden;
+
+
+}
+
+.ad-descricao strong {
+color: #0f172a;
+
+
+font-size: 13px;
+
+font-weight: 700;
+
+line-height: 1.2;
+
+white-space: nowrap;
+
+overflow: hidden;
+
+text-overflow: ellipsis;
+
+
+}
+
+.ad-descricao p {
+font-size: 12px;
+
+
+line-height: 1.45;
+
+color: #475569;
+
+display: -webkit-box;
+
+-webkit-box-orient: vertical;
+
+-webkit-line-clamp: 2;
+
+overflow: hidden;
+
+text-overflow: ellipsis;
+
+max-height: 34.8px;
+
+margin: 0;
+
+
+}
+
+/* =========================================================
+RODAPÉ
+========================================================= */
+
+.ad-footer {
+display: flex;
+
+
+justify-content: space-between;
+
+align-items: center;
+
+gap: 10px;
+
+padding-top: 8px;
+
+border-top: 1px solid #f1f5f9;
+
+margin-top: auto;
+
+min-height: 37px;
+
+flex-shrink: 0;
+
+
+}
+
+.ad-localizacao {
+flex: 1;
+
+
+min-width: 0;
+
+font-size: 11px;
+
+color: #94a3b8;
+
+white-space: nowrap;
+
+overflow: hidden;
+
+text-overflow: ellipsis;
+
+
+}
+
+.btn-detalhes {
+flex-shrink: 0;
+
+
+background-color: #2563eb;
+
+color: #ffffff;
+
+border: none;
+
+padding: 8px 16px;
+
+border-radius: 10px;
+
+font-size: 12px;
+
+font-weight: 700;
+
+cursor: pointer;
+
+transition:
+    opacity 0.2s ease,
+    transform 0.15s ease;
+
+
+}
+
+.btn-detalhes:hover {
+opacity: 0.9;
+}
+
+.btn-detalhes:active {
+transform: scale(0.97);
+}
+
+/* =========================================================
+CARREGAMENTO
+========================================================= */
+
+.carregando-profissionais {
+width: 100%;
+
+
+min-height: 180px;
+
+padding: 28px 18px;
+
+display: flex;
+
+flex-direction: column;
+
+align-items: center;
+
+justify-content: center;
+
+gap: 10px;
+
+text-align: center;
+
+background-color: #ffffff;
+
+border: 1px solid #e2e8f0;
+
+border-radius: 16px;
+
+color: #64748b;
+
+font-size: 13px;
+
+
+}
+
+.feed-spinner {
+width: 22px;
+height: 22px;
+
+
+border: 2px solid #e2e8f0;
+
+border-top-color: #2563eb;
+
+border-radius: 50%;
+
+animation: feed-spinner-rotacao 0.8s linear infinite;
+
+
+}
+
+@keyframes feed-spinner-rotacao {
+from {
+transform: rotate(0deg);
+}
+
+
+to {
+    transform: rotate(360deg);
+}
+
+
+}
+
+/* =========================================================
+CARREGANDO MAIS
+========================================================= */
+
+.feed-carregando-mais {
+width: 100%;
+
+
+padding: 18px 0;
+
+display: flex;
+
+align-items: center;
+justify-content: center;
+
+gap: 9px;
+
+color: #64748b;
+
+font-size: 12px;
+
+
+}
+
+/* =========================================================
+FIM DO FEED
+========================================================= */
+
+.feed-fim {
+width: 100%;
+
+
+padding: 20px 10px;
+
+text-align: center;
+
+color: #94a3b8;
+
+font-size: 11px;
+
+
+}
+
+/* =========================================================
+SENTINELA
+========================================================= */
+
+.feed-sentinela {
+width: 100%;
+height: 1px;
+}
+
+/* =========================================================
+ESTADO VAZIO
+========================================================= */
+
+.estado-vazio {
+width: 100%;
+
+
+padding: 28px 18px;
+
+text-align: center;
+
+background-color: #ffffff;
+
+border: 1px solid #e2e8f0;
+
+border-radius: 16px;
+
+color: #64748b;
+
+font-size: 13px;
+
+
+}
+
+.estado-vazio strong {
+display: block;
+
+
+color: #334155;
+
+font-size: 14px;
+
+margin-bottom: 6px;
+
+
+}
+
+.estado-vazio p {
+font-size: 12px;
+
+
+line-height: 1.5;
+
+color: #94a3b8;
+
+
+}
+
+/* =========================================================
+RESPONSIVIDADE
+========================================================= */
+
+@media (max-width: 600px) {
+
+
+.feed-header {
+    margin-bottom: 14px;
+}
+
+.feed-title {
+    font-size: 17px;
+}
+
+.feed-profissionais {
+    gap: 14px;
+}
+
+.ad-card-novo {
+    height: 430px;
+
+    min-height: 430px;
+    max-height: 430px;
+
+    padding: 14px;
+
+    border-radius: 15px;
+}
+
+.ad-media-box {
+    height: 220px;
+
+    min-height: 220px;
+    max-height: 220px;
+}
+
+
+}
+
+@media (max-width: 380px) {
+
+
+.ad-card-novo {
+    height: 420px;
+
+    min-height: 420px;
+    max-height: 420px;
+
+    padding: 13px;
+}
+
+.ad-media-box {
+    height: 200px;
+
+    min-height: 200px;
+    max-height: 200px;
+}
+
+.btn-detalhes {
+    padding: 8px 12px;
+}
+
+
+}
+
 
 /* =========================================================
 CARDS DE PROFISSIONAIS
