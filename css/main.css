@@ -611,9 +611,9 @@ text-overflow: ellipsis;
 
 .ad-media-box {
 width: 100%;
-height: 190px;
-min-height: 190px;
-max-height: 190px;
+height: 220px;
+min-height: 220px;
+max-height: 220px;
 
 flex-shrink: 0;
 
@@ -1359,9 +1359,9 @@ border-radius: 15px;
 }
 
 .ad-media-box {
-height: 135px;
-min-height: 135px;
-max-height: 135px;
+height: 220px;
+min-height: 220px;
+max-height: 220px;
 }
 
 .ad-descricao {
@@ -1445,9 +1445,9 @@ padding: 13px;
 }
 
 .ad-media-box {
-height: 125px;
-min-height: 125px;
-max-height: 125px;
+height: 200px;
+min-height: 200px;
+max-height: 200px;
 }
 
 .ad-descricao {
