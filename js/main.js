@@ -1,4 +1,3 @@
-
 /* =========================================================
 MUSICALWORLD — PÁGINA INICIAL
 FEED DE PROFISSIONAIS
@@ -914,18 +913,12 @@ function criarCardProfissional(
     /*
      * DESTAQUE — VÍDEO
      *
-     * O vídeo usa a mesma classe
-     * ad-media-img da imagem.
+     * O vídeo continua usando a mesma classe
+     * ad-media-img para preservar o layout atual.
      *
-     * Isso garante que o CSS existente
-     * do card continue controlando:
-     *
-     * width
-     * height
-     * object-fit
-     * border-radius
-     * display
-     *
+     * Agora ele fica dentro de um pequeno
+     * container para podermos colocar o botão
+     * de tela cheia sobre o vídeo.
      */
 
     else if (
@@ -942,16 +935,53 @@ function criarCardProfissional(
 
         mediaHtml = `
 
-            <video
-                src="${escaparHtml(urlDestaque)}"
-                ${posterHtml}
-                class="ad-media-img ad-media-destaque ad-media-video"
-                muted
-                autoplay
-                loop
-                playsinline
-                preload="metadata"
-            ></video>
+            <div class="ad-video-container">
+
+                <video
+                    src="${escaparHtml(urlDestaque)}"
+                    ${posterHtml}
+                    class="ad-media-img ad-media-destaque ad-media-video"
+                    muted
+                    autoplay
+                    loop
+                    playsinline
+                    preload="metadata"
+                ></video>
+
+
+                <button
+                    type="button"
+                    class="btn-video-tela-cheia"
+                    aria-label="Abrir vídeo em tela cheia"
+                    title="Tela cheia"
+                >
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                    >
+
+                        <path
+                            d="M8 3H5a2 2 0 0 0-2 2v3"
+                        ></path>
+
+                        <path
+                            d="M16 3h3a2 2 0 0 1 2 2v3"
+                        ></path>
+
+                        <path
+                            d="M21 16v3a2 2 0 0 1-2 2h-3"
+                        ></path>
+
+                        <path
+                            d="M3 16v3a2 2 0 0 0 2 2h3"
+                        ></path>
+
+                    </svg>
+
+                </button>
+
+            </div>
 
         `;
 
@@ -1220,8 +1250,8 @@ function criarCardProfissional(
 
 
     /* =====================================================
-       TRATAMENTO DE ERRO DO VÍDEO
-    ===================================================== */
+       TRATAMENTO DO VÍDEO
+    ====================================================== */
 
     const videoMedia =
         card.querySelector(
@@ -1246,14 +1276,109 @@ function criarCardProfissional(
                             /*
                              * Alguns navegadores podem
                              * bloquear o autoplay.
-                             * O card continua funcionando
-                             * normalmente.
                              */
                         }
                     );
 
             }
         );
+
+
+        /* =================================================
+           BOTÃO DE TELA CHEIA
+        ================================================= */
+
+        const botaoTelaCheia =
+            card.querySelector(
+                '.btn-video-tela-cheia'
+            );
+
+
+        if (botaoTelaCheia) {
+
+            botaoTelaCheia.addEventListener(
+                'click',
+                async function (event) {
+
+                    event.preventDefault();
+
+                    event.stopPropagation();
+
+
+                    try {
+
+                        /*
+                         * Android / alguns navegadores
+                         * permitem fullscreen diretamente
+                         * pelo elemento video.
+                         */
+
+                        if (
+                            typeof videoMedia.webkitEnterFullscreen ===
+                            'function'
+                        ) {
+
+                            videoMedia.webkitEnterFullscreen();
+
+                            return;
+
+                        }
+
+
+                        /*
+                         * API padrão de tela cheia.
+                         */
+
+                        if (
+                            typeof videoMedia.requestFullscreen ===
+                            'function'
+                        ) {
+
+                            await videoMedia.requestFullscreen();
+
+                            return;
+
+                        }
+
+
+                        /*
+                         * Fallback para o container.
+                         */
+
+                        const containerVideo =
+                            videoMedia.parentElement;
+
+
+                        if (
+                            containerVideo &&
+                            typeof containerVideo.requestFullscreen ===
+                            'function'
+                        ) {
+
+                            await containerVideo.requestFullscreen();
+
+                            return;
+
+                        }
+
+
+                        console.warn(
+                            '⚠️ Tela cheia não é suportada neste navegador.'
+                        );
+
+                    } catch (erro) {
+
+                        console.warn(
+                            '⚠️ Não foi possível abrir o vídeo em tela cheia:',
+                            erro
+                        );
+
+                    }
+
+                }
+            );
+
+        }
 
 
         /*
@@ -1272,7 +1397,7 @@ function criarCardProfissional(
 
 
                 const mediaBox =
-                    this.parentElement;
+                    this.closest('.ad-media-box');
 
 
                 if (!mediaBox) {
@@ -1629,21 +1754,10 @@ document.addEventListener(
         );
 
 
-        /*
-         * Primeiro inicializamos o aviso.
-         * Ele é independente do feed e não
-         * interfere no infinite scroll.
-         */
-
         iniciarAvisoFeed();
 
-
-        /*
-         * Depois iniciamos o feed.
-         */
 
         carregarProfissionaisInicio();
 
     }
 );
-

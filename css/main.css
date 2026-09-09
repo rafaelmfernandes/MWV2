@@ -2139,3 +2139,87 @@ TELAS MUITO PEQUENAS
 
 
 }
+
+/* =========================================================
+BOTÃO DE TELA CHEIA DO VÍDEO
+========================================================= */
+
+.ad-video-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.ad-video-container .ad-media-video {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+}
+
+.btn-video-tela-cheia {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    width: 34px;
+    height: 34px;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    border: 1px solid rgba(255, 255, 255, 0.45);
+    border-radius: 9px;
+    background: rgba(15, 23, 42, 0.62);
+    color: #ffffff;
+    cursor: pointer;
+    z-index: 5;
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    transition:
+        background .18s ease,
+        transform .12s ease,
+        border-color .18s ease;
+}
+
+.btn-video-tela-cheia:hover {
+    background: rgba(15, 23, 42, 0.82);
+    border-color: rgba(255, 255, 255, 0.7);
+}
+
+.btn-video-tela-cheia:active {
+    transform: scale(.92);
+}
+
+.btn-video-tela-cheia:focus-visible {
+    outline: none;
+    border-color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, .18);
+}
+
+.btn-video-tela-cheia svg {
+    width: 17px;
+    height: 17px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.9;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    pointer-events: none;
+}
+
+@media (max-width: 520px) {
+
+    .btn-video-tela-cheia {
+        right: 8px;
+        bottom: 8px;
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+    }
+
+    .btn-video-tela-cheia svg {
+        width: 16px;
+        height: 16px;
+    }
+
+}
