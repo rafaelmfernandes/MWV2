@@ -1653,7 +1653,7 @@
             agendaDados.find(item => {
 
                 const dataItem =
-                    item.data ||
+                    item.data_inicio ||
                     item.data_agenda ||
                     item.data_evento ||
                     item.inicio;
