@@ -178,7 +178,9 @@ button {
     font-size: 11px;
 }
 
-/* ABAS */
+/* ================================
+   ABAS
+================================ */
 
 .editor-tabs {
     position: sticky;
@@ -235,7 +237,9 @@ button {
     display: block;
 }
 
-/* CABEÇALHOS */
+/* ================================
+   CABEÇALHOS
+================================ */
 
 .section-heading {
     display: flex;
@@ -267,7 +271,9 @@ button {
     line-height: 1.45;
 }
 
-/* CAMPOS */
+/* ================================
+   CAMPOS
+================================ */
 
 .campo {
     position: relative;
@@ -339,7 +345,9 @@ button {
     pointer-events: none;
 }
 
-/* CHIPS */
+/* ================================
+   CHIPS
+================================ */
 
 .chips {
     display: flex;
@@ -371,7 +379,9 @@ button {
     color: var(--mw-primary);
 }
 
-/* SWITCH */
+/* ================================
+   SWITCH
+================================ */
 
 .switch-row {
     display: flex;
@@ -436,7 +446,9 @@ button {
     transform: translateX(21px);
 }
 
-/* CONTA */
+/* ================================
+   CONTA
+================================ */
 
 .conta-card {
     background: #fbfbfd;
@@ -462,7 +474,9 @@ button {
     font-size: 13px;
 }
 
-/* BOTÕES */
+/* ================================
+   BOTÕES
+================================ */
 
 .acoes-finais {
     display: grid;
@@ -523,7 +537,9 @@ button {
     background: var(--mw-primary-dark);
 }
 
-/* PORTFÓLIO */
+/* ================================
+   PORTFÓLIO
+================================ */
 
 .portfolio-tipo-tabs {
     display: grid;
@@ -564,15 +580,29 @@ button {
     gap: 10px;
 }
 
+/* ================================
+   CARD DE MÍDIA
+================================ */
+
 .media-edit-card {
     display: grid;
-    grid-template-columns: 74px 1fr auto;
+    grid-template-columns: 74px minmax(0, 1fr) auto;
     gap: 12px;
     align-items: center;
     padding: 11px;
     border: 1px solid var(--mw-border);
     border-radius: 14px;
     background: #fff;
+    transition:
+        border-color .18s ease,
+        box-shadow .18s ease,
+        background .18s ease;
+}
+
+.media-edit-card:has(.btn-destaque.ativo) {
+    border-color: #d8d0ff;
+    background: #fdfcff;
+    box-shadow: 0 5px 18px rgba(109, 74, 255, .07);
 }
 
 .media-preview {
@@ -606,6 +636,7 @@ button {
     display: block;
     margin-bottom: 4px;
     font-size: 13px;
+    line-height: 1.3;
 }
 
 .media-edit-info span {
@@ -617,29 +648,137 @@ button {
     white-space: nowrap;
 }
 
+/* ================================
+   ETIQUETA DE DESTAQUE
+================================ */
+
+.portfolio-destaque-label {
+    width: fit-content !important;
+    max-width: 100%;
+    display: inline-flex !important;
+    align-items: center;
+    gap: 5px;
+    margin-top: 7px !important;
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: var(--mw-primary-soft);
+    color: var(--mw-primary) !important;
+    font-size: 9px !important;
+    font-weight: 800 !important;
+    line-height: 1.2;
+    white-space: nowrap !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+}
+
+.portfolio-destaque-label svg {
+    width: 11px;
+    height: 11px;
+    flex: 0 0 11px;
+    fill: currentColor;
+    stroke-width: 2;
+}
+
+/* ================================
+   AÇÕES DA MÍDIA
+================================ */
+
 .media-edit-actions {
     display: flex;
     align-items: center;
-    gap: 5px;
+    justify-content: flex-end;
+    gap: 7px;
+    flex-shrink: 0;
 }
+
+/* ================================
+   BOTÃO DE DESTAQUE
+================================ */
+
+.btn-destaque {
+    height: 34px;
+    min-width: 34px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 0 10px;
+    border: 1px solid var(--mw-border);
+    border-radius: 10px;
+    background: #fff;
+    color: #687184;
+    cursor: pointer;
+    font-size: 10px;
+    font-weight: 800;
+    line-height: 1;
+    white-space: nowrap;
+    transition:
+        background .18s ease,
+        border-color .18s ease,
+        color .18s ease,
+        transform .12s ease;
+}
+
+.btn-destaque svg {
+    width: 14px;
+    height: 14px;
+    flex: 0 0 14px;
+    stroke-width: 2;
+}
+
+.btn-destaque:hover {
+    border-color: #cfc5ff;
+    background: var(--mw-primary-soft);
+    color: var(--mw-primary);
+}
+
+.btn-destaque:active {
+    transform: scale(.97);
+}
+
+.btn-destaque.ativo {
+    border-color: #c8bcff;
+    background: var(--mw-primary-soft);
+    color: var(--mw-primary);
+}
+
+.btn-destaque.ativo svg {
+    fill: currentColor;
+}
+
+/* ================================
+   BOTÃO EXCLUIR
+================================ */
 
 .btn-excluir {
     width: 34px;
     height: 34px;
     display: grid;
     place-items: center;
+    flex: 0 0 34px;
     border: 1px solid #f1d8dc;
     border-radius: 10px;
     background: #fff;
     color: var(--mw-danger);
     cursor: pointer;
+    transition:
+        background .18s ease,
+        border-color .18s ease,
+        transform .12s ease;
 }
 
 .btn-excluir:hover {
     background: #fff5f6;
+    border-color: #eccbd0;
 }
 
-/* AGENDA */
+.btn-excluir:active {
+    transform: scale(.97);
+}
+
+/* ================================
+   AGENDA
+================================ */
 
 .campo-grid {
     display: grid;
@@ -715,7 +854,9 @@ button {
     text-transform: uppercase;
 }
 
-/* VAZIO */
+/* ================================
+   VAZIO
+================================ */
 
 .empty-editor {
     min-height: 160px;
@@ -749,7 +890,9 @@ button {
     line-height: 1.45;
 }
 
-/* TOAST */
+/* ================================
+   TOAST
+================================ */
 
 .toast {
     position: fixed;
@@ -784,7 +927,9 @@ button {
     opacity: 1;
 }
 
-/* LOADING */
+/* ================================
+   LOADING
+================================ */
 
 .loading-overlay {
     position: fixed;
@@ -835,6 +980,10 @@ button {
     }
 }
 
+/* ================================
+   DESKTOP
+================================ */
+
 @media (min-width: 700px) {
 
     .editar-container {
@@ -846,6 +995,10 @@ button {
     }
 
 }
+
+/* ================================
+   TABLET / CELULAR
+================================ */
 
 @media (max-width: 520px) {
 
@@ -907,13 +1060,57 @@ button {
         font-size: 10px;
     }
 
+    /* CARD DE PORTFÓLIO NO CELULAR */
+
     .media-edit-card {
-        grid-template-columns: 58px 1fr auto;
+        grid-template-columns: 58px minmax(0, 1fr) auto;
+        gap: 9px;
+        padding: 9px;
     }
 
     .media-preview {
         width: 58px;
         height: 58px;
+    }
+
+    .media-edit-actions {
+        gap: 5px;
+    }
+
+    /* NO CELULAR FICA SOMENTE A ESTRELA */
+
+    .btn-destaque {
+        width: 34px;
+        height: 34px;
+        min-width: 34px;
+        padding: 0;
+    }
+
+    .btn-destaque span {
+        display: none;
+    }
+
+    .btn-destaque svg {
+        width: 15px;
+        height: 15px;
+    }
+
+    .btn-excluir {
+        width: 34px;
+        height: 34px;
+        flex-basis: 34px;
+    }
+
+    .portfolio-destaque-label {
+        margin-top: 6px !important;
+        padding: 3px 7px;
+        font-size: 8px !important;
+    }
+
+    .portfolio-destaque-label svg {
+        width: 10px;
+        height: 10px;
+        flex-basis: 10px;
     }
 
     .agenda-edit-card {
@@ -927,6 +1124,10 @@ button {
 
 }
 
+/* ================================
+   CELULARES PEQUENOS
+================================ */
+
 @media (max-width: 380px) {
 
     .editor-tab span {
@@ -935,6 +1136,36 @@ button {
 
     .topbar-salvar {
         font-size: 12px;
+    }
+
+    .media-edit-card {
+        grid-template-columns: 52px minmax(0, 1fr) auto;
+        gap: 7px;
+    }
+
+    .media-preview {
+        width: 52px;
+        height: 52px;
+    }
+
+    .media-edit-info strong {
+        font-size: 12px;
+    }
+
+    .media-edit-actions {
+        gap: 4px;
+    }
+
+    .btn-destaque,
+    .btn-excluir {
+        width: 32px;
+        min-width: 32px;
+        height: 32px;
+    }
+
+    .btn-destaque svg {
+        width: 14px;
+        height: 14px;
     }
 
 }

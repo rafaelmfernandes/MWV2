@@ -599,6 +599,7 @@ const EditarPerfilMusico = (() => {
 
         preencherFormulario();
 
+
         await Promise.all([
             carregarPortfolio(),
             carregarAgenda()
@@ -1116,6 +1117,7 @@ const EditarPerfilMusico = (() => {
                     thumbnail_url,
                     ordem,
                     ativo,
+                    destaque_catalogo,
                     created_at,
                     updated_at
                 `)
@@ -1137,7 +1139,8 @@ const EditarPerfilMusico = (() => {
                     "created_at",
                     {
                         ascending: false
-                    });
+                    }
+                );
 
 
         if (resultado.error) {
@@ -1216,6 +1219,20 @@ const EditarPerfilMusico = (() => {
     }
 
 
+    function tipoPodeSerDestaque(tipo) {
+
+        const tipoNormalizado =
+            String(tipo || "")
+                .trim()
+                .toLowerCase();
+
+        return (
+            tipoNormalizado === "imagem" ||
+            tipoNormalizado === "video"
+        );
+    }
+
+
     function atualizarTipoMedia() {
 
         document
@@ -1276,7 +1293,7 @@ const EditarPerfilMusico = (() => {
                 "audio/mpeg,audio/mp3,audio/wav,audio/ogg";
 
             ajuda.textContent =
-                "MP3, WAV ou OGG.";
+                "MP3, WAV ou OGG. Áudios não podem ser destaque no catálogo.";
 
         }
     }
@@ -1397,6 +1414,10 @@ const EditarPerfilMusico = (() => {
                 ?.value.trim() || "";
 
 
+        const tipo =
+            obterTipoMedia();
+
+
         if (!titulo) {
 
             mostrarToast(
@@ -1444,10 +1465,27 @@ const EditarPerfilMusico = (() => {
             }
 
 
+            const itemExistente =
+                estado.portfolio.find(
+                    item =>
+                        String(item.id) ===
+                        String(estado.editandoPortfolioId)
+                );
+
+
+            const destaqueAtual =
+                itemExistente?.destaque_catalogo === true;
+
+
+            const destaqueCatalogo =
+                tipoPodeSerDestaque(tipo)
+                    ? destaqueAtual
+                    : false;
+
+
             const dados = {
 
-                tipo:
-                    obterTipoMedia(),
+                tipo,
 
                 titulo,
 
@@ -1458,6 +1496,9 @@ const EditarPerfilMusico = (() => {
                     arquivoUrl,
 
                 ativo: true,
+
+                destaque_catalogo:
+                    destaqueCatalogo,
 
                 updated_at:
                     new Date().toISOString()
@@ -1540,6 +1581,195 @@ const EditarPerfilMusico = (() => {
     }
 
 
+    async function definirDestaqueCatalogo(id) {
+
+        if (!id) {
+            return;
+        }
+
+
+        if (!estado.perfil?.id) {
+
+            mostrarToast(
+                "Perfil não carregado.",
+                true
+            );
+
+            return;
+        }
+
+
+        const item =
+            estado.portfolio.find(
+                portfolioItem =>
+                    String(portfolioItem.id) ===
+                    String(id)
+            );
+
+
+        if (!item) {
+
+            mostrarToast(
+                "Item do portfólio não encontrado.",
+                true
+            );
+
+            return;
+        }
+
+
+        if (!tipoPodeSerDestaque(item.tipo)) {
+
+            mostrarToast(
+                "Áudios não podem ser usados como destaque no catálogo.",
+                true
+            );
+
+            return;
+        }
+
+
+        try {
+
+            const estaDestacado =
+                item.destaque_catalogo === true;
+
+
+            mostrarLoading(
+                estaDestacado
+                    ? "Removendo destaque..."
+                    : "Definindo destaque..."
+            );
+
+
+            if (estaDestacado) {
+
+                const remover =
+                    await supabaseClient
+                        .from("portfolio_musicos")
+                        .update({
+                            destaque_catalogo: false,
+                            updated_at:
+                                new Date().toISOString()
+                        })
+                        .eq(
+                            "id",
+                            id
+                        )
+                        .eq(
+                            "perfil_id",
+                            estado.perfil.id
+                        );
+
+
+                if (remover.error) {
+                    throw remover.error;
+                }
+
+
+                esconderLoading();
+
+
+                mostrarToast(
+                    "Destaque removido do catálogo."
+                );
+
+
+                await carregarPortfolio();
+
+                return;
+            }
+
+
+            /*
+             * Primeiro remove qualquer destaque existente
+             * do perfil inteiro.
+             *
+             * Isso é importante porque existe um índice
+             * UNIQUE parcial no banco.
+             */
+
+            const removerDestaquesAnteriores =
+                await supabaseClient
+                    .from("portfolio_musicos")
+                    .update({
+                        destaque_catalogo: false,
+                        updated_at:
+                            new Date().toISOString()
+                    })
+                    .eq(
+                        "perfil_id",
+                        estado.perfil.id
+                    )
+                    .eq(
+                        "destaque_catalogo",
+                        true
+                    );
+
+
+            if (removerDestaquesAnteriores.error) {
+                throw removerDestaquesAnteriores.error;
+            }
+
+
+            const definir =
+                await supabaseClient
+                    .from("portfolio_musicos")
+                    .update({
+                        destaque_catalogo: true,
+                        updated_at:
+                            new Date().toISOString()
+                    })
+                    .eq(
+                        "id",
+                        id
+                    )
+                    .eq(
+                        "perfil_id",
+                        estado.perfil.id
+                    )
+                    .eq(
+                        "ativo",
+                        true
+                    );
+
+
+            if (definir.error) {
+                throw definir.error;
+            }
+
+
+            esconderLoading();
+
+
+            mostrarToast(
+                "Mídia definida como destaque no catálogo!"
+            );
+
+
+            await carregarPortfolio();
+
+
+        } catch (erro) {
+
+            console.error(
+                "Erro ao definir destaque:",
+                erro
+            );
+
+            esconderLoading();
+
+            mostrarToast(
+                erro?.message ||
+                "Não foi possível definir o destaque.",
+                true
+            );
+
+            await carregarPortfolio();
+        }
+    }
+
+
     function renderizarPortfolio() {
 
         const container =
@@ -1556,7 +1786,11 @@ const EditarPerfilMusico = (() => {
             container.innerHTML = `
                 <div class="empty-editor">
                     <i data-lucide="images"></i>
-                    <strong>Nenhum item cadastrado</strong>
+
+                    <strong>
+                        Nenhum item cadastrado
+                    </strong>
+
                     <span>
                         Adicione imagens, vídeos ou áudios ao seu portfólio.
                     </span>
@@ -1593,12 +1827,16 @@ const EditarPerfilMusico = (() => {
                     }
 
 
-                    if (item.tipo === "video") {
+                    if (
+                        item.tipo === "video" &&
+                        item.arquivo_url
+                    ) {
 
                         preview = `
                             <video
                                 src="${escaparHtml(item.arquivo_url)}"
                                 muted
+                                playsinline
                                 preload="metadata">
                             </video>
                         `;
@@ -1615,12 +1853,61 @@ const EditarPerfilMusico = (() => {
                     }
 
 
+                    const podeDestacar =
+                        tipoPodeSerDestaque(
+                            item.tipo
+                        );
+
+
+                    const estaDestacado =
+                        item.destaque_catalogo === true;
+
+
+                    const botaoDestaque =
+                        podeDestacar
+                            ? `
+                                <button
+                                    type="button"
+                                    class="btn-destaque ${estaDestacado ? "ativo" : ""}"
+                                    title="${
+                                        estaDestacado
+                                            ? "Remover destaque do catálogo"
+                                            : "Usar como destaque no catálogo"
+                                    }"
+                                    aria-label="${
+                                        estaDestacado
+                                            ? "Remover destaque do catálogo"
+                                            : "Usar como destaque no catálogo"
+                                    }"
+                                    data-destaque-portfolio="${escaparHtml(item.id)}">
+
+                                    <i data-lucide="star"></i>
+
+                                    <span>
+                                        ${
+                                            estaDestacado
+                                                ? "Destaque"
+                                                : "Usar como destaque"
+                                        }
+                                    </span>
+
+                                </button>
+                            `
+                            : "";
+
+
                     return `
-                        <article class="media-edit-card">
+                        <article
+                            class="media-edit-card ${
+                                estaDestacado
+                                    ? "portfolio-card-destaque"
+                                    : ""
+                            }">
 
                             <div class="media-preview">
                                 ${preview}
                             </div>
+
 
                             <div class="media-edit-info">
 
@@ -1631,28 +1918,37 @@ const EditarPerfilMusico = (() => {
                                     )}
                                 </strong>
 
-                                <span>
-                                    ${escaparHtml(
-                                        item.descricao ||
-                                        item.tipo
-                                    )}
-                                </span>
+                                ${
+                                    item.descricao
+                                        ? `
+                                            <span>
+                                                ${escaparHtml(
+                                                    item.descricao
+                                                )}
+                                            </span>
+                                        `
+                                        : ""
+                                }
 
                                 <span>
                                     ${escaparHtml(
                                         item.tipo
                                     )}
-                                </span>
+                                >
 
                             </div>
 
+
                             <div class="media-edit-actions">
+
+                                ${botaoDestaque}
 
                                 <button
                                     type="button"
                                     class="btn-excluir"
                                     title="Excluir"
-                                    data-excluir-portfolio="${item.id}">
+                                    aria-label="Excluir item"
+                                    data-excluir-portfolio="${escaparHtml(item.id)}">
 
                                     <i data-lucide="trash-2"></i>
 
@@ -1679,6 +1975,26 @@ const EditarPerfilMusico = (() => {
 
                         excluirPortfolio(
                             botao.dataset.excluirPortfolio
+                        );
+
+                    }
+                );
+
+            });
+
+
+        container
+            .querySelectorAll(
+                "[data-destaque-portfolio]"
+            )
+            .forEach(botao => {
+
+                botao.addEventListener(
+                    "click",
+                    () => {
+
+                        definirDestaqueCatalogo(
+                            botao.dataset.destaquePortfolio
                         );
 
                     }
@@ -1721,6 +2037,7 @@ const EditarPerfilMusico = (() => {
                     .from("portfolio_musicos")
                     .update({
                         ativo: false,
+                        destaque_catalogo: false,
                         updated_at:
                             new Date().toISOString()
                     })
@@ -2218,7 +2535,11 @@ const EditarPerfilMusico = (() => {
             container.innerHTML = `
                 <div class="empty-editor">
                     <i data-lucide="calendar-days"></i>
-                    <strong>Nenhum compromisso cadastrado</strong>
+
+                    <strong>
+                        Nenhum compromisso cadastrado
+                    </strong>
+
                     <span>
                         Adicione um evento para começar a organizar sua agenda.
                     </span>
@@ -2298,7 +2619,7 @@ const EditarPerfilMusico = (() => {
                                     type="button"
                                     class="btn-excluir"
                                     title="Excluir"
-                                    data-excluir-agenda="${item.id}">
+                                    data-excluir-agenda="${escaparHtml(item.id)}">
 
                                     <i data-lucide="trash-2"></i>
 
@@ -2716,6 +3037,7 @@ const EditarPerfilMusico = (() => {
         iniciar,
         salvar: salvarSobre
     };
+
 
 })();
 
