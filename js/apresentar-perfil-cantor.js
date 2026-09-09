@@ -377,12 +377,16 @@
                 artista.tipo_artista || ""
             ).trim().toLowerCase();
 
+        const tiposCantor = [
+            "cantor",
+            "cantora",
+            "cantor(a)"
+        ];
 
         if (
             tipoArtista &&
-            tipoArtista !== "cantor"
+            !tiposCantor.includes(tipoArtista)
         ) {
-
             throw new Error(
                 "Este perfil não é de cantor."
             );
