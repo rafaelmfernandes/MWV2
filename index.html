@@ -4,38 +4,39 @@
 
 <head>
 
-  <meta charset="UTF-8">
+
+<meta charset="UTF-8">
 
 <meta
-name="viewport"
-content="width=device-width, initial-scale=1.0"
-
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
 >
 
-  <title>
+<title>
     ArtistaShow - Conectando a Cena de Goiânia
-  </title>
+</title>
 
-  <link
+<link
     rel="stylesheet"
     href="css/main.css"
-  >
+>
 
-  <link
+<link
     rel="stylesheet"
     href="css/menu-inferior.css"
-  >
+>
 
-  <link
+<link
     rel="stylesheet"
     href="css/modal-filtro.css"
-  >
+>
+
 
 </head>
 
 <body>
 
-  <div class="app-container">
+<div class="app-container">
 
 
 <!-- =====================================================
@@ -44,359 +45,361 @@ content="width=device-width, initial-scale=1.0"
 
 <header class="navbar">
 
-  <div class="navbar-brand-area">
-
-    <div
-      id="cabecalho-logo"
-      class="logo"
-    >
-      Artista<span>Show</span>
-    </div>
-
-    <div
-      id="cabecalho-logado"
-      class="cabecalho-logado"
-      style="display: none;"
-    >
-
-      <button
-        type="button"
-        class="cabecalho-usuario-btn"
-        onclick="Cabecalho.alternarMenuUsuario()"
-        title="Opções da conta"
-        aria-haspopup="true"
-        aria-expanded="false"
-      >
+    <div class="navbar-brand-area">
 
         <div
-          id="cabecalho-avatar"
-          class="cabecalho-avatar"
+            id="cabecalho-logo"
+            class="logo"
         >
-          <span id="cabecalho-avatar-letras">
-            U
-          </span>
+            Artista<span>Show</span>
         </div>
 
-        <div class="cabecalho-info-usuario">
+        <div
+            id="cabecalho-logado"
+            class="cabecalho-logado"
+            style="display: none;"
+        >
 
-          <strong id="cabecalho-nome">
-            Usuário
-          </strong>
+            <button
+                type="button"
+                class="cabecalho-usuario-btn"
+                onclick="Cabecalho.alternarMenuUsuario()"
+                title="Opções da conta"
+                aria-haspopup="true"
+                aria-expanded="false"
+            >
 
-          <small id="cabecalho-tipo">
-            Perfil
-          </small>
+                <div
+                    id="cabecalho-avatar"
+                    class="cabecalho-avatar"
+                >
+
+                    <span id="cabecalho-avatar-letras">
+                        U
+                    </span>
+
+                </div>
+
+                <div class="cabecalho-info-usuario">
+
+                    <strong id="cabecalho-nome">
+                        Usuário
+                    </strong>
+
+                    <small id="cabecalho-tipo">
+                        Perfil
+                    </small>
+
+                </div>
+
+                <svg
+                    class="cabecalho-chevron"
+                    viewBox="0 0 24 24"
+                    width="16"
+                    height="16"
+                    aria-hidden="true"
+                >
+
+                    <path
+                        d="M6 9l6 6 6-6"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    />
+
+                </svg>
+
+            </button>
+
+            <div
+                id="cabecalho-menu-usuario"
+                class="cabecalho-menu-usuario"
+                style="display: none;"
+            >
+
+                <button
+                    type="button"
+                    onclick="Cabecalho.trocarConta()"
+                >
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        width="18"
+                        height="18"
+                        aria-hidden="true"
+                    >
+
+                        <path
+                            d="M16 3h5v5"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        />
+
+                        <path
+                            d="M21 3l-7 7"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        />
+
+                        <path
+                            d="M20 14v4a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3h4"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        />
+
+                    </svg>
+
+                    <span>
+                        Trocar de conta
+                    </span>
+
+                </button>
+
+                <button
+                    type="button"
+                    onclick="Cabecalho.sair()"
+                >
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        width="18"
+                        height="18"
+                        aria-hidden="true"
+                    >
+
+                        <path
+                            d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        />
+
+                        <path
+                            d="M16 17l5-5-5-5"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        />
+
+                        <path
+                            d="M21 12H9"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        />
+
+                    </svg>
+
+                    <span>
+                        Sair
+                    </span>
+
+                </button>
+
+            </div>
 
         </div>
 
-        <svg
-          class="cabecalho-chevron"
-          viewBox="0 0 24 24"
-          width="16"
-          height="16"
-          aria-hidden="true"
+        <div
+            id="cabecalho-carregando"
+            class="cabecalho-usuario-loading"
         >
 
-          <path
-            d="M6 9l6 6 6-6"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
+            <span></span>
 
-        </svg>
+        </div>
 
-      </button>
+    </div>
 
-      <div
-        id="cabecalho-menu-usuario"
-        class="cabecalho-menu-usuario"
-        style="display: none;"
-      >
+    <!-- =================================================
+         ÍCONES DO CABEÇALHO
+    ================================================== -->
+
+    <div class="navbar-icons">
+
+        <div
+            id="cabecalho-deslogado"
+            class="cabecalho-usuario-estado"
+            style="display: none;"
+        >
+
+            <button
+                class="cabecalho-btn-entrar"
+                onclick="window.location.href='login.html'"
+            >
+                Entrar
+            </button>
+
+        </div>
+
+        <!-- Notificações -->
 
         <button
-          type="button"
-          onclick="Cabecalho.trocarConta()"
+            class="nav-icon-btn"
+            onclick="window.location.href='notificacoes.html'"
+            title="Notificações"
         >
 
-          <svg
-            viewBox="0 0 24 24"
-            width="18"
-            height="18"
-            aria-hidden="true"
-          >
+            <svg
+                class="top-icon-svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            >
 
-            <path
-              d="M16 3h5v5"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
+                <path
+                    d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"
+                ></path>
 
-            <path
-              d="M21 3l-7 7"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
+                <path
+                    d="M13.73 21a2 2 0 0 1-3.46 0"
+                ></path>
 
-            <path
-              d="M20 14v4a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3h4"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
+            </svg>
 
-          </svg>
-
-          <span>
-            Trocar de conta
-          </span>
+            <span class="notification-badge">
+                5
+            </span>
 
         </button>
 
+        <!-- Mensagens -->
+
         <button
-          type="button"
-          onclick="Cabecalho.sair()"
+            class="nav-icon-btn"
+            onclick="window.location.href='mensagens.html'"
+            title="Mensagens"
         >
 
-          <svg
-            viewBox="0 0 24 24"
-            width="18"
-            height="18"
-            aria-hidden="true"
-          >
+            <div class="msg-icon-wrapper">
 
-            <path
-              d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
+                <svg
+                    class="top-icon-svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                >
 
-            <path
-              d="M16 17l5-5-5-5"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
+                    <path
+                        d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
+                    ></path>
 
-            <path
-              d="M21 12H9"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
+                </svg>
 
-          </svg>
+                <span class="msg-letter">
+                    M
+                </span>
 
-          <span>
-            Sair
-          </span>
+            </div>
+
+            <span class="notification-badge">
+                10
+            </span>
 
         </button>
 
-      </div>
+        <!-- Filtro -->
 
-    </div>
-
-    <div
-      id="cabecalho-carregando"
-      class="cabecalho-usuario-loading"
-    >
-
-      <span></span>
-
-    </div>
-
-  </div>
-
-  <!-- =================================================
-       ÍCONES DO CABEÇALHO
-  ================================================== -->
-
-  <div class="navbar-icons">
-
-    <div
-      id="cabecalho-deslogado"
-      class="cabecalho-usuario-estado"
-      style="display: none;"
-    >
-
-      <button
-        class="cabecalho-btn-entrar"
-        onclick="window.location.href='login.html'"
-      >
-        Entrar
-      </button>
-
-    </div>
-
-    <!-- Notificações -->
-
-    <button
-      class="nav-icon-btn"
-      onclick="window.location.href='notificacoes.html'"
-      title="Notificações"
-    >
-
-      <svg
-        class="top-icon-svg"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      >
-
-        <path
-          d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"
-        ></path>
-
-        <path
-          d="M13.73 21a2 2 0 0 1-3.46 0"
-        ></path>
-
-      </svg>
-
-      <span class="notification-badge">
-        5
-      </span>
-
-    </button>
-
-    <!-- Mensagens -->
-
-    <button
-      class="nav-icon-btn"
-      onclick="window.location.href='mensagens.html'"
-      title="Mensagens"
-    >
-
-      <div class="msg-icon-wrapper">
-
-        <svg
-          class="top-icon-svg"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+        <button
+            class="nav-icon-btn"
+            onclick="abrirModalFiltro()"
+            title="Filtros"
         >
 
-          <path
-            d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
-          ></path>
+            <svg
+                class="top-icon-svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            >
 
-        </svg>
+                <line
+                    x1="4"
+                    y1="21"
+                    x2="4"
+                    y2="14"
+                ></line>
 
-        <span class="msg-letter">
-          M
-        </span>
+                <line
+                    x1="4"
+                    y1="10"
+                    x2="4"
+                    y2="3"
+                ></line>
 
-      </div>
+                <line
+                    x1="12"
+                    y1="21"
+                    x2="12"
+                    y2="12"
+                ></line>
 
-      <span class="notification-badge">
-        10
-      </span>
+                <line
+                    x1="12"
+                    y1="8"
+                    x2="12"
+                    y2="3"
+                ></line>
 
-    </button>
+                <line
+                    x1="20"
+                    y1="21"
+                    x2="20"
+                    y2="16"
+                ></line>
 
-    <!-- Filtro -->
+                <line
+                    x1="1"
+                    y1="14"
+                    x2="7"
+                    y2="14"
+                ></line>
 
-    <button
-      class="nav-icon-btn"
-      onclick="abrirModalFiltro()"
-      title="Filtros"
-    >
+                <line
+                    x1="9"
+                    y1="8"
+                    x2="15"
+                    y2="8"
+                ></line>
 
-      <svg
-        class="top-icon-svg"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      >
+                <line
+                    x1="17"
+                    y1="16"
+                    x2="23"
+                    y2="16"
+                ></line>
 
-        <line
-          x1="4"
-          y1="21"
-          x2="4"
-          y2="14"
-        ></line>
+            </svg>
 
-        <line
-          x1="4"
-          y1="10"
-          x2="4"
-          y2="3"
-        ></line>
+        </button>
 
-        <line
-          x1="12"
-          y1="21"
-          x2="12"
-          y2="12"
-        ></line>
-
-        <line
-          x1="12"
-          y1="8"
-          x2="12"
-          y2="3"
-        ></line>
-
-        <line
-          x1="20"
-          y1="21"
-          x2="20"
-          y2="16"
-        ></line>
-
-        <line
-          x1="1"
-          y1="14"
-          x2="7"
-          y2="14"
-        ></line>
-
-        <line
-          x1="9"
-          y1="8"
-          x2="15"
-          y2="8"
-        ></line>
-
-        <line
-          x1="17"
-          y1="16"
-          x2="23"
-          y2="16"
-        ></line>
-
-      </svg>
-
-    </button>
-
-  </div>
+    </div>
 
 </header>
 
@@ -407,138 +410,213 @@ content="width=device-width, initial-scale=1.0"
 
 <main class="main-content">
 
-  <!-- Hero -->
-
-  <section class="hero-section">
-
-    <h1 class="hero-title">
-      Encontre profissionais
-    </h1>
-
-    <p class="hero-subtitle">
-      Conecte-se com talentos, artistas e profissionais da cena musical.
-    </p>
-
-  </section>
-
-
-  <!-- =================================================
-       FEED DE PROFISSIONAIS
-  ================================================== -->
-
-  <section class="section profissionais-section">
-
-    <div class="feed-header">
-
-      <div>
-        <h2 class="feed-title">
-          Profissionais
-        </h2>
-
-        <p class="feed-subtitle">
-          Descubra novos talentos
-        </p>
-      </div>
-
-      <span
-        id="contador-profissionais"
-        class="feed-contador"
-      >
-      </span>
-
-    </div>
-
-
     <!-- =================================================
-         LISTA DO FEED
+         AVISO DISCRETO
     ================================================== -->
 
     <div
-      id="feed-profissionais"
-      class="feed-profissionais"
+        class="feed-aviso"
+        id="feedAviso"
     >
 
-      <div class="carregando-profissionais">
+        <div
+            class="feed-aviso-icone"
+            aria-hidden="true"
+        >
 
-        <div class="feed-spinner"></div>
+            <svg
+                viewBox="0 0 24 24"
+                width="17"
+                height="17"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            >
 
-        <span>
-          Carregando profissionais...
-        </span>
+                <path
+                    d="M9 18V5l10-2v13"
+                ></path>
 
-      </div>
+                <circle
+                    cx="6"
+                    cy="18"
+                    r="3"
+                ></circle>
+
+                <circle
+                    cx="16"
+                    cy="16"
+                    r="3"
+                ></circle>
+
+            </svg>
+
+        </div>
+
+
+        <div class="feed-aviso-conteudo">
+
+            <strong>
+                Encontre seu próximo talento
+            </strong>
+
+            <span>
+                Descubra profissionais para o seu próximo projeto ou evento.
+            </span>
+
+        </div>
+
+
+        <button
+            class="feed-aviso-fechar"
+            id="btnFecharFeedAviso"
+            type="button"
+            aria-label="Fechar aviso"
+            title="Fechar"
+        >
+
+            <svg
+                viewBox="0 0 24 24"
+                width="16"
+                height="16"
+                aria-hidden="true"
+            >
+
+                <path
+                    d="M6 6l12 12M18 6L6 18"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                />
+
+            </svg>
+
+        </button>
 
     </div>
 
 
     <!-- =================================================
-         INDICADOR DE CARREGAMENTO
+         FEED DE PROFISSIONAIS
     ================================================== -->
 
-    <div
-      id="feed-carregando-mais"
-      class="feed-carregando-mais"
-      style="display: none;"
-    >
+    <section class="section profissionais-section">
 
-      <div class="feed-spinner"></div>
+        <div class="feed-header">
 
-      <span>
-        Carregando mais profissionais...
-      </span>
+            <div>
 
-    </div>
+                <h2 class="feed-title">
+                    Profissionais
+                </h2>
 
+                <p class="feed-subtitle">
+                    Descubra novos talentos
+                </p>
 
-    <!-- =================================================
-         FIM DO FEED
-    ================================================== -->
+            </div>
 
-    <div
-      id="feed-fim"
-      class="feed-fim"
-      style="display: none;"
-    >
+            <span
+                id="contador-profissionais"
+                class="feed-contador"
+            ></span>
 
-      <span>
-        Você chegou ao fim dos profissionais disponíveis.
-      </span>
-
-    </div>
+        </div>
 
 
-    <!-- =================================================
-         ESTADO VAZIO
-    ================================================== -->
+        <!-- =================================================
+             LISTA DO FEED
+        ================================================== -->
 
-    <div
-      id="feed-vazio"
-      class="estado-vazio"
-      style="display: none;"
-    >
+        <div
+            id="feed-profissionais"
+            class="feed-profissionais"
+        >
 
-      <strong>
-        Nenhum profissional encontrado.
-      </strong>
+            <div class="carregando-profissionais">
 
-      <p>
-        Novos profissionais aparecerão aqui quando completarem e publicarem seus perfis.
-      </p>
+                <div class="feed-spinner"></div>
 
-    </div>
+                <span>
+                    Carregando profissionais...
+                </span>
+
+            </div>
+
+        </div>
 
 
-    <!-- =================================================
-         SENTINELA DO INFINITE SCROLL
-    ================================================== -->
+        <!-- =================================================
+             INDICADOR DE CARREGAMENTO
+        ================================================== -->
 
-    <div
-      id="feed-sentinela"
-      class="feed-sentinela"
-      aria-hidden="true"
-    ></div>
+        <div
+            id="feed-carregando-mais"
+            class="feed-carregando-mais"
+            style="display: none;"
+        >
 
-  </section>
+            <div class="feed-spinner"></div>
+
+            <span>
+                Carregando mais profissionais...
+            </span>
+
+        </div>
+
+
+        <!-- =================================================
+             FIM DO FEED
+        ================================================== -->
+
+        <div
+            id="feed-fim"
+            class="feed-fim"
+            style="display: none;"
+        >
+
+            <span>
+                Você chegou ao fim dos profissionais disponíveis.
+            </span>
+
+        </div>
+
+
+        <!-- =================================================
+             ESTADO VAZIO
+        ================================================== -->
+
+        <div
+            id="feed-vazio"
+            class="estado-vazio"
+            style="display: none;"
+        >
+
+            <strong>
+                Nenhum profissional encontrado.
+            </strong>
+
+            <p>
+                Novos profissionais aparecerão aqui quando completarem e publicarem seus perfis.
+            </p>
+
+        </div>
+
+
+        <!-- =================================================
+             SENTINELA DO INFINITE SCROLL
+        ================================================== -->
+
+        <div
+            id="feed-sentinela"
+            class="feed-sentinela"
+            aria-hidden="true"
+        ></div>
+
+    </section>
 
 </main>
 
@@ -557,44 +635,55 @@ content="width=device-width, initial-scale=1.0"
 <div id="menu-inferior-container"></div>
 
 
-  </div>
+</div>
 
-  <!-- =====================================================
-       SUPABASE
-  ====================================================== -->
+<!-- =====================================================
+     SUPABASE
+====================================================== -->
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 
-  <script src="js/core/SupabaseClient.js"></script>
+<script src="js/core/SupabaseClient.js"></script>
 
-  <script src="js/core/Sessao.js"></script>
+<script src="js/core/Sessao.js"></script>
 
-  <script src="js/core/UsuarioAtual.js"></script>
+<script src="js/core/UsuarioAtual.js"></script>
 
-  <script src="js/core/ControleSessao.js"></script>
+<script src="js/core/ControleSessao.js"></script>
 
-  <script src="js/core/RoteamentoPerfil.js"></script>
+<script src="js/core/RoteamentoPerfil.js"></script>
 
-  <script src="js/components/Cabecalho.js"></script>
+<script src="js/components/Cabecalho.js"></script>
 
-  <script src="js/components/modal-filtro.js"></script>
+<script src="js/components/modal-filtro.js"></script>
 
-  <script src="js/main.js"></script>
+<script src="js/main.js"></script>
 
-  <script src="js/components/menu-inferior.js"></script>
+<script src="js/components/menu-inferior.js"></script>
 
-  <script>
+<script>
 
-    document.addEventListener('DOMContentLoaded', async function () {
+document.addEventListener(
+    'DOMContentLoaded',
+    async function () {
 
-      console.log('🚀 Iniciando cabeçalho do index...');
+        console.log(
+            '🚀 Iniciando cabeçalho do index...'
+        );
 
-      await Cabecalho.iniciar();
+        if (
+            window.Cabecalho &&
+            typeof Cabecalho.iniciar === 'function'
+        ) {
 
-    });
+            await Cabecalho.iniciar();
 
-  </script>
+        }
+
+    }
+);
+
+</script>
 
 </body>
-
 </html>

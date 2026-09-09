@@ -224,7 +224,6 @@ box-shadow:
 0 12px 30px rgba(15, 23, 42, 0.16),
 0 3px 8px rgba(15, 23, 42, 0.08);
 z-index: 9999;
-box-sizing: border-box;
 }
 
 .cabecalho-menu-usuario button {
@@ -261,7 +260,6 @@ width: 18px;
 height: 18px;
 flex-shrink: 0;
 color: #64748b;
-opacity: 1;
 }
 
 .cabecalho-menu-usuario button:hover svg {
@@ -287,19 +285,11 @@ font-weight: 700;
 padding: 8px 13px;
 border-radius: 10px;
 cursor: pointer;
-transition:
-background-color 0.2s ease,
-border-color 0.2s ease,
-transform 0.15s ease;
 }
 
 .cabecalho-btn-entrar:hover {
 background-color: #eff6ff;
 border-color: #bfdbfe;
-}
-
-.cabecalho-btn-entrar:active {
-transform: scale(0.97);
 }
 
 /* =========================================================
@@ -324,17 +314,21 @@ animation: cabecalho-spinner 0.8s linear infinite;
 }
 
 @keyframes cabecalho-spinner {
+
+
 from {
-transform: rotate(0deg);
+    transform: rotate(0deg);
 }
 
 to {
-transform: rotate(360deg);
+    transform: rotate(360deg);
 }
+
+
 }
 
 /* =========================================================
-ÍCONES DO LADO DIREITO DO CABEÇALHO
+ÍCONES DO CABEÇALHO
 ========================================================= */
 
 .navbar-icons {
@@ -355,9 +349,6 @@ align-items: center;
 justify-content: center;
 cursor: pointer;
 position: relative;
-transition:
-background 0.2s,
-border-color 0.2s;
 }
 
 .nav-icon-btn:hover {
@@ -426,6 +417,196 @@ margin-bottom: 6px;
 .hero-subtitle {
 font-size: 13px;
 color: #64748b;
+}
+
+/* =========================================================
+AVISO DISCRETO DO FEED
+========================================================= */
+
+.feed-aviso {
+width: 100%;
+min-height: 50px;
+
+
+display: flex;
+align-items: center;
+
+gap: 9px;
+
+margin: 0 0 14px 0;
+padding: 8px 8px 8px 10px;
+
+background-color: #ffffff;
+
+border: 1px solid #e8ebef;
+border-radius: 10px;
+
+box-shadow: 0 1px 2px rgba(15, 23, 42, 0.025);
+
+overflow: hidden;
+
+opacity: 1;
+transform: translateY(0);
+
+transition:
+    opacity 0.2s ease,
+    transform 0.2s ease,
+    height 0.2s ease,
+    margin 0.2s ease,
+    padding 0.2s ease;
+
+
+}
+
+.feed-aviso.ocultando {
+opacity: 0;
+transform: translateY(-4px);
+}
+
+/* =========================================================
+ÍCONE DO AVISO
+========================================================= */
+
+.feed-aviso-icone {
+width: 29px;
+height: 29px;
+min-width: 29px;
+
+
+display: flex;
+align-items: center;
+justify-content: center;
+
+border-radius: 8px;
+
+background-color: #f1f5f9;
+color: #64748b;
+
+flex-shrink: 0;
+
+
+}
+
+.feed-aviso-icone svg {
+display: block;
+width: 17px;
+height: 17px;
+}
+
+/* =========================================================
+CONTEÚDO DO AVISO
+========================================================= */
+
+.feed-aviso-conteudo {
+flex: 1;
+min-width: 0;
+
+
+display: flex;
+flex-direction: column;
+
+gap: 1px;
+
+overflow: hidden;
+
+
+}
+
+.feed-aviso-conteudo strong {
+display: block;
+
+
+margin: 0;
+
+color: #3f444b;
+
+font-size: 12px;
+line-height: 1.3;
+font-weight: 600;
+
+white-space: nowrap;
+overflow: hidden;
+text-overflow: ellipsis;
+
+
+}
+
+.feed-aviso-conteudo span {
+display: block;
+
+
+margin: 0;
+
+color: #8a9098;
+
+font-size: 10.5px;
+line-height: 1.35;
+font-weight: 400;
+
+white-space: nowrap;
+overflow: hidden;
+text-overflow: ellipsis;
+
+
+}
+
+/* =========================================================
+BOTÃO FECHAR DO AVISO
+========================================================= */
+
+.feed-aviso-fechar {
+width: 27px;
+height: 27px;
+min-width: 27px;
+
+
+flex-shrink: 0;
+
+display: flex;
+align-items: center;
+justify-content: center;
+
+margin: 0;
+padding: 0;
+
+border: 0;
+border-radius: 7px;
+
+background-color: transparent;
+
+color: #9aa0a8;
+
+cursor: pointer;
+
+appearance: none;
+-webkit-appearance: none;
+
+transition:
+    background-color 0.18s ease,
+    color 0.18s ease,
+    transform 0.15s ease;
+
+
+}
+
+.feed-aviso-fechar svg {
+display: block;
+width: 15px;
+height: 15px;
+}
+
+.feed-aviso-fechar:hover {
+background-color: #f1f5f9;
+color: #525860;
+}
+
+.feed-aviso-fechar:active {
+transform: scale(0.9);
+}
+
+.feed-aviso-fechar:focus-visible {
+outline: 2px solid #bfdbfe;
+outline-offset: 1px;
 }
 
 /* =========================================================
@@ -500,7 +681,6 @@ max-height: 430px;
 background-color: #ffffff;
 
 border: 1px solid #e2e8f0;
-
 border-radius: 16px;
 
 padding: 16px;
@@ -559,7 +739,6 @@ min-width: 44px;
 min-height: 44px;
 
 background-color: #0284c7;
-
 color: #ffffff;
 
 font-weight: 700;
@@ -608,13 +787,8 @@ INFORMAÇÕES DO PROFISSIONAL
 
 .ad-user-info {
 flex: 1;
-
-
 min-width: 0;
-
 overflow: hidden;
-
-
 }
 
 .ad-user-info h4 {
@@ -882,11 +1056,12 @@ flex-shrink: 0;
 
 }
 
+.ad-footer span,
 .ad-localizacao {
-flex: 1;
-
-
 min-width: 0;
+
+
+flex: 1;
 
 font-size: 11px;
 
@@ -990,10 +1165,11 @@ animation: feed-spinner-rotacao 0.8s linear infinite;
 }
 
 @keyframes feed-spinner-rotacao {
-from {
-transform: rotate(0deg);
-}
 
+
+from {
+    transform: rotate(0deg);
+}
 
 to {
     transform: rotate(360deg);
@@ -1104,492 +1280,36 @@ color: #94a3b8;
 }
 
 /* =========================================================
-RESPONSIVIDADE
-========================================================= */
-
-@media (max-width: 600px) {
-
-
-.feed-header {
-    margin-bottom: 14px;
-}
-
-.feed-title {
-    font-size: 17px;
-}
-
-.feed-profissionais {
-    gap: 14px;
-}
-
-.ad-card-novo {
-    height: 430px;
-
-    min-height: 430px;
-    max-height: 430px;
-
-    padding: 14px;
-
-    border-radius: 15px;
-}
-
-.ad-media-box {
-    height: 220px;
-
-    min-height: 220px;
-    max-height: 220px;
-}
-
-
-}
-
-@media (max-width: 380px) {
-
-
-.ad-card-novo {
-    height: 420px;
-
-    min-height: 420px;
-    max-height: 420px;
-
-    padding: 13px;
-}
-
-.ad-media-box {
-    height: 200px;
-
-    min-height: 200px;
-    max-height: 200px;
-}
-
-.btn-detalhes {
-    padding: 8px 12px;
-}
-
-
-}
-
-
-/* =========================================================
-CARDS DE PROFISSIONAIS
-========================================================= */
-
-.profissional-card-link {
-display: block;
-width: 100%;
-text-decoration: none;
-color: inherit;
-}
-
-/* =========================================================
-CARD
-========================================================= */
-
-.ad-card-novo {
-width: 100%;
-height: 430px;
-min-height: 430px;
-max-height: 430px;
-
-background-color: #ffffff;
-
-border: 1px solid #e2e8f0;
-
-border-radius: 16px;
-
-padding: 16px;
-
-display: flex;
-flex-direction: column;
-
-gap: 12px;
-
-margin-bottom: 16px;
-
-box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
-
-overflow: hidden;
-}
-
-.ad-card-novo:hover {
-box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
-}
-
-/* =========================================================
-CABEÇALHO DO CARD
-========================================================= */
-
-.ad-header {
-width: 100%;
-display: flex;
-align-items: center;
-gap: 12px;
-flex-shrink: 0;
-}
-
-.ad-avatar-user {
-width: 44px;
-height: 44px;
-min-width: 44px;
-min-height: 44px;
-background-color: #0284c7;
-color: #ffffff;
-font-weight: 700;
-border-radius: 12px;
-display: flex;
-align-items: center;
-justify-content: center;
-font-size: 15px;
-flex-shrink: 0;
-overflow: hidden;
-}
-
-/* =========================================================
-NOVA IMAGEM DO AVATAR
-========================================================= */
-
-.ad-avatar-img {
-width: 44px;
-height: 44px;
-min-width: 44px;
-min-height: 44px;
-max-width: 44px;
-max-height: 44px;
-display: block;
-object-fit: cover;
-object-position: center;
-border-radius: 12px;
-flex-shrink: 0;
-}
-
-/* =========================================================
-INFORMAÇÕES DO CARD
-========================================================= */
-
-.ad-user-info {
-flex: 1;
-min-width: 0;
-overflow: hidden;
-}
-
-.ad-user-info h4 {
-font-size: 15px;
-color: #0f172a;
-font-weight: 600;
-margin-bottom: 3px;
-white-space: nowrap;
-overflow: hidden;
-text-overflow: ellipsis;
-}
-
-.ad-meta-row {
-display: flex;
-justify-content: flex-start;
-align-items: center;
-gap: 8px;
-min-width: 0;
-width: 100%;
-overflow: hidden;
-}
-
-.ad-estilo {
-display: block;
-width: 100%;
-font-size: 12px;
-color: #2563eb;
-font-weight: 500;
-white-space: nowrap;
-overflow: hidden;
-text-overflow: ellipsis;
-}
-
-/* =========================================================
-ÁREA DA IMAGEM PRINCIPAL
-========================================================= */
-
-.ad-media-box {
-width: 100%;
-height: 220px;
-min-height: 220px;
-max-height: 220px;
-
-flex-shrink: 0;
-
-overflow: hidden;
-
-position: relative;
-
-background-color: #f1f5f9;
-
-border: 1px dashed #cbd5e1;
-
-border-radius: 12px;
-
-display: flex;
-align-items: center;
-justify-content: center;
-
-color: #64748b;
-
-font-size: 13px;
-font-weight: 500;
-}
-
-.ad-media-box.photo-bg {
-background: linear-gradient(135deg, #e2e8f0, #f1f5f9);
-}
-
-/* =========================================================
-IMAGEM PRINCIPAL DO CARD
-========================================================= */
-
-.ad-media-img {
-width: 100%;
-height: 100%;
-max-width: 100%;
-max-height: 100%;
-display: block;
-object-fit: cover;
-object-position: center;
-}
-
-/* =========================================================
-FALLBACK DA MÍDIA
-========================================================= */
-
-.ad-media-sem-foto {
-width: 100%;
-height: 100%;
-display: flex;
-align-items: center;
-justify-content: center;
-background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
-}
-
-.ad-media-sem-foto span {
-width: 64px;
-height: 64px;
-display: flex;
-align-items: center;
-justify-content: center;
-border-radius: 18px;
-background-color: #0284c7;
-color: #ffffff;
-font-size: 20px;
-font-weight: 700;
-}
-
-.ad-media-fallback {
-width: 64px;
-height: 64px;
-display: flex;
-align-items: center;
-justify-content: center;
-border-radius: 18px;
-background-color: #0284c7;
-color: #ffffff;
-font-size: 20px;
-font-weight: 700;
-}
-
-/* =========================================================
-DESCRIÇÃO
-========================================================= */
-
-.ad-descricao {
-font-size: 12px;
-color: #475569;
-
-display: flex;
-flex-direction: column;
-
-gap: 4px;
-
-flex-shrink: 0;
-
-min-height: 52px;
-max-height: 52px;
-
-overflow: hidden;
-}
-
-.ad-descricao strong {
-color: #0f172a;
-font-size: 13px;
-font-weight: 700;
-
-line-height: 1.2;
-
-white-space: nowrap;
-overflow: hidden;
-text-overflow: ellipsis;
-}
-
-.ad-descricao p {
-font-size: 12px;
-line-height: 1.45;
-color: #475569;
-
-display: -webkit-box;
--webkit-box-orient: vertical;
--webkit-line-clamp: 2;
-
-overflow: hidden;
-
-text-overflow: ellipsis;
-
-max-height: 34.8px;
-
-margin: 0;
-}
-
-/* =========================================================
-PREÇOS
-========================================================= */
-
-.ad-precos-lista {
-display: flex;
-flex-direction: column;
-gap: 6px;
-background-color: #f8fafc;
-padding: 10px;
-border-radius: 10px;
-}
-
-.preco-item {
-display: flex;
-justify-content: space-between;
-align-items: center;
-font-size: 12px;
-}
-
-.preco-formato {
-color: #64748b;
-}
-
-.preco-valor {
-color: #16a34a;
-font-weight: 700;
-}
-
-/* =========================================================
-RODAPÉ DO CARD
-========================================================= */
-
-.ad-footer {
-display: flex;
-justify-content: space-between;
-align-items: center;
-
-gap: 10px;
-
-padding-top: 8px;
-
-border-top: 1px solid #f1f5f9;
-
-margin-top: auto;
-
-min-height: 37px;
-
-flex-shrink: 0;
-}
-
-.ad-footer span {
-min-width: 0;
-font-size: 11px;
-color: #94a3b8;
-white-space: nowrap;
-overflow: hidden;
-text-overflow: ellipsis;
-}
-
-.ad-localizacao {
-flex: 1;
-min-width: 0;
-overflow: hidden;
-text-overflow: ellipsis;
-white-space: nowrap;
-}
-
-.btn-detalhes {
-flex-shrink: 0;
-
-background-color: #2563eb;
-
-color: #ffffff;
-
-border: none;
-
-padding: 8px 16px;
-
-border-radius: 10px;
-
-font-size: 12px;
-
-font-weight: 700;
-
-cursor: pointer;
-
-transition:
-opacity 0.2s ease,
-transform 0.15s ease;
-}
-
-.btn-detalhes:hover {
-opacity: 0.9;
-}
-
-.btn-detalhes:active {
-transform: scale(0.97);
-}
-
-/* =========================================================
-ESTADOS DE CARREGAMENTO / VAZIO
-========================================================= */
-
-.carregando-profissionais,
-.estado-vazio {
-width: 100%;
-padding: 28px 18px;
-text-align: center;
-background-color: #ffffff;
-border: 1px solid #e2e8f0;
-border-radius: 16px;
-color: #64748b;
-font-size: 13px;
-}
-
-.estado-vazio strong {
-display: block;
-color: #334155;
-font-size: 14px;
-margin-bottom: 6px;
-}
-
-.estado-vazio p {
-font-size: 12px;
-line-height: 1.5;
-color: #94a3b8;
-}
-
-/* =========================================================
 MODAL BOTTOM SHEET
 ========================================================= */
 
 .modal-overlay {
 display: none;
+
+
 position: fixed;
+
 top: 0;
 left: 0;
+
 width: 100%;
 height: 100%;
+
 background-color: rgba(15, 23, 42, 0.55);
+
 backdrop-filter: blur(5px);
+
 z-index: 1000;
+
 justify-content: center;
+
 align-items: flex-end;
+
 opacity: 0;
+
 transition: opacity 0.3s ease;
+
+
 }
 
 .modal-overlay.ativo {
@@ -1600,17 +1320,32 @@ opacity: 1;
 .modal-sheet {
 width: 100%;
 max-width: 480px;
+
+
 background-color: #ffffff;
+
 border-top-left-radius: 28px;
 border-top-right-radius: 28px;
+
 border-top: 1px solid #e5e7eb;
-box-shadow: 0 -10px 40px rgba(15, 23, 42, 0.15);
+
+box-shadow:
+    0 -10px 40px rgba(15, 23, 42, 0.15);
+
 padding: 16px 20px 36px 20px;
+
 display: flex;
+
 flex-direction: column;
+
 gap: 18px;
+
 transform: translateY(100%);
-transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+
+transition:
+    transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+
+
 }
 
 .modal-overlay.ativo .modal-sheet {
@@ -1620,18 +1355,32 @@ transform: translateY(0);
 .modal-handle {
 width: 40px;
 height: 4px;
+
+
 background-color: #cbd5e1;
+
 border-radius: 2px;
+
 align-self: center;
+
 margin-bottom: -2px;
+
+
 }
 
 .modal-header h3 {
 font-size: 18px;
+
+
 font-weight: 700;
+
 color: #0f172a;
+
 margin-bottom: 4px;
+
 letter-spacing: -0.3px;
+
+
 }
 
 .modal-header p {
@@ -1647,33 +1396,70 @@ gap: 10px;
 
 .modal-option-item {
 display: flex;
+
+
 align-items: center;
+
 gap: 14px;
-background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+
+background:
+    linear-gradient(
+        135deg,
+        #f8fafc 0%,
+        #f1f5f9 100%
+    );
+
 border: 1px solid #e2e8f0;
+
 padding: 12px 14px;
+
 border-radius: 16px;
+
 cursor: pointer;
+
 text-align: left;
+
 width: 100%;
+
 transition: all 0.25s ease;
+
+
 }
 
 .modal-option-item:hover {
-background: linear-gradient(135deg, #eff6ff 0%, #f1f5f9 100%);
+background:
+linear-gradient(
+135deg,
+#eff6ff 0%,
+#f1f5f9 100%
+);
+
+
 border-color: #2563eb;
+
 transform: translateY(-2px);
-box-shadow: 0 4px 16px rgba(37, 99, 235, 0.12);
+
+box-shadow:
+    0 4px 16px rgba(37, 99, 235, 0.12);
+
+
 }
 
 .modal-option-icon {
 width: 44px;
 height: 44px;
+
+
 border-radius: 12px;
+
 display: flex;
+
 align-items: center;
 justify-content: center;
+
 flex-shrink: 0;
+
+
 }
 
 .modal-option-icon svg {
@@ -1707,52 +1493,93 @@ border: 1px solid rgba(225, 29, 72, 0.25);
 
 .modal-option-text {
 flex: 1;
+
+
 display: flex;
+
 flex-direction: column;
+
 gap: 2px;
+
+
 }
 
 .modal-option-text h4 {
 font-size: 14px;
+
+
 color: #0f172a;
+
 font-weight: 600;
+
+
 }
 
 .modal-option-text p {
 font-size: 11px;
+
+
 color: #64748b;
+
 line-height: 1.3;
+
+
 }
 
 .modal-arrow {
 font-size: 18px;
+
+
 color: #94a3b8;
+
 font-weight: bold;
+
 transition: transform 0.2s;
+
+
 }
 
 .modal-option-item:hover .modal-arrow {
 color: #2563eb;
+
+
 transform: translateX(3px);
+
+
 }
 
 .modal-close-btn {
 background: transparent;
+
+
 border: 1px solid #e2e8f0;
+
 color: #64748b;
+
 padding: 12px;
+
 border-radius: 14px;
+
 font-size: 13px;
+
 font-weight: 600;
+
 cursor: pointer;
+
 margin-top: 4px;
-transition: all 0.2s;
+
+
 }
 
 .modal-close-btn:hover {
 background-color: #f1f5f9;
+
+
 color: #0f172a;
+
 border-color: #cbd5e1;
+
+
 }
 
 /* =========================================================
@@ -1765,13 +1592,23 @@ max-height: 85vh;
 
 .filter-form-scroll {
 display: flex;
+
+
 flex-direction: column;
+
 gap: 14px;
+
 overflow-y: auto;
+
 max-height: 50vh;
+
 padding-right: 4px;
+
 scrollbar-width: thin;
+
 scrollbar-color: #cbd5e1 transparent;
+
+
 }
 
 .filter-row {
@@ -1785,27 +1622,46 @@ flex: 1;
 
 .filter-group {
 display: flex;
+
+
 flex-direction: column;
+
 gap: 6px;
+
+
 }
 
 .filter-group label {
 font-size: 12px;
+
+
 font-weight: 600;
+
 color: #334155;
+
+
 }
 
 .filter-select,
 .filter-input {
 background-color: #f8fafc;
+
+
 border: 1px solid #e2e8f0;
+
 color: #0f172a;
+
 padding: 10px 12px;
+
 border-radius: 12px;
+
 font-size: 13px;
+
 outline: none;
+
 width: 100%;
-transition: border-color 0.2s;
+
+
 }
 
 .filter-select:focus,
@@ -1815,8 +1671,13 @@ border-color: #2563eb;
 
 .filter-row-prices {
 display: flex;
+
+
 align-items: center;
+
 gap: 8px;
+
+
 }
 
 .price-separator {
@@ -1829,15 +1690,19 @@ animation: fadeIn 0.3s ease;
 }
 
 @keyframes fadeIn {
+
+
 from {
-opacity: 0;
-transform: translateY(-4px);
+    opacity: 0;
+    transform: translateY(-4px);
 }
 
 to {
-opacity: 1;
-transform: translateY(0);
+    opacity: 1;
+    transform: translateY(0);
 }
+
+
 }
 
 .filter-actions {
@@ -1848,15 +1713,25 @@ margin-top: 4px;
 
 .filter-btn-clear {
 flex: 1;
+
+
 background-color: transparent;
+
 border: 1px solid #e2e8f0;
+
 color: #64748b;
+
 padding: 12px;
+
 border-radius: 14px;
+
 font-size: 13px;
+
 font-weight: 600;
+
 cursor: pointer;
-transition: all 0.2s;
+
+
 }
 
 .filter-btn-clear:hover {
@@ -1866,15 +1741,25 @@ color: #0f172a;
 
 .filter-btn-apply {
 flex: 2;
+
+
 background-color: #2563eb;
+
 border: none;
+
 color: #ffffff;
+
 padding: 12px;
+
 border-radius: 14px;
+
 font-size: 13px;
+
 font-weight: 700;
+
 cursor: pointer;
-transition: opacity 0.2s;
+
+
 }
 
 .filter-btn-apply:hover {
@@ -1887,16 +1772,28 @@ PAINEL DE BUSCA
 
 .search-overlay {
 position: absolute;
+
+
 top: 0;
 left: 0;
+
 width: 100%;
 height: 100%;
+
 background-color: #ffffff;
+
 z-index: 20;
+
 display: flex;
+
 flex-direction: column;
+
 transform: translateY(-100%);
-transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+
+transition:
+    transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+
+
 }
 
 .search-overlay.ativo {
@@ -1905,38 +1802,69 @@ transform: translateY(0);
 
 .search-overlay-header {
 display: flex;
+
+
 align-items: center;
+
 gap: 10px;
+
 padding: 16px 20px;
+
 border-bottom: 1px solid #e5e7eb;
+
 flex-shrink: 0;
+
+
 }
 
 .search-overlay-input-wrapper {
 flex: 1;
+
+
 display: flex;
+
 align-items: center;
+
 gap: 8px;
+
 background-color: #f1f5f9;
+
 border: 1px solid #e2e8f0;
+
 border-radius: 12px;
+
 padding: 10px 14px;
+
+
 }
 
 .search-overlay-icon {
 width: 18px;
 height: 18px;
+
+
 color: #94a3b8;
+
 flex-shrink: 0;
+
+
 }
 
 .search-overlay-input {
 flex: 1;
+
+
 background: none;
+
 border: none;
+
 outline: none;
+
 color: #0f172a;
+
 font-size: 14px;
+
+
 }
 
 .search-overlay-input::placeholder {
@@ -1945,26 +1873,47 @@ color: #94a3b8;
 
 .search-overlay-cancelar {
 background: none;
+
+
 border: none;
+
 color: #2563eb;
+
 font-size: 13px;
+
 font-weight: 600;
+
 cursor: pointer;
+
 white-space: nowrap;
+
+
 }
 
 .search-results {
 flex: 1;
+
+
 overflow-y: auto;
+
 padding: 16px 20px 90px 20px;
+
 background-color: #f8fafc;
+
+
 }
 
 .search-estado-vazio {
 text-align: center;
+
+
 color: #94a3b8;
+
 font-size: 13px;
+
 margin-top: 40px;
+
+
 }
 
 /* =========================================================
@@ -1973,191 +1922,209 @@ RESPONSIVIDADE — CELULAR
 
 @media (max-width: 600px) {
 
+
 .navbar {
-padding: 11px 14px;
-gap: 6px;
+    padding: 11px 14px;
+    gap: 6px;
 }
 
 .navbar-brand-area {
-min-width: 0;
+    min-width: 0;
 }
 
 .cabecalho-avatar {
-width: 38px;
-height: 38px;
-min-width: 38px;
-min-height: 38px;
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+    min-height: 38px;
 }
 
 .cabecalho-usuario-btn {
-gap: 7px;
-padding: 3px 5px;
-max-width: 100%;
+    gap: 7px;
+    padding: 3px 5px;
+    max-width: 100%;
 }
 
 .cabecalho-info-usuario {
-display: flex;
-max-width: 115px;
+    display: flex;
+    max-width: 115px;
 }
 
 .cabecalho-info-usuario strong {
-max-width: 115px;
-font-size: 13px;
+    max-width: 115px;
+    font-size: 13px;
 }
 
 .cabecalho-info-usuario small {
-max-width: 115px;
-font-size: 9px;
+    max-width: 115px;
+    font-size: 9px;
 }
 
 .cabecalho-chevron {
-width: 14px;
-height: 14px;
+    width: 14px;
+    height: 14px;
 }
 
 .cabecalho-menu-usuario {
-top: calc(100% + 7px);
-left: 0;
-width: 195px;
+    top: calc(100% + 7px);
+    left: 0;
+    width: 195px;
 }
 
 .cabecalho-menu-usuario button {
-padding: 12px;
+    padding: 12px;
 }
 
 .navbar-icons {
-gap: 4px;
+    gap: 4px;
 }
 
 .nav-icon-btn {
-width: 38px;
-height: 38px;
-border-radius: 11px;
+    width: 38px;
+    height: 38px;
+    border-radius: 11px;
 }
 
 .top-icon-svg {
-width: 19px;
-height: 19px;
+    width: 19px;
+    height: 19px;
 }
 
-/* =====================================================
-CARD PROFISSIONAL — MOBILE
-===================================================== */
-
 .ad-card-novo {
-height: 430px;
-min-height: 430px;
-max-height: 430px;
-
-
-padding: 14px;
-border-radius: 15px;
-
-
+    height: 430px;
+    min-height: 430px;
+    max-height: 430px;
+    padding: 14px;
+    border-radius: 15px;
 }
 
 .ad-media-box {
-height: 220px;
-min-height: 220px;
-max-height: 220px;
+    height: 220px;
+    min-height: 220px;
+    max-height: 220px;
 }
 
 .ad-descricao {
-min-height: 52px;
-max-height: 52px;
+    min-height: 52px;
+    max-height: 52px;
 }
 
 .ad-footer {
-min-height: 37px;
+    min-height: 37px;
 }
+
+
 }
 
 /* =========================================================
-CELULARES MUITO PEQUENOS
+TELAS MUITO PEQUENAS
 ========================================================= */
 
 @media (max-width: 380px) {
 
+
 .navbar {
-padding-left: 10px;
-padding-right: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
 }
 
 .cabecalho-avatar {
-width: 36px;
-height: 36px;
-min-width: 36px;
-min-height: 36px;
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    min-height: 36px;
 }
 
 .cabecalho-info-usuario {
-max-width: 88px;
+    max-width: 88px;
 }
 
 .cabecalho-info-usuario strong {
-max-width: 88px;
-font-size: 12px;
+    max-width: 88px;
+    font-size: 12px;
 }
 
 .cabecalho-info-usuario small {
-max-width: 88px;
-font-size: 8px;
+    max-width: 88px;
+    font-size: 8px;
 }
 
 .cabecalho-chevron {
-width: 13px;
-height: 13px;
+    width: 13px;
+    height: 13px;
 }
 
 .cabecalho-menu-usuario {
-width: 180px;
+    width: 180px;
 }
 
 .navbar-icons {
-gap: 2px;
+    gap: 2px;
 }
 
 .nav-icon-btn {
-width: 36px;
-height: 36px;
+    width: 36px;
+    height: 36px;
 }
 
 .top-icon-svg {
-width: 18px;
-height: 18px;
+    width: 18px;
+    height: 18px;
 }
 
-/* =====================================================
-CARD PROFISSIONAL — TELAS PEQUENAS
-===================================================== */
-
 .ad-card-novo {
-height: 420px;
-min-height: 420px;
-max-height: 420px;
-
-
-padding: 13px;
-
-
+    height: 420px;
+    min-height: 420px;
+    max-height: 420px;
+    padding: 13px;
 }
 
 .ad-media-box {
-height: 200px;
-min-height: 200px;
-max-height: 200px;
+    height: 200px;
+    min-height: 200px;
+    max-height: 200px;
 }
 
 .ad-descricao {
-min-height: 52px;
-max-height: 52px;
-}
-
-.ad-footer {
-align-items: center;
+    min-height: 52px;
+    max-height: 52px;
 }
 
 .btn-detalhes {
-padding: 8px 12px;
+    padding: 8px 12px;
 }
+
+.feed-aviso {
+    min-height: 48px;
+    gap: 8px;
+    padding: 8px;
+    margin-bottom: 12px;
+}
+
+.feed-aviso-icone {
+    width: 27px;
+    height: 27px;
+    min-width: 27px;
+}
+
+.feed-aviso-icone svg {
+    width: 16px;
+    height: 16px;
+}
+
+.feed-aviso-conteudo strong {
+    font-size: 11.5px;
+}
+
+.feed-aviso-conteudo span {
+    font-size: 10px;
+}
+
+.feed-aviso-fechar {
+    width: 26px;
+    height: 26px;
+    min-width: 26px;
+}
+
+
 }

@@ -166,7 +166,8 @@ PÁGINA PÚBLICA DO PROFISSIONAL
 function obterPaginaPerfil(tipo) {
 
 
-const tipoNormalizado = normalizarTexto(tipo);
+const tipoNormalizado =
+    normalizarTexto(tipo);
 
 if (
     tipoNormalizado === 'musico' ||
@@ -186,13 +187,106 @@ if (
 
 }
 
-/*
- * Para novos tipos que ainda não possuírem
- * uma página pública própria, usamos uma
- * página genérica futuramente.
- */
-
 return 'apresentar-perfil-profissional.html';
+
+
+}
+
+/* =========================================================
+AVISO DISCRETO DO FEED
+========================================================= */
+
+function iniciarAvisoFeed() {
+
+
+const aviso =
+    document.getElementById('feedAviso');
+
+const botaoFechar =
+    document.getElementById('btnFecharFeedAviso');
+
+if (!aviso || !botaoFechar) {
+
+    console.warn(
+        '⚠️ Elementos do aviso do feed não encontrados.'
+    );
+
+    return;
+
+}
+
+
+const chaveAviso =
+    'musicalworld_feed_aviso_fechado';
+
+
+let avisoFechado = false;
+
+
+try {
+
+    avisoFechado =
+        localStorage.getItem(chaveAviso) === 'true';
+
+} catch (erro) {
+
+    console.warn(
+        '⚠️ Não foi possível acessar o localStorage.',
+        erro
+    );
+
+}
+
+
+if (avisoFechado) {
+
+    aviso.style.display = 'none';
+
+    return;
+
+}
+
+
+botaoFechar.addEventListener(
+    'click',
+    function (event) {
+
+        event.preventDefault();
+
+        event.stopPropagation();
+
+
+        aviso.classList.add('ocultando');
+
+
+        try {
+
+            localStorage.setItem(
+                chaveAviso,
+                'true'
+            );
+
+        } catch (erro) {
+
+            console.warn(
+                '⚠️ Não foi possível salvar o fechamento do aviso.',
+                erro
+            );
+
+        }
+
+
+        setTimeout(
+            function () {
+
+                aviso.style.display = 'none';
+
+            },
+            200
+        );
+
+    }
+);
 
 
 }
@@ -204,27 +298,45 @@ CARREGAR PRIMEIRA PÁGINA
 async function carregarProfissionaisInicio() {
 
 
-console.log('🎵 Iniciando feed de profissionais...');
+console.log(
+    '🎵 Iniciando feed de profissionais...'
+);
+
 
 FEED_CONFIG.paginaAtual = 0;
+
 FEED_CONFIG.carregando = false;
+
 FEED_CONFIG.acabou = false;
+
 FEED_CONFIG.totalCarregado = 0;
 
+
 const container =
-    document.getElementById('feed-profissionais');
+    document.getElementById(
+        'feed-profissionais'
+    );
 
 const vazio =
-    document.getElementById('feed-vazio');
+    document.getElementById(
+        'feed-vazio'
+    );
 
 const fim =
-    document.getElementById('feed-fim');
+    document.getElementById(
+        'feed-fim'
+    );
 
 const carregandoMais =
-    document.getElementById('feed-carregando-mais');
+    document.getElementById(
+        'feed-carregando-mais'
+    );
 
 const contador =
-    document.getElementById('contador-profissionais');
+    document.getElementById(
+        'contador-profissionais'
+    );
+
 
 if (!container) {
 
@@ -236,7 +348,9 @@ if (!container) {
 
 }
 
+
 container.innerHTML = `
+
     <div class="carregando-profissionais">
 
         <div class="feed-spinner"></div>
@@ -246,7 +360,9 @@ container.innerHTML = `
         </span>
 
     </div>
+
 `;
+
 
 if (vazio) {
     vazio.style.display = 'none';
@@ -264,7 +380,9 @@ if (contador) {
     contador.textContent = '';
 }
 
+
 configurarInfiniteScroll();
+
 
 await carregarProximaPagina();
 
@@ -286,6 +404,7 @@ if (FEED_CONFIG.acabou) {
     return;
 }
 
+
 if (!window.supabaseClient) {
 
     console.error(
@@ -300,20 +419,25 @@ if (!window.supabaseClient) {
 
 }
 
+
 FEED_CONFIG.carregando = true;
+
 
 const primeiraPagina =
     FEED_CONFIG.paginaAtual === 0;
 
+
 mostrarCarregamentoMais(
     !primeiraPagina
 );
+
 
 try {
 
     const inicio =
         FEED_CONFIG.paginaAtual *
         FEED_CONFIG.limitePorPagina;
+
 
     const fim =
         inicio +
@@ -390,25 +514,24 @@ try {
 
 
     const profissionais =
-        (data || []).filter(perfil => {
+        (data || []).filter(
+            perfil => {
 
-            const artista =
-                obterArtistaPerfil(perfil);
+                const artista =
+                    obterArtistaPerfil(
+                        perfil
+                    );
 
-            return !!artista;
+                return !!artista;
 
-        });
+            }
+        );
 
 
     console.log(
         `📦 ${profissionais.length} profissional(is) recebido(s).`
     );
 
-
-    /*
-     * Se vier menos profissionais que o limite,
-     * sabemos que chegamos ao fim.
-     */
 
     if (
         !data ||
@@ -456,30 +579,41 @@ try {
     }
 
 
-    profissionais.forEach(perfil => {
+    profissionais.forEach(
+        perfil => {
 
-        const artista =
-            obterArtistaPerfil(perfil);
+            const artista =
+                obterArtistaPerfil(
+                    perfil
+                );
 
-        if (!artista) {
-            return;
+            if (!artista) {
+                return;
+            }
+
+
+            const card =
+                criarCardProfissional(
+                    perfil,
+                    artista
+                );
+
+
+            if (container) {
+
+                container.appendChild(
+                    card
+                );
+
+            }
+
         }
-
-        const card =
-            criarCardProfissional(
-                perfil,
-                artista
-            );
-
-        if (container) {
-            container.appendChild(card);
-        }
-
-    });
+    );
 
 
     FEED_CONFIG.totalCarregado +=
         profissionais.length;
+
 
     FEED_CONFIG.paginaAtual++;
 
@@ -488,7 +622,9 @@ try {
 
 
     if (FEED_CONFIG.acabou) {
+
         mostrarFimFeed();
+
     }
 
 
@@ -529,15 +665,20 @@ const tipoArtista =
         artista.tipo_artista || ''
     ).trim();
 
+
 const paginaPerfil =
-    obterPaginaPerfil(tipoArtista);
+    obterPaginaPerfil(
+        tipoArtista
+    );
 
 
 const link =
     document.createElement('a');
 
+
 link.href =
     `${paginaPerfil}?id=${encodeURIComponent(perfil.id)}`;
+
 
 link.className =
     'profissional-card-link';
@@ -545,6 +686,7 @@ link.className =
 
 const card =
     document.createElement('div');
+
 
 card.className =
     'ad-card-novo';
@@ -572,7 +714,9 @@ const localizacao =
 
 
 const tipo =
-    obterNomeTipo(tipoArtista);
+    obterNomeTipo(
+        tipoArtista
+    );
 
 
 const estilosLista =
@@ -597,9 +741,9 @@ const iniciais =
     gerarIniciais(nome);
 
 
-/*
- * Avatar
- */
+/* =====================================================
+   AVATAR
+====================================================== */
 
 const avatarHtml =
     fotoUrl
@@ -609,10 +753,6 @@ const avatarHtml =
                 src="${escaparHtml(fotoUrl)}"
                 alt="${escaparHtml(nome)}"
                 class="ad-avatar-img"
-                onerror="
-                    this.style.display='none';
-                    this.nextElementSibling.style.display='flex';
-                "
             >
 
             <div
@@ -630,9 +770,9 @@ const avatarHtml =
           `;
 
 
-/*
- * Área principal da foto
- */
+/* =====================================================
+   ÁREA PRINCIPAL DA FOTO
+====================================================== */
 
 const mediaHtml =
     fotoUrl
@@ -648,9 +788,11 @@ const mediaHtml =
 
         : `
             <div class="ad-media-sem-foto">
+
                 <span>
                     ${escaparHtml(iniciais)}
                 </span>
+
             </div>
           `;
 
@@ -721,9 +863,9 @@ card.innerHTML = `
 `;
 
 
-/*
- * Botão Ver perfil
- */
+/* =====================================================
+   BOTÃO VER PERFIL
+====================================================== */
 
 const botaoDetalhes =
     card.querySelector(
@@ -741,6 +883,7 @@ if (botaoDetalhes) {
 
             event.stopPropagation();
 
+
             window.location.href =
                 `${paginaPerfil}?id=${encodeURIComponent(perfil.id)}`;
 
@@ -750,9 +893,46 @@ if (botaoDetalhes) {
 }
 
 
-/*
- * Tratamento de erro da foto
- */
+/* =====================================================
+   TRATAMENTO DE ERRO DO AVATAR
+====================================================== */
+
+const imagemAvatar =
+    card.querySelector(
+        '.ad-avatar-img'
+    );
+
+
+if (imagemAvatar) {
+
+    imagemAvatar.addEventListener(
+        'error',
+        function () {
+
+            this.style.display =
+                'none';
+
+
+            const fallback =
+                this.nextElementSibling;
+
+
+            if (fallback) {
+
+                fallback.style.display =
+                    'flex';
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   TRATAMENTO DE ERRO DA FOTO PRINCIPAL
+====================================================== */
 
 const imagemMedia =
     card.querySelector(
@@ -795,11 +975,14 @@ if (imagemMedia) {
                         'div'
                     );
 
+
                 fallback.className =
                     'ad-media-fallback';
 
+
                 fallback.textContent =
                     iniciais;
+
 
                 mediaBox.appendChild(
                     fallback
@@ -814,6 +997,7 @@ if (imagemMedia) {
 
 
 link.appendChild(card);
+
 
 return link;
 
@@ -832,9 +1016,11 @@ const contador =
         'contador-profissionais'
     );
 
+
 if (!contador) {
     return;
 }
+
 
 if (
     FEED_CONFIG.totalCarregado > 0
@@ -875,6 +1061,12 @@ if (!sentinela) {
 }
 
 
+const areaRolagem =
+    document.querySelector(
+        '.main-content'
+    );
+
+
 FEED_CONFIG.observer =
     new IntersectionObserver(
 
@@ -882,6 +1074,7 @@ FEED_CONFIG.observer =
 
             const entrada =
                 entries[0];
+
 
             if (
                 entrada &&
@@ -895,14 +1088,15 @@ FEED_CONFIG.observer =
         },
 
         {
-            root: document.querySelector(
-                '.main-content'
-            ),
+
+            root:
+                areaRolagem || null,
 
             rootMargin:
                 '500px 0px',
 
-            threshold: 0
+            threshold:
+                0
 
         }
 
@@ -930,9 +1124,11 @@ const elemento =
         'feed-carregando-mais'
     );
 
+
 if (!elemento) {
     return;
 }
+
 
 elemento.style.display =
     mostrar
@@ -954,9 +1150,11 @@ const elemento =
         'feed-fim'
     );
 
+
 if (!elemento) {
     return;
 }
+
 
 elemento.style.display =
     'block';
@@ -976,17 +1174,26 @@ const container =
         'feed-profissionais'
     );
 
+
 const vazio =
     document.getElementById(
         'feed-vazio'
     );
 
+
 if (container) {
-    container.innerHTML = '';
+
+    container.innerHTML =
+        '';
+
 }
 
+
 if (vazio) {
-    vazio.style.display = 'block';
+
+    vazio.style.display =
+        'block';
+
 }
 
 
@@ -1006,9 +1213,11 @@ const container =
         'feed-profissionais'
     );
 
+
 if (!container) {
     return;
 }
+
 
 container.innerHTML = `
 
@@ -1037,25 +1246,25 @@ window.abrirModalFiltro =
 function () {
 
 
-    if (
-        window.ModalFiltro &&
-        typeof window.ModalFiltro.abrir ===
-            'function'
-    ) {
+if (
+    window.ModalFiltro &&
+    typeof window.ModalFiltro.abrir ===
+        'function'
+) {
 
-        window.ModalFiltro.abrir();
+    window.ModalFiltro.abrir();
 
-        return;
+    return;
 
-    }
+}
 
 
-    console.warn(
-        '⚠️ ModalFiltro ainda não foi carregado.'
-    );
+console.warn(
+    '⚠️ ModalFiltro ainda não foi carregado.'
+);
+
 
 };
-
 
 /* =========================================================
 INICIALIZAÇÃO
@@ -1069,6 +1278,20 @@ function () {
     console.log(
         '🚀 Inicializando feed MusicalWorld...'
     );
+
+
+    /*
+     * Primeiro inicializamos o aviso.
+     * Ele é independente do feed e não
+     * interfere no infinite scroll.
+     */
+
+    iniciarAvisoFeed();
+
+
+    /*
+     * Depois iniciamos o feed.
+     */
 
     carregarProfissionaisInicio();
 
