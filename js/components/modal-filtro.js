@@ -8,10 +8,12 @@ window.ModalFiltro = {
 inicializado: false,
 modalCriado: false,
 animacaoEmAndamento: false,
+carregandoCidades: false,
 
-/* =======================================================
+
+/* =====================================================
    INICIALIZAÇÃO
-======================================================= */
+===================================================== */
 
 iniciar() {
 
@@ -21,24 +23,25 @@ iniciar() {
 
     this.criarModal();
     this.configurarEventos();
+    this.inicializarEstados();
 
     this.inicializado = true;
 
     console.log(
-        '🔎 Modal Filtro inicializado corretamente'
+        "🔎 Modal Filtro inicializado corretamente"
     );
 
 },
 
 
-/* =======================================================
+/* =====================================================
    CRIAR MODAL
-======================================================= */
+===================================================== */
 
 criarModal() {
 
     if (
-        document.getElementById('modal-filtro')
+        document.getElementById("modal-filtro")
     ) {
 
         this.modalCriado = true;
@@ -49,13 +52,13 @@ criarModal() {
 
     const container =
         document.getElementById(
-            'modal-filtro-container'
+            "modal-filtro-container"
         );
 
     if (!container) {
 
         console.warn(
-            '⚠️ Container #modal-filtro-container não encontrado.'
+            "⚠️ Container #modal-filtro-container não encontrado."
         );
 
         return;
@@ -127,26 +130,6 @@ criarModal() {
                                 Todos os estados
                             </option>
 
-                            <option value="GO">
-                                Goiás
-                            </option>
-
-                            <option value="SP">
-                                São Paulo
-                            </option>
-
-                            <option value="MG">
-                                Minas Gerais
-                            </option>
-
-                            <option value="DF">
-                                Distrito Federal
-                            </option>
-
-                            <option value="BA">
-                                Bahia
-                            </option>
-
                         </select>
 
                     </div>
@@ -160,26 +143,13 @@ criarModal() {
                             Cidade
                         </label>
 
-                        <select id="filtro-cidade">
+                        <select
+                            id="filtro-cidade"
+                            disabled
+                        >
 
                             <option value="">
-                                Todas as cidades
-                            </option>
-
-                            <option value="goiania">
-                                Goiânia
-                            </option>
-
-                            <option value="aparecida">
-                                Aparecida de Goiânia
-                            </option>
-
-                            <option value="anapolis">
-                                Anápolis
-                            </option>
-
-                            <option value="trindade">
-                                Trindade
+                                Selecione um estado primeiro
                             </option>
 
                         </select>
@@ -391,7 +361,7 @@ criarModal() {
 
     if (
         window.lucide &&
-        typeof window.lucide.createIcons === 'function'
+        typeof window.lucide.createIcons === "function"
     ) {
 
         window.lucide.createIcons();
@@ -401,15 +371,78 @@ criarModal() {
 },
 
 
-/* =======================================================
+/* =====================================================
+   INICIALIZAR ESTADOS
+===================================================== */
+
+inicializarEstados() {
+
+    const selectEstado =
+        document.getElementById(
+            "filtro-estado"
+        );
+
+    if (!selectEstado) {
+        return;
+    }
+
+    if (
+        !window.MunicipiosBrasil ||
+        typeof window.MunicipiosBrasil.obterEstados !== "function"
+    ) {
+
+        console.error(
+            "❌ MunicipiosBrasil não foi carregado."
+        );
+
+        return;
+
+    }
+
+    const estados =
+        window.MunicipiosBrasil.obterEstados();
+
+    selectEstado.innerHTML = `
+
+        <option value="">
+            Todos os estados
+        </option>
+
+    `;
+
+    estados.forEach(
+        estado => {
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+            option.value =
+                estado.sigla;
+
+            option.textContent =
+                estado.nome;
+
+            selectEstado.appendChild(
+                option
+            );
+
+        }
+    );
+
+},
+
+
+/* =====================================================
    CONFIGURAR EVENTOS
-======================================================= */
+===================================================== */
 
 configurarEventos() {
 
     const modal =
         document.getElementById(
-            'modal-filtro'
+            "modal-filtro"
         );
 
     if (!modal) {
@@ -418,46 +451,57 @@ configurarEventos() {
 
     const sheet =
         modal.querySelector(
-            '.modal-filtro-sheet'
+            ".modal-filtro-sheet"
         );
 
     const fechar =
         document.getElementById(
-            'modal-filtro-fechar'
+            "modal-filtro-fechar"
+        );
+
+    const estado =
+        document.getElementById(
+            "filtro-estado"
         );
 
     const categoria =
         document.getElementById(
-            'filtro-categoria'
+            "filtro-categoria"
         );
 
     const limpar =
         document.getElementById(
-            'modal-filtro-limpar'
+            "modal-filtro-limpar"
         );
 
     const aplicar =
         document.getElementById(
-            'modal-filtro-aplicar'
+            "modal-filtro-aplicar"
         );
 
 
-    if (modal.dataset.eventosConfigurados === 'true') {
+    if (
+        modal.dataset.eventosConfigurados === "true"
+    ) {
+
         return;
+
     }
 
-    modal.dataset.eventosConfigurados = 'true';
+    modal.dataset.eventosConfigurados = "true";
 
 
-    /* =====================================================
+    /* =================================================
        CLIQUE FORA
-    ===================================================== */
+    ================================================= */
 
     modal.addEventListener(
-        'click',
+        "click",
         event => {
 
-            if (event.target === modal) {
+            if (
+                event.target === modal
+            ) {
 
                 this.fechar();
 
@@ -467,14 +511,14 @@ configurarEventos() {
     );
 
 
-    /* =====================================================
+    /* =================================================
        CLIQUE DENTRO
-    ===================================================== */
+    ================================================= */
 
     if (sheet) {
 
         sheet.addEventListener(
-            'click',
+            "click",
             event => {
 
                 event.stopPropagation();
@@ -485,14 +529,14 @@ configurarEventos() {
     }
 
 
-    /* =====================================================
+    /* =================================================
        FECHAR
-    ===================================================== */
+    ================================================= */
 
     if (fechar) {
 
         fechar.addEventListener(
-            'click',
+            "click",
             () => {
 
                 this.fechar();
@@ -503,14 +547,32 @@ configurarEventos() {
     }
 
 
-    /* =====================================================
+    /* =================================================
+       ESTADO
+    ================================================= */
+
+    if (estado) {
+
+        estado.addEventListener(
+            "change",
+            () => {
+
+                this.tratarMudancaEstado();
+
+            }
+        );
+
+    }
+
+
+    /* =================================================
        CATEGORIA
-    ===================================================== */
+    ================================================= */
 
     if (categoria) {
 
         categoria.addEventListener(
-            'change',
+            "change",
             () => {
 
                 this.tratarMudancaCategoria();
@@ -521,14 +583,14 @@ configurarEventos() {
     }
 
 
-    /* =====================================================
+    /* =================================================
        LIMPAR
-    ===================================================== */
+    ================================================= */
 
     if (limpar) {
 
         limpar.addEventListener(
-            'click',
+            "click",
             () => {
 
                 this.limpar();
@@ -539,14 +601,14 @@ configurarEventos() {
     }
 
 
-    /* =====================================================
+    /* =================================================
        APLICAR
-    ===================================================== */
+    ================================================= */
 
     if (aplicar) {
 
         aplicar.addEventListener(
-            'click',
+            "click",
             () => {
 
                 this.aplicar();
@@ -559,9 +621,156 @@ configurarEventos() {
 },
 
 
-/* =======================================================
+/* =====================================================
+   MUDANÇA DE ESTADO
+===================================================== */
+
+async tratarMudancaEstado() {
+
+    const estado =
+        document.getElementById(
+            "filtro-estado"
+        );
+
+    const cidade =
+        document.getElementById(
+            "filtro-cidade"
+        );
+
+    if (!estado || !cidade) {
+        return;
+    }
+
+    const sigla =
+        estado.value;
+
+    cidade.innerHTML = "";
+
+    cidade.value = "";
+
+    if (!sigla) {
+
+        cidade.disabled = true;
+
+        cidade.innerHTML = `
+
+            <option value="">
+                Selecione um estado primeiro
+            </option>
+
+        `;
+
+        return;
+
+    }
+
+    cidade.disabled = true;
+
+    cidade.innerHTML = `
+
+        <option value="">
+            Carregando cidades...
+        </option>
+
+    `;
+
+    this.carregandoCidades = true;
+
+    try {
+
+        const municipios =
+            await window.MunicipiosBrasil.carregarMunicipios(
+                sigla
+            );
+
+        cidade.innerHTML = "";
+
+        const primeiraOpcao =
+            document.createElement(
+                "option"
+            );
+
+        primeiraOpcao.value = "";
+
+        primeiraOpcao.textContent =
+            "Todas as cidades";
+
+        cidade.appendChild(
+            primeiraOpcao
+        );
+
+
+        municipios.forEach(
+            municipio => {
+
+                const option =
+                    document.createElement(
+                        "option"
+                    );
+
+                option.value =
+                    municipio.valor;
+
+                option.textContent =
+                    municipio.nome;
+
+                cidade.appendChild(
+                    option
+                );
+
+            }
+        );
+
+        cidade.disabled =
+            municipios.length === 0;
+
+        if (
+            municipios.length === 0
+        ) {
+
+            cidade.innerHTML = `
+
+                <option value="">
+                    Nenhuma cidade encontrada
+                </option>
+
+            `;
+
+        }
+
+        console.log(
+            `📍 ${municipios.length} cidades carregadas para ${sigla}.`
+        );
+
+    } catch (erro) {
+
+        console.error(
+            "Erro ao carregar cidades:",
+            erro
+        );
+
+        cidade.innerHTML = `
+
+            <option value="">
+                Não foi possível carregar as cidades
+            </option>
+
+        `;
+
+        cidade.disabled = true;
+
+    } finally {
+
+        this.carregandoCidades = false;
+
+    }
+
+},
+
+
+/* =====================================================
    ABRIR
-======================================================= */
+===================================================== */
 
 abrir() {
 
@@ -569,18 +778,19 @@ abrir() {
 
         this.criarModal();
         this.configurarEventos();
+        this.inicializarEstados();
 
     }
 
     const modal =
         document.getElementById(
-            'modal-filtro'
+            "modal-filtro"
         );
 
     if (!modal) {
 
         console.warn(
-            '⚠️ ModalFiltro não foi criado.'
+            "⚠️ ModalFiltro não foi criado."
         );
 
         return;
@@ -594,16 +804,16 @@ abrir() {
     this.animacaoEmAndamento = true;
 
     modal.classList.remove(
-        'fechando'
+        "fechando"
     );
 
     modal.setAttribute(
-        'aria-hidden',
-        'false'
+        "aria-hidden",
+        "false"
     );
 
     document.body.classList.add(
-        'modal-filtro-aberto'
+        "modal-filtro-aberto"
     );
 
     void modal.offsetHeight;
@@ -612,7 +822,7 @@ abrir() {
         () => {
 
             modal.classList.add(
-                'ativo'
+                "ativo"
             );
 
         }
@@ -630,15 +840,15 @@ abrir() {
 },
 
 
-/* =======================================================
+/* =====================================================
    FECHAR
-======================================================= */
+===================================================== */
 
 fechar() {
 
     const modal =
         document.getElementById(
-            'modal-filtro'
+            "modal-filtro"
         );
 
     if (!modal) {
@@ -657,7 +867,7 @@ fechar() {
     if (
         elementoFocado &&
         modal.contains(elementoFocado) &&
-        typeof elementoFocado.blur === 'function'
+        typeof elementoFocado.blur === "function"
     ) {
 
         elementoFocado.blur();
@@ -665,27 +875,27 @@ fechar() {
     }
 
     modal.classList.remove(
-        'ativo'
+        "ativo"
     );
 
     modal.classList.add(
-        'fechando'
+        "fechando"
     );
 
     modal.setAttribute(
-        'aria-hidden',
-        'true'
+        "aria-hidden",
+        "true"
     );
 
     setTimeout(
         () => {
 
             modal.classList.remove(
-                'fechando'
+                "fechando"
             );
 
             document.body.classList.remove(
-                'modal-filtro-aberto'
+                "modal-filtro-aberto"
             );
 
             this.animacaoEmAndamento = false;
@@ -697,15 +907,15 @@ fechar() {
 },
 
 
-/* =======================================================
+/* =====================================================
    FECHAR FORA
-======================================================= */
+===================================================== */
 
 fecharFora(event) {
 
     const modal =
         document.getElementById(
-            'modal-filtro'
+            "modal-filtro"
         );
 
     if (
@@ -720,20 +930,20 @@ fecharFora(event) {
 },
 
 
-/* =======================================================
+/* =====================================================
    MUDANÇA DE CATEGORIA
-======================================================= */
+===================================================== */
 
 tratarMudancaCategoria() {
 
     const categoria =
         document.getElementById(
-            'filtro-categoria'
+            "filtro-categoria"
         );
 
     const wrapper =
         document.getElementById(
-            'wrapper-instrumento'
+            "wrapper-instrumento"
         );
 
     if (!categoria || !wrapper) {
@@ -741,22 +951,22 @@ tratarMudancaCategoria() {
     }
 
     const mostrar =
-        categoria.value === 'musicos';
+        categoria.value === "musicos";
 
     wrapper.style.display =
         mostrar
-            ? 'flex'
-            : 'none';
+            ? "flex"
+            : "none";
 
     if (!mostrar) {
 
         const instrumento =
             document.getElementById(
-                'filtro-instrumento'
+                "filtro-instrumento"
             );
 
         if (instrumento) {
-            instrumento.value = '';
+            instrumento.value = "";
         }
 
     }
@@ -764,29 +974,29 @@ tratarMudancaCategoria() {
 },
 
 
-/* =======================================================
+/* =====================================================
    OBTER FILTROS
-======================================================= */
+===================================================== */
 
 obterFiltros() {
 
     const valorMinElemento =
         document.getElementById(
-            'filtro-valor-min'
+            "filtro-valor-min"
         );
 
     const valorMaxElemento =
         document.getElementById(
-            'filtro-valor-max'
+            "filtro-valor-max"
         );
 
     const valorMin =
-        valorMinElemento?.value !== ''
+        valorMinElemento?.value !== ""
             ? Number(valorMinElemento.value)
             : null;
 
     const valorMax =
-        valorMaxElemento?.value !== ''
+        valorMaxElemento?.value !== ""
             ? Number(valorMaxElemento.value)
             : null;
 
@@ -795,28 +1005,28 @@ obterFiltros() {
 
         estado:
             document.getElementById(
-                'filtro-estado'
-            )?.value || '',
+                "filtro-estado"
+            )?.value || "",
 
         cidade:
             document.getElementById(
-                'filtro-cidade'
-            )?.value || '',
+                "filtro-cidade"
+            )?.value || "",
 
         categoria:
             document.getElementById(
-                'filtro-categoria'
-            )?.value || '',
+                "filtro-categoria"
+            )?.value || "",
 
         instrumento:
             document.getElementById(
-                'filtro-instrumento'
-            )?.value || '',
+                "filtro-instrumento"
+            )?.value || "",
 
         estilo:
             document.getElementById(
-                'filtro-estilo'
-            )?.value || '',
+                "filtro-estilo"
+            )?.value || "",
 
         valorMin:
             Number.isFinite(valorMin)
@@ -833,9 +1043,9 @@ obterFiltros() {
 },
 
 
-/* =======================================================
+/* =====================================================
    VALIDAR FILTROS
-======================================================= */
+===================================================== */
 
 validarFiltros(filtros) {
 
@@ -879,9 +1089,9 @@ validarFiltros(filtros) {
 },
 
 
-/* =======================================================
+/* =====================================================
    APLICAR FILTROS
-======================================================= */
+===================================================== */
 
 aplicar() {
 
@@ -896,12 +1106,12 @@ aplicar() {
 
     const valorMin =
         document.getElementById(
-            'filtro-valor-min'
+            "filtro-valor-min"
         );
 
     const valorMax =
         document.getElementById(
-            'filtro-valor-max'
+            "filtro-valor-max"
         );
 
 
@@ -910,7 +1120,7 @@ aplicar() {
         valorMin.value =
             filtros.valorMin !== null
                 ? filtros.valorMin
-                : '';
+                : "";
 
     }
 
@@ -919,20 +1129,20 @@ aplicar() {
         valorMax.value =
             filtros.valorMax !== null
                 ? filtros.valorMax
-                : '';
+                : "";
 
     }
 
 
     console.log(
-        '🔎 Filtros aplicados:',
+        "🔎 Filtros aplicados:",
         filtros
     );
 
 
     window.dispatchEvent(
         new CustomEvent(
-            'musicalworld:filtros-aplicados',
+            "musicalworld:filtros-aplicados",
             {
                 detail: {
                     filtros
@@ -947,93 +1157,105 @@ aplicar() {
 },
 
 
-/* =======================================================
+/* =====================================================
    LIMPAR FILTROS
-======================================================= */
+===================================================== */
 
-limpar() {
+async limpar() {
 
     const estado =
         document.getElementById(
-            'filtro-estado'
+            "filtro-estado"
         );
 
     const cidade =
         document.getElementById(
-            'filtro-cidade'
+            "filtro-cidade"
         );
 
     const categoria =
         document.getElementById(
-            'filtro-categoria'
+            "filtro-categoria"
         );
 
     const instrumento =
         document.getElementById(
-            'filtro-instrumento'
+            "filtro-instrumento"
         );
 
     const estilo =
         document.getElementById(
-            'filtro-estilo'
+            "filtro-estilo"
         );
 
     const valorMin =
         document.getElementById(
-            'filtro-valor-min'
+            "filtro-valor-min"
         );
 
     const valorMax =
         document.getElementById(
-            'filtro-valor-max'
+            "filtro-valor-max"
         );
 
     const wrapper =
         document.getElementById(
-            'wrapper-instrumento'
+            "wrapper-instrumento"
         );
 
 
     if (estado) {
-        estado.value = '';
+        estado.value = "";
     }
 
     if (cidade) {
-        cidade.value = '';
+
+        cidade.innerHTML = `
+
+            <option value="">
+                Selecione um estado primeiro
+            </option>
+
+        `;
+
+        cidade.value = "";
+
+        cidade.disabled = true;
+
     }
 
     if (categoria) {
-        categoria.value = '';
+        categoria.value = "";
     }
 
     if (instrumento) {
-        instrumento.value = '';
+        instrumento.value = "";
     }
 
     if (estilo) {
-        estilo.value = '';
+        estilo.value = "";
     }
 
     if (valorMin) {
-        valorMin.value = '';
+        valorMin.value = "";
     }
 
     if (valorMax) {
-        valorMax.value = '';
+        valorMax.value = "";
     }
 
     if (wrapper) {
-        wrapper.style.display = 'none';
+        wrapper.style.display = "none";
     }
 
 
     const filtros = {
 
-        estado: '',
-        cidade: '',
-        categoria: '',
-        instrumento: '',
-        estilo: '',
+        estado: "",
+        cidade: "",
+        categoria: "",
+        instrumento: "",
+        estilo: "",
         valorMin: null,
         valorMax: null
 
@@ -1041,13 +1263,13 @@ limpar() {
 
 
     console.log(
-        '🧹 Filtros limpos.'
+        "🧹 Filtros limpos."
     );
 
 
     window.dispatchEvent(
         new CustomEvent(
-            'musicalworld:filtros-aplicados',
+            "musicalworld:filtros-aplicados",
             {
                 detail: {
                     filtros
@@ -1070,7 +1292,7 @@ window.abrirModalFiltro = function () {
 
 if (
     window.ModalFiltro &&
-    typeof window.ModalFiltro.abrir === 'function'
+    typeof window.ModalFiltro.abrir === "function"
 ) {
 
     window.ModalFiltro.abrir();
@@ -1080,7 +1302,7 @@ if (
 }
 
 console.warn(
-    '⚠️ ModalFiltro ainda não foi carregado.'
+    "⚠️ ModalFiltro ainda não foi carregado."
 );
 
 
@@ -1091,7 +1313,7 @@ window.fecharModalFiltro = function () {
 
 if (
     window.ModalFiltro &&
-    typeof window.ModalFiltro.fechar === 'function'
+    typeof window.ModalFiltro.fechar === "function"
 ) {
 
     window.ModalFiltro.fechar();
@@ -1108,7 +1330,7 @@ event
 
 if (
     window.ModalFiltro &&
-    typeof window.ModalFiltro.fecharFora === 'function'
+    typeof window.ModalFiltro.fecharFora === "function"
 ) {
 
     window.ModalFiltro.fecharFora(
@@ -1125,7 +1347,7 @@ window.tratarMudancaCategoriaFiltro = function () {
 
 if (
     window.ModalFiltro &&
-    typeof window.ModalFiltro.tratarMudancaCategoria === 'function'
+    typeof window.ModalFiltro.tratarMudancaCategoria === "function"
 ) {
 
     window.ModalFiltro.tratarMudancaCategoria();
@@ -1140,7 +1362,7 @@ window.limparFiltros = function () {
 
 if (
     window.ModalFiltro &&
-    typeof window.ModalFiltro.limpar === 'function'
+    typeof window.ModalFiltro.limpar === "function"
 ) {
 
     window.ModalFiltro.limpar();
@@ -1155,7 +1377,7 @@ window.aplicarFiltros = function () {
 
 if (
     window.ModalFiltro &&
-    typeof window.ModalFiltro.aplicar === 'function'
+    typeof window.ModalFiltro.aplicar === "function"
 ) {
 
     window.ModalFiltro.aplicar();
@@ -1170,12 +1392,12 @@ INICIALIZAÇÃO
 ========================================================= */
 
 if (
-document.readyState === 'loading'
+document.readyState === "loading"
 ) {
 
 
 document.addEventListener(
-    'DOMContentLoaded',
+    "DOMContentLoaded",
     () => {
 
         ModalFiltro.iniciar();
