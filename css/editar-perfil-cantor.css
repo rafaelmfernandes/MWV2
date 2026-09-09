@@ -1,6 +1,6 @@
 * {
-  box-sizing: border-box;
-  }
+box-sizing: border-box;
+}
 
 :root {
 --mw-bg: #f7f8fb;
@@ -687,6 +687,10 @@ padding: 11px;
 border: 1px solid var(--mw-border);
 border-radius: 14px;
 background: #fff;
+transition:
+border-color .18s ease,
+background .18s ease,
+box-shadow .18s ease;
 }
 
 .media-preview {
@@ -738,6 +742,57 @@ white-space: nowrap;
 display: flex;
 align-items: center;
 gap: 5px;
+}
+
+/* =========================================================
+DESTAQUE DO CATÁLOGO
+========================================================= */
+
+.btn-destaque {
+display: inline-flex;
+align-items: center;
+justify-content: center;
+gap: 6px;
+min-height: 34px;
+padding: 0 9px;
+border: 1px solid #e6e1ff;
+border-radius: 10px;
+background: #fff;
+color: var(--mw-primary);
+font-size: 10px;
+font-weight: 800;
+cursor: pointer;
+transition: all .16s ease;
+}
+
+.btn-destaque svg {
+width: 15px;
+height: 15px;
+}
+
+.btn-destaque:hover {
+border-color: #cfc7ff;
+background: var(--mw-primary-soft);
+}
+
+.btn-destaque.ativo {
+border-color: #cfc7ff;
+background: var(--mw-primary-soft);
+color: var(--mw-primary);
+}
+
+.media-edit-card.portfolio-card-destaque {
+border-color: #cfc7ff;
+background: #fcfbff;
+box-shadow:
+0 0 0 2px rgba(109, 74, 255, .06),
+var(--mw-shadow);
+}
+
+.media-edit-card.portfolio-card-destaque
+.media-preview {
+box-shadow:
+inset 0 0 0 2px rgba(109, 74, 255, .16);
 }
 
 .btn-excluir {
@@ -974,11 +1029,9 @@ animation: girar .75s linear infinite;
 
 @keyframes girar {
 
-
 to {
-    transform: rotate(360deg);
+transform: rotate(360deg);
 }
-
 
 }
 
@@ -1024,213 +1077,218 @@ RESPONSIVIDADE
 
 @media (min-width: 700px) {
 
-
 .editar-container {
-    margin-top: 30px;
+margin-top: 30px;
 }
 
 .acoes-finais {
-    grid-template-columns: 1fr 180px;
+grid-template-columns: 1fr 180px;
 }
-
 
 }
 
 @media (max-width: 520px) {
 
-
 .editar-topbar {
-    top: env(safe-area-inset-top);
-    height: 66px;
-    padding: 0 13px;
+top: env(safe-area-inset-top);
+height: 66px;
+padding: 0 13px;
 }
 
 .topbar-titulo h1 {
-    font-size: 18px;
+font-size: 18px;
 }
 
 .editar-container {
-    width: min(100% - 20px, 760px);
-    margin-top: 12px;
+width: min(100% - 20px, 760px);
+margin-top: 12px;
 }
 
 .editor-tabs {
-    top: 66px;
+top: 66px;
 }
 
 .editor-tab {
-    min-height: 42px;
-    flex-direction: column;
-    gap: 3px;
-    font-size: 10px;
+min-height: 42px;
+flex-direction: column;
+gap: 3px;
+font-size: 10px;
 }
 
 .editor-tab svg {
-    width: 15px;
-    height: 15px;
+width: 15px;
+height: 15px;
 }
 
 .form-card,
 .foto-card {
-    padding: 18px 15px;
-    border-radius: 16px;
+padding: 18px 15px;
+border-radius: 16px;
 }
 
 .foto-card {
-    padding-top: 22px;
-    padding-bottom: 22px;
+padding-top: 22px;
+padding-bottom: 22px;
 }
 
 .avatar-edit {
-    width: 100px;
-    height: 100px;
-    font-size: 28px;
+width: 100px;
+height: 100px;
+font-size: 28px;
 }
 
 .section-heading {
-    margin-bottom: 18px;
+margin-bottom: 18px;
 }
 
 .section-heading h2 {
-    font-size: 15px;
+font-size: 15px;
 }
 
 .section-heading p {
-    font-size: 11px;
+font-size: 11px;
 }
 
 .switch-row {
-    align-items: center;
+align-items: center;
 }
 
 .switch-row strong {
-    font-size: 13px;
+font-size: 13px;
 }
 
 .switch-row small {
-    font-size: 11px;
+font-size: 11px;
 }
 
 .campo-grid {
-    grid-template-columns: 1fr;
-    gap: 0;
+grid-template-columns: 1fr;
+gap: 0;
 }
 
 .portfolio-tipo {
-    font-size: 10px;
+font-size: 10px;
 }
 
 .portfolio-tipo svg {
-    width: 14px;
-    height: 14px;
+width: 14px;
+height: 14px;
 }
 
 .media-edit-card {
-    grid-template-columns: 58px 1fr auto;
-    gap: 9px;
-    padding: 9px;
+grid-template-columns: 58px 1fr auto;
+gap: 9px;
+padding: 9px;
 }
 
 .media-preview {
-    width: 58px;
-    height: 58px;
+width: 58px;
+height: 58px;
 }
 
 .media-edit-info strong {
-    font-size: 12px;
+font-size: 12px;
 }
 
 .media-edit-info span {
-    font-size: 10px;
+font-size: 10px;
+}
+
+.btn-destaque {
+width: 34px;
+height: 34px;
+padding: 0;
+}
+
+.btn-destaque span {
+display: none;
+}
+
+.btn-destaque svg {
+width: 16px;
+height: 16px;
 }
 
 .agenda-edit-card {
-    grid-template-columns: 52px 1fr auto;
-    gap: 9px;
-    padding: 10px;
+grid-template-columns: 52px 1fr auto;
+gap: 9px;
+padding: 10px;
 }
 
 .agenda-data {
-    width: 52px;
-    height: 52px;
-}
-
-.agenda-data strong {
-    font-size: 17px;
+width: 52px;
+height: 52px;
 }
 
 .agenda-edit-info strong {
-    font-size: 12px;
+font-size: 12px;
 }
 
 .agenda-edit-info span {
-    font-size: 10px;
+font-size: 10px;
 }
 
 .btn-salvar,
 .btn-cancelar,
 .btn-adicionar {
-    min-height: 46px;
-    font-size: 13px;
+min-height: 46px;
+font-size: 13px;
 }
-
 
 }
 
 @media (max-width: 380px) {
 
-
 .editar-topbar {
-    grid-template-columns: 40px 1fr auto;
-    gap: 7px;
-    padding: 0 9px;
+grid-template-columns: 40px 1fr auto;
+gap: 7px;
+padding: 0 9px;
 }
 
 .topbar-voltar {
-    width: 36px;
-    height: 36px;
+width: 36px;
+height: 36px;
 }
 
 .topbar-titulo h1 {
-    font-size: 17px;
+font-size: 17px;
 }
 
 .topbar-eyebrow {
-    font-size: 9px;
+font-size: 9px;
 }
 
 .topbar-salvar {
-    font-size: 12px;
+font-size: 12px;
 }
 
 .editor-tab span {
-    font-size: 9px;
+font-size: 9px;
 }
 
 .portfolio-tipo {
-    min-height: 40px;
-    gap: 4px;
-    font-size: 9px;
+min-height: 40px;
+gap: 4px;
+font-size: 9px;
 }
 
 .media-edit-card {
-    grid-template-columns: 52px 1fr auto;
+grid-template-columns: 52px 1fr auto;
 }
 
 .media-preview {
-    width: 52px;
-    height: 52px;
+width: 52px;
+height: 52px;
 }
 
 .agenda-edit-card {
-    grid-template-columns: 48px 1fr auto;
+grid-template-columns: 48px 1fr auto;
 }
 
 .agenda-data {
-    width: 48px;
-    height: 48px;
+width: 48px;
+height: 48px;
 }
-
 
 }
 
@@ -1240,12 +1298,10 @@ SAFE AREA - ANDROID / IOS
 
 @supports (padding: env(safe-area-inset-top)) {
 
-
 body {
-    padding-bottom:
-        calc(40px + env(safe-area-inset-bottom));
+padding-bottom:
+calc(40px + env(safe-area-inset-bottom));
 }
-
 
 }
 
@@ -1267,19 +1323,233 @@ REDUÇÃO DE MOVIMENTO
 
 @media (prefers-reduced-motion: reduce) {
 
-
 html {
-    scroll-behavior: auto;
+scroll-behavior: auto;
 }
 
 *,
 *::before,
 *::after {
-    animation-duration: .01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: .01ms !important;
-    scroll-behavior: auto !important;
+animation-duration: .01ms !important;
+animation-iteration-count: 1 !important;
+transition-duration: .01ms !important;
+scroll-behavior: auto !important;
 }
 
+}
+
+/* =========================================================
+DESTAQUE DO PORTFÓLIO
+========================================================= */
+
+.btn-destaque {
+    width: 34px;
+    height: 34px;
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--mw-border);
+    border-radius: 10px;
+    background: #fff;
+    color: #a1a7b5;
+    cursor: pointer;
+    transition:
+        background .18s ease,
+        border-color .18s ease,
+        color .18s ease,
+        transform .15s ease;
+}
+
+.btn-destaque svg {
+    width: 17px;
+    height: 17px;
+    stroke-width: 2;
+    fill: none;
+    transition:
+        fill .18s ease,
+        transform .18s ease;
+}
+
+.btn-destaque:hover {
+    border-color: #cfc7ff;
+    background: var(--mw-primary-soft);
+    color: var(--mw-primary);
+}
+
+.btn-destaque:active {
+    transform: scale(.94);
+}
+
+/* =========================================================
+DESTAQUE SELECIONADO
+========================================================= */
+
+.btn-destaque.ativo {
+    border-color: var(--mw-primary);
+    background: var(--mw-primary-soft);
+    color: var(--mw-primary);
+}
+
+.btn-destaque.ativo svg {
+    fill: var(--mw-primary);
+    stroke: var(--mw-primary);
+    transform: scale(1.05);
+}
+
+/* =========================================================
+CARD COM DESTAQUE
+========================================================= */
+
+.media-edit-card.portfolio-card-destaque {
+    border-color: #cfc7ff;
+    box-shadow: 0 0 0 2px rgba(109, 74, 255, .06);
+}
+
+/* =========================================================
+MOBILE
+========================================================= */
+
+@media (max-width: 520px) {
+
+    .btn-destaque {
+        width: 32px;
+        height: 32px;
+    }
+
+    .btn-destaque svg {
+        width: 16px;
+        height: 16px;
+    }
+
+}
+
+/* =========================================================
+DESTAQUE NO CATÁLOGO
+========================================================= */
+
+.portfolio-destaque-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    width: fit-content;
+    margin-top: 8px;
+    padding: 5px 9px;
+    border: 1px solid #d8d0ff;
+    border-radius: 999px;
+    background: var(--mw-primary-soft);
+    color: var(--mw-primary);
+    font-size: 10px;
+    font-weight: 800;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.portfolio-destaque-label svg {
+    width: 12px;
+    height: 12px;
+    flex: 0 0 12px;
+    fill: var(--mw-primary);
+    stroke: var(--mw-primary);
+    stroke-width: 2;
+}
+
+
+/* =========================================================
+ESTRELA DE DESTAQUE
+========================================================= */
+
+.btn-destaque {
+    width: 34px;
+    height: 34px;
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--mw-border);
+    border-radius: 10px;
+    background: #fff;
+    color: #a1a7b5;
+    cursor: pointer;
+    transition:
+        background .18s ease,
+        border-color .18s ease,
+        color .18s ease,
+        transform .15s ease;
+}
+
+.btn-destaque svg {
+    width: 17px;
+    height: 17px;
+    stroke-width: 2;
+    fill: none;
+    transition:
+        fill .18s ease,
+        stroke .18s ease,
+        transform .18s ease;
+}
+
+.btn-destaque:hover {
+    border-color: #cfc7ff;
+    background: var(--mw-primary-soft);
+    color: var(--mw-primary);
+}
+
+.btn-destaque:active {
+    transform: scale(.94);
+}
+
+
+/* =========================================================
+ESTRELA SELECIONADA
+========================================================= */
+
+.btn-destaque.ativo {
+    border-color: var(--mw-primary);
+    background: var(--mw-primary-soft);
+    color: var(--mw-primary);
+}
+
+.btn-destaque.ativo svg {
+    fill: var(--mw-primary);
+    stroke: var(--mw-primary);
+    transform: scale(1.08);
+}
+
+
+/* =========================================================
+CARD QUE ESTÁ EM DESTAQUE
+========================================================= */
+
+.media-edit-card.portfolio-card-destaque {
+    border-color: #d8d0ff;
+    box-shadow:
+        0 0 0 2px rgba(109, 74, 255, .06);
+}
+
+
+/* =========================================================
+MOBILE
+========================================================= */
+
+@media (max-width: 520px) {
+
+    .btn-destaque {
+        width: 32px;
+        height: 32px;
+    }
+
+    .btn-destaque svg {
+        width: 16px;
+        height: 16px;
+    }
+
+    .portfolio-destaque-label {
+        margin-top: 6px;
+        padding: 4px 8px;
+        font-size: 9px;
+    }
+
+    .portfolio-destaque-label svg {
+        width: 11px;
+        height: 11px;
+        flex-basis: 11px;
+    }
 
 }

@@ -1,990 +1,653 @@
 const EditarPerfilCantor = (() => {
 
+"use strict";
+
+
 const estado = {
-usuarioAuth: null,
-usuario: null,
-perfil: null,
-perfilArtista: null,
-fotoArquivo: null,
-salvando: false,
+
+    usuarioAuth: null,
+
+    usuario: null,
+
+    perfil: null,
+
+    perfilArtista: null,
+
+    fotoArquivo: null,
+
+    salvando: false,
 
 
-abaAtual: "sobre",
+    abaAtual: "sobre",
 
-portfolio: [],
-agenda: [],
+    portfolio: [],
 
-tipoMedia: "imagem",
+    agenda: [],
 
-editandoPortfolioId: null,
-editandoAgendaId: null
+    tipoMedia: "imagem",
 
+    editandoPortfolioId: null,
+
+    editandoAgendaId: null
 
 };
+
 
 const ids = {
 
+    nome: "nome",
 
-nome: "nome",
-nomeExibicao: "nomeExibicao",
-telefone: "telefone",
-localizacao: "localizacao",
-descricao: "descricao",
-experiencia: "experiencia",
-areaAtendimento: "areaAtendimento",
-tipoArtista: "tipoArtista",
-disponivel: "disponivel",
+    nomeExibicao: "nomeExibicao",
 
-emailConta: "emailConta",
+    telefone: "telefone",
 
-avatarImage: "avatarImage",
-avatarInitials: "avatarInitials",
-fotoInput: "fotoInput",
-btnFoto: "btnFoto",
+    localizacao: "localizacao",
 
-form: "formEditarPerfil",
+    descricao: "descricao",
 
-btnSalvar: "btnSalvar",
-btnSalvarTopo: "btnSalvarTopo",
+    experiencia: "experiencia",
 
-btnVoltar: "btnVoltar",
-btnCancelar: "btnCancelar",
+    areaAtendimento: "areaAtendimento",
 
-contadorDescricao: "contadorDescricao",
+    tipoArtista: "tipoArtista",
 
-portfolioTitulo: "portfolioTitulo",
-portfolioDescricao: "portfolioDescricao",
-portfolioArquivo: "portfolioArquivo",
-portfolioUrl: "portfolioUrl",
-portfolioAjuda: "portfolioAjuda",
-btnAdicionarPortfolio: "btnAdicionarPortfolio",
-portfolioEditList: "portfolioEditList",
+    disponivel: "disponivel",
 
-agendaTitulo: "agendaTitulo",
-agendaTipo: "agendaTipo",
-agendaInicio: "agendaInicio",
-agendaFim: "agendaFim",
-agendaLocalizacao: "agendaLocalizacao",
-agendaDescricao: "agendaDescricao",
-agendaStatus: "agendaStatus",
-btnAdicionarAgenda: "btnAdicionarAgenda",
-agendaEditList: "agendaEditList",
+    emailConta: "emailConta",
 
-toast: "toast",
-toastMessage: "toastMessage",
+    avatarImage: "avatarImage",
 
-loadingOverlay: "loadingOverlay",
-loadingText: "loadingText"
+    avatarInitials: "avatarInitials",
 
+    fotoInput: "fotoInput",
+
+    btnFoto: "btnFoto",
+
+    form: "formEditarPerfil",
+
+    btnSalvar: "btnSalvar",
+
+    btnSalvarTopo: "btnSalvarTopo",
+
+    btnVoltar: "btnVoltar",
+
+    btnCancelar: "btnCancelar",
+
+    contadorDescricao: "contadorDescricao",
+
+    portfolioTitulo: "portfolioTitulo",
+
+    portfolioDescricao: "portfolioDescricao",
+
+    portfolioArquivo: "portfolioArquivo",
+
+    portfolioUrl: "portfolioUrl",
+
+    portfolioAjuda: "portfolioAjuda",
+
+    btnAdicionarPortfolio: "btnAdicionarPortfolio",
+
+    portfolioEditList: "portfolioEditList",
+
+    agendaTitulo: "agendaTitulo",
+
+    agendaTipo: "agendaTipo",
+
+    agendaInicio: "agendaInicio",
+
+    agendaFim: "agendaFim",
+
+    agendaLocalizacao: "agendaLocalizacao",
+
+    agendaDescricao: "agendaDescricao",
+
+    agendaStatus: "agendaStatus",
+
+    btnAdicionarAgenda: "btnAdicionarAgenda",
+
+    agendaEditList: "agendaEditList",
+
+    toast: "toast",
+
+    toastMessage: "toastMessage",
+
+    loadingOverlay: "loadingOverlay",
+
+    loadingText: "loadingText"
 
 };
 
+
 const BUCKET_FOTOS = "perfil-musico";
+
 const BUCKET_PORTFOLIO = "portfolio-musicos";
 
+
 function el(id) {
-return document.getElementById(id);
+
+    return document.getElementById(id);
+
 }
+
 
 function normalizarArray(valor) {
 
+    if (Array.isArray(valor)) {
 
-if (Array.isArray(valor)) {
+        return valor
+            .filter(Boolean)
+            .map(item => String(item).trim())
+            .filter(Boolean);
 
-    return valor
-        .filter(Boolean)
-        .map(item => String(item).trim())
-        .filter(Boolean);
+    }
+
+
+    if (typeof valor === "string") {
+
+        return valor
+            .split(",")
+            .map(item => item.trim())
+            .filter(Boolean);
+
+    }
+
+
+    return [];
 
 }
 
-if (typeof valor === "string") {
-
-    return valor
-        .split(",")
-        .map(item => item.trim())
-        .filter(Boolean);
-
-}
-
-return [];
-
-
-}
 
 function obterIniciais(nome) {
 
+    const partes =
+        String(nome || "Usuário")
+            .trim()
+            .split(/\s+/)
+            .filter(Boolean);
 
-const partes =
-    String(nome || "Usuário")
-        .trim()
-        .split(/\s+/)
-        .filter(Boolean);
 
-if (!partes.length) {
-    return "U";
+    if (!partes.length) {
+
+        return "U";
+
+    }
+
+
+    if (partes.length === 1) {
+
+        return partes[0]
+            .slice(0, 2)
+            .toUpperCase();
+
+    }
+
+
+    return (
+        partes[0][0] +
+        partes[partes.length - 1][0]
+    ).toUpperCase();
+
 }
 
-if (partes.length === 1) {
-
-    return partes[0]
-        .slice(0, 2)
-        .toUpperCase();
-
-}
-
-return (
-    partes[0][0] +
-    partes[partes.length - 1][0]
-).toUpperCase();
-
-
-}
 
 function escaparHtml(valor) {
 
-
-return String(valor ?? "")
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
-
+    return String(valor ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 
 }
+
 
 function mostrarLoading(texto = "Carregando...") {
 
+    const overlay =
+        el(ids.loadingOverlay);
 
-const overlay =
-    el(ids.loadingOverlay);
+    const textoEl =
+        el(ids.loadingText);
 
-const textoEl =
-    el(ids.loadingText);
 
-if (textoEl) {
-    textoEl.textContent = texto;
+    if (textoEl) {
+
+        textoEl.textContent =
+            texto;
+
+    }
+
+
+    if (overlay) {
+
+        overlay.style.display =
+            "grid";
+
+    }
+
 }
 
-if (overlay) {
-    overlay.style.display = "grid";
-}
-
-
-}
 
 function esconderLoading() {
 
+    const overlay =
+        el(ids.loadingOverlay);
 
-const overlay =
-    el(ids.loadingOverlay);
 
-if (overlay) {
-    overlay.style.display = "none";
+    if (overlay) {
+
+        overlay.style.display =
+            "none";
+
+    }
+
 }
 
-
-}
 
 function mostrarToast(mensagem, erro = false) {
 
+    const toast =
+        el(ids.toast);
 
-const toast =
-    el(ids.toast);
-
-const texto =
-    el(ids.toastMessage);
-
-if (!toast || !texto) {
-    return;
-}
-
-texto.textContent =
-    mensagem;
-
-toast.classList.toggle(
-    "erro",
-    erro
-);
-
-toast.classList.add(
-    "visivel"
-);
-
-clearTimeout(
-    mostrarToast.timer
-);
-
-mostrarToast.timer =
-    setTimeout(() => {
-
-        toast.classList.remove(
-            "visivel"
-        );
-
-    }, 3500);
+    const texto =
+        el(ids.toastMessage);
 
 
-}
+    if (!toast || !texto) {
 
-function marcarChips(
-containerId,
-valores
-) {
+        return;
+
+    }
 
 
-const container =
-    el(containerId);
+    texto.textContent =
+        mensagem;
 
-if (!container) {
-    return;
-}
 
-const selecionados =
-    new Set(
-        normalizarArray(valores)
-            .map(valor =>
-                valor.toLowerCase()
-            )
+    toast.classList.toggle(
+        "erro",
+        erro
     );
 
-container
-    .querySelectorAll(".chip")
-    .forEach(chip => {
 
-        const valor =
-            chip.dataset.value || "";
+    toast.classList.add(
+        "visivel"
+    );
 
-        chip.classList.toggle(
-            "ativo",
-            selecionados.has(
-                valor.toLowerCase()
-            )
-        );
 
-    });
+    clearTimeout(
+        mostrarToast.timer
+    );
 
+
+    mostrarToast.timer =
+        setTimeout(() => {
+
+            toast.classList.remove(
+                "visivel"
+            );
+
+        }, 3500);
 
 }
 
-function obterChipsSelecionados(
-containerId
+
+function marcarChips(
+    containerId,
+    valores
 ) {
 
+    const container =
+        el(containerId);
 
-const container =
-    el(containerId);
 
-if (!container) {
-    return [];
+    if (!container) {
+
+        return;
+
+    }
+
+
+    const selecionados =
+        new Set(
+            normalizarArray(valores)
+                .map(valor =>
+                    valor.toLowerCase()
+                )
+        );
+
+
+    container
+        .querySelectorAll(".chip")
+        .forEach(chip => {
+
+            const valor =
+                chip.dataset.value || "";
+
+
+            chip.classList.toggle(
+                "ativo",
+                selecionados.has(
+                    valor.toLowerCase()
+                )
+            );
+
+        });
+
 }
 
-return [
-    ...container.querySelectorAll(
-        ".chip.ativo"
-    )
-]
-    .map(chip =>
-        chip.dataset.value
-    )
-    .filter(Boolean);
 
+function obterChipsSelecionados(
+    containerId
+) {
+
+    const container =
+        el(containerId);
+
+
+    if (!container) {
+
+        return [];
+
+    }
+
+
+    return [
+        ...container.querySelectorAll(
+            ".chip.ativo"
+        )
+    ]
+        .map(chip =>
+            chip.dataset.value
+        )
+        .filter(Boolean);
 
 }
+
 
 function inicializarChips() {
 
+    document
+        .querySelectorAll(".chips .chip")
+        .forEach(chip => {
 
-document
-    .querySelectorAll(".chips .chip")
-    .forEach(chip => {
+            chip.addEventListener(
+                "click",
+                () => {
 
-        chip.addEventListener(
-            "click",
-            () => {
+                    chip.classList.toggle(
+                        "ativo"
+                    );
 
-                chip.classList.toggle(
-                    "ativo"
-                );
+                }
+            );
 
-            }
-        );
-
-    });
-
+        });
 
 }
+
 
 function preencherFormulario() {
 
+    const usuario =
+        estado.usuario || {};
 
-const usuario =
-    estado.usuario || {};
+    const perfil =
+        estado.perfil || {};
 
-const perfil =
-    estado.perfil || {};
-
-const artista =
-    estado.perfilArtista || {};
-
-
-const campoNome =
-    el(ids.nome);
-
-const campoNomeExibicao =
-    el(ids.nomeExibicao);
-
-const campoTelefone =
-    el(ids.telefone);
-
-const campoLocalizacao =
-    el(ids.localizacao);
-
-const campoDescricao =
-    el(ids.descricao);
-
-const campoExperiencia =
-    el(ids.experiencia);
-
-const campoArea =
-    el(ids.areaAtendimento);
-
-const campoTipo =
-    el(ids.tipoArtista);
-
-const campoDisponivel =
-    el(ids.disponivel);
-
-const campoEmail =
-    el(ids.emailConta);
+    const artista =
+        estado.perfilArtista || {};
 
 
-if (campoNome) {
+    const campoNome =
+        el(ids.nome);
 
-    campoNome.value =
-        usuario.nome || "";
+    const campoNomeExibicao =
+        el(ids.nomeExibicao);
+
+    const campoTelefone =
+        el(ids.telefone);
+
+    const campoLocalizacao =
+        el(ids.localizacao);
+
+    const campoDescricao =
+        el(ids.descricao);
+
+    const campoExperiencia =
+        el(ids.experiencia);
+
+    const campoArea =
+        el(ids.areaAtendimento);
+
+    const campoTipo =
+        el(ids.tipoArtista);
+
+    const campoDisponivel =
+        el(ids.disponivel);
+
+    const campoEmail =
+        el(ids.emailConta);
+
+
+    if (campoNome) {
+
+        campoNome.value =
+            usuario.nome || "";
+
+    }
+
+
+    if (campoNomeExibicao) {
+
+        campoNomeExibicao.value =
+            perfil.nome_exibicao ||
+            usuario.nome ||
+            "";
+
+    }
+
+
+    if (campoTelefone) {
+
+        campoTelefone.value =
+            usuario.telefone || "";
+
+    }
+
+
+    if (campoLocalizacao) {
+
+        campoLocalizacao.value =
+            artista.localizacao || "";
+
+    }
+
+
+    if (campoDescricao) {
+
+        campoDescricao.value =
+            perfil.descricao || "";
+
+    }
+
+
+    if (campoExperiencia) {
+
+        campoExperiencia.value =
+            artista.experiencia || "";
+
+    }
+
+
+    if (campoArea) {
+
+        campoArea.value =
+            artista.area_atendimento || "";
+
+    }
+
+
+    if (campoTipo) {
+
+        campoTipo.value =
+            "Cantor";
+
+    }
+
+
+    if (campoDisponivel) {
+
+        campoDisponivel.checked =
+            artista.disponivel !== false;
+
+    }
+
+
+    if (campoEmail) {
+
+        campoEmail.textContent =
+            estado.usuarioAuth?.email ||
+            usuario.email ||
+            "Não informado";
+
+    }
+
+
+    marcarChips(
+        "estilos",
+        artista.estilos
+    );
+
+
+    marcarChips(
+        "servicos",
+        artista.servicos
+    );
+
+
+    atualizarContador();
+
+    preencherAvatar();
 
 }
 
-
-if (campoNomeExibicao) {
-
-    campoNomeExibicao.value =
-        perfil.nome_exibicao ||
-        usuario.nome ||
-        "";
-
-}
-
-
-if (campoTelefone) {
-
-    campoTelefone.value =
-        usuario.telefone || "";
-
-}
-
-
-if (campoLocalizacao) {
-
-    campoLocalizacao.value =
-        artista.localizacao || "";
-
-}
-
-
-if (campoDescricao) {
-
-    campoDescricao.value =
-        perfil.descricao || "";
-
-}
-
-
-if (campoExperiencia) {
-
-    campoExperiencia.value =
-        artista.experiencia || "";
-
-}
-
-
-if (campoArea) {
-
-    campoArea.value =
-        artista.area_atendimento || "";
-
-}
-
-
-if (campoTipo) {
-
-    campoTipo.value =
-        "Cantor";
-
-}
-
-
-if (campoDisponivel) {
-
-    campoDisponivel.checked =
-        artista.disponivel !== false;
-
-}
-
-
-if (campoEmail) {
-
-    campoEmail.textContent =
-        estado.usuarioAuth?.email ||
-        usuario.email ||
-        "Não informado";
-
-}
-
-
-marcarChips(
-    "estilos",
-    artista.estilos
-);
-
-
-marcarChips(
-    "servicos",
-    artista.servicos
-);
-
-
-atualizarContador();
-preencherAvatar();
-
-
-}
 
 function preencherAvatar() {
 
+    const usuario =
+        estado.usuario || {};
 
-const usuario =
-    estado.usuario || {};
+    const perfil =
+        estado.perfil || {};
 
-const perfil =
-    estado.perfil || {};
-
-const artista =
-    estado.perfilArtista || {};
-
-
-const foto =
-    artista.foto_url ||
-    usuario.foto_url ||
-    "";
+    const artista =
+        estado.perfilArtista || {};
 
 
-const img =
-    el(ids.avatarImage);
+    const foto =
+        artista.foto_url ||
+        usuario.foto_url ||
+        "";
 
-const initials =
-    el(ids.avatarInitials);
+
+    const img =
+        el(ids.avatarImage);
+
+    const initials =
+        el(ids.avatarInitials);
 
 
-if (foto && img) {
+    if (foto && img) {
 
-    img.src = foto;
-    img.style.display = "block";
+        img.src = foto;
 
-    if (initials) {
-        initials.style.display = "none";
+        img.style.display =
+            "block";
+
+
+        if (initials) {
+
+            initials.style.display =
+                "none";
+
+        }
+
+
+        return;
+
     }
 
-    return;
+
+    if (img) {
+
+        img.removeAttribute("src");
+
+        img.style.display =
+            "none";
+
+    }
+
+
+    if (initials) {
+
+        initials.textContent =
+            obterIniciais(
+                perfil.nome_exibicao ||
+                usuario.nome ||
+                "Usuário"
+            );
+
+
+        initials.style.display =
+            "block";
+
+    }
+
 }
 
-
-if (img) {
-
-    img.removeAttribute("src");
-    img.style.display = "none";
-
-}
-
-
-if (initials) {
-
-    initials.textContent =
-        obterIniciais(
-            perfil.nome_exibicao ||
-            usuario.nome ||
-            "Usuário"
-        );
-
-    initials.style.display =
-        "block";
-}
-
-
-}
 
 function atualizarContador() {
 
+    const campo =
+        el(ids.descricao);
 
-const campo =
-    el(ids.descricao);
+    const contador =
+        el(ids.contadorDescricao);
 
-const contador =
-    el(ids.contadorDescricao);
 
-if (campo && contador) {
+    if (campo && contador) {
 
-    contador.textContent =
-        String(
-            campo.value.length
-        );
+        contador.textContent =
+            String(
+                campo.value.length
+            );
+
+    }
 
 }
 
-
-}
 
 async function carregarDados() {
 
-
-estado.usuarioAuth =
-    await Sessao.usuarioAtual();
-
-
-if (!estado.usuarioAuth) {
-
-    sessionStorage.setItem(
-        "musicalworld_destino_login",
-        "editar-perfil-cantor.html"
-    );
-
-    window.location.href =
-        "login.html";
-
-    return false;
-}
+    estado.usuarioAuth =
+        await Sessao.usuarioAtual();
 
 
-const resultadoUsuario =
-    await supabaseClient
-        .from("usuarios")
-        .select(`
-            id,
-            nome,
-            email,
-            telefone,
-            foto_url,
-            ativo
-        `)
-        .eq(
-            "id",
-            estado.usuarioAuth.id
-        )
-        .single();
+    if (!estado.usuarioAuth) {
 
-
-if (resultadoUsuario.error) {
-    throw resultadoUsuario.error;
-}
-
-
-estado.usuario =
-    resultadoUsuario.data;
-
-
-const resultadoPerfil =
-    await supabaseClient
-        .from("perfis")
-        .select(`
-            id,
-            usuario_id,
-            tipo_perfil_id,
-            nome_exibicao,
-            descricao,
-            ativo,
-            tipos_perfil (
-                id,
-                nome,
-                descricao
-            )
-        `)
-        .eq(
-            "usuario_id",
-            estado.usuarioAuth.id
-        )
-        .eq(
-            "ativo",
-            true
+        sessionStorage.setItem(
+            "musicalworld_destino_login",
+            "editar-perfil-cantor.html"
         );
 
-
-if (resultadoPerfil.error) {
-    throw resultadoPerfil.error;
-}
-
-
-const perfilArtista =
-    (resultadoPerfil.data || [])
-        .find(item =>
-            String(
-                item.tipos_perfil?.nome || ""
-            ).toLowerCase() ===
-            "artista"
-        );
-
-
-if (!perfilArtista) {
-
-    mostrarToast(
-        "Perfil de artista não encontrado.",
-        true
-    );
-
-    setTimeout(() => {
 
         window.location.href =
-            "index.html";
+            "login.html";
 
-    }, 1200);
 
-    return false;
-}
-
-
-estado.perfil =
-    perfilArtista;
-
-
-const resultadoArtista =
-    await supabaseClient
-        .from("perfis_artistas")
-        .select(`
-            id,
-            perfil_id,
-            tipo_artista,
-            localizacao,
-            experiencia,
-            area_atendimento,
-            disponivel,
-            instrumentos,
-            estilos,
-            servicos,
-            foto_url,
-            created_at,
-            updated_at
-        `)
-        .eq(
-            "perfil_id",
-            perfilArtista.id
-        )
-        .maybeSingle();
-
-
-if (resultadoArtista.error) {
-    throw resultadoArtista.error;
-}
-
-
-estado.perfilArtista =
-    resultadoArtista.data || {
-        perfil_id:
-            perfilArtista.id,
-
-        tipo_artista:
-            "Cantor",
-
-        localizacao:
-            "",
-
-        experiencia:
-            "",
-
-        area_atendimento:
-            "",
-
-        disponivel:
-            true,
-
-        instrumentos:
-            [],
-
-        estilos:
-            [],
-
-        servicos:
-            [],
-
-        foto_url:
-            null
-    };
-
-
-const tipoArtistaAtual =
-    String(
-        estado.perfilArtista.tipo_artista || ""
-    )
-        .trim()
-        .toLowerCase();
-
-
-if (
-    tipoArtistaAtual &&
-    !tipoArtistaAtual.includes("cantor")
-) {
-
-    mostrarToast(
-        "Este perfil não está configurado como cantor.",
-        true
-    );
-
-    setTimeout(() => {
-
-        window.location.href =
-            "meu-perfil-musico.html";
-
-    }, 1200);
-
-    return false;
-}
-
-
-preencherFormulario();
-
-
-await Promise.all([
-    carregarPortfolio(),
-    carregarAgenda()
-]);
-
-
-return true;
-
-
-}
-
-async function fazerUploadFoto() {
-
-
-if (!estado.fotoArquivo) {
-
-    return (
-        estado.perfilArtista?.foto_url ||
-        estado.usuario?.foto_url ||
-        null
-    );
-
-}
-
-
-const arquivo =
-    estado.fotoArquivo;
-
-
-const usuarioId =
-    estado.usuarioAuth.id;
-
-
-const extensao =
-    arquivo.name
-        .split(".")
-        .pop()
-        .toLowerCase();
-
-
-const caminho =
-    `${usuarioId}/perfil.${extensao}`;
-
-
-const upload =
-    await supabaseClient
-        .storage
-        .from(BUCKET_FOTOS)
-        .upload(
-            caminho,
-            arquivo,
-            {
-                cacheControl: "3600",
-                upsert: true,
-                contentType:
-                    arquivo.type
-            }
-        );
-
-
-if (upload.error) {
-    throw upload.error;
-}
-
-
-const urlResultado =
-    supabaseClient
-        .storage
-        .from(BUCKET_FOTOS)
-        .getPublicUrl(
-            caminho
-        );
-
-
-return (
-    urlResultado?.data?.publicUrl ||
-    null
-);
-
-
-}
-
-async function salvarSobre() {
-
-
-if (estado.salvando) {
-    return;
-}
-
-
-const campoNome =
-    el(ids.nome);
-
-const campoNomeExibicao =
-    el(ids.nomeExibicao);
-
-const campoDescricao =
-    el(ids.descricao);
-
-const campoExperiencia =
-    el(ids.experiencia);
-
-const campoArea =
-    el(ids.areaAtendimento);
-
-const campoTelefone =
-    el(ids.telefone);
-
-const campoLocalizacao =
-    el(ids.localizacao);
-
-const campoDisponivel =
-    el(ids.disponivel);
-
-
-const nome =
-    campoNome?.value.trim() || "";
-
-const nomeExibicao =
-    campoNomeExibicao?.value.trim() || "";
-
-const descricao =
-    campoDescricao?.value.trim() || "";
-
-const experiencia =
-    campoExperiencia?.value.trim() || "";
-
-const areaAtendimento =
-    campoArea?.value.trim() || "";
-
-const telefone =
-    campoTelefone?.value.trim() || "";
-
-const localizacao =
-    campoLocalizacao?.value.trim() || "";
-
-const disponivel =
-    campoDisponivel?.checked === true;
-
-
-if (!nome) {
-
-    mostrarToast(
-        "Informe seu nome completo.",
-        true
-    );
-
-    campoNome?.focus();
-
-    return;
-}
-
-
-if (!nomeExibicao) {
-
-    mostrarToast(
-        "Informe seu nome artístico ou nome de exibição.",
-        true
-    );
-
-    campoNomeExibicao?.focus();
-
-    return;
-}
-
-
-if (descricao.length > 1000) {
-
-    mostrarToast(
-        "A descrição pode ter no máximo 1000 caracteres.",
-        true
-    );
-
-    campoDescricao?.focus();
-
-    return;
-}
-
-
-estado.salvando = true;
-
-
-const botaoSalvar =
-    el(ids.btnSalvar);
-
-const botaoTopo =
-    el(ids.btnSalvarTopo);
-
-
-if (botaoSalvar) {
-
-    botaoSalvar.disabled = true;
-
-    botaoSalvar.textContent =
-        "Salvando...";
-
-}
-
-
-if (botaoTopo) {
-    botaoTopo.disabled = true;
-}
-
-
-try {
-
-    mostrarLoading(
-        "Salvando perfil..."
-    );
-
-
-    const estilos =
-        obterChipsSelecionados(
-            "estilos"
-        );
-
-    const servicos =
-        obterChipsSelecionados(
-            "servicos"
-        );
-
-
-    let fotoUrl =
-        estado.perfilArtista?.foto_url ||
-        estado.usuario?.foto_url ||
-        null;
-
-
-    if (estado.fotoArquivo) {
-
-        fotoUrl =
-            await fazerUploadFoto();
+        return false;
 
     }
 
@@ -992,212 +655,695 @@ try {
     const resultadoUsuario =
         await supabaseClient
             .from("usuarios")
-            .update({
+            .select(`
+                id,
                 nome,
-
-                telefone:
-                    telefone || null,
-
-                foto_url:
-                    fotoUrl
-            })
+                email,
+                telefone,
+                foto_url,
+                ativo
+            `)
             .eq(
                 "id",
                 estado.usuarioAuth.id
-            );
+            )
+            .single();
 
 
     if (resultadoUsuario.error) {
+
         throw resultadoUsuario.error;
+
     }
+
+
+    estado.usuario =
+        resultadoUsuario.data;
 
 
     const resultadoPerfil =
         await supabaseClient
             .from("perfis")
-            .update({
-                nome_exibicao:
-                    nomeExibicao,
-
-                descricao:
-                    descricao || null,
-
-                updated_at:
-                    new Date().toISOString()
-            })
-            .eq(
-                "id",
-                estado.perfil.id
-            )
+            .select(`
+                id,
+                usuario_id,
+                tipo_perfil_id,
+                nome_exibicao,
+                descricao,
+                ativo,
+                tipos_perfil (
+                    id,
+                    nome,
+                    descricao
+                )
+            `)
             .eq(
                 "usuario_id",
                 estado.usuarioAuth.id
+            )
+            .eq(
+                "ativo",
+                true
             );
 
 
     if (resultadoPerfil.error) {
+
         throw resultadoPerfil.error;
+
+    }
+
+
+    const perfilArtista =
+        (resultadoPerfil.data || [])
+            .find(item =>
+                String(
+                    item.tipos_perfil?.nome || ""
+                ).toLowerCase() ===
+                "artista"
+            );
+
+
+    if (!perfilArtista) {
+
+        mostrarToast(
+            "Perfil de artista não encontrado.",
+            true
+        );
+
+
+        setTimeout(() => {
+
+            window.location.href =
+                "index.html";
+
+        }, 1200);
+
+
+        return false;
+
     }
 
 
-    const dadosArtista = {
-
-        tipo_artista:
-            "Cantor",
-
-        localizacao:
-            localizacao || null,
-
-        experiencia:
-            experiencia || null,
-
-        area_atendimento:
-            areaAtendimento || null,
-
-        disponivel,
-
-        instrumentos:
-            [],
-
-        estilos,
-
-        servicos,
-
-        foto_url:
-            fotoUrl,
-
-        updated_at:
-            new Date().toISOString()
-
-    };
+    estado.perfil =
+        perfilArtista;
 
 
-    let resultadoArtista;
-
-
-    if (estado.perfilArtista?.id) {
-
-        resultadoArtista =
-            await supabaseClient
-                .from("perfis_artistas")
-                .update(
-                    dadosArtista
-                )
-                .eq(
-                    "id",
-                    estado.perfilArtista.id
-                )
-                .eq(
-                    "perfil_id",
-                    estado.perfil.id
-                );
-
-    } else {
-
-        resultadoArtista =
-            await supabaseClient
-                .from("perfis_artistas")
-                .insert({
-                    perfil_id:
-                        estado.perfil.id,
-
-                    ...dadosArtista
-                });
-
-    }
+    const resultadoArtista =
+        await supabaseClient
+            .from("perfis_artistas")
+            .select(`
+                id,
+                perfil_id,
+                tipo_artista,
+                localizacao,
+                experiencia,
+                area_atendimento,
+                disponivel,
+                instrumentos,
+                estilos,
+                servicos,
+                foto_url,
+                created_at,
+                updated_at
+            `)
+            .eq(
+                "perfil_id",
+                perfilArtista.id
+            )
+            .maybeSingle();
 
 
     if (resultadoArtista.error) {
+
         throw resultadoArtista.error;
+
     }
 
 
-    estado.usuario = {
-        ...estado.usuario,
+    estado.perfilArtista =
+        resultadoArtista.data || {
 
-        nome,
+            perfil_id:
+                perfilArtista.id,
 
-        telefone,
+            tipo_artista:
+                "Cantor",
 
-        foto_url:
-            fotoUrl
-    };
+            localizacao:
+                "",
+
+            experiencia:
+                "",
+
+            area_atendimento:
+                "",
+
+            disponivel:
+                true,
+
+            instrumentos:
+                [],
+
+            estilos:
+                [],
+
+            servicos:
+                [],
+
+            foto_url:
+                null
+
+        };
 
 
-    estado.perfil = {
-        ...estado.perfil,
-
-        nome_exibicao:
-            nomeExibicao,
-
-        descricao
-    };
+    const tipoArtistaAtual =
+        String(
+            estado.perfilArtista.tipo_artista || ""
+        )
+            .trim()
+            .toLowerCase();
 
 
-    estado.perfilArtista = {
-        ...estado.perfilArtista,
+    if (
+        tipoArtistaAtual &&
+        !tipoArtistaAtual.includes("cantor")
+    ) {
 
-        ...dadosArtista
-    };
-
-
-    estado.fotoArquivo =
-        null;
-
-
-    esconderLoading();
+        mostrarToast(
+            "Este perfil não está configurado como cantor.",
+            true
+        );
 
 
-    mostrarToast(
-        "Perfil atualizado com sucesso!"
+        setTimeout(() => {
+
+            window.location.href =
+                "meu-perfil-musico.html";
+
+        }, 1200);
+
+
+        return false;
+
+    }
+
+
+    preencherFormulario();
+
+
+    await Promise.all([
+        carregarPortfolio(),
+        carregarAgenda()
+    ]);
+
+
+    return true;
+
+}
+
+
+async function fazerUploadFoto() {
+
+    if (!estado.fotoArquivo) {
+
+        return (
+            estado.perfilArtista?.foto_url ||
+            estado.usuario?.foto_url ||
+            null
+        );
+
+    }
+
+
+    const arquivo =
+        estado.fotoArquivo;
+
+
+    const usuarioId =
+        estado.usuarioAuth.id;
+
+
+    const extensao =
+        arquivo.name
+            .split(".")
+            .pop()
+            .toLowerCase();
+
+
+    const caminho =
+        `${usuarioId}/perfil.${extensao}`;
+
+
+    const upload =
+        await supabaseClient
+            .storage
+            .from(BUCKET_FOTOS)
+            .upload(
+                caminho,
+                arquivo,
+                {
+                    cacheControl:
+                        "3600",
+
+                    upsert:
+                        true,
+
+                    contentType:
+                        arquivo.type
+                }
+            );
+
+
+    if (upload.error) {
+
+        throw upload.error;
+
+    }
+
+
+    const urlResultado =
+        supabaseClient
+            .storage
+            .from(BUCKET_FOTOS)
+            .getPublicUrl(
+                caminho
+            );
+
+
+    return (
+        urlResultado?.data?.publicUrl ||
+        null
     );
 
-
-} catch (erro) {
-
-    console.error(
-        "Erro ao salvar perfil:",
-        erro
-    );
+}
 
 
-    esconderLoading();
+async function salvarSobre() {
+
+    if (estado.salvando) {
+
+        return;
+
+    }
 
 
-    mostrarToast(
-        erro?.message ||
-        "Não foi possível salvar as alterações.",
-        true
-    );
+    const campoNome =
+        el(ids.nome);
 
-} finally {
+    const campoNomeExibicao =
+        el(ids.nomeExibicao);
+
+    const campoDescricao =
+        el(ids.descricao);
+
+    const campoExperiencia =
+        el(ids.experiencia);
+
+    const campoArea =
+        el(ids.areaAtendimento);
+
+    const campoTelefone =
+        el(ids.telefone);
+
+    const campoLocalizacao =
+        el(ids.localizacao);
+
+    const campoDisponivel =
+        el(ids.disponivel);
+
+
+    const nome =
+        campoNome?.value.trim() || "";
+
+
+    const nomeExibicao =
+        campoNomeExibicao?.value.trim() || "";
+
+
+    const descricao =
+        campoDescricao?.value.trim() || "";
+
+
+    const experiencia =
+        campoExperiencia?.value.trim() || "";
+
+
+    const areaAtendimento =
+        campoArea?.value.trim() || "";
+
+
+    const telefone =
+        campoTelefone?.value.trim() || "";
+
+
+    const localizacao =
+        campoLocalizacao?.value.trim() || "";
+
+
+    const disponivel =
+        campoDisponivel?.checked === true;
+
+
+    if (!nome) {
+
+        mostrarToast(
+            "Informe seu nome completo.",
+            true
+        );
+
+
+        campoNome?.focus();
+
+        return;
+
+    }
+
+
+    if (!nomeExibicao) {
+
+        mostrarToast(
+            "Informe seu nome artístico ou nome de exibição.",
+            true
+        );
+
+
+        campoNomeExibicao?.focus();
+
+        return;
+
+    }
+
+
+    if (descricao.length > 1000) {
+
+        mostrarToast(
+            "A descrição pode ter no máximo 1000 caracteres.",
+            true
+        );
+
+
+        campoDescricao?.focus();
+
+        return;
+
+    }
+
 
     estado.salvando =
-        false;
+        true;
+
+
+    const botaoSalvar =
+        el(ids.btnSalvar);
+
+    const botaoTopo =
+        el(ids.btnSalvarTopo);
 
 
     if (botaoSalvar) {
 
         botaoSalvar.disabled =
-            false;
+            true;
 
-        botaoSalvar.innerHTML =
-            '<i data-lucide="check"></i> Salvar alterações';
+        botaoSalvar.textContent =
+            "Salvando...";
 
     }
 
 
     if (botaoTopo) {
+
         botaoTopo.disabled =
-            false;
+            true;
+
     }
 
 
-    atualizarIcones();
-}
+    try {
+
+        mostrarLoading(
+            "Salvando perfil..."
+        );
 
 
+        const estilos =
+            obterChipsSelecionados(
+                "estilos"
+            );
+
+
+        const servicos =
+            obterChipsSelecionados(
+                "servicos"
+            );
+
+
+        let fotoUrl =
+            estado.perfilArtista?.foto_url ||
+            estado.usuario?.foto_url ||
+            null;
+
+
+        if (estado.fotoArquivo) {
+
+            fotoUrl =
+                await fazerUploadFoto();
+
+        }
+
+
+        const resultadoUsuario =
+            await supabaseClient
+                .from("usuarios")
+                .update({
+
+                    nome,
+
+                    telefone:
+                        telefone || null,
+
+                    foto_url:
+                        fotoUrl
+
+                })
+                .eq(
+                    "id",
+                    estado.usuarioAuth.id
+                );
+
+
+        if (resultadoUsuario.error) {
+
+            throw resultadoUsuario.error;
+
+        }
+
+
+        const resultadoPerfil =
+            await supabaseClient
+                .from("perfis")
+                .update({
+
+                    nome_exibicao:
+                        nomeExibicao,
+
+                    descricao:
+                        descricao || null,
+
+                    updated_at:
+                        new Date().toISOString()
+
+                })
+                .eq(
+                    "id",
+                    estado.perfil.id
+                )
+                .eq(
+                    "usuario_id",
+                    estado.usuarioAuth.id
+                );
+
+
+        if (resultadoPerfil.error) {
+
+            throw resultadoPerfil.error;
+
+        }
+
+
+        const dadosArtista = {
+
+            tipo_artista:
+                "Cantor",
+
+            localizacao:
+                localizacao || null,
+
+            experiencia:
+                experiencia || null,
+
+            area_atendimento:
+                areaAtendimento || null,
+
+            disponivel,
+
+            instrumentos:
+                [],
+
+            estilos,
+
+            servicos,
+
+            foto_url:
+                fotoUrl,
+
+            updated_at:
+                new Date().toISOString()
+
+        };
+
+
+        let resultadoArtista;
+
+
+        if (estado.perfilArtista?.id) {
+
+            resultadoArtista =
+                await supabaseClient
+                    .from("perfis_artistas")
+                    .update(
+                        dadosArtista
+                    )
+                    .eq(
+                        "id",
+                        estado.perfilArtista.id
+                    )
+                    .eq(
+                        "perfil_id",
+                        estado.perfil.id
+                    );
+
+        } else {
+
+            resultadoArtista =
+                await supabaseClient
+                    .from("perfis_artistas")
+                    .insert({
+
+                        perfil_id:
+                            estado.perfil.id,
+
+                        ...dadosArtista
+
+                    });
+
+        }
+
+
+        if (resultadoArtista.error) {
+
+            throw resultadoArtista.error;
+
+        }
+
+
+        estado.usuario = {
+
+            ...estado.usuario,
+
+            nome,
+
+            telefone,
+
+            foto_url:
+                fotoUrl
+
+        };
+
+
+        estado.perfil = {
+
+            ...estado.perfil,
+
+            nome_exibicao:
+                nomeExibicao,
+
+            descricao
+
+        };
+
+
+        estado.perfilArtista = {
+
+            ...estado.perfilArtista,
+
+            ...dadosArtista
+
+        };
+
+
+        estado.fotoArquivo =
+            null;
+
+
+        esconderLoading();
+
+
+        mostrarToast(
+            "Perfil atualizado com sucesso!"
+        );
+
+
+    } catch (erro) {
+
+        console.error(
+            "Erro ao salvar perfil:",
+            erro
+        );
+
+
+        esconderLoading();
+
+
+        mostrarToast(
+            erro?.message ||
+            "Não foi possível salvar as alterações.",
+            true
+        );
+
+
+    } finally {
+
+        estado.salvando =
+            false;
+
+
+        if (botaoSalvar) {
+
+            botaoSalvar.disabled =
+                false;
+
+            botaoSalvar.innerHTML =
+                '<i data-lucide="check"></i> Salvar alterações';
+
+        }
+
+
+        if (botaoTopo) {
+
+            botaoTopo.disabled =
+                false;
+
+        }
+
+
+        atualizarIcones();
+
+    }
+
 }
+
 
 /* =====================================================
 ABAS
@@ -1205,724 +1351,1160 @@ ABAS
 
 function trocarAba(nome) {
 
-
-const abas =
-    document.querySelectorAll(
-        ".editor-tab"
-    );
-
-const paineis =
-    document.querySelectorAll(
-        ".editor-panel"
-    );
+    const abas =
+        document.querySelectorAll(
+            ".editor-tab"
+        );
 
 
-abas.forEach(aba => {
-
-    aba.classList.toggle(
-        "ativo",
-        aba.dataset.editorTab === nome
-    );
-
-});
+    const paineis =
+        document.querySelectorAll(
+            ".editor-panel"
+        );
 
 
-paineis.forEach(painel => {
+    abas.forEach(aba => {
 
-    painel.classList.toggle(
-        "ativo",
-        painel.dataset.editorPanel === nome
-    );
-
-});
-
-
-estado.abaAtual =
-    nome;
-
-
-window.scrollTo({
-    top: 0,
-    behavior: "smooth"
-});
-
-
-atualizarIcones();
-
-
-}
-
-function inicializarAbas() {
-
-
-document
-    .querySelectorAll(
-        ".editor-tab"
-    )
-    .forEach(aba => {
-
-        aba.addEventListener(
-            "click",
-            () => {
-
-                trocarAba(
-                    aba.dataset.editorTab
-                );
-
-            }
+        aba.classList.toggle(
+            "ativo",
+            aba.dataset.editorTab === nome
         );
 
     });
 
 
+    paineis.forEach(painel => {
+
+        painel.classList.toggle(
+            "ativo",
+            painel.dataset.editorPanel === nome
+        );
+
+    });
+
+
+    estado.abaAtual =
+        nome;
+
+
+    window.scrollTo({
+
+        top: 0,
+
+        behavior: "smooth"
+
+    });
+
+
+    atualizarIcones();
+
 }
+
+
+function inicializarAbas() {
+
+    document
+        .querySelectorAll(
+            ".editor-tab"
+        )
+        .forEach(aba => {
+
+            aba.addEventListener(
+                "click",
+                () => {
+
+                    trocarAba(
+                        aba.dataset.editorTab
+                    );
+
+                }
+            );
+
+        });
+
+}
+
 
 /* =====================================================
 PORTFÓLIO
 ====================================================== */
 
-async function carregarPortfolio() {
+function tipoPodeSerDestaque(tipo) {
+
+    const tipoNormalizado =
+        String(tipo || "")
+            .trim()
+            .toLowerCase();
 
 
-if (!estado.perfil?.id) {
-    return;
-}
-
-
-const resultado =
-    await supabaseClient
-        .from("portfolio_musicos")
-        .select(`
-            id,
-            perfil_id,
-            tipo,
-            titulo,
-            descricao,
-            arquivo_url,
-            thumbnail_url,
-            ordem,
-            ativo,
-            created_at,
-            updated_at
-        `)
-        .eq(
-            "perfil_id",
-            estado.perfil.id
-        )
-        .eq(
-            "ativo",
-            true
-        )
-        .order(
-            "ordem",
-            {
-                ascending: true
-            }
-        )
-        .order(
-            "created_at",
-            {
-                ascending: false
-            });
-
-
-if (resultado.error) {
-
-    console.error(
-        "Erro ao carregar portfólio:",
-        resultado.error
+    return (
+        tipoNormalizado === "imagem" ||
+        tipoNormalizado === "video"
     );
 
-    return;
 }
 
 
-estado.portfolio =
-    resultado.data || [];
+async function carregarPortfolio() {
+
+    if (!estado.perfil?.id) {
+
+        return;
+
+    }
 
 
-renderizarPortfolio();
+    const resultado =
+        await supabaseClient
+            .from("portfolio_musicos")
+            .select(`
+                id,
+                perfil_id,
+                tipo,
+                titulo,
+                descricao,
+                arquivo_url,
+                thumbnail_url,
+                ordem,
+                ativo,
+                destaque_catalogo,
+                created_at,
+                updated_at
+            `)
+            .eq(
+                "perfil_id",
+                estado.perfil.id
+            )
+            .eq(
+                "ativo",
+                true
+            )
+            .order(
+                "ordem",
+                {
+                    ascending: true
+                }
+            )
+            .order(
+                "created_at",
+                {
+                    ascending: false
+                }
+            );
 
+
+    if (resultado.error) {
+
+        console.error(
+            "Erro ao carregar portfólio:",
+            resultado.error
+        );
+
+
+        return;
+
+    }
+
+
+    estado.portfolio =
+        resultado.data || [];
+
+
+    renderizarPortfolio();
 
 }
+
 
 function limparFormularioPortfolio() {
 
+    const titulo =
+        el(ids.portfolioTitulo);
 
-const titulo =
-    el(ids.portfolioTitulo);
+    const descricao =
+        el(ids.portfolioDescricao);
 
-const descricao =
-    el(ids.portfolioDescricao);
+    const arquivo =
+        el(ids.portfolioArquivo);
 
-const arquivo =
-    el(ids.portfolioArquivo);
+    const url =
+        el(ids.portfolioUrl);
 
-const url =
-    el(ids.portfolioUrl);
 
+    if (titulo) {
 
-if (titulo) {
-    titulo.value = "";
-}
+        titulo.value =
+            "";
 
-if (descricao) {
-    descricao.value = "";
-}
+    }
 
-if (arquivo) {
-    arquivo.value = "";
-}
 
-if (url) {
-    url.value = "";
-}
+    if (descricao) {
 
+        descricao.value =
+            "";
 
-estado.editandoPortfolioId =
-    null;
-
-
-const botao =
-    el(ids.btnAdicionarPortfolio);
-
-if (botao) {
-
-    botao.innerHTML =
-        '<i data-lucide="plus"></i> Adicionar ao portfólio';
-
-}
-
-
-atualizarIcones();
-
-
-}
-
-function atualizarTipoMedia() {
-
-
-document
-    .querySelectorAll(
-        ".portfolio-tipo"
-    )
-    .forEach(botao => {
-
-        botao.classList.toggle(
-            "ativo",
-            botao.dataset.mediaType ===
-            estado.tipoMedia
-        );
-
-    });
-
-
-const arquivo =
-    el(ids.portfolioArquivo);
-
-const ajuda =
-    el(ids.portfolioAjuda);
-
-
-if (!arquivo || !ajuda) {
-    return;
-}
-
-
-arquivo.value = "";
-
-
-if (
-    estado.tipoMedia ===
-    "imagem"
-) {
-
-    arquivo.accept =
-        "image/png,image/jpeg,image/webp";
-
-    ajuda.textContent =
-        "JPG, PNG ou WEBP.";
-
-}
-
-
-if (
-    estado.tipoMedia ===
-    "video"
-) {
-
-    arquivo.accept =
-        "video/mp4,video/webm,video/quicktime";
-
-    ajuda.textContent =
-        "MP4, WEBM ou MOV.";
-
-}
-
-
-if (
-    estado.tipoMedia ===
-    "audio"
-) {
-
-    arquivo.accept =
-        "audio/mpeg,audio/mp3,audio/wav,audio/ogg";
-
-    ajuda.textContent =
-        "MP3, WAV ou OGG.";
-
-}
-
-
-}
-
-function inicializarTiposPortfolio() {
-
-
-document
-    .querySelectorAll(
-        ".portfolio-tipo"
-    )
-    .forEach(botao => {
-
-        botao.addEventListener(
-            "click",
-            () => {
-
-                estado.tipoMedia =
-                    botao.dataset.mediaType;
-
-                atualizarTipoMedia();
-
-            }
-        );
-
-    });
-
-
-atualizarTipoMedia();
-
-
-}
-
-async function fazerUploadPortfolio(
-arquivo
-) {
-
-
-if (!arquivo) {
-    return null;
-}
-
-
-const extensao =
-    arquivo.name
-        .split(".")
-        .pop()
-        .toLowerCase();
-
-
-const nomeSeguro =
-    `${Date.now()}-${Math.random()
-        .toString(36)
-        .slice(2, 8)}.${extensao}`;
-
-
-const caminho =
-    `${estado.usuarioAuth.id}/${nomeSeguro}`;
-
-
-const resultado =
-    await supabaseClient
-        .storage
-        .from(
-            BUCKET_PORTFOLIO
-        )
-        .upload(
-            caminho,
-            arquivo,
-            {
-                cacheControl:
-                    "3600",
-
-                upsert:
-                    false,
-
-                contentType:
-                    arquivo.type
-            }
-        );
-
-
-if (resultado.error) {
-    throw resultado.error;
-}
-
-
-const url =
-    supabaseClient
-        .storage
-        .from(
-            BUCKET_PORTFOLIO
-        )
-        .getPublicUrl(
-            caminho
-        );
-
-
-return (
-    url?.data?.publicUrl ||
-    null
-);
-
-
-}
-
-async function adicionarPortfolio() {
-
-
-if (!estado.perfil?.id) {
-
-    mostrarToast(
-        "Perfil não carregado.",
-        true
-    );
-
-    return;
-}
-
-
-const titulo =
-    el(ids.portfolioTitulo)
-        ?.value.trim() || "";
-
-
-const descricao =
-    el(ids.portfolioDescricao)
-        ?.value.trim() || "";
-
-
-const arquivo =
-    el(ids.portfolioArquivo)
-        ?.files?.[0] || null;
-
-
-const urlInformada =
-    el(ids.portfolioUrl)
-        ?.value.trim() || "";
-
-
-if (!titulo) {
-
-    mostrarToast(
-        "Informe um título para o item.",
-        true
-    );
-
-    el(ids.portfolioTitulo)?.focus();
-
-    return;
-}
-
-
-if (!arquivo && !urlInformada) {
-
-    mostrarToast(
-        "Selecione um arquivo ou informe uma URL.",
-        true
-    );
-
-    return;
-}
-
-
-try {
-
-    mostrarLoading(
-        estado.editandoPortfolioId
-            ? "Atualizando portfólio..."
-            : "Adicionando ao portfólio..."
-    );
-
-
-    let arquivoUrl =
-        urlInformada ||
-        null;
+    }
 
 
     if (arquivo) {
 
-        arquivoUrl =
-            await fazerUploadPortfolio(
-                arquivo
-            );
+        arquivo.value =
+            "";
 
     }
 
 
-    const dados = {
+    if (url) {
 
-        tipo:
-            estado.tipoMedia,
+        url.value =
+            "";
 
-        titulo,
-
-        descricao:
-            descricao || null,
-
-        arquivo_url:
-            arquivoUrl,
-
-        ativo:
-            true,
-
-        updated_at:
-            new Date().toISOString()
-
-    };
+    }
 
 
-    let resultado;
+    estado.editandoPortfolioId =
+        null;
 
 
-    if (estado.editandoPortfolioId) {
+    const botao =
+        el(ids.btnAdicionarPortfolio);
 
-        resultado =
+
+    if (botao) {
+
+        botao.innerHTML =
+            '<i data-lucide="plus"></i> Adicionar ao portfólio';
+
+    }
+
+
+    atualizarIcones();
+
+}
+
+
+function atualizarTipoMedia() {
+
+    document
+        .querySelectorAll(
+            ".portfolio-tipo"
+        )
+        .forEach(botao => {
+
+            botao.classList.toggle(
+                "ativo",
+                botao.dataset.mediaType ===
+                estado.tipoMedia
+            );
+
+        });
+
+
+    const arquivo =
+        el(ids.portfolioArquivo);
+
+    const ajuda =
+        el(ids.portfolioAjuda);
+
+
+    if (!arquivo || !ajuda) {
+
+        return;
+
+    }
+
+
+    arquivo.value =
+        "";
+
+
+    if (
+        estado.tipoMedia ===
+        "imagem"
+    ) {
+
+        arquivo.accept =
+            "image/png,image/jpeg,image/webp";
+
+
+        ajuda.textContent =
+            "JPG, PNG ou WEBP. Imagens podem ser escolhidas como destaque no catálogo.";
+
+    }
+
+
+    if (
+        estado.tipoMedia ===
+        "video"
+    ) {
+
+        arquivo.accept =
+            "video/mp4,video/webm,video/quicktime";
+
+
+        ajuda.textContent =
+            "MP4, WEBM ou MOV. Vídeos podem ser escolhidos como destaque no catálogo.";
+
+    }
+
+
+    if (
+        estado.tipoMedia ===
+        "audio"
+    ) {
+
+        arquivo.accept =
+            "audio/mpeg,audio/mp3,audio/wav,audio/ogg";
+
+
+        ajuda.textContent =
+            "MP3, WAV ou OGG. Áudios não podem ser usados como destaque no catálogo.";
+
+    }
+
+}
+
+
+function inicializarTiposPortfolio() {
+
+    document
+        .querySelectorAll(
+            ".portfolio-tipo"
+        )
+        .forEach(botao => {
+
+            botao.addEventListener(
+                "click",
+                () => {
+
+                    estado.tipoMedia =
+                        botao.dataset.mediaType;
+
+
+                    atualizarTipoMedia();
+
+                }
+            );
+
+        });
+
+
+    atualizarTipoMedia();
+
+}
+
+
+async function fazerUploadPortfolio(
+    arquivo
+) {
+
+    if (!arquivo) {
+
+        return null;
+
+    }
+
+
+    const extensao =
+        arquivo.name
+            .split(".")
+            .pop()
+            .toLowerCase();
+
+
+    const nomeSeguro =
+        `${Date.now()}-${Math.random()
+            .toString(36)
+            .slice(2, 8)}.${extensao}`;
+
+
+    const caminho =
+        `${estado.usuarioAuth.id}/${nomeSeguro}`;
+
+
+    const resultado =
+        await supabaseClient
+            .storage
+            .from(
+                BUCKET_PORTFOLIO
+            )
+            .upload(
+                caminho,
+                arquivo,
+                {
+
+                    cacheControl:
+                        "3600",
+
+                    upsert:
+                        false,
+
+                    contentType:
+                        arquivo.type
+
+                }
+            );
+
+
+    if (resultado.error) {
+
+        throw resultado.error;
+
+    }
+
+
+    const url =
+        supabaseClient
+            .storage
+            .from(
+                BUCKET_PORTFOLIO
+            )
+            .getPublicUrl(
+                caminho
+            );
+
+
+    return (
+        url?.data?.publicUrl ||
+        null
+    );
+
+}
+
+
+async function adicionarPortfolio() {
+
+    if (!estado.perfil?.id) {
+
+        mostrarToast(
+            "Perfil não carregado.",
+            true
+        );
+
+
+        return;
+
+    }
+
+
+    const titulo =
+        el(ids.portfolioTitulo)
+            ?.value.trim() || "";
+
+
+    const descricao =
+        el(ids.portfolioDescricao)
+            ?.value.trim() || "";
+
+
+    const arquivo =
+        el(ids.portfolioArquivo)
+            ?.files?.[0] || null;
+
+
+    const urlInformada =
+        el(ids.portfolioUrl)
+            ?.value.trim() || "";
+
+
+    if (!titulo) {
+
+        mostrarToast(
+            "Informe um título para o item.",
+            true
+        );
+
+
+        el(ids.portfolioTitulo)?.focus();
+
+        return;
+
+    }
+
+
+    if (!arquivo && !urlInformada) {
+
+        mostrarToast(
+            "Selecione um arquivo ou informe uma URL.",
+            true
+        );
+
+
+        return;
+
+    }
+
+
+    try {
+
+        mostrarLoading(
+
+            estado.editandoPortfolioId
+                ? "Atualizando portfólio..."
+                : "Adicionando ao portfólio..."
+
+        );
+
+
+        let arquivoUrl =
+            urlInformada ||
+            null;
+
+
+        if (arquivo) {
+
+            arquivoUrl =
+                await fazerUploadPortfolio(
+                    arquivo
+                );
+
+        }
+
+
+        const itemAtual =
+            estado.editandoPortfolioId
+                ? estado.portfolio.find(
+                    item =>
+                        String(item.id) ===
+                        String(
+                            estado.editandoPortfolioId
+                        )
+                )
+                : null;
+
+
+        const destaqueCatalogo =
+            itemAtual
+                ? (
+                    tipoPodeSerDestaque(
+                        estado.tipoMedia
+                    ) &&
+                    itemAtual.destaque_catalogo === true
+                )
+                : false;
+
+
+        const dados = {
+
+            tipo:
+                estado.tipoMedia,
+
+            titulo,
+
+            descricao:
+                descricao || null,
+
+            arquivo_url:
+                arquivoUrl,
+
+            ativo:
+                true,
+
+            destaque_catalogo:
+                destaqueCatalogo,
+
+            updated_at:
+                new Date().toISOString()
+
+        };
+
+
+        let resultado;
+
+
+        if (estado.editandoPortfolioId) {
+
+            resultado =
+                await supabaseClient
+                    .from(
+                        "portfolio_musicos"
+                    )
+                    .update(dados)
+                    .eq(
+                        "id",
+                        estado.editandoPortfolioId
+                    )
+                    .eq(
+                        "perfil_id",
+                        estado.perfil.id
+                    );
+
+        } else {
+
+            resultado =
+                await supabaseClient
+                    .from(
+                        "portfolio_musicos"
+                    )
+                    .insert({
+
+                        perfil_id:
+                            estado.perfil.id,
+
+                        ...dados,
+
+                        ordem:
+                            estado.portfolio.length
+
+                    });
+
+        }
+
+
+        if (resultado.error) {
+
+            throw resultado.error;
+
+        }
+
+
+        esconderLoading();
+
+
+        mostrarToast(
+
+            estado.editandoPortfolioId
+                ? "Item atualizado com sucesso!"
+                : "Item adicionado ao portfólio!"
+
+        );
+
+
+        limparFormularioPortfolio();
+
+
+        await carregarPortfolio();
+
+
+    } catch (erro) {
+
+        console.error(
+            "Erro ao salvar portfólio:",
+            erro
+        );
+
+
+        esconderLoading();
+
+
+        mostrarToast(
+            erro?.message ||
+            "Não foi possível salvar o item.",
+            true
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+DESTAQUE DO CATÁLOGO
+====================================================== */
+
+async function definirDestaqueCatalogo(id) {
+
+    if (!id || !estado.perfil?.id) {
+
+        return;
+
+    }
+
+
+    const item =
+        estado.portfolio.find(
+            registro =>
+                String(registro.id) ===
+                String(id)
+        );
+
+
+    if (!item) {
+
+        mostrarToast(
+            "Item do portfólio não encontrado.",
+            true
+        );
+
+
+        return;
+
+    }
+
+
+    if (!tipoPodeSerDestaque(item.tipo)) {
+
+        mostrarToast(
+            "Somente imagens e vídeos podem ser usados como destaque.",
+            true
+        );
+
+
+        return;
+
+    }
+
+
+    try {
+
+        mostrarLoading(
+            "Atualizando destaque..."
+        );
+
+
+        const jaEstaDestacado =
+            item.destaque_catalogo === true;
+
+
+        /*
+         * Se já é o destaque,
+         * remove o destaque.
+         */
+
+        if (jaEstaDestacado) {
+
+            const resultado =
+                await supabaseClient
+                    .from(
+                        "portfolio_musicos"
+                    )
+                    .update({
+
+                        destaque_catalogo:
+                            false,
+
+                        updated_at:
+                            new Date().toISOString()
+
+                    })
+                    .eq(
+                        "id",
+                        id
+                    )
+                    .eq(
+                        "perfil_id",
+                        estado.perfil.id
+                    );
+
+
+            if (resultado.error) {
+
+                throw resultado.error;
+
+            }
+
+
+            esconderLoading();
+
+
+            mostrarToast(
+                "Destaque removido."
+            );
+
+
+            await carregarPortfolio();
+
+
+            return;
+
+        }
+
+
+        /*
+         * Remove o destaque anterior
+         * antes de definir o novo.
+         */
+
+        const removerAnterior =
             await supabaseClient
                 .from(
                     "portfolio_musicos"
                 )
-                .update(dados)
+                .update({
+
+                    destaque_catalogo:
+                        false,
+
+                    updated_at:
+                        new Date().toISOString()
+
+                })
+                .eq(
+                    "perfil_id",
+                    estado.perfil.id
+                )
+                .eq(
+                    "ativo",
+                    true
+                )
+                .eq(
+                    "destaque_catalogo",
+                    true
+                );
+
+
+        if (removerAnterior.error) {
+
+            throw removerAnterior.error;
+
+        }
+
+
+        /*
+         * Define o novo destaque.
+         */
+
+        const definirNovo =
+            await supabaseClient
+                .from(
+                    "portfolio_musicos"
+                )
+                .update({
+
+                    destaque_catalogo:
+                        true,
+
+                    updated_at:
+                        new Date().toISOString()
+
+                })
                 .eq(
                     "id",
-                    estado.editandoPortfolioId
+                    id
                 )
                 .eq(
                     "perfil_id",
                     estado.perfil.id
+                )
+                .eq(
+                    "ativo",
+                    true
                 );
 
-    } else {
 
-        resultado =
-            await supabaseClient
-                .from(
-                    "portfolio_musicos"
-                )
-                .insert({
+        if (definirNovo.error) {
 
-                    perfil_id:
-                        estado.perfil.id,
+            throw definirNovo.error;
 
-                    ...dados,
+        }
 
-                    ordem:
-                        estado.portfolio.length
 
-                });
+        esconderLoading();
+
+
+        mostrarToast(
+            "Item definido como destaque no catálogo!"
+        );
+
+
+        await carregarPortfolio();
+
+
+    } catch (erro) {
+
+        console.error(
+            "Erro ao definir destaque:",
+            erro
+        );
+
+
+        esconderLoading();
+
+
+        mostrarToast(
+            erro?.message ||
+            "Não foi possível atualizar o destaque.",
+            true
+        );
 
     }
 
-
-    if (resultado.error) {
-        throw resultado.error;
-    }
-
-
-    esconderLoading();
-
-
-    mostrarToast(
-        estado.editandoPortfolioId
-            ? "Item atualizado com sucesso!"
-            : "Item adicionado ao portfólio!"
-    );
-
-
-    limparFormularioPortfolio();
-
-    await carregarPortfolio();
-
-
-} catch (erro) {
-
-    console.error(
-        "Erro ao salvar portfólio:",
-        erro
-    );
-
-
-    esconderLoading();
-
-
-    mostrarToast(
-        erro?.message ||
-        "Não foi possível salvar o item.",
-        true
-    );
-
 }
 
-
-}
 
 function renderizarPortfolio() {
 
-
-const container =
-    el(ids.portfolioEditList);
-
-
-if (!container) {
-    return;
-}
+    const container =
+        el(ids.portfolioEditList);
 
 
-if (!estado.portfolio.length) {
+    if (!container) {
 
-    container.innerHTML = `
-        <div class="empty-editor">
-            <i data-lucide="images"></i>
-            <strong>Nenhum item cadastrado</strong>
-            <span>
-                Adicione imagens, vídeos ou áudios ao seu portfólio.
-            </span>
-        </div>
-    `;
+        return;
+
+    }
+
+
+    if (!estado.portfolio.length) {
+
+        container.innerHTML = `
+
+            <div class="empty-editor">
+
+                <i data-lucide="images"></i>
+
+                <strong>
+                    Nenhum item cadastrado
+                </strong>
+
+                <span>
+                    Adicione imagens, vídeos ou áudios ao seu portfólio.
+                </span>
+
+            </div>
+
+        `;
+
+
+        atualizarIcones();
+
+
+        return;
+
+    }
+
+
+    container.innerHTML =
+        estado.portfolio
+            .map(item => {
+
+                const podeDestacar =
+                    tipoPodeSerDestaque(
+                        item.tipo
+                    );
+
+
+                const estaDestacado =
+                    item.destaque_catalogo === true;
+
+
+                let preview = `
+
+                    <i data-lucide="file"></i>
+
+                `;
+
+
+                if (
+                    item.tipo === "imagem" &&
+                    item.arquivo_url
+                ) {
+
+                    preview = `
+
+                        <img
+                            src="${escaparHtml(item.arquivo_url)}"
+                            alt="${escaparHtml(item.titulo || "Portfólio")}"
+                            loading="lazy"
+                        >
+
+                    `;
+
+                }
+
+
+                if (
+                    item.tipo === "video"
+                ) {
+
+                    preview = `
+
+                        <video
+                            src="${escaparHtml(item.arquivo_url || "")}"
+                            muted
+                            preload="metadata"
+                        ></video>
+
+                    `;
+
+                }
+
+
+                if (
+                    item.tipo === "audio"
+                ) {
+
+                    preview = `
+
+                        <i data-lucide="music"></i>
+
+                    `;
+
+                }
+
+
+                const botaoDestaque =
+                    podeDestacar
+                        ? `
+
+                            <button
+                                type="button"
+                                class="btn-destaque ${estaDestacado ? "ativo" : ""}"
+                                title="${
+                                    estaDestacado
+                                        ? "Remover destaque"
+                                        : "Usar como destaque"
+                                }"
+                                aria-label="${
+                                    estaDestacado
+                                        ? "Remover destaque"
+                                        : "Usar como destaque"
+                                }"
+                                data-destaque-portfolio="${escaparHtml(item.id)}"
+                            >
+
+                                <i data-lucide="star"></i>
+
+                                <span>
+                                    ${
+                                        estaDestacado
+                                            ? "Destaque"
+                                            : "Usar como destaque"
+                                    }
+                                </span>
+
+                            </button>
+
+                        `
+                        : "";
+
+
+                const etiquetaDestaque =
+                    estaDestacado
+                        ? `
+
+                            <span class="portfolio-destaque-label">
+                                <i data-lucide="star"></i>
+                                Destaque no catálogo
+                            </span>
+
+                        `
+                        : "";
+
+
+                return `
+
+                    <article
+                        class="media-edit-card ${
+                            estaDestacado
+                                ? "portfolio-card-destaque"
+                                : ""
+                        }"
+                    >
+
+                        <div class="media-preview">
+
+                            ${preview}
+
+                        </div>
+
+
+                        <div class="media-edit-info">
+
+                            <strong>
+
+                                ${escaparHtml(
+                                    item.titulo ||
+                                    "Sem título"
+                                )}
+
+                            </strong>
+
+
+                            <span>
+
+                                ${escaparHtml(
+                                    item.descricao ||
+                                    item.tipo
+                                )}
+
+                            </span>
+
+
+                            <span>
+
+                                ${escaparHtml(
+                                    item.tipo
+                                )}
+
+                            </span>
+
+
+                            ${etiquetaDestaque}
+
+                        </div>
+
+
+                        <div class="media-edit-actions">
+
+                            ${botaoDestaque}
+
+
+                            <button
+                                type="button"
+                                class="btn-excluir"
+                                title="Excluir"
+                                data-excluir-portfolio="${escaparHtml(item.id)}"
+                            >
+
+                                <i data-lucide="trash-2"></i>
+
+                            </button>
+
+                        </div>
+
+                    </article>
+
+                `;
+
+            })
+            .join("");
+
+
+    container
+        .querySelectorAll(
+            "[data-destaque-portfolio]"
+        )
+        .forEach(botao => {
+
+            botao.addEventListener(
+                "click",
+                () => {
+
+                    definirDestaqueCatalogo(
+                        botao.dataset.destaquePortfolio
+                    );
+
+                }
+            );
+
+        });
+
+
+    container
+        .querySelectorAll(
+            "[data-excluir-portfolio]"
+        )
+        .forEach(botao => {
+
+            botao.addEventListener(
+                "click",
+                () => {
+
+                    excluirPortfolio(
+                        botao.dataset.excluirPortfolio
+                    );
+
+                }
+            );
+
+        });
+
 
     atualizarIcones();
 
-    return;
 }
 
-
-container.innerHTML =
-    estado.portfolio
-        .map(item => {
-
-            let preview = `
-                <i data-lucide="file"></i>
-            `;
-
-
-            if (
-                item.tipo === "imagem" &&
-                item.arquivo_url
-            ) {
-
-                preview = `
-                    <img
-                        src="${escaparHtml(item.arquivo_url)}"
-                        alt="${escaparHtml(item.titulo || "Portfólio")}"
-                        loading="lazy">
-                `;
-
-            }
-
-
-            if (
-                item.tipo === "video"
-            ) {
-
-                preview = `
-                    <video
-                        src="${escaparHtml(item.arquivo_url)}"
-                        muted
-                        preload="metadata">
-                    </video>
-                `;
-
-            }
-
-
-            if (
-                item.tipo === "audio"
-            ) {
-
-                preview = `
-                    <i data-lucide="music"></i>
-                `;
-
-            }
-
-
-            return `
-                <article class="media-edit-card">
-
-                    <div class="media-preview">
-                        ${preview}
-                    </div>
-
-                    <div class="media-edit-info">
-
-                        <strong>
-                            ${escaparHtml(
-                                item.titulo ||
-                                "Sem título"
-                            )}
-                        </strong>
-
-                        <span>
-                            ${escaparHtml(
-                                item.descricao ||
-                                item.tipo
-                            )}
-                        </span>
-
-                        <span>
-                            ${escaparHtml(
-                                item.tipo
-                            )}
-                        </span>
-
-                    </div>
-
-                    <div class="media-edit-actions">
-
-                        <button
-                            type="button"
-                            class="btn-excluir"
-                            title="Excluir"
-                            data-excluir-portfolio="${item.id}"
-                        >
-
-                            <i data-lucide="trash-2"></i>
-
-                        </button>
-
-                    </div>
-
-                </article>
-            `;
-
-        })
-        .join("");
-
-
-container
-    .querySelectorAll(
-        "[data-excluir-portfolio]"
-    )
-    .forEach(botao => {
-
-        botao.addEventListener(
-            "click",
-            () => {
-
-                excluirPortfolio(
-                    botao.dataset.excluirPortfolio
-                );
-
-            }
-        );
-
-    });
-
-
-atualizarIcones();
-
-
-}
 
 /* =====================================================
 EXCLUIR PORTFÓLIO
@@ -1931,242 +2513,223 @@ Banco de dados + Storage
 
 async function excluirPortfolio(id) {
 
+    if (!id) {
 
-if (!id) {
-    return;
-}
+        return;
 
-
-const confirmar =
-    window.confirm(
-        "Deseja realmente excluir este item do portfólio?"
-    );
-
-
-if (!confirmar) {
-    return;
-}
-
-
-try {
-
-    mostrarLoading(
-        "Excluindo item..."
-    );
-
-
-    /*
-     * Busca o item somente dentro do perfil atual.
-     */
-    const registro =
-        await supabaseClient
-            .from("portfolio_musicos")
-            .select(`
-                id,
-                perfil_id,
-                arquivo_url
-            `)
-            .eq(
-                "id",
-                id
-            )
-            .eq(
-                "perfil_id",
-                estado.perfil.id
-            )
-            .maybeSingle();
-
-
-    if (registro.error) {
-        throw registro.error;
     }
 
 
-    if (!registro.data) {
-
-        throw new Error(
-            "O item do portfólio não foi encontrado ou não pertence ao seu perfil."
+    const confirmar =
+        window.confirm(
+            "Deseja realmente excluir este item do portfólio?"
         );
 
+
+    if (!confirmar) {
+
+        return;
+
     }
 
 
-    const arquivoUrl =
-        registro.data.arquivo_url || null;
+    try {
 
-
-    /*
-     * Exclui definitivamente o registro
-     * da tabela portfolio_musicos.
-     */
-    const resultado =
-        await supabaseClient
-            .from("portfolio_musicos")
-            .delete()
-            .eq(
-                "id",
-                id
-            )
-            .eq(
-                "perfil_id",
-                estado.perfil.id
-            )
-            .select("id")
-            .maybeSingle();
-
-
-    if (resultado.error) {
-        throw resultado.error;
-    }
-
-
-    if (!resultado.data) {
-
-        throw new Error(
-            "O item não foi excluído do banco de dados. Verifique as permissões de exclusão (RLS) da tabela portfolio_musicos."
+        mostrarLoading(
+            "Excluindo item..."
         );
 
-    }
+
+        const registro =
+            await supabaseClient
+                .from("portfolio_musicos")
+                .select(`
+                    id,
+                    perfil_id,
+                    arquivo_url
+                `)
+                .eq(
+                    "id",
+                    id
+                )
+                .eq(
+                    "perfil_id",
+                    estado.perfil.id
+                )
+                .maybeSingle();
 
 
-    /*
-     * Exclui o arquivo físico do Storage.
-     *
-     * Os uploads são salvos no formato:
-     *
-     * usuarioAuth.id/nome-do-arquivo.extensao
-     */
-    if (arquivoUrl) {
+        if (registro.error) {
 
-        try {
+            throw registro.error;
 
-            const marcador =
-                `/storage/v1/object/public/${BUCKET_PORTFOLIO}/`;
+        }
 
 
-            const posicao =
-                arquivoUrl.indexOf(
-                    marcador
-                );
+        if (!registro.data) {
 
-
-            if (posicao !== -1) {
-
-                const caminho =
-                    decodeURIComponent(
-                        arquivoUrl.substring(
-                            posicao +
-                            marcador.length
-                        )
-                    );
-
-
-                /*
-                 * Segurança adicional:
-                 * só permite excluir arquivos
-                 * dentro da pasta do usuário logado.
-                 */
-                const pastaUsuario =
-                    `${estado.usuarioAuth.id}/`;
-
-
-                if (
-                    caminho.startsWith(
-                        pastaUsuario
-                    )
-                ) {
-
-                    const exclusaoStorage =
-                        await supabaseClient
-                            .storage
-                            .from(
-                                BUCKET_PORTFOLIO
-                            )
-                            .remove([
-                                caminho
-                            ]);
-
-
-                    if (exclusaoStorage.error) {
-
-                        console.warn(
-                            "Registro removido do banco, mas o arquivo do Storage não pôde ser excluído:",
-                            exclusaoStorage.error
-                        );
-
-                    }
-
-                } else {
-
-                    console.warn(
-                        "O arquivo do Storage não pertence à pasta do usuário autenticado:",
-                        caminho
-                    );
-
-                }
-
-            }
-
-        } catch (erroStorage) {
-
-            /*
-             * O registro já foi removido do banco.
-             * Portanto não restauramos o registro.
-             */
-            console.warn(
-                "Não foi possível remover o arquivo do Storage:",
-                erroStorage
+            throw new Error(
+                "O item do portfólio não foi encontrado ou não pertence ao seu perfil."
             );
 
         }
 
-    }
+
+        const arquivoUrl =
+            registro.data.arquivo_url ||
+            null;
 
 
-    /*
-     * Remove imediatamente da memória
-     * e atualiza a interface.
-     */
-    estado.portfolio =
-        estado.portfolio.filter(
-            item =>
-                String(item.id) !==
-                String(id)
+        const resultado =
+            await supabaseClient
+                .from("portfolio_musicos")
+                .delete()
+                .eq(
+                    "id",
+                    id
+                )
+                .eq(
+                    "perfil_id",
+                    estado.perfil.id
+                )
+                .select("id")
+                .maybeSingle();
+
+
+        if (resultado.error) {
+
+            throw resultado.error;
+
+        }
+
+
+        if (!resultado.data) {
+
+            throw new Error(
+                "O item não foi excluído do banco de dados. Verifique as permissões de exclusão (RLS) da tabela portfolio_musicos."
+            );
+
+        }
+
+
+        if (arquivoUrl) {
+
+            try {
+
+                const marcador =
+                    `/storage/v1/object/public/${BUCKET_PORTFOLIO}/`;
+
+
+                const posicao =
+                    arquivoUrl.indexOf(
+                        marcador
+                    );
+
+
+                if (posicao !== -1) {
+
+                    const caminho =
+                        decodeURIComponent(
+                            arquivoUrl.substring(
+                                posicao +
+                                marcador.length
+                            )
+                        );
+
+
+                    const pastaUsuario =
+                        `${estado.usuarioAuth.id}/`;
+
+
+                    if (
+                        caminho.startsWith(
+                            pastaUsuario
+                        )
+                    ) {
+
+                        const exclusaoStorage =
+                            await supabaseClient
+                                .storage
+                                .from(
+                                    BUCKET_PORTFOLIO
+                                )
+                                .remove([
+                                    caminho
+                                ]);
+
+
+                        if (exclusaoStorage.error) {
+
+                            console.warn(
+                                "Registro removido do banco, mas o arquivo do Storage não pôde ser excluído:",
+                                exclusaoStorage.error
+                            );
+
+                        }
+
+                    } else {
+
+                        console.warn(
+                            "O arquivo do Storage não pertence à pasta do usuário autenticado:",
+                            caminho
+                        );
+
+                    }
+
+                }
+
+            } catch (erroStorage) {
+
+                console.warn(
+                    "Não foi possível remover o arquivo do Storage:",
+                    erroStorage
+                );
+
+            }
+
+        }
+
+
+        estado.portfolio =
+            estado.portfolio.filter(
+                item =>
+                    String(item.id) !==
+                    String(id)
+            );
+
+
+        renderizarPortfolio();
+
+
+        esconderLoading();
+
+
+        mostrarToast(
+            "Item e arquivo removidos do portfólio."
         );
 
 
-    renderizarPortfolio();
+    } catch (erro) {
+
+        console.error(
+            "Erro ao excluir portfólio:",
+            erro
+        );
 
 
-    esconderLoading();
+        esconderLoading();
 
 
-    mostrarToast(
-        "Item e arquivo removidos do portfólio."
-    );
+        mostrarToast(
+            erro?.message ||
+            "Não foi possível excluir o item.",
+            true
+        );
 
-
-} catch (erro) {
-
-    console.error(
-        "Erro ao excluir portfólio:",
-        erro
-    );
-
-
-    esconderLoading();
-
-
-    mostrarToast(
-        erro?.message ||
-        "Não foi possível excluir o item.",
-        true
-    );
+    }
 
 }
 
-
-}
 
 /* =====================================================
 AGENDA
@@ -2174,651 +2737,11 @@ AGENDA
 
 async function carregarAgenda() {
 
+    if (!estado.perfil?.id) {
 
-if (!estado.perfil?.id) {
-    return;
-}
-
-
-const resultado =
-    await supabaseClient
-        .from(
-            "agenda_musicos"
-        )
-        .select(`
-            id,
-            perfil_id,
-            titulo,
-            descricao,
-            tipo,
-            data_inicio,
-            data_fim,
-            localizacao,
-            status,
-            created_at,
-            updated_at
-        `)
-        .eq(
-            "perfil_id",
-            estado.perfil.id
-        )
-        .order(
-            "data_inicio",
-            {
-                ascending:
-                    true
-            }
-        );
-
-
-if (resultado.error) {
-
-    console.error(
-        "Erro ao carregar agenda:",
-        resultado.error
-    );
-
-    return;
-}
-
-
-estado.agenda =
-    resultado.data || [];
-
-
-renderizarAgenda();
-
-
-}
-
-function formatarDataAgenda(data) {
-
-
-if (!data) {
-
-    return {
-        dia: "--",
-        mes: "---"
-    };
-
-}
-
-
-const dataObj =
-    new Date(data);
-
-
-if (
-    Number.isNaN(
-        dataObj.getTime()
-    )
-) {
-
-    return {
-        dia: "--",
-        mes: "---"
-    };
-
-}
-
-
-const meses = [
-    "jan",
-    "fev",
-    "mar",
-    "abr",
-    "mai",
-    "jun",
-    "jul",
-    "ago",
-    "set",
-    "out",
-    "nov",
-    "dez"
-];
-
-
-return {
-
-    dia:
-        String(
-            dataObj.getDate()
-        ).padStart(2, "0"),
-
-    mes:
-        meses[
-            dataObj.getMonth()
-        ]
-
-};
-
-
-}
-
-function formatarDataHora(data) {
-
-
-if (!data) {
-    return "";
-}
-
-
-const dataObj =
-    new Date(data);
-
-
-if (
-    Number.isNaN(
-        dataObj.getTime()
-    )
-) {
-
-    return "";
-}
-
-
-return dataObj.toLocaleString(
-    "pt-BR",
-    {
-        dateStyle:
-            "short",
-
-        timeStyle:
-            "short"
-    }
-);
-
-
-}
-
-function converterDatetimeLocalParaISO(
-valor
-) {
-
-
-if (!valor) {
-    return null;
-}
-
-
-const data =
-    new Date(valor);
-
-
-if (
-    Number.isNaN(
-        data.getTime()
-    )
-) {
-
-    return null;
-}
-
-
-return data.toISOString();
-
-
-}
-
-function limparFormularioAgenda() {
-
-
-const campos = [
-
-    ids.agendaTitulo,
-    ids.agendaInicio,
-    ids.agendaFim,
-    ids.agendaLocalizacao,
-    ids.agendaDescricao
-
-];
-
-
-campos.forEach(id => {
-
-    const campo =
-        el(id);
-
-    if (campo) {
-        campo.value = "";
-    }
-
-});
-
-
-const tipo =
-    el(ids.agendaTipo);
-
-const status =
-    el(ids.agendaStatus);
-
-
-if (tipo) {
-    tipo.value = "evento";
-}
-
-
-if (status) {
-    status.value = "agendado";
-}
-
-
-estado.editandoAgendaId =
-    null;
-
-
-const botao =
-    el(ids.btnAdicionarAgenda);
-
-
-if (botao) {
-
-    botao.innerHTML =
-        '<i data-lucide="calendar-plus"></i> Adicionar à agenda';
-
-}
-
-
-atualizarIcones();
-
-
-}
-
-async function adicionarAgenda() {
-
-
-if (!estado.perfil?.id) {
-
-    mostrarToast(
-        "Perfil não carregado.",
-        true
-    );
-
-    return;
-}
-
-
-const titulo =
-    el(ids.agendaTitulo)
-        ?.value.trim() || "";
-
-
-const tipo =
-    el(ids.agendaTipo)
-        ?.value ||
-        "evento";
-
-
-const inicio =
-    el(ids.agendaInicio)
-        ?.value || "";
-
-
-const fim =
-    el(ids.agendaFim)
-        ?.value || "";
-
-
-const localizacao =
-    el(ids.agendaLocalizacao)
-        ?.value.trim() || "";
-
-
-const descricao =
-    el(ids.agendaDescricao)
-        ?.value.trim() || "";
-
-
-const status =
-    el(ids.agendaStatus)
-        ?.value ||
-        "agendado";
-
-
-if (!titulo) {
-
-    mostrarToast(
-        "Informe o título do compromisso.",
-        true
-    );
-
-    el(ids.agendaTitulo)?.focus();
-
-    return;
-}
-
-
-if (!inicio) {
-
-    mostrarToast(
-        "Informe a data e o horário.",
-        true
-    );
-
-    el(ids.agendaInicio)?.focus();
-
-    return;
-}
-
-
-const dataInicio =
-    converterDatetimeLocalParaISO(
-        inicio
-    );
-
-
-const dataFim =
-    converterDatetimeLocalParaISO(
-        fim
-    );
-
-
-if (!dataInicio) {
-
-    mostrarToast(
-        "Informe uma data válida.",
-        true
-    );
-
-    return;
-}
-
-
-if (
-    dataFim &&
-    new Date(dataFim) <
-    new Date(dataInicio)
-) {
-
-    mostrarToast(
-        "O término não pode ser anterior ao início.",
-        true
-    );
-
-    return;
-}
-
-
-try {
-
-    mostrarLoading(
-        estado.editandoAgendaId
-            ? "Atualizando agenda..."
-            : "Adicionando compromisso..."
-    );
-
-
-    const dados = {
-
-        titulo,
-
-        descricao:
-            descricao || null,
-
-        tipo,
-
-        data_inicio:
-            dataInicio,
-
-        data_fim:
-            dataFim,
-
-        localizacao:
-            localizacao || null,
-
-        status,
-
-        updated_at:
-            new Date().toISOString()
-
-    };
-
-
-    let resultado;
-
-
-    if (
-        estado.editandoAgendaId
-    ) {
-
-        resultado =
-            await supabaseClient
-                .from(
-                    "agenda_musicos"
-                )
-                .update(dados)
-                .eq(
-                    "id",
-                    estado.editandoAgendaId
-                )
-                .eq(
-                    "perfil_id",
-                    estado.perfil.id
-                );
-
-    } else {
-
-        resultado =
-            await supabaseClient
-                .from(
-                    "agenda_musicos"
-                )
-                .insert({
-
-                    perfil_id:
-                        estado.perfil.id,
-
-                    ...dados
-
-                });
+        return;
 
     }
-
-
-    if (resultado.error) {
-        throw resultado.error;
-    }
-
-
-    esconderLoading();
-
-
-    mostrarToast(
-        estado.editandoAgendaId
-            ? "Compromisso atualizado!"
-            : "Compromisso adicionado!"
-    );
-
-
-    limparFormularioAgenda();
-
-    await carregarAgenda();
-
-
-} catch (erro) {
-
-    console.error(
-        "Erro ao salvar agenda:",
-        erro
-    );
-
-
-    esconderLoading();
-
-
-    mostrarToast(
-        erro?.message ||
-        "Não foi possível salvar o compromisso.",
-        true
-    );
-
-}
-
-
-}
-
-function renderizarAgenda() {
-
-
-const container =
-    el(ids.agendaEditList);
-
-
-if (!container) {
-    return;
-}
-
-
-if (!estado.agenda.length) {
-
-    container.innerHTML = `
-        <div class="empty-editor">
-            <i data-lucide="calendar-days"></i>
-            <strong>Nenhum compromisso cadastrado</strong>
-            <span>
-                Adicione um evento para começar a organizar sua agenda.
-            </span>
-        </div>
-    `;
-
-    atualizarIcones();
-
-    return;
-}
-
-
-container.innerHTML =
-    estado.agenda
-        .map(item => {
-
-            const data =
-                formatarDataAgenda(
-                    item.data_inicio
-                );
-
-
-            return `
-                <article class="agenda-edit-card">
-
-                    <div class="agenda-data">
-
-                        <strong>
-                            ${escaparHtml(data.dia)}
-                        </strong>
-
-                        <span>
-                            ${escaparHtml(data.mes)}
-                        </span>
-
-                    </div>
-
-
-                    <div class="agenda-edit-info">
-
-                        <strong>
-                            ${escaparHtml(item.titulo)}
-                        </strong>
-
-                        <span>
-                            ${escaparHtml(
-                                formatarDataHora(
-                                    item.data_inicio
-                                )
-                            )}
-                        </span>
-
-                        ${
-                            item.localizacao
-                                ? `
-                                    <span>
-                                        ${escaparHtml(
-                                            item.localizacao
-                                        )}
-                                    </span>
-                                `
-                                : ""
-                        }
-
-                        <span class="agenda-status">
-                            ${escaparHtml(
-                                item.status
-                            )}
-                        </span>
-
-                    </div>
-
-
-                    <div class="media-edit-actions">
-
-                        <button
-                            type="button"
-                            class="btn-excluir"
-                            title="Excluir"
-                            data-excluir-agenda="${item.id}"
-                        >
-
-                            <i data-lucide="trash-2"></i>
-
-                        </button>
-
-                    </div>
-
-                </article>
-            `;
-
-        })
-        .join("");
-
-
-container
-    .querySelectorAll(
-        "[data-excluir-agenda]"
-    )
-    .forEach(botao => {
-
-        botao.addEventListener(
-            "click",
-            () => {
-
-                excluirAgenda(
-                    botao.dataset.excluirAgenda
-                );
-
-            }
-        );
-
-    });
-
-
-atualizarIcones();
-
-
-}
-
-async function excluirAgenda(id) {
-
-
-if (!id) {
-    return;
-}
-
-
-const confirmar =
-    window.confirm(
-        "Deseja realmente excluir este compromisso?"
-    );
-
-
-if (!confirmar) {
-    return;
-}
-
-
-try {
-
-    mostrarLoading(
-        "Excluindo compromisso..."
-    );
 
 
     const resultado =
@@ -2826,54 +2749,756 @@ try {
             .from(
                 "agenda_musicos"
             )
-            .delete()
-            .eq(
-                "id",
-                id
-            )
+            .select(`
+                id,
+                perfil_id,
+                titulo,
+                descricao,
+                tipo,
+                data_inicio,
+                data_fim,
+                localizacao,
+                status,
+                created_at,
+                updated_at
+            `)
             .eq(
                 "perfil_id",
                 estado.perfil.id
+            )
+            .order(
+                "data_inicio",
+                {
+                    ascending:
+                        true
+                }
             );
 
 
     if (resultado.error) {
-        throw resultado.error;
+
+        console.error(
+            "Erro ao carregar agenda:",
+            resultado.error
+        );
+
+
+        return;
+
     }
 
 
-    esconderLoading();
+    estado.agenda =
+        resultado.data || [];
 
 
-    mostrarToast(
-        "Compromisso removido."
-    );
+    renderizarAgenda();
+
+}
 
 
-    await carregarAgenda();
+function formatarDataAgenda(data) {
+
+    if (!data) {
+
+        return {
+
+            dia: "--",
+
+            mes: "---"
+
+        };
+
+    }
 
 
-} catch (erro) {
-
-    console.error(
-        "Erro ao excluir agenda:",
-        erro
-    );
+    const dataObj =
+        new Date(data);
 
 
-    esconderLoading();
+    if (
+        Number.isNaN(
+            dataObj.getTime()
+        )
+    ) {
+
+        return {
+
+            dia: "--",
+
+            mes: "---"
+
+        };
+
+    }
 
 
-    mostrarToast(
-        erro?.message ||
-        "Não foi possível excluir o compromisso.",
-        true
+    const meses = [
+
+        "jan",
+        "fev",
+        "mar",
+        "abr",
+        "mai",
+        "jun",
+        "jul",
+        "ago",
+        "set",
+        "out",
+        "nov",
+        "dez"
+
+    ];
+
+
+    return {
+
+        dia:
+            String(
+                dataObj.getDate()
+            ).padStart(2, "0"),
+
+        mes:
+            meses[
+                dataObj.getMonth()
+            ]
+
+    };
+
+}
+
+
+function formatarDataHora(data) {
+
+    if (!data) {
+
+        return "";
+
+    }
+
+
+    const dataObj =
+        new Date(data);
+
+
+    if (
+        Number.isNaN(
+            dataObj.getTime()
+        )
+    ) {
+
+        return "";
+
+    }
+
+
+    return dataObj.toLocaleString(
+        "pt-BR",
+        {
+
+            dateStyle:
+                "short",
+
+            timeStyle:
+                "short"
+
+        }
     );
 
 }
 
 
+function converterDatetimeLocalParaISO(
+    valor
+) {
+
+    if (!valor) {
+
+        return null;
+
+    }
+
+
+    const data =
+        new Date(valor);
+
+
+    if (
+        Number.isNaN(
+            data.getTime()
+        )
+    ) {
+
+        return null;
+
+    }
+
+
+    return data.toISOString();
+
 }
+
+
+function limparFormularioAgenda() {
+
+    const campos = [
+
+        ids.agendaTitulo,
+        ids.agendaInicio,
+        ids.agendaFim,
+        ids.agendaLocalizacao,
+        ids.agendaDescricao
+
+    ];
+
+
+    campos.forEach(id => {
+
+        const campo =
+            el(id);
+
+
+        if (campo) {
+
+            campo.value =
+                "";
+
+        }
+
+    });
+
+
+    const tipo =
+        el(ids.agendaTipo);
+
+    const status =
+        el(ids.agendaStatus);
+
+
+    if (tipo) {
+
+        tipo.value =
+            "evento";
+
+    }
+
+
+    if (status) {
+
+        status.value =
+            "agendado";
+
+    }
+
+
+    estado.editandoAgendaId =
+        null;
+
+
+    const botao =
+        el(ids.btnAdicionarAgenda);
+
+
+    if (botao) {
+
+        botao.innerHTML =
+            '<i data-lucide="calendar-plus"></i> Adicionar à agenda';
+
+    }
+
+
+    atualizarIcones();
+
+}
+
+
+async function adicionarAgenda() {
+
+    if (!estado.perfil?.id) {
+
+        mostrarToast(
+            "Perfil não carregado.",
+            true
+        );
+
+
+        return;
+
+    }
+
+
+    const titulo =
+        el(ids.agendaTitulo)
+            ?.value.trim() || "";
+
+
+    const tipo =
+        el(ids.agendaTipo)
+            ?.value ||
+            "evento";
+
+
+    const inicio =
+        el(ids.agendaInicio)
+            ?.value || "";
+
+
+    const fim =
+        el(ids.agendaFim)
+            ?.value || "";
+
+
+    const localizacao =
+        el(ids.agendaLocalizacao)
+            ?.value.trim() || "";
+
+
+    const descricao =
+        el(ids.agendaDescricao)
+            ?.value.trim() || "";
+
+
+    const status =
+        el(ids.agendaStatus)
+            ?.value ||
+            "agendado";
+
+
+    if (!titulo) {
+
+        mostrarToast(
+            "Informe o título do compromisso.",
+            true
+        );
+
+
+        el(ids.agendaTitulo)?.focus();
+
+        return;
+
+    }
+
+
+    if (!inicio) {
+
+        mostrarToast(
+            "Informe a data e o horário.",
+            true
+        );
+
+
+        el(ids.agendaInicio)?.focus();
+
+        return;
+
+    }
+
+
+    const dataInicio =
+        converterDatetimeLocalParaISO(
+            inicio
+        );
+
+
+    const dataFim =
+        converterDatetimeLocalParaISO(
+            fim
+        );
+
+
+    if (!dataInicio) {
+
+        mostrarToast(
+            "Informe uma data válida.",
+            true
+        );
+
+
+        return;
+
+    }
+
+
+    if (
+        dataFim &&
+        new Date(dataFim) <
+        new Date(dataInicio)
+    ) {
+
+        mostrarToast(
+            "O término não pode ser anterior ao início.",
+            true
+        );
+
+
+        return;
+
+    }
+
+
+    try {
+
+        mostrarLoading(
+
+            estado.editandoAgendaId
+                ? "Atualizando agenda..."
+                : "Adicionando compromisso..."
+
+        );
+
+
+        const dados = {
+
+            titulo,
+
+            descricao:
+                descricao || null,
+
+            tipo,
+
+            data_inicio:
+                dataInicio,
+
+            data_fim:
+                dataFim,
+
+            localizacao:
+                localizacao || null,
+
+            status,
+
+            updated_at:
+                new Date().toISOString()
+
+        };
+
+
+        let resultado;
+
+
+        if (
+            estado.editandoAgendaId
+        ) {
+
+            resultado =
+                await supabaseClient
+                    .from(
+                        "agenda_musicos"
+                    )
+                    .update(dados)
+                    .eq(
+                        "id",
+                        estado.editandoAgendaId
+                    )
+                    .eq(
+                        "perfil_id",
+                        estado.perfil.id
+                    );
+
+        } else {
+
+            resultado =
+                await supabaseClient
+                    .from(
+                        "agenda_musicos"
+                    )
+                    .insert({
+
+                        perfil_id:
+                            estado.perfil.id,
+
+                        ...dados
+
+                    });
+
+        }
+
+
+        if (resultado.error) {
+
+            throw resultado.error;
+
+        }
+
+
+        esconderLoading();
+
+
+        mostrarToast(
+
+            estado.editandoAgendaId
+                ? "Compromisso atualizado!"
+                : "Compromisso adicionado!"
+
+        );
+
+
+        limparFormularioAgenda();
+
+
+        await carregarAgenda();
+
+
+    } catch (erro) {
+
+        console.error(
+            "Erro ao salvar agenda:",
+            erro
+        );
+
+
+        esconderLoading();
+
+
+        mostrarToast(
+            erro?.message ||
+            "Não foi possível salvar o compromisso.",
+            true
+        );
+
+    }
+
+}
+
+
+function renderizarAgenda() {
+
+    const container =
+        el(ids.agendaEditList);
+
+
+    if (!container) {
+
+        return;
+
+    }
+
+
+    if (!estado.agenda.length) {
+
+        container.innerHTML = `
+
+            <div class="empty-editor">
+
+                <i data-lucide="calendar-days"></i>
+
+                <strong>
+                    Nenhum compromisso cadastrado
+                </strong>
+
+                <span>
+                    Adicione um evento para começar a organizar sua agenda.
+                </span>
+
+            </div>
+
+        `;
+
+
+        atualizarIcones();
+
+
+        return;
+
+    }
+
+
+    container.innerHTML =
+        estado.agenda
+            .map(item => {
+
+                const data =
+                    formatarDataAgenda(
+                        item.data_inicio
+                    );
+
+
+                return `
+
+                    <article class="agenda-edit-card">
+
+                        <div class="agenda-data">
+
+                            <strong>
+                                ${escaparHtml(data.dia)}
+                            </strong>
+
+                            <span>
+                                ${escaparHtml(data.mes)}
+                            </span>
+
+                        </div>
+
+
+                        <div class="agenda-edit-info">
+
+                            <strong>
+                                ${escaparHtml(item.titulo)}
+                            </strong>
+
+                            <span>
+                                ${escaparHtml(
+                                    formatarDataHora(
+                                        item.data_inicio
+                                    )
+                                )}
+                            </span>
+
+                            ${
+                                item.localizacao
+                                    ? `
+                                        <span>
+                                            ${escaparHtml(
+                                                item.localizacao
+                                            )}
+                                        </span>
+                                    `
+                                    : ""
+                            }
+
+                            <span class="agenda-status">
+
+                                ${escaparHtml(
+                                    item.status
+                                )}
+
+                            </span>
+
+                        </div>
+
+
+                        <div class="media-edit-actions">
+
+                            <button
+                                type="button"
+                                class="btn-excluir"
+                                title="Excluir"
+                                data-excluir-agenda="${escaparHtml(item.id)}"
+                            >
+
+                                <i data-lucide="trash-2"></i>
+
+                            </button>
+
+                        </div>
+
+                    </article>
+
+                `;
+
+            })
+            .join("");
+
+
+    container
+        .querySelectorAll(
+            "[data-excluir-agenda]"
+        )
+        .forEach(botao => {
+
+            botao.addEventListener(
+                "click",
+                () => {
+
+                    excluirAgenda(
+                        botao.dataset.excluirAgenda
+                    );
+
+                }
+            );
+
+        });
+
+
+    atualizarIcones();
+
+}
+
+
+async function excluirAgenda(id) {
+
+    if (!id) {
+
+        return;
+
+    }
+
+
+    const confirmar =
+        window.confirm(
+            "Deseja realmente excluir este compromisso?"
+        );
+
+
+    if (!confirmar) {
+
+        return;
+
+    }
+
+
+    try {
+
+        mostrarLoading(
+            "Excluindo compromisso..."
+        );
+
+
+        const resultado =
+            await supabaseClient
+                .from(
+                    "agenda_musicos"
+                )
+                .delete()
+                .eq(
+                    "id",
+                    id
+                )
+                .eq(
+                    "perfil_id",
+                    estado.perfil.id
+                );
+
+
+        if (resultado.error) {
+
+            throw resultado.error;
+
+        }
+
+
+        esconderLoading();
+
+
+        mostrarToast(
+            "Compromisso removido."
+        );
+
+
+        await carregarAgenda();
+
+
+    } catch (erro) {
+
+        console.error(
+            "Erro ao excluir agenda:",
+            erro
+        );
+
+
+        esconderLoading();
+
+
+        mostrarToast(
+            erro?.message ||
+            "Não foi possível excluir o compromisso.",
+            true
+        );
+
+    }
+
+}
+
 
 /* =====================================================
 FOTO
@@ -2881,120 +3506,128 @@ FOTO
 
 function inicializarFoto() {
 
+    el(ids.btnFoto)
+        ?.addEventListener(
+            "click",
+            () => {
 
-el(ids.btnFoto)
-    ?.addEventListener(
-        "click",
-        () => {
+                el(ids.fotoInput)?.click();
 
-            el(ids.fotoInput)?.click();
-
-        }
-    );
-
-
-el(ids.fotoInput)
-    ?.addEventListener(
-        "change",
-        evento => {
-
-            const arquivo =
-                evento.target.files?.[0];
-
-
-            if (!arquivo) {
-                return;
             }
+        );
 
 
-            if (
-                arquivo.size >
-                5 * 1024 * 1024
-            ) {
+    el(ids.fotoInput)
+        ?.addEventListener(
+            "change",
+            evento => {
 
-                mostrarToast(
-                    "A foto deve ter no máximo 5 MB.",
-                    true
+                const arquivo =
+                    evento.target.files?.[0];
+
+
+                if (!arquivo) {
+
+                    return;
+
+                }
+
+
+                if (
+                    arquivo.size >
+                    5 * 1024 * 1024
+                ) {
+
+                    mostrarToast(
+                        "A foto deve ter no máximo 5 MB.",
+                        true
+                    );
+
+
+                    evento.target.value =
+                        "";
+
+
+                    return;
+
+                }
+
+
+                if (
+                    !arquivo.type ||
+                    !arquivo.type.startsWith(
+                        "image/"
+                    )
+                ) {
+
+                    mostrarToast(
+                        "Selecione uma imagem válida.",
+                        true
+                    );
+
+
+                    evento.target.value =
+                        "";
+
+
+                    return;
+
+                }
+
+
+                estado.fotoArquivo =
+                    arquivo;
+
+
+                const leitor =
+                    new FileReader();
+
+
+                leitor.onload =
+                    () => {
+
+                        const img =
+                            el(
+                                ids.avatarImage
+                            );
+
+
+                        const initials =
+                            el(
+                                ids.avatarInitials
+                            );
+
+
+                        if (img) {
+
+                            img.src =
+                                leitor.result;
+
+                            img.style.display =
+                                "block";
+
+                        }
+
+
+                        if (initials) {
+
+                            initials.style.display =
+                                "none";
+
+                        }
+
+                    };
+
+
+                leitor.readAsDataURL(
+                    arquivo
                 );
 
-                evento.target.value =
-                    "";
-
-                return;
             }
-
-
-            if (
-                !arquivo.type ||
-                !arquivo.type.startsWith(
-                    "image/"
-                )
-            ) {
-
-                mostrarToast(
-                    "Selecione uma imagem válida.",
-                    true
-                );
-
-                evento.target.value =
-                    "";
-
-                return;
-            }
-
-
-            estado.fotoArquivo =
-                arquivo;
-
-
-            const leitor =
-                new FileReader();
-
-
-            leitor.onload =
-                () => {
-
-                    const img =
-                        el(
-                            ids.avatarImage
-                        );
-
-                    const initials =
-                        el(
-                            ids.avatarInitials
-                        );
-
-
-                    if (img) {
-
-                        img.src =
-                            leitor.result;
-
-                        img.style.display =
-                            "block";
-
-                    }
-
-
-                    if (initials) {
-
-                        initials.style.display =
-                            "none";
-
-                    }
-
-                };
-
-
-            leitor.readAsDataURL(
-                arquivo
-            );
-
-        }
-    );
-
+        );
 
 }
+
 
 /* =====================================================
 EVENTOS
@@ -3002,222 +3635,230 @@ EVENTOS
 
 function inicializarEventos() {
 
+    el(ids.form)
+        ?.addEventListener(
+            "submit",
+            evento => {
 
-el(ids.form)
-    ?.addEventListener(
-        "submit",
-        evento => {
-
-            evento.preventDefault();
-
-            salvarSobre();
-
-        }
-    );
-
-
-el(ids.btnSalvarTopo)
-    ?.addEventListener(
-        "click",
-        () => {
-
-            if (
-                estado.abaAtual ===
-                "sobre"
-            ) {
+                evento.preventDefault();
 
                 salvarSobre();
 
-                return;
             }
+        );
 
 
-            if (
-                estado.abaAtual ===
-                "portfolio"
-            ) {
+    el(ids.btnSalvarTopo)
+        ?.addEventListener(
+            "click",
+            () => {
 
-                adicionarPortfolio();
+                if (
+                    estado.abaAtual ===
+                    "sobre"
+                ) {
 
-                return;
-            }
+                    salvarSobre();
 
+                    return;
 
-            if (
-                estado.abaAtual ===
-                "agenda"
-            ) {
-
-                adicionarAgenda();
-
-            }
-
-        }
-    );
+                }
 
 
-el(ids.btnVoltar)
-    ?.addEventListener(
-        "click",
-        voltarPerfil
-    );
+                if (
+                    estado.abaAtual ===
+                    "portfolio"
+                ) {
+
+                    adicionarPortfolio();
+
+                    return;
+
+                }
 
 
-el(ids.btnCancelar)
-    ?.addEventListener(
-        "click",
-        voltarPerfil
-    );
+                if (
+                    estado.abaAtual ===
+                    "agenda"
+                ) {
 
+                    adicionarAgenda();
 
-el(ids.descricao)
-    ?.addEventListener(
-        "input",
-        atualizarContador
-    );
-
-
-el(ids.btnAdicionarPortfolio)
-    ?.addEventListener(
-        "click",
-        adicionarPortfolio
-    );
-
-
-el(ids.btnAdicionarAgenda)
-    ?.addEventListener(
-        "click",
-        adicionarAgenda
-    );
-
-
-el(ids.portfolioArquivo)
-    ?.addEventListener(
-        "change",
-        evento => {
-
-            const arquivo =
-                evento.target.files?.[0];
-
-
-            if (!arquivo) {
-                return;
-            }
-
-
-            if (
-                arquivo.size >
-                50 * 1024 * 1024
-            ) {
-
-                mostrarToast(
-                    "O arquivo deve ter no máximo 50 MB.",
-                    true
-                );
-
-                evento.target.value =
-                    "";
+                }
 
             }
+        );
 
-        }
-    );
 
+    el(ids.btnVoltar)
+        ?.addEventListener(
+            "click",
+            voltarPerfil
+        );
+
+
+    el(ids.btnCancelar)
+        ?.addEventListener(
+            "click",
+            voltarPerfil
+        );
+
+
+    el(ids.descricao)
+        ?.addEventListener(
+            "input",
+            atualizarContador
+        );
+
+
+    el(ids.btnAdicionarPortfolio)
+        ?.addEventListener(
+            "click",
+            adicionarPortfolio
+        );
+
+
+    el(ids.btnAdicionarAgenda)
+        ?.addEventListener(
+            "click",
+            adicionarAgenda
+        );
+
+
+    el(ids.portfolioArquivo)
+        ?.addEventListener(
+            "change",
+            evento => {
+
+                const arquivo =
+                    evento.target.files?.[0];
+
+
+                if (!arquivo) {
+
+                    return;
+
+                }
+
+
+                if (
+                    arquivo.size >
+                    50 * 1024 * 1024
+                ) {
+
+                    mostrarToast(
+                        "O arquivo deve ter no máximo 50 MB.",
+                        true
+                    );
+
+
+                    evento.target.value =
+                        "";
+
+                }
+
+            }
+        );
 
 }
+
 
 function voltarPerfil() {
 
-
-window.location.href =
-    "meu-perfil-cantor.html";
-
+    window.location.href =
+        "meu-perfil-cantor.html";
 
 }
+
 
 function atualizarIcones() {
 
+    if (window.lucide) {
 
-if (window.lucide) {
-    lucide.createIcons();
+        lucide.createIcons();
+
+    }
+
 }
 
-
-}
 
 async function iniciar() {
 
+    try {
 
-try {
-
-    mostrarLoading(
-        "Carregando perfil..."
-    );
-
-
-    inicializarAbas();
-    inicializarChips();
-    inicializarTiposPortfolio();
-    inicializarEventos();
-    inicializarFoto();
+        mostrarLoading(
+            "Carregando perfil..."
+        );
 
 
-    const carregou =
-        await carregarDados();
+        inicializarAbas();
+
+        inicializarChips();
+
+        inicializarTiposPortfolio();
+
+        inicializarEventos();
+
+        inicializarFoto();
 
 
-    if (!carregou) {
-        return;
+        const carregou =
+            await carregarDados();
+
+
+        if (!carregou) {
+
+            return;
+
+        }
+
+
+        esconderLoading();
+
+
+        atualizarIcones();
+
+
+    } catch (erro) {
+
+        console.error(
+            "Erro ao iniciar edição:",
+            erro
+        );
+
+
+        esconderLoading();
+
+
+        mostrarToast(
+            erro?.message ||
+            "Não foi possível carregar seu perfil.",
+            true
+        );
+
     }
 
-
-    esconderLoading();
-
-    atualizarIcones();
-
-
-} catch (erro) {
-
-    console.error(
-        "Erro ao iniciar edição:",
-        erro
-    );
-
-
-    esconderLoading();
-
-
-    mostrarToast(
-        erro?.message ||
-        "Não foi possível carregar seu perfil.",
-        true
-    );
 }
 
-
-}
 
 return {
 
+    iniciar,
 
-iniciar,
-
-salvar:
-    salvarSobre
-
+    salvar:
+        salvarSobre
 
 };
 
 })();
 
+
 document.addEventListener(
-"DOMContentLoaded",
-() => {
+    "DOMContentLoaded",
+    () => {
 
+        EditarPerfilCantor.iniciar();
 
-    EditarPerfilCantor.iniciar();
-
-}
-
-
+    }
 );
+

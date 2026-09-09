@@ -1,204 +1,207 @@
 <!DOCTYPE html>
-
 <html lang="pt-BR">
 
 <head>
 
+    <meta charset="UTF-8">
 
-<meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    >
 
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
->
+    <title>Editar Perfil - Cantor | MusicalWorld</title>
 
-<title>Editar Perfil - Cantor | MusicalWorld</title>
+    <link
+        rel="stylesheet"
+        href="css/editar-perfil-cantor.css"
+    >
 
-<link
-    rel="stylesheet"
-    href="css/editar-perfil-cantor.css"
->
-
-<script src="https://unpkg.com/lucide@latest"></script>
-
+    <script src="https://unpkg.com/lucide@latest"></script>
 
 </head>
 
 <body>
 
-
-<header class="editar-topbar">
-
-    <button
-        type="button"
-        class="topbar-voltar"
-        id="btnVoltar"
-        aria-label="Voltar"
-    >
-        <i data-lucide="arrow-left"></i>
-    </button>
-
-    <div class="topbar-titulo">
-
-        <span class="topbar-eyebrow">
-            MUSICALWORLD
-        </span>
-
-        <h1>
-            Editar perfil
-        </h1>
-
-    </div>
-
-    <button
-        type="button"
-        class="topbar-salvar"
-        id="btnSalvarTopo"
-    >
-        Salvar
-    </button>
-
-</header>
-
-
-<main class="editar-container">
-
-
     <!-- =====================================================
-         FOTO
+    TOPBAR
     ====================================================== -->
 
-    <section class="foto-card">
+    <header class="editar-topbar">
 
-        <div class="foto-area">
+        <button
+            type="button"
+            class="topbar-voltar"
+            id="btnVoltar"
+            aria-label="Voltar"
+        >
 
-            <div class="avatar-edit">
+            <i data-lucide="arrow-left"></i>
 
-                <img
-                    id="avatarImage"
-                    alt="Foto do perfil"
-                >
+        </button>
 
-                <span id="avatarInitials">
-                    U
-                </span>
 
-            </div>
+        <div class="topbar-titulo">
 
-            <button
-                type="button"
-                class="foto-botao"
-                id="btnFoto"
-            >
+            <span class="topbar-eyebrow">
+                MUSICALWORLD
+            </span>
 
-                <i data-lucide="camera"></i>
-
-                Alterar foto
-
-            </button>
-
-            <input
-                type="file"
-                id="fotoInput"
-                accept="image/png,image/jpeg,image/webp"
-                hidden
-            >
-
-            <p class="foto-ajuda">
-                JPG, PNG ou WEBP · máximo de 5 MB
-            </p>
+            <h1>
+                Editar perfil
+            </h1>
 
         </div>
 
-    </section>
-
-
-    <!-- =====================================================
-         ABAS
-    ====================================================== -->
-
-    <nav class="editor-tabs">
 
         <button
             type="button"
-            class="editor-tab ativo"
-            data-editor-tab="sobre"
+            class="topbar-salvar"
+            id="btnSalvarTopo"
         >
-
-            <i data-lucide="user-round"></i>
-
-            <span>
-                Sobre
-            </span>
-
+            Salvar
         </button>
 
+    </header>
 
-        <button
-            type="button"
-            class="editor-tab"
-            data-editor-tab="portfolio"
+
+    <main class="editar-container">
+
+
+        <!-- =================================================
+        FOTO
+        ================================================== -->
+
+        <section class="foto-card">
+
+            <div class="foto-area">
+
+                <div class="avatar-edit">
+
+                    <img
+                        id="avatarImage"
+                        alt="Foto do perfil"
+                    >
+
+                    <span id="avatarInitials">
+                        U
+                    </span>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="foto-botao"
+                    id="btnFoto"
+                >
+
+                    <i data-lucide="camera"></i>
+
+                    Alterar foto
+
+                </button>
+
+
+                <input
+                    type="file"
+                    id="fotoInput"
+                    accept="image/png,image/jpeg,image/webp"
+                    hidden
+                >
+
+
+                <p class="foto-ajuda">
+                    JPG, PNG ou WEBP. Máximo de 5 MB.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+        ABAS
+        ================================================== -->
+
+        <nav class="editor-tabs">
+
+            <button
+                type="button"
+                class="editor-tab ativo"
+                data-editor-tab="sobre"
+            >
+
+                <i data-lucide="user"></i>
+
+                <span>
+                    Sobre
+                </span>
+
+            </button>
+
+
+            <button
+                type="button"
+                class="editor-tab"
+                data-editor-tab="portfolio"
+            >
+
+                <i data-lucide="images"></i>
+
+                <span>
+                    Portfólio
+                </span>
+
+            </button>
+
+
+            <button
+                type="button"
+                class="editor-tab"
+                data-editor-tab="agenda"
+            >
+
+                <i data-lucide="calendar-days"></i>
+
+                <span>
+                    Agenda
+                </span>
+
+            </button>
+
+        </nav>
+
+
+        <!-- =================================================
+        SOBRE
+        ================================================== -->
+
+        <section
+            class="editor-panel ativo"
+            data-editor-panel="sobre"
+            id="editorSobre"
         >
 
-            <i data-lucide="images"></i>
-
-            <span>
-                Portfólio
-            </span>
-
-        </button>
-
-
-        <button
-            type="button"
-            class="editor-tab"
-            data-editor-tab="agenda"
-        >
-
-            <i data-lucide="calendar-days"></i>
-
-            <span>
-                Agenda
-            </span>
-
-        </button>
-
-    </nav>
-
-
-    <!-- =====================================================
-         SOBRE
-    ====================================================== -->
-
-    <section
-        class="editor-panel ativo"
-        data-editor-panel="sobre"
-    >
-
-        <form
-            id="formEditarPerfil"
-            autocomplete="off"
-        >
-
-
-            <!-- DADOS PESSOAIS -->
-
-            <section class="form-card">
+            <form
+                class="form-card"
+                id="formEditarPerfil"
+            >
 
                 <div class="section-heading">
 
                     <div class="section-icon">
-                        <i data-lucide="user"></i>
+                        <i data-lucide="user-round"></i>
                     </div>
 
                     <div>
 
                         <h2>
-                            Informações pessoais
+                            Informações do perfil
                         </h2>
 
                         <p>
-                            Mantenha seus dados básicos atualizados.
+                            Mantenha seus dados e informações profissionais atualizados.
                         </p>
 
                     </div>
@@ -215,8 +218,8 @@
                     <input
                         type="text"
                         id="nome"
-                        maxlength="120"
-                        placeholder="Seu nome completo"
+                        autocomplete="name"
+                        placeholder="Digite seu nome completo"
                     >
 
                 </div>
@@ -225,19 +228,14 @@
                 <div class="campo">
 
                     <label for="nomeExibicao">
-                        Nome artístico
+                        Nome artístico / nome de exibição
                     </label>
 
                     <input
                         type="text"
                         id="nomeExibicao"
-                        maxlength="120"
-                        placeholder="Como você quer ser encontrado"
+                        placeholder="Como você quer aparecer no MusicalWorld?"
                     >
-
-                    <small class="campo-ajuda">
-                        Esse será o nome exibido no seu perfil público.
-                    </small>
 
                 </div>
 
@@ -245,13 +243,13 @@
                 <div class="campo">
 
                     <label for="telefone">
-                        Telefone / WhatsApp
+                        Telefone
                     </label>
 
                     <input
                         type="tel"
                         id="telefone"
-                        maxlength="30"
+                        autocomplete="tel"
                         placeholder="(00) 00000-0000"
                     >
 
@@ -261,94 +259,13 @@
                 <div class="campo">
 
                     <label>
-                        E-mail da conta
+                        Tipo de perfil
                     </label>
 
-                    <div class="conta-email">
-
-                        <span>
-                            E-mail utilizado para acessar sua conta
-                        </span>
-
-                        <strong id="emailConta">
-                            Carregando...
-                        </strong>
-
-                    </div>
-
-                </div>
-
-            </section>
-
-
-            <!-- PERFIL ARTÍSTICO -->
-
-            <section class="form-card">
-
-                <div class="section-heading">
-
-                    <div class="section-icon">
-                        <i data-lucide="mic-2"></i>
-                    </div>
-
-                    <div>
-
-                        <h2>
-                            Perfil artístico
-                        </h2>
-
-                        <p>
-                            Conte ao público quem você é como cantor.
-                        </p>
-
-                    </div>
-
-                </div>
-
-
-                <div class="campo">
-
-                    <label for="descricao">
-                        Sobre você
-                    </label>
-
-                    <textarea
-                        id="descricao"
-                        maxlength="1000"
-                        placeholder="Fale sobre seu trabalho, sua trajetória e seu estilo..."
-                    ></textarea>
-
-                    <span
-                        class="contador"
+                    <select
+                        id="tipoArtista"
+                        disabled
                     >
-                        <span id="contadorDescricao">0</span>/1000
-                    </span>
-
-                </div>
-
-
-                <div class="campo">
-
-                    <label for="experiencia">
-                        Experiência
-                    </label>
-
-                    <textarea
-                        id="experiencia"
-                        maxlength="500"
-                        placeholder="Ex.: 8 anos de experiência com shows, eventos e apresentações..."
-                    ></textarea>
-
-                </div>
-
-
-                <div class="campo">
-
-                    <label for="tipoArtista">
-                        Tipo de artista
-                    </label>
-
-                    <select id="tipoArtista">
 
                         <option value="Cantor">
                             Cantor
@@ -356,36 +273,9 @@
 
                     </select>
 
-                    <small class="campo-ajuda">
-                        Seu perfil será apresentado como cantor no MusicalWorld.
-                    </small>
-
-                </div>
-
-            </section>
-
-
-            <!-- LOCALIZAÇÃO -->
-
-            <section class="form-card">
-
-                <div class="section-heading">
-
-                    <div class="section-icon">
-                        <i data-lucide="map-pin"></i>
-                    </div>
-
-                    <div>
-
-                        <h2>
-                            Localização e atendimento
-                        </h2>
-
-                        <p>
-                            Informe onde você atua e até onde pode atender.
-                        </p>
-
-                    </div>
+                    <span class="campo-ajuda">
+                        Este perfil está configurado como cantor.
+                    </span>
 
                 </div>
 
@@ -399,8 +289,7 @@
                     <input
                         type="text"
                         id="localizacao"
-                        maxlength="150"
-                        placeholder="Ex.: Goiânia - GO"
+                        placeholder="Cidade, estado ou região"
                     >
 
                 </div>
@@ -415,306 +304,283 @@
                     <input
                         type="text"
                         id="areaAtendimento"
-                        maxlength="200"
                         placeholder="Ex.: Goiânia e região"
                     >
 
                 </div>
 
-            </section>
 
+                <div class="campo">
 
-            <!-- ESTILOS -->
+                    <label for="descricao">
+                        Sobre você
+                    </label>
 
-            <section class="form-card">
+                    <textarea
+                        id="descricao"
+                        maxlength="1000"
+                        placeholder="Conte um pouco sobre você, seu trabalho e sua experiência..."
+                    ></textarea>
 
-                <div class="section-heading">
+                    <span
+                        class="contador"
+                        id="contadorDescricao"
+                    >
+                        0
+                    </span>
 
-                    <div class="section-icon">
-                        <i data-lucide="music-2"></i>
-                    </div>
-
-                    <div>
-
-                        <h2>
-                            Estilos musicais
-                        </h2>
-
-                        <p>
-                            Selecione os estilos que representam seu trabalho.
-                        </p>
-
-                    </div>
+                    <span class="campo-ajuda">
+                        Máximo de 1000 caracteres.
+                    </span>
 
                 </div>
 
 
-                <div
-                    class="chips"
-                    id="estilos"
-                >
+                <div class="campo">
 
-                    <button
-                        type="button"
-                        class="chip"
-                        data-value="Sertanejo"
-                    >
-                        Sertanejo
-                    </button>
+                    <label for="experiencia">
+                        Experiência
+                    </label>
 
-                    <button
-                        type="button"
-                        class="chip"
-                        data-value="MPB"
-                    >
-                        MPB
-                    </button>
-
-                    <button
-                        type="button"
-                        class="chip"
-                        data-value="Pop"
-                    >
-                        Pop
-                    </button>
-
-                    <button
-                        type="button"
-                        class="chip"
-                        data-value="Rock"
-                    >
-                        Rock
-                    </button>
-
-                    <button
-                        type="button"
-                        class="chip"
-                        data-value="Pagode"
-                    >
-                        Pagode
-                    </button>
-
-                    <button
-                        type="button"
-                        class="chip"
-                        data-value="Forró"
-                    >
-                        Forró
-                    </button>
-
-                    <button
-                        type="button"
-                        class="chip"
-                        data-value="Gospel"
-                    >
-                        Gospel
-                    </button>
-
-                    <button
-                        type="button"
-                        class="chip"
-                        data-value="Reggae"
-                    >
-                        Reggae
-                    </button>
-
-                    <button
-                        type="button"
-                        class="chip"
-                        data-value="Eletrônica"
-                    >
-                        Eletrônica
-                    </button>
-
-                    <button
-                        type="button"
-                        class="chip"
-                        data-value="Internacional"
-                    >
-                        Internacional
-                    </button>
+                    <textarea
+                        id="experiencia"
+                        placeholder="Conte sobre sua experiência profissional, bandas, shows ou trabalhos realizados..."
+                    ></textarea>
 
                 </div>
 
-            </section>
 
+                <div class="campo">
 
-            <!-- SERVIÇOS -->
+                    <label>
+                        Estilos musicais
+                    </label>
 
-            <section class="form-card">
+                    <div
+                        class="chips"
+                        id="estilos"
+                    >
 
-                <div class="section-heading">
+                        <button
+                            type="button"
+                            class="chip"
+                            data-value="Sertanejo"
+                        >
+                            Sertanejo
+                        </button>
 
-                    <div class="section-icon">
-                        <i data-lucide="briefcase-business"></i>
-                    </div>
+                        <button
+                            type="button"
+                            class="chip"
+                            data-value="MPB"
+                        >
+                            MPB
+                        </button>
 
-                    <div>
+                        <button
+                            type="button"
+                            class="chip"
+                            data-value="Pop"
+                        >
+                            Pop
+                        </button>
 
-                        <h2>
-                            Serviços
-                        </h2>
+                        <button
+                            type="button"
+                            class="chip"
+                            data-value="Rock"
+                        >
+                            Rock
+                        </button>
 
-                        <p>
-                            Escolha os serviços que você oferece.
-                        </p>
+                        <button
+                            type="button"
+                            class="chip"
+                            data-value="Pagode"
+                        >
+                            Pagode
+                        </button>
+
+                        <button
+                            type="button"
+                            class="chip"
+                            data-value="Forró"
+                        >
+                            Forró
+                        </button>
+
+                        <button
+                            type="button"
+                            class="chip"
+                            data-value="Gospel"
+                        >
+                            Gospel
+                        </button>
+
+                        <button
+                            type="button"
+                            class="chip"
+                            data-value="Reggae"
+                        >
+                            Reggae
+                        </button>
+
+                        <button
+                            type="button"
+                            class="chip"
+                            data-value="Eletrônica"
+                        >
+                            Eletrônica
+                        </button>
+
+                        <button
+                            type="button"
+                            class="chip"
+                            data-value="Internacional"
+                        >
+                            Internacional
+                        </button>
 
                     </div>
 
                 </div>
 
 
-                <div
-                    class="chips"
-                    id="servicos"
-                >
+                <div class="campo">
 
-                    <button
-                        type="button"
-                        class="chip"
-                        data-value="Shows"
-                    >
-                        Shows
-                    </button>
+                    <label>
+                        Serviços oferecidos
+                    </label>
 
-                    <button
-                        type="button"
-                        class="chip"
-                        data-value="Eventos"
+                    <div
+                        class="chips"
+                        id="servicos"
                     >
-                        Eventos
-                    </button>
 
-                    <button
-                        type="button"
-                        class="chip"
-                        data-value="Casamentos"
-                    >
-                        Casamentos
-                    </button>
+                        <button
+                            type="button"
+                            class="chip"
+                            data-value="Shows"
+                        >
+                            Shows
+                        </button>
 
-                    <button
-                        type="button"
-                        class="chip"
-                        data-value="Aniversários"
-                    >
-                        Aniversários
-                    </button>
+                        <button
+                            type="button"
+                            class="chip"
+                            data-value="Eventos"
+                        >
+                            Eventos
+                        </button>
 
-                    <button
-                        type="button"
-                        class="chip"
-                        data-value="Corporativo"
-                    >
-                        Corporativo
-                    </button>
+                        <button
+                            type="button"
+                            class="chip"
+                            data-value="Casamentos"
+                        >
+                            Casamentos
+                        </button>
 
-                    <button
-                        type="button"
-                        class="chip"
-                        data-value="Bares e restaurantes"
-                    >
-                        Bares e restaurantes
-                    </button>
+                        <button
+                            type="button"
+                            class="chip"
+                            data-value="Aniversários"
+                        >
+                            Aniversários
+                        </button>
 
-                    <button
-                        type="button"
-                        class="chip"
-                        data-value="Cerimônias"
-                    >
-                        Cerimônias
-                    </button>
+                        <button
+                            type="button"
+                            class="chip"
+                            data-value="Corporativo"
+                        >
+                            Corporativo
+                        </button>
 
-                    <button
-                        type="button"
-                        class="chip"
-                        data-value="Apresentação acústica"
-                    >
-                        Acústico
-                    </button>
+                        <button
+                            type="button"
+                            class="chip"
+                            data-value="Bares e restaurantes"
+                        >
+                            Bares e restaurantes
+                        </button>
+
+                        <button
+                            type="button"
+                            class="chip"
+                            data-value="Cerimônias"
+                        >
+                            Cerimônias
+                        </button>
+
+                        <button
+                            type="button"
+                            class="chip"
+                            data-value="Apresentação acústica"
+                        >
+                            Acústico
+                        </button>
+
+                    </div>
 
                 </div>
 
-            </section>
+
+                <div class="campo">
+
+                    <label class="switch-row">
+
+                        <span>
+
+                            <strong>
+                                Disponível para contratação
+                            </strong>
+
+                            <small>
+                                Indica aos usuários que você está disponível para receber propostas.
+                            </small>
+
+                        </span>
+
+                        <input
+                            type="checkbox"
+                            id="disponivel"
+                        >
+
+                        <span class="switch"></span>
+
+                    </label>
+
+                </div>
 
 
-            <!-- DISPONIBILIDADE -->
+                <div class="campo">
 
-            <section class="form-card">
+                    <label>
+                        Conta
+                    </label>
 
-                <label class="switch-row">
+                    <div class="conta-email">
 
-                    <span>
+                        <span>
+                            E-mail da conta
+                        </span>
 
-                        <strong>
-                            Estou disponível para contratar
+                        <strong id="emailConta">
+                            Não informado
                         </strong>
 
-                        <small>
-                            Quando ativado, seu perfil poderá aparecer
-                            como disponível para novas oportunidades.
-                        </small>
-
-                    </span>
-
-                    <input
-                        type="checkbox"
-                        id="disponivel"
-                    >
-
-                    <span class="switch"></span>
-
-                </label>
-
-            </section>
-
-
-            <!-- CONTA -->
-
-            <section class="form-card conta-card">
-
-                <div class="section-heading">
-
-                    <div class="section-icon">
-                        <i data-lucide="shield-check"></i>
-                    </div>
-
-                    <div>
-
-                        <h2>
-                            Conta
-                        </h2>
-
-                        <p>
-                            Informações relacionadas à sua conta.
-                        </p>
-
                     </div>
 
                 </div>
 
+            </form>
 
-                <div class="conta-email">
-
-                    <span>
-                        Tipo de perfil
-                    </span>
-
-                    <strong>
-                        Cantor
-                    </strong>
-
-                </div>
-
-            </section>
-
-
-            <!-- AÇÕES -->
 
             <div class="acoes-finais">
 
                 <button
-                    type="submit"
+                    type="button"
                     class="btn-salvar"
                     id="btnSalvar"
                 >
@@ -724,6 +590,7 @@
                     Salvar alterações
 
                 </button>
+
 
                 <button
                     type="button"
@@ -735,167 +602,168 @@
 
             </div>
 
-        </form>
-
-    </section>
-
-
-    <!-- =====================================================
-         PORTFÓLIO
-    ====================================================== -->
-
-    <section
-        class="editor-panel"
-        data-editor-panel="portfolio"
-    >
-
-        <section class="form-card">
-
-            <div class="section-heading">
-
-                <div class="section-icon">
-                    <i data-lucide="images"></i>
-                </div>
-
-                <div>
-
-                    <h2>
-                        Meu portfólio
-                    </h2>
-
-                    <p>
-                        Mostre apresentações, fotos, vídeos e músicas.
-                    </p>
-
-                </div>
-
-            </div>
-
-
-            <div class="portfolio-tipo-tabs">
-
-                <button
-                    type="button"
-                    class="portfolio-tipo ativo"
-                    data-media-type="imagem"
-                >
-
-                    <i data-lucide="image"></i>
-
-                    Imagem
-
-                </button>
-
-                <button
-                    type="button"
-                    class="portfolio-tipo"
-                    data-media-type="video"
-                >
-
-                    <i data-lucide="video"></i>
-
-                    Vídeo
-
-                </button>
-
-                <button
-                    type="button"
-                    class="portfolio-tipo"
-                    data-media-type="audio"
-                >
-
-                    <i data-lucide="music"></i>
-
-                    Áudio
-
-                </button>
-
-            </div>
-
-
-            <div class="campo">
-
-                <label for="portfolioTitulo">
-                    Título
-                </label>
-
-                <input
-                    type="text"
-                    id="portfolioTitulo"
-                    maxlength="120"
-                    placeholder="Ex.: Apresentação ao vivo"
-                >
-
-            </div>
-
-
-            <div class="campo">
-
-                <label for="portfolioDescricao">
-                    Descrição
-                </label>
-
-                <textarea
-                    id="portfolioDescricao"
-                    maxlength="500"
-                    placeholder="Descreva este trabalho..."
-                ></textarea>
-
-            </div>
-
-
-            <div class="campo">
-
-                <label for="portfolioArquivo">
-                    Arquivo
-                </label>
-
-                <input
-                    type="file"
-                    id="portfolioArquivo"
-                >
-
-                <small
-                    class="campo-ajuda"
-                    id="portfolioAjuda"
-                >
-                    JPG, PNG ou WEBP.
-                </small>
-
-            </div>
-
-
-            <div class="campo">
-
-                <label for="portfolioUrl">
-                    Ou informe uma URL
-                </label>
-
-                <input
-                    type="url"
-                    id="portfolioUrl"
-                    placeholder="https://..."
-                >
-
-            </div>
-
-
-            <button
-                type="button"
-                class="btn-adicionar"
-                id="btnAdicionarPortfolio"
-            >
-
-                <i data-lucide="plus"></i>
-
-                Adicionar ao portfólio
-
-            </button>
-
         </section>
 
 
-        <section class="form-card">
+        <!-- =================================================
+        PORTFÓLIO
+        ================================================== -->
+
+        <section
+            class="editor-panel"
+            data-editor-panel="portfolio"
+            id="editorPortfolio"
+        >
+
+            <div class="form-card">
+
+                <div class="section-heading">
+
+                    <div class="section-icon">
+                        <i data-lucide="images"></i>
+                    </div>
+
+                    <div>
+
+                        <h2>
+                            Portfólio
+                        </h2>
+
+                        <p>
+                            Adicione imagens, vídeos e áudios para apresentar seu trabalho.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="portfolio-tipo-tabs">
+
+                    <button
+                        type="button"
+                        class="portfolio-tipo ativo"
+                        data-media-type="imagem"
+                    >
+
+                        <i data-lucide="image"></i>
+
+                        Imagem
+
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="portfolio-tipo"
+                        data-media-type="video"
+                    >
+
+                        <i data-lucide="video"></i>
+
+                        Vídeo
+
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="portfolio-tipo"
+                        data-media-type="audio"
+                    >
+
+                        <i data-lucide="music"></i>
+
+                        Áudio
+
+                    </button>
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label for="portfolioTitulo">
+                        Título
+                    </label>
+
+                    <input
+                        type="text"
+                        id="portfolioTitulo"
+                        placeholder="Ex.: Show ao vivo"
+                    >
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label for="portfolioDescricao">
+                        Descrição
+                    </label>
+
+                    <textarea
+                        id="portfolioDescricao"
+                        placeholder="Descreva este trabalho..."
+                    ></textarea>
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label for="portfolioArquivo">
+                        Arquivo
+                    </label>
+
+                    <input
+                        type="file"
+                        id="portfolioArquivo"
+                    >
+
+                    <span
+                        class="campo-ajuda"
+                        id="portfolioAjuda"
+                    >
+                        JPG, PNG ou WEBP.
+                    </span>
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label for="portfolioUrl">
+                        URL opcional
+                    </label>
+
+                    <input
+                        type="url"
+                        id="portfolioUrl"
+                        placeholder="https://..."
+                    >
+
+                    <span class="campo-ajuda">
+                        Você pode informar uma URL em vez de enviar um arquivo.
+                    </span>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="btn-adicionar"
+                    id="btnAdicionarPortfolio"
+                >
+
+                    <i data-lucide="plus"></i>
+
+                    Adicionar ao portfólio
+
+                </button>
+
+            </div>
+
 
             <div
                 class="portfolio-edit-list"
@@ -904,58 +772,54 @@
 
         </section>
 
-    </section>
 
+        <!-- =================================================
+        AGENDA
+        ================================================== -->
 
-    <!-- =====================================================
-         AGENDA
-    ====================================================== -->
+        <section
+            class="editor-panel"
+            data-editor-panel="agenda"
+            id="editorAgenda"
+        >
 
-    <section
-        class="editor-panel"
-        data-editor-panel="agenda"
-    >
+            <div class="form-card">
 
-        <section class="form-card">
+                <div class="section-heading">
 
-            <div class="section-heading">
+                    <div class="section-icon">
+                        <i data-lucide="calendar-days"></i>
+                    </div>
 
-                <div class="section-icon">
-                    <i data-lucide="calendar-days"></i>
+                    <div>
+
+                        <h2>
+                            Agenda
+                        </h2>
+
+                        <p>
+                            Organize seus eventos, apresentações e compromissos.
+                        </p>
+
+                    </div>
+
                 </div>
 
-                <div>
 
-                    <h2>
-                        Minha agenda
-                    </h2>
+                <div class="campo">
 
-                    <p>
-                        Organize seus próximos compromissos e apresentações.
-                    </p>
+                    <label for="agendaTitulo">
+                        Título
+                    </label>
+
+                    <input
+                        type="text"
+                        id="agendaTitulo"
+                        placeholder="Ex.: Show no evento"
+                    >
 
                 </div>
 
-            </div>
-
-
-            <div class="campo">
-
-                <label for="agendaTitulo">
-                    Título
-                </label>
-
-                <input
-                    type="text"
-                    id="agendaTitulo"
-                    maxlength="120"
-                    placeholder="Ex.: Show de aniversário"
-                >
-
-            </div>
-
-
-            <div class="campo-grid">
 
                 <div class="campo">
 
@@ -977,8 +841,8 @@
                             Ensaio
                         </option>
 
-                        <option value="compromisso">
-                            Compromisso
+                        <option value="gravação">
+                            Gravação
                         </option>
 
                         <option value="outro">
@@ -986,6 +850,67 @@
                         </option>
 
                     </select>
+
+                </div>
+
+
+                <div class="campo campo-grid">
+
+                    <div>
+
+                        <label for="agendaInicio">
+                            Início
+                        </label>
+
+                        <input
+                            type="datetime-local"
+                            id="agendaInicio"
+                        >
+
+                    </div>
+
+
+                    <div>
+
+                        <label for="agendaFim">
+                            Término
+                        </label>
+
+                        <input
+                            type="datetime-local"
+                            id="agendaFim"
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label for="agendaLocalizacao">
+                        Localização
+                    </label>
+
+                    <input
+                        type="text"
+                        id="agendaLocalizacao"
+                        placeholder="Local do evento"
+                    >
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label for="agendaDescricao">
+                        Descrição
+                    </label>
+
+                    <textarea
+                        id="agendaDescricao"
+                        placeholder="Informações adicionais..."
+                    ></textarea>
 
                 </div>
 
@@ -1006,6 +931,10 @@
                             Confirmado
                         </option>
 
+                        <option value="realizado">
+                            Realizado
+                        </option>
+
                         <option value="cancelado">
                             Cancelado
                         </option>
@@ -1014,88 +943,21 @@
 
                 </div>
 
-            </div>
 
-
-            <div class="campo-grid">
-
-                <div class="campo">
-
-                    <label for="agendaInicio">
-                        Início
-                    </label>
-
-                    <input
-                        type="datetime-local"
-                        id="agendaInicio"
-                    >
-
-                </div>
-
-
-                <div class="campo">
-
-                    <label for="agendaFim">
-                        Término
-                    </label>
-
-                    <input
-                        type="datetime-local"
-                        id="agendaFim"
-                    >
-
-                </div>
-
-            </div>
-
-
-            <div class="campo">
-
-                <label for="agendaLocalizacao">
-                    Localização
-                </label>
-
-                <input
-                    type="text"
-                    id="agendaLocalizacao"
-                    maxlength="200"
-                    placeholder="Local do evento"
+                <button
+                    type="button"
+                    class="btn-adicionar"
+                    id="btnAdicionarAgenda"
                 >
 
-            </div>
+                    <i data-lucide="calendar-plus"></i>
 
+                    Adicionar à agenda
 
-            <div class="campo">
-
-                <label for="agendaDescricao">
-                    Descrição
-                </label>
-
-                <textarea
-                    id="agendaDescricao"
-                    maxlength="500"
-                    placeholder="Detalhes do compromisso..."
-                ></textarea>
+                </button>
 
             </div>
 
-
-            <button
-                type="button"
-                class="btn-adicionar"
-                id="btnAdicionarAgenda"
-            >
-
-                <i data-lucide="calendar-plus"></i>
-
-                Adicionar à agenda
-
-            </button>
-
-        </section>
-
-
-        <section class="form-card">
 
             <div
                 class="agenda-edit-list"
@@ -1104,68 +966,69 @@
 
         </section>
 
-    </section>
 
-</main>
-
-
-<!-- =====================================================
-     TOAST
-====================================================== -->
-
-<div
-    class="toast"
-    id="toast"
-    role="status"
-    aria-live="polite"
->
-
-    <i data-lucide="check-circle-2"></i>
-
-    <span id="toastMessage"></span>
-
-</div>
+    </main>
 
 
-<!-- =====================================================
-     LOADING
-====================================================== -->
+    <!-- =====================================================
+    TOAST
+    ====================================================== -->
 
-<div
-    class="loading-overlay"
-    id="loadingOverlay"
->
+    <div
+        class="toast"
+        id="toast"
+        role="status"
+        aria-live="polite"
+    >
 
-    <div class="loading-box">
+        <i data-lucide="check-circle-2"></i>
 
-        <div class="spinner"></div>
-
-        <strong>
-            Aguarde
-        </strong>
-
-        <span id="loadingText">
-            Carregando...
-        </span>
+        <span id="toastMessage"></span>
 
     </div>
 
-</div>
+
+    <!-- =====================================================
+    LOADING
+    ====================================================== -->
+
+    <div
+        class="loading-overlay"
+        id="loadingOverlay"
+    >
+
+        <div class="loading-box">
+
+            <div class="spinner"></div>
+
+            <strong id="loadingText">
+                Carregando...
+            </strong>
+
+            <span>
+                Aguarde um momento.
+            </span>
+
+        </div>
+
+    </div>
 
 
-<!-- =====================================================
-     SCRIPTS
-====================================================== -->
+    <!-- =====================================================
+    SCRIPTS
+    ====================================================== -->
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<script src="js/core/SupabaseClient.js"></script>
-<script src="js/core/Sessao.js"></script>
-<script src="js/core/UsuarioAtual.js"></script>
-<script src="js/core/ControleSessao.js"></script>
+    <script src="js/core/SupabaseClient.js"></script>
 
-<script src="js/editar-perfil-cantor.js"></script>
+    <script src="js/core/Sessao.js"></script>
 
+    <script src="js/core/UsuarioAtual.js"></script>
+
+    <script src="js/core/ControleSessao.js"></script>
+
+    <script src="js/editar-perfil-cantor.js"></script>
 
 </body>
 
