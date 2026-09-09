@@ -1055,6 +1055,17 @@ flex-shrink: 0;
 
 
 }
+.icone-localizacao {
+    width: 15px;
+    height: 15px;
+    flex: 0 0 15px;
+    display: inline-block;
+    fill: none;
+    stroke: #6366f1;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
 
 .ad-footer span,
 .ad-localizacao {

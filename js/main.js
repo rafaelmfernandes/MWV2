@@ -844,21 +844,25 @@ card.innerHTML = `
 
     <div class="ad-footer">
 
-        <span class="ad-localizacao">
+    <span class="ad-localizacao">
 
-            📍 ${escaparHtml(localizacao)}
+        <svg class="icone-localizacao" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 21s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12Z"></path>
+            <circle cx="12" cy="9" r="2.5"></circle>
+        </svg>
 
-        </span>
+        ${escaparHtml(localizacao)}
 
+    </span>
 
-        <button
-            class="btn-detalhes"
-            type="button"
-        >
-            Ver perfil
-        </button>
+    <button
+        class="btn-detalhes"
+        type="button"
+    >
+        Ver perfil
+    </button>
 
-    </div>
+</div>
 
 `;
 
