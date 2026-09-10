@@ -17,7 +17,9 @@ const estado = {
     tipoMedia: "imagem",
 
     editandoPortfolioId: null,
-    editandoAgendaId: null
+    editandoAgendaId: null,
+    servicosValores: [],
+    editandoServicoId: null,
 };
 
 
@@ -72,7 +74,18 @@ const ids = {
     toastMessage: "toastMessage",
 
     loadingOverlay: "loadingOverlay",
-    loadingText: "loadingText"
+    loadingText: "loadingText",
+
+    servicoNome: "servicoNome",
+    servicoDescricao: "servicoDescricao",
+    servicoDuracao: "servicoDuracao",
+    servicoTipoPreco: "servicoTipoPreco",
+    servicoValor: "servicoValor",
+    servicoAtivo: "servicoAtivo",
+    campoValorServico: "campoValorServico",
+    btnAdicionarServico: "btnAdicionarServico",
+    btnCancelarServico: "btnCancelarServico",
+    servicosList: "servicosList",
 };
 
 
@@ -706,7 +719,8 @@ async function carregarDados() {
 
     await Promise.all([
         carregarPortfolio(),
-        carregarAgenda()
+        carregarAgenda(),
+        carregarServicosValores()
     ]);
 
 
@@ -2611,6 +2625,920 @@ async function excluirAgenda(id) {
 
 
 /* =====================================================
+   SERVIÇOS E VALORES
+====================================================== */
+
+async function carregarServicosValores() {
+
+    if (!estado.perfil?.id) {
+        return;
+    }
+
+
+    const resultado =
+        await supabaseClient
+            .from("servicos_artistas")
+            .select(`
+                id,
+                perfil_id,
+                nome_servico,
+                descricao,
+                duracao,
+                tipo_preco,
+                valor,
+                ativo,
+                created_at,
+                updated_at
+            `)
+            .eq(
+                "perfil_id",
+                estado.perfil.id
+            )
+            .order(
+                "created_at",
+                {
+                    ascending: true
+                }
+            );
+
+
+    if (resultado.error) {
+
+        console.error(
+            "Erro ao carregar serviços:",
+            resultado.error
+        );
+
+        estado.servicosValores = [];
+
+        renderizarServicosValores();
+
+        return;
+    }
+
+
+    estado.servicosValores =
+        resultado.data || [];
+
+
+    renderizarServicosValores();
+}
+
+
+function formatarValorServico(valor) {
+
+    if (
+        valor === null ||
+        valor === undefined ||
+        valor === ""
+    ) {
+        return "";
+    }
+
+
+    const numero =
+        Number(valor);
+
+
+    if (Number.isNaN(numero)) {
+        return "";
+    }
+
+
+    return numero.toLocaleString(
+        "pt-BR",
+        {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }
+    );
+}
+
+
+function obterTextoTipoPreco(tipoPreco) {
+
+    const tipos = {
+
+        fixo: "Preço fixo",
+
+        a_partir_de: "A partir de",
+
+        sob_consulta: "Sob consulta"
+
+    };
+
+
+    return tipos[tipoPreco] ||
+        "Preço não informado";
+}
+
+
+function obterPrecoServico(item) {
+
+    if (
+        item.tipo_preco ===
+        "sob_consulta"
+    ) {
+
+        return "Sob consulta";
+
+    }
+
+
+    const valor =
+        formatarValorServico(
+            item.valor
+        );
+
+
+    if (!valor) {
+        return "Valor não informado";
+    }
+
+
+    if (
+        item.tipo_preco ===
+        "a_partir_de"
+    ) {
+
+        return `A partir de R$ ${valor}`;
+
+    }
+
+
+    return `R$ ${valor}`;
+}
+
+
+function renderizarServicosValores() {
+
+    const container =
+        el(ids.servicosList);
+
+
+    if (!container) {
+        return;
+    }
+
+
+    if (!estado.servicosValores.length) {
+
+        container.innerHTML = `
+            <div class="empty-editor">
+
+                <i data-lucide="briefcase-business"></i>
+
+                <strong>
+                    Nenhum serviço cadastrado
+                </strong>
+
+                <span>
+                    Cadastre seus serviços e valores para facilitar suas contratações.
+                </span>
+
+            </div>
+        `;
+
+
+        atualizarIcones();
+
+        return;
+    }
+
+
+    container.innerHTML =
+        estado.servicosValores
+            .map(item => {
+
+                const status =
+                    item.ativo !== false
+                        ? "Ativo"
+                        : "Inativo";
+
+
+                const classeStatus =
+                    item.ativo !== false
+                        ? "ativo"
+                        : "inativo";
+
+
+                return `
+                    <article
+                        class="servico-edit-card">
+
+                        <div class="servico-edit-icon">
+
+                            <i data-lucide="briefcase"></i>
+
+                        </div>
+
+
+                        <div class="servico-edit-info">
+
+                            <strong>
+                                ${escaparHtml(
+                                    item.nome_servico
+                                )}
+                            </strong>
+
+                            ${
+                                item.descricao
+                                    ? `
+                                        <span>
+                                            ${escaparHtml(
+                                                item.descricao
+                                            )}
+                                        </span>
+                                    `
+                                    : ""
+                            }
+
+                            <div class="servico-edit-meta">
+
+                                ${
+                                    item.duracao
+                                        ? `
+                                            <span>
+                                                <i data-lucide="clock-3"></i>
+                                                ${escaparHtml(
+                                                    item.duracao
+                                                )}
+                                            </span>
+                                        `
+                                        : ""
+                                }
+
+                                <span>
+                                    ${escaparHtml(
+                                        obterTextoTipoPreco(
+                                            item.tipo_preco
+                                        )
+                                    )}
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="servico-edit-preco">
+
+                            <strong>
+                                ${escaparHtml(
+                                    obterPrecoServico(item)
+                                )}
+                            </strong>
+
+                            <span
+                                class="servico-status ${classeStatus}">
+
+                                ${status}
+
+                            </span>
+
+                        </div>
+
+
+                        <div class="media-edit-actions">
+
+                            <button
+                                type="button"
+                                class="btn-editar-servico"
+                                title="Editar serviço"
+                                data-editar-servico="${item.id}">
+
+                                <i data-lucide="pencil"></i>
+
+                            </button>
+
+
+                            <button
+                                type="button"
+                                class="btn-excluir"
+                                title="Excluir serviço"
+                                data-excluir-servico="${item.id}">
+
+                                <i data-lucide="trash-2"></i>
+
+                            </button>
+
+                        </div>
+
+                    </article>
+                `;
+
+            })
+            .join("");
+
+
+    container
+        .querySelectorAll(
+            "[data-editar-servico]"
+        )
+        .forEach(botao => {
+
+            botao.addEventListener(
+                "click",
+                () => {
+
+                    editarServico(
+                        botao.dataset.editarServico
+                    );
+
+                }
+            );
+
+        });
+
+
+    container
+        .querySelectorAll(
+            "[data-excluir-servico]"
+        )
+        .forEach(botao => {
+
+            botao.addEventListener(
+                "click",
+                () => {
+
+                    excluirServico(
+                        botao.dataset.excluirServico
+                    );
+
+                }
+            );
+
+        });
+
+
+    atualizarIcones();
+}
+
+
+function atualizarCampoValorServico() {
+
+    const tipo =
+        el(ids.servicoTipoPreco)
+            ?.value || "fixo";
+
+
+    const campo =
+        el(ids.campoValorServico);
+
+
+    const input =
+        el(ids.servicoValor);
+
+
+    if (!campo || !input) {
+        return;
+    }
+
+
+    if (tipo === "sob_consulta") {
+
+        campo.style.display = "none";
+
+        input.value = "";
+
+        return;
+    }
+
+
+    campo.style.display = "";
+
+
+    if (tipo === "a_partir_de") {
+
+        input.placeholder =
+            "Ex.: 500,00";
+
+        return;
+    }
+
+
+    input.placeholder =
+        "0,00";
+}
+
+
+function limparFormularioServico() {
+
+    const nome =
+        el(ids.servicoNome);
+
+
+    const descricao =
+        el(ids.servicoDescricao);
+
+
+    const duracao =
+        el(ids.servicoDuracao);
+
+
+    const tipoPreco =
+        el(ids.servicoTipoPreco);
+
+
+    const valor =
+        el(ids.servicoValor);
+
+
+    const ativo =
+        el(ids.servicoAtivo);
+
+
+    if (nome) {
+        nome.value = "";
+    }
+
+
+    if (descricao) {
+        descricao.value = "";
+    }
+
+
+    if (duracao) {
+        duracao.value = "";
+    }
+
+
+    if (tipoPreco) {
+        tipoPreco.value = "fixo";
+    }
+
+
+    if (valor) {
+        valor.value = "";
+    }
+
+
+    if (ativo) {
+        ativo.checked = true;
+    }
+
+
+    estado.editandoServicoId =
+        null;
+
+
+    const botao =
+        el(ids.btnAdicionarServico);
+
+
+    if (botao) {
+
+        botao.innerHTML =
+            '<i data-lucide="plus"></i> Adicionar serviço';
+
+    }
+
+
+    const cancelar =
+        el(ids.btnCancelarServico);
+
+
+    if (cancelar) {
+        cancelar.hidden = true;
+    }
+
+
+    atualizarCampoValorServico();
+
+    atualizarIcones();
+}
+
+
+function editarServico(id) {
+
+    const servico =
+        estado.servicosValores
+            .find(item =>
+                String(item.id) ===
+                String(id)
+            );
+
+
+    if (!servico) {
+        return;
+    }
+
+
+    const nome =
+        el(ids.servicoNome);
+
+
+    const descricao =
+        el(ids.servicoDescricao);
+
+
+    const duracao =
+        el(ids.servicoDuracao);
+
+
+    const tipoPreco =
+        el(ids.servicoTipoPreco);
+
+
+    const valor =
+        el(ids.servicoValor);
+
+
+    const ativo =
+        el(ids.servicoAtivo);
+
+
+    if (nome) {
+
+        nome.value =
+            servico.nome_servico || "";
+
+    }
+
+
+    if (descricao) {
+
+        descricao.value =
+            servico.descricao || "";
+
+    }
+
+
+    if (duracao) {
+
+        duracao.value =
+            servico.duracao || "";
+
+    }
+
+
+    if (tipoPreco) {
+
+        tipoPreco.value =
+            servico.tipo_preco || "fixo";
+
+    }
+
+
+    if (valor) {
+
+        valor.value =
+            servico.valor ?? "";
+
+    }
+
+
+    if (ativo) {
+
+        ativo.checked =
+            servico.ativo !== false;
+
+    }
+
+
+    estado.editandoServicoId =
+        servico.id;
+
+
+    const botao =
+        el(ids.btnAdicionarServico);
+
+
+    if (botao) {
+
+        botao.innerHTML =
+            '<i data-lucide="check"></i> Atualizar serviço';
+
+    }
+
+
+    const cancelar =
+        el(ids.btnCancelarServico);
+
+
+    if (cancelar) {
+        cancelar.hidden = false;
+    }
+
+
+    atualizarCampoValorServico();
+
+
+    el(ids.servicoNome)?.focus();
+
+
+    atualizarIcones();
+}
+
+
+async function salvarServico() {
+
+    if (!estado.perfil?.id) {
+
+        mostrarToast(
+            "Perfil não carregado.",
+            true
+        );
+
+        return;
+    }
+
+
+    const nome =
+        el(ids.servicoNome)
+            ?.value.trim() || "";
+
+
+    const descricao =
+        el(ids.servicoDescricao)
+            ?.value.trim() || "";
+
+
+    const duracao =
+        el(ids.servicoDuracao)
+            ?.value.trim() || "";
+
+
+    const tipoPreco =
+        el(ids.servicoTipoPreco)
+            ?.value || "fixo";
+
+
+    const valorTexto =
+        el(ids.servicoValor)
+            ?.value || "";
+
+
+    const ativo =
+        el(ids.servicoAtivo)
+            ?.checked === true;
+
+
+    if (!nome) {
+
+        mostrarToast(
+            "Informe o nome do serviço.",
+            true
+        );
+
+        el(ids.servicoNome)?.focus();
+
+        return;
+    }
+
+
+    if (
+        tipoPreco !==
+        "sob_consulta" &&
+        !valorTexto
+    ) {
+
+        mostrarToast(
+            "Informe o valor do serviço.",
+            true
+        );
+
+        el(ids.servicoValor)?.focus();
+
+        return;
+    }
+
+
+    let valor = null;
+
+
+    if (
+        tipoPreco !==
+        "sob_consulta"
+    ) {
+
+        valor =
+            Number(
+                String(valorTexto)
+                    .replace(",", ".")
+            );
+
+
+        if (
+            !Number.isFinite(valor) ||
+            valor < 0
+        ) {
+
+            mostrarToast(
+                "Informe um valor válido.",
+                true
+            );
+
+            el(ids.servicoValor)?.focus();
+
+            return;
+        }
+
+    }
+
+
+    const dados = {
+
+        nome_servico:
+            nome,
+
+        descricao:
+            descricao || null,
+
+        duracao:
+            duracao || null,
+
+        tipo_preco:
+            tipoPreco,
+
+        valor,
+
+        ativo,
+
+        updated_at:
+            new Date().toISOString()
+
+    };
+
+
+    try {
+
+        mostrarLoading(
+            estado.editandoServicoId
+                ? "Atualizando serviço..."
+                : "Salvando serviço..."
+        );
+
+
+        let resultado;
+
+
+        if (
+            estado.editandoServicoId
+        ) {
+
+            resultado =
+                await supabaseClient
+                    .from("servicos_artistas")
+                    .update(dados)
+                    .eq(
+                        "id",
+                        estado.editandoServicoId
+                    )
+                    .eq(
+                        "perfil_id",
+                        estado.perfil.id
+                    );
+
+        } else {
+
+            resultado =
+                await supabaseClient
+                    .from("servicos_artistas")
+                    .insert({
+
+                        perfil_id:
+                            estado.perfil.id,
+
+                        ...dados
+
+                    });
+
+        }
+
+
+        if (resultado.error) {
+            throw resultado.error;
+        }
+
+
+        esconderLoading();
+
+
+        mostrarToast(
+            estado.editandoServicoId
+                ? "Serviço atualizado com sucesso!"
+                : "Serviço adicionado com sucesso!"
+        );
+
+
+        limparFormularioServico();
+
+
+        await carregarServicosValores();
+
+
+    } catch (erro) {
+
+        console.error(
+            "Erro ao salvar serviço:",
+            erro
+        );
+
+
+        esconderLoading();
+
+
+        mostrarToast(
+            erro?.message ||
+            "Não foi possível salvar o serviço.",
+            true
+        );
+
+    }
+}
+
+
+async function excluirServico(id) {
+
+    if (!id) {
+        return;
+    }
+
+
+    const servico =
+        estado.servicosValores
+            .find(item =>
+                String(item.id) ===
+                String(id)
+            );
+
+
+    const nome =
+        servico?.nome_servico ||
+        "este serviço";
+
+
+    const confirmar =
+        window.confirm(
+            `Deseja realmente excluir "${nome}"?`
+        );
+
+
+    if (!confirmar) {
+        return;
+    }
+
+
+    try {
+
+        mostrarLoading(
+            "Excluindo serviço..."
+        );
+
+
+        const resultado =
+            await supabaseClient
+                .from("servicos_artistas")
+                .delete()
+                .eq(
+                    "id",
+                    id
+                )
+                .eq(
+                    "perfil_id",
+                    estado.perfil.id
+                );
+
+
+        if (resultado.error) {
+            throw resultado.error;
+        }
+
+
+        esconderLoading();
+
+
+        mostrarToast(
+            "Serviço removido."
+        );
+
+
+        await carregarServicosValores();
+
+
+    } catch (erro) {
+
+        console.error(
+            "Erro ao excluir serviço:",
+            erro
+        );
+
+
+        esconderLoading();
+
+
+        mostrarToast(
+            erro?.message ||
+            "Não foi possível excluir o serviço.",
+            true
+        );
+
+    }
+}
+
+
+/* =====================================================
    FOTO
 ====================================================== */
 
@@ -2725,6 +3653,27 @@ function inicializarFoto() {
 ====================================================== */
 
 function inicializarEventos() {
+
+    el(ids.btnAdicionarServico)
+        ?.addEventListener(
+            "click",
+            salvarServico
+        );
+
+
+    el(ids.btnCancelarServico)
+        ?.addEventListener(
+            "click",
+            limparFormularioServico
+        );
+
+
+    el(ids.servicoTipoPreco)
+        ?.addEventListener(
+            "change",
+            atualizarCampoValorServico
+        );
+
 
     el(ids.form)
         ?.addEventListener(
@@ -2919,14 +3868,12 @@ return {
 
 })();
 
+
 document.addEventListener(
-"DOMContentLoaded",
-() => {
+    "DOMContentLoaded",
+    () => {
 
+        EditarPerfilMusico.iniciar();
 
-    EditarPerfilMusico.iniciar();
-
-}
-
-
+    }
 );

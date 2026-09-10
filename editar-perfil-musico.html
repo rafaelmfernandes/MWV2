@@ -534,70 +534,297 @@
             </section>
 
 
-            <!-- SERVIÇOS -->
+<!-- SERVIÇOS -->
 
-            <section class="form-card">
+<section class="form-card">
 
-                <div class="section-heading">
+    <div class="section-heading">
 
-                    <div class="section-icon">
-                        <i data-lucide="briefcase-business"></i>
-                    </div>
+        <div class="section-icon">
+            <i data-lucide="briefcase-business"></i>
+        </div>
 
-                    <div>
+        <div>
 
-                        <h2>
-                            Serviços
-                        </h2>
+            <h2>
+                Serviços
+            </h2>
 
-                        <p>
-                            Selecione o que você oferece.
-                        </p>
+            <p>
+                Selecione as categorias de serviços que você oferece.
+            </p>
 
-                    </div>
+        </div>
 
-                </div>
+    </div>
 
 
-                <div
-                    class="chips"
-                    id="servicos">
+    <div
+        class="chips"
+        id="servicos">
 
-                    <button type="button" class="chip" data-value="Shows">
-                        Shows
-                    </button>
+        <button type="button" class="chip" data-value="Shows">
+            Shows
+        </button>
 
-                    <button type="button" class="chip" data-value="Casamentos">
-                        Casamentos
-                    </button>
+        <button type="button" class="chip" data-value="Casamentos">
+            Casamentos
+        </button>
 
-                    <button type="button" class="chip" data-value="Aniversários">
-                        Aniversários
-                    </button>
+        <button type="button" class="chip" data-value="Aniversários">
+            Aniversários
+        </button>
 
-                    <button type="button" class="chip" data-value="Eventos corporativos">
-                        Eventos corporativos
-                    </button>
+        <button type="button" class="chip" data-value="Eventos corporativos">
+            Eventos corporativos
+        </button>
 
-                    <button type="button" class="chip" data-value="Bares e restaurantes">
-                        Bares e restaurantes
-                    </button>
+        <button type="button" class="chip" data-value="Bares e restaurantes">
+            Bares e restaurantes
+        </button>
 
-                    <button type="button" class="chip" data-value="Cerimônias">
-                        Cerimônias
-                    </button>
+        <button type="button" class="chip" data-value="Cerimônias">
+            Cerimônias
+        </button>
 
-                    <button type="button" class="chip" data-value="Gravações">
-                        Gravações
-                    </button>
+        <button type="button" class="chip" data-value="Gravações">
+            Gravações
+        </button>
 
-                    <button type="button" class="chip" data-value="Aulas">
-                        Aulas
-                    </button>
+        <button type="button" class="chip" data-value="Aulas">
+            Aulas
+        </button>
 
-                </div>
+    </div>
 
-            </section>
+</section>
+
+
+<!-- SERVIÇOS E VALORES -->
+
+<section class="form-card">
+
+    <div class="section-heading">
+
+        <div class="section-icon">
+            <i data-lucide="badge-dollar-sign"></i>
+        </div>
+
+        <div>
+
+            <h2>
+                Serviços e valores
+            </h2>
+
+            <p>
+                Cadastre os serviços que você oferece e informe como deseja cobrar.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <p class="servicos-ajuda">
+        <i data-lucide="info"></i>
+        <span>Esses valores serão apresentados aos clientes quando eles visualizarem seu perfil e poderão ser usados como referência durante uma contratação.</span>
+    </p>
+
+
+    <div class="servico-form">
+
+        <div class="campo">
+
+            <label for="servicoNome">
+                Nome do serviço
+            </label>
+
+            <input
+                id="servicoNome"
+                type="text"
+                maxlength="120"
+                placeholder="Ex.: Show completo">
+
+        </div>
+
+
+        <div class="campo">
+
+            <label for="servicoDescricao">
+                Descrição
+            </label>
+
+            <textarea
+                id="servicoDescricao"
+                rows="3"
+                maxlength="500"
+                placeholder="Descreva o que está incluso neste serviço..."></textarea>
+
+        </div>
+
+
+        <div class="campo-grid">
+
+            <div class="campo">
+
+                <label for="servicoDuracao">
+                    Duração
+                </label>
+
+                <input
+                    id="servicoDuracao"
+                    type="text"
+                    maxlength="50"
+                    placeholder="Ex.: 3 horas">
+
+            </div>
+
+
+            <div class="campo">
+
+                <label for="servicoTipoPreco">
+                    Tipo de preço
+                </label>
+
+                <select id="servicoTipoPreco">
+
+                    <option value="fixo">
+                        Preço fixo
+                    </option>
+
+                    <option value="a_partir_de">
+                        A partir de
+                    </option>
+
+                    <option value="sob_consulta">
+                        Sob consulta
+                    </option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+
+        <div
+            class="campo"
+            id="campoValorServico">
+
+            <label for="servicoValor">
+                Valor
+            </label>
+
+            <div class="campo-moeda">
+
+                <span>
+                    R$
+                </span>
+
+                <input
+                    id="servicoValor"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    inputmode="decimal"
+                    placeholder="0,00">
+
+            </div>
+
+        </div>
+
+
+        <label class="switch-row servico-switch">
+
+            <span>
+
+                <strong>
+                    Serviço disponível
+                </strong>
+
+                <small>
+                    Permite que este serviço seja apresentado para contratação.
+                </small>
+
+            </span>
+
+
+            <input
+                id="servicoAtivo"
+                type="checkbox"
+                checked>
+
+            <span class="switch"></span>
+
+        </label>
+
+
+        <div class="servico-form-acoes">
+
+            <button
+                class="btn-adicionar"
+                id="btnAdicionarServico"
+                type="button">
+
+                <i data-lucide="plus"></i>
+
+                Adicionar serviço
+
+            </button>
+
+            <button
+                class="btn-cancelar-servico"
+                id="btnCancelarServico"
+                type="button"
+                hidden>
+
+                Cancelar edição
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <div class="servicos-cadastrados">
+
+        <div class="subheading">
+
+            <strong>
+                Meus serviços
+            </strong>
+
+            <span>
+                Serviços cadastrados no seu perfil.
+            </span>
+
+        </div>
+
+
+        <div
+            class="servicos-list"
+            id="servicosList">
+
+            <div class="empty-editor">
+
+                <i data-lucide="briefcase-business"></i>
+
+                <strong>
+                    Nenhum serviço cadastrado
+                </strong>
+
+                <span>
+                    Cadastre seus serviços e valores para facilitar suas contratações.
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
 
 
             <!-- DISPONIBILIDADE -->

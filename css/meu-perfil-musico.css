@@ -991,72 +991,392 @@ svg {
     width: 100%;
 
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
 
-    gap: 7px;
+    gap: 12px;
 }
 
-.service-card {
-    min-width: 0;
 
-    display: inline-flex;
+/* =========================================================
+   CARD DO SERVIÇO
+   ========================================================= */
+
+.servico-edit-card {
+    display: grid;
+
+    grid-template-columns:
+        46px
+        minmax(0, 1fr)
+        minmax(110px, 180px);
+
     align-items: center;
 
-    gap: 5px;
+    gap: 12px;
 
-    padding: 7px 10px;
-
-    background: #f0f4ff;
-
-    border: 1px solid #dce5ff;
-
-    border-radius: 999px;
-
-    color: #315edb;
-}
-
-.service-icon {
-    width: 13px;
-    height: 13px;
-
-    flex: 0 0 13px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    background: transparent;
-
-    color: #315edb;
-}
-
-.service-icon svg {
-    width: 13px;
-    height: 13px;
-}
-
-.service-info {
+    width: 100%;
+    max-width: 100%;
     min-width: 0;
+
+    padding: 14px;
+
+    border: 1px solid #e6eaf1;
+
+    border-radius: 15px;
+
+    background: #ffffff;
+
+    overflow: hidden;
+
+    box-sizing: border-box;
+
+    transition:
+        border-color .18s ease,
+        box-shadow .18s ease,
+        transform .12s ease;
 }
 
-.service-info strong {
-    display: inline;
+
+.servico-edit-card:hover {
+    border-color: #dcd7f4;
+
+    box-shadow:
+        0 5px 18px rgba(30, 35, 55, .05);
+}
+
+
+/* =========================================================
+   ÍCONE DO SERVIÇO
+   ========================================================= */
+
+.servico-edit-icon {
+    width: 46px;
+    height: 46px;
+
+    display: grid;
+    place-items: center;
+
+    flex: 0 0 46px;
+
+    border-radius: 13px;
+
+    background: #eef3ff;
 
     color: #315edb;
+}
+
+
+.servico-edit-icon svg {
+    width: 20px;
+    height: 20px;
+}
+
+
+/* =========================================================
+   INFORMAÇÕES DO SERVIÇO
+   ========================================================= */
+
+.servico-edit-info {
+    min-width: 0;
+    max-width: 100%;
+
+    overflow: hidden;
+}
+
+
+.servico-edit-info > strong {
+    display: block;
+
+    margin-bottom: 4px;
+
+    color: #172033;
+
+    font-size: 13px;
+
+    font-weight: 800;
+
+    line-height: 1.3;
+
+    overflow-wrap: anywhere;
+
+    word-break: break-word;
+}
+
+
+.servico-edit-info > span {
+    display: block;
+
+    max-width: 100%;
+
+    margin-bottom: 6px;
+
+    overflow: hidden;
+
+    color: #7a8497;
 
     font-size: 11px;
 
-    line-height: 1.2;
+    line-height: 1.4;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   META DO SERVIÇO
+   ========================================================= */
+
+.servico-edit-meta {
+    display: flex;
+
+    align-items: center;
+
+    flex-wrap: wrap;
+
+    gap: 8px;
+
+    min-width: 0;
+}
+
+
+.servico-edit-meta > span {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 4px;
+
+    min-width: 0;
+
+    max-width: 100%;
+
+    color: #737c90;
+
+    font-size: 10px;
 
     font-weight: 700;
 }
 
-.service-info span,
-.service-info small,
-.service-price {
-    display: none;
+
+.servico-edit-meta svg {
+    width: 12px;
+    height: 12px;
+
+    flex: 0 0 12px;
 }
 
+
+/* =========================================================
+   PREÇO DO SERVIÇO
+   ========================================================= */
+
+.servico-edit-preco {
+    min-width: 0;
+
+    width: 100%;
+    max-width: 180px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: flex-end;
+
+    gap: 6px;
+
+    text-align: right;
+
+    overflow: hidden;
+}
+
+
+.servico-edit-preco > strong {
+    display: block;
+
+    max-width: 100%;
+
+    color: #172033;
+
+    font-size: 13px;
+
+    font-weight: 850;
+
+    line-height: 1.2;
+
+    overflow-wrap: anywhere;
+
+    word-break: break-word;
+}
+
+
+/* =========================================================
+   STATUS
+   ========================================================= */
+
+.servico-status {
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: fit-content;
+
+    min-height: 21px;
+
+    max-width: 100%;
+
+    padding: 3px 8px;
+
+    border-radius: 999px;
+
+    font-size: 9px;
+
+    font-weight: 800;
+
+    line-height: 1;
+
+    text-transform: uppercase;
+
+    white-space: nowrap;
+}
+
+
+.servico-status.ativo {
+    background: #eaf8f2;
+
+    color: #16845b;
+}
+
+
+.servico-status.inativo {
+    background: #f2f3f6;
+
+    color: #7a8291;
+}
+
+
+/* =========================================================
+   ESTADO VAZIO
+   ========================================================= */
+
+.services-list .empty-inline {
+    width: 100%;
+
+    padding: 12px 0;
+
+    color: #7a8497;
+
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    .services-list {
+        gap: 10px;
+    }
+
+
+    .servico-edit-card {
+        grid-template-columns:
+            44px
+            minmax(0, 1fr);
+
+        gap: 10px;
+
+        padding: 12px;
+    }
+
+
+    .servico-edit-icon {
+        width: 44px;
+        height: 44px;
+    }
+
+
+    .servico-edit-icon svg {
+        width: 19px;
+        height: 19px;
+    }
+
+
+    .servico-edit-info > strong {
+        font-size: 12px;
+    }
+
+
+    .servico-edit-info > span {
+        font-size: 10px;
+    }
+
+
+    .servico-edit-meta > span {
+        font-size: 9px;
+    }
+
+
+    .servico-edit-preco {
+        grid-column: 1 / -1;
+
+        width: 100%;
+        max-width: none;
+
+        flex-direction: row;
+
+        align-items: center;
+
+        justify-content: space-between;
+
+        padding-top: 9px;
+
+        border-top: 1px solid #eef1f5;
+
+        text-align: left;
+    }
+
+
+    .servico-edit-preco > strong {
+        font-size: 13px;
+    }
+
+}
+
+
+@media (max-width: 380px) {
+
+    .servico-edit-card {
+        padding: 11px;
+    }
+
+
+    .servico-edit-icon {
+        width: 42px;
+        height: 42px;
+    }
+
+
+    .servico-edit-icon svg {
+        width: 18px;
+        height: 18px;
+    }
+
+
+    .servico-edit-info > strong {
+        font-size: 11px;
+    }
+
+
+    .servico-edit-info > span {
+        font-size: 10px;
+    }
+
+}
 
 /* =========================================================
    PORTFÓLIO
@@ -2518,6 +2838,71 @@ svg {
     }
 
 
+    /* =====================================================
+       SERVIÇOS - MOBILE
+       ===================================================== */
+
+    .services-list {
+        gap: 10px;
+    }
+
+    .service-card {
+        grid-template-columns:
+            42px
+            minmax(0, 1fr);
+
+        gap: 10px;
+
+        padding: 12px;
+
+        border-radius: 14px;
+    }
+
+    .service-icon {
+        width: 42px;
+        height: 42px;
+
+        flex-basis: 42px;
+
+        border-radius: 12px;
+    }
+
+    .service-icon svg {
+        width: 19px;
+        height: 19px;
+    }
+
+    .service-info strong {
+        font-size: 12px;
+    }
+
+    .service-info p {
+        font-size: 10px;
+
+        margin-bottom: 6px;
+    }
+
+    .service-info > span {
+        font-size: 9px;
+    }
+
+    .service-info small {
+        min-height: 20px;
+
+        padding:
+            3px
+            7px;
+
+        font-size: 8px;
+    }
+
+    .service-price {
+        margin-top: 6px;
+
+        font-size: 12px;
+    }
+
+
     /* AGENDA */
 
     .agenda-calendar {
@@ -2645,6 +3030,59 @@ svg {
     }
 
 
+    /* =====================================================
+       SERVIÇOS - CELULARES PEQUENOS
+       ===================================================== */
+
+    .service-card {
+        grid-template-columns:
+            40px
+            minmax(0, 1fr);
+
+        gap: 9px;
+
+        padding: 11px;
+    }
+
+    .service-icon {
+        width: 40px;
+        height: 40px;
+
+        flex-basis: 40px;
+
+        border-radius: 11px;
+    }
+
+    .service-icon svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .service-info strong {
+        font-size: 11px;
+    }
+
+    .service-info p {
+        font-size: 9px;
+    }
+
+    .service-info > span {
+        font-size: 8px;
+    }
+
+    .service-info small {
+        font-size: 7px;
+
+        padding:
+            3px
+            6px;
+    }
+
+    .service-price {
+        font-size: 11px;
+    }
+
+
     /* AGENDA */
 
     .agenda-calendar {
@@ -2737,113 +3175,114 @@ svg {
 
 }
 
-/* =========================================================
-DESTAQUE NO CATÁLOGO
-========================================================= */
-
-/*
-
-* Garante que o selo fique posicionado
-* dentro do próprio card.
-  */
-  .portfolio-card {
-  position: relative;
-  }
-
-/*
-
-* Card selecionado como destaque
-  */
-  .portfolio-card-destaque {
-  border-color: #f2c94c;
-
-  box-shadow:
-  0 0 0 2px rgba(245, 158, 11, 0.14),
-  0 5px 16px rgba(22, 34, 55, 0.08);
-  }
 
 /* =========================================================
-SELO "DESTAQUE"
-========================================================= */
+   DESTAQUE NO CATÁLOGO
+   ========================================================= */
 
-.portfolio-destaque-badge {
-position: absolute;
+/*
+ * Garante que o selo fique posicionado
+ * dentro do próprio card.
+ */
 
-
-top: 7px;
-left: 7px;
-
-z-index: 5;
-
-display: inline-flex;
-align-items: center;
-
-gap: 4px;
-
-padding: 5px 7px;
-
-border-radius: 7px;
-
-background: rgba(255, 255, 255, 0.94);
-
-color: #a66b00;
-
-box-shadow:
-    0 2px 7px rgba(0, 0, 0, 0.12);
-
-backdrop-filter: blur(4px);
--webkit-backdrop-filter: blur(4px);
-
-font-size: 8px;
-line-height: 1;
-
-font-weight: 800;
-
-text-transform: uppercase;
-
-letter-spacing: 0.02em;
-
-
+.portfolio-card {
+    position: relative;
 }
 
+
 /*
+ * Card selecionado como destaque
+ */
 
-* Ícone de estrela
-  */
-  .portfolio-destaque-badge svg {
-  width: 12px;
-  height: 12px;
+.portfolio-card-destaque {
+    border-color: #f2c94c;
 
-  stroke-width: 2.3;
+    box-shadow:
+        0 0 0 2px rgba(245, 158, 11, 0.14),
+        0 5px 16px rgba(22, 34, 55, 0.08);
+}
 
-  fill: rgba(245, 158, 11, 0.18);
-  }
 
 /* =========================================================
-MOBILE
-========================================================= */
+   SELO "DESTAQUE"
+   ========================================================= */
+
+.portfolio-destaque-badge {
+    position: absolute;
+
+    top: 7px;
+    left: 7px;
+
+    z-index: 5;
+
+    display: inline-flex;
+    align-items: center;
+
+    gap: 4px;
+
+    padding: 5px 7px;
+
+    border-radius: 7px;
+
+    background: rgba(255, 255, 255, 0.94);
+
+    color: #a66b00;
+
+    box-shadow:
+        0 2px 7px rgba(0, 0, 0, 0.12);
+
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+
+    font-size: 8px;
+    line-height: 1;
+
+    font-weight: 800;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.02em;
+}
+
+
+/*
+ * Ícone de estrela
+ */
+
+.portfolio-destaque-badge svg {
+    width: 12px;
+    height: 12px;
+
+    stroke-width: 2.3;
+
+    fill: rgba(245, 158, 11, 0.18);
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
 
 @media (max-width: 520px) {
 
+    .portfolio-destaque-badge {
+        top: 6px;
+        left: 6px;
 
-.portfolio-destaque-badge {
-    top: 6px;
-    left: 6px;
+        padding: 4px 6px;
 
-    padding: 4px 6px;
+        gap: 3px;
 
-    gap: 3px;
+        font-size: 7px;
+    }
 
-    font-size: 7px;
-}
-
-.portfolio-destaque-badge svg {
-    width: 11px;
-    height: 11px;
-}
-
+    .portfolio-destaque-badge svg {
+        width: 11px;
+        height: 11px;
+    }
 
 }
+
 
 .portfolio-card {
     position: relative;
@@ -2851,6 +3290,7 @@ MOBILE
 
 .portfolio-card-destaque {
     border: 2px solid #f2c94c !important;
+
     box-shadow:
         0 0 0 2px rgba(245, 158, 11, 0.14),
         0 5px 16px rgba(22, 34, 55, 0.08);
@@ -2858,12 +3298,15 @@ MOBILE
 
 .portfolio-destaque-badge {
     position: absolute;
+
     top: 8px;
     left: 8px;
+
     z-index: 10;
 
     display: inline-flex;
     align-items: center;
+
     gap: 4px;
 
     padding: 6px 8px;
@@ -2882,9 +3325,11 @@ MOBILE
 
     font-size: 8px;
     line-height: 1;
+
     font-weight: 800;
 
     text-transform: uppercase;
+
     letter-spacing: 0.02em;
 }
 
@@ -2896,13 +3341,16 @@ MOBILE
 
     fill: rgba(245, 158, 11, 0.18);
 }
+
 .video-portfolio {
     position: relative;
 }
 
 .video-item-destaque .video-portfolio {
     border: 2px solid #f2c94c;
+
     border-radius: inherit;
+
     box-shadow:
         0 0 0 2px rgba(245, 158, 11, 0.14),
         0 5px 16px rgba(22, 34, 55, 0.08);
@@ -2914,12 +3362,15 @@ MOBILE
 
 .portfolio-destaque-badge {
     position: absolute;
+
     top: 8px;
     left: 8px;
+
     z-index: 10;
 
     display: inline-flex;
     align-items: center;
+
     gap: 4px;
 
     padding: 6px 8px;
@@ -2938,9 +3389,11 @@ MOBILE
 
     font-size: 8px;
     line-height: 1;
+
     font-weight: 800;
 
     text-transform: uppercase;
+
     letter-spacing: 0.02em;
 
     pointer-events: none;
@@ -2956,11 +3409,15 @@ MOBILE
 }
 
 @media (max-width: 520px) {
+
     .portfolio-destaque-badge {
         top: 6px;
         left: 6px;
+
         padding: 5px 7px;
+
         gap: 3px;
+
         font-size: 7px;
     }
 
@@ -2968,4 +3425,6 @@ MOBILE
         width: 11px;
         height: 11px;
     }
+
 }
+
