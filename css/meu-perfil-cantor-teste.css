@@ -1,0 +1,4162 @@
+/* =========================================================
+MUSICALWORLD
+MEU PERFIL — CANTOR — VERSÃO DE TESTE
+=====================================
+
+Este arquivo é um CLONE do CSS utilizado pela página real:
+
+
+   css/meu-perfil-cantor.css
+
+
+IMPORTANTE:
+
+* Este arquivo pertence exclusivamente à página de teste.
+* Alterações feitas aqui NÃO afetam a página real.
+* O objetivo é permitir a refatoração da arquitetura
+  sem colocar em risco o perfil que já está funcionando.
+
+Página de teste:
+meu-perfil-cantor-teste.html
+
+Página real:
+meu-perfil-cantor.html
+
+========================================================= */
+
+/* =========================================================
+01. RESET GLOBAL
+========================================================= */
+
+/*
+Remove margens e espaçamentos padrão do navegador.
+
+box-sizing: border-box garante que padding e border
+sejam incluídos dentro da largura/altura dos elementos.
+*/
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  }
+
+/* =========================================================
+02. VARIÁVEIS GLOBAIS DO MUSICALWORLD
+========================================================= */
+
+:root {
+
+
+/* Cores principais da interface */
+--mw-bg: #f5f7fb;
+--mw-white: #ffffff;
+
+/* Tipografia */
+--mw-text: #172033;
+--mw-text-dark: #1d273b;
+--mw-text-medium: #526078;
+--mw-text-light: #7a8497;
+--mw-muted: #8992a4;
+
+/* Bordas */
+--mw-border: #e6eaf1;
+--mw-border-light: #edf0f6;
+
+/* Azul principal */
+--mw-blue: #315edb;
+--mw-blue-light: #eef3ff;
+--mw-blue-soft: #e8efff;
+
+/* Verde / disponibilidade */
+--mw-green: #16803c;
+--mw-green-light: #edfdf3;
+--mw-green-dot: #22c55e;
+
+/* Estados adicionais */
+--mw-orange: #f59e0b;
+--mw-red: #dc3545;
+--mw-red-light: #fff1f2;
+
+/* Sombras */
+--mw-shadow: 0 4px 18px rgba(25, 40, 70, 0.05);
+
+
+}
+
+/* =========================================================
+03. HTML / BODY
+========================================================= */
+
+/*
+Rolagem suave para navegação interna da página.
+*/
+
+html {
+scroll-behavior: smooth;
+}
+
+/*
+Configuração geral do documento.
+
+A interface foi projetada para funcionar tanto em
+dispositivos móveis quanto em telas maiores.
+*/
+
+body {
+min-height: 100vh;
+
+
+background: var(--mw-bg);
+color: var(--mw-text);
+
+font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif;
+
+-webkit-font-smoothing: antialiased;
+
+
+}
+
+/*
+Os elementos de formulário utilizam a mesma fonte
+definida no body.
+*/
+
+button,
+input,
+textarea,
+select {
+font: inherit;
+}
+
+/*
+Reset visual dos botões.
+*/
+
+button {
+border: 0;
+cursor: pointer;
+}
+
+/*
+Imagens nunca ultrapassam a largura do elemento pai.
+*/
+
+img {
+max-width: 100%;
+display: block;
+}
+
+/*
+Container principal do aplicativo.
+*/
+
+.app {
+min-height: 100vh;
+}
+
+/* =========================================================
+04. TOPBAR
+========================================================= */
+
+/*
+Barra superior fixa durante a rolagem.
+
+Contém:
+
+* botão voltar;
+* título da página;
+* subtítulo;
+* botão de QR Code / compartilhamento.
+  */
+
+.topbar {
+position: sticky;
+top: 0;
+
+
+z-index: 100;
+
+height: 64px;
+
+display: flex;
+align-items: center;
+justify-content: space-between;
+
+padding: 0 16px;
+
+background: var(--mw-white);
+
+border-bottom: 1px solid #e8ebf2;
+
+box-shadow:
+    0 2px 8px rgba(25, 40, 70, 0.035);
+
+
+}
+
+/*
+Áreas esquerda e direita da topbar.
+*/
+
+.topbar-left,
+.topbar-right {
+display: flex;
+align-items: center;
+}
+
+/*
+Espaçamento entre botão voltar e identificação
+da página.
+*/
+
+.topbar-left {
+gap: 11px;
+}
+
+/*
+Botões circulares da topbar.
+*/
+
+.topbar-button {
+width: 42px;
+height: 42px;
+
+
+display: flex;
+align-items: center;
+justify-content: center;
+
+border-radius: 50%;
+
+background: transparent;
+color: #3d4658;
+
+transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+
+
+}
+
+/*
+Estado hover dos botões da topbar.
+*/
+
+.topbar-button:hover {
+background: #f2f5f9;
+}
+
+/*
+Pequena animação ao pressionar o botão.
+*/
+
+.topbar-button:active {
+transform: scale(0.95);
+}
+
+/*
+Tamanho dos ícones da topbar.
+*/
+
+.topbar-button svg {
+width: 19px;
+height: 19px;
+
+
+stroke-width: 2;
+
+
+}
+
+/*
+Container do título e subtítulo.
+*/
+
+.topbar-heading {
+display: flex;
+flex-direction: column;
+justify-content: center;
+}
+
+/*
+Título principal.
+*/
+
+.topbar-title {
+font-size: 17px;
+line-height: 20px;
+font-weight: 800;
+
+
+color: var(--mw-text);
+
+
+}
+
+/*
+Subtítulo indicando o tipo de perfil.
+*/
+
+.topbar-subtitle {
+margin-top: 1px;
+
+
+font-size: 11px;
+line-height: 14px;
+font-weight: 500;
+
+color: #8a94a7;
+
+
+}
+
+/* =========================================================
+05. PÁGINA DO PERFIL
+========================================================= */
+
+/*
+Container central da página.
+
+Em telas maiores existe uma largura máxima para evitar
+que o conteúdo fique excessivamente espalhado.
+
+Em celulares ocupa toda a largura disponível.
+*/
+
+.profile-page {
+width: 100%;
+max-width: 720px;
+
+
+margin: 0 auto;
+
+padding: 18px 16px 130px;
+
+
+}
+
+/* =========================================================
+06. CARTÃO PRINCIPAL DO PERFIL
+========================================================= */
+
+/*
+Cartão que contém:
+
+* avatar;
+* nome;
+* categoria;
+* localização;
+* avaliação;
+* status;
+* ações.
+  */
+
+.profile-card {
+position: relative;
+
+
+width: 100%;
+
+background: var(--mw-white);
+
+border: 1px solid var(--mw-border);
+
+border-radius: 20px;
+
+box-shadow:
+    0 8px 28px rgba(22, 34, 55, 0.06);
+
+padding: 20px;
+
+
+}
+
+/* =========================================================
+07. BOTÃO FLUTUANTE — VISUALIZAR PERFIL
+========================================================= */
+
+/*
+Botão fixado próximo ao menu inferior.
+
+Permite visualizar o perfil como ele será apresentado
+para outras pessoas.
+*/
+
+.preview-profile-button {
+position: fixed;
+
+
+right: 16px;
+bottom: 82px;
+
+z-index: 80;
+
+width: 36px;
+height: 36px;
+
+display: flex;
+align-items: center;
+justify-content: center;
+
+border-radius: 50%;
+
+background: var(--mw-white);
+
+border: 1px solid #e4e8ef;
+
+color: #8a94a7;
+
+box-shadow:
+    0 4px 14px rgba(25, 40, 70, 0.10);
+
+transition:
+    color 0.2s ease,
+    background 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+
+
+}
+
+/*
+Estado hover.
+*/
+
+.preview-profile-button:hover {
+background: #f8faff;
+color: var(--mw-blue);
+
+
+box-shadow:
+    0 5px 16px rgba(25, 40, 70, 0.14);
+
+
+}
+
+/*
+Estado pressionado.
+*/
+
+.preview-profile-button:active {
+transform: scale(0.94);
+}
+
+/*
+Ícone do botão.
+*/
+
+.preview-profile-button svg {
+width: 17px;
+height: 17px;
+
+
+stroke-width: 2;
+
+
+}
+
+/* =========================================================
+08. CABEÇALHO DO PERFIL
+========================================================= */
+
+/*
+Área que reúne o avatar e as informações principais.
+*/
+
+.profile-header {
+display: flex;
+align-items: flex-start;
+
+
+gap: 15px;
+
+
+}
+
+/* =========================================================
+09. AVATAR
+========================================================= */
+
+/*
+Avatar circular do artista.
+
+Quando existe foto, o JavaScript insere uma imagem.
+
+Quando não existe foto, são utilizadas as iniciais
+do artista.
+*/
+
+.profile-avatar {
+flex: 0 0 auto;
+
+
+width: 88px;
+height: 88px;
+
+display: flex;
+align-items: center;
+justify-content: center;
+
+overflow: hidden;
+
+border-radius: 50%;
+
+background:
+    linear-gradient(
+        135deg,
+        #e8efff,
+        #dce7ff
+    );
+
+border: 3px solid var(--mw-white);
+
+color: #315edb;
+
+font-size: 26px;
+font-weight: 800;
+
+box-shadow:
+    0 5px 18px rgba(49, 94, 219, 0.12);
+
+
+}
+
+/*
+Imagem do avatar.
+*/
+
+.profile-avatar img {
+width: 100%;
+height: 100%;
+
+
+object-fit: cover;
+
+
+}
+
+/*
+Container das iniciais.
+*/
+
+#profileInitials {
+display: flex;
+align-items: center;
+justify-content: center;
+
+
+width: 100%;
+height: 100%;
+
+
+}
+
+/* =========================================================
+10. INFORMAÇÕES PRINCIPAIS DO PERFIL
+========================================================= */
+
+.profile-info {
+min-width: 0;
+flex: 1;
+
+
+padding-top: 2px;
+
+
+}
+
+/*
+Linha que contém nome e selo de verificação.
+*/
+
+.profile-name-row {
+display: flex;
+align-items: center;
+
+
+gap: 6px;
+
+
+}
+
+/*
+Nome do artista.
+
+O texto é cortado com "..." caso seja muito grande.
+*/
+
+.profile-name-row h1 {
+min-width: 0;
+
+
+overflow: hidden;
+text-overflow: ellipsis;
+white-space: nowrap;
+
+color: var(--mw-text);
+
+font-size: 21px;
+line-height: 25px;
+font-weight: 800;
+
+
+}
+
+/* =========================================================
+11. SELO DE VERIFICAÇÃO
+========================================================= */
+
+.verified-badge {
+flex: 0 0 auto;
+
+
+width: 19px;
+height: 19px;
+
+display: inline-flex;
+align-items: center;
+justify-content: center;
+
+color: var(--mw-blue);
+
+
+}
+
+.verified-badge svg {
+width: 18px;
+height: 18px;
+
+
+stroke-width: 2.3;
+
+
+}
+
+/* =========================================================
+12. CATEGORIA DO PERFIL
+========================================================= */
+
+.profile-category {
+margin-top: 3px;
+
+
+color: var(--mw-medium, #526078);
+
+font-size: 13px;
+line-height: 18px;
+font-weight: 500;
+
+
+}
+
+/* =========================================================
+13. LOCALIZAÇÃO
+========================================================= */
+
+.profile-location {
+display: flex;
+align-items: center;
+
+
+gap: 5px;
+
+margin-top: 4px;
+
+color: var(--mw-text-light);
+
+font-size: 12px;
+line-height: 16px;
+
+
+}
+
+.profile-location svg {
+flex: 0 0 auto;
+
+
+width: 14px;
+height: 14px;
+
+stroke-width: 2;
+
+
+}
+
+.profile-location span {
+overflow: hidden;
+text-overflow: ellipsis;
+white-space: nowrap;
+}
+
+/* =========================================================
+14. AVALIAÇÃO
+========================================================= */
+
+.profile-rating {
+display: flex;
+align-items: center;
+flex-wrap: wrap;
+
+
+gap: 5px;
+
+margin-top: 7px;
+
+
+}
+
+/*
+Estrelas da avaliação.
+*/
+
+.rating-stars {
+display: flex;
+align-items: center;
+
+
+gap: 2px;
+
+color: var(--mw-orange);
+
+
+}
+
+.rating-stars svg {
+width: 14px;
+height: 14px;
+
+
+fill: currentColor;
+
+stroke-width: 1.7;
+
+
+}
+
+/*
+Nota média.
+*/
+
+.rating-value {
+color: #263148;
+
+
+font-size: 12px;
+font-weight: 800;
+
+
+}
+
+/*
+Quantidade de avaliações.
+*/
+
+.rating-reviews {
+color: #8992a4;
+
+
+font-size: 11px;
+font-weight: 500;
+
+
+}
+
+/* =========================================================
+15. STATUS DE DISPONIBILIDADE
+========================================================= */
+
+.profile-status {
+display: inline-flex;
+align-items: center;
+
+
+gap: 6px;
+
+margin-top: 7px;
+
+padding: 4px 8px;
+
+border-radius: 999px;
+
+background: var(--mw-green-light);
+
+color: var(--mw-green);
+
+font-size: 11px;
+line-height: 14px;
+font-weight: 700;
+
+
+}
+
+/*
+Ponto indicador de disponibilidade.
+*/
+
+.status-dot {
+width: 7px;
+height: 7px;
+
+
+flex: 0 0 auto;
+
+border-radius: 50%;
+
+background: var(--mw-green-dot);
+
+
+}
+
+/*
+Estado indisponível.
+*/
+
+.profile-status.unavailable {
+background: var(--mw-red-light);
+color: var(--mw-red);
+}
+
+.profile-status.unavailable .status-dot {
+background: var(--mw-red);
+}
+
+/* =========================================================
+16. AÇÕES DO PERFIL
+========================================================= */
+
+.profile-actions {
+width: 100%;
+
+
+margin-top: 17px;
+
+
+}
+
+/*
+Estilo base dos botões de ação.
+*/
+
+.edit-profile-button,
+.whatsapp-button {
+width: 100%;
+min-height: 44px;
+
+
+display: flex;
+align-items: center;
+justify-content: center;
+
+gap: 8px;
+
+border-radius: 12px;
+
+font-size: 13px;
+font-weight: 800;
+
+transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.15s ease;
+
+
+}
+
+/*
+Botão editar perfil.
+*/
+
+.edit-profile-button {
+margin-top: 18px;
+
+
+background: var(--mw-blue-light);
+color: var(--mw-blue);
+
+
+}
+
+.edit-profile-button:hover {
+background: #e5edff;
+}
+
+/*
+Botão WhatsApp.
+*/
+
+.whatsapp-button {
+margin-top: 9px;
+
+
+background: var(--mw-green-light);
+color: var(--mw-green);
+
+
+}
+
+.whatsapp-button:hover {
+background: #e1faeb;
+}
+
+/*
+Efeito ao pressionar os botões.
+*/
+
+.edit-profile-button:active,
+.whatsapp-button:active {
+transform: scale(0.99);
+}
+
+/*
+Ícones dos botões.
+*/
+
+.edit-profile-button svg,
+.whatsapp-button svg {
+width: 17px;
+height: 17px;
+
+
+stroke-width: 2;
+
+
+}
+
+/* /* =========================================================
+17. NAVEGAÇÃO DAS ABAS
+========================================================= */
+
+/*
+Navegação principal das áreas do perfil.
+
+As abas utilizam ícones para facilitar a identificação
+visual de cada seção.
+*/
+
+.profile-tabs {
+    width: 100%;
+
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+
+    margin-top: 15px;
+
+    padding: 4px;
+
+    background: var(--mw-white);
+
+    border: 1px solid var(--mw-border);
+
+    border-radius: 15px;
+
+    box-shadow:
+        0 4px 14px rgba(22, 34, 55, 0.035);
+
+    overflow: hidden;
+}
+
+
+/*
+Botão individual da aba.
+*/
+
+.tab-button {
+    position: relative;
+
+    min-width: 0;
+    min-height: 58px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    gap: 4px;
+
+    padding: 7px 5px;
+
+    border-radius: 11px;
+
+    background: transparent;
+
+    color: #8992a4;
+
+    font-size: 10px;
+    line-height: 14px;
+
+    font-weight: 700;
+
+    white-space: nowrap;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        transform 0.15s ease;
+}
+
+
+/*
+Ícone da aba.
+*/
+
+.tab-button svg {
+    width: 17px;
+    height: 17px;
+
+    flex: 0 0 auto;
+
+    stroke-width: 2;
+}
+
+
+/*
+Texto da aba.
+*/
+
+.tab-button span {
+    display: block;
+
+    overflow: hidden;
+
+    max-width: 100%;
+
+    text-overflow: ellipsis;
+}
+
+
+/*
+Estado hover.
+*/
+
+.tab-button:hover {
+    background: #f8faff;
+
+    color: var(--mw-blue);
+}
+
+
+/*
+Aba atualmente selecionada.
+*/
+
+.tab-button.active {
+    background: var(--mw-blue-light);
+
+    color: var(--mw-blue);
+}
+
+
+/*
+Ícone da aba ativa.
+*/
+
+.tab-button.active svg {
+    stroke-width: 2.2;
+}
+
+
+/*
+Indicador inferior da aba ativa.
+
+Fica dentro da própria aba para deixar o estado
+selecionado mais evidente.
+*/
+
+.tab-button.active::after {
+    content: "";
+
+    position: absolute;
+
+    left: 22%;
+    right: 22%;
+    bottom: 2px;
+
+    height: 2px;
+
+    border-radius: 999px;
+
+    background: var(--mw-blue);
+}
+
+
+/*
+Efeito ao pressionar.
+*/
+
+.tab-button:active {
+    transform: scale(0.97);
+}
+
+/* =========================================================
+18. CONTEÚDO DAS ABAS
+========================================================= */
+
+/*
+Por padrão todas as abas ficam escondidas.
+*/
+
+.tab-content {
+display: none;
+
+
+margin-top: 15px;
+
+
+}
+
+/*
+Somente a aba ativa fica visível.
+*/
+
+.tab-content.active {
+display: block;
+}
+
+/* =========================================================
+19. SEÇÕES INTERNAS
+========================================================= */
+
+.profile-section {
+margin-bottom: 12px;
+
+
+padding: 17px;
+
+background: var(--mw-white);
+
+border: 1px solid var(--mw-border);
+
+border-radius: 17px;
+
+box-shadow:
+    0 2px 8px rgba(25, 40, 70, 0.025);
+
+
+}
+
+.profile-section:last-child {
+margin-bottom: 0;
+}
+
+/*
+Cabeçalho das seções.
+*/
+
+.section-heading {
+display: flex;
+align-items: baseline;
+justify-content: space-between;
+
+
+gap: 12px;
+
+margin-bottom: 11px;
+
+
+}
+
+.section-heading h2 {
+color: var(--mw-text-dark);
+
+
+font-size: 15px;
+line-height: 20px;
+font-weight: 800;
+
+
+}
+
+.section-heading span {
+color: var(--mw-muted);
+
+
+font-size: 11px;
+line-height: 16px;
+font-weight: 500;
+
+
+}
+
+/* =========================================================
+20. BIOGRAFIA / SOBRE MIM
+========================================================= */
+
+.profile-bio {
+color: #5d687c;
+
+
+font-size: 13px;
+line-height: 1.7;
+
+white-space: pre-line;
+
+
+}
+
+/* =========================================================
+21. INFORMAÇÕES PROFISSIONAIS
+========================================================= */
+
+.info-grid {
+display: grid;
+
+
+grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+gap: 7px;
+
+
+}
+
+.info-card {
+min-width: 0;
+
+
+padding: 11px;
+
+background: #f8faff;
+
+border: 1px solid var(--mw-border-light);
+
+border-radius: 10px;
+
+
+}
+
+.info-label {
+display: block;
+
+
+margin-bottom: 4px;
+
+color: #8992a4;
+
+font-size: 10px;
+line-height: 14px;
+font-weight: 600;
+
+
+}
+
+.info-card strong {
+display: block;
+
+
+overflow: hidden;
+text-overflow: ellipsis;
+
+color: #344057;
+
+font-size: 12px;
+line-height: 17px;
+font-weight: 700;
+
+
+}
+
+/* =========================================================
+22. GÊNEROS / ESTILOS MUSICAIS
+========================================================= */
+
+.genre-list {
+display: flex;
+flex-wrap: wrap;
+
+
+gap: 7px;
+
+
+}
+
+/*
+Tag individual de gênero musical.
+*/
+
+.genre-tag {
+display: inline-flex;
+align-items: center;
+
+
+min-height: 28px;
+
+padding: 5px 10px;
+
+background: var(--mw-blue-light);
+
+border: 1px solid #dce6ff;
+
+border-radius: 999px;
+
+color: var(--mw-blue);
+
+font-size: 11px;
+line-height: 16px;
+font-weight: 700;
+
+
+}
+
+/*
+Mensagem exibida quando não existem gêneros.
+*/
+
+.empty-inline {
+color: #929bad;
+
+
+font-size: 12px;
+
+
+}
+
+/* /* =========================================================
+23. SERVIÇOS
+========================================================= */
+
+/*
+Lista de serviços cadastrados pelo artista.
+
+No perfil público os serviços são apenas exibidos.
+Não existem ações de editar ou excluir.
+*/
+
+.services-list {
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 9px;
+}
+
+
+/*
+Card individual do serviço.
+*/
+
+.service-card {
+    width: 100%;
+
+    display: flex;
+    align-items: flex-start;
+
+    gap: 12px;
+
+    padding: 13px;
+
+    background: #f8faff;
+
+    border: 1px solid var(--mw-border-light);
+
+    border-radius: 13px;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.2s ease;
+}
+
+
+/*
+Pequeno efeito visual ao passar o mouse
+em telas que suportam hover.
+*/
+
+.service-card:hover {
+    background: #fbfcff;
+
+    border-color: #dce4f2;
+
+    box-shadow:
+        0 3px 12px rgba(25, 40, 70, 0.045);
+}
+
+
+/*
+Ícone do serviço.
+*/
+
+.service-icon {
+    width: 38px;
+    height: 38px;
+
+    flex: 0 0 auto;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 11px;
+
+    background: var(--mw-green-light);
+
+    color: var(--mw-green);
+}
+
+
+/*
+Ícone SVG do serviço.
+*/
+
+.service-icon svg {
+    width: 18px;
+    height: 18px;
+
+    stroke-width: 2;
+}
+
+
+/*
+Área das informações.
+*/
+
+.service-info {
+    min-width: 0;
+
+    flex: 1;
+
+    display: flex;
+    flex-direction: column;
+}
+
+
+/*
+Nome do serviço.
+*/
+
+.service-name {
+    margin: 0;
+
+    overflow: hidden;
+
+    color: var(--mw-text-dark);
+
+    font-size: 13px;
+    line-height: 18px;
+
+    font-weight: 800;
+
+    word-break: break-word;
+}
+
+
+/*
+Descrição do serviço.
+*/
+
+.service-description {
+    margin-top: 4px;
+
+    color: #68748a;
+
+    font-size: 11px;
+    line-height: 16px;
+
+    white-space: pre-line;
+
+    word-break: break-word;
+}
+
+
+/*
+Informações complementares.
+
+Exemplo:
+
+por evento • 2 horas
+por hora • 1 hora
+por show
+*/
+
+.service-meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+
+    gap: 5px;
+
+    margin-top: 7px;
+
+    color: #8992a4;
+
+    font-size: 10px;
+    line-height: 14px;
+
+    font-weight: 600;
+}
+
+
+/*
+Separador entre informações.
+*/
+
+.service-meta-separator {
+    color: #b3bac7;
+
+    font-size: 10px;
+}
+
+
+/*
+Preço do serviço.
+*/
+
+.service-price {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+
+    gap: 4px;
+
+    margin-top: 8px;
+
+    color: #647086;
+
+    font-size: 10px;
+    line-height: 16px;
+
+    font-weight: 600;
+}
+
+
+/*
+Valor em destaque.
+*/
+
+.service-price strong {
+    color: var(--mw-text-dark);
+
+    font-size: 13px;
+    line-height: 17px;
+
+    font-weight: 800;
+}
+
+
+/*
+Status do serviço.
+
+O status fica separado visualmente do restante
+das informações.
+*/
+
+.service-status {
+    margin-top: 7px;
+}
+
+
+/*
+Serviço disponível.
+*/
+
+.service-status-active {
+    display: inline-flex;
+    align-items: center;
+
+    gap: 5px;
+
+    min-height: 23px;
+
+    padding: 3px 8px;
+
+    border-radius: 999px;
+
+    background: var(--mw-green-light);
+
+    color: var(--mw-green);
+
+    font-size: 9px;
+    line-height: 13px;
+
+    font-weight: 800;
+}
+
+
+/*
+Ícone do status disponível.
+*/
+
+.service-status-active svg {
+    width: 12px;
+    height: 12px;
+
+    stroke-width: 2.2;
+}
+
+
+/*
+Serviço indisponível.
+*/
+
+.service-status-inactive {
+    display: inline-flex;
+    align-items: center;
+
+    min-height: 23px;
+
+    padding: 3px 8px;
+
+    border-radius: 999px;
+
+    background: var(--mw-red-light);
+
+    color: var(--mw-red);
+
+    font-size: 9px;
+    line-height: 13px;
+
+    font-weight: 800;
+}
+
+
+/*
+Compatibilidade com a antiga estrutura de tags.
+
+Caso algum dado antigo ainda seja renderizado
+como .service-tag, ele continua visualmente
+coerente com o novo padrão.
+*/
+
+.service-tag {
+    display: inline-flex;
+    align-items: center;
+
+    min-height: 28px;
+
+    padding: 5px 10px;
+
+    background: var(--mw-green-light);
+
+    border: 1px solid #c9f0d7;
+
+    border-radius: 999px;
+
+    color: var(--mw-green);
+
+    font-size: 11px;
+    line-height: 16px;
+
+    font-weight: 700;
+}
+
+
+/*
+Ajuste para telas pequenas.
+*/
+
+@media (max-width: 520px) {
+
+    .services-list {
+        gap: 8px;
+    }
+
+
+    .service-card {
+        gap: 10px;
+
+        padding: 11px;
+
+        border-radius: 12px;
+    }
+
+
+    .service-icon {
+        width: 35px;
+        height: 35px;
+
+        border-radius: 10px;
+    }
+
+
+    .service-icon svg {
+        width: 17px;
+        height: 17px;
+    }
+
+
+    .service-name {
+        font-size: 12px;
+        line-height: 17px;
+    }
+
+
+    .service-description {
+        margin-top: 3px;
+
+        font-size: 10px;
+        line-height: 15px;
+    }
+
+
+    .service-meta {
+        margin-top: 6px;
+
+        font-size: 9px;
+        line-height: 13px;
+    }
+
+
+    .service-price {
+        margin-top: 7px;
+
+        font-size: 9px;
+    }
+
+
+    .service-price strong {
+        font-size: 12px;
+    }
+
+
+    .service-status-active,
+    .service-status-inactive {
+        font-size: 8px;
+    }
+
+}
+
+
+/*
+Ajuste para celulares muito pequenos.
+*/
+
+@media (max-width: 380px) {
+
+    .service-card {
+        gap: 9px;
+
+        padding: 10px;
+    }
+
+
+    .service-icon {
+        width: 33px;
+        height: 33px;
+    }
+
+
+    .service-name {
+        font-size: 11px;
+    }
+
+
+    .service-description {
+        font-size: 9px;
+        line-height: 14px;
+    }
+
+
+    .service-meta {
+        font-size: 8px;
+    }
+
+
+    .service-price strong {
+        font-size: 11px;
+    }
+
+}
+
+/* =========================================================
+24. ESTADO VAZIO
+========================================================= */
+
+.empty-state {
+min-height: 100px;
+
+
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+
+padding: 20px;
+
+text-align: center;
+
+color: #929bad;
+
+
+}
+
+.empty-state svg {
+width: 25px;
+height: 25px;
+
+
+margin-bottom: 8px;
+
+color: #b4bdcc;
+
+stroke-width: 1.7;
+
+
+}
+
+.empty-state p {
+font-size: 12px;
+line-height: 17px;
+}
+
+/* =========================================================
+25. PORTFÓLIO — IMAGENS
+========================================================= */
+
+/*
+Galeria principal do portfólio.
+
+As imagens são apresentadas em formato compacto
+para permitir visualizar vários trabalhos de uma vez.
+*/
+
+.portfolio-grid {
+    width: 100%;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+    gap: 8px;
+}
+
+
+/*
+Card individual da imagem.
+*/
+
+.portfolio-card {
+    position: relative;
+
+    width: 100%;
+
+    overflow: hidden;
+
+    background: var(--mw-white);
+
+    border: 1px solid var(--mw-border-light);
+
+    border-radius: 11px;
+
+    box-shadow:
+        0 2px 7px rgba(25, 40, 70, 0.035);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
+}
+
+
+/*
+Pequena elevação ao passar o mouse.
+*/
+
+.portfolio-card:hover {
+    transform: translateY(-2px);
+
+    border-color: #dbe3ef;
+
+    box-shadow:
+        0 6px 16px rgba(25, 40, 70, 0.08);
+}
+
+
+/*
+Área da imagem.
+
+Mantemos todas as imagens com a mesma proporção
+para criar uma galeria visualmente organizada.
+*/
+
+.portfolio-image {
+    position: relative;
+
+    width: 100%;
+
+    aspect-ratio: 1 / 1;
+
+    overflow: hidden;
+
+    background: #eef2f8;
+}
+
+
+/*
+Imagem do portfólio.
+*/
+
+.portfolio-image img {
+    width: 100%;
+    height: 100%;
+
+    display: block;
+
+    object-fit: cover;
+
+    transition:
+        transform 0.3s ease;
+}
+
+
+/*
+Zoom extremamente discreto.
+*/
+
+.portfolio-card:hover .portfolio-image img {
+    transform: scale(1.035);
+}
+
+
+/*
+Área das informações da imagem.
+
+O título fica visualmente separado da imagem,
+criando uma área branca própria para o texto.
+*/
+
+.portfolio-info {
+    width: 100%;
+
+    padding: 9px 10px 10px;
+
+    background: var(--mw-white);
+
+    border-top: 1px solid var(--mw-border-light);
+
+    min-height: 51px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+
+    gap: 3px;
+}
+
+
+/*
+Título da imagem.
+
+Permite até duas linhas e corta automaticamente
+textos maiores com reticências.
+*/
+
+.portfolio-title {
+    width: 100%;
+
+    margin: 0;
+
+    color: var(--mw-text-dark);
+
+    font-size: 11px;
+    line-height: 15px;
+
+    font-weight: 800;
+
+    overflow: hidden;
+
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+
+    text-overflow: ellipsis;
+
+    word-break: break-word;
+}
+
+
+/*
+Descrição da imagem.
+
+Visualmente mais discreta que o título.
+*/
+
+.portfolio-description {
+    width: 100%;
+
+    margin: 0;
+
+    color: var(--mw-text-medium);
+
+    font-size: 9px;
+    line-height: 13px;
+
+    font-weight: 400;
+
+    overflow: hidden;
+
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+
+    text-overflow: ellipsis;
+
+    word-break: break-word;
+}
+
+
+/*
+Quando o card não possuir informações adicionais,
+a área de texto não deve criar espaço desnecessário.
+*/
+
+.portfolio-card .portfolio-info:empty {
+    display: none;
+}
+
+/* =========================================================
+26. PORTFÓLIO — VÍDEOS
+========================================================= */
+
+/*
+Lista de vídeos do portfólio.
+
+Os vídeos ficam em duas colunas para evitar
+que um único vídeo ocupe toda a largura da tela.
+*/
+
+.video-list {
+    width: 100%;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 9px;
+}
+
+
+/*
+Card individual do vídeo.
+*/
+
+.video-card {
+    width: 100%;
+
+    overflow: hidden;
+
+    background: var(--mw-white);
+
+    border: 1px solid var(--mw-border-light);
+
+    border-radius: 12px;
+
+    box-shadow:
+        0 2px 8px rgba(25, 40, 70, 0.035);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
+}
+
+
+.video-card:hover {
+    transform: translateY(-2px);
+
+    border-color: #dbe3ef;
+
+    box-shadow:
+        0 6px 16px rgba(25, 40, 70, 0.08);
+}
+
+
+/*
+Player de vídeo.
+*/
+
+.video-card video,
+.video-card iframe {
+    width: 100%;
+
+    aspect-ratio: 16 / 9;
+
+    display: block;
+
+    border: 0;
+
+    background: #101522;
+
+    object-fit: cover;
+}
+
+
+/*
+Título do vídeo.
+
+O título recebe uma área própria abaixo
+do player, seguindo o mesmo padrão visual
+das imagens do portfólio.
+*/
+
+.video-title {
+    width: 100%;
+
+    display: -webkit-box;
+
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+
+    overflow: hidden;
+
+    margin: 0;
+
+    padding: 9px 10px 10px;
+
+    background: var(--mw-white);
+
+    border-top: 1px solid var(--mw-border-light);
+
+    color: var(--mw-text-dark);
+
+    font-size: 11px;
+    line-height: 15px;
+
+    font-weight: 800;
+
+    text-overflow: ellipsis;
+
+    word-break: break-word;
+
+    min-height: 40px;
+}
+
+/* =========================================================
+27. PORTFÓLIO — ÁUDIOS
+========================================================= */
+
+.audio-list {
+display: flex;
+flex-direction: column;
+
+
+gap: 8px;
+
+
+}
+
+.audio-card {
+display: flex;
+align-items: center;
+
+
+gap: 10px;
+
+padding: 10px 11px;
+
+background: #f8faff;
+
+border: 1px solid var(--mw-border-light);
+
+border-radius: 11px;
+
+
+}
+
+/*
+Ícone do áudio.
+*/
+
+.audio-icon {
+width: 34px;
+height: 34px;
+
+
+flex: 0 0 auto;
+
+display: flex;
+align-items: center;
+justify-content: center;
+
+border-radius: 10px;
+
+background: var(--mw-blue-light);
+
+color: var(--mw-blue);
+
+
+}
+
+.audio-icon svg {
+width: 17px;
+height: 17px;
+}
+
+/*
+Área textual do áudio.
+*/
+
+.audio-content {
+min-width: 0;
+flex: 1;
+}
+
+.audio-title {
+overflow: hidden;
+text-overflow: ellipsis;
+white-space: nowrap;
+
+
+color: #344057;
+
+font-size: 12px;
+line-height: 17px;
+font-weight: 700;
+
+
+}
+
+/*
+Player de áudio.
+*/
+
+.audio-card audio {
+width: 100%;
+
+
+margin-top: 5px;
+
+height: 30px;
+
+
+}
+
+/* =========================================================
+28. AGENDA / CALENDÁRIO
+========================================================= */
+
+.agenda-list {
+width: 100%;
+}
+
+/*
+Container geral do calendário.
+*/
+
+.calendar {
+width: 100%;
+
+
+overflow: hidden;
+
+background: #f8faff;
+
+border: 1px solid var(--mw-border-light);
+
+border-radius: 13px;
+
+
+}
+
+/*
+Cabeçalho do calendário.
+*/
+
+.calendar-header {
+display: flex;
+align-items: center;
+justify-content: space-between;
+
+
+padding: 12px;
+
+border-bottom: 1px solid var(--mw-border-light);
+
+background: var(--mw-white);
+
+
+}
+
+/*
+Nome do mês / ano.
+*/
+
+.calendar-title {
+color: #344057;
+
+
+font-size: 13px;
+font-weight: 800;
+
+
+}
+
+/*
+Botões anterior / próximo.
+*/
+
+.calendar-navigation {
+display: flex;
+align-items: center;
+
+
+gap: 5px;
+
+
+}
+
+.calendar-navigation button {
+width: 30px;
+height: 30px;
+
+
+display: flex;
+align-items: center;
+justify-content: center;
+
+border-radius: 8px;
+
+background: #f3f6fb;
+
+color: #647086;
+
+transition:
+    background 0.2s ease,
+    color 0.2s ease;
+
+
+}
+
+.calendar-navigation button:hover {
+background: var(--mw-blue-light);
+color: var(--mw-blue);
+}
+
+.calendar-navigation svg {
+width: 15px;
+height: 15px;
+}
+
+/*
+Grade dos dias da semana e dos dias do mês.
+*/
+
+.calendar-weekdays,
+.calendar-days {
+display: grid;
+
+
+grid-template-columns:
+    repeat(7, minmax(0, 1fr));
+
+
+}
+
+/*
+Cabeçalho dos dias da semana.
+*/
+
+.calendar-weekdays {
+padding: 9px 9px 5px;
+}
+
+.calendar-weekdays span {
+text-align: center;
+
+
+color: #8992a4;
+
+font-size: 9px;
+line-height: 14px;
+font-weight: 800;
+
+
+}
+
+/*
+Área dos dias.
+*/
+
+.calendar-days {
+padding: 5px 9px 12px;
+
+
+gap: 4px;
+
+
+}
+
+/*
+Dia individual.
+*/
+
+.calendar-day {
+min-height: 34px;
+
+
+display: flex;
+align-items: center;
+justify-content: center;
+
+border-radius: 8px;
+
+color: #4e596d;
+
+font-size: 11px;
+font-weight: 600;
+
+cursor: default;
+
+
+}
+
+.calendar-day:hover {
+background: #eef3ff;
+}
+
+/*
+Dias pertencentes ao mês anterior ou seguinte.
+*/
+
+.calendar-day.other-month {
+color: #c3c9d3;
+}
+
+/*
+Dia atual.
+*/
+
+.calendar-day.today {
+background: var(--mw-blue-light);
+
+
+color: var(--mw-blue);
+
+font-weight: 800;
+
+
+}
+
+/*
+Dia disponível.
+*/
+
+.calendar-day.available {
+background: var(--mw-green-light);
+
+
+color: var(--mw-green);
+
+
+}
+
+/*
+Dia indisponível.
+*/
+
+.calendar-day.unavailable {
+background: var(--mw-red-light);
+
+
+color: var(--mw-red);
+
+
+}
+
+/* =========================================================
+29. LEGENDA DA AGENDA
+========================================================= */
+
+.agenda-legend {
+display: flex;
+flex-wrap: wrap;
+
+
+gap: 10px;
+
+margin-top: 11px;
+
+color: #8992a4;
+
+font-size: 10px;
+
+
+}
+
+.agenda-legend-item {
+display: inline-flex;
+align-items: center;
+
+
+gap: 5px;
+
+
+}
+
+.agenda-legend-dot {
+width: 7px;
+height: 7px;
+
+
+border-radius: 50%;
+
+
+}
+
+.agenda-legend-dot.available {
+background: var(--mw-green-dot);
+}
+
+.agenda-legend-dot.unavailable {
+background: var(--mw-red);
+}
+
+.agenda-legend-dot.today {
+background: var(--mw-blue);
+}
+
+/* =========================================================
+30. AVALIAÇÕES
+========================================================= */
+
+.reviews-list {
+display: flex;
+flex-direction: column;
+
+
+gap: 9px;
+
+
+}
+
+.review-card {
+padding: 12px;
+
+
+background: #f8faff;
+
+border: 1px solid var(--mw-border-light);
+
+border-radius: 12px;
+
+
+}
+
+/*
+Cabeçalho da avaliação.
+*/
+
+.review-header {
+display: flex;
+align-items: center;
+
+
+gap: 9px;
+
+
+}
+
+/*
+Avatar do cliente.
+*/
+
+.review-avatar {
+width: 36px;
+height: 36px;
+
+
+flex: 0 0 auto;
+
+display: flex;
+align-items: center;
+justify-content: center;
+
+overflow: hidden;
+
+border-radius: 50%;
+
+background: var(--mw-blue-light);
+
+color: var(--mw-blue);
+
+font-size: 12px;
+font-weight: 800;
+
+
+}
+
+.review-avatar img {
+width: 100%;
+height: 100%;
+
+
+object-fit: cover;
+
+
+}
+
+/*
+Informações do avaliador.
+*/
+
+.review-user {
+min-width: 0;
+flex: 1;
+}
+
+.review-user-name {
+overflow: hidden;
+text-overflow: ellipsis;
+white-space: nowrap;
+
+
+color: #344057;
+
+font-size: 12px;
+line-height: 16px;
+font-weight: 800;
+
+
+}
+
+.review-date {
+margin-top: 2px;
+
+
+color: #929bad;
+
+font-size: 9px;
+line-height: 13px;
+
+
+}
+
+/*
+Estrelas da avaliação.
+*/
+
+.review-stars {
+display: flex;
+
+
+gap: 2px;
+
+color: var(--mw-orange);
+
+
+}
+
+.review-stars svg {
+width: 12px;
+height: 12px;
+
+
+fill: currentColor;
+
+stroke-width: 1.7;
+
+
+}
+
+/*
+Comentário do cliente.
+*/
+
+.review-comment {
+margin-top: 9px;
+
+
+color: #5d687c;
+
+font-size: 11px;
+line-height: 1.6;
+
+
+}
+
+/* =========================================================
+31. CARTEIRA
+========================================================= */
+
+/*
+Três indicadores financeiros:
+
+* saldo total;
+* disponível;
+* pendente.
+  */
+
+.wallet-summary {
+display: grid;
+
+
+grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+
+gap: 9px;
+
+
+}
+
+.wallet-card {
+min-width: 0;
+
+
+padding: 12px;
+
+border-radius: 11px;
+
+border: 1px solid var(--mw-border-light);
+
+
+}
+
+/*
+Saldo total.
+*/
+
+.wallet-total {
+background: #f8faff;
+}
+
+/*
+Saldo disponível.
+*/
+
+.wallet-available {
+background: var(--mw-green-light);
+
+
+border-color: #d8f3e2;
+
+
+}
+
+/*
+Saldo pendente.
+*/
+
+.wallet-pending {
+background: #fffaf0;
+
+
+border-color: #f8ebc9;
+
+
+}
+
+/*
+Título dos indicadores financeiros.
+*/
+
+.wallet-label {
+display: block;
+
+
+margin-bottom: 5px;
+
+color: #8992a4;
+
+font-size: 10px;
+line-height: 14px;
+font-weight: 600;
+
+
+}
+
+/*
+Valor financeiro.
+*/
+
+.wallet-card strong {
+display: block;
+
+
+overflow: hidden;
+text-overflow: ellipsis;
+
+color: #344057;
+
+font-size: 15px;
+line-height: 20px;
+font-weight: 800;
+
+
+}
+
+.wallet-available strong {
+color: var(--mw-green);
+}
+
+.wallet-pending strong {
+color: #b77905;
+}
+
+/* =========================================================
+32. BOTÃO DE SAQUE
+========================================================= */
+
+.wallet-withdraw {
+margin-top: 11px;
+}
+
+.withdraw-button {
+width: 100%;
+min-height: 42px;
+
+
+display: flex;
+align-items: center;
+justify-content: center;
+
+gap: 7px;
+
+border-radius: 11px;
+
+background: var(--mw-blue-light);
+
+color: var(--mw-blue);
+
+font-size: 12px;
+font-weight: 800;
+
+transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+
+
+}
+
+.withdraw-button:hover {
+background: #e5edff;
+}
+
+.withdraw-button:active {
+transform: scale(0.99);
+}
+
+.withdraw-button svg {
+width: 16px;
+height: 16px;
+}
+
+/* =========================================================
+33. TRANSAÇÕES
+========================================================= */
+
+.transaction-list {
+display: flex;
+flex-direction: column;
+
+
+gap: 7px;
+
+
+}
+
+/*
+Item individual da transação.
+*/
+
+.transaction-item {
+display: flex;
+align-items: center;
+
+
+gap: 10px;
+
+padding: 10px;
+
+background: #f8faff;
+
+border: 1px solid var(--mw-border-light);
+
+border-radius: 10px;
+
+
+}
+
+/*
+Ícone da transação.
+*/
+
+.transaction-icon {
+width: 34px;
+height: 34px;
+
+
+flex: 0 0 auto;
+
+display: flex;
+align-items: center;
+justify-content: center;
+
+border-radius: 9px;
+
+background: var(--mw-blue-light);
+
+color: var(--mw-blue);
+
+
+}
+
+.transaction-icon svg {
+width: 16px;
+height: 16px;
+}
+
+/*
+Informações da transação.
+*/
+
+.transaction-content {
+min-width: 0;
+flex: 1;
+}
+
+.transaction-title {
+overflow: hidden;
+text-overflow: ellipsis;
+white-space: nowrap;
+
+
+color: #344057;
+
+font-size: 11px;
+line-height: 15px;
+font-weight: 700;
+
+
+}
+
+.transaction-date {
+margin-top: 2px;
+
+
+color: #929bad;
+
+font-size: 9px;
+line-height: 13px;
+
+
+}
+
+/*
+Valor da transação.
+*/
+
+.transaction-value {
+flex: 0 0 auto;
+
+
+font-size: 12px;
+font-weight: 800;
+
+
+}
+
+/*
+Entrada de dinheiro.
+*/
+
+.transaction-value.positive {
+color: var(--mw-green);
+}
+
+/*
+Saída de dinheiro.
+*/
+
+.transaction-value.negative {
+color: var(--mw-red);
+}
+
+/* =========================================================
+34. MODAL QR CODE
+========================================================= */
+
+/*
+Fundo escurecido que cobre a tela inteira.
+*/
+
+.qr-overlay {
+position: fixed;
+
+
+inset: 0;
+
+z-index: 500;
+
+display: none;
+
+align-items: center;
+justify-content: center;
+
+padding: 20px;
+
+background: rgba(17, 27, 45, 0.48);
+
+backdrop-filter: blur(3px);
+
+
+}
+
+/*
+Estado aberto do modal.
+*/
+
+.qr-overlay.active {
+display: flex;
+}
+
+/*
+Caixa principal do modal.
+*/
+
+.qr-modal {
+width: 100%;
+max-width: 390px;
+
+
+overflow: hidden;
+
+background: var(--mw-white);
+
+border-radius: 18px;
+
+box-shadow:
+    0 20px 60px rgba(20, 30, 50, 0.20);
+
+
+}
+
+/*
+Cabeçalho do modal.
+*/
+
+.qr-modal-header {
+display: flex;
+align-items: flex-start;
+justify-content: space-between;
+
+
+gap: 12px;
+
+padding: 17px;
+
+border-bottom: 1px solid var(--mw-border);
+
+
+}
+
+.qr-modal-header h2 {
+color: var(--mw-text-dark);
+
+
+font-size: 16px;
+line-height: 21px;
+font-weight: 800;
+
+
+}
+
+.qr-modal-header p {
+margin-top: 3px;
+
+
+color: #8992a4;
+
+font-size: 10px;
+line-height: 15px;
+
+
+}
+
+/*
+Botão fechar.
+*/
+
+.qr-close-button {
+width: 34px;
+height: 34px;
+
+
+flex: 0 0 auto;
+
+display: flex;
+align-items: center;
+justify-content: center;
+
+border-radius: 50%;
+
+background: #f4f6fa;
+
+color: #697489;
+
+
+}
+
+.qr-close-button:hover {
+background: #edf1f7;
+}
+
+.qr-close-button svg {
+width: 17px;
+height: 17px;
+}
+
+/*
+Conteúdo interno do modal.
+*/
+
+.qr-content {
+padding: 18px;
+}
+
+/*
+Área da imagem do QR Code.
+*/
+
+.qr-image-wrapper {
+width: 190px;
+height: 190px;
+
+
+display: flex;
+align-items: center;
+justify-content: center;
+
+margin: 0 auto;
+
+padding: 10px;
+
+background: #ffffff;
+
+border: 1px solid var(--mw-border);
+
+border-radius: 13px;
+
+
+}
+
+.qr-image-wrapper img {
+width: 100%;
+height: 100%;
+
+
+object-fit: contain;
+
+
+}
+
+/*
+Área do link do perfil.
+*/
+
+.profile-link-wrapper {
+margin-top: 15px;
+}
+
+.profile-link-label {
+display: block;
+
+
+margin-bottom: 5px;
+
+color: #8992a4;
+
+font-size: 10px;
+font-weight: 700;
+
+
+}
+
+.profile-link {
+width: 100%;
+
+
+padding: 9px 10px;
+
+overflow: hidden;
+text-overflow: ellipsis;
+white-space: nowrap;
+
+background: #f8faff;
+
+border: 1px solid var(--mw-border-light);
+
+border-radius: 9px;
+
+color: #526078;
+
+font-size: 10px;
+
+
+}
+
+/*
+Botão de compartilhamento do QR Code.
+*/
+
+.share-qr-button {
+width: 100%;
+min-height: 42px;
+
+
+display: flex;
+align-items: center;
+justify-content: center;
+
+gap: 7px;
+
+margin-top: 10px;
+
+border-radius: 11px;
+
+background: var(--mw-blue);
+
+color: #ffffff;
+
+font-size: 12px;
+font-weight: 800;
+
+transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+
+
+}
+
+.share-qr-button:hover {
+background: #2852c7;
+}
+
+.share-qr-button:active {
+transform: scale(0.99);
+}
+
+.share-qr-button svg {
+width: 16px;
+height: 16px;
+}
+
+/* =========================================================
+35. TOAST / NOTIFICAÇÕES
+========================================================= */
+
+/*
+Notificação temporária exibida na parte inferior da tela.
+*/
+
+.toast {
+position: fixed;
+
+
+left: 50%;
+bottom: 24px;
+
+z-index: 600;
+
+max-width: calc(100vw - 30px);
+
+display: flex;
+align-items: center;
+
+gap: 8px;
+
+padding: 10px 14px;
+
+border-radius: 11px;
+
+background: #1d273b;
+
+color: #ffffff;
+
+box-shadow:
+    0 8px 24px rgba(20, 30, 50, 0.18);
+
+font-size: 11px;
+line-height: 15px;
+font-weight: 600;
+
+opacity: 0;
+visibility: hidden;
+
+transform: translate(-50%, 10px);
+
+pointer-events: none;
+
+transition:
+    opacity 0.25s ease,
+    visibility 0.25s ease,
+    transform 0.25s ease;
+
+
+}
+
+/*
+Toast visível.
+*/
+
+.toast.show {
+opacity: 1;
+visibility: visible;
+
+
+transform: translate(-50%, 0);
+
+
+}
+
+.toast svg {
+width: 15px;
+height: 15px;
+
+
+flex: 0 0 auto;
+
+
+}
+
+/* =========================================================
+36. FOCO / ACESSIBILIDADE
+========================================================= */
+
+/*
+Indicador visual para navegação por teclado.
+*/
+
+button:focus-visible {
+outline: 2px solid var(--mw-blue);
+outline-offset: 2px;
+}
+
+/* =========================================================
+37. DESKTOP
+========================================================= */
+
+@media (min-width: 768px) {
+
+
+/*
+   Aumenta um pouco o espaço superior em telas maiores.
+*/
+
+.profile-page {
+    padding-top: 24px;
+}
+
+
+}
+
+/* /* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 720px) {
+
+    .topbar {
+        height: 60px;
+    }
+
+    .topbar-content {
+        padding: 0 14px;
+    }
+
+    .topbar-title {
+        font-size: 15px;
+    }
+
+    .topbar-subtitle {
+        font-size: 10px;
+    }
+
+    .profile-page {
+        padding: 14px 10px 100px;
+    }
+
+    .profile-card {
+        border-radius: 18px;
+    }
+
+    .profile-header {
+        padding: 18px 14px 14px;
+    }
+
+    .profile-avatar {
+        width: 76px;
+        height: 76px;
+    }
+
+    .profile-initials {
+        font-size: 25px;
+    }
+
+    .profile-name {
+        font-size: 19px;
+        line-height: 1.2;
+    }
+
+    .profile-category {
+        font-size: 11px;
+    }
+
+    .profile-location {
+        font-size: 10px;
+    }
+
+    .profile-rating {
+        font-size: 10px;
+    }
+
+    .profile-status {
+        font-size: 10px;
+    }
+
+    .profile-actions {
+        gap: 7px;
+    }
+
+    .profile-actions button {
+        min-height: 38px;
+        padding: 0 11px;
+        font-size: 10px;
+    }
+
+    .profile-tabs {
+        overflow-x: auto;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .profile-tabs::-webkit-scrollbar {
+        display: none;
+    }
+
+    .profile-tab {
+        flex: 0 0 auto;
+        min-width: 72px;
+        padding: 11px 8px;
+        font-size: 9px;
+    }
+
+    .profile-section {
+        padding: 14px;
+    }
+
+    .section-title {
+        font-size: 14px;
+    }
+
+    .section-description {
+        font-size: 10px;
+    }
+
+    .bio-text {
+        font-size: 11px;
+        line-height: 1.55;
+    }
+
+    .info-grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .info-item {
+        padding: 9px;
+    }
+
+    .info-label {
+        font-size: 9px;
+    }
+
+    .info-value {
+        font-size: 10px;
+    }
+
+    /* =====================================================
+       GÊNEROS
+       ===================================================== */
+
+    .genre-list {
+        gap: 5px;
+    }
+
+    .genre-tag {
+        padding: 5px 8px;
+        font-size: 9px;
+    }
+
+    /* =====================================================
+       SERVIÇOS
+       ===================================================== */
+
+    .services-list {
+        gap: 7px;
+    }
+
+    .service-card {
+        padding: 9px;
+        gap: 9px;
+        border-radius: 12px;
+    }
+
+    .service-icon {
+        width: 34px;
+        height: 34px;
+        min-width: 34px;
+        border-radius: 9px;
+    }
+
+    .service-icon svg {
+        width: 16px;
+        height: 16px;
+    }
+
+    .service-info {
+        min-width: 0;
+    }
+
+    .service-name {
+        font-size: 10px;
+        line-height: 1.25;
+    }
+
+    .service-description {
+        margin-top: 3px;
+        font-size: 8px;
+        line-height: 1.35;
+
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        overflow: hidden;
+    }
+
+    .service-meta {
+        margin-top: 4px;
+        gap: 5px;
+        font-size: 8px;
+    }
+
+    .service-price {
+        min-width: max-content;
+        font-size: 9px;
+    }
+
+    .service-price strong {
+        font-size: 10px;
+    }
+
+    .service-status {
+        margin-top: 3px;
+        font-size: 8px;
+    }
+
+        /* =====================================================
+       PORTFÓLIO
+       ===================================================== */
+
+    .portfolio-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 6px;
+    }
+
+    .portfolio-card {
+        min-width: 0;
+
+        border-radius: 9px;
+    }
+
+    .portfolio-image {
+        aspect-ratio: 1 / 1;
+    }
+
+    .portfolio-info {
+        padding: 7px 8px 8px;
+
+        min-height: 45px;
+
+        gap: 2px;
+    }
+
+    .portfolio-title {
+        width: 100%;
+
+        font-size: 9px;
+        line-height: 12px;
+
+        font-weight: 800;
+
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+
+        overflow: hidden;
+
+        text-overflow: ellipsis;
+
+        word-break: break-word;
+    }
+
+    .portfolio-description {
+        width: 100%;
+
+        margin: 0;
+
+        font-size: 8px;
+        line-height: 10px;
+
+        color: var(--mw-text-medium);
+
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+
+        overflow: hidden;
+
+        text-overflow: ellipsis;
+
+        word-break: break-word;
+    }
+
+
+    /* =====================================================
+       VÍDEOS
+       ===================================================== */
+
+    .video-list {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+
+        gap: 7px;
+    }
+
+    .video-card {
+        min-width: 0;
+
+        border-radius: 10px;
+    }
+
+    .video-card video,
+    .video-card iframe {
+        width: 100%;
+
+        aspect-ratio: 16 / 9;
+
+        display: block;
+    }
+
+    .video-title {
+        width: 100%;
+
+        min-height: 34px;
+
+        padding: 7px 8px 8px;
+
+        margin: 0;
+
+        font-size: 9px;
+        line-height: 12px;
+
+        font-weight: 800;
+
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+
+        overflow: hidden;
+
+        text-overflow: ellipsis;
+
+        word-break: break-word;
+    }
+    /* =====================================================
+       ÁUDIO
+       ===================================================== */
+
+    .audio-list {
+        gap: 7px;
+    }
+
+    .audio-card {
+        padding: 8px;
+        border-radius: 10px;
+    }
+
+    .audio-title {
+        font-size: 9px;
+    }
+
+    .audio-description {
+        font-size: 8px;
+    }
+
+    /* =====================================================
+       AGENDA
+       ===================================================== */
+
+    .agenda-list {
+        gap: 7px;
+    }
+
+    .agenda-card {
+        padding: 9px;
+        border-radius: 11px;
+    }
+
+    .agenda-date {
+        min-width: 44px;
+    }
+
+    .agenda-day {
+        font-size: 17px;
+    }
+
+    .agenda-month {
+        font-size: 8px;
+    }
+
+    .agenda-info h4 {
+        font-size: 10px;
+    }
+
+    .agenda-info p {
+        font-size: 8px;
+    }
+
+    /* =====================================================
+       AVALIAÇÕES
+       ===================================================== */
+
+    .reviews-summary {
+        padding: 12px;
+        border-radius: 11px;
+    }
+
+    .reviews-average {
+        font-size: 25px;
+    }
+
+    .reviews-stars svg {
+        width: 13px;
+        height: 13px;
+    }
+
+    .reviews-count {
+        font-size: 9px;
+    }
+
+    .review-card {
+        padding: 10px;
+        border-radius: 11px;
+    }
+
+    .review-name {
+        font-size: 10px;
+    }
+
+    .review-date {
+        font-size: 8px;
+    }
+
+    .review-text {
+        font-size: 9px;
+        line-height: 1.45;
+    }
+
+    /* =====================================================
+       CARTEIRA
+       ===================================================== */
+
+    .wallet-summary {
+        gap: 7px;
+    }
+
+    .wallet-card {
+        padding: 11px;
+        border-radius: 11px;
+    }
+
+    .wallet-label {
+        font-size: 8px;
+    }
+
+    .wallet-value {
+        font-size: 17px;
+    }
+
+    .transaction-list {
+        gap: 6px;
+    }
+
+    .transaction-card {
+        padding: 9px;
+        border-radius: 10px;
+    }
+
+    .transaction-title {
+        font-size: 9px;
+    }
+
+    .transaction-date {
+        font-size: 8px;
+    }
+
+    .transaction-value {
+        font-size: 10px;
+    }
+
+    /* =====================================================
+       BOTÃO FLUTUANTE
+       ===================================================== */
+
+    .floating-profile-button {
+        right: 12px;
+        bottom: 76px;
+        width: 42px;
+        height: 42px;
+    }
+
+    .floating-profile-button svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    /* =====================================================
+       QR CODE
+       ===================================================== */
+
+    .qr-modal {
+        padding: 15px;
+    }
+
+    .qr-content {
+        width: min(100%, 340px);
+        padding: 18px;
+        border-radius: 18px;
+    }
+
+    .qr-image {
+        width: 190px;
+        height: 190px;
+    }
+
+    .profile-link {
+        font-size: 9px;
+    }
+}
+
+
+/* =========================================================
+   MOBILE PEQUENO
+   ========================================================= */
+
+@media (max-width: 380px) {
+
+    .profile-page {
+        padding-left: 8px;
+        padding-right: 8px;
+    }
+
+    .profile-header {
+        padding: 16px 11px 13px;
+    }
+
+    .profile-avatar {
+        width: 68px;
+        height: 68px;
+    }
+
+    .profile-name {
+        font-size: 17px;
+    }
+
+    .profile-category {
+        font-size: 10px;
+    }
+
+    .profile-tabs {
+        margin-left: -2px;
+        margin-right: -2px;
+    }
+
+    .profile-tab {
+        min-width: 66px;
+        padding: 10px 6px;
+        font-size: 8px;
+    }
+
+    .profile-section {
+        padding: 12px;
+    }
+
+    /* =====================================================
+       SERVIÇOS
+       ===================================================== */
+
+    .service-card {
+        padding: 8px;
+        gap: 7px;
+    }
+
+    .service-icon {
+        width: 31px;
+        height: 31px;
+        min-width: 31px;
+    }
+
+    .service-icon svg {
+        width: 14px;
+        height: 14px;
+    }
+
+    .service-name {
+        font-size: 9px;
+    }
+
+    .service-description {
+        font-size: 7px;
+    }
+
+    .service-meta {
+        font-size: 7px;
+    }
+
+    .service-price {
+        font-size: 8px;
+    }
+
+    .service-price strong {
+        font-size: 9px;
+    }
+
+    .service-status {
+        font-size: 7px;
+    }
+
+        /* =====================================================
+       PORTFÓLIO
+       ===================================================== */
+
+    .portfolio-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+
+        gap: 5px;
+    }
+
+    .portfolio-card {
+        border-radius: 8px;
+    }
+
+    .portfolio-info {
+        padding: 6px 7px 7px;
+
+        min-height: 40px;
+
+        gap: 2px;
+    }
+
+    .portfolio-title {
+        font-size: 8px;
+        line-height: 10px;
+
+        font-weight: 800;
+
+        -webkit-line-clamp: 2;
+    }
+
+    .portfolio-description {
+        font-size: 7px;
+        line-height: 9px;
+
+        -webkit-line-clamp: 2;
+    }
+
+
+    /* =====================================================
+       VÍDEOS
+       ===================================================== */
+
+    .video-list {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+
+        gap: 5px;
+    }
+
+    .video-card {
+        border-radius: 8px;
+    }
+
+    .video-title {
+        min-height: 29px;
+
+        padding: 6px 7px 7px;
+
+        font-size: 8px;
+        line-height: 10px;
+
+        font-weight: 800;
+
+        -webkit-line-clamp: 2;
+    }
+    /* =====================================================
+       ÁUDIO
+       ===================================================== */
+
+    .audio-card {
+        padding: 7px;
+    }
+
+    .audio-title {
+        font-size: 8px;
+    }
+
+    .audio-description {
+        font-size: 7px;
+    }
+
+    /* =====================================================
+       AGENDA
+       ===================================================== */
+
+    .agenda-card {
+        padding: 8px;
+    }
+
+    .agenda-day {
+        font-size: 15px;
+    }
+
+    .agenda-info h4 {
+        font-size: 9px;
+    }
+
+    .agenda-info p {
+        font-size: 7px;
+    }
+
+    /* =====================================================
+       AVALIAÇÕES
+       ===================================================== */
+
+    .review-card {
+        padding: 8px;
+    }
+
+    .review-name {
+        font-size: 9px;
+    }
+
+    .review-text {
+        font-size: 8px;
+    }
+
+    /* =====================================================
+       CARTEIRA
+       ===================================================== */
+
+    .wallet-card {
+        padding: 9px;
+    }
+
+    .wallet-value {
+        font-size: 15px;
+    }
+
+    .transaction-card {
+        padding: 8px;
+    }
+
+    .transaction-title {
+        font-size: 8px;
+    }
+
+    .transaction-value {
+        font-size: 9px;
+    }
+}
+
+
+/* =========================================================
+   SAFE AREA — IPHONE
+   ========================================================= */
+
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+
+    .profile-page {
+        padding-bottom: calc(100px + env(safe-area-inset-bottom));
+    }
+
+    .floating-profile-button {
+        bottom: calc(76px + env(safe-area-inset-bottom));
+    }
+
+    .bottom-menu {
+        padding-bottom: env(safe-area-inset-bottom);
+    }
+}
+
+
+/* =========================================================
+   REDUÇÃO DE MOVIMENTO
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .portfolio-card,
+    .video-card,
+    .service-card,
+    button {
+        transition: none !important;
+    }
+}
+
+/* =========================================================
+41. REDUÇÃO DE MOVIMENTO
+========================================================= */
+
+/*
+Para usuários que preferem reduzir animações,
+diminuímos drasticamente as transições.
+
+Isso melhora acessibilidade e conforto visual.
+*/
+
+@media (prefers-reduced-motion: reduce) {
+
+
+*,
+*::before,
+*::after {
+
+    scroll-behavior: auto !important;
+
+    transition-duration: 0.01ms !important;
+
+    animation-duration: 0.01ms !important;
+
+    animation-iteration-count: 1 !important;
+}
+
+
+}
+
+/* =========================================================
+FIM DO CSS
+==========
+
+Este arquivo é exclusivo da página:
+
+
+   meu-perfil-cantor-teste.html
+
+
+O CSS da página real permanece separado em:
+
+
+   css/meu-perfil-cantor.css
+
+
+========================================================= */
