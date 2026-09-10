@@ -19,6 +19,8 @@ async usuarioAtual() {
         return null;
     }
 
+    console.log("USUÁRIO AUTH COMPLETO:", data.user);
+    console.log("E-MAIL AUTH:", data.user?.email);
     return data.user;
 },
 
