@@ -4,7 +4,6 @@
 
 <head>
 
-
 <meta charset="UTF-8">
 
 <meta
@@ -20,7 +19,6 @@
 >
 
 <script src="https://unpkg.com/lucide@latest"></script>
-
 
 </head>
 
@@ -174,6 +172,21 @@ TOPBAR
 
         </button>
 
+
+        <button
+            type="button"
+            class="editor-tab"
+            data-editor-tab="servicos"
+        >
+
+            <i data-lucide="briefcase-business"></i>
+
+            <span>
+                Serviços
+            </span>
+
+        </button>
+
     </nav>
 
 
@@ -195,7 +208,9 @@ TOPBAR
             <div class="section-heading">
 
                 <div class="section-icon">
+
                     <i data-lucide="user-round"></i>
+
                 </div>
 
                 <div>
@@ -661,7 +676,9 @@ TOPBAR
             <div class="section-heading">
 
                 <div class="section-icon">
+
                     <i data-lucide="images"></i>
+
                 </div>
 
                 <div>
@@ -829,7 +846,9 @@ TOPBAR
             <div class="section-heading">
 
                 <div class="section-icon">
+
                     <i data-lucide="calendar-days"></i>
+
                 </div>
 
                 <div>
@@ -1008,6 +1027,203 @@ TOPBAR
     </section>
 
 
+    <!-- =================================================
+    SERVIÇOS E VALORES
+    ================================================== -->
+
+    <section
+        class="editor-panel"
+        data-editor-panel="servicos"
+        id="editorServicos"
+    >
+
+        <div class="form-card">
+
+            <div class="section-heading">
+
+                <div class="section-icon">
+
+                    <i data-lucide="briefcase-business"></i>
+
+                </div>
+
+                <div>
+
+                    <h2>
+                        Serviços e Valores
+                    </h2>
+
+                    <p>
+                        Cadastre os serviços que você oferece e informe como deseja apresentar seus valores.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="campo">
+
+                <label for="servicoNome">
+                    Nome do serviço
+                </label>
+
+                <input
+                    type="text"
+                    id="servicoNome"
+                    placeholder="Ex.: Show acústico"
+                >
+
+            </div>
+
+
+            <div class="campo">
+
+                <label for="servicoDescricao">
+                    Descrição
+                </label>
+
+                <textarea
+                    id="servicoDescricao"
+                    placeholder="Descreva o que está incluso neste serviço..."
+                ></textarea>
+
+            </div>
+
+
+            <div class="campo">
+
+                <label for="servicoDuracao">
+                    Duração
+                </label>
+
+                <input
+                    type="text"
+                    id="servicoDuracao"
+                    placeholder="Ex.: 2 horas"
+                >
+
+                <span class="campo-ajuda">
+                    Informe uma duração aproximada para o serviço.
+                </span>
+
+            </div>
+
+
+            <div class="campo">
+
+                <label for="servicoTipoPreco">
+                    Tipo de preço
+                </label>
+
+                <select id="servicoTipoPreco">
+
+                    <option value="fixo">
+                        Preço fixo
+                    </option>
+
+                    <option value="a_partir_de">
+                        A partir de
+                    </option>
+
+                    <option value="sob_consulta">
+                        Sob consulta
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div
+                class="campo"
+                id="campoValorServico"
+            >
+
+                <label for="servicoValor">
+                    Valor
+                </label>
+
+                <input
+                    type="text"
+                    id="servicoValor"
+                    inputmode="decimal"
+                    placeholder="0,00"
+                >
+
+                <span class="campo-ajuda">
+                    Informe somente o valor do serviço.
+                </span>
+
+            </div>
+
+
+            <div class="campo">
+
+                <label class="switch-row">
+
+                    <span>
+
+                        <strong>
+                            Serviço ativo
+                        </strong>
+
+                        <small>
+                            Serviços ativos ficam disponíveis para visualização e contratação.
+                        </small>
+
+                    </span>
+
+                    <input
+                        type="checkbox"
+                        id="servicoAtivo"
+                        checked
+                    >
+
+                    <span class="switch"></span>
+
+                </label>
+
+            </div>
+
+
+            <div class="acoes-servico">
+
+                <button
+                    type="button"
+                    class="btn-adicionar"
+                    id="btnAdicionarServico"
+                >
+
+                    <i data-lucide="plus"></i>
+
+                    Adicionar serviço
+
+                </button>
+
+
+                <button
+                    type="button"
+                    class="btn-cancelar"
+                    id="btnCancelarServico"
+                    hidden
+                >
+                    Cancelar edição
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div
+            class="servicos-edit-list"
+            id="servicosList"
+        ></div>
+
+    </section>
+
+
 </main>
 
 
@@ -1059,6 +1275,8 @@ LOADING
 SCRIPTS
 ====================================================== -->
 
+<script src="https://unpkg.com/lucide@latest"></script>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script src="js/core/SupabaseClient.js"></script>
@@ -1070,6 +1288,19 @@ SCRIPTS
 <script src="js/core/ControleSessao.js"></script>
 
 <script src="js/editar-perfil-cantor.js"></script>
+
+
+<script>
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    if (window.lucide) {
+        lucide.createIcons();
+    }
+
+});
+
+</script>
 
 
 </body>
