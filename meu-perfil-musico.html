@@ -4,17 +4,28 @@
 
 <head>
 
+<!-- =========================================================
+     CONFIGURAÇÕES BÁSICAS DO DOCUMENTO
+     ========================================================= -->
+
 <meta charset="UTF-8">
 
 <meta
-name="viewport"
-content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
 >
 
-<meta name="theme-color" content="#ffffff">
+<meta
+    name="theme-color"
+    content="#ffffff"
+>
 
 <title>Meu Perfil - Músico | MusicalWorld</title>
+
+
+<!-- =========================================================
+     ESTILOS
+     ========================================================= -->
 
 <link
     rel="stylesheet"
@@ -26,918 +37,1039 @@ content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable
     href="css/menu-inferior.css"
 >
 
+
+<!-- =========================================================
+     ÍCONES
+     ========================================================= -->
+
 <script src="https://unpkg.com/lucide@latest"></script>
 
 </head>
+
 
 <body>
 
 <div class="app">
 
+
+<!-- =====================================================
+     TOPBAR
+     ===================================================== -->
+
 <header class="topbar">
 
-<div class="topbar-left">
+    <div class="topbar-left">
+
+        <button
+            id="btnVoltar"
+            class="topbar-button"
+            type="button"
+            aria-label="Voltar"
+            title="Voltar"
+        >
+
+            <i data-lucide="arrow-left"></i>
+
+        </button>
 
 
-<button
-    type="button"
-    class="topbar-button"
-    id="btnVoltar"
-    aria-label="Voltar"
->
-    <i data-lucide="arrow-left"></i>
-</button>
+        <div class="topbar-heading">
 
-<div class="topbar-heading">
+            <div class="topbar-title">
+                Meu perfil
+            </div>
 
-    <span class="topbar-title">
-        Meu perfil
-    </span>
+            <div class="topbar-subtitle">
+                Músico
+            </div>
 
-    <span class="topbar-subtitle">
-        Músico
-    </span>
+        </div>
 
-</div>
+    </div>
 
 
-</div>
+    <div class="topbar-right">
 
-<div class="topbar-right">
+        <button
+            id="btnQRCode"
+            class="topbar-button"
+            type="button"
+            aria-label="Compartilhar perfil"
+            title="Compartilhar perfil"
+        >
 
+            <i data-lucide="qr-code"></i>
 
-<button
-    type="button"
-    class="topbar-button"
-    id="btnQRCode"
-    aria-label="Meu QR Code"
->
-    <i data-lucide="qr-code"></i>
-</button>
+        </button>
 
-
-</div>
+    </div>
 
 </header>
 
+
+<!-- =====================================================
+     CONTEÚDO PRINCIPAL
+     ===================================================== -->
+
 <main class="profile-page">
 
-<section class="profile-card">
+
+    <!-- =================================================
+         CARTÃO PRINCIPAL DO PERFIL
+         ================================================= -->
+
+    <section class="profile-card">
 
 
-<button
-    type="button"
-    class="preview-profile-button"
-    id="btnVisualizarPerfil"
-    title="Ver meu perfil"
-    aria-label="Ver meu perfil"
->
-    <i data-lucide="eye"></i>
-</button>
+        <!-- =================================================
+             BOTÃO VISUALIZAR PERFIL
+             ================================================= -->
 
-<div class="profile-header">
+        <button
+            id="btnVisualizarPerfil"
+            class="preview-profile-button"
+            type="button"
+            aria-label="Ver meu perfil"
+            title="Ver meu perfil"
+        >
 
-    <div
-        class="profile-avatar"
-        id="profileAvatar"
-    >
-        <span id="profileInitials">
-            --
-        </span>
-    </div>
+            <i data-lucide="eye"></i>
 
-    <div class="profile-info">
+        </button>
 
-        <div class="profile-name-row">
 
-            <h1
-                class="profile-name"
-                id="profileName"
+        <!-- =================================================
+             CABEÇALHO DO PERFIL
+             ================================================= -->
+
+        <div class="profile-header">
+
+
+            <!-- =================================================
+                 FOTO / AVATAR
+                 ================================================= -->
+
+            <div
+                id="profileAvatar"
+                class="profile-avatar"
             >
-                Carregando...
-            </h1>
 
-            <span
-                class="verified-badge"
-                id="verifiedBadge"
-                aria-label="Perfil verificado"
-            >
-                <i data-lucide="check"></i>
-            </span>
-
-        </div>
-
-        <p
-            class="profile-category"
-            id="profileCategory"
-        >
-            Músico / Instrumentista
-        </p>
-
-        <div
-            class="profile-location"
-            id="profileLocation"
-        >
-            <i data-lucide="map-pin"></i>
-
-            <span>
-                Localização não informada
-            </span>
-
-        </div>
-
-        <div
-            class="profile-rating"
-            id="profileRating"
-        >
-
-            <div class="rating-stars">
-
-                <i data-lucide="star"></i>
-                <i data-lucide="star"></i>
-                <i data-lucide="star"></i>
-                <i data-lucide="star"></i>
-                <i data-lucide="star"></i>
+                <span id="profileInitials">
+                    M
+                </span>
 
             </div>
 
-            <span
-                class="rating-value"
-                id="ratingValue"
-            >
-                0,0
-            </span>
 
-            <span
-                class="rating-reviews"
-                id="ratingReviews"
-            >
-                (0 avaliações)
-            </span>
+            <!-- =================================================
+                 INFORMAÇÕES DO MÚSICO
+                 ================================================= -->
+
+            <div class="profile-info">
+
+
+                <!-- =================================================
+                     NOME
+                     ================================================= -->
+
+                <div class="profile-name-row">
+
+                    <h1 id="profileName">
+                        Músico
+                    </h1>
+
+
+                    <span
+                        id="verifiedBadge"
+                        class="verified-badge"
+                        title="Perfil verificado"
+                    >
+
+                        <i data-lucide="badge-check"></i>
+
+                    </span>
+
+                </div>
+
+
+                <!-- =================================================
+                     CATEGORIA
+                     ================================================= -->
+
+                <div
+                    id="profileCategory"
+                    class="profile-category"
+                >
+                    Músico(a)
+                </div>
+
+
+                <!-- =================================================
+                     LOCALIZAÇÃO
+                     ================================================= -->
+
+                <div
+                    id="profileLocation"
+                    class="profile-location"
+                >
+
+                    <i data-lucide="map-pin"></i>
+
+                    <span>
+                        Localização não informada
+                    </span>
+
+                </div>
+
+
+                <!-- =================================================
+                     AVALIAÇÃO
+                     ================================================= -->
+
+                <div
+                    id="profileRating"
+                    class="profile-rating"
+                >
+
+                    <div class="rating-stars">
+
+                        <i data-lucide="star"></i>
+
+                        <i data-lucide="star"></i>
+
+                        <i data-lucide="star"></i>
+
+                        <i data-lucide="star"></i>
+
+                        <i data-lucide="star"></i>
+
+                    </div>
+
+
+                    <span
+                        id="ratingValue"
+                        class="rating-value"
+                    >
+                        0,0
+                    </span>
+
+
+                    <span
+                        id="ratingReviews"
+                        class="rating-reviews"
+                    >
+                        (0 avaliações)
+                    </span>
+
+                </div>
+
+
+                <!-- =================================================
+                     STATUS
+                     ================================================= -->
+
+                <div
+                    id="profileStatus"
+                    class="profile-status"
+                >
+
+                    <span class="status-dot"></span>
+
+                    <span class="status-text">
+                        Disponível
+                    </span>
+
+                </div>
+
+            </div>
 
         </div>
 
-        <div
-            class="profile-status"
-            id="profileStatus"
+
+        <!-- =================================================
+             AÇÕES DO PERFIL
+             ================================================= -->
+
+        <div class="profile-actions">
+
+
+            <!-- EDITAR PERFIL -->
+
+            <button
+                id="btnEditarPerfil"
+                class="edit-profile-button"
+                type="button"
+                aria-label="Editar perfil"
+                title="Editar perfil"
+            >
+
+                <i data-lucide="pencil"></i>
+
+                <span>
+                    Editar perfil
+                </span>
+
+            </button>
+
+
+            <!-- COMPARTILHAR PELO WHATSAPP -->
+
+            <button
+                id="btnWhatsApp"
+                class="whatsapp-button"
+                type="button"
+                aria-label="Compartilhar perfil pelo WhatsApp"
+                title="Compartilhar perfil pelo WhatsApp"
+            >
+
+                <i data-lucide="message-circle"></i>
+
+                <span>
+                    Compartilhar
+                </span>
+
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- =================================================
+         ABAS
+         ================================================= -->
+
+    <nav
+        class="profile-tabs"
+        aria-label="Navegação do perfil"
+    >
+
+
+        <button
+            type="button"
+            class="tab-button active"
+            data-tab="sobre"
+            aria-selected="true"
         >
-            Disponível para contratação
-        </div>
 
-    </div>
-
-</div>
-
-<button
-    type="button"
-    class="edit-profile-button"
-    id="btnEditarPerfil"
->
-
-    <i data-lucide="pencil"></i>
-
-    <span>
-        Editar perfil
-    </span>
-
-</button>
-
-<button
-    type="button"
-    class="whatsapp-button"
-    id="btnWhatsApp"
->
-
-    <i data-lucide="message-circle"></i>
-
-    <span>
-        Compartilhar pelo WhatsApp
-    </span>
-
-</button>
-
-
-</section>
-
-<nav
-    class="profile-tabs"
-    id="profileTabs"
-    aria-label="Seções do perfil"
->
-
-
-<button
-    type="button"
-    class="tab-button active"
-    data-tab="sobre"
->
-    Sobre
-</button>
-
-<button
-    type="button"
-    class="tab-button"
-    data-tab="portfolio"
->
-    Portfólio
-</button>
-
-<button
-    type="button"
-    class="tab-button"
-    data-tab="agenda"
->
-    Agenda
-</button>
-
-<button
-    type="button"
-    class="tab-button"
-    data-tab="avaliacoes"
->
-    Avaliações
-</button>
-
-<button
-    type="button"
-    class="tab-button"
-    data-tab="carteira"
->
-    Carteira
-</button>
-
-
-</nav>
-
-<section
-    class="tab-content active"
-    id="tab-sobre"
-    data-content="sobre"
->
-
-
-<article class="profile-section">
-
-    <div class="section-header">
-
-        <div>
-
-            <h2 class="section-title">
-                Sobre mim
-            </h2>
-
-            <p class="section-subtitle">
-                Informações profissionais
-            </p>
-
-        </div>
-
-    </div>
-
-    <p
-        class="profile-bio"
-        id="profileBio"
-    >
-        Nenhuma descrição profissional cadastrada.
-    </p>
-
-</article>
-
-<article class="profile-section">
-
-    <div class="section-header">
-
-        <div>
-
-            <h2 class="section-title">
-                Informações profissionais
-            </h2>
-
-        </div>
-
-    </div>
-
-    <div class="info-grid">
-
-        <div class="info-card">
-
-            <span class="info-card-label">
-                Experiência
-            </span>
-
-            <span
-                class="info-card-value"
-                id="profileExperience"
-            >
-                Não informada
-            </span>
-
-        </div>
-
-        <div class="info-card">
-
-            <span class="info-card-label">
-                Área de atuação
-            </span>
-
-            <span
-                class="info-card-value"
-                id="profileArea"
-            >
-                Não informada
-            </span>
-
-        </div>
-
-        <div class="info-card">
-
-            <span class="info-card-label">
-                Tipo de perfil
-            </span>
-
-            <span
-                class="info-card-value"
-                id="profileType"
-            >
-                Artista
-            </span>
-
-        </div>
-
-        <div class="info-card">
-
-            <span class="info-card-label">
-                Status
-            </span>
-
-            <span
-                class="info-card-value"
-                id="profileAvailability"
-            >
-                Disponível
-            </span>
-
-        </div>
-
-    </div>
-
-</article>
-
-<article class="profile-section">
-
-    <div class="section-header">
-
-        <div>
-
-            <h2 class="section-title">
-                Instrumentos
-            </h2>
-
-            <p class="section-subtitle">
-                Instrumentos que você toca
-            </p>
-
-        </div>
-
-    </div>
-
-    <div
-        class="instrument-grid"
-        id="instrumentGrid"
-    >
-
-        <div class="empty-state">
-
-            <i data-lucide="music-2"></i>
-
-            <strong>
-                Nenhum instrumento cadastrado
-            </strong>
+            <i data-lucide="user-round"></i>
 
             <span>
-                Adicione seus instrumentos ao editar seu perfil.
+                Sobre
             </span>
 
-        </div>
-
-    </div>
-
-</article>
-
-<article class="profile-section">
-
-    <div class="section-header">
-
-        <div>
-
-            <h2 class="section-title">
-                Gêneros musicais
-            </h2>
-
-            <p class="section-subtitle">
-                Estilos que fazem parte do seu trabalho
-            </p>
-
-        </div>
-
-    </div>
-
-    <div
-        class="genre-list"
-        id="genreList"
-    >
-
-        <span class="empty-inline">
-            Nenhum gênero cadastrado.
-        </span>
-
-    </div>
-
-</article>
-
-<article class="profile-section">
-
-    <div class="section-header">
-
-        <div>
-
-            <h2 class="section-title">
-                Serviços
-            </h2>
-
-            <p class="section-subtitle">
-                O que você oferece
-            </p>
-
-        </div>
-
-    </div>
-
-    <div
-        class="services-list"
-        id="servicesList"
-    >
-
-        <div class="empty-state">
-
-            <i data-lucide="briefcase-business"></i>
-
-            <strong>
-                Nenhum serviço cadastrado
-            </strong>
-
-            <span>
-                Seus serviços aparecerão aqui.
-            </span>
-
-        </div>
-
-    </div>
-
-</article>
+        </button>
 
 
-</section>
-
-<section
-    class="tab-content"
-    id="tab-portfolio"
-    data-content="portfolio"
->
-
-
-<article class="profile-section">
-
-    <div class="section-header">
-
-        <div>
-
-            <h2 class="section-title">
-                Portfólio
-            </h2>
-
-            <p class="section-subtitle">
-                Mostre seu trabalho
-            </p>
-
-        </div>
-
-    </div>
-
-    <div
-        class="portfolio-grid"
-        id="portfolioGrid"
-    >
-
-        <div class="empty-state">
+        <button
+            type="button"
+            class="tab-button"
+            data-tab="portfolio"
+            aria-selected="false"
+        >
 
             <i data-lucide="images"></i>
 
-            <strong>
-                Portfólio vazio
-            </strong>
-
             <span>
-                Fotos e trabalhos adicionados ao seu perfil aparecerão aqui.
+                Portfólio
             </span>
 
-        </div>
-
-    </div>
-
-</article>
-
-<article class="profile-section">
-
-    <div class="section-header">
-
-        <div>
-
-            <h2 class="section-title">
-                Vídeos
-            </h2>
-
-            <p class="section-subtitle">
-                Apresentações e performances
-            </p>
-
-        </div>
-
-    </div>
-
-    <div
-        class="video-list"
-        id="videoList"
-    >
-
-        <div class="empty-state">
-
-            <i data-lucide="video"></i>
-
-            <strong>
-                Nenhum vídeo cadastrado
-            </strong>
-
-            <span>
-                Seus vídeos aparecerão aqui.
-            </span>
-
-        </div>
-
-    </div>
-
-</article>
-
-<article class="profile-section">
-
-    <div class="section-header">
-
-        <div>
-
-            <h2 class="section-title">
-                Áudios
-            </h2>
-
-            <p class="section-subtitle">
-                Músicas e gravações
-            </p>
-
-        </div>
-
-    </div>
-
-    <div
-        class="audio-list"
-        id="audioList"
-    >
-
-        <div class="empty-state">
-
-            <i data-lucide="headphones"></i>
-
-            <strong>
-                Nenhum áudio cadastrado
-            </strong>
-
-            <span>
-                Suas gravações aparecerão aqui.
-            </span>
-
-        </div>
-
-    </div>
-
-</article>
+        </button>
 
 
-</section>
-
-<section
-    class="tab-content"
-    id="tab-agenda"
-    data-content="agenda"
->
-
-
-<article class="profile-section">
-
-    <div class="section-header">
-
-        <div>
-
-            <h2 class="section-title">
-                Minha agenda
-            </h2>
-
-            <p class="section-subtitle">
-                Próximos compromissos
-            </p>
-
-        </div>
-
-    </div>
-
-    <div
-        class="agenda-list"
-        id="agendaList"
-    >
-
-        <div class="empty-state">
+        <button
+            type="button"
+            class="tab-button"
+            data-tab="agenda"
+            aria-selected="false"
+        >
 
             <i data-lucide="calendar-days"></i>
 
-            <strong>
-                Agenda vazia
-            </strong>
-
             <span>
-                Seus eventos e contratos aparecerão aqui.
+                Agenda
             </span>
 
-        </div>
-
-    </div>
-
-</article>
+        </button>
 
 
-</section>
-
-<section
-    class="tab-content"
-    id="tab-avaliacoes"
-    data-content="avaliacoes"
->
-
-
-<article class="profile-section">
-
-    <div class="section-header">
-
-        <div>
-
-            <h2 class="section-title">
-                Avaliações
-            </h2>
-
-            <p class="section-subtitle">
-                O que contratantes dizem sobre você
-            </p>
-
-        </div>
-
-    </div>
-
-    <div
-        class="reviews-list"
-        id="reviewsList"
-    >
-
-        <div class="empty-state">
+        <button
+            type="button"
+            class="tab-button"
+            data-tab="avaliacoes"
+            aria-selected="false"
+        >
 
             <i data-lucide="star"></i>
 
-            <strong>
-                Ainda não há avaliações
-            </strong>
+            <span>
+                Avaliações
+            </span>
+
+        </button>
+
+
+        <button
+            type="button"
+            class="tab-button"
+            data-tab="carteira"
+            aria-selected="false"
+        >
+
+            <i data-lucide="wallet-cards"></i>
 
             <span>
-                As avaliações recebidas após seus trabalhos aparecerão aqui.
+                Carteira
             </span>
 
-        </div>
+        </button>
 
-    </div>
-
-</article>
+    </nav>
 
 
-</section>
-
-<section
-    class="tab-content"
-    id="tab-carteira"
-    data-content="carteira"
->
-
-
-<article class="profile-section">
-
-    <div class="section-header">
-
-        <div>
-
-            <h2 class="section-title">
-                Minha carteira
-            </h2>
-
-            <p class="section-subtitle">
-                Acompanhe seus recebimentos
-            </p>
-
-        </div>
-
-    </div>
-
-    <div class="wallet-summary">
-
-        <div class="wallet-card">
-
-            <span class="wallet-label">
-                Saldo total
-            </span>
-
-            <strong
-                class="wallet-value"
-                id="walletTotal"
-            >
-                R$ 0,00
-            </strong>
-
-        </div>
-
-        <div class="wallet-card available">
-
-            <span class="wallet-label">
-                Disponível
-            </span>
-
-            <strong
-                class="wallet-value"
-                id="walletAvailable"
-            >
-                R$ 0,00
-            </strong>
-
-        </div>
-
-        <div class="wallet-card pending">
-
-            <span class="wallet-label">
-                Pendente
-            </span>
-
-            <strong
-                class="wallet-value"
-                id="walletPending"
-            >
-                R$ 0,00
-            </strong>
-
-        </div>
-
-    </div>
-
-    <button
-        type="button"
-        class="wallet-withdraw"
-        id="btnSacar"
-    >
-
-        <i data-lucide="wallet"></i>
-
-        <span>
-            Solicitar saque
-        </span>
-
-    </button>
+    <!-- =================================================
+         ABA — SOBRE
+         ================================================= -->
 
     <div
-        class="transaction-list"
-        id="transactionList"
+        id="tab-sobre"
+        class="tab-content active"
     >
 
-        <div class="empty-transactions">
 
-            <i data-lucide="receipt-text"></i>
+        <!-- APRESENTAÇÃO -->
 
-            <strong>
-                Nenhuma movimentação
-            </strong>
+        <section class="profile-section">
 
-            <span>
-                Seus recebimentos e saques aparecerão aqui.
-            </span>
+            <div class="section-heading">
 
-        </div>
+                <h2>
+                    Sobre mim
+                </h2>
+
+            </div>
+
+
+            <p
+                id="profileBio"
+                class="profile-bio"
+            >
+                Nenhuma apresentação cadastrada.
+            </p>
+
+        </section>
+
+
+        <!-- INFORMAÇÕES PROFISSIONAIS -->
+
+        <section class="profile-section">
+
+            <div class="section-heading">
+
+                <h2>
+                    Informações profissionais
+                </h2>
+
+            </div>
+
+
+            <div class="info-grid">
+
+
+                <div class="info-card">
+
+                    <span class="info-label">
+                        Experiência
+                    </span>
+
+                    <strong id="profileExperience">
+                        Não informado
+                    </strong>
+
+                </div>
+
+
+                <div class="info-card">
+
+                    <span class="info-label">
+                        Área de atendimento
+                    </span>
+
+                    <strong id="profileArea">
+                        Não informado
+                    </strong>
+
+                </div>
+
+
+                <div class="info-card">
+
+                    <span class="info-label">
+                        Tipo de artista
+                    </span>
+
+                    <strong id="profileType">
+                        Músico(a)
+                    </strong>
+
+                </div>
+
+
+                <div class="info-card">
+
+                    <span class="info-label">
+                        Disponibilidade
+                    </span>
+
+                    <strong id="profileAvailability">
+                        Não informado
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ESTILOS MUSICAIS -->
+
+        <section class="profile-section">
+
+            <div class="section-heading">
+
+                <h2>
+                    Estilos musicais
+                </h2>
+
+                <span>
+                    Gêneros
+                </span>
+
+            </div>
+
+
+            <div
+                id="genreList"
+                class="genre-list"
+            >
+
+                <span class="empty-inline">
+                    Nenhum estilo cadastrado.
+                </span>
+
+            </div>
+
+        </section>
+
+
+        <!-- SERVIÇOS -->
+
+        <section class="profile-section">
+
+            <div class="section-heading">
+
+                <h2>
+                    Serviços
+                </h2>
+
+            </div>
+
+
+            <div
+                id="servicesList"
+                class="services-list"
+            >
+
+                <div class="empty-state">
+
+                    <i data-lucide="music-2"></i>
+
+                    <p>
+                        Nenhum serviço cadastrado.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
 
     </div>
 
-</article>
+
+    <!-- =================================================
+         ABA — PORTFÓLIO
+         ================================================= -->
+
+    <div
+        id="tab-portfolio"
+        class="tab-content"
+    >
 
 
-</section>
+        <section class="profile-section">
+
+            <div class="section-heading">
+
+                <h2>
+                    Portfólio
+                </h2>
+
+                <span>
+                    Fotos
+                </span>
+
+            </div>
+
+
+            <div
+                id="portfolioGrid"
+                class="portfolio-grid"
+            >
+
+                <div class="empty-state">
+
+                    <i data-lucide="image"></i>
+
+                    <p>
+                        Nenhuma imagem adicionada ao portfólio.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- VÍDEOS -->
+
+        <section class="profile-section">
+
+            <div class="section-heading">
+
+                <h2>
+                    Vídeos
+                </h2>
+
+            </div>
+
+
+            <div
+                id="videoList"
+                class="video-list"
+            >
+
+                <div class="empty-state">
+
+                    <i data-lucide="video"></i>
+
+                    <p>
+                        Nenhum vídeo adicionado.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ÁUDIOS -->
+
+        <section class="profile-section">
+
+            <div class="section-heading">
+
+                <h2>
+                    Áudios
+                </h2>
+
+            </div>
+
+
+            <div
+                id="audioList"
+                class="audio-list"
+            >
+
+                <div class="empty-state">
+
+                    <i data-lucide="headphones"></i>
+
+                    <p>
+                        Nenhum áudio adicionado.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </div>
+
+
+    <!-- =================================================
+         ABA — AGENDA
+         ================================================= -->
+
+    <div
+        id="tab-agenda"
+        class="tab-content"
+    >
+
+        <section class="profile-section">
+
+            <div class="section-heading">
+
+                <h2>
+                    Minha agenda
+                </h2>
+
+                <span>
+                    Disponibilidade
+                </span>
+
+            </div>
+
+
+            <div
+                id="agendaList"
+                class="agenda-list"
+            >
+
+                <div class="empty-state">
+
+                    <i data-lucide="calendar-days"></i>
+
+                    <p>
+                        Nenhum compromisso cadastrado.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </div>
+
+
+    <!-- =================================================
+         ABA — AVALIAÇÕES
+         ================================================= -->
+
+    <div
+        id="tab-avaliacoes"
+        class="tab-content"
+    >
+
+        <section class="profile-section">
+
+            <div class="section-heading">
+
+                <h2>
+                    Avaliações
+                </h2>
+
+                <span id="reviewsSummary">
+                    Opiniões dos clientes
+                </span>
+
+            </div>
+
+
+            <div
+                id="reviewsList"
+                class="reviews-list"
+            >
+
+                <div class="empty-state">
+
+                    <i data-lucide="star"></i>
+
+                    <p>
+                        Você ainda não possui avaliações.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </div>
+
+
+    <!-- =================================================
+         ABA — CARTEIRA
+         ================================================= -->
+
+    <div
+        id="tab-carteira"
+        class="tab-content"
+    >
+
+
+        <section class="profile-section">
+
+            <div class="section-heading">
+
+                <h2>
+                    Minha carteira
+                </h2>
+
+                <span>
+                    Resumo financeiro
+                </span>
+
+            </div>
+
+
+            <div class="wallet-summary">
+
+
+                <div class="wallet-card wallet-total">
+
+                    <span class="wallet-label">
+                        Saldo total
+                    </span>
+
+                    <strong id="walletTotal">
+                        R$ 0,00
+                    </strong>
+
+                </div>
+
+
+                <div class="wallet-card wallet-available">
+
+                    <span class="wallet-label">
+                        Disponível
+                    </span>
+
+                    <strong id="walletAvailable">
+                        R$ 0,00
+                    </strong>
+
+                </div>
+
+
+                <div class="wallet-card wallet-pending">
+
+                    <span class="wallet-label">
+                        Pendente
+                    </span>
+
+                    <strong id="walletPending">
+                        R$ 0,00
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <!-- SAQUE -->
+
+            <div class="wallet-withdraw">
+
+                <button
+                    id="btnSacar"
+                    class="withdraw-button"
+                    type="button"
+                >
+
+                    <i data-lucide="wallet"></i>
+
+                    <span>
+                        Solicitar saque
+                    </span>
+
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- TRANSAÇÕES -->
+
+        <section class="profile-section">
+
+            <div class="section-heading">
+
+                <h2>
+                    Transações
+                </h2>
+
+            </div>
+
+
+            <div
+                id="transactionList"
+                class="transaction-list"
+            >
+
+                <div class="empty-state">
+
+                    <i data-lucide="receipt"></i>
+
+                    <p>
+                        Nenhuma transação encontrada.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </div>
 
 </main>
 
+
+<!-- =====================================================
+     MODAL — QR CODE
+     ===================================================== -->
+
 <div
-    class="qr-overlay"
     id="qrOverlay"
+    class="qr-overlay"
     aria-hidden="true"
 >
 
-<div
-    class="qr-modal"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="qrTitle"
->
+    <div
+        class="qr-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="qrTitle"
+    >
 
 
-<div class="qr-header">
+        <div class="qr-modal-header">
 
-    <div>
+            <div>
 
-        <h3 id="qrTitle">
-            Meu QR Code
-        </h3>
+                <h2 id="qrTitle">
+                    Compartilhar perfil
+                </h2>
 
-        <p>
-            Compartilhe seu perfil
-        </p>
+                <p>
+                    Escaneie o QR Code para visualizar seu perfil.
+                </p>
+
+            </div>
+
+
+            <button
+                id="btnFecharQR"
+                class="qr-close-button"
+                type="button"
+                aria-label="Fechar"
+            >
+
+                <i data-lucide="x"></i>
+
+            </button>
+
+        </div>
+
+
+        <div class="qr-content">
+
+
+            <div class="qr-image-wrapper">
+
+                <img
+                    id="qrImage"
+                    src=""
+                    alt="QR Code do perfil"
+                >
+
+            </div>
+
+
+            <div class="profile-link-wrapper">
+
+                <span class="profile-link-label">
+                    Link do perfil
+                </span>
+
+                <div
+                    id="profileLink"
+                    class="profile-link"
+                >
+                    —
+                </div>
+
+            </div>
+
+
+            <button
+                id="btnCompartilharQR"
+                class="share-qr-button"
+                type="button"
+            >
+
+                <i data-lucide="share-2"></i>
+
+                <span>
+                    Compartilhar perfil
+                </span>
+
+            </button>
+
+        </div>
 
     </div>
 
-    <button
-        type="button"
-        class="qr-close"
-        id="btnFecharQR"
-        aria-label="Fechar"
-    >
-
-        <i data-lucide="x"></i>
-
-    </button>
-
 </div>
 
-<div class="qr-image-container">
 
-    <img
-        src=""
-        alt="QR Code do perfil"
-        class="qr-image"
-        id="qrImage"
-    >
-
-</div>
+<!-- =====================================================
+     TOAST
+     ===================================================== -->
 
 <div
-    class="profile-link"
-    id="profileLink"
->
-    Seu link de perfil aparecerá aqui.
-</div>
-
-<button
-    type="button"
-    class="qr-share-button"
-    id="btnCompartilharQR"
->
-
-    <i data-lucide="share-2"></i>
-
-    <span>
-        Compartilhar perfil
-    </span>
-
-</button>
-
-
-</div>
-
-</div>
-
-<div
-    class="toast"
     id="toast"
+    class="toast"
     role="status"
     aria-live="polite"
-></div>
+>
+
+    <i data-lucide="check-circle"></i>
+
+    <span id="toastMessage">
+        Operação realizada.
+    </span>
+
+</div>
+
+
+<!-- =====================================================
+     MENU INFERIOR
+     ===================================================== -->
 
 <div id="menu-inferior-container"></div>
 
-<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+
+</div>
+
+
+<!-- =========================================================
+     SUPABASE
+     ========================================================= -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+
+<!-- =========================================================
+     CORE DO MUSICALWORLD
+     ========================================================= -->
 
 <script src="js/core/SupabaseClient.js"></script>
 
@@ -949,26 +1081,54 @@ content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable
 
 <script src="js/core/RoteamentoPerfil.js"></script>
 
-<script src="js/meu-perfil-musico.js"></script>
+
+<!-- =========================================================
+     PERFIL PÚBLICO — NOVA ARQUITETURA
+     ========================================================= -->
+
+<script src="js/perfil-publico/PerfilPublicoUtils.js"></script>
+
+<script src="js/perfil-publico/PerfilPublicoDados.js"></script>
+
+<script src="js/perfil-publico/PerfilPublicoPortfolio.js"></script>
+
+<script src="js/perfil-publico/PerfilPublicoServicos.js"></script>
+
+<script src="js/perfil-publico/PerfilPublicoAgenda.js"></script>
+
+<script src="js/perfil-publico/PerfilPublicoAvaliacoes.js"></script>
+
+<script src="js/perfil-publico/PerfilPublico.js"></script>
+
+
+<!-- =========================================================
+     MENU INFERIOR
+     ========================================================= -->
 
 <script src="js/components/menu-inferior.js"></script>
 
+
+<!-- =========================================================
+     INICIALIZAÇÃO DOS ÍCONES
+     ========================================================= -->
+
 <script>
 
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
 
-    if (window.lucide) {
+        if (window.lucide) {
 
-        lucide.createIcons();
+            lucide.createIcons();
+
+        }
 
     }
-
-});
+);
 
 </script>
 
-</div>
-
 </body>
 
-</html>
+</html> 

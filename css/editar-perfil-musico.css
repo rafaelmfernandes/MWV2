@@ -17,6 +17,10 @@
 --mw-shadow: 0 8px 28px rgba(30, 35, 55, .06);
 }
 
+/* =========================================================
+BASE
+========================================================= */
+
 html {
 scroll-behavior: smooth;
 }
@@ -40,9 +44,9 @@ button {
 -webkit-tap-highlight-color: transparent;
 }
 
-/* ================================
+/* =========================================================
 TOPBAR
-================================ */
+========================================================= */
 
 .editar-topbar {
 position: sticky;
@@ -79,6 +83,11 @@ color: var(--mw-text);
 background: #f1f3f7;
 }
 
+.topbar-voltar svg {
+width: 20px;
+height: 20px;
+}
+
 .topbar-titulo {
 min-width: 0;
 }
@@ -102,20 +111,30 @@ line-height: 1.15;
 color: var(--mw-primary);
 font-size: 14px;
 font-weight: 800;
+white-space: nowrap;
 }
 
-/* ================================
-CONTAINER
-================================ */
+.topbar-salvar:hover {
+color: var(--mw-primary-dark);
+}
+
+.topbar-salvar:disabled {
+opacity: .5;
+cursor: wait;
+}
+
+/* =========================================================
+CONTAINER PRINCIPAL
+========================================================= */
 
 .editar-container {
 width: min(760px, calc(100% - 28px));
 margin: 22px auto 0;
 }
 
-/* ================================
+/* =========================================================
 CARDS
-================================ */
+========================================================= */
 
 .form-card,
 .foto-card {
@@ -131,9 +150,9 @@ box-shadow: var(--mw-shadow);
 padding: 26px 22px;
 }
 
-/* ================================
-FOTO
-================================ */
+/* =========================================================
+FOTO DO PERFIL
+========================================================= */
 
 .foto-area {
 display: flex;
@@ -167,6 +186,11 @@ object-fit: cover;
 display: none;
 }
 
+.avatar-edit span {
+position: relative;
+z-index: 1;
+}
+
 .foto-botao {
 display: inline-flex;
 align-items: center;
@@ -180,6 +204,12 @@ color: var(--mw-text);
 font-size: 13px;
 font-weight: 750;
 cursor: pointer;
+transition: all .18s ease;
+}
+
+.foto-botao svg {
+width: 16px;
+height: 16px;
 }
 
 .foto-botao:hover {
@@ -194,16 +224,16 @@ color: var(--mw-muted);
 font-size: 11px;
 }
 
-/* ================================
-ABAS
-================================ */
+/* =========================================================
+ABAS PRINCIPAIS
+========================================================= */
 
 .editor-tabs {
 position: sticky;
 top: 72px;
 z-index: 15;
 display: grid;
-grid-template-columns: repeat(3, 1fr);
+grid-template-columns: repeat(4, minmax(0, 1fr));
 gap: 5px;
 margin-bottom: 16px;
 padding: 5px;
@@ -215,6 +245,7 @@ backdrop-filter: blur(14px);
 }
 
 .editor-tab {
+min-width: 0;
 min-height: 44px;
 display: flex;
 align-items: center;
@@ -228,11 +259,13 @@ font-size: 12px;
 font-weight: 800;
 cursor: pointer;
 transition: all .18s ease;
+white-space: nowrap;
 }
 
 .editor-tab svg {
 width: 16px;
 height: 16px;
+flex: 0 0 16px;
 }
 
 .editor-tab:hover {
@@ -245,6 +278,10 @@ background: var(--mw-primary-soft);
 color: var(--mw-primary);
 }
 
+/* =========================================================
+PAINÉIS
+========================================================= */
+
 .editor-panel {
 display: none;
 }
@@ -253,9 +290,9 @@ display: none;
 display: block;
 }
 
-/* ================================
-CABEÇALHOS
-================================ */
+/* =========================================================
+CABEÇALHOS DAS SEÇÕES
+========================================================= */
 
 .section-heading {
 display: flex;
@@ -275,6 +312,11 @@ background: var(--mw-primary-soft);
 color: var(--mw-primary);
 }
 
+.section-icon svg {
+width: 19px;
+height: 19px;
+}
+
 .section-heading h2 {
 margin: 1px 0 4px;
 font-size: 16px;
@@ -287,9 +329,9 @@ font-size: 12px;
 line-height: 1.45;
 }
 
-/* ================================
+/* =========================================================
 CAMPOS
-================================ */
+========================================================= */
 
 .campo {
 position: relative;
@@ -321,7 +363,8 @@ padding: 12px 13px;
 font-size: 14px;
 transition:
 border-color .18s ease,
-box-shadow .18s ease;
+box-shadow .18s ease,
+background .18s ease;
 }
 
 .campo input,
@@ -347,11 +390,20 @@ border-color: #b9adff;
 box-shadow: 0 0 0 4px rgba(109, 74, 255, .08);
 }
 
+.campo input:disabled,
+.campo input[readonly],
+.campo select:disabled {
+background: #f5f6f8;
+color: #737c8e;
+cursor: not-allowed;
+}
+
 .campo-ajuda {
 display: block;
 margin-top: 7px;
 color: var(--mw-muted);
 font-size: 11px;
+line-height: 1.45;
 }
 
 .contador {
@@ -363,9 +415,9 @@ font-size: 10px;
 pointer-events: none;
 }
 
-/* ================================
+/* =========================================================
 CHIPS
-================================ */
+========================================================= */
 
 .chips {
 display: flex;
@@ -397,19 +449,25 @@ background: var(--mw-primary-soft);
 color: var(--mw-primary);
 }
 
-/* ================================
+/* =========================================================
 SWITCH
-================================ */
+========================================================= */
 
 .switch-row {
+position: relative;
 display: flex;
 align-items: center;
 justify-content: space-between;
+width: 100%;
+min-width: 0;
 gap: 18px;
 cursor: pointer;
 }
 
 .switch-row > span:first-child {
+position: static;
+display: block;
+flex: 1 1 auto;
 min-width: 0;
 }
 
@@ -429,21 +487,27 @@ line-height: 1.45;
 
 .switch-row input {
 position: absolute;
+width: 1px;
+height: 1px;
+margin: 0;
+padding: 0;
 opacity: 0;
 pointer-events: none;
 }
 
-.switch {
+.switch-row .switch {
 position: relative;
+display: block;
 width: 50px;
 height: 29px;
+min-width: 50px;
 flex: 0 0 50px;
 border-radius: 999px;
 background: #dfe3eb;
 transition: background .2s ease;
 }
 
-.switch::after {
+.switch-row .switch::after {
 content: "";
 position: absolute;
 top: 4px;
@@ -464,9 +528,21 @@ background: var(--mw-success);
 transform: translateX(21px);
 }
 
-/* ================================
+/* =========================================================
+GARANTIA DE VISIBILIDADE POR ABA
+========================================================= */
+
+.editor-panel:not(.ativo) .switch-row {
+display: none !important;
+}
+
+.editor-panel.ativo .switch-row {
+display: flex;
+}
+
+/* =========================================================
 CONTA
-================================ */
+========================================================= */
 
 .conta-card {
 background: #fbfbfd;
@@ -492,9 +568,9 @@ overflow-wrap: anywhere;
 font-size: 13px;
 }
 
-/* ================================
+/* =========================================================
 BOTÕES
-================================ */
+========================================================= */
 
 .acoes-finais {
 display: grid;
@@ -510,6 +586,12 @@ border-radius: 13px;
 cursor: pointer;
 font-size: 14px;
 font-weight: 800;
+transition:
+background .18s ease,
+border-color .18s ease,
+color .18s ease,
+opacity .18s ease,
+transform .12s ease;
 }
 
 .btn-salvar {
@@ -523,8 +605,19 @@ color: #fff;
 box-shadow: 0 8px 18px rgba(109, 74, 255, .2);
 }
 
+.btn-salvar svg {
+width: 17px;
+height: 17px;
+}
+
 .btn-salvar:hover {
 background: var(--mw-primary-dark);
+}
+
+.btn-salvar:active,
+.btn-adicionar:active,
+.btn-cancelar:active {
+transform: translateY(1px);
 }
 
 .btn-salvar:disabled {
@@ -536,6 +629,11 @@ cursor: wait;
 border: 1px solid var(--mw-border);
 background: #fff;
 color: #5d6679;
+}
+
+.btn-cancelar:hover {
+background: #f7f8fa;
+border-color: #d9dce4;
 }
 
 .btn-adicionar {
@@ -551,20 +649,250 @@ color: #fff;
 box-shadow: 0 8px 18px rgba(109, 74, 255, .15);
 }
 
-.btn-adicionar:hover {
-background: var(--mw-primary-dark);
-}
-
-.btn-adicionar svg,
-.btn-salvar svg,
-.btn-cancelar svg {
+.btn-adicionar svg {
 width: 17px;
 height: 17px;
 }
 
-/* ================================
+.btn-adicionar:hover {
+background: var(--mw-primary-dark);
+}
+
+/* =========================================================
+SERVIÇOS E VALORES
+========================================================= */
+
+.acoes-servico {
+display: grid;
+gap: 9px;
+margin-top: 20px;
+}
+
+.acoes-servico .btn-adicionar {
+margin-top: 0;
+}
+
+.servicos-edit-list {
+display: grid;
+gap: 10px;
+margin-bottom: 20px;
+}
+
+/* =========================================================
+CARD DO SERVIÇO
+========================================================= */
+
+.servico-edit-card {
+width: 100%;
+min-width: 0;
+display: grid;
+grid-template-columns: 44px minmax(0, 1fr) auto auto;
+align-items: center;
+gap: 12px;
+padding: 12px;
+border: 1px solid var(--mw-border);
+border-radius: 14px;
+background: #fff;
+transition:
+border-color .18s ease,
+background .18s ease,
+box-shadow .18s ease;
+}
+
+.servico-edit-card:hover {
+border-color: #dcd8f7;
+box-shadow: 0 5px 18px rgba(30, 35, 55, .05);
+}
+
+/* =========================================================
+ÍCONE DO SERVIÇO
+========================================================= */
+
+.servico-edit-icone {
+width: 44px;
+height: 44px;
+min-width: 44px;
+display: grid;
+place-items: center;
+border-radius: 12px;
+background: var(--mw-primary-soft);
+color: var(--mw-primary);
+}
+
+.servico-edit-icone svg {
+width: 19px;
+height: 19px;
+}
+
+/* =========================================================
+INFORMAÇÕES DO SERVIÇO
+========================================================= */
+
+.servico-edit-info {
+min-width: 0;
+overflow: hidden;
+}
+
+.servico-edit-info h3 {
+margin: 0;
+overflow: hidden;
+color: var(--mw-text);
+font-size: 13px;
+font-weight: 800;
+line-height: 1.3;
+text-overflow: ellipsis;
+white-space: nowrap;
+}
+
+.servico-edit-info p {
+margin: 5px 0 0;
+overflow: hidden;
+color: var(--mw-muted);
+font-size: 11px;
+line-height: 1.4;
+display: -webkit-box;
+-webkit-box-orient: vertical;
+-webkit-line-clamp: 2;
+}
+
+.servico-edit-meta {
+display: flex;
+align-items: center;
+flex-wrap: wrap;
+gap: 8px;
+margin-top: 7px;
+}
+
+.servico-edit-meta span {
+display: inline-flex;
+align-items: center;
+gap: 4px;
+color: var(--mw-muted);
+font-size: 10px;
+line-height: 1.2;
+white-space: nowrap;
+}
+
+.servico-edit-meta svg {
+width: 12px;
+height: 12px;
+flex: 0 0 12px;
+}
+
+/* =========================================================
+PREÇO DO SERVIÇO
+========================================================= */
+
+.servico-edit-preco {
+min-width: 130px;
+display: flex;
+flex-direction: column;
+align-items: flex-end;
+justify-content: center;
+gap: 6px;
+}
+
+.servico-edit-preco strong {
+display: block;
+color: var(--mw-text);
+font-size: 13px;
+font-weight: 850;
+line-height: 1.2;
+text-align: right;
+white-space: nowrap;
+}
+
+/* =========================================================
+STATUS
+========================================================= */
+
+.servico-status {
+display: inline-flex;
+align-items: center;
+justify-content: center;
+width: fit-content;
+min-height: 21px;
+padding: 4px 8px;
+border-radius: 999px;
+font-size: 9px;
+font-weight: 800;
+line-height: 1;
+text-transform: uppercase;
+white-space: nowrap;
+}
+
+.servico-status.ativo {
+background: #eaf8f2;
+color: var(--mw-success);
+}
+
+.servico-status.inativo {
+background: #f3f4f6;
+color: #858c9a;
+}
+
+/* =========================================================
+AÇÕES DO SERVIÇO
+========================================================= */
+
+.servico-edit-card .media-edit-actions {
+display: flex;
+align-items: center;
+justify-content: flex-end;
+gap: 6px;
+}
+
+.btn-editar-servico,
+.servico-edit-card .btn-excluir {
+width: 36px;
+height: 36px;
+padding: 0;
+display: grid;
+place-items: center;
+border: 1px solid var(--mw-border);
+border-radius: 10px;
+background: #fff;
+cursor: pointer;
+transition:
+background .16s ease,
+border-color .16s ease,
+color .16s ease,
+transform .12s ease;
+}
+
+.btn-editar-servico svg,
+.servico-edit-card .btn-excluir svg {
+width: 16px;
+height: 16px;
+}
+
+.btn-editar-servico {
+color: var(--mw-primary);
+}
+
+.btn-editar-servico:hover {
+border-color: #cfc7ff;
+background: var(--mw-primary-soft);
+color: var(--mw-primary-dark);
+}
+
+.servico-edit-card .btn-excluir {
+color: var(--mw-danger);
+}
+
+.servico-edit-card .btn-excluir:hover {
+border-color: #efc1c7;
+background: #fff1f3;
+color: #c93647;
+}
+
+.btn-editar-servico:active,
+.servico-edit-card .btn-excluir:active {
+transform: scale(.94);
+}
+/* =========================================================
 PORTFÓLIO
-================================ */
+========================================================= */
 
 .portfolio-tipo-tabs {
 display: grid;
@@ -586,11 +914,18 @@ color: var(--mw-muted);
 font-size: 12px;
 font-weight: 800;
 cursor: pointer;
+transition: all .18s ease;
 }
 
 .portfolio-tipo svg {
 width: 15px;
 height: 15px;
+}
+
+.portfolio-tipo:hover {
+border-color: #cfc7ff;
+color: var(--mw-primary);
+background: #faf9ff;
 }
 
 .portfolio-tipo.ativo {
@@ -599,18 +934,23 @@ background: var(--mw-primary-soft);
 color: var(--mw-primary);
 }
 
+/* =========================================================
+LISTA DOS CARDS
+========================================================= */
+
 .portfolio-edit-list,
-.agenda-edit-list,
-.servicos-list {
+.agenda-edit-list {
 display: grid;
 gap: 10px;
 }
 
-/* ================================
-CARD DE MÍDIA
-================================ */
+/* =========================================================
+CARD DO PORTFÓLIO
+========================================================= */
 
-.media-edit-card {
+.portfolio-edit-list .media-edit-card {
+width: 100%;
+min-width: 0;
 display: grid;
 grid-template-columns: 74px minmax(0, 1fr) auto;
 gap: 12px;
@@ -621,19 +961,23 @@ border-radius: 14px;
 background: #fff;
 transition:
 border-color .18s ease,
-box-shadow .18s ease,
-background .18s ease;
+background .18s ease,
+box-shadow .18s ease;
 }
 
-.media-edit-card:has(.btn-destaque.ativo) {
-border-color: #d8d0ff;
-background: #fdfcff;
-box-shadow: 0 5px 18px rgba(109, 74, 255, .07);
+.portfolio-edit-list .media-edit-card:hover {
+border-color: #dcd8f7;
+box-shadow: 0 5px 18px rgba(30, 35, 55, .05);
 }
 
-.media-preview {
+/* =========================================================
+PREVIEW DO PORTFÓLIO
+========================================================= */
+
+.portfolio-edit-list .media-edit-preview {
 width: 74px;
 height: 74px;
+min-width: 74px;
 display: grid;
 place-items: center;
 overflow: hidden;
@@ -642,273 +986,78 @@ background: var(--mw-primary-soft);
 color: var(--mw-primary);
 }
 
-.media-preview img,
-.media-preview video {
+.portfolio-edit-list .media-edit-preview img,
+.portfolio-edit-list .media-edit-preview video {
+display: block;
 width: 100%;
 height: 100%;
+max-width: 100%;
+max-height: 100%;
 object-fit: cover;
 }
 
-.media-preview svg {
+.portfolio-edit-list .media-edit-preview audio {
+width: calc(100% - 10px);
+max-width: 100%;
+height: 30px;
+}
+
+.portfolio-edit-list .media-edit-preview svg {
 width: 25px;
 height: 25px;
 }
 
-.media-edit-info {
+.portfolio-edit-list .media-edit-preview-audio {
+gap: 6px;
+padding: 7px;
+display: flex;
+flex-direction: column;
+justify-content: center;
+}
+
+.portfolio-edit-list .media-edit-preview-audio svg {
+width: 22px;
+height: 22px;
+}
+
+/* =========================================================
+INFORMAÇÕES DO PORTFÓLIO
+========================================================= */
+
+.portfolio-edit-list .media-edit-info {
 min-width: 0;
-}
-
-.media-edit-info strong {
-display: block;
-margin-bottom: 4px;
-font-size: 13px;
-line-height: 1.3;
-}
-
-.media-edit-info span {
-display: block;
 overflow: hidden;
-color: var(--mw-muted);
-font-size: 11px;
-text-overflow: ellipsis;
-white-space: nowrap;
 }
 
-/* ================================
-ETIQUETA DE DESTAQUE
-================================ */
-
-.portfolio-destaque-label {
-width: fit-content !important;
-max-width: 100%;
-display: inline-flex !important;
-align-items: center;
-gap: 5px;
-margin-top: 7px !important;
-padding: 4px 8px;
-border-radius: 999px;
-background: var(--mw-primary-soft);
-color: var(--mw-primary) !important;
-font-size: 9px !important;
-font-weight: 800 !important;
-line-height: 1.2;
-white-space: nowrap !important;
-overflow: visible !important;
-text-overflow: clip !important;
-}
-
-.portfolio-destaque-label svg {
-width: 11px;
-height: 11px;
-flex: 0 0 11px;
-fill: currentColor;
-stroke-width: 2;
-}
-
-/* ================================
-AÇÕES DA MÍDIA
-================================ */
-
-.media-edit-actions {
+.portfolio-edit-list .media-edit-type {
 display: flex;
 align-items: center;
-justify-content: flex-end;
-gap: 7px;
-flex-shrink: 0;
-}
-
-/* ================================
-BOTÃO DE DESTAQUE
-================================ */
-
-.btn-destaque {
-height: 34px;
-min-width: 34px;
-display: inline-flex;
-align-items: center;
-justify-content: center;
-gap: 6px;
-padding: 0 10px;
-border: 1px solid var(--mw-border);
-border-radius: 10px;
-background: #fff;
-color: #687184;
-cursor: pointer;
+gap: 5px;
+margin-bottom: 5px;
+color: var(--mw-primary);
 font-size: 10px;
 font-weight: 800;
-line-height: 1;
-white-space: nowrap;
-transition:
-background .18s ease,
-border-color .18s ease,
-color .18s ease,
-transform .12s ease;
 }
 
-.btn-destaque svg {
-width: 14px;
-height: 14px;
-flex: 0 0 14px;
-stroke-width: 2;
+.portfolio-edit-list .media-edit-type svg {
+width: 13px;
+height: 13px;
+flex: 0 0 13px;
 }
 
-.btn-destaque:hover {
-border-color: #cfc5ff;
-background: var(--mw-primary-soft);
-color: var(--mw-primary);
-}
-
-.btn-destaque:active {
-transform: scale(.97);
-}
-
-.btn-destaque.ativo {
-border-color: #c8bcff;
-background: var(--mw-primary-soft);
-color: var(--mw-primary);
-}
-
-.btn-destaque.ativo svg {
-fill: currentColor;
-}
-
-/* ================================
-BOTÃO EXCLUIR
-================================ */
-
-.btn-excluir {
-width: 34px;
-height: 34px;
-display: grid;
-place-items: center;
-flex: 0 0 34px;
-border: 1px solid #f1d8dc;
-border-radius: 10px;
-background: #fff;
-color: var(--mw-danger);
-cursor: pointer;
-transition:
-background .18s ease,
-border-color .18s ease,
-transform .12s ease;
-}
-
-.btn-excluir:hover {
-background: #fff5f6;
-border-color: #eccbd0;
-}
-
-.btn-excluir:active {
-transform: scale(.97);
-}
-
-.btn-excluir svg {
-width: 15px;
-height: 15px;
-}
-
-/* ================================
-SERVIÇOS E VALORES
-================================ */
-
-.servicos-form {
-padding: 18px;
-margin-top: 4px;
-border: 1px solid #e4e0f8;
-border-radius: 16px;
-background: #fbfaff;
-}
-
-.servicos-form .campo:first-child {
-margin-top: 0;
-}
-
-.servicos-form .campo {
-margin-top: 14px;
-}
-
-.servicos-form .campo-grid {
-margin-top: 0;
-}
-
-.servicos-form .btn-adicionar {
-margin-top: 18px;
-}
-
-.servicos-list {
-margin-top: 18px;
-}
-
-/* CARD DE SERVIÇO */
-
-.servico-edit-card {
-display: grid;
-grid-template-columns: 44px minmax(0, 1fr) minmax(110px, 180px) auto;
-align-items: center;
-gap: 12px;
-
-
-width: 100%;
-max-width: 100%;
-min-width: 0;
-
-padding: 14px;
-
-border: 1px solid var(--mw-border);
-border-radius: 15px;
-
-background: #fff;
-
+.portfolio-edit-list .media-edit-info h3 {
+margin: 0;
 overflow: hidden;
-
-
-}
-
-.servico-edit-card:hover {
-border-color: #dcd7f4;
-box-shadow: 0 5px 18px rgba(30, 35, 55, .05);
-}
-
-/* ÍCONE */
-
-.servico-edit-icon {
-width: 46px;
-height: 46px;
-display: grid;
-place-items: center;
-border-radius: 13px;
-background: var(--mw-primary-soft);
-color: var(--mw-primary);
-}
-
-.servico-edit-icon svg {
-width: 20px;
-height: 20px;
-}
-
-/* INFORMAÇÕES */
-
-.servico-edit-info {
-min-width: 0;
-max-width: 100%;
-overflow: hidden;
-}
-
-.servico-edit-info > strong {
-display: block;
-margin-bottom: 4px;
 color: var(--mw-text);
 font-size: 13px;
 font-weight: 800;
 line-height: 1.3;
-overflow-wrap: anywhere;
-word-break: break-word;
+text-overflow: ellipsis;
+white-space: nowrap;
 }
 
-.servico-edit-info > span {
-display: block;
-max-width: 100%;
-margin-bottom: 6px;
+.portfolio-edit-list .media-edit-info p {
+margin: 5px 0 0;
 overflow: hidden;
 color: var(--mw-muted);
 font-size: 11px;
@@ -917,159 +1066,177 @@ text-overflow: ellipsis;
 white-space: nowrap;
 }
 
-.servico-edit-meta {
-display: flex;
-align-items: center;
-flex-wrap: wrap;
-gap: 8px;
-min-width: 0;
-}
-
-.servico-edit-meta > span {
+.portfolio-edit-list .media-edit-destaque {
 display: inline-flex;
 align-items: center;
 gap: 4px;
-min-width: 0;
-max-width: 100%;
-color: #737c90;
-font-size: 10px;
-font-weight: 700;
-}
-
-.servico-edit-meta svg {
-width: 12px;
-height: 12px;
-flex: 0 0 12px;
-}
-
-/* PREÇO */
-
-.servico-edit-preco {
-min-width: 0;
-width: 100%;
-max-width: 180px;
-
-
-display: flex;
-flex-direction: column;
-align-items: flex-end;
-gap: 6px;
-
-text-align: right;
-
-overflow: hidden;
-
-
-}
-
-.servico-edit-preco strong {
-display: block;
-max-width: 100%;
-
-
-color: var(--mw-text);
-font-size: 13px;
-font-weight: 850;
-line-height: 1.2;
-
-white-space: normal;
-overflow-wrap: anywhere;
-word-break: break-word;
-
-
-}
-
-/* STATUS */
-
-.servico-status {
-display: inline-flex;
-align-items: center;
-justify-content: center;
 width: fit-content;
-min-height: 21px;
-max-width: 100%;
-padding: 3px 8px;
+margin-top: 7px;
+padding: 4px 7px;
 border-radius: 999px;
+background: var(--mw-primary-soft);
+color: var(--mw-primary);
 font-size: 9px;
 font-weight: 800;
 line-height: 1;
-text-transform: uppercase;
-white-space: nowrap;
 }
 
-.servico-status.ativo {
-background: #eaf8f2;
-color: #16845b;
+.portfolio-edit-list .media-edit-destaque svg {
+width: 11px;
+height: 11px;
+fill: var(--mw-primary);
+stroke: var(--mw-primary);
 }
 
-.servico-status.inativo {
-background: #f2f3f6;
-color: #7a8291;
-}
+/* =========================================================
+AÇÕES DO PORTFÓLIO
+========================================================= */
 
-/* AÇÕES */
-
-.servico-edit-card .media-edit-actions {
-min-width: 0;
+.portfolio-edit-list .media-edit-actions {
+display: flex;
+align-items: center;
+justify-content: flex-end;
 gap: 6px;
-flex-shrink: 0;
 }
 
-/* BOTÃO EDITAR */
+.btn-editar-portfolio,
+.portfolio-edit-list .btn-excluir {
+width: 34px;
+height: 34px;
+padding: 0;
+display: grid;
+place-items: center;
+border: 1px solid var(--mw-border);
+border-radius: 10px;
+background: #fff;
+cursor: pointer;
+transition:
+background .16s ease,
+border-color .16s ease,
+color .16s ease,
+transform .12s ease;
+}
 
-.btn-editar-servico {
+.btn-editar-portfolio svg,
+.portfolio-edit-list .btn-excluir svg {
+width: 16px;
+height: 16px;
+}
+
+.btn-editar-portfolio {
+color: var(--mw-primary);
+}
+
+.btn-editar-portfolio:hover {
+border-color: #cfc7ff;
+background: var(--mw-primary-soft);
+color: var(--mw-primary-dark);
+}
+
+.portfolio-edit-list .btn-excluir {
+color: var(--mw-danger);
+}
+
+.portfolio-edit-list .btn-excluir:hover {
+border-color: #efc1c7;
+background: #fff1f3;
+color: #c93647;
+}
+
+.btn-editar-portfolio:active,
+.portfolio-edit-list .btn-excluir:active {
+transform: scale(.94);
+}
+
+/* =========================================================
+DESTAQUE DO CATÁLOGO
+========================================================= */
+
+.btn-destaque {
 width: 34px;
 height: 34px;
 display: grid;
 place-items: center;
-flex: 0 0 34px;
-border: 1px solid #ded9f8;
+border: 1px solid var(--mw-border);
 border-radius: 10px;
 background: #fff;
-color: var(--mw-primary);
+color: #a1a7b5;
 cursor: pointer;
 transition:
 background .18s ease,
 border-color .18s ease,
-transform .12s ease;
+color .18s ease,
+transform .15s ease;
 }
 
-.btn-editar-servico:hover {
-border-color: #cfc6ff;
+.btn-destaque svg {
+width: 17px;
+height: 17px;
+stroke-width: 2;
+fill: none;
+transition:
+fill .18s ease,
+stroke .18s ease,
+transform .18s ease;
+}
+
+.btn-destaque:hover {
+border-color: #cfc7ff;
 background: var(--mw-primary-soft);
+color: var(--mw-primary);
 }
 
-.btn-editar-servico:active {
-transform: scale(.97);
+.btn-destaque:active {
+transform: scale(.94);
 }
 
-.btn-editar-servico svg {
-width: 15px;
-height: 15px;
+.btn-destaque.ativo {
+border-color: var(--mw-primary);
+background: var(--mw-primary-soft);
+color: var(--mw-primary);
 }
 
-/* CANCELAR EDIÇÃO */
+.btn-destaque.ativo svg {
+fill: var(--mw-primary);
+stroke: var(--mw-primary);
+transform: scale(1.08);
+}
 
-#btnCancelarServico {
-width: 100%;
-min-height: 42px;
-margin-top: 9px;
-border: 1px solid var(--mw-border);
-border-radius: 12px;
-background: #fff;
-color: #687184;
-font-size: 12px;
+.media-edit-card.portfolio-card-destaque {
+border-color: #d8d0ff;
+box-shadow:
+0 0 0 2px rgba(109, 74, 255, .06);
+}
+
+.portfolio-destaque-label {
+display: inline-flex;
+align-items: center;
+gap: 5px;
+width: fit-content;
+margin-top: 8px;
+padding: 5px 9px;
+border: 1px solid #d8d0ff;
+border-radius: 999px;
+background: var(--mw-primary-soft);
+color: var(--mw-primary);
+font-size: 10px;
 font-weight: 800;
-cursor: pointer;
+line-height: 1;
+white-space: nowrap;
 }
 
-#btnCancelarServico:hover {
-background: #f6f7fa;
+.portfolio-destaque-label svg {
+width: 12px;
+height: 12px;
+flex: 0 0 12px;
+fill: var(--mw-primary);
+stroke: var(--mw-primary);
+stroke-width: 2;
 }
 
-/* ================================
+/* =========================================================
 AGENDA
-================================ */
+========================================================= */
 
 .campo-grid {
 display: grid;
@@ -1119,7 +1286,10 @@ min-width: 0;
 .agenda-edit-info strong {
 display: block;
 margin-bottom: 4px;
+overflow: hidden;
 font-size: 13px;
+text-overflow: ellipsis;
+white-space: nowrap;
 }
 
 .agenda-edit-info span {
@@ -1145,11 +1315,12 @@ font-weight: 800;
 text-transform: uppercase;
 }
 
-/* ================================
-VAZIO
-================================ */
+/* =========================================================
+ESTADOS VAZIOS
+========================================================= */
 
-.empty-editor {
+.empty-editor,
+.portfolio-edit-list .empty-state {
 min-height: 160px;
 display: flex;
 flex-direction: column;
@@ -1162,18 +1333,21 @@ background: #fafbfc;
 text-align: center;
 }
 
-.empty-editor svg {
+.empty-editor svg,
+.portfolio-edit-list .empty-state svg {
 width: 28px;
 height: 28px;
 margin-bottom: 10px;
 color: var(--mw-primary);
 }
 
-.empty-editor strong {
+.empty-editor strong,
+.portfolio-edit-list .empty-state strong {
 font-size: 13px;
 }
 
-.empty-editor span {
+.empty-editor span,
+.portfolio-edit-list .empty-state span {
 max-width: 340px;
 margin-top: 5px;
 color: var(--mw-muted);
@@ -1181,9 +1355,9 @@ font-size: 11px;
 line-height: 1.45;
 }
 
-/* ================================
+/* =========================================================
 TOAST
-================================ */
+========================================================= */
 
 .toast {
 position: fixed;
@@ -1210,6 +1384,12 @@ font-size: 13px;
 font-weight: 700;
 }
 
+.toast svg {
+width: 18px;
+height: 18px;
+flex: 0 0 18px;
+}
+
 .toast.erro {
 border-color: #f2d4d8;
 color: var(--mw-danger);
@@ -1220,9 +1400,9 @@ transform: translate(-50%, 0);
 opacity: 1;
 }
 
-/* ================================
+/* =========================================================
 LOADING
-================================ */
+========================================================= */
 
 .loading-overlay {
 position: fixed;
@@ -1273,9 +1453,45 @@ transform: rotate(360deg);
 }
 }
 
-/* ================================
-DESKTOP
-================================ */
+/* =========================================================
+INPUT FILE
+========================================================= */
+
+.campo input[type="file"] {
+padding: 9px;
+cursor: pointer;
+}
+
+.campo input[type="file"]::file-selector-button {
+margin-right: 10px;
+padding: 7px 11px;
+border: 1px solid var(--mw-border);
+border-radius: 9px;
+background: #f7f8fb;
+color: #596276;
+font-size: 11px;
+font-weight: 700;
+cursor: pointer;
+}
+
+.campo input[type="file"]::file-selector-button:hover {
+background: var(--mw-primary-soft);
+color: var(--mw-primary);
+border-color: #cfc7ff;
+}
+
+/* =========================================================
+SELECT
+========================================================= */
+
+.campo select {
+appearance: auto;
+cursor: pointer;
+}
+
+/* =========================================================
+RESPONSIVIDADE — DESKTOP
+========================================================= */
 
 @media (min-width: 700px) {
 
@@ -1291,9 +1507,9 @@ DESKTOP
 
 }
 
-/* ================================
-TABLET / CELULAR
-================================ */
+/* =========================================================
+RESPONSIVIDADE — CELULAR
+========================================================= */
 
 @media (max-width: 520px) {
 
@@ -1315,24 +1531,41 @@ TABLET / CELULAR
 
 .editor-tabs {
     top: 66px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 3px;
+    padding: 4px;
 }
 
 .editor-tab {
     min-height: 42px;
+    min-width: 0;
     flex-direction: column;
     gap: 3px;
     font-size: 10px;
+    white-space: nowrap;
 }
 
 .editor-tab svg {
     width: 15px;
     height: 15px;
+    flex-basis: 15px;
 }
 
 .form-card,
 .foto-card {
     padding: 18px 15px;
     border-radius: 16px;
+}
+
+.foto-card {
+    padding-top: 22px;
+    padding-bottom: 22px;
+}
+
+.avatar-edit {
+    width: 100px;
+    height: 100px;
+    font-size: 28px;
 }
 
 .section-heading {
@@ -1343,8 +1576,20 @@ TABLET / CELULAR
     font-size: 15px;
 }
 
+.section-heading p {
+    font-size: 11px;
+}
+
 .switch-row {
     align-items: center;
+}
+
+.switch-row strong {
+    font-size: 13px;
+}
+
+.switch-row small {
+    font-size: 11px;
 }
 
 .campo-grid {
@@ -1356,12 +1601,82 @@ TABLET / CELULAR
     font-size: 10px;
 }
 
-/* ============================
-   PORTFÓLIO
-============================ */
+.portfolio-tipo svg {
+    width: 14px;
+    height: 14px;
+}
+
+/* -----------------------------------------------------
+   PORTFÓLIO — CELULAR
+   ----------------------------------------------------- */
+
+.portfolio-edit-list .media-edit-card {
+    grid-template-columns: 58px minmax(0, 1fr) auto;
+    gap: 9px;
+    padding: 9px;
+}
+
+.portfolio-edit-list .media-edit-preview {
+    width: 58px;
+    height: 58px;
+    min-width: 58px;
+    border-radius: 10px;
+}
+
+.portfolio-edit-list .media-edit-preview svg {
+    width: 21px;
+    height: 21px;
+}
+
+.portfolio-edit-list .media-edit-preview audio {
+    width: calc(100% - 6px);
+    height: 24px;
+}
+
+.portfolio-edit-list .media-edit-type {
+    margin-bottom: 3px;
+    font-size: 9px;
+}
+
+.portfolio-edit-list .media-edit-type svg {
+    width: 11px;
+    height: 11px;
+}
+
+.portfolio-edit-list .media-edit-info h3 {
+    font-size: 12px;
+}
+
+.portfolio-edit-list .media-edit-info p {
+    margin-top: 3px;
+    font-size: 10px;
+}
+
+.portfolio-edit-list .media-edit-destaque {
+    margin-top: 5px;
+    padding: 4px 6px;
+    font-size: 8px;
+}
+
+.portfolio-edit-list .media-edit-actions {
+    align-self: start;
+    gap: 5px;
+}
+
+.btn-editar-portfolio,
+.portfolio-edit-list .btn-excluir {
+    width: 32px;
+    height: 32px;
+}
+
+.btn-editar-portfolio svg,
+.portfolio-edit-list .btn-excluir svg {
+    width: 15px;
+    height: 15px;
+}
 
 .media-edit-card {
-    grid-template-columns: 58px minmax(0, 1fr) auto;
+    grid-template-columns: 58px 1fr auto;
     gap: 9px;
     padding: 9px;
 }
@@ -1371,14 +1686,17 @@ TABLET / CELULAR
     height: 58px;
 }
 
-.media-edit-actions {
-    gap: 5px;
+.media-edit-info strong {
+    font-size: 12px;
+}
+
+.media-edit-info span {
+    font-size: 10px;
 }
 
 .btn-destaque {
     width: 34px;
     height: 34px;
-    min-width: 34px;
     padding: 0;
 }
 
@@ -1387,67 +1705,54 @@ TABLET / CELULAR
 }
 
 .btn-destaque svg {
-    width: 15px;
-    height: 15px;
+    width: 16px;
+    height: 16px;
 }
 
-.btn-excluir {
-    width: 34px;
-    height: 34px;
-    flex-basis: 34px;
-}
+/* -----------------------------------------------------
+   AGENDA — CELULAR
+   ----------------------------------------------------- */
 
-.portfolio-destaque-label {
-    margin-top: 6px !important;
-    padding: 3px 7px;
-    font-size: 8px !important;
-}
-
-.portfolio-destaque-label svg {
-    width: 10px;
-    height: 10px;
-    flex-basis: 10px;
-}
-
-/* ============================
-   SERVIÇOS
-============================ */
-
-.servicos-form {
-    padding: 15px;
-    border-radius: 14px;
-}
-
-/*
-   CORREÇÃO:
-   No celular o preço passa para uma linha própria.
-   Isso impede que ele seja colocado na terceira coluna
-   junto com os botões e ultrapasse a largura da página.
-*/
-
-.servico-edit-card {
-    grid-template-columns: 42px minmax(0, 1fr);
+.agenda-edit-card {
+    grid-template-columns: 52px 1fr auto;
     gap: 9px;
     padding: 10px;
-    align-items: start;
+}
+
+.agenda-data {
+    width: 52px;
+    height: 52px;
+}
+
+.agenda-edit-info strong {
+    font-size: 12px;
+}
+
+.agenda-edit-info span {
+    font-size: 10px;
+}
+
+/* -----------------------------------------------------
+   SERVIÇOS — CELULAR
+   ----------------------------------------------------- */
+
+.servico-edit-card {
+    grid-template-columns: 40px minmax(0, 1fr) auto;
+    gap: 9px;
+    padding: 10px;
 }
 
 .servico-edit-icon {
-    width: 42px;
-    height: 42px;
-    border-radius: 11px;
-    grid-column: 1;
-    grid-row: 1;
+    width: 40px;
+    height: 40px;
 }
 
-.servico-edit-info {
-    grid-column: 2;
-    grid-row: 1;
-    min-width: 0;
-    max-width: 100%;
+.servico-edit-icon svg {
+    width: 17px;
+    height: 17px;
 }
 
-.servico-edit-info > strong {
+.servico-edit-info strong {
     font-size: 12px;
 }
 
@@ -1457,100 +1762,78 @@ TABLET / CELULAR
 
 .servico-edit-meta {
     gap: 6px;
+    margin-top: 5px;
 }
 
-.servico-edit-meta > span {
+.servico-edit-meta span {
     font-size: 9px;
 }
 
 .servico-edit-preco {
-    grid-column: 1 / -1;
-    grid-row: 2;
-
+    grid-column: 2 / -1;
     min-width: 0;
-    width: 100%;
-    max-width: 100%;
-
+    display: flex;
     align-items: flex-start;
-
-    padding-top: 9px;
-
-    border-top: 1px solid var(--mw-border);
-
-    text-align: left;
-
-    overflow: hidden;
+    justify-content: flex-start;
+    margin-top: 2px;
+    gap: 5px;
 }
 
 .servico-edit-preco strong {
-    width: 100%;
-    max-width: 100%;
-
-    font-size: 11px;
-
-    white-space: normal;
-    overflow-wrap: anywhere;
-    word-break: break-word;
+    font-size: 12px;
+    text-align: left;
 }
 
 .servico-status {
-    align-self: flex-start;
     font-size: 8px;
-    padding: 3px 6px;
 }
 
-.servico-edit-card .media-edit-actions {
-    grid-column: 1 / -1;
-    grid-row: 3;
-
-    width: 100%;
-    min-width: 0;
-
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-
+.media-edit-actions {
+    grid-column: 3;
+    grid-row: 1;
     gap: 5px;
-    padding-top: 2px;
+    align-self: start;
 }
 
 .btn-editar-servico,
 .servico-edit-card .btn-excluir {
     width: 32px;
     height: 32px;
-    flex-basis: 32px;
 }
 
-.btn-editar-servico svg,
-.servico-edit-card .btn-excluir svg {
-    width: 14px;
-    height: 14px;
-}
-
-/* ============================
-   AGENDA
-============================ */
-
-.agenda-edit-card {
-    grid-template-columns: 52px 1fr auto;
-}
-
-.agenda-data {
-    width: 52px;
-    height: 52px;
+.btn-salvar,
+.btn-cancelar,
+.btn-adicionar {
+    min-height: 46px;
+    font-size: 13px;
 }
 
 
 }
 
-/* ================================
-CELULARES PEQUENOS
-================================ */
+/* =========================================================
+RESPONSIVIDADE — CELULARES PEQUENOS
+========================================================= */
 
 @media (max-width: 380px) {
 
 
-.editor-tab span {
+.editar-topbar {
+    grid-template-columns: 40px 1fr auto;
+    gap: 7px;
+    padding: 0 9px;
+}
+
+.topbar-voltar {
+    width: 36px;
+    height: 36px;
+}
+
+.topbar-titulo h1 {
+    font-size: 17px;
+}
+
+.topbar-eyebrow {
     font-size: 9px;
 }
 
@@ -1558,9 +1841,59 @@ CELULARES PEQUENOS
     font-size: 12px;
 }
 
-.media-edit-card {
+.editor-tabs {
+    gap: 2px;
+    padding: 3px;
+}
+
+.editor-tab {
+    min-height: 40px;
+    gap: 2px;
+    font-size: 9px;
+}
+
+.editor-tab svg {
+    width: 14px;
+    height: 14px;
+    flex-basis: 14px;
+}
+
+.editor-tab span {
+    font-size: 9px;
+}
+
+.portfolio-tipo {
+    min-height: 40px;
+    gap: 4px;
+    font-size: 9px;
+}
+
+.portfolio-edit-list .media-edit-card {
     grid-template-columns: 52px minmax(0, 1fr) auto;
-    gap: 7px;
+}
+
+.portfolio-edit-list .media-edit-preview {
+    width: 52px;
+    height: 52px;
+    min-width: 52px;
+}
+
+.portfolio-edit-list .media-edit-info h3 {
+    font-size: 11px;
+}
+
+.portfolio-edit-list .media-edit-info p {
+    font-size: 9px;
+}
+
+.btn-editar-portfolio,
+.portfolio-edit-list .btn-excluir {
+    width: 30px;
+    height: 30px;
+}
+
+.media-edit-card {
+    grid-template-columns: 52px 1fr auto;
 }
 
 .media-preview {
@@ -1568,172 +1901,64 @@ CELULARES PEQUENOS
     height: 52px;
 }
 
-.media-edit-info strong {
-    font-size: 12px;
+.agenda-edit-card {
+    grid-template-columns: 48px 1fr auto;
 }
 
-.media-edit-actions {
-    gap: 4px;
-}
-
-.btn-destaque,
-.btn-excluir {
-    width: 32px;
-    min-width: 32px;
-    height: 32px;
-}
-
-.btn-destaque svg {
-    width: 14px;
-    height: 14px;
-}
-
-/* ============================
-   SERVIÇOS PEQUENOS
-============================ */
-
-.servicos-form {
-    padding: 13px;
-}
-
-.servico-edit-card {
-    grid-template-columns: 38px minmax(0, 1fr);
-    gap: 7px;
-    padding: 9px;
-    align-items: start;
-}
-
-.servico-edit-icon {
-    width: 38px;
-    height: 38px;
-    grid-column: 1;
-    grid-row: 1;
-}
-
-.servico-edit-info {
-    grid-column: 2;
-    grid-row: 1;
-    min-width: 0;
-    max-width: 100%;
-}
-
-.servico-edit-info > strong {
-    font-size: 11px;
-}
-
-.servico-edit-info > span {
-    font-size: 9px;
-}
-
-.servico-edit-meta > span {
-    font-size: 8px;
-}
-
-.servico-edit-preco {
-    grid-column: 1 / -1;
-    grid-row: 2;
-
-    width: 100%;
-    max-width: 100%;
-    min-width: 0;
-
-    align-items: flex-start;
-
-    padding-top: 8px;
-
-    border-top: 1px solid var(--mw-border);
-
-    text-align: left;
-}
-
-.servico-edit-preco strong {
-    width: 100%;
-    max-width: 100%;
-
-    font-size: 10px;
-
-    white-space: normal;
-    overflow-wrap: anywhere;
-    word-break: break-word;
-}
-
-.servico-status {
-    align-self: flex-start;
-    font-size: 7px;
-    padding: 3px 5px;
-}
-
-.servico-edit-card .media-edit-actions {
-    grid-column: 1 / -1;
-    grid-row: 3;
-
-    width: 100%;
-    min-width: 0;
-
-    display: flex;
-    justify-content: flex-end;
-
-    gap: 4px;
-    padding-top: 2px;
-}
-
-.btn-editar-servico,
-.servico-edit-card .btn-excluir {
-    width: 30px;
-    height: 30px;
-    flex-basis: 30px;
+.agenda-data {
+    width: 48px;
+    height: 48px;
 }
 
 
 }
 
-.servicos-ajuda {
-display: flex;
-align-items: flex-start;
-gap: 8px;
-margin: 10px 0 0;
-padding: 11px 13px;
-border: 1px solid #e4e0f8;
-border-radius: 12px;
-background: #faf9ff;
-color: var(--mw-muted);
-font-size: 12px;
-line-height: 1.5;
-}
+/* =========================================================
+SAFE AREA — ANDROID / IOS
+========================================================= */
 
-.servicos-ajuda i[data-lucide="info"] {
-width: 16px;
-height: 16px;
-min-width: 16px;
-margin-top: 1px;
-color: var(--mw-primary);
-stroke-width: 2;
+@supports (padding: env(safe-area-inset-top)) {
+
+
+body {
+    padding-bottom:
+        calc(40px + env(safe-area-inset-bottom));
 }
 
 
-.subheading {
-display: flex;
-flex-direction: column;
-gap: 4px;
-margin: 24px 0 14px;
-padding-bottom: 10px;
-border-bottom: 1px solid var(--mw-border);
 }
 
-.subheading strong {
-display: block;
-margin: 0;
-color: var(--mw-text);
-font-size: 15px;
-font-weight: 700;
-line-height: 1.4;
+/* =========================================================
+ACESSIBILIDADE
+========================================================= */
+
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+outline: 3px solid rgba(109, 74, 255, .18);
+outline-offset: 2px;
 }
 
-.subheading span {
-display: block;
-margin: 0;
-color: var(--mw-muted);
-font-size: 12px;
-font-weight: 400;
-line-height: 1.5;
+/* =========================================================
+REDUÇÃO DE MOVIMENTO
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+
+html {
+    scroll-behavior: auto;
+}
+
+*,
+*::before,
+*::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+}
+
+
 }
