@@ -2187,125 +2187,68 @@ const PerfilEditor = (() => {
      * ============================================================
  */
 
-    async function iniciar() {
+function iniciar() {
 
-        try {
+    try {
 
-            if (
-                window.PerfilUtils &&
-                typeof window.PerfilUtils.mostrarLoading === "function"
-            ) {
+        configurarModulos();
 
-                window.PerfilUtils.mostrarLoading(
-                    "Carregando perfil..."
-                );
-            }
+        if (
+            window.PerfilAbas &&
+            typeof window.PerfilAbas.inicializar === "function"
+        ) {
+            window.PerfilAbas.inicializar();
+        }
 
+        inicializarEventos();
 
-            configurarModulos();
+        inicializarFoto();
 
+        if (
+            window.PerfilInstrumentos &&
+            typeof window.PerfilInstrumentos.inicializar === "function"
+        ) {
+            window.PerfilInstrumentos.inicializar();
+        }
 
-            /*
-             * As abas são inicializadas uma única vez
-             * pelo módulo universal.
-             */
+        if (
+            window.PerfilServicos &&
+            typeof window.PerfilServicos.inicializar === "function"
+        ) {
+            window.PerfilServicos.inicializar();
+        }
 
-            if (
-                window.PerfilAbas &&
-                typeof window.PerfilAbas.inicializar === "function"
-            ) {
+        if (
+            window.PerfilUtils &&
+            typeof window.PerfilUtils.inicializarChips === "function"
+        ) {
+            window.PerfilUtils.inicializarChips();
+        }
 
-                window.PerfilAbas.inicializar();
-            }
+        carregarDados();
 
+    } catch (erro) {
 
-            /*
-             * Módulos de conteúdo também são inicializados
-             * uma única vez.
-             */
+        console.error(
+            "PerfilEditor: erro ao iniciar:",
+            erro
+        );
 
-            if (
-                window.PerfilPortfolio &&
-                typeof window.PerfilPortfolio.inicializar === "function"
-            ) {
-
-                window.PerfilPortfolio.inicializar();
-            }
-
-
-            if (
-                window.PerfilAgenda &&
-                typeof window.PerfilAgenda.inicializar === "function"
-            ) {
-
-                window.PerfilAgenda.inicializar();
-            }
-
-
-            if (
-                window.PerfilServicos &&
-                typeof window.PerfilServicos.inicializar === "function"
-            ) {
-
-                window.PerfilServicos.inicializar();
-            }
-
-
-            if (
-                window.PerfilInstrumentos &&
-                typeof window.PerfilInstrumentos.inicializar === "function"
-            ) {
-
-                window.PerfilInstrumentos.inicializar();
-            }
-
-
-            inicializarEventos();
-
-            inicializarFoto();
-
-            await carregarDados();
-
-
-            if (
-                window.PerfilUtils &&
-                typeof window.PerfilUtils.atualizarIcones === "function"
-            ) {
-
-                window.PerfilUtils.atualizarIcones();
-            }
-
-        } catch (erro) {
-
-            console.error(
-                "Erro ao iniciar editor:",
-                erro
+        if (
+            window.PerfilUtils &&
+            typeof window.PerfilUtils.mostrarToast === "function"
+        ) {
+            window.PerfilUtils.mostrarToast(
+                "Não foi possível iniciar o editor.",
+                "erro"
             );
-
-
-            if (
-                window.PerfilUtils &&
-                typeof window.PerfilUtils.mostrarToast === "function"
-            ) {
-
-                window.PerfilUtils.mostrarToast(
-                    erro?.message ||
-                    "Não foi possível iniciar o editor.",
-                    "erro"
-                );
-            }
-
-        } finally {
-
-            if (
-                window.PerfilUtils &&
-                typeof window.PerfilUtils.esconderLoading === "function"
-            ) {
-
-                window.PerfilUtils.esconderLoading();
-            }
+        } else {
+            console.error(
+                "PerfilUtils não está disponível."
+            );
         }
     }
+}
 
 
     /*

@@ -1356,6 +1356,41 @@ line-height: 1.45;
 }
 
 /* =========================================================
+ESTADOS VAZIOS — SERVIÇOS
+========================================================= */
+
+.servicos-edit-list .empty-state {
+min-height: 160px;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+padding: 25px;
+border: 1px dashed #dfe3eb;
+border-radius: 15px;
+background: #fafbfc;
+text-align: center;
+}
+
+.servicos-edit-list .empty-state svg {
+width: 28px;
+height: 28px;
+margin-bottom: 10px;
+color: var(--mw-primary);
+}
+
+.servicos-edit-list .empty-state strong {
+font-size: 13px;
+}
+
+.servicos-edit-list .empty-state span {
+max-width: 340px;
+margin-top: 5px;
+color: var(--mw-muted);
+font-size: 11px;
+line-height: 1.45;
+}
+/* =========================================================
 TOAST
 ========================================================= */
 
