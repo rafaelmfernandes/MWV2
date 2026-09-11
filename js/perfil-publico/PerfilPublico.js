@@ -1125,106 +1125,288 @@ function preencherInformacoesPerfil() {
 }
 
 
+
 /* =====================================================
    AVATAR
    ===================================================== */
 
-function preencherAvatar(
-    artista,
-    perfil,
-    nome
-) {
+function preencherAvatar(artista, perfil, nome) {
 
-    const avatar =
-        obterElemento(
-            CONFIG.elementos.avatar
-        );
+const container =
+    obterElemento(CONFIG.elementos.avatar);
+
+const iniciais =
+    obterElemento(CONFIG.elementos.iniciais);
 
 
-    const iniciais =
-        obterElemento(
-            CONFIG.elementos.iniciais
-        );
+if (!container) {
+
+    aviso(
+        "Elemento #profileAvatar não encontrado."
+    );
+
+    return;
+
+}
 
 
-    const url =
-        obterPrimeiroValor(
+/* =====================================================
+   LOCALIZAR OU CRIAR A IMAGEM
+   ===================================================== */
 
-            artista.foto_url,
-
-            artista.avatar_url,
-
-            artista.foto,
-
-            artista.avatar,
-
-            perfil.foto_url,
-
-            perfil.avatar_url,
-
-            usuarioFoto()
-
-        );
+let imagem =
+    container.querySelector(
+        "img.profile-avatar-image"
+    );
 
 
-    if (
-        avatar &&
-        url
-    ) {
+if (!imagem) {
 
-        avatar.src =
-            String(
-                url
-            );
+    imagem =
+        document.createElement("img");
 
+    imagem.className =
+        "profile-avatar-image";
 
-        avatar.style.display =
-            "";
+    imagem.alt =
+        `Foto de perfil de ${nome || "artista"}`;
 
+    container.appendChild(
+        imagem
+    );
 
-        avatar.onerror =
-            function () {
-
-                avatar.style.display =
-                    "none";
+}
 
 
-                if (iniciais) {
+/* =====================================================
+   OBTER URL DA FOTO
+   ===================================================== */
 
-                    iniciais.style.display =
-                        "flex";
+const url =
+    obterPrimeiroValor(
 
-                }
+        artista?.foto_url,
 
-            };
+        artista?.avatar_url,
 
-    } else if (avatar) {
+        artista?.foto,
 
-        avatar.style.display =
-            "none";
+        artista?.avatar,
 
-    }
+        perfil?.foto_url,
+
+        perfil?.avatar_url,
+
+        estado.usuario?.foto_url,
+
+        estado.usuario?.avatar_url,
+
+        estado.usuario?.foto,
+
+        estado.usuario?.avatar
+
+    );
+
+
+/* =====================================================
+   CONFIGURAR INICIAIS
+   ===================================================== */
+
+if (iniciais) {
+
+    iniciais.textContent =
+        obterIniciais(nome);
+
+    iniciais.style.display =
+        "none";
+
+    iniciais.hidden =
+        true;
+
+}
+
+
+/* =====================================================
+   SEM FOTO
+   ===================================================== */
+
+if (!url) {
+
+    imagem.removeAttribute(
+        "src"
+    );
+
+    imagem.style.display =
+        "none";
+
+    imagem.hidden =
+        true;
 
 
     if (iniciais) {
 
         iniciais.textContent =
-            obterIniciais(
-                nome
-            );
+            obterIniciais(nome);
+
+        iniciais.style.display =
+            "flex";
+
+        iniciais.hidden =
+            false;
+
+    }
 
 
-        if (
-            !url ||
-            avatar?.style.display === "none"
-        ) {
+    log(
+        "Avatar: nenhuma foto encontrada. Exibindo iniciais."
+    );
+
+    return;
+
+}
+
+
+/* =====================================================
+   CONFIGURAR CONTAINER
+   ===================================================== */
+
+container.hidden =
+    false;
+
+container.style.display =
+    "";
+
+
+/* =====================================================
+   CONFIGURAR IMAGEM
+   ===================================================== */
+
+imagem.hidden =
+    false;
+
+imagem.style.display =
+    "block";
+
+
+/* =====================================================
+   EVENTO — FOTO CARREGADA
+   ===================================================== */
+
+imagem.onload =
+    function () {
+
+        imagem.hidden =
+            false;
+
+        imagem.style.display =
+            "block";
+
+
+        if (iniciais) {
+
+            iniciais.style.display =
+                "none";
+
+            iniciais.hidden =
+                true;
+
+        }
+
+
+        log(
+            "Avatar carregado com sucesso:",
+            imagem.src
+        );
+
+    };
+
+
+/* =====================================================
+   EVENTO — ERRO AO CARREGAR
+   ===================================================== */
+
+imagem.onerror =
+    function () {
+
+        erro(
+            "Não foi possível carregar a imagem do avatar:",
+            imagem.src
+        );
+
+
+        imagem.style.display =
+            "none";
+
+        imagem.hidden =
+            true;
+
+
+        if (iniciais) {
+
+            iniciais.textContent =
+                obterIniciais(nome);
 
             iniciais.style.display =
                 "flex";
 
+            iniciais.hidden =
+                false;
+
         }
 
+    };
+
+
+/* =====================================================
+   DEFINIR FOTO
+   ===================================================== */
+
+imagem.src =
+    String(url);
+
+
+log(
+    "Avatar encontrado:",
+    url
+);
+
+
+/* =====================================================
+   VERIFICAR CACHE
+   ===================================================== */
+
+if (imagem.complete) {
+
+    if (
+        imagem.naturalWidth > 0
+    ) {
+
+        imagem.hidden =
+            false;
+
+        imagem.style.display =
+            "block";
+
+
+        if (iniciais) {
+
+            iniciais.style.display =
+                "none";
+
+            iniciais.hidden =
+                true;
+
+        }
+
+
+        log(
+            "Avatar carregado do cache:",
+            imagem.src
+        );
+
     }
+
+}
 
 }
 

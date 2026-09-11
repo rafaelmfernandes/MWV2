@@ -529,50 +529,24 @@ function renderizarResumo() {
             `Elemento #${CONFIG.elementos.resumo} não encontrado.`
         );
 
-
         return;
 
     }
 
 
     /*
-     * Ainda não existem avaliações.
+     * Quando ainda não existem avaliações,
+     * não exibimos um segundo estado vazio.
+     *
+     * A mensagem principal será exibida
+     * somente em #reviewsList.
      */
 
     if (
         estado.quantidade <= 0
     ) {
 
-        container.innerHTML = `
-
-            <div class="reviews-empty-summary">
-
-                <div class="reviews-empty-icon">
-
-                    <i
-                        data-lucide="star"
-                        aria-hidden="true"
-                    ></i>
-
-                </div>
-
-                <div>
-
-                    <strong>
-                        Ainda não há avaliações
-                    </strong>
-
-                    <p>
-                        As avaliações recebidas após
-                        os serviços realizados aparecerão aqui.
-                    </p>
-
-                </div>
-
-            </div>
-
-        `;
-
+        container.innerHTML = "";
 
         return;
 
