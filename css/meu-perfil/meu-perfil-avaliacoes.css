@@ -1,0 +1,473 @@
+/* =========================================================
+   MUSICALWORLD
+   MEU PERFIL
+   AVALIAÇÕES
+   ========================================================= */
+
+/* =========================================================
+   29. AVALIAÇÕES
+   ========================================================= */
+
+.reviews-summary {
+  width: 100%;
+
+  padding: 12px;
+
+  background: #f8faff;
+
+  border: 1px solid var(--mw-border-light);
+
+  border-radius: 12px;
+}
+
+/* =========================================================
+   RESUMO COM AVALIAÇÕES
+   ========================================================= */
+
+.reviews-summary-content {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+
+  gap: 20px;
+}
+
+.reviews-score {
+  min-width: 95px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.reviews-average {
+  display: block;
+
+  color: var(--mw-text-dark);
+
+  font-size: 25px;
+  line-height: 29px;
+
+  font-weight: 850;
+}
+
+.reviews-stars {
+  display: flex;
+  align-items: center;
+
+  gap: 2px;
+
+  margin-top: 3px;
+
+  color: var(--mw-orange);
+}
+
+.reviews-stars svg {
+  width: 13px;
+  height: 13px;
+
+  fill: currentColor;
+
+  stroke-width: 1.7;
+}
+
+.reviews-stars .star-empty {
+  fill: transparent;
+}
+
+.reviews-stars .star-filled {
+  fill: currentColor;
+}
+
+.reviews-count {
+  display: block;
+
+  margin-top: 3px;
+
+  color: #8992a4;
+
+  font-size: 9px;
+  line-height: 13px;
+
+  font-weight: 500;
+}
+
+/* =========================================================
+   DISTRIBUIÇÃO DAS AVALIAÇÕES
+   ========================================================= */
+
+.reviews-distribution {
+  min-width: 0;
+
+  flex: 1;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 5px;
+}
+
+.review-distribution-row {
+  width: 100%;
+
+  display: grid;
+
+  grid-template-columns:
+    28px minmax(0, 1fr) 24px;
+
+  align-items: center;
+
+  gap: 6px;
+}
+
+.review-distribution-label {
+  display: flex;
+  align-items: center;
+
+  gap: 2px;
+
+  color: #697489;
+
+  font-size: 9px;
+  line-height: 12px;
+
+  font-weight: 700;
+}
+
+.review-distribution-label svg {
+  width: 10px;
+  height: 10px;
+
+  color: var(--mw-orange);
+
+  fill: currentColor;
+
+  stroke-width: 1.7;
+}
+
+.review-distribution-bar {
+  width: 100%;
+  height: 5px;
+
+  overflow: hidden;
+
+  border-radius: 999px;
+
+  background: #e9edf4;
+}
+
+.review-distribution-fill {
+  height: 100%;
+
+  min-width: 0;
+
+  border-radius: inherit;
+
+  background: var(--mw-blue);
+
+  transition:
+    width 0.25s ease;
+}
+
+.review-distribution-count {
+  color: #8992a4;
+
+  font-size: 8px;
+  line-height: 11px;
+
+  font-weight: 600;
+
+  text-align: right;
+}
+
+/* =========================================================
+   LISTA DE AVALIAÇÕES
+   ========================================================= */
+
+.reviews-list {
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 9px;
+}
+
+/* =========================================================
+   AVALIAÇÃO INDIVIDUAL
+   ========================================================= */
+
+.review-item {
+  width: 100%;
+
+  display: flex;
+  align-items: flex-start;
+
+  gap: 10px;
+
+  padding: 12px;
+
+  background: #f8faff;
+
+  border: 1px solid var(--mw-border-light);
+
+  border-radius: 12px;
+}
+
+.review-avatar-wrapper {
+  width: 36px;
+  height: 36px;
+
+  flex: 0 0 auto;
+}
+
+.review-avatar {
+  width: 36px;
+  height: 36px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  overflow: hidden;
+
+  border-radius: 50%;
+
+  background: var(--mw-blue-light);
+
+  color: var(--mw-blue);
+
+  font-size: 11px;
+  line-height: 14px;
+
+  font-weight: 800;
+}
+
+.review-avatar img {
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  object-fit: cover;
+}
+
+.review-avatar-initials {
+  text-transform: uppercase;
+}
+
+.review-content {
+  min-width: 0;
+
+  flex: 1;
+}
+
+.review-header {
+  width: 100%;
+
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 8px;
+}
+
+.review-author {
+  min-width: 0;
+
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+
+  gap: 5px;
+}
+
+.review-author strong {
+  min-width: 0;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  color: #344057;
+
+  font-size: 11px;
+  line-height: 15px;
+
+  font-weight: 800;
+}
+
+.review-verified {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 3px;
+
+  flex: 0 0 auto;
+
+  color: var(--mw-green);
+
+  font-size: 8px;
+  line-height: 12px;
+
+  font-weight: 700;
+}
+
+.review-verified svg {
+  width: 11px;
+  height: 11px;
+
+  stroke-width: 2.1;
+}
+
+.review-date {
+  flex: 0 0 auto;
+
+  color: #929bad;
+
+  font-size: 8px;
+  line-height: 12px;
+
+  white-space: nowrap;
+}
+
+.review-rating {
+  margin-top: 4px;
+}
+
+.review-rating .review-stars {
+  margin-top: 0;
+}
+
+.review-comment {
+  margin-top: 7px;
+
+  color: #5d687c;
+
+  font-size: 10px;
+  line-height: 1.55;
+
+  white-space: pre-line;
+
+  word-break: break-word;
+}
+
+.review-response {
+  margin-top: 9px;
+
+  padding: 8px 9px;
+
+  background: #f1f5ff;
+
+  border-left: 2px solid var(--mw-blue);
+
+  border-radius: 7px;
+}
+
+.review-response-title {
+  display: flex;
+  align-items: center;
+
+  gap: 5px;
+
+  color: var(--mw-blue);
+
+  font-size: 9px;
+  line-height: 13px;
+
+  font-weight: 800;
+}
+
+.review-response-title svg {
+  width: 12px;
+  height: 12px;
+
+  stroke-width: 2;
+}
+
+.review-response p {
+  margin-top: 4px;
+
+  color: #5d687c;
+
+  font-size: 9px;
+  line-height: 14px;
+
+  white-space: pre-line;
+
+  word-break: break-word;
+}
+
+/* =========================================================
+   ESTADO VAZIO DAS AVALIAÇÕES
+   ========================================================= */
+
+.reviews-empty {
+  width: 100%;
+
+  min-height: 110px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px 14px;
+
+  text-align: center;
+}
+
+.reviews-empty-icon {
+  width: 42px;
+  height: 42px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-bottom: 8px;
+
+  border-radius: 12px;
+
+  background: var(--mw-blue-light);
+
+  color: var(--mw-blue);
+}
+
+.reviews-empty-icon svg {
+  width: 21px;
+  height: 21px;
+
+  margin: 0;
+
+  color: currentColor;
+
+  stroke-width: 1.8;
+}
+
+.reviews-empty h4 {
+  margin: 0;
+
+  color: #697489;
+
+  font-size: 12px;
+  line-height: 17px;
+
+  font-weight: 800;
+}
+
+.reviews-empty p {
+  max-width: 330px;
+
+  margin: 4px auto 0;
+
+  color: #929bad;
+
+  font-size: 10px;
+  line-height: 15px;
+
+  font-weight: 500;
+}

@@ -20,7 +20,7 @@
     content="#ffffff"
 >
 
-<title>Meu Perfil - Músico | MusicalWorld</title>
+<title>Meu Perfil | MusicalWorld</title>
 
 
 <!-- =========================================================
@@ -29,7 +29,7 @@
 
 <link
     rel="stylesheet"
-    href="css/meu-perfil-musico.css"
+    href="css/meu-perfil/meu-perfil.css"
 >
 
 <link
@@ -79,8 +79,11 @@
                 Meu perfil
             </div>
 
-            <div class="topbar-subtitle">
-                Músico
+            <div
+                id="topbarProfileSubtitle"
+                class="topbar-subtitle"
+            >
+                Perfil
             </div>
 
         </div>
@@ -155,14 +158,14 @@
             >
 
                 <span id="profileInitials">
-                    M
+                    A
                 </span>
 
             </div>
 
 
             <!-- =================================================
-                 INFORMAÇÕES DO MÚSICO
+                 INFORMAÇÕES DO PERFIL
                  ================================================= -->
 
             <div class="profile-info">
@@ -175,7 +178,7 @@
                 <div class="profile-name-row">
 
                     <h1 id="profileName">
-                        Músico
+                        Meu perfil
                     </h1>
 
 
@@ -193,14 +196,14 @@
 
 
                 <!-- =================================================
-                     CATEGORIA
+                     CATEGORIA / TIPO DE PERFIL
                      ================================================= -->
 
                 <div
                     id="profileCategory"
                     class="profile-category"
                 >
-                    Músico(a)
+                    Artista
                 </div>
 
 
@@ -312,7 +315,7 @@
             </button>
 
 
-            <!-- COMPARTILHAR PELO WHATSAPP -->
+            <!-- COMPARTILHAR -->
 
             <button
                 id="btnWhatsApp"
@@ -505,11 +508,11 @@
                 <div class="info-card">
 
                     <span class="info-label">
-                        Tipo de artista
+                        Tipo de perfil
                     </span>
 
                     <strong id="profileType">
-                        Músico(a)
+                        Artista
                     </strong>
 
                 </div>
@@ -532,18 +535,18 @@
         </section>
 
 
-        <!-- ESTILOS MUSICAIS -->
+        <!-- ESTILOS / ESPECIALIDADES -->
 
         <section class="profile-section">
 
             <div class="section-heading">
 
                 <h2>
-                    Estilos musicais
+                    Estilos e especialidades
                 </h2>
 
                 <span>
-                    Gêneros
+                    Áreas de atuação
                 </span>
 
             </div>
@@ -555,16 +558,17 @@
             >
 
                 <span class="empty-inline">
-                    Nenhum estilo cadastrado.
+                    Nenhum estilo ou especialidade cadastrado.
                 </span>
 
             </div>
 
         </section>
 
+
         <!-- =================================================
-        INSTRUMENTOS
-        ================================================= -->
+             INSTRUMENTOS
+             ================================================= -->
 
         <section
             id="instrumentosSection"
@@ -593,6 +597,7 @@
 
         </section>
 
+
         <!-- SERVIÇOS -->
 
         <section class="profile-section">
@@ -613,7 +618,7 @@
 
                 <div class="empty-state">
 
-                    <i data-lucide="music-2"></i>
+                    <i data-lucide="briefcase-business"></i>
 
                     <p>
                         Nenhum serviço cadastrado.
@@ -638,6 +643,8 @@
     >
 
 
+        <!-- FOTOS / IMAGENS -->
+
         <section class="profile-section">
 
             <div class="section-heading">
@@ -647,7 +654,7 @@
                 </h2>
 
                 <span>
-                    Fotos
+                    Imagens
                 </span>
 
             </div>
@@ -759,7 +766,7 @@
                 </h2>
 
                 <span>
-                    Disponibilidade
+                    Compromissos
                 </span>
 
             </div>
@@ -1113,7 +1120,7 @@
 
 
 <!-- =========================================================
-     PERFIL PÚBLICO — NOVA ARQUITETURA
+     MÓDULOS DO MEU PERFIL
      ========================================================= -->
 
 <script src="js/perfil-publico/PerfilPublicoUtils.js"></script>
@@ -1161,4 +1168,4 @@ document.addEventListener(
 
 </body>
 
-</html> 
+</html>

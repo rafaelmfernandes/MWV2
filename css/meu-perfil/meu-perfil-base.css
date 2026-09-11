@@ -1,0 +1,102 @@
+/* =========================================================
+   MUSICALWORLD
+   MEU PERFIL
+   BASE
+   ========================================================= */
+
+/* =========================================================
+   01. RESET GLOBAL
+   ========================================================= */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* =========================================================
+   02. VARIÁVEIS GLOBAIS DO MUSICALWORLD
+   ========================================================= */
+
+:root {
+
+  /* Cores principais */
+  --mw-bg: #f5f7fb;
+  --mw-white: #ffffff;
+
+  /* Tipografia */
+  --mw-text: #172033;
+  --mw-text-dark: #1d273b;
+  --mw-text-medium: #526078;
+  --mw-text-light: #7a8497;
+  --mw-muted: #8992a4;
+
+  /* Bordas */
+  --mw-border: #e6eaf1;
+  --mw-border-light: #edf0f6;
+
+  /* Azul principal */
+  --mw-blue: #315edb;
+  --mw-blue-light: #eef3ff;
+  --mw-blue-soft: #e8efff;
+
+  /* Verde */
+  --mw-green: #16803c;
+  --mw-green-light: #edfdf3;
+  --mw-green-dot: #22c55e;
+
+  /* Estados */
+  --mw-orange: #f59e0b;
+  --mw-red: #dc3545;
+  --mw-red-light: #fff1f2;
+
+  /* Sombras */
+  --mw-shadow: 0 4px 18px rgba(25, 40, 70, 0.05);
+}
+
+/* =========================================================
+   03. HTML / BODY
+   ========================================================= */
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+
+  background: var(--mw-bg);
+  color: var(--mw-text);
+
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif;
+
+  -webkit-font-smoothing: antialiased;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  border: 0;
+  cursor: pointer;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+.app {
+  min-height: 100vh;
+}

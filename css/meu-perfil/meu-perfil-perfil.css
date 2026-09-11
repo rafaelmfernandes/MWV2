@@ -1,0 +1,470 @@
+/* =========================================================
+   MUSICALWORLD
+   MEU PERFIL
+   PERFIL
+   ========================================================= */
+
+/* =========================================================
+   05. PÁGINA DO PERFIL
+   ========================================================= */
+
+.profile-page {
+  width: 100%;
+  max-width: 720px;
+
+  margin: 0 auto;
+
+  padding: 18px 16px 130px;
+}
+
+/* =========================================================
+   06. CARTÃO PRINCIPAL DO PERFIL
+   ========================================================= */
+
+.profile-card {
+  position: relative;
+
+  width: 100%;
+
+  background: var(--mw-white);
+
+  border: 1px solid var(--mw-border);
+
+  border-radius: 20px;
+
+  box-shadow:
+    0 8px 28px rgba(22, 34, 55, 0.06);
+
+  padding: 20px;
+}
+
+/* =========================================================
+   07. BOTÃO FLUTUANTE — VISUALIZAR PERFIL
+   ========================================================= */
+
+.preview-profile-button {
+  position: fixed;
+
+  right: 16px;
+  bottom: 82px;
+
+  z-index: 80;
+
+  width: 36px;
+  height: 36px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: var(--mw-white);
+
+  border: 1px solid #e4e8ef;
+
+  color: #8a94a7;
+
+  box-shadow:
+    0 4px 14px rgba(25, 40, 70, 0.10);
+
+  transition:
+    color 0.2s ease,
+    background 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.preview-profile-button:hover {
+  background: #f8faff;
+  color: var(--mw-blue);
+
+  box-shadow:
+    0 5px 16px rgba(25, 40, 70, 0.14);
+}
+
+.preview-profile-button:active {
+  transform: scale(0.94);
+}
+
+.preview-profile-button svg {
+  width: 17px;
+  height: 17px;
+
+  stroke-width: 2;
+}
+
+/* =========================================================
+   08. CABEÇALHO DO PERFIL
+   ========================================================= */
+
+.profile-header {
+  width: 100%;
+
+  display: flex;
+  align-items: flex-start;
+
+  gap: 15px;
+}
+
+/* =========================================================
+   09. AVATAR
+   ========================================================= */
+
+.profile-avatar {
+  flex: 0 0 auto;
+
+  width: 88px;
+  height: 88px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  overflow: hidden;
+
+  border-radius: 50%;
+
+  background:
+    linear-gradient(
+      135deg,
+      #e8efff,
+      #dce7ff
+    );
+
+  border: 3px solid var(--mw-white);
+
+  color: #315edb;
+
+  font-size: 26px;
+  font-weight: 800;
+
+  box-shadow:
+    0 5px 18px rgba(49, 94, 219, 0.12);
+}
+
+.profile-avatar img {
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+}
+
+#profileInitials {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  height: 100%;
+}
+
+/* =========================================================
+   10. INFORMAÇÕES PRINCIPAIS DO PERFIL
+   ========================================================= */
+
+.profile-info {
+  min-width: 0;
+  flex: 1;
+
+  padding-top: 2px;
+}
+
+.profile-name-row {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+
+  gap: 6px;
+}
+
+.profile-name-row h1 {
+  min-width: 0;
+  flex: 1;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  color: var(--mw-text);
+
+  font-size: 21px;
+  line-height: 25px;
+  font-weight: 800;
+}
+
+/* =========================================================
+   11. SELO DE VERIFICAÇÃO
+   ========================================================= */
+
+.verified-badge {
+  flex: 0 0 auto;
+
+  width: 19px;
+  height: 19px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  color: var(--mw-blue);
+}
+
+.verified-badge svg {
+  width: 18px;
+  height: 18px;
+
+  stroke-width: 2.3;
+}
+
+/* =========================================================
+   12. CATEGORIA DO PERFIL
+   ========================================================= */
+
+.profile-category {
+  display: inline-flex;
+  align-items: center;
+
+  width: fit-content;
+
+  margin-top: 5px;
+  padding: 3px 8px;
+
+  background: var(--mw-blue-light);
+
+  border: 1px solid #dce6ff;
+
+  border-radius: 999px;
+
+  color: var(--mw-blue);
+
+  font-size: 10px;
+  line-height: 14px;
+  font-weight: 700;
+}
+
+/* =========================================================
+   13. LOCALIZAÇÃO
+   ========================================================= */
+
+.profile-location {
+  display: flex;
+  align-items: center;
+
+  gap: 5px;
+
+  margin-top: 6px;
+
+  color: var(--mw-text-light);
+
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.profile-location svg {
+  flex: 0 0 auto;
+
+  width: 14px;
+  height: 14px;
+
+  stroke-width: 2;
+}
+
+.profile-location span {
+  min-width: 0;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* =========================================================
+   14. AVALIAÇÃO DO CABEÇALHO
+   ========================================================= */
+
+.profile-rating {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+
+  gap: 5px;
+
+  margin-top: 8px;
+}
+
+.rating-stars {
+  display: flex;
+  align-items: center;
+
+  gap: 2px;
+
+  color: var(--mw-orange);
+}
+
+.rating-stars svg {
+  width: 14px;
+  height: 14px;
+
+  fill: currentColor;
+
+  stroke-width: 1.7;
+}
+
+.rating-value {
+  color: #263148;
+
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.rating-reviews {
+  color: #8992a4;
+
+  font-size: 11px;
+  font-weight: 500;
+}
+
+/* =========================================================
+   15. STATUS DE DISPONIBILIDADE
+   ========================================================= */
+
+.profile-status {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 6px;
+
+  margin-top: 7px;
+
+  padding: 4px 8px;
+
+  border-radius: 999px;
+
+  background: var(--mw-green-light);
+
+  color: var(--mw-green);
+
+  font-size: 11px;
+  line-height: 14px;
+  font-weight: 700;
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+
+  flex: 0 0 auto;
+
+  border-radius: 50%;
+
+  background: var(--mw-green-dot);
+}
+
+.profile-status.unavailable {
+  background: var(--mw-red-light);
+  color: var(--mw-red);
+}
+
+.profile-status.unavailable .status-dot {
+  background: var(--mw-red);
+}
+
+/* =========================================================
+   16. AÇÕES DO PERFIL
+   ========================================================= */
+
+.profile-actions {
+  width: 100%;
+
+  display: flex;
+  align-items: stretch;
+
+  gap: 8px;
+
+  margin-top: 17px;
+}
+
+.edit-profile-button,
+.whatsapp-button {
+  flex: 1;
+
+  width: auto;
+  min-width: 0;
+  min-height: 44px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  padding: 0 12px;
+
+  border-radius: 12px;
+
+  font-size: 12px;
+  font-weight: 800;
+
+  white-space: nowrap;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.15s ease,
+    box-shadow 0.2s ease;
+}
+
+.edit-profile-button {
+  margin-top: 0;
+
+  background: var(--mw-blue);
+
+  color: #ffffff;
+
+  border: 1px solid var(--mw-blue);
+
+  box-shadow:
+    0 4px 10px rgba(49, 94, 219, 0.12);
+}
+
+.edit-profile-button:hover {
+  background: #2852c7;
+
+  border-color: #2852c7;
+
+  box-shadow:
+    0 5px 14px rgba(49, 94, 219, 0.16);
+}
+
+.whatsapp-button {
+  margin-top: 0;
+
+  background: var(--mw-white);
+
+  color: var(--mw-green);
+
+  border: 1px solid #cfe9d8;
+}
+
+.whatsapp-button:hover {
+  background: var(--mw-green-light);
+
+  border-color: #b9dfc7;
+}
+
+.edit-profile-button:active,
+.whatsapp-button:active {
+  transform: scale(0.98);
+}
+
+.edit-profile-button svg,
+.whatsapp-button svg {
+  flex: 0 0 auto;
+
+  width: 16px;
+  height: 16px;
+
+  stroke-width: 2;
+}

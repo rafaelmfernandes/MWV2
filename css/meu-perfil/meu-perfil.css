@@ -1,0 +1,19 @@
+/* =========================================================
+   MUSICALWORLD
+   MEU PERFIL
+   ARQUIVO PRINCIPAL
+   ========================================================= */
+
+@import url("./meu-perfil-base.css");
+@import url("./meu-perfil-header.css");
+@import url("./meu-perfil-perfil.css");
+@import url("./meu-perfil-abas.css");
+@import url("./meu-perfil-sobre.css");
+@import url("./meu-perfil-servicos.css");
+@import url("./meu-perfil-portfolio.css");
+@import url("./meu-perfil-agenda.css");
+@import url("./meu-perfil-avaliacoes.css");
+@import url("./meu-perfil-carteira.css");
+@import url("./meu-perfil-modal.css");
+@import url("./meu-perfil-toast.css");
+@import url("./meu-perfil-responsivo.css");

@@ -853,292 +853,77 @@ fecharPesquisa() {
    ABRIR MEU PERFIL
    ===================================================== */
 
+/* =====================================================
+   ABRIR MEU PERFIL
+   ===================================================== */
+
+/* =====================================================
+   ABRIR MEU PERFIL
+   ===================================================== */
+
 async abrirMeuPerfil() {
 
-
-console.log(
-    '👤 Abrindo perfil do usuário...'
-);
-
-/*
- * Verifica se o sistema de sessão está disponível.
- */
-
-if (
-    typeof window.Sessao === 'undefined'
-) {
-
-    console.error(
-        '❌ Sessao.js não está disponível.'
+    console.log(
+        '👤 Abrindo meu perfil...'
     );
 
-    window.location.href = 'login.html';
+    /* =====================================================
+       VERIFICAR SE O MÓDULO DE SESSÃO EXISTE
+       ===================================================== */
 
-    return;
-}
-
-/*
- * Verifica diretamente a sessão no Supabase.
- */
-
-const sessao = await Sessao.obter();
-
-if (!sessao) {
-
-    console.warn(
-        '🚪 Nenhuma sessão ativa. Redirecionando para login.'
-    );
-
-    sessionStorage.setItem(
-        'musicalworld_destino_login',
-        'index.html'
-    );
-
-    window.location.href = 'login.html';
-
-    return;
-}
-
-console.log(
-    '✅ Sessão encontrada:',
-    sessao.user?.id
-);
-
-/*
- * Verifica UsuarioAtual.
- */
-
-if (
-    typeof window.UsuarioAtual === 'undefined'
-) {
-
-    console.error(
-        '❌ UsuarioAtual.js não está disponível.'
-    );
-
-    return;
-}
-
-/*
- * Carrega os dados completos do usuário.
- */
-
-const dados = await UsuarioAtual.carregar();
-
-if (!dados) {
-
-    console.error(
-        '❌ Não foi possível carregar os dados do usuário.'
-    );
-
-    return;
-}
-
-console.log(
-    '👤 Dados do usuário carregados:',
-    dados
-);
-
-/*
- * Verifica o roteador.
- */
-
-if (
-    typeof window.RoteamentoPerfil === 'undefined'
-) {
-
-    console.error(
-        '❌ RoteamentoPerfil.js não foi carregado.'
-    );
-
-    return;
-}
-
-/*
- * =====================================================
- * DESCOBRIR TIPO PRINCIPAL
- * =====================================================
- */
-
-const tipoPerfil =
-    dados.tipoPerfil?.nome ||
-    dados.perfil?.tipo_perfil?.nome ||
-    dados.perfil?.tipos_perfil?.nome ||
-    '';
-
-/*
- * =====================================================
- * DESCOBRIR SUBTIPO DO ARTISTA
- * =====================================================
- *
- * Para artista:
- *
- * artista + Cantor
- * artista + Músico
- *
- * O subtipo vem de perfis_artistas.tipo_artista.
- */
-
-let tipoArtista =
-    dados.tipoArtista ||
-    dados.perfilArtista?.tipo_artista ||
-    dados.perfil_artista?.tipo_artista ||
-    dados.perfis_artistas?.tipo_artista ||
-    dados.perfil?.tipo_artista ||
-    '';
-
-/*
- * =====================================================
- * SE FOR ARTISTA, BUSCAR DIRETAMENTE NO SUPABASE
- * =====================================================
- *
- * Isso garante que o roteamento não dependa de
- * UsuarioAtual.carregar() trazer o relacionamento.
- */
-
-if (
-    String(tipoPerfil).trim().toLowerCase() === 'artista'
-) {
-
-    try {
-
-        const supabase =
-            window.supabaseClient ||
-            window._supabase ||
-            window.supabase;
-
-        if (!supabase) {
-
-            console.warn(
-                '⚠️ Cliente Supabase não encontrado.'
-            );
-
-        } else {
-
-            /*
-             * Descobre o perfil do usuário.
-             */
-
-            const usuarioId =
-                dados.usuario?.id ||
-                dados.id ||
-                sessao.user?.id;
-
-            if (usuarioId) {
-
-                const { data: perfil, error: erroPerfil } =
-                    await supabase
-                        .from('perfis')
-                        .select('id')
-                        .eq('usuario_id', usuarioId)
-                        .eq('ativo', true)
-                        .order('id', { ascending: false })
-                        .limit(1)
-                        .maybeSingle();
-
-                if (erroPerfil) {
-
-                    console.error(
-                        '❌ Erro ao buscar perfil:',
-                        erroPerfil
-                    );
-
-                } else if (perfil?.id) {
-
-                    console.log(
-                        '🆔 Perfil encontrado:',
-                        perfil.id
-                    );
-
-                    /*
-                     * Busca o subtipo do artista.
-                     */
-
-                    const { data: perfilArtista, error: erroArtista } =
-                        await supabase
-                            .from('perfis_artistas')
-                            .select('tipo_artista')
-                            .eq('perfil_id', perfil.id)
-                            .maybeSingle();
-
-                    if (erroArtista) {
-
-                        console.error(
-                            '❌ Erro ao buscar tipo do artista:',
-                            erroArtista
-                        );
-
-                    } else if (perfilArtista) {
-
-                        tipoArtista =
-                            perfilArtista.tipo_artista ||
-                            '';
-
-                        console.log(
-                            '🎤 Tipo de artista encontrado:',
-                            tipoArtista
-                        );
-
-                    }
-
-                }
-
-            }
-
-        }
-
-    } catch (erro) {
+    if (
+        typeof window.Sessao === 'undefined'
+    ) {
 
         console.error(
-            '❌ Erro ao consultar subtipo do perfil:',
-            erro
+            '❌ Sessao.js não está disponível.'
         );
 
+        window.location.href =
+            'login.html';
+
+        return;
     }
 
-}
+    /* =====================================================
+       VERIFICAR SESSÃO ATIVA
+       ===================================================== */
 
-/*
- * =====================================================
- * RESULTADO FINAL
- * =====================================================
- */
+    const sessao =
+        await Sessao.obter();
 
-console.log(
-    '🎯 Tipo de perfil:',
-    tipoPerfil
-);
+    if (!sessao) {
 
-console.log(
-    '🎤 Tipo de artista:',
-    tipoArtista
-);
+        console.warn(
+            '🚪 Nenhuma sessão ativa. Redirecionando para login.'
+        );
 
-/*
- * =====================================================
- * ABRIR PÁGINA CORRETA
- * =====================================================
- */
+        sessionStorage.setItem(
+            'musicalworld_destino_login',
+            'meu-perfil.html'
+        );
 
-const abriu =
-    RoteamentoPerfil.abrir(
-        tipoPerfil,
-        tipoArtista
+        window.location.href =
+            'login.html';
+
+        return;
+    }
+
+    /* =====================================================
+       SESSÃO ENCONTRADA
+       ===================================================== */
+
+    console.log(
+        '✅ Sessão encontrada:',
+        sessao.user?.id
     );
 
-if (!abriu) {
+    /* =====================================================
+       PERFIL UNIVERSAL
+       ===================================================== */
 
-    console.warn(
-        '⚠️ Não existe uma página cadastrada para este tipo de perfil:',
-        {
-            tipoPerfil,
-            tipoArtista
-        }
-    );
-
-}
-
-
+    window.location.href =
+        'meu-perfil.html';
 }
 
 

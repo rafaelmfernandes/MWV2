@@ -1,0 +1,1466 @@
+/* =========================================================
+   MUSICALWORLD
+   MEU PERFIL
+   RESPONSIVO
+   ========================================================= */
+
+/* =========================================================
+   35. FOCO / ACESSIBILIDADE
+   ========================================================= */
+
+button:focus-visible {
+  outline: 2px solid var(--mw-blue);
+
+  outline-offset: 2px;
+}
+
+/* =========================================================
+   36. DESKTOP
+   ========================================================= */
+
+@media (min-width: 768px) {
+
+  .profile-page {
+    padding-top: 24px;
+  }
+}
+
+/* =========================================================
+   37. MOBILE
+   ========================================================= */
+
+@media (max-width: 720px) {
+
+  .topbar {
+    height: 60px;
+  }
+
+  .topbar-content {
+    padding: 0 14px;
+  }
+
+  .topbar-title {
+    font-size: 15px;
+  }
+
+  .topbar-subtitle {
+    font-size: 10px;
+  }
+
+  .profile-page {
+    padding: 14px 10px 100px;
+  }
+
+  .profile-card {
+    border-radius: 18px;
+  }
+
+  /* =====================================================
+     CABEÇALHO DO PERFIL
+     ===================================================== */
+
+  .profile-header {
+    padding: 18px 14px 14px;
+
+    gap: 11px;
+  }
+
+  .profile-avatar {
+    width: 76px;
+    height: 76px;
+  }
+
+  .profile-info {
+    padding-top: 1px;
+  }
+
+  .profile-name-row {
+    gap: 5px;
+  }
+
+  .profile-name-row h1 {
+    font-size: 19px;
+    line-height: 23px;
+  }
+
+  .verified-badge {
+    width: 17px;
+    height: 17px;
+  }
+
+  .verified-badge svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .profile-category {
+    margin-top: 4px;
+
+    padding: 3px 7px;
+
+    font-size: 9px;
+    line-height: 13px;
+  }
+
+  .profile-location {
+    margin-top: 5px;
+
+    font-size: 10px;
+    line-height: 14px;
+  }
+
+  .profile-location svg {
+    width: 13px;
+    height: 13px;
+  }
+
+  .profile-rating {
+    margin-top: 6px;
+
+    gap: 4px;
+  }
+
+  .profile-status {
+    margin-top: 6px;
+
+    padding: 3px 7px;
+
+    font-size: 9px;
+    line-height: 13px;
+  }
+
+  /* =====================================================
+     AÇÕES DO PERFIL
+     ===================================================== */
+
+  .profile-actions {
+    display: flex;
+    flex-direction: row;
+
+    gap: 7px;
+
+    margin-top: 14px;
+  }
+
+  .edit-profile-button,
+  .whatsapp-button {
+    flex: 1;
+
+    width: 0;
+    min-width: 0;
+
+    min-height: 40px;
+
+    padding: 0 8px;
+
+    gap: 5px;
+
+    border-radius: 10px;
+
+    font-size: 10px;
+  }
+
+  .edit-profile-button svg,
+  .whatsapp-button svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  /* =====================================================
+     ABAS
+     ===================================================== */
+
+  .profile-tabs {
+    overflow-x: auto;
+
+    scrollbar-width: none;
+
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .profile-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tab-button {
+    min-width: 0;
+
+    padding: 11px 8px;
+
+    font-size: 9px;
+  }
+
+  .profile-section {
+    padding: 14px;
+  }
+
+  .section-heading h2 {
+    font-size: 14px;
+  }
+
+  .section-heading span {
+    font-size: 10px;
+  }
+
+  .profile-bio {
+    font-size: 11px;
+    line-height: 1.55;
+  }
+
+  /* =====================================================
+     INFORMAÇÕES PROFISSIONAIS
+     ===================================================== */
+
+  .info-grid {
+    display: grid;
+
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+
+    gap: 12px 18px;
+
+    width: 100%;
+  }
+
+  .info-card {
+    min-width: 0;
+
+    padding: 0;
+
+    background: transparent;
+
+    border: 0;
+
+    border-radius: 0;
+  }
+
+  .info-label {
+    display: block;
+
+    margin-bottom: 3px;
+
+    color: #8992a4;
+
+    font-size: 9px;
+    line-height: 13px;
+
+    font-weight: 700;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.25px;
+  }
+
+  .info-card strong {
+    display: block;
+
+    min-width: 0;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    color: #344057;
+
+    font-size: 12px;
+    line-height: 17px;
+
+    font-weight: 750;
+
+    word-break: break-word;
+  }
+
+  /* =====================================================
+     GÊNEROS
+     ===================================================== */
+
+  .genre-list {
+    gap: 5px;
+  }
+
+  .genre-tag {
+    padding: 5px 8px;
+
+    font-size: 9px;
+  }
+
+  /* =====================================================
+     SERVIÇOS
+     ===================================================== */
+
+  .services-list {
+    gap: 7px;
+  }
+
+  .service-card {
+    padding: 9px;
+
+    gap: 9px;
+
+    border-radius: 12px;
+  }
+
+  .service-icon {
+    width: 34px;
+    height: 34px;
+
+    min-width: 34px;
+
+    border-radius: 9px;
+  }
+
+  .service-icon svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .service-info {
+    min-width: 0;
+  }
+
+  .service-name {
+    font-size: 10px;
+    line-height: 1.25;
+  }
+
+  .service-description {
+    margin-top: 3px;
+
+    font-size: 8px;
+    line-height: 1.35;
+
+    display: -webkit-box;
+
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+
+    overflow: hidden;
+  }
+
+  .service-meta {
+    margin-top: 4px;
+
+    gap: 5px;
+
+    font-size: 8px;
+  }
+
+  .service-price {
+    min-width: max-content;
+
+    font-size: 9px;
+  }
+
+  .service-price strong {
+    font-size: 10px;
+  }
+
+  .service-status {
+    margin-top: 3px;
+
+    font-size: 8px;
+  }
+
+  /* =====================================================
+     PORTFÓLIO
+     ===================================================== */
+
+  .portfolio-grid {
+    grid-template-columns:
+      repeat(3, minmax(0, 1fr));
+
+    gap: 6px;
+  }
+
+  .portfolio-card {
+    min-width: 0;
+
+    border-radius: 9px;
+  }
+
+  .portfolio-image {
+    aspect-ratio: 1 / 1;
+  }
+
+  .portfolio-info {
+    padding: 7px 8px 8px;
+
+    min-height: 45px;
+
+    gap: 2px;
+  }
+
+  .portfolio-title {
+    width: 100%;
+
+    font-size: 9px;
+    line-height: 12px;
+
+    font-weight: 800;
+
+    display: -webkit-box;
+
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    word-break: break-word;
+  }
+
+  .portfolio-description {
+    width: 100%;
+
+    margin: 0;
+
+    font-size: 8px;
+    line-height: 10px;
+
+    color: var(--mw-text-medium);
+
+    display: -webkit-box;
+
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    word-break: break-word;
+  }
+
+  /* =====================================================
+     VÍDEOS
+     ===================================================== */
+
+  .video-list {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+
+    gap: 7px;
+  }
+
+  .video-card {
+    min-width: 0;
+
+    border-radius: 10px;
+  }
+
+  .video-card video,
+  .video-card iframe {
+    width: 100%;
+
+    aspect-ratio: 16 / 9;
+
+    display: block;
+  }
+
+  .video-title {
+    width: 100%;
+
+    min-height: 34px;
+
+    padding: 7px 8px 8px;
+
+    margin: 0;
+
+    font-size: 9px;
+    line-height: 12px;
+
+    font-weight: 800;
+
+    display: -webkit-box;
+
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    word-break: break-word;
+  }
+
+  /* =====================================================
+     ÁUDIO
+     ===================================================== */
+
+  .audio-list {
+    gap: 7px;
+  }
+
+  .audio-card {
+    padding: 8px;
+
+    border-radius: 10px;
+  }
+
+  .audio-title {
+    font-size: 9px;
+  }
+
+  .audio-description {
+    font-size: 8px;
+  }
+
+  /* =====================================================
+     AGENDA
+     ===================================================== */
+
+  .agenda-list {
+    gap: 8px;
+  }
+
+  .agenda-item {
+    gap: 10px;
+
+    padding: 9px;
+
+    border-radius: 13px;
+  }
+
+  .agenda-item:hover {
+    transform: none;
+  }
+
+  .agenda-date {
+    width: 53px;
+    min-width: 53px;
+
+    min-height: 70px;
+
+    padding: 7px 4px;
+
+    border-radius: 11px;
+  }
+
+  .agenda-date strong {
+    font-size: 21px;
+    line-height: 24px;
+  }
+
+  .agenda-date span {
+    font-size: 8px;
+    line-height: 12px;
+
+    letter-spacing: 0.4px;
+  }
+
+  .agenda-header {
+    gap: 6px;
+  }
+
+  .agenda-title {
+    font-size: 11px;
+    line-height: 15px;
+  }
+
+  .agenda-type {
+    max-width: 90px;
+
+    min-height: 20px;
+
+    padding: 3px 6px;
+
+    font-size: 8px;
+    line-height: 11px;
+  }
+
+  .agenda-detail {
+    gap: 5px;
+
+    margin-top: 5px;
+
+    font-size: 9px;
+    line-height: 13px;
+  }
+
+  .agenda-detail svg {
+    width: 13px;
+    height: 13px;
+  }
+
+  .agenda-description {
+    margin-top: 6px;
+
+    font-size: 9px;
+    line-height: 14px;
+  }
+
+  .agenda-footer {
+    margin-top: 8px;
+
+    padding-top: 7px;
+
+    gap: 5px;
+  }
+
+  .agenda-status {
+    min-height: 21px;
+
+    padding: 3px 6px;
+
+    font-size: 8px;
+    line-height: 11px;
+  }
+
+  .agenda-status svg {
+    width: 11px;
+    height: 11px;
+  }
+
+  .agenda-link {
+    min-height: 25px;
+
+    padding: 4px 7px;
+
+    font-size: 8px;
+    line-height: 12px;
+  }
+
+  .agenda-link svg {
+    width: 12px;
+    height: 12px;
+  }
+
+  /* =====================================================
+     AVALIAÇÕES
+     ===================================================== */
+
+  .reviews-summary {
+    padding: 10px;
+
+    border-radius: 10px;
+  }
+
+  .reviews-summary-content {
+    gap: 13px;
+  }
+
+  .reviews-score {
+    min-width: 78px;
+  }
+
+  .reviews-average {
+    font-size: 22px;
+    line-height: 26px;
+  }
+
+  .reviews-stars {
+    gap: 1px;
+  }
+
+  .reviews-stars svg {
+    width: 11px;
+    height: 11px;
+  }
+
+  .reviews-count {
+    font-size: 8px;
+    line-height: 12px;
+  }
+
+  .reviews-distribution {
+    gap: 4px;
+  }
+
+  .review-distribution-row {
+    grid-template-columns:
+      24px minmax(0, 1fr) 19px;
+
+    gap: 4px;
+  }
+
+  .review-distribution-label {
+    font-size: 8px;
+  }
+
+  .review-distribution-label svg {
+    width: 9px;
+    height: 9px;
+  }
+
+  .review-distribution-bar {
+    height: 4px;
+  }
+
+  .review-distribution-count {
+    font-size: 7px;
+  }
+
+  .review-item {
+    gap: 8px;
+
+    padding: 10px;
+
+    border-radius: 10px;
+  }
+
+  .review-avatar-wrapper,
+  .review-avatar {
+    width: 32px;
+    height: 32px;
+  }
+
+  .review-avatar {
+    font-size: 9px;
+  }
+
+  .review-header {
+    gap: 5px;
+  }
+
+  .review-author strong {
+    font-size: 10px;
+    line-height: 14px;
+  }
+
+  .review-verified {
+    font-size: 7px;
+  }
+
+  .review-verified svg {
+    width: 10px;
+    height: 10px;
+  }
+
+  .review-date {
+    font-size: 7px;
+    line-height: 11px;
+  }
+
+  .review-rating {
+    margin-top: 3px;
+  }
+
+  .review-rating .review-stars svg {
+    width: 10px;
+    height: 10px;
+  }
+
+  .review-comment {
+    margin-top: 6px;
+
+    font-size: 9px;
+    line-height: 1.5;
+  }
+
+  .review-response {
+    margin-top: 7px;
+
+    padding: 7px 8px;
+  }
+
+  .review-response-title {
+    font-size: 8px;
+    line-height: 12px;
+  }
+
+  .review-response-title svg {
+    width: 11px;
+    height: 11px;
+  }
+
+  .review-response p {
+    font-size: 8px;
+    line-height: 13px;
+  }
+
+  .reviews-empty {
+    min-height: 100px;
+
+    padding: 17px 12px;
+  }
+
+  .reviews-empty-icon {
+    width: 38px;
+    height: 38px;
+
+    margin-bottom: 7px;
+
+    border-radius: 10px;
+  }
+
+  .reviews-empty-icon svg {
+    width: 19px;
+    height: 19px;
+  }
+
+  .reviews-empty h4 {
+    font-size: 11px;
+    line-height: 15px;
+  }
+
+  .reviews-empty p {
+    max-width: 290px;
+
+    font-size: 9px;
+    line-height: 14px;
+  }
+
+  /* =====================================================
+     CARTEIRA
+     ===================================================== */
+
+  .wallet-summary {
+    gap: 7px;
+  }
+
+  .wallet-card {
+    padding: 11px;
+
+    border-radius: 11px;
+  }
+
+  .wallet-label {
+    font-size: 8px;
+  }
+
+  .wallet-card strong {
+    font-size: 17px;
+  }
+
+  .transaction-list {
+    gap: 6px;
+  }
+
+  .transaction-item {
+    padding: 9px;
+
+    border-radius: 10px;
+  }
+
+  .transaction-title {
+    font-size: 9px;
+  }
+
+  .transaction-date {
+    font-size: 8px;
+  }
+
+  .transaction-value {
+    font-size: 10px;
+  }
+
+  /* =====================================================
+     BOTÃO FLUTUANTE
+     ===================================================== */
+
+  .preview-profile-button {
+    right: 12px;
+
+    bottom: 76px;
+
+    width: 42px;
+    height: 42px;
+  }
+
+  .preview-profile-button svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  /* =====================================================
+     QR CODE
+     ===================================================== */
+
+  .qr-modal {
+    max-width: 390px;
+  }
+
+  .qr-content {
+    padding: 15px;
+  }
+
+  .qr-image-wrapper {
+    width: 190px;
+    height: 190px;
+  }
+
+  .profile-link {
+    font-size: 9px;
+  }
+}
+
+/* =========================================================
+   38. MOBILE PEQUENO
+   ========================================================= */
+
+@media (max-width: 380px) {
+
+  .profile-page {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  /* =====================================================
+     INFORMAÇÕES PROFISSIONAIS
+     ===================================================== */
+
+  .info-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+
+    gap: 10px 13px;
+  }
+
+  .info-label {
+    font-size: 8px;
+    line-height: 12px;
+  }
+
+  .info-card strong {
+    font-size: 11px;
+    line-height: 15px;
+  }
+
+  /* =====================================================
+     CABEÇALHO DO PERFIL
+     ===================================================== */
+
+  .profile-header {
+    padding: 16px 11px 13px;
+
+    gap: 9px;
+  }
+
+  .profile-avatar {
+    width: 68px;
+    height: 68px;
+  }
+
+  .profile-info {
+    padding-top: 0;
+  }
+
+  .profile-name-row {
+    gap: 4px;
+  }
+
+  .profile-name-row h1 {
+    font-size: 17px;
+    line-height: 21px;
+  }
+
+  .verified-badge {
+    width: 16px;
+    height: 16px;
+  }
+
+  .verified-badge svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  .profile-category {
+    margin-top: 3px;
+
+    padding: 2px 6px;
+
+    font-size: 8px;
+    line-height: 12px;
+  }
+
+  .profile-location {
+    margin-top: 4px;
+
+    font-size: 9px;
+    line-height: 13px;
+  }
+
+  .profile-location svg {
+    width: 12px;
+    height: 12px;
+  }
+
+  .profile-rating {
+    margin-top: 5px;
+
+    gap: 3px;
+  }
+
+  .profile-status {
+    margin-top: 5px;
+
+    padding: 3px 6px;
+
+    font-size: 8px;
+    line-height: 12px;
+  }
+
+  /* =====================================================
+     AÇÕES DO PERFIL
+     ===================================================== */
+
+  .profile-actions {
+    gap: 6px;
+
+    margin-top: 12px;
+  }
+
+  .edit-profile-button,
+  .whatsapp-button {
+    min-height: 38px;
+
+    padding: 0 6px;
+
+    gap: 4px;
+
+    border-radius: 9px;
+
+    font-size: 9px;
+  }
+
+  .edit-profile-button svg,
+  .whatsapp-button svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .profile-tabs {
+    margin-left: -2px;
+    margin-right: -2px;
+  }
+
+  .tab-button {
+    padding: 10px 6px;
+
+    font-size: 8px;
+  }
+
+  .profile-section {
+    padding: 12px;
+  }
+
+  /* =====================================================
+     SERVIÇOS
+     ===================================================== */
+
+  .service-card {
+    padding: 8px;
+
+    gap: 7px;
+  }
+
+  .service-icon {
+    width: 31px;
+    height: 31px;
+
+    min-width: 31px;
+  }
+
+  .service-icon svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .service-name {
+    font-size: 9px;
+  }
+
+  .service-description {
+    font-size: 7px;
+  }
+
+  .service-meta {
+    font-size: 7px;
+  }
+
+  .service-price {
+    font-size: 8px;
+  }
+
+  .service-price strong {
+    font-size: 9px;
+  }
+
+  .service-status {
+    font-size: 7px;
+  }
+
+  /* =====================================================
+     PORTFÓLIO
+     ===================================================== */
+
+  .portfolio-grid {
+    grid-template-columns:
+      repeat(3, minmax(0, 1fr));
+
+    gap: 5px;
+  }
+
+  .portfolio-card {
+    border-radius: 8px;
+  }
+
+  .portfolio-info {
+    padding: 6px 7px 7px;
+
+    min-height: 40px;
+
+    gap: 2px;
+  }
+
+  .portfolio-title {
+    font-size: 8px;
+    line-height: 10px;
+
+    font-weight: 800;
+
+    -webkit-line-clamp: 2;
+  }
+
+  .portfolio-description {
+    font-size: 7px;
+    line-height: 9px;
+
+    -webkit-line-clamp: 2;
+  }
+
+  /* =====================================================
+     VÍDEOS
+     ===================================================== */
+
+  .video-list {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+
+    gap: 5px;
+  }
+
+  .video-card {
+    border-radius: 8px;
+  }
+
+  .video-title {
+    min-height: 29px;
+
+    padding: 6px 7px 7px;
+
+    font-size: 8px;
+    line-height: 10px;
+
+    font-weight: 800;
+
+    -webkit-line-clamp: 2;
+  }
+
+  /* =====================================================
+     ÁUDIO
+     ===================================================== */
+
+  .audio-card {
+    padding: 7px;
+  }
+
+  .audio-title {
+    font-size: 8px;
+  }
+
+  .audio-description {
+    font-size: 7px;
+  }
+
+  /* =====================================================
+     AGENDA
+     ===================================================== */
+
+  .agenda-list {
+    gap: 7px;
+  }
+
+  .agenda-item {
+    gap: 8px;
+
+    padding: 8px;
+
+    border-radius: 12px;
+  }
+
+  .agenda-date {
+    width: 48px;
+    min-width: 48px;
+
+    min-height: 64px;
+
+    padding: 6px 3px;
+
+    border-radius: 10px;
+  }
+
+  .agenda-date strong {
+    font-size: 19px;
+    line-height: 22px;
+  }
+
+  .agenda-date span {
+    font-size: 7px;
+    line-height: 10px;
+  }
+
+  .agenda-title {
+    font-size: 10px;
+    line-height: 14px;
+  }
+
+  .agenda-type {
+    max-width: 75px;
+
+    min-height: 18px;
+
+    padding: 2px 5px;
+
+    font-size: 7px;
+    line-height: 10px;
+  }
+
+  .agenda-detail {
+    gap: 4px;
+
+    margin-top: 4px;
+
+    font-size: 8px;
+    line-height: 12px;
+  }
+
+  .agenda-detail svg {
+    width: 12px;
+    height: 12px;
+  }
+
+  .agenda-description {
+    margin-top: 5px;
+
+    font-size: 8px;
+    line-height: 12px;
+  }
+
+  .agenda-footer {
+    margin-top: 7px;
+
+    padding-top: 6px;
+  }
+
+  .agenda-status {
+    min-height: 19px;
+
+    padding: 2px 5px;
+
+    font-size: 7px;
+    line-height: 10px;
+  }
+
+  .agenda-status svg {
+    width: 10px;
+    height: 10px;
+  }
+
+  .agenda-link {
+    min-height: 23px;
+
+    padding: 3px 6px;
+
+    font-size: 7px;
+    line-height: 10px;
+  }
+
+  .agenda-link svg {
+    width: 11px;
+    height: 11px;
+  }
+
+  /* =====================================================
+     AVALIAÇÕES
+     ===================================================== */
+
+  .reviews-summary {
+    padding: 9px;
+  }
+
+  .reviews-summary-content {
+    gap: 10px;
+  }
+
+  .reviews-score {
+    min-width: 68px;
+  }
+
+  .reviews-average {
+    font-size: 20px;
+    line-height: 24px;
+  }
+
+  .reviews-stars svg {
+    width: 10px;
+    height: 10px;
+  }
+
+  .reviews-count {
+    font-size: 7px;
+  }
+
+  .review-distribution-row {
+    grid-template-columns:
+      22px minmax(0, 1fr) 17px;
+
+    gap: 3px;
+  }
+
+  .review-distribution-label {
+    font-size: 7px;
+  }
+
+  .review-distribution-label svg {
+    width: 8px;
+    height: 8px;
+  }
+
+  .review-distribution-bar {
+    height: 3px;
+  }
+
+  .review-distribution-count {
+    font-size: 6px;
+  }
+
+  .review-item {
+    gap: 7px;
+
+    padding: 8px;
+  }
+
+  .review-avatar-wrapper,
+  .review-avatar {
+    width: 29px;
+    height: 29px;
+  }
+
+  .review-avatar {
+    font-size: 8px;
+  }
+
+  .review-author strong {
+    font-size: 9px;
+    line-height: 13px;
+  }
+
+  .review-date {
+    font-size: 6px;
+    line-height: 10px;
+  }
+
+  .review-comment {
+    font-size: 8px;
+  }
+
+  .reviews-empty {
+    min-height: 90px;
+
+    padding: 14px 10px;
+  }
+
+  .reviews-empty-icon {
+    width: 34px;
+    height: 34px;
+
+    margin-bottom: 6px;
+
+    border-radius: 9px;
+  }
+
+  .reviews-empty-icon svg {
+    width: 17px;
+    height: 17px;
+  }
+
+  .reviews-empty h4 {
+    font-size: 10px;
+    line-height: 14px;
+  }
+
+  .reviews-empty p {
+    max-width: 260px;
+
+    font-size: 8px;
+    line-height: 12px;
+  }
+
+  /* =====================================================
+     CARTEIRA
+     ===================================================== */
+
+  .wallet-card {
+    padding: 9px;
+  }
+
+  .wallet-card strong {
+    font-size: 15px;
+  }
+
+  .transaction-item {
+    padding: 8px;
+  }
+
+  .transaction-title {
+    font-size: 8px;
+  }
+
+  .transaction-value {
+    font-size: 9px;
+  }
+}
+
+/* =========================================================
+   39. SAFE AREA — IPHONE
+   ========================================================= */
+
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+
+  .profile-page {
+    padding-bottom:
+      calc(
+        100px +
+        env(safe-area-inset-bottom)
+      );
+  }
+
+  .preview-profile-button {
+    bottom:
+      calc(
+        76px +
+        env(safe-area-inset-bottom)
+      );
+  }
+
+  .bottom-menu {
+    padding-bottom:
+      env(safe-area-inset-bottom);
+  }
+}
+
+/* =========================================================
+   40. REDUÇÃO DE MOVIMENTO
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+
+    scroll-behavior: auto !important;
+
+    transition-duration: 0.01ms !important;
+
+    animation-duration: 0.01ms !important;
+
+    animation-iteration-count: 1 !important;
+  }
+}
+
+/* =========================================================
+   FIM DO CSS RESPONSIVO
+   ========================================================= */
