@@ -152,6 +152,12 @@ const CONFIG = {
         generos:
             "genreList",
 
+        instrumentos:
+            "instrumentList",
+
+        instrumentosSection:
+            "instrumentosSection",
+
         servicos:
             "servicesList",
 
@@ -1113,6 +1119,9 @@ function preencherInformacoesPerfil() {
         artista
     );
 
+    preencherInstrumentos(
+        artista
+    );
 
     preencherServicos();
 
@@ -1774,6 +1783,222 @@ function preencherGeneros(
 
 }
 
+/* =====================================================
+   INSTRUMENTOS
+   ===================================================== */
+
+function preencherInstrumentos(artista) {
+
+    const container =
+        obterElemento(
+            CONFIG.elementos.instrumentos
+        );
+
+    const section =
+        obterElemento(
+            CONFIG.elementos.instrumentosSection
+        );
+
+
+    if (!container) {
+
+        aviso(
+            "Elemento #instrumentList não encontrado."
+        );
+
+        return;
+
+    }
+
+
+    /*
+     * -----------------------------------------------------
+     * OBTER INSTRUMENTOS
+     * -----------------------------------------------------
+     *
+     * A fonte principal é:
+     *
+     * public.perfis_artistas.instrumentos
+     */
+
+    let instrumentos =
+        artista?.instrumentos;
+
+
+    /*
+     * -----------------------------------------------------
+     * INTERPRETAR JSON
+     * -----------------------------------------------------
+     *
+     * Caso o Supabase retorne o conteúdo como texto:
+     *
+     * ["Violão","Guitarra","Piano"]
+     */
+
+    if (
+        typeof instrumentos === "string"
+    ) {
+
+        const texto =
+            instrumentos.trim();
+
+
+        if (
+            texto.startsWith("[") &&
+            texto.endsWith("]")
+        ) {
+
+            try {
+
+                instrumentos =
+                    JSON.parse(
+                        texto
+                    );
+
+            } catch (error) {
+
+                aviso(
+                    "Não foi possível interpretar os instrumentos como JSON.",
+                    error
+                );
+
+            }
+
+        }
+
+    }
+
+
+    /*
+     * -----------------------------------------------------
+     * NORMALIZAR
+     * -----------------------------------------------------
+     */
+
+    const lista =
+        normalizarLista(
+            instrumentos
+        );
+
+
+    /*
+     * -----------------------------------------------------
+     * LIMPAR E REMOVER DUPLICADOS
+     * -----------------------------------------------------
+     */
+
+    const instrumentosUnicos = [
+        ...new Set(
+
+            lista
+                .map(
+                    item =>
+                        String(
+                            item
+                        ).trim()
+                )
+                .filter(
+                    Boolean
+                )
+
+        )
+    ];
+
+
+    /*
+     * -----------------------------------------------------
+     * NENHUM INSTRUMENTO
+     * -----------------------------------------------------
+     *
+     * A seção fica completamente escondida.
+     */
+
+    if (
+        !instrumentosUnicos.length
+    ) {
+
+        container.innerHTML =
+            "";
+
+        if (section) {
+
+            section.style.display =
+                "none";
+
+        }
+
+        log(
+            "Nenhum instrumento cadastrado."
+        );
+
+        return;
+
+    }
+
+
+    /*
+     * -----------------------------------------------------
+     * EXIBIR SEÇÃO
+     * -----------------------------------------------------
+     */
+
+    if (section) {
+
+        section.style.display =
+            "";
+
+    }
+
+
+    /*
+     * -----------------------------------------------------
+     * RENDERIZAR
+     * -----------------------------------------------------
+     *
+     * Usamos a mesma classe visual dos gêneros:
+     *
+     * .genre-tag
+     *
+     * Dessa forma não precisamos criar CSS novo.
+     */
+
+    container.innerHTML =
+        instrumentosUnicos
+            .map(
+                instrumento => `
+
+                    <span class="genre-tag">
+                        ${escaparHtml(
+                            instrumento
+                        )}
+                    </span>
+
+                `
+            )
+            .join("");
+
+
+    /*
+     * -----------------------------------------------------
+     * LOG
+     * -----------------------------------------------------
+     */
+
+    log(
+        "Instrumentos renderizados:",
+        instrumentosUnicos
+    );
+
+
+    /*
+     * -----------------------------------------------------
+     * ÍCONES
+     * -----------------------------------------------------
+     */
+
+    renderizarIcones();
+
+}
 
 /* =====================================================
    SERVIÇOS

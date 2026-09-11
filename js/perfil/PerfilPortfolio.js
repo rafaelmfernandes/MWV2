@@ -144,6 +144,35 @@ function normalizarTipo(tipo) {
     return "imagem";
 }
 
+function obterTipoBotao(botao) {
+    if (!botao) {
+        return "imagem";
+    }
+
+    const tipo =
+        botao.dataset.mediaType ||
+        botao.dataset.tipo ||
+        botao.getAttribute("data-media-type") ||
+        botao.getAttribute("data-tipo") ||
+        "";
+
+    return normalizarTipo(tipo);
+}
+
+function atualizarBotoesTipo() {
+    document
+        .querySelectorAll(".portfolio-tipo")
+        .forEach(botao => {
+            const tipoBotao =
+                obterTipoBotao(botao);
+
+            botao.classList.toggle(
+                "ativo",
+                tipoBotao === estado.tipoMedia
+            );
+        });
+}
+
 function obterIconeTipo(tipo) {
     switch (normalizarTipo(tipo)) {
         case "video":
@@ -169,9 +198,11 @@ function obterLabelTipo(tipo) {
 }
 
 function obterExtensao(nomeArquivo) {
-    const nome = String(nomeArquivo || "");
+    const nome =
+        String(nomeArquivo || "");
 
-    const partes = nome.split(".");
+    const partes =
+        nome.split(".");
 
     if (partes.length < 2) {
         return "";
@@ -184,10 +215,11 @@ function obterExtensao(nomeArquivo) {
 }
 
 function obterNomeArquivoSeguro(nomeArquivo) {
-    const nome = String(nomeArquivo || "")
-        .trim()
-        .replace(/[^\w.\-]+/g, "-")
-        .replace(/-+/g, "-");
+    const nome =
+        String(nomeArquivo || "")
+            .trim()
+            .replace(/[^\w.-]+/g, "-")
+            .replace(/-+/g, "-");
 
     return nome || "arquivo";
 }
@@ -254,8 +286,10 @@ function configurar(novoContexto) {
     }
 
     estado.tipoMedia =
-        contexto.estado.tipoMedia ||
-        "imagem";
+        normalizarTipo(
+            contexto.estado.tipoMedia ||
+            "imagem"
+        );
 
     estado.editandoId =
         contexto.estado.editandoPortfolioId ||
@@ -328,6 +362,7 @@ async function carregar() {
         renderizar();
 
         return estado.lista;
+
     } catch (erro) {
         console.error(
             "Erro ao carregar portfólio:",
@@ -345,21 +380,68 @@ async function carregar() {
 }
 
 function selecionarTipo(tipo) {
-    const tipoNormalizado =
-        normalizarTipo(tipo);
+console.log("====================================");
+console.log("PORTFÓLIO — CLIQUE DETECTADO");
+console.log("Valor recebido:", tipo);
 
-    estado.tipoMedia =
-        tipoNormalizado;
 
-    if (contexto?.estado) {
-        contexto.estado.tipoMedia =
-            tipoNormalizado;
-    }
+const tipoNormalizado = normalizarTipo(tipo);
 
-    atualizarCampoArquivo();
+console.log("Tipo normalizado:", tipoNormalizado);
+console.log("Tipo anterior:", estado.tipoMedia);
 
-    atualizarIcones();
+estado.tipoMedia = tipoNormalizado;
+
+if (contexto?.estado) {
+    contexto.estado.tipoMedia = tipoNormalizado;
 }
+
+document.querySelectorAll(".portfolio-tipo").forEach(botao => {
+    const tipoBotao = obterTipoBotao(botao);
+
+    console.log(
+        "Botão:",
+        botao.textContent.trim(),
+        "| tipo:",
+        tipoBotao,
+        "| antes ativo:",
+        botao.classList.contains("ativo")
+    );
+
+    botao.classList.remove("ativo");
+
+    if (tipoBotao === tipoNormalizado) {
+        botao.classList.add("ativo");
+    }
+});
+
+const arquivoInput = obterElemento(
+    contexto?.ids?.portfolioArquivo ||
+    "portfolioArquivo"
+);
+
+if (arquivoInput) {
+    arquivoInput.value = "";
+}
+
+atualizarCampoArquivo();
+atualizarIcones();
+
+console.log(
+    "Tipo final:",
+    estado.tipoMedia
+);
+
+console.log(
+    "Botão ativo final:",
+    document.querySelector(".portfolio-tipo.ativo")?.textContent.trim()
+);
+
+console.log("====================================");
+
+
+}
+
 
 function atualizarCampoArquivo() {
     const arquivoInput =
@@ -383,20 +465,30 @@ function atualizarCampoArquivo() {
             estado.tipoMedia
         ];
 
+    /*
+     * Atualiza o accept do input de arquivo.
+     */
+
     if (configuracao) {
         arquivoInput.accept =
             configuracao.accept;
     }
 
+    /*
+     * Atualiza o texto de ajuda.
+     */
+
     if (ajuda) {
         if (estado.tipoMedia === "imagem") {
             ajuda.textContent =
                 "JPG, PNG, WEBP ou GIF. Máximo de 50 MB.";
+
         } else if (
             estado.tipoMedia === "video"
         ) {
             ajuda.textContent =
                 "MP4, WEBM, MOV ou AVI. Máximo de 50 MB.";
+
         } else {
             ajuda.textContent =
                 "MP3, WAV, OGG, M4A ou AAC. Máximo de 50 MB.";
@@ -428,7 +520,18 @@ function arquivoSelecionado() {
             estado.tipoMedia
         );
 
+        console.log(
+            "PerfilPortfolio: arquivo selecionado:",
+            {
+                nome: arquivo.name,
+                tipo: arquivo.type,
+                tamanho: arquivo.size,
+                tipoMedia: estado.tipoMedia
+            }
+        );
+
         return arquivo;
+
     } catch (erro) {
         arquivoInput.value = "";
 
@@ -629,14 +732,7 @@ async function adicionar() {
                 dados.tipo
             );
 
-        const podeDestacar =
-            tipo === "imagem" ||
-            tipo === "video";
-
-        const destaque =
-            podeDestacar
-                ? false
-                : false;
+        const destaque = false;
 
         mostrarLoading(
             estado.editandoId
@@ -680,6 +776,7 @@ async function adicionar() {
                 "Item do portfólio atualizado com sucesso.",
                 "sucesso"
             );
+
         } else {
             const dadosInsercao = {
                 perfil_id: perfilId,
@@ -713,6 +810,7 @@ async function adicionar() {
         limparFormulario();
 
         await carregar();
+
     } catch (erro) {
         console.error(
             "Erro ao salvar portfólio:",
@@ -724,6 +822,7 @@ async function adicionar() {
             "Não foi possível salvar o item do portfólio.",
             "erro"
         );
+
     } finally {
         esconderLoading();
         atualizarIcones();
@@ -759,6 +858,11 @@ async function editar(id) {
         normalizarTipo(
             item.tipo
         );
+
+    if (contexto?.estado) {
+        contexto.estado.tipoMedia =
+            estado.tipoMedia;
+    }
 
     const titulo =
         obterElemento(
@@ -803,19 +907,7 @@ async function editar(id) {
         arquivo.value = "";
     }
 
-    document
-        .querySelectorAll(
-            ".portfolio-tipo"
-        )
-        .forEach(botao => {
-            botao.classList.toggle(
-                "ativo",
-                normalizarTipo(
-                    botao.dataset.tipo
-                ) === estado.tipoMedia
-            );
-        });
-
+    atualizarBotoesTipo();
     atualizarCampoArquivo();
 
     const botao =
@@ -919,6 +1011,7 @@ async function excluir(id) {
         );
 
         await carregar();
+
     } catch (erro) {
         console.error(
             "Erro ao excluir portfólio:",
@@ -930,6 +1023,7 @@ async function excluir(id) {
             "Não foi possível excluir o item.",
             "erro"
         );
+
     } finally {
         esconderLoading();
         atualizarIcones();
@@ -1024,6 +1118,7 @@ async function alternarDestaque(id) {
         );
 
         await carregar();
+
     } catch (erro) {
         console.error(
             "Erro ao destacar portfólio:",
@@ -1035,6 +1130,7 @@ async function alternarDestaque(id) {
             "Não foi possível atualizar o destaque.",
             "erro"
         );
+
     } finally {
         esconderLoading();
         atualizarIcones();
@@ -1045,9 +1141,15 @@ function limparFormulario() {
     estado.editandoId =
         null;
 
+    estado.tipoMedia =
+        "imagem";
+
     if (contexto?.estado) {
         contexto.estado.editandoPortfolioId =
             null;
+
+        contexto.estado.tipoMedia =
+            "imagem";
     }
 
     const titulo =
@@ -1089,6 +1191,9 @@ function limparFormulario() {
     if (url) {
         url.value = "";
     }
+
+    atualizarBotoesTipo();
+    atualizarCampoArquivo();
 
     const botao =
         obterElemento(
@@ -1150,6 +1255,7 @@ function obterPreview(item) {
         return `
             <div class="media-edit-preview media-edit-preview-audio">
                 <i data-lucide="music-2"></i>
+
                 <audio
                     src="${escaparHtml(url)}"
                     controls
@@ -1211,23 +1317,35 @@ function renderizar() {
                         class="media-edit-card"
                         data-portfolio-id="${escaparHtml(item.id)}"
                     >
+
                         ${obterPreview(item)}
 
                         <div class="media-edit-info">
+
                             <div class="media-edit-type">
                                 <i data-lucide="${obterIconeTipo(tipo)}"></i>
-                                <span>${escaparHtml(obterLabelTipo(tipo))}</span>
+
+                                <span>
+                                    ${escaparHtml(
+                                        obterLabelTipo(tipo)
+                                    )}
+                                </span>
                             </div>
 
                             <h3>
-                                ${escaparHtml(item.titulo || "Sem título")}
+                                ${escaparHtml(
+                                    item.titulo ||
+                                    "Sem título"
+                                )}
                             </h3>
 
                             ${
                                 item.descricao
                                     ? `
                                         <p>
-                                            ${escaparHtml(item.descricao)}
+                                            ${escaparHtml(
+                                                item.descricao
+                                            )}
                                         </p>
                                     `
                                     : ""
@@ -1243,9 +1361,11 @@ function renderizar() {
                                     `
                                     : ""
                             }
+
                         </div>
 
                         <div class="media-edit-actions">
+
                             ${
                                 tipoPermitidoDestaque
                                     ? `
@@ -1286,7 +1406,9 @@ function renderizar() {
                             >
                                 <i data-lucide="trash-2"></i>
                             </button>
+
                         </div>
+
                     </article>
                 `;
             })
@@ -1342,6 +1464,7 @@ function renderizar() {
 
 function inicializar() {
     atualizarCampoArquivo();
+    atualizarBotoesTipo();
 
     const arquivoInput =
         obterElemento(
@@ -1349,7 +1472,13 @@ function inicializar() {
             "portfolioArquivo"
         );
 
-    if (arquivoInput) {
+    if (
+        arquivoInput &&
+        !arquivoInput.dataset.portfolioArquivoInicializado
+    ) {
+        arquivoInput.dataset.portfolioArquivoInicializado =
+            "true";
+
         arquivoInput.addEventListener(
             "change",
             arquivoSelecionado
@@ -1357,34 +1486,33 @@ function inicializar() {
     }
 
     document
-    .querySelectorAll(
-        ".portfolio-tipo"
-    )
-    .forEach(botao => {
-        botao.addEventListener(
-            "click",
-            () => {
-
-                selecionarTipo(
-                    botao.dataset.mediaType
-                );
-
-                document
-                    .querySelectorAll(
-                        ".portfolio-tipo"
-                    )
-                    .forEach(item => {
-
-                        item.classList.toggle(
-                            "ativo",
-                            item === botao
-                        );
-
-                    });
-
+        .querySelectorAll(
+            ".portfolio-tipo"
+        )
+        .forEach(botao => {
+            if (
+                botao.dataset.portfolioTipoInicializado ===
+                "true"
+            ) {
+                return;
             }
-        );
-    });
+
+            botao.dataset.portfolioTipoInicializado =
+                "true";
+
+            botao.addEventListener(
+                "click",
+                event => {
+                    event.preventDefault();
+
+                    const tipo =
+                        obterTipoBotao(botao);
+
+                    selecionarTipo(tipo);
+                }
+            );
+        });
+
     const botaoAdicionar =
         obterElemento(
             contexto?.ids?.btnAdicionarPortfolio ||
@@ -1408,6 +1536,8 @@ function inicializar() {
         );
     }
 
+    atualizarBotoesTipo();
+    atualizarCampoArquivo();
     atualizarIcones();
 }
 
