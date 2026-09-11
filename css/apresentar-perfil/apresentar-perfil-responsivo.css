@@ -1,0 +1,619 @@
+/* =========================================================
+   MUSICALWORLD — APRESENTAR PERFIL
+   RESPONSIVO
+   ========================================================= */
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    .profile-page {
+        max-width: 100%;
+
+        padding: 16px 12px 115px;
+    }
+
+    .profile-card,
+    .profile-section {
+        border-radius: 20px;
+    }
+
+    .portfolio-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .portfolio-video-wrapper {
+        aspect-ratio: 16 / 9;
+    }
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    .topbar {
+        height: 60px;
+
+        padding: 0 12px;
+    }
+
+    .topbar-left {
+        gap: 9px;
+    }
+
+    .topbar-button {
+        width: 38px;
+        height: 38px;
+
+        border-radius: 11px;
+    }
+
+    .topbar-title {
+        font-size: 14px;
+    }
+
+    .profile-page {
+        padding: 13px 9px 110px;
+    }
+
+    .profile-card,
+    .profile-section {
+        padding: 16px;
+
+        border-radius: 18px;
+    }
+
+    .profile-header {
+        gap: 13px;
+    }
+
+    .profile-avatar {
+        width: 76px;
+        height: 76px;
+
+        min-width: 76px;
+
+        font-size: 21px;
+    }
+
+    .profile-name {
+        font-size: 19px;
+    }
+
+    .profile-category {
+        font-size: 12px;
+    }
+
+    .profile-location {
+        font-size: 12px;
+    }
+
+    .profile-fixed-actions {
+        padding: 9px 10px;
+
+        gap: 8px;
+    }
+
+    .contact-button,
+    .hire-button {
+        min-height: 44px;
+
+        padding: 0 10px;
+
+        border-radius: 6px;
+
+        font-size: 12px;
+
+        gap: 6px;
+    }
+
+    .contact-button svg,
+    .hire-button svg {
+        width: 16px;
+        height: 16px;
+    }
+
+    /* =====================================================
+       TÍTULOS DAS SEÇÕES
+       ===================================================== */
+
+    .section-title {
+        font-size: 15px;
+    }
+
+    .section-title-row {
+        gap: 7px;
+    }
+
+    .section-title-row > svg {
+        width: 17px;
+        height: 17px;
+
+        min-width: 17px;
+
+        display: block;
+
+        margin-top: 2px;
+    }
+
+    .section-title-row .section-title {
+        margin: 0;
+    }
+
+    /* =====================================================
+       INFORMAÇÕES
+       ===================================================== */
+
+    .info-card-heading {
+        gap: 5px;
+    }
+
+    .info-card-heading svg {
+        width: 13px;
+        height: 13px;
+
+        min-width: 13px;
+    }
+
+    .info-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    /* =====================================================
+       PORTFÓLIO
+       ===================================================== */
+
+    .portfolio-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+
+        gap: 7px;
+    }
+
+    .portfolio-card {
+        border-radius: 12px;
+    }
+
+    .portfolio-media-type {
+        top: 5px;
+        right: 5px;
+
+        width: 24px;
+        height: 24px;
+
+        border-radius: 7px;
+    }
+
+    .portfolio-media-type svg {
+        width: 13px;
+        height: 13px;
+    }
+
+    .portfolio-card-content {
+        padding: 8px 9px 9px;
+    }
+
+    .portfolio-card-title {
+        font-size: 10px;
+        line-height: 1.35;
+    }
+
+    .portfolio-card-description {
+        font-size: 9px;
+        line-height: 1.4;
+    }
+
+    /* =====================================================
+       ÁUDIO
+       ===================================================== */
+
+    .portfolio-audio-card {
+        padding: 12px;
+
+        gap: 10px;
+    }
+
+    .portfolio-audio-icon {
+        width: 36px;
+        height: 36px;
+
+        min-width: 36px;
+    }
+
+    .portfolio-audio-card audio {
+        height: 36px;
+    }
+
+    /* =====================================================
+       SERVIÇOS
+       ===================================================== */
+
+    .service-card {
+        padding: 13px;
+    }
+
+    .service-icon {
+        width: 36px;
+        height: 36px;
+
+        min-width: 36px;
+    }
+
+    /* =====================================================
+       AGENDA
+       ===================================================== */
+
+    .agenda-event-card {
+        padding: 12px;
+
+        gap: 10px;
+    }
+
+    .agenda-event-date {
+        width: 50px;
+        min-width: 50px;
+    }
+
+    .agenda-event-header {
+        gap: 7px;
+    }
+
+    .agenda-event-status {
+        font-size: 8px;
+
+        padding: 4px 6px;
+    }
+
+    /* =====================================================
+       AVALIAÇÕES
+       ===================================================== */
+
+    .reviews-summary-main {
+        align-items: flex-start;
+
+        gap: 13px;
+    }
+
+    .reviews-summary-score {
+        width: 68px;
+        min-width: 68px;
+    }
+
+    .reviews-summary-score strong {
+        font-size: 26px;
+    }
+}
+
+/* =========================================================
+   MOBILE PEQUENO
+   ========================================================= */
+
+@media (max-width: 420px) {
+
+    .profile-header {
+        gap: 11px;
+    }
+
+    .portfolio-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+
+        gap: 6px;
+    }
+
+    .portfolio-card {
+        border-radius: 11px;
+    }
+
+    .profile-avatar {
+        width: 68px;
+        height: 68px;
+
+        min-width: 68px;
+    }
+
+    .profile-name {
+        font-size: 17px;
+    }
+
+    .verified-badge {
+        width: 18px;
+        height: 18px;
+
+        min-width: 18px;
+    }
+
+    .verified-badge svg {
+        width: 11px;
+        height: 11px;
+    }
+
+    .info-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+
+        column-gap: 14px;
+        row-gap: 18px;
+    }
+
+    .info-card {
+        min-height: 0;
+
+        padding: 0;
+
+        border-radius: 0;
+
+        background: transparent;
+
+        border: 0;
+
+        gap: 4px;
+    }
+
+    .info-card-label {
+        font-size: 9px;
+    }
+
+    .info-card-value {
+        font-size: 11px;
+
+        line-height: 1.35;
+    }
+
+    .portfolio-media-type {
+        top: 4px;
+        right: 4px;
+
+        width: 22px;
+        height: 22px;
+
+        border-radius: 6px;
+    }
+
+    .portfolio-media-type svg {
+        width: 12px;
+        height: 12px;
+    }
+
+    .portfolio-card-content {
+        padding: 7px 8px 8px;
+    }
+
+    .portfolio-card-title {
+        font-size: 9px;
+        line-height: 1.35;
+    }
+
+    .reviews-summary-main {
+        flex-direction: column;
+    }
+
+    .reviews-summary-score {
+        width: 100%;
+    }
+
+    .reviews-summary-distribution {
+        width: 100%;
+    }
+
+    .review-header {
+        flex-direction: column;
+    }
+
+    .review-date {
+        margin-left: 45px;
+    }
+
+    .agenda-event-header {
+        flex-direction: column;
+    }
+
+    .agenda-event-status {
+        align-self: flex-start;
+    }
+
+    .portfolio-audio-card {
+        align-items: flex-start;
+    }
+
+    .portfolio-audio-content {
+        width: calc(100% - 46px);
+    }
+}
+
+/* =========================================================
+   MUITO PEQUENO
+   ========================================================= */
+
+@media (max-width: 340px) {
+
+    .profile-card,
+    .profile-section {
+        padding: 13px;
+    }
+
+    .profile-avatar {
+        width: 62px;
+        height: 62px;
+
+        min-width: 62px;
+    }
+
+    .profile-name {
+        font-size: 16px;
+    }
+
+    .portfolio-grid {
+        gap: 6px;
+    }
+
+    .service-card {
+        padding: 11px;
+    }
+
+    .service-card-header {
+        gap: 8px;
+    }
+
+    .service-icon {
+        width: 34px;
+        height: 34px;
+
+        min-width: 34px;
+    }
+
+    .agenda-event-card {
+        padding: 10px;
+
+        gap: 8px;
+    }
+
+    .agenda-event-date {
+        width: 46px;
+        min-width: 46px;
+    }
+
+    .agenda-event-date strong {
+        font-size: 17px;
+    }
+
+    .portfolio-audio-card {
+        gap: 8px;
+
+        padding: 10px;
+    }
+
+    .portfolio-audio-icon {
+        width: 34px;
+        height: 34px;
+
+        min-width: 34px;
+    }
+
+    .genre-list {
+    gap: 6px;
+    }
+
+    .profile-tag {
+        min-height: 30px;
+        padding: 5px 10px;
+        font-size: 12px;
+        line-height: 17px;
+    }
+}
+
+/* =========================================================
+   AGENDA — RESPONSIVO
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    #agendaList {
+        gap: 10px;
+    }
+
+    .agenda-event-card {
+        grid-template-columns: 54px minmax(0, 1fr);
+        gap: 12px;
+        padding: 14px;
+        border-radius: 15px;
+    }
+
+    .agenda-event-date {
+        width: 54px;
+        min-width: 54px;
+        height: 62px;
+        border-radius: 12px;
+    }
+
+    .agenda-event-date strong {
+        font-size: 22px;
+        line-height: 25px;
+    }
+
+    .agenda-event-date span {
+        font-size: 10px;
+        line-height: 14px;
+    }
+
+    .agenda-event-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 7px;
+    }
+
+    .agenda-event-header h3 {
+        font-size: 15px;
+        line-height: 20px;
+    }
+
+    .agenda-event-full-date {
+        font-size: 11px;
+        line-height: 16px;
+    }
+
+    .agenda-event-status {
+        min-height: 25px;
+        padding: 3px 8px;
+        font-size: 10px;
+        line-height: 15px;
+    }
+
+    .agenda-event-info {
+        gap: 6px;
+        font-size: 12px;
+        line-height: 18px;
+    }
+
+    .agenda-event-info svg {
+        width: 14px;
+        height: 14px;
+        min-width: 14px;
+    }
+
+    .agenda-event-description {
+        font-size: 12px;
+        line-height: 19px;
+    }
+
+    .agenda-event-link {
+        font-size: 11px;
+        line-height: 15px;
+    }
+
+    #agendaList .empty-state {
+        min-height: 135px;
+        padding: 20px 16px;
+        border-radius: 15px;
+    }
+}
+
+
+/* =========================================================
+   AGENDA — TELAS MUITO PEQUENAS
+   ========================================================= */
+
+@media (max-width: 380px) {
+
+    .agenda-event-card {
+        grid-template-columns: 48px minmax(0, 1fr);
+        gap: 10px;
+        padding: 12px;
+    }
+
+    .agenda-event-date {
+        width: 48px;
+        min-width: 48px;
+        height: 58px;
+    }
+
+    .agenda-event-date strong {
+        font-size: 20px;
+        line-height: 23px;
+    }
+
+    .agenda-event-date span {
+        font-size: 9px;
+    }
+}

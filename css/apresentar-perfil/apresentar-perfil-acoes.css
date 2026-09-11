@@ -1,0 +1,229 @@
+/* =========================================================
+   MUSICALWORLD — APRESENTAR PERFIL
+   AÇÕES / COMPARTILHAMENTO / TOAST
+   ========================================================= */
+
+/* =========================================================
+   AÇÕES FIXAS DO PERFIL
+   ========================================================= */
+
+.profile-fixed-actions {
+    position: fixed;
+
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    z-index: 200;
+
+    width: 100%;
+
+    padding: 10px 14px;
+
+    background: rgba(255, 255, 255, 0.97);
+
+    border-top: 1px solid #e7eaf0;
+
+    box-shadow:
+        0 -6px 24px rgba(15, 23, 42, 0.08);
+
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 10px;
+
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+}
+
+.contact-button,
+.hire-button {
+    width: 100%;
+
+    min-height: 46px;
+
+    padding: 0 16px;
+
+    border-radius: 13px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
+
+    font-size: 13px;
+    line-height: 1.2;
+
+    font-weight: 700;
+
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease,
+        opacity 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.contact-button {
+    background: #f1f4f8;
+
+    color: #344054;
+
+    border: 1px solid #e2e6ec;
+}
+
+.contact-button:hover {
+    background: #e9edf3;
+}
+
+.hire-button {
+    background: #6d4aff;
+
+    color: #ffffff;
+
+    box-shadow:
+        0 6px 16px rgba(109, 74, 255, 0.18);
+}
+
+.hire-button:hover {
+    background: #5f3ff0;
+}
+
+.contact-button:active,
+.hire-button:active {
+    transform: scale(0.98);
+}
+
+.contact-button svg,
+.hire-button svg {
+    width: 17px;
+    height: 17px;
+
+    flex-shrink: 0;
+}
+
+/* =========================================================
+   COMPARTILHAMENTO / QR
+   ========================================================= */
+
+.profile-share-area {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    margin-top: 16px;
+}
+
+.profile-share-button,
+.profile-qr-button {
+    min-height: 38px;
+
+    padding: 0 12px;
+
+    border-radius: 10px;
+
+    background: #f4f5f8;
+
+    color: #475467;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 6px;
+
+    font-size: 11px;
+
+    font-weight: 700;
+}
+
+.profile-share-button:hover,
+.profile-qr-button:hover {
+    background: #eceef3;
+}
+
+.profile-share-button svg,
+.profile-qr-button svg {
+    width: 15px;
+    height: 15px;
+}
+
+/* =========================================================
+   TOAST
+   ========================================================= */
+
+.toast {
+    position: fixed;
+
+    left: 50%;
+    bottom: 90px;
+
+    z-index: 500;
+
+    width: max-content;
+
+    max-width: calc(100% - 30px);
+
+    padding: 11px 15px;
+
+    border-radius: 11px;
+
+    background: #172033;
+
+    color: #ffffff;
+
+    font-size: 12px;
+
+    line-height: 1.4;
+
+    font-weight: 600;
+
+    text-align: center;
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    transform: translate(-50%, 18px);
+
+    transition:
+        opacity 0.25s ease,
+        transform 0.25s ease;
+}
+
+.toast.show {
+    opacity: 1;
+
+    transform: translate(-50%, 0);
+}
+
+/* =========================================================
+   GÊNEROS MUSICAIS / TAGS
+   ========================================================= */
+
+.genre-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+}
+
+.profile-tag {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 32px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: #f0ecff;
+    border: 1px solid #ddd4ff;
+    color: #6d4aff;
+    font-size: 13px;
+    line-height: 18px;
+    font-weight: 650;
+    white-space: nowrap;
+}

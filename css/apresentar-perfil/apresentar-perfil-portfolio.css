@@ -1,0 +1,327 @@
+/* =========================================================
+   MUSICALWORLD — APRESENTAR PERFIL
+   PORTFÓLIO E ÁUDIOS
+   ========================================================= */
+
+/* =========================================================
+   PORTFÓLIO — GALERIA UNIFICADA
+   IMAGENS + VÍDEOS
+   ========================================================= */
+
+.portfolio-grid {
+    width: 100%;
+
+    display: grid;
+
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+
+    gap: 10px;
+}
+
+/* =========================================================
+   CARD DO PORTFÓLIO
+   ========================================================= */
+
+.portfolio-card {
+    position: relative;
+
+    width: 100%;
+
+    overflow: hidden;
+
+    border-radius: 15px;
+
+    background: #f8fafc;
+
+    border: 1px solid #e7ebf0;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.portfolio-card:hover {
+    transform: translateY(-1px);
+
+    border-color: #ddd7ff;
+
+    box-shadow:
+        0 7px 20px rgba(15, 23, 42, 0.06);
+}
+
+/* =========================================================
+   ÁREA DA MÍDIA
+   ========================================================= */
+
+.portfolio-media {
+    position: relative;
+
+    width: 100%;
+
+    aspect-ratio: 1 / 1;
+
+    overflow: hidden;
+
+    background: #eef1f5;
+}
+
+/* =========================================================
+   IMAGEM
+   ========================================================= */
+
+.portfolio-media img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    transition:
+        transform 0.25s ease;
+}
+
+.portfolio-card:hover .portfolio-media img {
+    transform: scale(1.035);
+}
+
+/* =========================================================
+   VÍDEO
+   ========================================================= */
+
+.portfolio-gallery-video .portfolio-media {
+    background: #111827;
+}
+
+.portfolio-gallery-video .portfolio-media video {
+    width: 100%;
+    height: 100%;
+
+    display: block;
+
+    object-fit: cover;
+
+    background: #111827;
+}
+
+/* =========================================================
+   ÍCONE DO TIPO DE MÍDIA
+   ========================================================= */
+
+.portfolio-media-type {
+    position: absolute;
+
+    top: 7px;
+    right: 7px;
+
+    width: 27px;
+    height: 27px;
+
+    border-radius: 8px;
+
+    background: rgba(23, 32, 51, 0.72);
+
+    color: #ffffff;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    pointer-events: none;
+
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+
+    box-shadow:
+        0 3px 8px rgba(0, 0, 0, 0.14);
+}
+
+.portfolio-media-type svg {
+    width: 15px;
+    height: 15px;
+
+    stroke-width: 2.2;
+}
+
+.portfolio-media-type-image {
+    background: rgba(23, 32, 51, 0.66);
+}
+
+.portfolio-media-type-video {
+    background: rgba(109, 74, 255, 0.88);
+}
+
+/* =========================================================
+   FALLBACK — IMAGEM
+   ========================================================= */
+
+.portfolio-image-fallback {
+    position: absolute;
+
+    inset: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #f1f4f8;
+
+    color: #98a2b3;
+}
+
+.portfolio-image-fallback svg {
+    width: 26px;
+    height: 26px;
+}
+
+/* =========================================================
+   FALLBACK — VÍDEO
+   ========================================================= */
+
+.portfolio-video-fallback {
+    position: absolute;
+
+    inset: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
+
+    padding: 20px;
+
+    background: #f1f4f8;
+
+    color: #98a2b3;
+
+    text-align: center;
+}
+
+.portfolio-video-fallback svg {
+    width: 27px;
+    height: 27px;
+}
+
+.portfolio-video-fallback span {
+    font-size: 11px;
+    line-height: 1.4;
+}
+
+/* =========================================================
+   CONTEÚDO DO CARD
+   ========================================================= */
+
+.portfolio-card-content {
+    width: 100%;
+
+    padding: 10px 11px 11px;
+}
+
+.portfolio-card-title {
+    display: block;
+
+    font-size: 11px;
+    line-height: 1.4;
+
+    font-weight: 750;
+
+    color: #344054;
+
+    overflow-wrap: anywhere;
+}
+
+.portfolio-card-description {
+    display: block;
+
+    margin-top: 4px;
+
+    font-size: 10px;
+    line-height: 1.45;
+
+    color: #98a2b3;
+
+    overflow-wrap: anywhere;
+}
+
+/* =========================================================
+   ÁUDIOS
+   ========================================================= */
+
+.audio-list {
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 10px;
+}
+
+.portfolio-audio-card {
+    width: 100%;
+
+    padding: 13px;
+
+    border-radius: 15px;
+
+    background: #f8fafc;
+
+    border: 1px solid #e7ebf0;
+
+    display: flex;
+    align-items: flex-start;
+
+    gap: 12px;
+
+    overflow: hidden;
+}
+
+.portfolio-audio-icon {
+    width: 40px;
+    height: 40px;
+
+    min-width: 40px;
+
+    border-radius: 11px;
+
+    background: #f1edff;
+
+    color: #6d4aff;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.portfolio-audio-icon svg {
+    width: 19px;
+    height: 19px;
+}
+
+.portfolio-audio-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.portfolio-audio-content .portfolio-card-title {
+    margin-bottom: 7px;
+}
+
+.portfolio-audio-content .portfolio-card-description {
+    margin-top: 0;
+
+    margin-bottom: 9px;
+}
+
+.portfolio-audio-card audio {
+    width: 100%;
+
+    max-width: 100%;
+
+    min-width: 0;
+
+    height: 38px;
+
+    display: block;
+}

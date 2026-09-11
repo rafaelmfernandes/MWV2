@@ -1,0 +1,15 @@
+/* =========================================================
+   MUSICALWORLD — APRESENTAR PERFIL
+   CSS PRINCIPAL
+   ========================================================= */
+
+@import url("./apresentar-perfil-base.css");
+@import url("./apresentar-perfil-header.css");
+@import url("./apresentar-perfil-secoes.css");
+@import url("./apresentar-perfil-info.css");
+@import url("./apresentar-perfil-servicos.css");
+@import url("./apresentar-perfil-portfolio.css");
+@import url("./apresentar-perfil-agenda.css");
+@import url("./apresentar-perfil-avaliacoes.css");
+@import url("./apresentar-perfil-acoes.css");
+@import url("./apresentar-perfil-responsivo.css");

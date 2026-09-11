@@ -2946,6 +2946,36 @@ try {
      */
 
     /*
+    * ----------------------------------------------------
+    * AGENDA
+    * ----------------------------------------------------
+    *
+    * A Agenda não depende do tipo artístico para
+    * inicializar seus eventos.
+    *
+    * Ela precisa ser inicializada aqui para registrar
+    * o clique do botão #btnAdicionarAgenda.
+    *
+    * O carregamento dos dados continua acontecendo
+    * posteriormente em carregarDados().
+    */
+
+    if (
+        window.PerfilAgenda &&
+        typeof window.PerfilAgenda.inicializar === "function"
+    ) {
+
+        window.PerfilAgenda.inicializar();
+
+    } else {
+
+        console.error(
+            "PerfilEditor: PerfilAgenda não foi carregado."
+        );
+
+    }
+
+    /*
      * ----------------------------------------------------
      * SERVIÇOS
      * ----------------------------------------------------
