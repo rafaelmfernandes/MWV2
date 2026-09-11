@@ -1316,6 +1316,66 @@ text-transform: uppercase;
 }
 
 /* =========================================================
+AÇÕES DA AGENDA
+========================================================= */
+
+.agenda-edit-card .media-edit-actions {
+display: flex;
+align-items: center;
+justify-content: flex-end;
+gap: 6px;
+}
+
+.btn-agenda-editar,
+.btn-agenda-excluir {
+width: 34px;
+height: 34px;
+padding: 0;
+display: grid;
+place-items: center;
+border: 1px solid var(--mw-border);
+border-radius: 10px;
+background: #fff;
+cursor: pointer;
+transition:
+background .16s ease,
+border-color .16s ease,
+color .16s ease,
+transform .12s ease;
+}
+
+.btn-agenda-editar svg,
+.btn-agenda-excluir svg {
+width: 16px;
+height: 16px;
+}
+
+.btn-agenda-editar {
+color: var(--mw-primary);
+}
+
+.btn-agenda-editar:hover {
+border-color: #cfc7ff;
+background: var(--mw-primary-soft);
+color: var(--mw-primary-dark);
+}
+
+.btn-agenda-excluir {
+color: var(--mw-danger);
+}
+
+.btn-agenda-excluir:hover {
+border-color: #efc1c7;
+background: #fff1f3;
+color: #c93647;
+}
+
+.btn-agenda-editar:active,
+.btn-agenda-excluir:active {
+transform: scale(.94);
+}
+
+/* =========================================================
 ESTADOS VAZIOS
 ========================================================= */
 
@@ -1766,6 +1826,23 @@ RESPONSIVIDADE — CELULAR
 
 .agenda-edit-info span {
     font-size: 10px;
+}
+
+.agenda-edit-card .media-edit-actions {
+gap: 5px;
+align-self: start;
+}
+
+.btn-agenda-editar,
+.btn-agenda-excluir {
+width: 32px;
+height: 32px;
+}
+
+.btn-agenda-editar svg,
+.btn-agenda-excluir svg {
+width: 15px;
+height: 15px;
 }
 
 /* -----------------------------------------------------
