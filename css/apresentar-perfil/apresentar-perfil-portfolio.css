@@ -48,11 +48,18 @@ Este arquivo continua sendo a fonte principal
 da apresentação visual do portfólio.
 ========================================================= */
 
-
 /* =========================================================
 CONTAINER PRINCIPAL
 
-O portfólio fica sobre uma superfície visualmente elevada.
+O portfólio utiliza toda a largura disponível da página.
+
+IMPORTANTE:
+
+Não existe mais um painel visual envolvendo o portfólio.
+
+O fundo dinâmico ocupa toda a largura da área,
+enquanto bordas, sombras e arredondamentos ficam
+restritos aos cards individuais.
 
 As cores centrais podem ser alteradas dinamicamente
 pelo JavaScript através das variáveis CSS.
@@ -60,28 +67,9 @@ pelo JavaScript através das variáveis CSS.
 Caso nenhuma cor seja fornecida, os valores abaixo
 funcionam como fallback neutro.
 ========================================================= */
-
 .portfolio-grid {
 
     position: relative;
-
-    /* =====================================================
-       CORES DINÂMICAS DO PORTFÓLIO
-
-       O JavaScript fornece somente as cores extraídas
-       da mídia ativa.
-
-       O CSS continua responsável por toda a apresentação.
-       ===================================================== */
-
-    --portfolio-cor-1:
-        rgba(167, 182, 198, 0.24);
-
-    --portfolio-cor-2:
-        rgba(200, 210, 222, 0.16);
-
-    --portfolio-cor-3:
-        rgba(226, 232, 240, 0.10);
 
     width: 100%;
 
@@ -100,29 +88,15 @@ funcionam como fallback neutro.
 
     touch-action: pan-y;
 
-    border-radius: 28px;
+    border: 0;
 
-    background:
-        radial-gradient(
-            ellipse at 50% 35%,
-            var(--portfolio-cor-1) 0%,
-            var(--portfolio-cor-2) 32%,
-            var(--portfolio-cor-3) 68%,
-            rgba(232, 238, 246, 0.94) 100%
-        );
+    border-radius: 0;
 
-    border:
-        1px solid rgba(255, 255, 255, 0.85);
-
-    box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.95),
-        inset 0 -20px 42px rgba(23, 32, 51, 0.045),
-        0 12px 34px rgba(23, 32, 51, 0.055);
+    background: transparent;
 
     isolation: isolate;
 
 }
-
 
 /* =========================================================
 ILUMINAÇÃO CENTRAL DO PALCO
@@ -133,42 +107,6 @@ dos cards.
 A iluminação utiliza as cores extraídas
 da mídia atualmente ativa.
 ========================================================= */
-
-.portfolio-grid::before {
-
-    content: "";
-
-    position: absolute;
-
-    top: 5%;
-
-    left: 50%;
-
-    width: 82%;
-
-    height: 76%;
-
-    transform:
-        translateX(-50%);
-
-    border-radius: 50%;
-
-    background:
-        radial-gradient(
-            ellipse at center,
-            var(--portfolio-cor-1) 0%,
-            var(--portfolio-cor-2) 34%,
-            var(--portfolio-cor-3) 62%,
-            rgba(255, 255, 255, 0) 78%
-        );
-
-    filter: blur(20px);
-
-    pointer-events: none;
-
-    z-index: 0;
-
-}
 
 
 /* =========================================================
@@ -183,44 +121,6 @@ A sombra continua neutra para não deixar
 o efeito dinâmico exagerado.
 ========================================================= */
 
-.portfolio-grid::after {
-
-    content: "";
-
-    position: absolute;
-
-    top: 48%;
-
-    left: 50%;
-
-    width: 54%;
-
-    height: 42%;
-
-    transform:
-        translate(
-            -50%,
-            -50%
-        );
-
-    border-radius: 50%;
-
-    background:
-        radial-gradient(
-            ellipse at center,
-            rgba(23, 32, 51, 0.14) 0%,
-            rgba(23, 32, 51, 0.075) 34%,
-            rgba(23, 32, 51, 0.025) 62%,
-            rgba(23, 32, 51, 0) 78%
-        );
-
-    filter: blur(22px);
-
-    pointer-events: none;
-
-    z-index: 0;
-
-}
 
 
 /* =========================================================
@@ -231,45 +131,46 @@ O deck fica acima das camadas de profundidade.
 
 .portfolio-deck {
 
-    position: relative;
 
-    z-index: 2;
+position: relative;
 
-    width: 100%;
+z-index: 2;
 
-    display: block;
+width: 100%;
 
-    margin: 0 auto;
+display: block;
 
-    padding: 0;
+margin: 0 auto;
 
-    overflow: visible;
+padding: 0;
 
-    box-sizing: border-box;
+overflow: visible;
 
-    touch-action: pan-y;
+box-sizing: border-box;
 
-    user-select: none;
+touch-action: pan-y;
 
-    -webkit-user-select: none;
+user-select: none;
 
-    -webkit-touch-callout: none;
+-webkit-user-select: none;
 
-    cursor: grab;
+-webkit-touch-callout: none;
+
+cursor: grab;
+
 
 }
-
 
 /* =========================================================
 BOTÕES DE NAVEGAÇÃO DA GALERIA
 
 Responsabilidade:
 
-- Permitir avançar e voltar manualmente no portfólio.
-- Reproduzir visualmente a navegação por swipe.
-- Manter os botões discretos.
-- Não sobrepor os controles internos de vídeo.
-- Permanecer fora da mídia principal.
+* Permitir avançar e voltar manualmente no portfólio.
+* Reproduzir visualmente a navegação por swipe.
+* Manter os botões discretos.
+* Não sobrepor os controles internos de vídeo.
+* Permanecer fora da mídia principal.
 
 O JavaScript controla somente o clique e a navegação.
 Toda a apresentação visual pertence ao CSS.
@@ -277,62 +178,63 @@ Toda a apresentação visual pertence ao CSS.
 
 .portfolio-deck-nav {
 
-    position: absolute;
 
-    top: 50%;
+position: absolute;
 
-    z-index: 60;
+top: 50%;
 
-    width: 38px;
+z-index: 60;
 
-    height: 38px;
+width: 38px;
 
-    box-sizing: border-box;
+height: 38px;
 
-    display: flex;
+box-sizing: border-box;
 
-    align-items: center;
+display: flex;
 
-    justify-content: center;
+align-items: center;
 
-    margin: 0;
+justify-content: center;
 
-    padding: 0;
+margin: 0;
 
-    border:
-        1px solid rgba(23, 32, 51, 0.10);
+padding: 0;
 
-    border-radius: 50%;
+border:
+    1px solid rgba(23, 32, 51, 0.10);
 
-    background:
-        rgba(255, 255, 255, 0.94);
+border-radius: 50%;
 
-    color: #172033;
+background:
+    rgba(255, 255, 255, 0.94);
 
-    box-shadow:
-        0 8px 18px rgba(23, 32, 51, 0.14),
-        0 2px 5px rgba(23, 32, 51, 0.08);
+color: #172033;
 
-    transform:
-        translateY(-50%);
+box-shadow:
+    0 8px 18px rgba(23, 32, 51, 0.14),
+    0 2px 5px rgba(23, 32, 51, 0.08);
 
-    cursor: pointer;
+transform:
+    translateY(-50%);
 
-    appearance: none;
+cursor: pointer;
 
-    -webkit-appearance: none;
+appearance: none;
 
-    outline: none;
+-webkit-appearance: none;
 
-    transition:
-        transform 180ms ease,
-        background 180ms ease,
-        border-color 180ms ease,
-        box-shadow 180ms ease,
-        opacity 180ms ease;
+outline: none;
+
+transition:
+    transform 180ms ease,
+    background 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    opacity 180ms ease;
+
 
 }
-
 
 /* =========================================================
 POSIÇÃO — BOTÃO ANTERIOR
@@ -340,10 +242,11 @@ POSIÇÃO — BOTÃO ANTERIOR
 
 .portfolio-deck-nav-prev {
 
-    left: 4%;
+
+left: 4%;
+
 
 }
-
 
 /* =========================================================
 POSIÇÃO — BOTÃO PRÓXIMO
@@ -351,10 +254,11 @@ POSIÇÃO — BOTÃO PRÓXIMO
 
 .portfolio-deck-nav-next {
 
-    right: 4%;
+
+right: 4%;
+
 
 }
-
 
 /* =========================================================
 ÍCONES
@@ -362,16 +266,17 @@ POSIÇÃO — BOTÃO PRÓXIMO
 
 .portfolio-deck-nav svg {
 
-    width: 18px;
 
-    height: 18px;
+width: 18px;
 
-    display: block;
+height: 18px;
 
-    stroke-width: 2.2;
+display: block;
+
+stroke-width: 2.2;
+
 
 }
-
 
 /* =========================================================
 HOVER
@@ -379,39 +284,40 @@ HOVER
 
 @media (hover: hover) and (pointer: fine) {
 
-    .portfolio-deck-nav:hover {
 
-        background: #ffffff;
+.portfolio-deck-nav:hover {
 
-        border-color:
-            rgba(23, 32, 51, 0.16);
+    background: #ffffff;
 
-        box-shadow:
-            0 10px 22px rgba(23, 32, 51, 0.18),
-            0 3px 7px rgba(23, 32, 51, 0.10);
+    border-color:
+        rgba(23, 32, 51, 0.16);
 
-    }
-
-
-    .portfolio-deck-nav-prev:hover {
-
-        transform:
-            translateY(-50%)
-            translateX(-2px);
-
-    }
-
-
-    .portfolio-deck-nav-next:hover {
-
-        transform:
-            translateY(-50%)
-            translateX(2px);
-
-    }
+    box-shadow:
+        0 10px 22px rgba(23, 32, 51, 0.18),
+        0 3px 7px rgba(23, 32, 51, 0.10);
 
 }
 
+
+.portfolio-deck-nav-prev:hover {
+
+    transform:
+        translateY(-50%)
+        translateX(-2px);
+
+}
+
+
+.portfolio-deck-nav-next:hover {
+
+    transform:
+        translateY(-50%)
+        translateX(2px);
+
+}
+
+
+}
 
 /* =========================================================
 CLIQUE
@@ -419,22 +325,24 @@ CLIQUE
 
 .portfolio-deck-nav:active {
 
-    transform:
-        translateY(-50%)
-        scale(0.94);
+
+transform:
+    translateY(-50%)
+    scale(0.94);
+
 
 }
-
 
 .portfolio-deck-nav:focus-visible {
 
-    outline:
-        2px solid rgba(22, 119, 210, 0.35);
 
-    outline-offset: 3px;
+outline:
+    2px solid rgba(22, 119, 210, 0.35);
+
+outline-offset: 3px;
+
 
 }
-
 
 /* =========================================================
 TABLET
@@ -442,171 +350,434 @@ TABLET
 
 @media (max-width: 900px) {
 
-    .portfolio-deck-nav {
 
-        width: 36px;
+.portfolio-grid {
 
-        height: 36px;
+    padding:
+        15px
+        10px
+        10px;
 
-    }
+    border: 0;
 
-
-    .portfolio-deck-nav svg {
-
-        width: 17px;
-
-        height: 17px;
-
-    }
-
-
-    .portfolio-deck-nav-prev {
-
-        left: 3%;
-
-    }
-
-
-    .portfolio-deck-nav-next {
-
-        right: 3%;
-
-    }
+    border-radius: 0;
 
 }
 
 
+.portfolio-deck-nav {
+
+    width: 36px;
+
+    height: 36px;
+
+}
+
+
+.portfolio-deck-nav svg {
+
+    width: 17px;
+
+    height: 17px;
+
+}
+
+
+.portfolio-deck-nav-prev {
+
+    left: 3%;
+
+}
+
+
+.portfolio-deck-nav-next {
+
+    right: 3%;
+
+}
+
+
+.portfolio-deck-card {
+
+    width: 60%;
+
+    max-width: 270px;
+
+    border-radius: 22px;
+
+}
+
+
+.portfolio-deck-indicadores {
+
+    margin-top: -22px;
+
+    gap: 5px;
+
+}
+
+
+}
+
 /* =========================================================
 MOBILE
+Até 600px
 ========================================================= */
 
 @media (max-width: 600px) {
 
-    .portfolio-deck-nav {
 
-        width: 34px;
+.portfolio-grid {
 
-        height: 34px;
+    padding:
+        13px
+        8px
+        9px;
 
-    }
+    border: 0;
 
-
-    .portfolio-deck-nav svg {
-
-        width: 16px;
-
-        height: 16px;
-
-    }
-
-
-    .portfolio-deck-nav-prev {
-
-        left: 1.5%;
-
-    }
-
-
-    .portfolio-deck-nav-next {
-
-        right: 1.5%;
-
-    }
+    border-radius: 0;
 
 }
 
 
+
+
+
+.portfolio-deck-nav {
+
+    width: 34px;
+
+    height: 34px;
+
+}
+
+
+.portfolio-deck-nav svg {
+
+    width: 16px;
+
+    height: 16px;
+
+}
+
+
+.portfolio-deck-nav-prev {
+
+    left: 1.5%;
+
+}
+
+
+.portfolio-deck-nav-next {
+
+    right: 1.5%;
+
+}
+
+
+.portfolio-deck-card {
+
+    width: 68%;
+
+    max-width: 270px;
+
+    border-radius: 20px;
+
+    box-shadow:
+        0 20px 44px rgba(23, 32, 51, 0.15),
+        0 6px 17px rgba(23, 32, 51, 0.07);
+
+}
+
+
+.portfolio-deck-caption {
+
+    padding:
+        18px
+        14px
+        28px;
+
+}
+
+
+.portfolio-deck-caption strong {
+
+    font-size: 14px;
+
+}
+
+
+.portfolio-deck-caption span {
+
+    font-size: 12px;
+
+}
+
+
+.portfolio-deck-indicadores {
+
+    margin-top: -20px;
+
+    gap: 5px;
+
+}
+
+
+.portfolio-deck-indicador {
+
+    width: 6px;
+
+    height: 6px;
+
+    min-width: 6px;
+
+    min-height: 6px;
+
+}
+
+
+.portfolio-deck-indicador[aria-current="true"] {
+
+    width: 8px;
+
+    height: 8px;
+
+    min-width: 8px;
+
+    min-height: 8px;
+
+}
+
+
+.portfolio-audio-card {
+
+    padding:
+        12px;
+
+    gap: 10px;
+
+    border-radius: 16px;
+
+}
+
+
+.portfolio-audio-card-conteudo {
+
+    gap: 10px;
+
+}
+
+
+.portfolio-audio-card-icone {
+
+    width: 38px;
+
+    height: 38px;
+
+    min-width: 38px;
+
+    border-radius: 11px;
+
+}
+
+
+.portfolio-audio-card-info strong {
+
+    font-size: 13px;
+
+}
+
+
+.portfolio-audio-card-info span {
+
+    font-size: 11px;
+
+}
+
+
+.portfolio-audio-card audio {
+
+    height: 36px;
+
+}
+
+
+}
+
 /* =========================================================
 MOBILE PEQUENO
+Até 420px
 ========================================================= */
 
 @media (max-width: 420px) {
 
-    .portfolio-deck-nav {
 
-        width: 32px;
+.portfolio-grid {
 
-        height: 32px;
+    padding:
+        12px
+        6px
+        8px;
 
-    }
+    border: 0;
 
-
-    .portfolio-deck-nav svg {
-
-        width: 15px;
-
-        height: 15px;
-
-    }
-
-
-    .portfolio-deck-nav-prev {
-
-        left: 0;
-
-    }
-
-
-    .portfolio-deck-nav-next {
-
-        right: 0;
-
-    }
+    border-radius: 0;
 
 }
 
 
+.portfolio-deck-card {
+
+    width: 72%;
+
+    max-width: 400px;
+
+    border-radius: 18px;
+
+}
+
+
+.portfolio-deck-caption {
+
+    padding:
+        16px
+        11px
+        25px;
+
+}
+
+
+.portfolio-deck-caption strong {
+
+    font-size: 13px;
+
+}
+
+
+.portfolio-deck-caption span {
+
+    font-size: 11px;
+
+}
+
+
+.portfolio-deck-indicadores {
+
+    margin-top: -19px;
+
+    gap: 4px;
+
+}
+
+
+.portfolio-deck-indicador {
+
+    width: 6px;
+
+    height: 6px;
+
+    min-width: 6px;
+
+    min-height: 6px;
+
+}
+
+
+.portfolio-deck-indicador[aria-current="true"] {
+
+    width: 8px;
+
+    height: 8px;
+
+    min-width: 8px;
+
+    min-height: 8px;
+
+}
+
+
+}
+
 /* =========================================================
 MUITO PEQUENO
+Até 340px
 ========================================================= */
 
 @media (max-width: 340px) {
 
-    .portfolio-deck-nav {
 
-        width: 30px;
+.portfolio-deck-card {
 
-        height: 30px;
+    width: 72%;
 
-    }
+    max-width: 270px;
 
-
-    .portfolio-deck-nav svg {
-
-        width: 14px;
-
-        height: 14px;
-
-    }
+    border-radius: 17px;
 
 }
 
 
-/* =========================================================
-REDUÇÃO DE MOVIMENTO
-========================================================= */
+.portfolio-deck-caption {
 
-@media (prefers-reduced-motion: reduce) {
-
-    .portfolio-deck-nav {
-
-        transition: none !important;
-
-    }
+    padding:
+        15px
+        10px
+        23px;
 
 }
 
 
-/* =========================================================
-CURSOR DURANTE ARRASTE
-========================================================= */
+.portfolio-deck-caption strong {
 
-.portfolio-deck:active {
-
-    cursor: grabbing;
+    font-size: 12px;
 
 }
 
+
+.portfolio-deck-caption span {
+
+    font-size: 10px;
+
+}
+
+
+.portfolio-deck-indicadores {
+
+    margin-top: -18px;
+
+    gap: 4px;
+
+}
+
+
+.portfolio-deck-indicador {
+
+    width: 6px;
+
+    height: 6px;
+
+    min-width: 6px;
+
+    min-height: 6px;
+
+}
+
+
+.portfolio-deck-indicador[aria-current="true"] {
+
+    width: 8px;
+
+    height: 8px;
+
+    min-width: 8px;
+
+    min-height: 8px;
+
+}
+
+
+}
 
 /* =========================================================
 CAMADA DE SOMBRA DO DECK
@@ -617,42 +788,43 @@ central dos cards.
 
 .portfolio-deck::before {
 
-    content: "";
 
-    position: absolute;
+content: "";
 
-    top: 42%;
+position: absolute;
 
-    left: 50%;
+top: 42%;
 
-    width: 48%;
+left: 50%;
 
-    height: 48%;
+width: 48%;
 
-    transform:
-        translate(
-            -50%,
-            -50%
-        );
+height: 48%;
 
-    border-radius: 50%;
+transform:
+    translate(
+        -50%,
+        -50%
+    );
 
-    background:
-        radial-gradient(
-            ellipse,
-            rgba(23, 32, 51, 0.10) 0%,
-            rgba(23, 32, 51, 0.045) 38%,
-            rgba(23, 32, 51, 0) 72%
-        );
+border-radius: 50%;
 
-    filter: blur(18px);
+background:
+    radial-gradient(
+        ellipse,
+        rgba(23, 32, 51, 0.10) 0%,
+        rgba(23, 32, 51, 0.045) 38%,
+        rgba(23, 32, 51, 0) 72%
+    );
 
-    pointer-events: none;
+filter: blur(18px);
 
-    z-index: -1;
+pointer-events: none;
+
+z-index: -1;
+
 
 }
-
 
 /* =========================================================
 CARDS DO DECK
@@ -680,46 +852,47 @@ Proporção:
 
 .portfolio-deck-card {
 
-    position: absolute;
 
-    top: 0;
+position: absolute;
 
-    left: 50%;
+top: 0;
 
-    width: 52%;
+left: 50%;
 
-    max-width: 270px;
+width: 70%;
 
-    aspect-ratio: 9 / 16;
+max-width: 270px;
 
-    border-radius: 24px;
+aspect-ratio: 9 / 16;
 
-    overflow: hidden;
+border-radius: 24px;
 
-    background: #ffffff;
+overflow: hidden;
 
-    border:
-        1px solid rgba(23, 32, 51, 0.08);
+background: #ffffff;
 
-    box-shadow:
-        0 18px 30px rgba(23, 32, 51, 0.22),
-        0 8px 14px rgba(23, 32, 51, 0.14),
-        0 2px 5px rgba(23, 32, 51, 0.10);
+border:
+    1px solid rgba(23, 32, 51, 0.08);
 
-    transition:
-        transform 360ms ease,
-        opacity 360ms ease,
-        filter 360ms ease;
+box-shadow:
+    0 18px 30px rgba(23, 32, 51, 0.22),
+    0 8px 14px rgba(23, 32, 51, 0.14),
+    0 2px 5px rgba(23, 32, 51, 0.10);
 
-    transform-origin: center center;
+transition:
+    transform 360ms ease,
+    opacity 360ms ease,
+    filter 360ms ease;
 
-    will-change:
-        transform,
-        opacity,
-        filter;
+transform-origin: center center;
+
+will-change:
+    transform,
+    opacity,
+    filter;
+
 
 }
-
 
 /* =========================================================
 CARD PRINCIPAL
@@ -739,10 +912,11 @@ O CSS controla a aparência estrutural.
 
 .portfolio-deck-card[data-indice] {
 
-    transform-origin: center center;
+
+transform-origin: center center;
+
 
 }
-
 
 /* =========================================================
 MÍDIA DO DECK
@@ -750,32 +924,33 @@ MÍDIA DO DECK
 
 .portfolio-deck-media {
 
-    display: block;
 
-    width: 100%;
+display: block;
 
-    height: 100%;
+width: 100%;
 
-    max-width: none;
+height: 100%;
 
-    max-height: none;
+max-width: none;
 
-    margin: 0;
+max-height: none;
 
-    padding: 0;
+margin: 0;
 
-    object-fit: cover;
+padding: 0;
 
-    object-position: center;
+object-fit: cover;
 
-    user-select: none;
+object-position: center;
 
-    -webkit-user-select: none;
+user-select: none;
 
-    -webkit-touch-callout: none;
+-webkit-user-select: none;
+
+-webkit-touch-callout: none;
+
 
 }
-
 
 /* =========================================================
 IMAGENS
@@ -783,34 +958,35 @@ IMAGENS
 
 .portfolio-deck-card img {
 
-    display: block;
 
-    width: 100%;
+display: block;
 
-    height: 100%;
+width: 100%;
 
-    max-width: none;
+height: 100%;
 
-    max-height: none;
+max-width: none;
 
-    margin: 0;
+max-height: none;
 
-    padding: 0;
+margin: 0;
 
-    object-fit: cover;
+padding: 0;
 
-    object-position: center;
+object-fit: cover;
 
-    pointer-events: none;
+object-position: center;
 
-    user-select: none;
+pointer-events: none;
 
-    -webkit-user-select: none;
+user-select: none;
 
-    -webkit-user-drag: none;
+-webkit-user-select: none;
+
+-webkit-user-drag: none;
+
 
 }
-
 
 /* =========================================================
 VÍDEOS
@@ -818,44 +994,35 @@ VÍDEOS
 
 .portfolio-deck-card video {
 
-    display: block;
 
-    width: 100%;
+display: block;
 
-    height: 100%;
+width: 100%;
 
-    max-width: none;
+height: 100%;
 
-    max-height: none;
+max-width: none;
 
-    margin: 0;
+max-height: none;
 
-    padding: 0;
+margin: 0;
 
-    object-fit: cover;
+padding: 0;
 
-    object-position: center;
+object-fit: cover;
 
-    background: #000000;
+object-position: center;
 
-    pointer-events: auto;
+background: #000000;
 
-    user-select: none;
+pointer-events: auto;
 
-    -webkit-user-select: none;
+user-select: none;
 
-    -webkit-touch-callout: none;
+-webkit-user-select: none;
 
-}
+-webkit-touch-callout: none;
 
-
-/* =========================================================
-CARD DE VÍDEO
-========================================================= */
-
-.portfolio-deck-card-video {
-
-    background: #000000;
 
 }
 
@@ -879,45 +1046,46 @@ Toda a apresentação pertence ao CSS.
 
 .portfolio-deck-caption {
 
-    position: absolute;
 
-    top: 0;
+position: absolute;
 
-    left: 0;
+top: 0;
 
-    right: 0;
+left: 0;
 
-    z-index: 5;
+right: 0;
 
-    box-sizing: border-box;
+z-index: 5;
 
-    width: 100%;
+box-sizing: border-box;
 
-    padding:
-        18px
-        20px
-        28px;
+width: 100%;
 
-    background:
-        linear-gradient(
-            to bottom,
-            rgba(0, 0, 0, 0.72),
-            rgba(0, 0, 0, 0.38),
-            rgba(0, 0, 0, 0)
-        );
+padding:
+    18px
+    20px
+    28px;
 
-    color: #ffffff;
+background:
+    linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0.72),
+        rgba(0, 0, 0, 0.38),
+        rgba(0, 0, 0, 0)
+    );
 
-    pointer-events: none;
+color: #ffffff;
 
-    user-select: none;
+pointer-events: none;
 
-    -webkit-user-select: none;
+user-select: none;
 
-    overflow: hidden;
+-webkit-user-select: none;
+
+overflow: hidden;
+
 
 }
-
 
 /* =========================================================
 TÍTULO DA LEGENDA
@@ -925,32 +1093,33 @@ TÍTULO DA LEGENDA
 
 .portfolio-deck-caption strong {
 
-    display: block;
 
-    margin: 0;
+display: block;
 
-    padding: 0;
+margin: 0;
 
-    color: #ffffff;
+padding: 0;
 
-    font-size: 15px;
+color: #ffffff;
 
-    font-weight: 700;
+font-size: 15px;
 
-    line-height: 1.35;
+font-weight: 700;
 
-    letter-spacing: 0;
+line-height: 1.35;
 
-    overflow: hidden;
+letter-spacing: 0;
 
-    text-overflow: ellipsis;
+overflow: hidden;
 
-    white-space: normal;
+text-overflow: ellipsis;
 
-    word-break: break-word;
+white-space: normal;
+
+word-break: break-word;
+
 
 }
-
 
 /* =========================================================
 DESCRIÇÃO DA LEGENDA
@@ -958,34 +1127,35 @@ DESCRIÇÃO DA LEGENDA
 
 .portfolio-deck-caption span {
 
-    display: block;
 
-    margin:
-        4px
-        0
-        0;
+display: block;
 
-    padding: 0;
+margin:
+    4px
+    0
+    0;
 
-    color:
-        rgba(255, 255, 255, 0.88);
+padding: 0;
 
-    font-size: 13px;
+color:
+    rgba(255, 255, 255, 0.88);
 
-    font-weight: 400;
+font-size: 13px;
 
-    line-height: 1.4;
+font-weight: 400;
 
-    overflow: hidden;
+line-height: 1.4;
 
-    text-overflow: ellipsis;
+overflow: hidden;
 
-    white-space: normal;
+text-overflow: ellipsis;
 
-    word-break: break-word;
+white-space: normal;
+
+word-break: break-word;
+
 
 }
-
 
 /* =========================================================
 INDICADORES / BOLINHAS
@@ -1008,49 +1178,50 @@ BOLINHAS
 
 .portfolio-deck-indicadores {
 
-    position: relative;
 
-    z-index: 50;
+position: relative;
 
-    width: 100%;
+z-index: 50;
 
-    min-width: 100%;
+width: 100%;
 
-    height: auto;
+min-width: 100%;
 
-    min-height: 8px;
+height: auto;
 
-    box-sizing: border-box;
+min-height: 8px;
 
-    display: flex;
+box-sizing: border-box;
 
-    flex-direction: row;
+display: flex;
 
-    align-items: center;
+flex-direction: row;
 
-    justify-content: center;
+align-items: center;
 
-    flex-wrap: nowrap;
+justify-content: center;
 
-    gap: 5px;
+flex-wrap: nowrap;
 
-    margin:
-        -22px
-        auto
-        0;
+gap: 5px;
 
-    padding: 0;
+margin:
+    -22px
+    auto
+    0;
 
-    overflow: visible;
+padding: 0;
 
-    clear: both;
+overflow: visible;
 
-    float: none;
+clear: both;
 
-    touch-action: manipulation;
+float: none;
+
+touch-action: manipulation;
+
 
 }
-
 
 /* =========================================================
 INDICADORES INDIVIDUAIS
@@ -1058,52 +1229,53 @@ INDICADORES INDIVIDUAIS
 
 .portfolio-deck-indicador {
 
-    display: block;
 
-    flex:
-        0
-        0
-        auto;
+display: block;
 
-    width: 6px;
+flex:
+    0
+    0
+    auto;
 
-    height: 6px;
+width: 6px;
 
-    min-width: 6px;
+height: 6px;
 
-    min-height: 6px;
+min-width: 6px;
 
-    margin: 0;
+min-height: 6px;
 
-    padding: 0;
+margin: 0;
 
-    border: 0;
+padding: 0;
 
-    border-radius: 999px;
+border: 0;
 
-    background: #cbd5e1;
+border-radius: 999px;
 
-    opacity: 0.72;
+background: #cbd5e1;
 
-    cursor: pointer;
+opacity: 0.72;
 
-    box-sizing: border-box;
+cursor: pointer;
 
-    appearance: none;
+box-sizing: border-box;
 
-    -webkit-appearance: none;
+appearance: none;
 
-    outline: none;
+-webkit-appearance: none;
 
-    transition:
-        width 180ms ease,
-        height 180ms ease,
-        transform 180ms ease,
-        background 180ms ease,
-        opacity 180ms ease;
+outline: none;
+
+transition:
+    width 180ms ease,
+    height 180ms ease,
+    transform 180ms ease,
+    background 180ms ease,
+    opacity 180ms ease;
+
 
 }
-
 
 /* =========================================================
 INDICADOR ATIVO
@@ -1111,22 +1283,23 @@ INDICADOR ATIVO
 
 .portfolio-deck-indicador[aria-current="true"] {
 
-    width: 8px;
 
-    height: 8px;
+width: 8px;
 
-    min-width: 8px;
+height: 8px;
 
-    min-height: 8px;
+min-width: 8px;
 
-    background: #1677d2;
+min-height: 8px;
 
-    opacity: 1;
+background: #1677d2;
 
-    transform: scale(1.05);
+opacity: 1;
+
+transform: scale(1.05);
+
 
 }
-
 
 /* =========================================================
 FOCO DOS INDICADORES
@@ -1134,13 +1307,14 @@ FOCO DOS INDICADORES
 
 .portfolio-deck-indicador:focus-visible {
 
-    outline:
-        2px solid rgba(22, 119, 210, 0.35);
 
-    outline-offset: 3px;
+outline:
+    2px solid rgba(22, 119, 210, 0.35);
+
+outline-offset: 3px;
+
 
 }
-
 
 /* =========================================================
 HOVER DOS INDICADORES
@@ -1148,23 +1322,24 @@ HOVER DOS INDICADORES
 
 @media (hover: hover) and (pointer: fine) {
 
-    .portfolio-deck-indicador:hover {
 
-        opacity: 1;
+.portfolio-deck-indicador:hover {
 
-        transform: scale(1.12);
+    opacity: 1;
 
-    }
-
-
-    .portfolio-deck-indicador[aria-current="true"]:hover {
-
-        transform: scale(1.08);
-
-    }
+    transform: scale(1.12);
 
 }
 
+
+.portfolio-deck-indicador[aria-current="true"]:hover {
+
+    transform: scale(1.08);
+
+}
+
+
+}
 
 /* =========================================================
 ESTADO DE ERRO DA MÍDIA
@@ -1172,16 +1347,17 @@ ESTADO DE ERRO DA MÍDIA
 
 .portfolio-media-erro {
 
-    position: relative;
 
-    background: #f8fafc;
+position: relative;
 
-    color: #64748b;
+background: #f8fafc;
 
-    overflow: hidden;
+color: #64748b;
+
+overflow: hidden;
+
 
 }
-
 
 /* =========================================================
 MENSAGEM DE ERRO DA MÍDIA
@@ -1189,33 +1365,34 @@ MENSAGEM DE ERRO DA MÍDIA
 
 .portfolio-media-erro-mensagem {
 
-    width: 100%;
 
-    height: 100%;
+width: 100%;
 
-    min-height: 220px;
+height: 100%;
 
-    box-sizing: border-box;
+min-height: 220px;
 
-    display: flex;
+box-sizing: border-box;
 
-    align-items: center;
+display: flex;
 
-    justify-content: center;
+align-items: center;
 
-    padding:
-        24px;
+justify-content: center;
 
-    text-align: center;
+padding:
+    24px;
 
-    color: #64748b;
+text-align: center;
 
-    font-size: 13px;
+color: #64748b;
 
-    line-height: 1.5;
+font-size: 13px;
+
+line-height: 1.5;
+
 
 }
-
 
 /* =========================================================
 ESTADO VAZIO
@@ -1223,41 +1400,42 @@ ESTADO VAZIO
 
 .portfolio-grid .portfolio-estado-vazio {
 
-    width: 100%;
 
-    min-height: 220px;
+width: 100%;
 
-    box-sizing: border-box;
+min-height: 220px;
 
-    display: flex;
+box-sizing: border-box;
 
-    flex-direction: column;
+display: flex;
 
-    align-items: center;
+flex-direction: column;
 
-    justify-content: center;
+align-items: center;
 
-    gap: 8px;
+justify-content: center;
 
-    margin: 0;
+gap: 8px;
 
-    padding:
-        32px
-        20px;
+margin: 0;
 
-    text-align: center;
+padding:
+    32px
+    20px;
 
-    border-radius: 22px;
+text-align: center;
 
-    background: #f8fafc;
+border-radius: 22px;
 
-    border:
-        1px dashed #d8e0ea;
+background: #f8fafc;
 
-    color: #667085;
+border:
+    1px dashed #d8e0ea;
+
+color: #667085;
+
 
 }
-
 
 /* =========================================================
 ÍCONE DO ESTADO VAZIO
@@ -1266,35 +1444,37 @@ ESTADO VAZIO
 .portfolio-grid
 .portfolio-estado-vazio-icone {
 
-    width: 42px;
 
-    height: 42px;
+width: 42px;
 
-    display: flex;
+height: 42px;
 
-    align-items: center;
+display: flex;
 
-    justify-content: center;
+align-items: center;
 
-    margin:
-        0
-        0
-        4px;
+justify-content: center;
 
-    color: #94a3b8;
+margin:
+    0
+    0
+    4px;
+
+color: #94a3b8;
+
 
 }
-
 
 .portfolio-grid
 .portfolio-estado-vazio-icone svg {
 
-    width: 28px;
 
-    height: 28px;
+width: 28px;
+
+height: 28px;
+
 
 }
-
 
 /* =========================================================
 TEXTO DO ESTADO VAZIO
@@ -1303,20 +1483,21 @@ TEXTO DO ESTADO VAZIO
 .portfolio-grid
 .portfolio-estado-vazio p {
 
-    max-width: 320px;
 
-    margin: 0;
+max-width: 320px;
 
-    padding: 0;
+margin: 0;
 
-    color: #98a2b3;
+padding: 0;
 
-    font-size: 12px;
+color: #98a2b3;
 
-    line-height: 1.5;
+font-size: 12px;
+
+line-height: 1.5;
+
 
 }
-
 
 /* =========================================================
 ÁUDIOS
@@ -1324,34 +1505,35 @@ TEXTO DO ESTADO VAZIO
 
 .portfolio-audio-card {
 
-    width: 100%;
 
-    box-sizing: border-box;
+width: 100%;
 
-    display: flex;
+box-sizing: border-box;
 
-    flex-direction: column;
+display: flex;
 
-    align-items: stretch;
+flex-direction: column;
 
-    gap: 12px;
+align-items: stretch;
 
-    padding:
-        14px
-        16px;
+gap: 12px;
 
-    border-radius: 18px;
+padding:
+    14px
+    16px;
 
-    background: #ffffff;
+border-radius: 18px;
 
-    border:
-        1px solid rgba(23, 32, 51, 0.08);
+background: #ffffff;
 
-    box-shadow:
-        0 8px 24px rgba(23, 32, 51, 0.07);
+border:
+    1px solid rgba(23, 32, 51, 0.08);
+
+box-shadow:
+    0 8px 24px rgba(23, 32, 51, 0.07);
+
 
 }
-
 
 /* =========================================================
 CONTEÚDO SUPERIOR DO ÁUDIO
@@ -1359,18 +1541,19 @@ CONTEÚDO SUPERIOR DO ÁUDIO
 
 .portfolio-audio-card-conteudo {
 
-    width: 100%;
 
-    display: flex;
+width: 100%;
 
-    align-items: center;
+display: flex;
 
-    gap: 14px;
+align-items: center;
 
-    min-width: 0;
+gap: 14px;
+
+min-width: 0;
+
 
 }
-
 
 /* =========================================================
 ÍCONE DO ÁUDIO
@@ -1378,35 +1561,37 @@ CONTEÚDO SUPERIOR DO ÁUDIO
 
 .portfolio-audio-card-icone {
 
-    width: 42px;
 
-    height: 42px;
+width: 42px;
 
-    min-width: 42px;
+height: 42px;
 
-    display: flex;
+min-width: 42px;
 
-    align-items: center;
+display: flex;
 
-    justify-content: center;
+align-items: center;
 
-    border-radius: 13px;
+justify-content: center;
 
-    background: #eef6ff;
+border-radius: 13px;
 
-    color: #1677d2;
+background: #eef6ff;
+
+color: #1677d2;
+
 
 }
-
 
 .portfolio-audio-card-icone svg {
 
-    width: 19px;
 
-    height: 19px;
+width: 19px;
+
+height: 19px;
+
 
 }
-
 
 /* =========================================================
 INFORMAÇÕES DO ÁUDIO
@@ -1414,18 +1599,19 @@ INFORMAÇÕES DO ÁUDIO
 
 .portfolio-audio-card-info {
 
-    min-width: 0;
 
-    flex: 1;
+min-width: 0;
 
-    display: flex;
+flex: 1;
 
-    flex-direction: column;
+display: flex;
 
-    gap: 4px;
+flex-direction: column;
+
+gap: 4px;
+
 
 }
-
 
 /* =========================================================
 TÍTULO DO ÁUDIO
@@ -1433,28 +1619,29 @@ TÍTULO DO ÁUDIO
 
 .portfolio-audio-card-info strong {
 
-    display: block;
 
-    margin: 0;
+display: block;
 
-    padding: 0;
+margin: 0;
 
-    color: #172033;
+padding: 0;
 
-    font-size: 14px;
+color: #172033;
 
-    font-weight: 700;
+font-size: 14px;
 
-    line-height: 1.35;
+font-weight: 700;
 
-    overflow: hidden;
+line-height: 1.35;
 
-    white-space: nowrap;
+overflow: hidden;
 
-    text-overflow: ellipsis;
+white-space: nowrap;
+
+text-overflow: ellipsis;
+
 
 }
-
 
 /* =========================================================
 DESCRIÇÃO DO ÁUDIO
@@ -1462,26 +1649,27 @@ DESCRIÇÃO DO ÁUDIO
 
 .portfolio-audio-card-info span {
 
-    display: block;
 
-    margin: 0;
+display: block;
 
-    padding: 0;
+margin: 0;
 
-    color: #667085;
+padding: 0;
 
-    font-size: 12px;
+color: #667085;
 
-    line-height: 1.4;
+font-size: 12px;
 
-    overflow: hidden;
+line-height: 1.4;
 
-    text-overflow: ellipsis;
+overflow: hidden;
 
-    white-space: nowrap;
+text-overflow: ellipsis;
+
+white-space: nowrap;
+
 
 }
-
 
 /* =========================================================
 PLAYER DE ÁUDIO
@@ -1489,399 +1677,19 @@ PLAYER DE ÁUDIO
 
 .portfolio-audio-card audio {
 
-    display: block;
 
-    width: 100%;
+display: block;
 
-    height: 38px;
+width: 100%;
 
-    margin: 0;
+height: 38px;
 
-    padding: 0;
+margin: 0;
+
+padding: 0;
+
 
 }
-
-
-/* =========================================================
-TABLET
-Até 900px
-========================================================= */
-
-@media (max-width: 900px) {
-
-    .portfolio-grid {
-
-        padding:
-            15px
-            10px
-            10px;
-
-        border-radius: 25px;
-
-    }
-
-
-    .portfolio-deck-card {
-
-        width: 60%;
-
-        max-width: 270px;
-
-        border-radius: 22px;
-
-    }
-
-
-    .portfolio-deck-indicadores {
-
-        margin-top: -22px;
-
-        gap: 5px;
-
-    }
-
-}
-
-
-/* =========================================================
-MOBILE
-Até 600px
-========================================================= */
-
-@media (max-width: 600px) {
-
-    .portfolio-grid {
-
-        padding:
-            13px
-            8px
-            9px;
-
-        border-radius: 23px;
-
-    }
-
-
-    .portfolio-grid::before {
-
-        width: 92%;
-
-        height: 72%;
-
-        filter: blur(18px);
-
-    }
-
-
-    .portfolio-grid::after {
-
-        width: 62%;
-
-        height: 40%;
-
-        filter: blur(20px);
-
-    }
-
-
-    .portfolio-deck-card {
-
-        width: 68%;
-
-        max-width: 270px;
-
-        border-radius: 20px;
-
-        box-shadow:
-            0 20px 44px rgba(23, 32, 51, 0.15),
-            0 6px 17px rgba(23, 32, 51, 0.07);
-
-    }
-
-
-    .portfolio-deck-caption {
-
-        padding:
-            18px
-            14px
-            28px;
-
-    }
-
-
-    .portfolio-deck-caption strong {
-
-        font-size: 14px;
-
-    }
-
-
-    .portfolio-deck-caption span {
-
-        font-size: 12px;
-
-    }
-
-
-    .portfolio-deck-indicadores {
-
-        margin-top: -20px;
-
-        gap: 5px;
-
-    }
-
-
-    .portfolio-deck-indicador {
-
-        width: 6px;
-
-        height: 6px;
-
-        min-width: 6px;
-
-        min-height: 6px;
-
-    }
-
-
-    .portfolio-deck-indicador[aria-current="true"] {
-
-        width: 8px;
-
-        height: 8px;
-
-        min-width: 8px;
-
-        min-height: 8px;
-
-    }
-
-
-    .portfolio-audio-card {
-
-        padding:
-            12px;
-
-        gap: 10px;
-
-        border-radius: 16px;
-
-    }
-
-
-    .portfolio-audio-card-conteudo {
-
-        gap: 10px;
-
-    }
-
-
-    .portfolio-audio-card-icone {
-
-        width: 38px;
-
-        height: 38px;
-
-        min-width: 38px;
-
-        border-radius: 11px;
-
-    }
-
-
-    .portfolio-audio-card-info strong {
-
-        font-size: 13px;
-
-    }
-
-
-    .portfolio-audio-card-info span {
-
-        font-size: 11px;
-
-    }
-
-
-    .portfolio-audio-card audio {
-
-        height: 36px;
-
-    }
-
-}
-
-
-/* =========================================================
-MOBILE PEQUENO
-Até 420px
-========================================================= */
-
-@media (max-width: 420px) {
-
-    .portfolio-grid {
-
-        padding:
-            12px
-            6px
-            8px;
-
-        border-radius: 21px;
-
-    }
-
-
-    .portfolio-deck-card {
-
-        width: 72%;
-
-        max-width: 270px;
-
-        border-radius: 18px;
-
-    }
-
-
-    .portfolio-deck-caption {
-
-        padding:
-            16px
-            11px
-            25px;
-
-    }
-
-
-    .portfolio-deck-caption strong {
-
-        font-size: 13px;
-
-    }
-
-
-    .portfolio-deck-caption span {
-
-        font-size: 11px;
-
-    }
-
-
-    .portfolio-deck-indicadores {
-
-        margin-top: -19px;
-
-        gap: 4px;
-
-    }
-
-
-    .portfolio-deck-indicador {
-
-        width: 6px;
-
-        height: 6px;
-
-        min-width: 6px;
-
-        min-height: 6px;
-
-    }
-
-
-    .portfolio-deck-indicador[aria-current="true"] {
-
-        width: 8px;
-
-        height: 8px;
-
-        min-width: 8px;
-
-        min-height: 8px;
-
-    }
-
-}
-
-
-/* =========================================================
-MUITO PEQUENO
-Até 340px
-========================================================= */
-
-@media (max-width: 340px) {
-
-    .portfolio-deck-card {
-
-        width: 72%;
-
-        max-width: 270px;
-
-        border-radius: 17px;
-
-    }
-
-
-    .portfolio-deck-caption {
-
-        padding:
-            15px
-            10px
-            23px;
-
-    }
-
-
-    .portfolio-deck-caption strong {
-
-        font-size: 12px;
-
-    }
-
-
-    .portfolio-deck-caption span {
-
-        font-size: 10px;
-
-    }
-
-
-    .portfolio-deck-indicadores {
-
-        margin-top: -18px;
-
-        gap: 4px;
-
-    }
-
-
-    .portfolio-deck-indicador {
-
-        width: 6px;
-
-        height: 6px;
-
-        min-width: 6px;
-
-        min-height: 6px;
-
-    }
-
-
-    .portfolio-deck-indicador[aria-current="true"] {
-
-        width: 8px;
-
-        height: 8px;
-
-        min-width: 8px;
-
-        min-height: 8px;
-
-    }
-
-}
-
 
 /* =========================================================
 ACESSIBILIDADE
@@ -1889,17 +1697,19 @@ ACESSIBILIDADE
 
 @media (prefers-reduced-motion: reduce) {
 
-    .portfolio-deck-card {
 
-        transition: none !important;
+.portfolio-deck-card {
 
-    }
+    transition: none !important;
+
+}
 
 
-    .portfolio-deck-indicador {
+.portfolio-deck-indicador {
 
-        transition: none !important;
+    transition: none !important;
 
-    }
+}
+
 
 }

@@ -26,7 +26,9 @@ Pausar vídeos quando saem completamente da viewport.
 Reproduzir novamente quando o vídeo volta a ficar
 completamente visível.
 Calcular cores predominantes das imagens do portfólio.
-Alimentar o fundo dinâmico da área do portfólio.
+Alimentar o fundo dinâmico de toda a página.
+Controlar a intensidade do fundo conforme o portfólio
+entra ou sai da viewport.
 Manter compatibilidade com os demais módulos
 da página pública.
 
@@ -34,11 +36,17 @@ Relação com outros módulos:
 
 ApresentarPerfil.js
 chama este módulo para renderizar o portfólio.
+
 PerfilPublico / módulos de dados
 fornecem os dados do portfólio.
+
 apresentar-perfil-portfolio.css
-controla toda a apresentação visual estática
-e utiliza as variáveis de cor fornecidas por este módulo.
+controla a apresentação visual do portfólio.
+
+apresentar-perfil-fundo.css
+controla visualmente o fundo dinâmico da página
+utilizando as variáveis fornecidas por este módulo.
+
 O HTML fornece:
 #portfolioGrid
 #videoList
@@ -54,6 +62,7 @@ let portfolio = [];
 let inicializado = false;
 
 let galeria = {
+
 
 itens: [],
 
@@ -75,6 +84,7 @@ bloqueado: false,
 
 animando: false
 
+
 };
 
 let ignorarProximoClique = false;
@@ -89,32 +99,50 @@ let observerVideos = null;
 
 /*
 
-Indica se o usuário está realizando um swipe horizontal.
-Enquanto estiver true, nenhum vídeo deve reproduzir.
-*/
+* Indica se o usuário está realizando um swipe horizontal.
+* Enquanto estiver true, nenhum vídeo deve reproduzir.
+  */
 
 let videosPausadosPorSwipe = false;
 
 /* =========================================================
-FUNDO DINÂMICO DO PORTFÓLIO
+FUNDO DINÂMICO DA PÁGINA
+========================
 
-Este estado controla somente o cálculo das cores
-utilizadas pelo fundo visual da área do portfólio.
+Este estado controla as cores utilizadas pelo fundo
+dinâmico de toda a página pública.
+
+IMPORTANTE:
 
 O JavaScript NÃO cria o gradiente.
 
-Ele apenas calcula as cores e envia os valores
-para o CSS através de variáveis customizadas.
+O JavaScript apenas:
 
-O CSS continua sendo responsável por toda a
-apresentação visual.
+1. analisa a imagem ativa;
+2. identifica as cores predominantes;
+3. envia as cores para o BODY;
+4. calcula a intensidade de visibilidade;
+5. informa essa intensidade ao CSS.
+
+O arquivo:
+
+apresentar-perfil-fundo.css
+
+é responsável por desenhar o efeito visual.
+
+O #portfolioGrid NÃO recebe mais o fundo dinâmico.
+
 ========================================================= */
 
 let fundoDinamico = {
 
+
 chaveAtual: "",
 
-processamento: 0
+processamento: 0,
+
+scrollRegistrado: false
+
 
 };
 
@@ -123,6 +151,7 @@ CONFIGURAÇÃO
 ========================================================= */
 
 const CONFIG = {
+
 
 elementos: {
 
@@ -197,8 +226,6 @@ fundoDinamico: {
     /*
      * Tamanho reduzido do canvas utilizado para
      * análise das imagens.
-     *
-     * Não precisamos analisar uma imagem inteira.
      */
 
     larguraCanvas: 40,
@@ -237,6 +264,7 @@ fundoDinamico: {
 
 }
 
+
 };
 
 /* =========================================================
@@ -244,6 +272,7 @@ UTILITÁRIOS
 ========================================================= */
 
 function obterUtils() {
+
 
 if (window.PerfilUtils) {
 
@@ -253,9 +282,11 @@ if (window.PerfilUtils) {
 
 return null;
 
+
 }
 
 function obterElemento(id) {
+
 
 if (!id) {
 
@@ -266,9 +297,11 @@ if (!id) {
 
 return document.getElementById(id);
 
+
 }
 
 function escaparHtml(valor) {
+
 
 if (
     valor === null ||
@@ -292,9 +325,11 @@ return String(valor)
 
     .replace(/'/g, "&#039;");
 
+
 }
 
 function renderizarIcones(container) {
+
 
 if (!container) {
 
@@ -332,49 +367,327 @@ try {
 
 }
 
+
 }
 
 /* =========================================================
-FUNDO DINÂMICO
+FUNDO DINÂMICO DA PÁGINA
 ========================================================= */
 
 /*
 
-Retorna o container principal onde o portfólio é
-apresentado.
-*/
+* Retorna o BODY da página.
+*
+* O fundo dinâmico agora pertence à página inteira,
+* e não mais ao container do portfólio.
+  */
 
-function obterContainerPortfolio() {
+function obterBody() {
 
-return obterElemento(
-    CONFIG.elementos.portfolioGrid
+
+return document.body || null;
+
+
+}
+
+/*
+
+* Retorna as cores fallback configuradas.
+  */
+
+function obterCoresFallbackDinamica() {
+
+
+return [
+
+    CONFIG.fundoDinamico.corFallback1,
+
+    CONFIG.fundoDinamico.corFallback2,
+
+    CONFIG.fundoDinamico.corFallback3
+
+];
+
+
+}
+
+/*
+
+* Aplica as cores fallback ao BODY.
+  */
+
+function aplicarCoresFundoFallback() {
+
+
+const body =
+    obterBody();
+
+
+if (!body) {
+
+    return;
+
+}
+
+
+const cores =
+    obterCoresFallbackDinamica();
+
+
+body.style.setProperty(
+    "--perfil-fundo-cor-1",
+    cores[0]
 );
 
+
+body.style.setProperty(
+    "--perfil-fundo-cor-2",
+    cores[1]
+);
+
+
+body.style.setProperty(
+    "--perfil-fundo-cor-3",
+    cores[2]
+);
+
+
 }
 
 /*
 
-Converte valores RGB para uma cor CSS rgba().
-*/
+* Aplica as três cores calculadas ao BODY.
+*
+* O JavaScript apenas fornece os valores.
+* O CSS continua responsável pelo gradiente.
+  */
 
-function converterRgbParaCss(
-r,
-g,
-b,
-a
+function aplicarCoresFundoDinamico(
+cores
 ) {
 
-return `rgba(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)}, ${a})`;
+
+const body =
+    obterBody();
+
+
+if (
+    !body ||
+    !Array.isArray(cores) ||
+    cores.length < 3
+) {
+
+    aplicarCoresFundoFallback();
+
+    return;
+
+}
+
+
+body.style.setProperty(
+    "--perfil-fundo-cor-1",
+    cores[0]
+);
+
+
+body.style.setProperty(
+    "--perfil-fundo-cor-2",
+    cores[1]
+);
+
+
+body.style.setProperty(
+    "--perfil-fundo-cor-3",
+    cores[2]
+);
+
 
 }
 
 /*
 
-Calcula uma aproximação simples da saturação da cor.
-Cores mais saturadas recebem um pequeno peso extra,
-porque normalmente representam melhor a identidade
-visual da imagem.
-*/
+* Calcula a intensidade do fundo com base na
+* quantidade do portfólio atualmente visível.
+*
+* Quanto mais o portfólio estiver visível,
+* mais forte fica o efeito.
+*
+* Conforme o usuário rola para baixo e o portfólio
+* desaparece, a intensidade vai para zero.
+  */
+
+function atualizarIntensidadeFundo() {
+
+
+const body =
+    obterBody();
+
+
+const portfolioGrid =
+    obterElemento(
+        CONFIG.elementos.portfolioGrid
+    );
+
+
+if (
+    !body ||
+    !portfolioGrid
+) {
+
+    return;
+
+}
+
+
+const rect =
+    portfolioGrid.getBoundingClientRect();
+
+
+const viewportHeight =
+    window.innerHeight ||
+    document.documentElement.clientHeight;
+
+
+/*
+ * Se o portfólio estiver completamente fora
+ * da viewport, o efeito desaparece.
+ */
+
+if (
+    rect.bottom <= 0 ||
+    rect.top >= viewportHeight
+) {
+
+    body.style.setProperty(
+        "--perfil-fundo-opacidade",
+        "0"
+    );
+
+
+    body.classList.remove(
+        "perfil-fundo-dinamico-visivel"
+    );
+
+
+    return;
+
+}
+
+
+const altura =
+    Math.max(
+        1,
+        rect.height
+    );
+
+
+const visivel =
+
+    Math.min(
+        rect.bottom,
+        viewportHeight
+    ) -
+
+    Math.max(
+        rect.top,
+        0
+    );
+
+
+let percentual =
+
+    visivel /
+    Math.min(
+        altura,
+        viewportHeight
+    );
+
+
+percentual =
+
+    Math.max(
+        0,
+        Math.min(
+            1,
+            percentual
+        )
+    );
+
+
+/*
+ * Limita a intensidade máxima para manter
+ * o efeito elegante e discreto.
+ */
+
+const intensidade =
+    percentual * 0.85;
+
+
+body.style.setProperty(
+    "--perfil-fundo-opacidade",
+    intensidade.toFixed(3)
+);
+
+
+body.classList.add(
+    "perfil-fundo-dinamico-visivel"
+);
+
+
+}
+
+/*
+
+* Registra os eventos responsáveis por acompanhar
+* a posição do portfólio na tela.
+  */
+
+function configurarControleVisibilidadeFundo() {
+
+
+if (
+    fundoDinamico.scrollRegistrado
+) {
+
+    atualizarIntensidadeFundo();
+
+    return;
+
+}
+
+
+window.addEventListener(
+    "scroll",
+    atualizarIntensidadeFundo,
+    {
+        passive: true
+    }
+);
+
+
+window.addEventListener(
+    "resize",
+    atualizarIntensidadeFundo
+);
+
+
+fundoDinamico.scrollRegistrado =
+    true;
+
+
+atualizarIntensidadeFundo();
+
+
+}
+
+/*
+
+* Calcula uma aproximação simples da saturação da cor.
+*
+* Cores mais saturadas recebem um pequeno peso extra,
+* porque normalmente representam melhor a identidade
+* visual da imagem.
+  */
 
 function calcularSaturacao(
 r,
@@ -382,14 +695,26 @@ g,
 b
 ) {
 
+
 const maior =
-    Math.max(r, g, b);
+    Math.max(
+        r,
+        g,
+        b
+    );
+
 
 const menor =
-    Math.min(r, g, b);
+    Math.min(
+        r,
+        g,
+        b
+    );
 
 
-if (maior === 0) {
+if (
+    maior === 0
+) {
 
     return 0;
 
@@ -397,29 +722,37 @@ if (maior === 0) {
 
 
 return (
-    maior - menor
+    maior -
+    menor
 ) / maior;
+
 
 }
 
 /*
 
-Calcula a distância entre duas cores RGB.
-*/
+* Calcula a distância entre duas cores RGB.
+  */
 
 function calcularDistanciaCores(
 corA,
 corB
 ) {
 
+
 const diferencaR =
-    corA.r - corB.r;
+    corA.r -
+    corB.r;
+
 
 const diferencaG =
-    corA.g - corB.g;
+    corA.g -
+    corB.g;
+
 
 const diferencaB =
-    corA.b - corB.b;
+    corA.b -
+    corB.b;
 
 
 return Math.sqrt(
@@ -441,129 +774,45 @@ return Math.sqrt(
 
 );
 
-}
-
-/*
-
-Retorna as cores de fallback configuradas.
-*/
-
-function obterCoresFallbackDinamica() {
-
-return [
-
-    CONFIG.fundoDinamico.corFallback1,
-
-    CONFIG.fundoDinamico.corFallback2,
-
-    CONFIG.fundoDinamico.corFallback3
-
-];
 
 }
 
 /*
 
-Aplica as cores fallback ao container.
-*/
+* Converte valores RGB para uma cor CSS rgba().
+  */
 
-function aplicarCoresFundoFallback() {
-
-const container =
-    obterContainerPortfolio();
-
-
-if (!container) {
-
-    return;
-
-}
-
-
-const cores =
-    obterCoresFallbackDinamica();
-
-
-container.style.setProperty(
-    "--portfolio-cor-1",
-    cores[0]
-);
-
-
-container.style.setProperty(
-    "--portfolio-cor-2",
-    cores[1]
-);
-
-
-container.style.setProperty(
-    "--portfolio-cor-3",
-    cores[2]
-);
-
-}
-
-/*
-
-Aplica as três cores calculadas ao CSS.
-O JavaScript apenas fornece os valores.
-O CSS continua responsável pelo gradiente.
-*/
-
-function aplicarCoresFundoDinamico(
-cores
+function converterRgbParaCss(
+r,
+g,
+b,
+a
 ) {
 
-const container =
-    obterContainerPortfolio();
 
+return `rgba(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)}, ${a})`;
 
-if (
-    !container ||
-    !Array.isArray(cores) ||
-    cores.length < 3
-) {
-
-    aplicarCoresFundoFallback();
-
-    return;
-
-}
-
-
-container.style.setProperty(
-    "--portfolio-cor-1",
-    cores[0]
-);
-
-
-container.style.setProperty(
-    "--portfolio-cor-2",
-    cores[1]
-);
-
-
-container.style.setProperty(
-    "--portfolio-cor-3",
-    cores[2]
-);
 
 }
 
 /*
 
-Extrai as cores predominantes de uma imagem.
-A imagem é carregada em um objeto Image separado.
-Isso é importante:
-NÃO alteramos o <img> que aparece no card.
-Portanto, mesmo que o servidor não permita
-leitura via canvas/CORS, a imagem original
-continuará funcionando normalmente.
-*/
+* Extrai as cores predominantes de uma imagem.
+*
+* A imagem é carregada em um objeto Image separado.
+* Isso é importante:
+*
+* NÃO alteramos o <img> que aparece no card.
+*
+* Portanto, mesmo que o servidor não permita
+* leitura via canvas/CORS, a imagem original
+* continuará funcionando normalmente.
+  */
 
 function extrairCoresImagem(
 url
 ) {
+
 
 return new Promise(
 
@@ -1081,8 +1330,7 @@ return new Promise(
                      * Converte para cores CSS.
                      *
                      * A primeira é a mais forte.
-                     * As seguintes recebem transparência menor
-                     * no CSS.
+                     * As seguintes recebem transparência menor.
                      */
 
                     const cores = [
@@ -1098,6 +1346,7 @@ return new Promise(
                             0.30
 
                         ),
+
 
                         converterRgbParaCss(
 
@@ -1119,6 +1368,7 @@ return new Promise(
                             0.18
 
                         ),
+
 
                         converterRgbParaCss(
 
@@ -1192,14 +1442,18 @@ return new Promise(
 
 );
 
+
 }
 
 /*
 
-Atualiza o fundo de acordo com o card atualmente ativo.
-*/
+* Atualiza o fundo de acordo com o card atualmente ativo.
+*
+* Agora as cores são enviadas para o BODY da página.
+  */
 
 function atualizarFundoDinamico() {
+
 
 if (
     !CONFIG.fundoDinamico.ativado
@@ -1210,11 +1464,11 @@ if (
 }
 
 
-const container =
-    obterContainerPortfolio();
+const body =
+    obterBody();
 
 
-if (!container) {
+if (!body) {
 
     return;
 
@@ -1234,6 +1488,9 @@ if (!item) {
 
 
     aplicarCoresFundoFallback();
+
+
+    atualizarIntensidadeFundo();
 
     return;
 
@@ -1256,6 +1513,8 @@ if (
     chave ===
     fundoDinamico.chaveAtual
 ) {
+
+    atualizarIntensidadeFundo();
 
     return;
 
@@ -1281,7 +1540,7 @@ const processamentoAtual =
 /*
  * Vídeos continuam utilizando o fallback.
  *
- * Não alteramos o funcionamento atual dos vídeos.
+ * Não analisamos frames de vídeo.
  */
 
 if (
@@ -1289,6 +1548,8 @@ if (
 ) {
 
     aplicarCoresFundoFallback();
+
+    atualizarIntensidadeFundo();
 
     return;
 
@@ -1340,6 +1601,9 @@ extrairCoresImagem(
 
             }
 
+
+            atualizarIntensidadeFundo();
+
         }
 
     )
@@ -1366,18 +1630,27 @@ extrairCoresImagem(
 
             aplicarCoresFundoFallback();
 
+
+            atualizarIntensidadeFundo();
+
         }
 
     );
+
 
 }
 
 /*
 
-Reseta completamente o estado do fundo dinâmico.
-*/
+* Reseta completamente o estado do fundo dinâmico.
+  */
 
 function resetarFundoDinamico() {
+
+
+const body =
+    obterBody();
+
 
 fundoDinamico.chaveAtual =
     "";
@@ -1386,7 +1659,23 @@ fundoDinamico.chaveAtual =
 fundoDinamico.processamento++;
 
 
-aplicarCoresFundoFallback();
+if (body) {
+
+    aplicarCoresFundoFallback();
+
+
+    body.style.setProperty(
+        "--perfil-fundo-opacidade",
+        "0"
+    );
+
+
+    body.classList.remove(
+        "perfil-fundo-dinamico-visivel"
+    );
+
+}
+
 
 }
 
@@ -1394,7 +1683,10 @@ aplicarCoresFundoFallback();
 NORMALIZAÇÃO
 ========================================================= */
 
-function normalizarTipoMidia(item) {
+function normalizarTipoMidia(
+item
+) {
+
 
 if (!item) {
 
@@ -1503,9 +1795,13 @@ if (
 
 return "imagem";
 
+
 }
 
-function obterUrlMidia(item) {
+function obterUrlMidia(
+item
+) {
+
 
 if (!item) {
 
@@ -1538,9 +1834,13 @@ return (
 
 );
 
+
 }
 
-function obterTitulo(item) {
+function obterTitulo(
+item
+) {
+
 
 if (!item) {
 
@@ -1565,9 +1865,13 @@ return (
 
 );
 
+
 }
 
-function obterDescricao(item) {
+function obterDescricao(
+item
+) {
+
 
 if (!item) {
 
@@ -1590,12 +1894,14 @@ return (
 
 );
 
+
 }
 
 function normalizarItem(
 item,
 indice
 ) {
+
 
 if (!item) {
 
@@ -1634,9 +1940,13 @@ return {
 
 };
 
+
 }
 
-function normalizarPortfolio(lista) {
+function normalizarPortfolio(
+lista
+) {
+
 
 if (!Array.isArray(lista)) {
 
@@ -1661,9 +1971,13 @@ return lista
 
     .filter(Boolean);
 
+
 }
 
-function obterPorTipo(tipo) {
+function obterPorTipo(
+tipo
+) {
+
 
 return portfolio.filter(
 
@@ -1681,6 +1995,7 @@ return portfolio.filter(
 
 );
 
+
 }
 
 /* =========================================================
@@ -1691,6 +2006,7 @@ function renderizarEstadoVazio(
 container,
 mensagem
 ) {
+
 
 if (!container) {
 
@@ -1728,6 +2044,7 @@ container.innerHTML = `
 
 renderizarIcones(container);
 
+
 }
 
 /* =========================================================
@@ -1735,6 +2052,7 @@ PREPARAÇÃO DOS CONTAINERS
 ========================================================= */
 
 function prepararContainers() {
+
 
 const videoList =
 
@@ -1767,6 +2085,7 @@ if (audioList) {
 
 }
 
+
 }
 
 /* =========================================================
@@ -1774,6 +2093,7 @@ GALERIA PRINCIPAL
 ========================================================= */
 
 function renderizarGaleria() {
+
 
 const container =
 
@@ -1976,9 +2296,18 @@ configurarObserverVideos();
 atualizarFundoDinamico();
 
 
+/*
+ * Ativa o controle que acompanha a visibilidade
+ * do portfólio durante o scroll.
+ */
+
+configurarControleVisibilidadeFundo();
+
+
 renderizarIcones(
     container
 );
+
 
 }
 
@@ -1989,6 +2318,7 @@ BOTÕES DE NAVEGAÇÃO LATERAL
 function criarBotoesNavegacaoGaleria(
 container
 ) {
+
 
 if (!container) {
 
@@ -2112,6 +2442,7 @@ container.appendChild(
     botaoProximo
 );
 
+
 }
 
 /* =========================================================
@@ -2121,6 +2452,7 @@ CONFIGURAÇÃO VISUAL BASE DO CARD
 function configurarEstiloCard(
 card
 ) {
+
 
 if (!card) {
 
@@ -2137,6 +2469,7 @@ card.style.transition =
 
     `filter ${CONFIG.deck.duracao}ms ease`;
 
+
 }
 
 /* =========================================================
@@ -2147,6 +2480,7 @@ function criarCardGaleriaImagem(
 item,
 indice
 ) {
+
 
 const card =
 
@@ -2223,6 +2557,7 @@ adicionarLegendaCard(
 
 return card;
 
+
 }
 
 /* =========================================================
@@ -2233,6 +2568,7 @@ function criarCardGaleriaVideo(
 item,
 indice
 ) {
+
 
 const card =
 
@@ -2334,6 +2670,7 @@ adicionarLegendaCard(
 
 return card;
 
+
 }
 
 /* =========================================================
@@ -2344,6 +2681,7 @@ function adicionarLegendaCard(
 card,
 item
 ) {
+
 
 if (
     !item._titulo &&
@@ -2410,6 +2748,7 @@ card.appendChild(
     informacoes
 );
 
+
 }
 
 /* =========================================================
@@ -2420,6 +2759,7 @@ function criarIndicadoresGaleria(
 container,
 quantidade
 ) {
+
 
 removerIndicadoresGaleria();
 
@@ -2534,9 +2874,11 @@ container.appendChild(
     indicadores
 );
 
+
 }
 
 function removerIndicadoresGaleria() {
+
 
 const container =
 
@@ -2565,9 +2907,11 @@ if (indicadores) {
 
 }
 
+
 }
 
 function atualizarIndicadoresGaleria() {
+
 
 const container =
 
@@ -2624,6 +2968,7 @@ indicadores.forEach(
 
 );
 
+
 }
 
 /* =========================================================
@@ -2633,6 +2978,7 @@ ERROS DE IMAGEM
 function configurarErrosImagens(
 container
 ) {
+
 
 if (!container) {
 
@@ -2711,6 +3057,7 @@ imagens.forEach(
 
 );
 
+
 }
 
 /* =========================================================
@@ -2720,6 +3067,7 @@ ERROS DE VÍDEO
 function configurarErrosVideos(
 container
 ) {
+
 
 if (!container) {
 
@@ -2775,6 +3123,7 @@ videos.forEach(
 
 );
 
+
 }
 
 /* =========================================================
@@ -2782,6 +3131,7 @@ DECK
 ========================================================= */
 
 function obterDeck() {
+
 
 const container =
 
@@ -2801,9 +3151,11 @@ return container.querySelector(
     ".portfolio-deck"
 );
 
+
 }
 
 function obterCardsDeck() {
+
 
 const deck =
     obterDeck();
@@ -2824,11 +3176,13 @@ return Array.from(
 
 );
 
+
 }
 
 function obterCardPorIndice(
 indice
 ) {
+
 
 const deck =
     obterDeck();
@@ -2847,11 +3201,13 @@ return deck.querySelector(
 
 );
 
+
 }
 
 function normalizarIndice(
 indice
 ) {
+
 
 const total =
     galeria.itens.length;
@@ -2904,6 +3260,7 @@ resultado =
 
 return resultado;
 
+
 }
 
 function obterDiferencaCircular(
@@ -2911,6 +3268,7 @@ indice,
 atual,
 total
 ) {
+
 
 if (total <= 1) {
 
@@ -2947,6 +3305,7 @@ if (
 
 return diferenca;
 
+
 }
 
 /* =========================================================
@@ -2957,6 +3316,7 @@ function aplicarPosicoesDeck(
 deslocamento = 0,
 animar = true
 ) {
+
 
 const cards =
     obterCardsDeck();
@@ -3340,6 +3700,7 @@ atualizarVideoAtivo();
 
 ajustarAlturaDeck();
 
+
 }
 
 /* =========================================================
@@ -3347,6 +3708,7 @@ ALTURA DO DECK
 ========================================================= */
 
 function ajustarAlturaDeck() {
+
 
 const deck =
     obterDeck();
@@ -3481,6 +3843,7 @@ videos.forEach(
 
 );
 
+
 }
 
 /* =========================================================
@@ -3488,6 +3851,7 @@ CONFIGURAÇÃO INICIAL DO DECK
 ========================================================= */
 
 function configurarDeck() {
+
 
 const deck =
     obterDeck();
@@ -3511,6 +3875,7 @@ configurarEventosDeck();
 
 ajustarAlturaDeck();
 
+
 }
 
 /* =========================================================
@@ -3518,6 +3883,7 @@ EVENTOS
 ========================================================= */
 
 function configurarEventosDeck() {
+
 
 const deck =
     obterDeck();
@@ -3572,9 +3938,11 @@ window.addEventListener(
 eventosDeckRegistrados =
     true;
 
+
 }
 
 function removerEventosDeck() {
+
 
 const deck =
     obterDeck();
@@ -3633,6 +4001,7 @@ window.removeEventListener(
 eventosDeckRegistrados =
     false;
 
+
 }
 
 /* =========================================================
@@ -3642,6 +4011,7 @@ INÍCIO DO ARRASTE
 function iniciarArrasteDeck(
 evento
 ) {
+
 
 if (
     galeria.bloqueado ||
@@ -3710,6 +4080,7 @@ if (deck) {
 
 }
 
+
 }
 
 /* =========================================================
@@ -3719,6 +4090,7 @@ MOVIMENTO DO ARRASTE
 function moverArrasteDeck(
 evento
 ) {
+
 
 if (
     !galeria.arrastando ||
@@ -3851,6 +4223,7 @@ if (deck) {
 
 }
 
+
 }
 
 /* =========================================================
@@ -3860,6 +4233,7 @@ FINALIZAÇÃO DO ARRASTE
 function finalizarArrasteDeck(
 evento
 ) {
+
 
 if (
     !galeria.arrastando ||
@@ -3998,6 +4372,7 @@ setTimeout(
 
 );
 
+
 }
 
 /* =========================================================
@@ -4007,6 +4382,7 @@ CANCELAMENTO
 function cancelarArrasteDeck(
 evento
 ) {
+
 
 if (
     !galeria.arrastando
@@ -4064,6 +4440,7 @@ setTimeout(
 
 );
 
+
 }
 
 /* =========================================================
@@ -4074,6 +4451,7 @@ function liberarCapturaPonteiro(
 deck,
 ponteiroId
 ) {
+
 
 if (
     !deck ||
@@ -4111,6 +4489,7 @@ if (
 
 }
 
+
 }
 
 /* =========================================================
@@ -4118,6 +4497,7 @@ AVANÇAR
 ========================================================= */
 
 function avancarGaleria() {
+
 
 if (
     galeria.animando ||
@@ -4191,6 +4571,7 @@ setTimeout(
 
 );
 
+
 }
 
 /* =========================================================
@@ -4198,6 +4579,7 @@ VOLTAR
 ========================================================= */
 
 function voltarGaleria() {
+
 
 if (
     galeria.animando ||
@@ -4270,6 +4652,7 @@ setTimeout(
 
 );
 
+
 }
 
 /* =========================================================
@@ -4277,6 +4660,7 @@ RESTAURAR CARD
 ========================================================= */
 
 function restaurarCardAtual() {
+
 
 if (
     galeria.animando
@@ -4314,6 +4698,7 @@ setTimeout(
 
 );
 
+
 }
 
 /* =========================================================
@@ -4323,6 +4708,7 @@ CLIQUE APÓS SWIPE
 function controlarCliqueDepoisSwipe(
 evento
 ) {
+
 
 if (
     ignorarProximoClique
@@ -4337,6 +4723,7 @@ if (
 
 }
 
+
 }
 
 /* =========================================================
@@ -4344,6 +4731,7 @@ CONTROLE DOS VÍDEOS
 ========================================================= */
 
 function obterVideosDeck() {
+
 
 const deck =
     obterDeck();
@@ -4364,9 +4752,11 @@ return Array.from(
 
 );
 
+
 }
 
 function pausarTodosVideos() {
+
 
 const videos =
     obterVideosDeck();
@@ -4397,9 +4787,11 @@ videos.forEach(
 
 );
 
+
 }
 
 function obterVideoAtivo() {
+
 
 const card =
     obterCardPorIndice(
@@ -4418,11 +4810,13 @@ return card.querySelector(
     "video.portfolio-deck-media"
 );
 
+
 }
 
 function estaCompletamenteVisivel(
 elemento
 ) {
+
 
 if (!elemento) {
 
@@ -4463,11 +4857,13 @@ return (
 
 );
 
+
 }
 
 function reproduzirVideoSePermitido(
 video
 ) {
+
 
 if (!video) {
 
@@ -4577,9 +4973,11 @@ try {
 
 }
 
+
 }
 
 function atualizarVideoAtivo() {
+
 
 const videos =
     obterVideosDeck();
@@ -4711,6 +5109,7 @@ videos.forEach(
 
 );
 
+
 }
 
 /* =========================================================
@@ -4718,6 +5117,7 @@ OBSERVER DOS VÍDEOS
 ========================================================= */
 
 function configurarObserverVideos() {
+
 
 destruirObserverVideos();
 
@@ -4943,9 +5343,11 @@ try {
 
 }
 
+
 }
 
 function destruirObserverVideos() {
+
 
 if (observerVideos) {
 
@@ -4967,6 +5369,7 @@ if (observerVideos) {
 
 }
 
+
 }
 
 /* =========================================================
@@ -4974,6 +5377,7 @@ RESIZE
 ========================================================= */
 
 function ajustarDeckNoResize() {
+
 
 aplicarPosicoesDeck(
 
@@ -4991,6 +5395,10 @@ ajustarAlturaDeck();
 
 atualizarVideoAtivo();
 
+
+atualizarIntensidadeFundo();
+
+
 }
 
 /* =========================================================
@@ -4998,6 +5406,7 @@ DESMONTAR INTERAÇÃO
 ========================================================= */
 
 function desmontarInteracaoDeck() {
+
 
 removerEventosDeck();
 
@@ -5044,11 +5453,13 @@ if (deck) {
 
 }
 
+
 }
 
 function resetarEstiloContainerDeck(
 deck
 ) {
+
 
 if (!deck) {
 
@@ -5060,6 +5471,7 @@ if (!deck) {
 deck.style.cursor =
     "grab";
 
+
 }
 
 /* =========================================================
@@ -5067,6 +5479,7 @@ deck.style.cursor =
 ========================================================= */
 
 function renderizarAudios() {
+
 
 const container =
 
@@ -5134,12 +5547,14 @@ renderizarIcones(
     container
 );
 
+
 }
 
 function criarCardAudio(
 item,
 indice
 ) {
+
 
 const card =
 
@@ -5214,6 +5629,7 @@ card.innerHTML = `
 
 return card;
 
+
 }
 
 /* =========================================================
@@ -5223,6 +5639,7 @@ RENDERIZAÇÃO COMPLETA
 function renderizar(
 lista
 ) {
+
 
 if (
     Array.isArray(lista)
@@ -5252,6 +5669,7 @@ inicializado =
 
 return portfolio;
 
+
 }
 
 /* =========================================================
@@ -5261,6 +5679,7 @@ INICIALIZAÇÃO
 function inicializar(
 lista
 ) {
+
 
 if (
     Array.isArray(lista)
@@ -5286,6 +5705,7 @@ inicializado =
 
 return portfolio;
 
+
 }
 
 /* =========================================================
@@ -5295,6 +5715,7 @@ ATUALIZAÇÃO
 function atualizar(
 lista
 ) {
+
 
 if (
     !Array.isArray(lista)
@@ -5325,6 +5746,7 @@ return renderizar(
     portfolio
 );
 
+
 }
 
 /* =========================================================
@@ -5333,35 +5755,44 @@ GETTERS
 
 function obterPortfolio() {
 
+
 return portfolio.slice();
+
 
 }
 
 function obterImagens() {
 
+
 return obterPorTipo(
     "imagem"
 );
+
 
 }
 
 function obterVideos() {
 
+
 return obterPorTipo(
     "video"
 );
+
 
 }
 
 function obterAudios() {
 
+
 return obterPorTipo(
     "audio"
 );
 
+
 }
 
 function obterEstadoGaleria() {
+
 
 return {
 
@@ -5379,6 +5810,7 @@ return {
 
 };
 
+
 }
 
 /* =========================================================
@@ -5388,6 +5820,7 @@ NAVEGAÇÃO DIRETA
 function irParaItem(
 indice
 ) {
+
 
 if (
     !galeria.itens.length
@@ -5483,6 +5916,7 @@ setTimeout(
 
 );
 
+
 }
 
 /* =========================================================
@@ -5490,6 +5924,7 @@ LIMPEZA
 ========================================================= */
 
 function limpar() {
+
 
 desmontarInteracaoDeck();
 
@@ -5581,6 +6016,7 @@ if (audioList) {
 inicializado =
     false;
 
+
 }
 
 /* =========================================================
@@ -5588,6 +6024,7 @@ API PÚBLICA
 ========================================================= */
 
 const ApresentarPerfilPortfolio = {
+
 
 renderizar,
 
@@ -5626,6 +6063,7 @@ estaInicializado:
 normalizarItem,
 
 normalizarPortfolio
+
 
 };
 
