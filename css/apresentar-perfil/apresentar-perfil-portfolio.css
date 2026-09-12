@@ -865,7 +865,7 @@ max-width: 270px;
 
 aspect-ratio: 9 / 16;
 
-border-radius: 24px;
+border-radius: 15px;
 
 overflow: hidden;
 
@@ -1237,9 +1237,9 @@ flex:
     0
     auto;
 
-width: 6px;
+width: 10px;
 
-height: 6px;
+height: 5px;
 
 min-width: 6px;
 
@@ -1249,7 +1249,7 @@ margin: 0;
 
 padding: 0;
 
-border: 0;
+border: 1px solid #464646;
 
 border-radius: 999px;
 
@@ -1284,15 +1284,15 @@ INDICADOR ATIVO
 .portfolio-deck-indicador[aria-current="true"] {
 
 
-width: 8px;
+width: 20px;
 
-height: 8px;
+height: 5px;
 
-min-width: 8px;
+min-width: 5px;
 
 min-height: 8px;
 
-background: #1677d2;
+background: black;
 
 opacity: 1;
 

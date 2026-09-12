@@ -25,7 +25,8 @@ Pausar vídeos durante swipe.
 Pausar vídeos quando saem completamente da viewport.
 Reproduzir novamente quando o vídeo volta a ficar
 completamente visível.
-Calcular cores predominantes das imagens do portfólio.
+Calcular cores predominantes das imagens e vídeos
+do portfólio.
 Alimentar o fundo dinâmico de toda a página.
 Controlar a intensidade do fundo conforme o portfólio
 entra ou sai da viewport.
@@ -118,7 +119,7 @@ O JavaScript NÃO cria o gradiente.
 
 O JavaScript apenas:
 
-1. analisa a imagem ativa;
+1. analisa a imagem ou um frame do vídeo ativo;
 2. identifica as cores predominantes;
 3. envia as cores para o BODY;
 4. calcula a intensidade de visibilidade;
@@ -163,7 +164,6 @@ elementos: {
 
 },
 
-
 deck: {
 
     limiteSwipe: 0.20,
@@ -187,7 +187,6 @@ deck: {
     blurDistante: "3px"
 
 },
-
 
 video: {
 
@@ -214,7 +213,6 @@ video: {
 
 },
 
-
 /* =====================================================
    CONFIGURAÇÃO DO FUNDO DINÂMICO
    ===================================================== */
@@ -225,7 +223,7 @@ fundoDinamico: {
 
     /*
      * Tamanho reduzido do canvas utilizado para
-     * análise das imagens.
+     * análise das imagens e dos frames de vídeo.
      */
 
     larguraCanvas: 40,
@@ -249,8 +247,7 @@ fundoDinamico: {
 
     /*
      * Cores utilizadas quando não é possível analisar
-     * a imagem, por exemplo quando o servidor não
-     * permite acesso ao canvas por CORS.
+     * a mídia.
      */
 
     corFallback1:
@@ -294,7 +291,6 @@ if (!id) {
 
 }
 
-
 return document.getElementById(id);
 
 
@@ -311,7 +307,6 @@ if (
     return "";
 
 }
-
 
 return String(valor)
 
@@ -336,7 +331,6 @@ if (!container) {
     return;
 
 }
-
 
 try {
 
@@ -422,29 +416,24 @@ function aplicarCoresFundoFallback() {
 const body =
     obterBody();
 
-
 if (!body) {
 
     return;
 
 }
 
-
 const cores =
     obterCoresFallbackDinamica();
-
 
 body.style.setProperty(
     "--perfil-fundo-cor-1",
     cores[0]
 );
 
-
 body.style.setProperty(
     "--perfil-fundo-cor-2",
     cores[1]
 );
-
 
 body.style.setProperty(
     "--perfil-fundo-cor-3",
@@ -470,7 +459,6 @@ cores
 const body =
     obterBody();
 
-
 if (
     !body ||
     !Array.isArray(cores) ||
@@ -483,18 +471,15 @@ if (
 
 }
 
-
 body.style.setProperty(
     "--perfil-fundo-cor-1",
     cores[0]
 );
 
-
 body.style.setProperty(
     "--perfil-fundo-cor-2",
     cores[1]
 );
-
 
 body.style.setProperty(
     "--perfil-fundo-cor-3",
@@ -508,12 +493,6 @@ body.style.setProperty(
 
 * Calcula a intensidade do fundo com base na
 * quantidade do portfólio atualmente visível.
-*
-* Quanto mais o portfólio estiver visível,
-* mais forte fica o efeito.
-*
-* Conforme o usuário rola para baixo e o portfólio
-* desaparece, a intensidade vai para zero.
   */
 
 function atualizarIntensidadeFundo() {
@@ -522,12 +501,10 @@ function atualizarIntensidadeFundo() {
 const body =
     obterBody();
 
-
 const portfolioGrid =
     obterElemento(
         CONFIG.elementos.portfolioGrid
     );
-
 
 if (
     !body ||
@@ -538,20 +515,12 @@ if (
 
 }
 
-
 const rect =
     portfolioGrid.getBoundingClientRect();
-
 
 const viewportHeight =
     window.innerHeight ||
     document.documentElement.clientHeight;
-
-
-/*
- * Se o portfólio estiver completamente fora
- * da viewport, o efeito desaparece.
- */
 
 if (
     rect.bottom <= 0 ||
@@ -563,23 +532,19 @@ if (
         "0"
     );
 
-
     body.classList.remove(
         "perfil-fundo-dinamico-visivel"
     );
 
-
     return;
 
 }
-
 
 const altura =
     Math.max(
         1,
         rect.height
     );
-
 
 const visivel =
 
@@ -593,7 +558,6 @@ const visivel =
         0
     );
 
-
 let percentual =
 
     visivel /
@@ -601,7 +565,6 @@ let percentual =
         altura,
         viewportHeight
     );
-
 
 percentual =
 
@@ -613,21 +576,13 @@ percentual =
         )
     );
 
-
-/*
- * Limita a intensidade máxima para manter
- * o efeito elegante e discreto.
- */
-
 const intensidade =
     percentual * 0.85;
-
 
 body.style.setProperty(
     "--perfil-fundo-opacidade",
     intensidade.toFixed(3)
 );
-
 
 body.classList.add(
     "perfil-fundo-dinamico-visivel"
@@ -655,7 +610,6 @@ if (
 
 }
 
-
 window.addEventListener(
     "scroll",
     atualizarIntensidadeFundo,
@@ -664,16 +618,13 @@ window.addEventListener(
     }
 );
 
-
 window.addEventListener(
     "resize",
     atualizarIntensidadeFundo
 );
 
-
 fundoDinamico.scrollRegistrado =
     true;
-
 
 atualizarIntensidadeFundo();
 
@@ -683,10 +634,6 @@ atualizarIntensidadeFundo();
 /*
 
 * Calcula uma aproximação simples da saturação da cor.
-*
-* Cores mais saturadas recebem um pequeno peso extra,
-* porque normalmente representam melhor a identidade
-* visual da imagem.
   */
 
 function calcularSaturacao(
@@ -703,14 +650,12 @@ const maior =
         b
     );
 
-
 const menor =
     Math.min(
         r,
         g,
         b
     );
-
 
 if (
     maior === 0
@@ -719,7 +664,6 @@ if (
     return 0;
 
 }
-
 
 return (
     maior -
@@ -744,16 +688,13 @@ const diferencaR =
     corA.r -
     corB.r;
 
-
 const diferencaG =
     corA.g -
     corB.g;
 
-
 const diferencaB =
     corA.b -
     corB.b;
-
 
 return Math.sqrt(
 
@@ -795,18 +736,433 @@ return `rgba(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)}, ${a})`;
 
 }
 
+/* =========================================================
+EXTRAÇÃO DAS CORES
+========================================================= */
+
+/*
+
+* Função central responsável por transformar os pixels
+* de um canvas em três cores predominantes.
+*
+* Esta função é compartilhada por:
+*
+* * imagens;
+* * frames de vídeos.
+*
+* Não alteramos a lógica de seleção das cores.
+  */
+
+function extrairCoresDoCanvas(
+contexto
+) {
+
+
+if (!contexto) {
+
+    return null;
+
+}
+
+try {
+
+    const dados =
+        contexto.getImageData(
+
+            0,
+            0,
+
+            CONFIG.fundoDinamico.larguraCanvas,
+            CONFIG.fundoDinamico.alturaCanvas
+
+        ).data;
+
+    const agrupamentos =
+        new Map();
+
+    const passo =
+
+        Math.max(
+
+            1,
+
+            CONFIG.fundoDinamico
+                .passoAmostragem
+
+        );
+
+    for (
+        let y = 0;
+        y < CONFIG.fundoDinamico.alturaCanvas;
+        y += passo
+    ) {
+
+        for (
+            let x = 0;
+            x < CONFIG.fundoDinamico.larguraCanvas;
+            x += passo
+        ) {
+
+            const posicao =
+
+                (
+                    (
+                        y *
+                        CONFIG.fundoDinamico.larguraCanvas
+                    ) +
+                    x
+                ) *
+                4;
+
+            const r =
+                dados[posicao];
+
+            const g =
+                dados[posicao + 1];
+
+            const b =
+                dados[posicao + 2];
+
+            const a =
+                dados[posicao + 3];
+
+            if (
+                a < 180
+            ) {
+
+                continue;
+
+            }
+
+            if (
+                r +
+                g +
+                b >
+                720
+            ) {
+
+                continue;
+
+            }
+
+            if (
+                r +
+                g +
+                b <
+                35
+            ) {
+
+                continue;
+
+            }
+
+            const tamanhoGrupo =
+                24;
+
+            const qr =
+
+                Math.min(
+
+                    255,
+
+                    Math.round(
+                        r /
+                        tamanhoGrupo
+                    ) *
+                    tamanhoGrupo
+
+                );
+
+            const qg =
+
+                Math.min(
+
+                    255,
+
+                    Math.round(
+                        g /
+                        tamanhoGrupo
+                    ) *
+                    tamanhoGrupo
+
+                );
+
+            const qb =
+
+                Math.min(
+
+                    255,
+
+                    Math.round(
+                        b /
+                        tamanhoGrupo
+                    ) *
+                    tamanhoGrupo
+
+                );
+
+            const chave =
+
+                `${qr},${qg},${qb}`;
+
+            const saturacao =
+
+                calcularSaturacao(
+                    r,
+                    g,
+                    b
+                );
+
+            const peso =
+
+                1 +
+                (
+                    saturacao *
+                    0.75
+                );
+
+            if (
+                agrupamentos.has(
+                    chave
+                )
+            ) {
+
+                const grupo =
+
+                    agrupamentos.get(
+                        chave
+                    );
+
+                grupo.peso +=
+                    peso;
+
+                grupo.quantidade +=
+                    1;
+
+            } else {
+
+                agrupamentos.set(
+
+                    chave,
+
+                    {
+
+                        r: qr,
+
+                        g: qg,
+
+                        b: qb,
+
+                        peso: peso,
+
+                        quantidade: 1
+
+                    }
+
+                );
+
+            }
+
+        }
+
+    }
+
+    const grupos =
+
+        Array.from(
+            agrupamentos.values()
+        );
+
+    if (!grupos.length) {
+
+        return null;
+
+    }
+
+    grupos.sort(
+
+        function (
+            a,
+            b
+        ) {
+
+            return (
+                b.peso -
+                a.peso
+            );
+
+        }
+
+    );
+
+    const selecionadas = [];
+
+    for (
+        let indice = 0;
+        indice < grupos.length;
+        indice++
+    ) {
+
+        const candidata =
+            grupos[indice];
+
+        let muitoParecida =
+            false;
+
+        for (
+            let j = 0;
+            j < selecionadas.length;
+            j++
+        ) {
+
+            const distancia =
+
+                calcularDistanciaCores(
+
+                    candidata,
+
+                    selecionadas[j]
+
+                );
+
+            if (
+                distancia <
+                CONFIG.fundoDinamico
+                    .distanciaMinimaCores
+            ) {
+
+                muitoParecida =
+                    true;
+
+                break;
+
+            }
+
+        }
+
+        if (
+            muitoParecida
+        ) {
+
+            continue;
+
+        }
+
+        selecionadas.push(
+            candidata
+        );
+
+        if (
+            selecionadas.length >= 3
+        ) {
+
+            break;
+
+        }
+
+    }
+
+    if (
+        selecionadas.length < 3
+    ) {
+
+        for (
+            let indice = 0;
+            indice < grupos.length;
+            indice++
+        ) {
+
+            if (
+                selecionadas.indexOf(
+                    grupos[indice]
+                ) !== -1
+            ) {
+
+                continue;
+
+            }
+
+            selecionadas.push(
+                grupos[indice]
+            );
+
+            if (
+                selecionadas.length >= 3
+            ) {
+
+                break;
+
+            }
+
+        }
+
+    }
+
+    if (
+        !selecionadas.length
+    ) {
+
+        return null;
+
+    }
+
+    const primeira =
+        selecionadas[0];
+
+    const segunda =
+        selecionadas[1] ||
+        primeira;
+
+    const terceira =
+        selecionadas[2] ||
+        segunda ||
+        primeira;
+
+    return [
+
+        converterRgbParaCss(
+            primeira.r,
+            primeira.g,
+            primeira.b,
+            1
+        ),
+
+        converterRgbParaCss(
+            segunda.r,
+            segunda.g,
+            segunda.b,
+            1
+        ),
+
+        converterRgbParaCss(
+            terceira.r,
+            terceira.g,
+            terceira.b,
+            1
+        )
+
+    ];
+
+} catch (erro) {
+
+    console.warn(
+        "ApresentarPerfilPortfolio: não foi possível analisar os pixels da mídia.",
+        erro
+    );
+
+    return null;
+
+}
+
+
+}
+
 /*
 
 * Extrai as cores predominantes de uma imagem.
 *
 * A imagem é carregada em um objeto Image separado.
-* Isso é importante:
-*
-* NÃO alteramos o <img> que aparece no card.
-*
-* Portanto, mesmo que o servidor não permita
-* leitura via canvas/CORS, a imagem original
-* continuará funcionando normalmente.
+* Não alteramos o <img> que aparece no card.
   */
 
 function extrairCoresImagem(
@@ -828,20 +1184,16 @@ return new Promise(
 
         }
 
-
         const canvas =
             document.createElement(
                 "canvas"
             );
 
-
         canvas.width =
             CONFIG.fundoDinamico.larguraCanvas;
 
-
         canvas.height =
             CONFIG.fundoDinamico.alturaCanvas;
-
 
         const contexto =
 
@@ -852,7 +1204,6 @@ return new Promise(
                 }
             );
 
-
         if (!contexto) {
 
             resolver(null);
@@ -861,19 +1212,11 @@ return new Promise(
 
         }
 
-
         const imagem =
             new Image();
 
-
-        /*
-         * Permite leitura de imagens que estejam
-         * em servidores que autorizem CORS.
-         */
-
         imagem.crossOrigin =
             "anonymous";
-
 
         imagem.onload =
             function () {
@@ -889,7 +1232,6 @@ return new Promise(
 
                     );
 
-
                     contexto.drawImage(
 
                         imagem,
@@ -902,518 +1244,18 @@ return new Promise(
 
                     );
 
-
-                    const dados =
-
-                        contexto.getImageData(
-
-                            0,
-                            0,
-
-                            canvas.width,
-                            canvas.height
-
-                        ).data;
-
-
-                    const agrupamentos =
-                        new Map();
-
-
-                    const passo =
-
-                        Math.max(
-
-                            1,
-
-                            CONFIG.fundoDinamico
-                                .passoAmostragem
-
-                        );
-
-
-                    for (
-                        let y = 0;
-                        y < canvas.height;
-                        y += passo
-                    ) {
-
-                        for (
-                            let x = 0;
-                            x < canvas.width;
-                            x += passo
-                        ) {
-
-                            const posicao =
-
-                                (
-                                    (
-                                        y *
-                                        canvas.width
-                                    ) +
-                                    x
-                                ) *
-                                4;
-
-
-                            const r =
-                                dados[posicao];
-
-
-                            const g =
-                                dados[posicao + 1];
-
-
-                            const b =
-                                dados[posicao + 2];
-
-
-                            const a =
-                                dados[posicao + 3];
-
-
-                            /*
-                             * Ignora pixels muito transparentes.
-                             */
-
-                            if (
-                                a < 180
-                            ) {
-
-                                continue;
-
-                            }
-
-
-                            /*
-                             * Ignora branco quase puro.
-                             *
-                             * O objetivo é encontrar as cores
-                             * da imagem, não o branco do fundo.
-                             */
-
-                            if (
-                                r +
-                                g +
-                                b >
-                                720
-                            ) {
-
-                                continue;
-
-                            }
-
-
-                            /*
-                             * Ignora preto absoluto.
-                             *
-                             * Isso evita que uma foto com fundo
-                             * preto transforme todo o ambiente
-                             * em preto.
-                             */
-
-                            if (
-                                r +
-                                g +
-                                b <
-                                35
-                            ) {
-
-                                continue;
-
-                            }
-
-
-                            /*
-                             * Quantização das cores.
-                             *
-                             * Agrupa pequenas diferenças em
-                             * uma mesma família de cor.
-                             */
-
-                            const tamanhoGrupo =
-                                24;
-
-
-                            const qr =
-
-                                Math.min(
-
-                                    255,
-
-                                    Math.round(
-                                        r /
-                                        tamanhoGrupo
-                                    ) *
-                                    tamanhoGrupo
-
-                                );
-
-
-                            const qg =
-
-                                Math.min(
-
-                                    255,
-
-                                    Math.round(
-                                        g /
-                                        tamanhoGrupo
-                                    ) *
-                                    tamanhoGrupo
-
-                                );
-
-
-                            const qb =
-
-                                Math.min(
-
-                                    255,
-
-                                    Math.round(
-                                        b /
-                                        tamanhoGrupo
-                                    ) *
-                                    tamanhoGrupo
-
-                                );
-
-
-                            const chave =
-
-                                `${qr},${qg},${qb}`;
-
-
-                            const saturacao =
-
-                                calcularSaturacao(
-                                    r,
-                                    g,
-                                    b
-                                );
-
-
-                            /*
-                             * Pequeno peso adicional para cores
-                             * mais fortes.
-                             */
-
-                            const peso =
-
-                                1 +
-                                (
-                                    saturacao *
-                                    0.75
-                                );
-
-
-                            if (
-                                agrupamentos.has(
-                                    chave
-                                )
-                            ) {
-
-                                const grupo =
-
-                                    agrupamentos.get(
-                                        chave
-                                    );
-
-
-                                grupo.peso +=
-                                    peso;
-
-
-                                grupo.quantidade +=
-                                    1;
-
-                            } else {
-
-                                agrupamentos.set(
-
-                                    chave,
-
-                                    {
-
-                                        r: qr,
-
-                                        g: qg,
-
-                                        b: qb,
-
-                                        peso: peso,
-
-                                        quantidade: 1
-
-                                    }
-
-                                );
-
-                            }
-
-                        }
-
-                    }
-
-
-                    const grupos =
-
-                        Array.from(
-                            agrupamentos.values()
-                        );
-
-
-                    if (!grupos.length) {
-
-                        resolver(null);
-
-                        return;
-
-                    }
-
-
-                    grupos.sort(
-
-                        function (
-                            a,
-                            b
-                        ) {
-
-                            return (
-                                b.peso -
-                                a.peso
-                            );
-
-                        }
-
-                    );
-
-
-                    const selecionadas = [];
-
-
-                    /*
-                     * Selecionamos no máximo três cores
-                     * visualmente diferentes.
-                     */
-
-                    for (
-                        let indice = 0;
-                        indice < grupos.length;
-                        indice++
-                    ) {
-
-                        const candidata =
-                            grupos[indice];
-
-
-                        let muitoParecida =
-                            false;
-
-
-                        for (
-                            let j = 0;
-                            j < selecionadas.length;
-                            j++
-                        ) {
-
-                            const distancia =
-
-                                calcularDistanciaCores(
-
-                                    candidata,
-
-                                    selecionadas[j]
-
-                                );
-
-
-                            if (
-                                distancia <
-                                CONFIG.fundoDinamico
-                                    .distanciaMinimaCores
-                            ) {
-
-                                muitoParecida =
-                                    true;
-
-                                break;
-
-                            }
-
-                        }
-
-
-                        if (
-                            muitoParecida
-                        ) {
-
-                            continue;
-
-                        }
-
-
-                        selecionadas.push(
-                            candidata
-                        );
-
-
-                        if (
-                            selecionadas.length >= 3
-                        ) {
-
-                            break;
-
-                        }
-
-                    }
-
-
-                    /*
-                     * Caso não existam três cores diferentes,
-                     * completamos utilizando as cores mais
-                     * relevantes disponíveis.
-                     */
-
-                    if (
-                        selecionadas.length < 3
-                    ) {
-
-                        for (
-                            let indice = 0;
-                            indice < grupos.length;
-                            indice++
-                        ) {
-
-                            if (
-                                selecionadas.indexOf(
-                                    grupos[indice]
-                                ) !== -1
-                            ) {
-
-                                continue;
-
-                            }
-
-
-                            selecionadas.push(
-                                grupos[indice]
-                            );
-
-
-                            if (
-                                selecionadas.length >= 3
-                            ) {
-
-                                break;
-
-                            }
-
-                        }
-
-                    }
-
-
-                    if (
-                        !selecionadas.length
-                    ) {
-
-                        resolver(null);
-
-                        return;
-
-                    }
-
-
-                    /*
-                     * Converte para cores CSS.
-                     *
-                     * A primeira é a mais forte.
-                     * As seguintes recebem transparência menor.
-                     */
-
-                    const cores = [
-
-                        converterRgbParaCss(
-
-                            selecionadas[0].r,
-
-                            selecionadas[0].g,
-
-                            selecionadas[0].b,
-
-                            0.30
-
-                        ),
-
-
-                        converterRgbParaCss(
-
-                            (
-                                selecionadas[1] ||
-                                selecionadas[0]
-                            ).r,
-
-                            (
-                                selecionadas[1] ||
-                                selecionadas[0]
-                            ).g,
-
-                            (
-                                selecionadas[1] ||
-                                selecionadas[0]
-                            ).b,
-
-                            0.18
-
-                        ),
-
-
-                        converterRgbParaCss(
-
-                            (
-                                selecionadas[2] ||
-                                selecionadas[1] ||
-                                selecionadas[0]
-                            ).r,
-
-                            (
-                                selecionadas[2] ||
-                                selecionadas[1] ||
-                                selecionadas[0]
-                            ).g,
-
-                            (
-                                selecionadas[2] ||
-                                selecionadas[1] ||
-                                selecionadas[0]
-                            ).b,
-
-                            0.10
-
-                        )
-
-                    ];
-
-
                     resolver(
-                        cores
+                        extrairCoresDoCanvas(
+                            contexto
+                        )
                     );
 
                 } catch (erro) {
-
-                    /*
-                     * SecurityError normalmente acontece
-                     * quando o servidor da imagem não permite
-                     * leitura pelo canvas.
-                     */
 
                     console.warn(
                         "ApresentarPerfilPortfolio: não foi possível analisar as cores da imagem.",
                         erro
                     );
-
 
                     resolver(null);
 
@@ -1421,22 +1263,259 @@ return new Promise(
 
             };
 
-
         imagem.onerror =
             function () {
-
-                /*
-                 * A análise falhou, mas isso NÃO interfere
-                 * na imagem real do card.
-                 */
 
                 resolver(null);
 
             };
 
-
         imagem.src =
             url;
+
+    }
+
+);
+
+
+}
+
+/* =========================================================
+CORES DO VÍDEO
+========================================================= */
+
+/*
+
+* Extrai as cores predominantes do frame atual do vídeo.
+*
+* IMPORTANTE:
+*
+* Esta função NÃO modifica o vídeo.
+*
+* Ela apenas desenha um frame do <video> em um canvas
+* pequeno e utiliza a mesma análise de cores das imagens.
+*
+* O vídeo precisa estar carregado e ter dimensões válidas.
+*
+* Como o vídeo está sendo reproduzido no próprio domínio
+* / Storage, o canvas poderá ser lido normalmente quando
+* não houver bloqueio de CORS.
+  */
+
+function extrairCoresVideo(
+video
+) {
+
+
+return new Promise(
+
+    function (
+        resolver
+    ) {
+
+        if (
+            !video
+        ) {
+
+            resolver(null);
+
+            return;
+
+        }
+
+        const largura =
+            video.videoWidth;
+
+        const altura =
+            video.videoHeight;
+
+        if (
+            !largura ||
+            !altura
+        ) {
+
+            /*
+             * O vídeo ainda não possui metadata suficiente.
+             *
+             * Esperamos o carregamento e tentamos novamente.
+             */
+
+            const tentarNovamente =
+                function () {
+
+                    extrairCoresVideo(
+                        video
+                    ).then(
+                        resolver
+                    );
+
+                };
+
+            video.addEventListener(
+                "loadeddata",
+                tentarNovamente,
+                {
+                    once: true
+                }
+            );
+
+            video.addEventListener(
+                "loadedmetadata",
+                tentarNovamente,
+                {
+                    once: true
+                }
+            );
+
+            return;
+
+        }
+
+        const canvas =
+            document.createElement(
+                "canvas"
+            );
+
+        canvas.width =
+            CONFIG.fundoDinamico.larguraCanvas;
+
+        canvas.height =
+            CONFIG.fundoDinamico.alturaCanvas;
+
+        const contexto =
+
+            canvas.getContext(
+                "2d",
+                {
+                    willReadFrequently: true
+                }
+            );
+
+        if (!contexto) {
+
+            resolver(null);
+
+            return;
+
+        }
+
+        try {
+
+            contexto.clearRect(
+
+                0,
+                0,
+
+                canvas.width,
+                canvas.height
+
+            );
+
+            /*
+             * Mantemos a proporção do vídeo para que
+             * a análise represente corretamente a mídia.
+             *
+             * O canvas pequeno serve apenas para
+             * identificar as cores predominantes.
+             */
+
+            const proporcaoVideo =
+                largura / altura;
+
+            const proporcaoCanvas =
+                canvas.width / canvas.height;
+
+            let larguraDesenho =
+                canvas.width;
+
+            let alturaDesenho =
+                canvas.height;
+
+            let deslocamentoX = 0;
+
+            let deslocamentoY = 0;
+
+            if (
+                proporcaoVideo >
+                proporcaoCanvas
+            ) {
+
+                /*
+                 * Vídeo mais largo que o canvas.
+                 */
+
+                alturaDesenho =
+                    canvas.height;
+
+                larguraDesenho =
+                    alturaDesenho *
+                    proporcaoVideo;
+
+                deslocamentoX =
+                    (
+                        canvas.width -
+                        larguraDesenho
+                    ) / 2;
+
+            } else {
+
+                /*
+                 * Vídeo mais alto que o canvas.
+                 */
+
+                larguraDesenho =
+                    canvas.width;
+
+                alturaDesenho =
+                    larguraDesenho /
+                    proporcaoVideo;
+
+                deslocamentoY =
+                    (
+                        canvas.height -
+                        alturaDesenho
+                    ) / 2;
+
+            }
+
+            contexto.drawImage(
+
+                video,
+
+                deslocamentoX,
+                deslocamentoY,
+
+                larguraDesenho,
+                alturaDesenho
+
+            );
+
+            const cores =
+                extrairCoresDoCanvas(
+                    contexto
+                );
+
+            resolver(
+                cores
+            );
+
+        } catch (erro) {
+
+            /*
+             * Se o navegador bloquear getImageData()
+             * por CORS, utilizamos o fallback.
+             *
+             * Isso não interfere na reprodução do vídeo.
+             */
+
+            console.warn(
+                "ApresentarPerfilPortfolio: não foi possível analisar o frame do vídeo.",
+                erro
+            );
+
+            resolver(null);
+
+        }
 
     }
 
@@ -1449,8 +1528,14 @@ return new Promise(
 
 * Atualiza o fundo de acordo com o card atualmente ativo.
 *
-* Agora as cores são enviadas para o BODY da página.
-  */
+* Imagens:
+* * utiliza extrairCoresImagem().
+*
+* Vídeos:
+* * utiliza o próprio elemento <video>;
+* * captura o frame atual;
+* * extrai as cores desse frame.
+    */
 
 function atualizarFundoDinamico() {
 
@@ -1463,10 +1548,8 @@ if (
 
 }
 
-
 const body =
     obterBody();
-
 
 if (!body) {
 
@@ -1474,21 +1557,17 @@ if (!body) {
 
 }
 
-
 const item =
     galeria.itens[
         galeria.indiceAtual
     ];
-
 
 if (!item) {
 
     fundoDinamico.chaveAtual =
         "";
 
-
     aplicarCoresFundoFallback();
-
 
     atualizarIntensidadeFundo();
 
@@ -1496,18 +1575,9 @@ if (!item) {
 
 }
 
-
-/*
- * Cada mídia recebe uma chave própria.
- *
- * Assim, se o usuário voltar para o mesmo card,
- * não precisamos recalcular as cores novamente.
- */
-
 const chave =
 
     `${item._tipo}|${item._url}`;
-
 
 if (
     chave ===
@@ -1520,27 +1590,159 @@ if (
 
 }
 
-
 fundoDinamico.chaveAtual =
     chave;
-
-
-/*
- * Cada novo processamento recebe um número.
- *
- * Isso evita que uma imagem antiga termine de carregar
- * depois de o usuário já ter passado para outro card.
- */
 
 const processamentoAtual =
 
     ++fundoDinamico.processamento;
 
+/*
+ * =====================================================
+ * VÍDEO
+ * =====================================================
+ *
+ * Agora o vídeo também participa do fundo dinâmico.
+ */
+
+if (
+    item._tipo === "video"
+) {
+
+    const video =
+        obterVideoAtivo();
+
+    if (!video) {
+
+        aplicarCoresFundoFallback();
+
+        atualizarIntensidadeFundo();
+
+        return;
+
+    }
+
+    const iniciarAnaliseVideo =
+        function () {
+
+            /*
+             * O processamento pode ter mudado enquanto
+             * o vídeo carregava.
+             */
+
+            if (
+                processamentoAtual !==
+                fundoDinamico.processamento
+            ) {
+
+                return;
+
+            }
+
+            extrairCoresVideo(
+                video
+            )
+
+                .then(
+
+                    function (cores) {
+
+                        if (
+                            processamentoAtual !==
+                            fundoDinamico.processamento
+                        ) {
+
+                            return;
+
+                        }
+
+                        if (
+                            Array.isArray(cores) &&
+                            cores.length >= 3
+                        ) {
+
+                            aplicarCoresFundoDinamico(
+                                cores
+                            );
+
+                        } else {
+
+                            aplicarCoresFundoFallback();
+
+                        }
+
+                        atualizarIntensidadeFundo();
+
+                    }
+
+                )
+
+                .catch(
+
+                    function (erro) {
+
+                        if (
+                            processamentoAtual !==
+                            fundoDinamico.processamento
+                        ) {
+
+                            return;
+
+                        }
+
+                        console.warn(
+                            "ApresentarPerfilPortfolio: erro ao calcular fundo dinâmico do vídeo.",
+                            erro
+                        );
+
+                        aplicarCoresFundoFallback();
+
+                        atualizarIntensidadeFundo();
+
+                    }
+
+                );
+
+        };
+
+    /*
+     * Se o vídeo já possui dados suficientes,
+     * fazemos a análise imediatamente.
+     */
+
+    if (
+        video.readyState >= 2
+    ) {
+
+        iniciarAnaliseVideo();
+
+    } else {
+
+        /*
+         * Caso ainda esteja carregando, esperamos
+         * os dados do vídeo ficarem disponíveis.
+         */
+
+        video.addEventListener(
+            "loadeddata",
+            iniciarAnaliseVideo,
+            {
+                once: true
+            }
+        );
+
+    }
+
+    return;
+
+}
 
 /*
- * Vídeos continuam utilizando o fallback.
+ * =====================================================
+ * ÁUDIO / OUTROS
+ * =====================================================
  *
- * Não analisamos frames de vídeo.
+ * O áudio não possui imagem visual para análise.
  */
 
 if (
@@ -1555,12 +1757,10 @@ if (
 
 }
 
-
 /*
- * Enquanto a nova imagem é analisada, mantemos
- * o fundo anterior.
- *
- * Isso evita um flash branco a cada troca.
+ * =====================================================
+ * IMAGEM
+ * =====================================================
  */
 
 extrairCoresImagem(
@@ -1571,11 +1771,6 @@ extrairCoresImagem(
 
         function (cores) {
 
-            /*
-             * Se o usuário já mudou de card,
-             * descartamos o resultado antigo.
-             */
-
             if (
                 processamentoAtual !==
                 fundoDinamico.processamento
@@ -1584,7 +1779,6 @@ extrairCoresImagem(
                 return;
 
             }
-
 
             if (
                 Array.isArray(cores) &&
@@ -1600,7 +1794,6 @@ extrairCoresImagem(
                 aplicarCoresFundoFallback();
 
             }
-
 
             atualizarIntensidadeFundo();
 
@@ -1621,15 +1814,12 @@ extrairCoresImagem(
 
             }
 
-
             console.warn(
                 "ApresentarPerfilPortfolio: erro ao calcular fundo dinâmico.",
                 erro
             );
 
-
             aplicarCoresFundoFallback();
-
 
             atualizarIntensidadeFundo();
 
@@ -1651,24 +1841,19 @@ function resetarFundoDinamico() {
 const body =
     obterBody();
 
-
 fundoDinamico.chaveAtual =
     "";
 
-
 fundoDinamico.processamento++;
-
 
 if (body) {
 
     aplicarCoresFundoFallback();
 
-
     body.style.setProperty(
         "--perfil-fundo-opacidade",
         "0"
     );
-
 
     body.classList.remove(
         "perfil-fundo-dinamico-visivel"
@@ -1694,7 +1879,6 @@ if (!item) {
 
 }
 
-
 const tipoOriginal =
 
     String(
@@ -1716,7 +1900,6 @@ const tipoOriginal =
         .toLowerCase()
 
         .trim();
-
 
 const url =
 
@@ -1742,7 +1925,6 @@ const url =
 
         .toLowerCase();
 
-
 if (
 
     tipoOriginal.includes("video") ||
@@ -1766,7 +1948,6 @@ if (
     return "video";
 
 }
-
 
 if (
 
@@ -1792,7 +1973,6 @@ if (
 
 }
 
-
 return "imagem";
 
 
@@ -1808,7 +1988,6 @@ if (!item) {
     return "";
 
 }
-
 
 return (
 
@@ -1848,7 +2027,6 @@ if (!item) {
 
 }
 
-
 return (
 
     item.titulo ||
@@ -1879,7 +2057,6 @@ if (!item) {
 
 }
 
-
 return (
 
     item.descricao ||
@@ -1909,17 +2086,14 @@ if (!item) {
 
 }
 
-
 const url =
     obterUrlMidia(item);
-
 
 if (!url) {
 
     return null;
 
 }
-
 
 return {
 
@@ -1953,7 +2127,6 @@ if (!Array.isArray(lista)) {
     return [];
 
 }
-
 
 return lista
 
@@ -2014,7 +2187,6 @@ if (!container) {
 
 }
 
-
 container.innerHTML = `
 
     <div class="portfolio-estado-vazio">
@@ -2041,7 +2213,6 @@ container.innerHTML = `
 
 `;
 
-
 renderizarIcones(container);
 
 
@@ -2060,13 +2231,11 @@ const videoList =
         CONFIG.elementos.videoList
     );
 
-
 const audioList =
 
     obterElemento(
         CONFIG.elementos.audioList
     );
-
 
 if (videoList) {
 
@@ -2075,7 +2244,6 @@ if (videoList) {
     );
 
 }
-
 
 if (audioList) {
 
@@ -2101,20 +2269,16 @@ const container =
         CONFIG.elementos.portfolioGrid
     );
 
-
 if (!container) {
 
     return;
 
 }
 
-
 desmontarInteracaoDeck();
-
 
 container.innerHTML =
     "";
-
 
 const itensGaleria =
 
@@ -2140,23 +2304,18 @@ const itensGaleria =
 
     );
 
-
 galeria.itens =
     itensGaleria;
-
 
 if (!itensGaleria.length) {
 
     galeria.indiceAtual =
         0;
 
-
     galeria.deslocamentoX =
         0;
 
-
     resetarFundoDinamico();
-
 
     renderizarEstadoVazio(
 
@@ -2166,11 +2325,9 @@ if (!itensGaleria.length) {
 
     );
 
-
     return;
 
 }
-
 
 galeria.indiceAtual =
 
@@ -2182,7 +2339,6 @@ galeria.indiceAtual =
 
     );
 
-
 if (itensGaleria.length > 1) {
 
     criarBotoesNavegacaoGaleria(
@@ -2191,20 +2347,16 @@ if (itensGaleria.length > 1) {
 
 }
 
-
 const deck =
     document.createElement("div");
 
-
 deck.className =
     "portfolio-deck";
-
 
 deck.setAttribute(
     "aria-label",
     "Galeria de trabalhos do artista"
 );
-
 
 itensGaleria.forEach(
 
@@ -2214,7 +2366,6 @@ itensGaleria.forEach(
     ) {
 
         let card = null;
-
 
         if (
             item._tipo === "video"
@@ -2244,7 +2395,6 @@ itensGaleria.forEach(
 
         }
 
-
         if (card) {
 
             deck.appendChild(
@@ -2257,11 +2407,9 @@ itensGaleria.forEach(
 
 );
 
-
 container.appendChild(
     deck
 );
-
 
 criarIndicadoresGaleria(
 
@@ -2271,38 +2419,26 @@ criarIndicadoresGaleria(
 
 );
 
-
 configurarErrosImagens(
     deck
 );
-
 
 configurarErrosVideos(
     deck
 );
 
-
 configurarDeck();
-
 
 configurarObserverVideos();
 
-
 /*
  * Depois que os cards existem no DOM,
- * calculamos a cor da imagem atualmente ativa.
+ * calculamos a cor da mídia atualmente ativa.
  */
 
 atualizarFundoDinamico();
 
-
-/*
- * Ativa o controle que acompanha a visibilidade
- * do portfólio durante o scroll.
- */
-
 configurarControleVisibilidadeFundo();
-
 
 renderizarIcones(
     container
@@ -2326,30 +2462,24 @@ if (!container) {
 
 }
 
-
 const botaoAnterior =
     document.createElement("button");
-
 
 botaoAnterior.type =
     "button";
 
-
 botaoAnterior.className =
     "portfolio-deck-nav portfolio-deck-nav-prev";
-
 
 botaoAnterior.setAttribute(
     "aria-label",
     "Trabalho anterior"
 );
 
-
 botaoAnterior.setAttribute(
     "title",
     "Trabalho anterior"
 );
-
 
 botaoAnterior.innerHTML = `
 
@@ -2359,7 +2489,6 @@ botaoAnterior.innerHTML = `
     ></i>
 
 `;
-
 
 botaoAnterior.addEventListener(
 
@@ -2379,30 +2508,24 @@ botaoAnterior.addEventListener(
 
 );
 
-
 const botaoProximo =
     document.createElement("button");
-
 
 botaoProximo.type =
     "button";
 
-
 botaoProximo.className =
     "portfolio-deck-nav portfolio-deck-nav-next";
-
 
 botaoProximo.setAttribute(
     "aria-label",
     "Próximo trabalho"
 );
 
-
 botaoProximo.setAttribute(
     "title",
     "Próximo trabalho"
 );
-
 
 botaoProximo.innerHTML = `
 
@@ -2412,7 +2535,6 @@ botaoProximo.innerHTML = `
     ></i>
 
 `;
-
 
 botaoProximo.addEventListener(
 
@@ -2432,11 +2554,9 @@ botaoProximo.addEventListener(
 
 );
 
-
 container.appendChild(
     botaoAnterior
 );
-
 
 container.appendChild(
     botaoProximo
@@ -2459,7 +2579,6 @@ if (!card) {
     return;
 
 }
-
 
 card.style.transition =
 
@@ -2488,18 +2607,14 @@ const card =
         "article"
     );
 
-
 card.className =
     "portfolio-deck-card";
-
 
 card.dataset.indice =
     String(indice);
 
-
 card.dataset.tipo =
     "imagem";
-
 
 card.setAttribute(
     "aria-label",
@@ -2507,11 +2622,9 @@ card.setAttribute(
     `Imagem ${indice + 1} do portfólio`
 );
 
-
 configurarEstiloCard(
     card
 );
-
 
 const imagem =
 
@@ -2519,19 +2632,15 @@ const imagem =
         "img"
     );
 
-
 imagem.className =
     "portfolio-deck-media";
-
 
 imagem.src =
     item._url;
 
-
 imagem.alt =
     item._titulo ||
     "Trabalho do artista";
-
 
 imagem.loading =
 
@@ -2539,21 +2648,17 @@ imagem.loading =
         ? "eager"
         : "lazy";
 
-
 imagem.draggable =
     false;
-
 
 card.appendChild(
     imagem
 );
 
-
 adicionarLegendaCard(
     card,
     item
 );
-
 
 return card;
 
@@ -2576,19 +2681,15 @@ const card =
         "article"
     );
 
-
 card.className =
 
     "portfolio-deck-card portfolio-deck-card-video";
 
-
 card.dataset.indice =
     String(indice);
 
-
 card.dataset.tipo =
     "video";
-
 
 card.setAttribute(
     "aria-label",
@@ -2596,11 +2697,9 @@ card.setAttribute(
     `Vídeo ${indice + 1} do portfólio`
 );
 
-
 configurarEstiloCard(
     card
 );
-
 
 const video =
 
@@ -2608,65 +2707,51 @@ const video =
         "video"
     );
 
-
 video.className =
     "portfolio-deck-media";
-
 
 video.src =
     item._url;
 
-
 video.controls =
     true;
-
 
 video.autoplay =
     false;
 
-
 video.muted =
     CONFIG.video.muted;
 
-
 video.defaultMuted =
     CONFIG.video.muted;
-
 
 video.setAttribute(
     "muted",
     ""
 );
 
-
 video.preload =
     "metadata";
 
-
 video.playsInline =
     true;
-
 
 video.setAttribute(
     "webkit-playsinline",
     ""
 );
 
-
 video.dataset.autoplayControlado =
     "true";
-
 
 card.appendChild(
     video
 );
 
-
 adicionarLegendaCard(
     card,
     item
 );
-
 
 return card;
 
@@ -2692,17 +2777,14 @@ if (
 
 }
 
-
 const informacoes =
 
     document.createElement(
         "div"
     );
 
-
 informacoes.className =
     "portfolio-deck-caption";
-
 
 if (item._titulo) {
 
@@ -2712,17 +2794,14 @@ if (item._titulo) {
             "strong"
         );
 
-
     titulo.textContent =
         item._titulo;
-
 
     informacoes.appendChild(
         titulo
     );
 
 }
-
 
 if (item._descricao) {
 
@@ -2732,17 +2811,14 @@ if (item._descricao) {
             "span"
         );
 
-
     descricao.textContent =
         item._descricao;
-
 
     informacoes.appendChild(
         descricao
     );
 
 }
-
 
 card.appendChild(
     informacoes
@@ -2763,7 +2839,6 @@ quantidade
 
 removerIndicadoresGaleria();
 
-
 if (
     !container ||
     quantidade <= 1
@@ -2773,23 +2848,19 @@ if (
 
 }
 
-
 const indicadores =
 
     document.createElement(
         "div"
     );
 
-
 indicadores.className =
     "portfolio-deck-indicadores";
-
 
 indicadores.setAttribute(
     "aria-label",
     "Navegação da galeria"
 );
-
 
 for (
     let indice = 0;
@@ -2803,24 +2874,19 @@ for (
             "button"
         );
 
-
     botao.type =
         "button";
-
 
     botao.className =
         "portfolio-deck-indicador";
 
-
     botao.dataset.indice =
         String(indice);
-
 
     botao.setAttribute(
         "aria-label",
         `Ir para o item ${indice + 1}`
     );
-
 
     botao.setAttribute(
         "aria-current",
@@ -2832,7 +2898,6 @@ for (
 
             : "false"
     );
-
 
     botao.addEventListener(
 
@@ -2846,13 +2911,11 @@ for (
 
             pausarTodosVideos();
 
-
             const alvo =
 
                 Number(
                     botao.dataset.indice
                 );
-
 
             irParaItem(
                 alvo
@@ -2862,13 +2925,11 @@ for (
 
     );
 
-
     indicadores.appendChild(
         botao
     );
 
 }
-
 
 container.appendChild(
     indicadores
@@ -2886,20 +2947,17 @@ const container =
         CONFIG.elementos.portfolioGrid
     );
 
-
 if (!container) {
 
     return;
 
 }
 
-
 const indicadores =
 
     container.querySelector(
         ".portfolio-deck-indicadores"
     );
-
 
 if (indicadores) {
 
@@ -2919,13 +2977,11 @@ const container =
         CONFIG.elementos.portfolioGrid
     );
 
-
 if (!container) {
 
     return;
 
 }
-
 
 const indicadores =
 
@@ -2933,13 +2989,11 @@ const indicadores =
         ".portfolio-deck-indicador"
     );
 
-
 if (!indicadores.length) {
 
     return;
 
 }
-
 
 indicadores.forEach(
 
@@ -2952,7 +3006,6 @@ indicadores.forEach(
 
             indice ===
             galeria.indiceAtual;
-
 
         botao.setAttribute(
 
@@ -2986,13 +3039,11 @@ if (!container) {
 
 }
 
-
 const imagens =
 
     container.querySelectorAll(
         "img.portfolio-deck-media"
     );
-
 
 imagens.forEach(
 
@@ -3007,13 +3058,11 @@ imagens.forEach(
                 imagem.style.display =
                     "none";
 
-
                 const card =
 
                     imagem.closest(
                         ".portfolio-deck-card"
                     );
-
 
                 if (!card) {
 
@@ -3021,11 +3070,9 @@ imagens.forEach(
 
                 }
 
-
                 card.classList.add(
                     "portfolio-media-erro"
                 );
-
 
                 const mensagem =
 
@@ -3033,19 +3080,15 @@ imagens.forEach(
                         "div"
                     );
 
-
                 mensagem.className =
                     "portfolio-media-erro-mensagem";
-
 
                 mensagem.textContent =
                     "Não foi possível carregar esta imagem.";
 
-
                 card.appendChild(
                     mensagem
                 );
-
 
                 ajustarAlturaDeck();
 
@@ -3075,13 +3118,11 @@ if (!container) {
 
 }
 
-
 const videos =
 
     container.querySelectorAll(
         "video.portfolio-deck-media"
     );
-
 
 videos.forEach(
 
@@ -3096,20 +3137,17 @@ videos.forEach(
                 video.controls =
                     false;
 
-
                 const card =
 
                     video.closest(
                         ".portfolio-deck-card"
                     );
 
-
                 if (!card) {
 
                     return;
 
                 }
-
 
                 card.classList.add(
                     "portfolio-media-erro"
@@ -3139,13 +3177,11 @@ const container =
         CONFIG.elementos.portfolioGrid
     );
 
-
 if (!container) {
 
     return null;
 
 }
-
 
 return container.querySelector(
     ".portfolio-deck"
@@ -3160,13 +3196,11 @@ function obterCardsDeck() {
 const deck =
     obterDeck();
 
-
 if (!deck) {
 
     return [];
 
 }
-
 
 return Array.from(
 
@@ -3187,13 +3221,11 @@ indice
 const deck =
     obterDeck();
 
-
 if (!deck) {
 
     return null;
 
 }
-
 
 return deck.querySelector(
 
@@ -3212,17 +3244,14 @@ indice
 const total =
     galeria.itens.length;
 
-
 if (!total) {
 
     return 0;
 
 }
 
-
 let resultado =
     Number(indice);
-
 
 if (
     !Number.isFinite(
@@ -3234,12 +3263,10 @@ if (
 
 }
 
-
 resultado =
     Math.round(
         resultado
     );
-
 
 resultado =
     (
@@ -3256,7 +3283,6 @@ resultado =
     ) %
 
     total;
-
 
 return resultado;
 
@@ -3276,10 +3302,8 @@ if (total <= 1) {
 
 }
 
-
 let diferenca =
     indice - atual;
-
 
 if (
     diferenca >
@@ -3291,7 +3315,6 @@ if (
 
 }
 
-
 if (
     diferenca <
     -(total / 2)
@@ -3301,7 +3324,6 @@ if (
         total;
 
 }
-
 
 return diferenca;
 
@@ -3321,10 +3343,8 @@ animar = true
 const cards =
     obterCardsDeck();
 
-
 const total =
     cards.length;
-
 
 if (!total) {
 
@@ -3332,10 +3352,8 @@ if (!total) {
 
 }
 
-
 const dx =
     Number(deslocamento) || 0;
-
 
 const progresso =
 
@@ -3347,7 +3365,6 @@ const progresso =
 
     );
 
-
 cards.forEach(
 
     function (card) {
@@ -3357,7 +3374,6 @@ cards.forEach(
             Number(
                 card.dataset.indice
             );
-
 
         const diferenca =
 
@@ -3370,7 +3386,6 @@ cards.forEach(
                 total
 
             );
-
 
         if (animar) {
 
@@ -3391,18 +3406,14 @@ cards.forEach(
 
         }
 
-
         card.style.pointerEvents =
             "none";
-
 
         card.style.opacity =
             "0";
 
-
         card.style.zIndex =
             "5";
-
 
         let x = 0;
 
@@ -3412,7 +3423,6 @@ cards.forEach(
             CONFIG.deck.escalaDistante;
 
         let rotacao = 0;
-
 
         if (
             diferenca === 0
@@ -3424,10 +3434,8 @@ cards.forEach(
 
             escala = 1;
 
-
             card.style.filter =
                 "blur(0px)";
-
 
             rotacao =
 
@@ -3445,14 +3453,11 @@ cards.forEach(
 
                 );
 
-
             card.style.opacity =
                 "1";
 
-
             card.style.zIndex =
                 "40";
-
 
             card.style.pointerEvents =
 
@@ -3464,7 +3469,6 @@ cards.forEach(
 
         }
 
-
         else if (
             diferenca === 1
         ) {
@@ -3472,14 +3476,11 @@ cards.forEach(
             const deslocamentoBase =
                 CONFIG.deck.deslocamentoProximo;
 
-
             const yBase =
                 CONFIG.deck.deslocamentoVertical;
 
-
             const escalaBase =
                 CONFIG.deck.escalaProximo;
-
 
             if (
                 galeria.arrastando &&
@@ -3489,16 +3490,13 @@ cards.forEach(
                 const fator =
                     progresso;
 
-
                 x =
                     deslocamentoBase *
                     (1 - fator);
 
-
                 y =
                     yBase *
                     (1 - fator);
-
 
                 escala =
                     escalaBase +
@@ -3506,7 +3504,6 @@ cards.forEach(
                         (1 - escalaBase) *
                         fator
                     );
-
 
                 const blurInicial =
 
@@ -3516,12 +3513,10 @@ cards.forEach(
 
                     ) || 0;
 
-
                 const blur =
 
                     blurInicial *
                     (1 - fator);
-
 
                 card.style.filter =
                     `blur(${blur}px)`;
@@ -3531,14 +3526,11 @@ cards.forEach(
                 x =
                     deslocamentoBase;
 
-
                 y =
                     yBase;
 
-
                 escala =
                     escalaBase;
-
 
                 card.style.filter =
 
@@ -3546,16 +3538,13 @@ cards.forEach(
 
             }
 
-
             card.style.opacity =
                 "1";
-
 
             card.style.zIndex =
                 "20";
 
         }
-
 
         else if (
             diferenca === -1
@@ -3565,14 +3554,11 @@ cards.forEach(
 
                 -CONFIG.deck.deslocamentoProximo;
 
-
             const yBase =
                 CONFIG.deck.deslocamentoVertical;
 
-
             const escalaBase =
                 CONFIG.deck.escalaProximo;
-
 
             if (
                 galeria.arrastando &&
@@ -3582,16 +3568,13 @@ cards.forEach(
                 const fator =
                     progresso;
 
-
                 x =
                     deslocamentoBase *
                     (1 - fator);
 
-
                 y =
                     yBase *
                     (1 - fator);
-
 
                 escala =
                     escalaBase +
@@ -3599,7 +3582,6 @@ cards.forEach(
                         (1 - escalaBase) *
                         fator
                     );
-
 
                 const blurInicial =
 
@@ -3609,12 +3591,10 @@ cards.forEach(
 
                     ) || 0;
 
-
                 const blur =
 
                     blurInicial *
                     (1 - fator);
-
 
                 card.style.filter =
                     `blur(${blur}px)`;
@@ -3624,14 +3604,11 @@ cards.forEach(
                 x =
                     deslocamentoBase;
 
-
                 y =
                     yBase;
 
-
                 escala =
                     escalaBase;
-
 
                 card.style.filter =
 
@@ -3639,16 +3616,13 @@ cards.forEach(
 
             }
 
-
             card.style.opacity =
                 "1";
-
 
             card.style.zIndex =
                 "19";
 
         }
-
 
         else {
 
@@ -3659,25 +3633,20 @@ cards.forEach(
             escala =
                 CONFIG.deck.escalaDistante;
 
-
             card.style.opacity =
                 "0";
-
 
             card.style.zIndex =
                 "5";
 
-
             card.style.pointerEvents =
                 "none";
-
 
             card.style.filter =
 
                 `blur(${CONFIG.deck.blurDistante})`;
 
         }
-
 
         card.style.transform =
 
@@ -3691,12 +3660,9 @@ cards.forEach(
 
 );
 
-
 atualizarIndicadoresGaleria();
 
-
 atualizarVideoAtivo();
-
 
 ajustarAlturaDeck();
 
@@ -3713,17 +3679,14 @@ function ajustarAlturaDeck() {
 const deck =
     obterDeck();
 
-
 if (!deck) {
 
     return;
 
 }
 
-
 const cards =
     obterCardsDeck();
-
 
 if (!cards.length) {
 
@@ -3731,9 +3694,7 @@ if (!cards.length) {
 
 }
 
-
 let maiorAltura = 0;
-
 
 cards.forEach(
 
@@ -3746,7 +3707,6 @@ cards.forEach(
             card.scrollHeight ||
 
             0;
-
 
         if (
             altura >
@@ -3762,7 +3722,6 @@ cards.forEach(
 
 );
 
-
 if (
     maiorAltura > 0
 ) {
@@ -3772,13 +3731,11 @@ if (
 
 }
 
-
 const imagens =
 
     deck.querySelectorAll(
         "img"
     );
-
 
 imagens.forEach(
 
@@ -3806,13 +3763,11 @@ imagens.forEach(
 
 );
 
-
 const videos =
 
     deck.querySelectorAll(
         "video"
     );
-
 
 videos.forEach(
 
@@ -3825,7 +3780,6 @@ videos.forEach(
             return;
 
         }
-
 
         video.addEventListener(
 
@@ -3856,22 +3810,18 @@ function configurarDeck() {
 const deck =
     obterDeck();
 
-
 if (!deck) {
 
     return;
 
 }
 
-
 aplicarPosicoesDeck(
     0,
     false
 );
 
-
 configurarEventosDeck();
-
 
 ajustarAlturaDeck();
 
@@ -3888,52 +3838,43 @@ function configurarEventosDeck() {
 const deck =
     obterDeck();
 
-
 if (!deck) {
 
     return;
 
 }
 
-
 removerEventosDeck();
-
 
 deck.addEventListener(
     "pointerdown",
     iniciarArrasteDeck
 );
 
-
 deck.addEventListener(
     "pointermove",
     moverArrasteDeck
 );
-
 
 deck.addEventListener(
     "pointerup",
     finalizarArrasteDeck
 );
 
-
 deck.addEventListener(
     "pointercancel",
     cancelarArrasteDeck
 );
-
 
 deck.addEventListener(
     "click",
     controlarCliqueDepoisSwipe
 );
 
-
 window.addEventListener(
     "resize",
     ajustarDeckNoResize
 );
-
 
 eventosDeckRegistrados =
     true;
@@ -3947,7 +3888,6 @@ function removerEventosDeck() {
 const deck =
     obterDeck();
 
-
 if (
     !deck &&
     !eventosDeckRegistrados
@@ -3957,7 +3897,6 @@ if (
 
 }
 
-
 if (deck) {
 
     deck.removeEventListener(
@@ -3965,24 +3904,20 @@ if (deck) {
         iniciarArrasteDeck
     );
 
-
     deck.removeEventListener(
         "pointermove",
         moverArrasteDeck
     );
-
 
     deck.removeEventListener(
         "pointerup",
         finalizarArrasteDeck
     );
 
-
     deck.removeEventListener(
         "pointercancel",
         cancelarArrasteDeck
     );
-
 
     deck.removeEventListener(
         "click",
@@ -3991,12 +3926,10 @@ if (deck) {
 
 }
 
-
 window.removeEventListener(
     "resize",
     ajustarDeckNoResize
 );
-
 
 eventosDeckRegistrados =
     false;
@@ -4023,7 +3956,6 @@ if (
 
 }
 
-
 if (
     evento.pointerType === "mouse" &&
     evento.button !== 0
@@ -4033,45 +3965,34 @@ if (
 
 }
 
-
 galeria.arrastando =
     true;
-
 
 galeria.gestoHorizontal =
     false;
 
-
 galeria.inicioX =
     evento.clientX;
-
 
 galeria.inicioY =
     evento.clientY;
 
-
 galeria.deslocamentoX =
     0;
-
 
 galeria.ponteiroId =
     evento.pointerId;
 
-
 ignorarProximoClique =
     false;
-
 
 videosPausadosPorSwipe =
     true;
 
-
 pausarTodosVideos();
-
 
 const deck =
     obterDeck();
-
 
 if (deck) {
 
@@ -4101,18 +4022,15 @@ if (
 
 }
 
-
 const deslocamentoX =
 
     evento.clientX -
     galeria.inicioX;
 
-
 const deslocamentoY =
 
     evento.clientY -
     galeria.inicioY;
-
 
 if (
     !galeria.gestoHorizontal
@@ -4127,7 +4045,6 @@ if (
 
     }
 
-
     if (
         Math.abs(deslocamentoY) >
         Math.abs(deslocamentoX)
@@ -4136,34 +4053,26 @@ if (
         galeria.arrastando =
             false;
 
-
         galeria.gestoHorizontal =
             false;
-
 
         galeria.ponteiroId =
             null;
 
-
         videosPausadosPorSwipe =
             false;
 
-
         atualizarVideoAtivo();
-
 
         return;
 
     }
 
-
     galeria.gestoHorizontal =
         true;
 
-
     const deck =
         obterDeck();
-
 
     if (
         deck &&
@@ -4189,7 +4098,6 @@ if (
 
 }
 
-
 if (
     !galeria.gestoHorizontal
 ) {
@@ -4198,23 +4106,18 @@ if (
 
 }
 
-
 evento.preventDefault();
-
 
 galeria.deslocamentoX =
     deslocamentoX;
-
 
 aplicarPosicoesDeck(
     deslocamentoX,
     false
 );
 
-
 const deck =
     obterDeck();
-
 
 if (deck) {
 
@@ -4244,28 +4147,22 @@ if (
 
 }
 
-
 const deslocamento =
     galeria.deslocamentoX;
 
-
 const deck =
     obterDeck();
-
 
 liberarCapturaPonteiro(
     deck,
     evento.pointerId
 );
 
-
 galeria.arrastando =
     false;
 
-
 galeria.ponteiroId =
     null;
-
 
 if (
     !galeria.gestoHorizontal
@@ -4274,32 +4171,25 @@ if (
     galeria.deslocamentoX =
         0;
 
-
     galeria.gestoHorizontal =
         false;
 
-
     videosPausadosPorSwipe =
         false;
-
 
     aplicarPosicoesDeck(
         0,
         true
     );
 
-
     atualizarVideoAtivo();
-
 
     return;
 
 }
 
-
 galeria.gestoHorizontal =
     false;
-
 
 const largura =
 
@@ -4307,12 +4197,10 @@ const largura =
         ? deck.clientWidth
         : window.innerWidth;
 
-
 const limitePorPorcentagem =
 
     largura *
     CONFIG.deck.limiteSwipe;
-
 
 const limite =
 
@@ -4321,12 +4209,10 @@ const limite =
         limitePorPorcentagem
     );
 
-
 ignorarProximoClique =
 
     Math.abs(deslocamento) >=
     limite;
-
 
 if (
     Math.abs(deslocamento) >=
@@ -4351,14 +4237,11 @@ if (
 
 }
 
-
 galeria.deslocamentoX =
     0;
 
-
 videosPausadosPorSwipe =
     false;
-
 
 setTimeout(
 
@@ -4392,10 +4275,8 @@ if (
 
 }
 
-
 const deck =
     obterDeck();
-
 
 liberarCapturaPonteiro(
     deck,
@@ -4404,29 +4285,22 @@ liberarCapturaPonteiro(
         : galeria.ponteiroId
 );
 
-
 galeria.arrastando =
     false;
-
 
 galeria.gestoHorizontal =
     false;
 
-
 galeria.ponteiroId =
     null;
-
 
 galeria.deslocamentoX =
     0;
 
-
 videosPausadosPorSwipe =
     false;
 
-
 restaurarCardAtual();
-
 
 setTimeout(
 
@@ -4462,7 +4336,6 @@ if (
     return;
 
 }
-
 
 if (
     typeof deck.hasPointerCapture ===
@@ -4508,13 +4381,10 @@ if (
 
 }
 
-
 pausarTodosVideos();
-
 
 galeria.animando =
     true;
-
 
 const novoIndice =
 
@@ -4524,27 +4394,17 @@ const novoIndice =
 
     );
 
-
 galeria.indiceAtual =
     novoIndice;
 
-
-/*
- * Atualiza o fundo imediatamente quando o novo
- * card passa a ser o card ativo.
- */
-
 atualizarFundoDinamico();
-
 
 aplicarPosicoesDeck(
     0,
     true
 );
 
-
 atualizarIndicadoresGaleria();
-
 
 setTimeout(
 
@@ -4553,15 +4413,12 @@ setTimeout(
         galeria.animando =
             false;
 
-
         aplicarPosicoesDeck(
             0,
             false
         );
 
-
         atualizarIndicadoresGaleria();
-
 
         atualizarVideoAtivo();
 
@@ -4590,13 +4447,10 @@ if (
 
 }
 
-
 pausarTodosVideos();
-
 
 galeria.animando =
     true;
-
 
 const novoIndice =
 
@@ -4606,26 +4460,17 @@ const novoIndice =
 
     );
 
-
 galeria.indiceAtual =
     novoIndice;
 
-
-/*
- * Atualiza o fundo para a imagem anterior.
- */
-
 atualizarFundoDinamico();
-
 
 aplicarPosicoesDeck(
     0,
     true
 );
 
-
 atualizarIndicadoresGaleria();
-
 
 setTimeout(
 
@@ -4634,15 +4479,12 @@ setTimeout(
         galeria.animando =
             false;
 
-
         aplicarPosicoesDeck(
             0,
             false
         );
 
-
         atualizarIndicadoresGaleria();
-
 
         atualizarVideoAtivo();
 
@@ -4670,15 +4512,12 @@ if (
 
 }
 
-
 pausarTodosVideos();
-
 
 aplicarPosicoesDeck(
     0,
     true
 );
-
 
 setTimeout(
 
@@ -4688,7 +4527,6 @@ setTimeout(
             0,
             false
         );
-
 
         atualizarVideoAtivo();
 
@@ -4736,13 +4574,11 @@ function obterVideosDeck() {
 const deck =
     obterDeck();
 
-
 if (!deck) {
 
     return [];
 
 }
-
 
 return Array.from(
 
@@ -4760,7 +4596,6 @@ function pausarTodosVideos() {
 
 const videos =
     obterVideosDeck();
-
 
 videos.forEach(
 
@@ -4798,13 +4633,11 @@ const card =
         galeria.indiceAtual
     );
 
-
 if (!card) {
 
     return null;
 
 }
-
 
 return card.querySelector(
     "video.portfolio-deck-media"
@@ -4824,24 +4657,19 @@ if (!elemento) {
 
 }
 
-
 const rect =
     elemento.getBoundingClientRect();
-
 
 const alturaViewport =
     window.innerHeight ||
     document.documentElement.clientHeight;
 
-
 const larguraViewport =
     window.innerWidth ||
     document.documentElement.clientWidth;
 
-
 const tolerancia =
     1;
-
 
 return (
 
@@ -4871,7 +4699,6 @@ if (!video) {
 
 }
 
-
 if (
     videosPausadosPorSwipe ||
     galeria.arrastando ||
@@ -4882,12 +4709,10 @@ if (
 
 }
 
-
 const card =
     video.closest(
         ".portfolio-deck-card"
     );
-
 
 if (!card) {
 
@@ -4895,12 +4720,10 @@ if (!card) {
 
 }
 
-
 const indice =
     Number(
         card.dataset.indice
     );
-
 
 if (
     indice !==
@@ -4910,7 +4733,6 @@ if (
     return;
 
 }
-
 
 if (
     !estaCompletamenteVisivel(
@@ -4922,11 +4744,9 @@ if (
 
 }
 
-
 video.muted = true;
 
 video.defaultMuted = true;
-
 
 if (
     !video.paused
@@ -4936,12 +4756,10 @@ if (
 
 }
 
-
 try {
 
     const promessa =
         video.play();
-
 
     if (
         promessa &&
@@ -4982,13 +4800,11 @@ function atualizarVideoAtivo() {
 const videos =
     obterVideosDeck();
 
-
 if (!videos.length) {
 
     return;
 
 }
-
 
 videos.forEach(
 
@@ -4999,19 +4815,16 @@ videos.forEach(
                 ".portfolio-deck-card"
             );
 
-
         if (!card) {
 
             return;
 
         }
 
-
         const indice =
             Number(
                 card.dataset.indice
             );
-
 
         if (
             indice !==
@@ -5041,7 +4854,6 @@ videos.forEach(
 
         }
 
-
         if (
             videosPausadosPorSwipe ||
             galeria.arrastando ||
@@ -5070,7 +4882,6 @@ videos.forEach(
             return;
 
         }
-
 
         if (
             estaCompletamenteVisivel(
@@ -5121,10 +4932,8 @@ function configurarObserverVideos() {
 
 destruirObserverVideos();
 
-
 const deck =
     obterDeck();
-
 
 if (!deck) {
 
@@ -5132,17 +4941,14 @@ if (!deck) {
 
 }
 
-
 const videos =
     obterVideosDeck();
-
 
 if (!videos.length) {
 
     return;
 
 }
-
 
 try {
 
@@ -5162,12 +4968,10 @@ try {
                         const card =
                             entrada.target;
 
-
                         const video =
                             card.querySelector(
                                 "video.portfolio-deck-media"
                             );
-
 
                         if (!video) {
 
@@ -5175,12 +4979,10 @@ try {
 
                         }
 
-
                         const indice =
                             Number(
                                 card.dataset.indice
                             );
-
 
                         if (
                             indice !==
@@ -5209,7 +5011,6 @@ try {
                             return;
 
                         }
-
 
                         if (
                             videosPausadosPorSwipe ||
@@ -5240,12 +5041,21 @@ try {
 
                         }
 
-
                         if (
                             entrada.isIntersecting &&
                             entrada.intersectionRatio >=
                             CONFIG.video.visibilidadeMinima
                         ) {
+
+                            /*
+                             * O vídeo já está no DOM e agora
+                             * está completamente visível.
+                             *
+                             * Aproveitamos este momento para
+                             * atualizar as cores do fundo.
+                             */
+
+                            atualizarFundoDinamico();
 
                             reproduzirVideoSePermitido(
                                 video
@@ -5300,7 +5110,6 @@ try {
 
         );
 
-
     videos.forEach(
 
         function (video) {
@@ -5309,7 +5118,6 @@ try {
                 video.closest(
                     ".portfolio-deck-card"
                 );
-
 
             if (card) {
 
@@ -5322,7 +5130,6 @@ try {
         }
 
     );
-
 
     requestAnimationFrame(
 
@@ -5389,12 +5196,9 @@ aplicarPosicoesDeck(
 
 );
 
-
 ajustarAlturaDeck();
 
-
 atualizarVideoAtivo();
-
 
 atualizarIntensidadeFundo();
 
@@ -5410,40 +5214,30 @@ function desmontarInteracaoDeck() {
 
 removerEventosDeck();
 
-
 destruirObserverVideos();
 
-
 pausarTodosVideos();
-
 
 galeria.arrastando =
     false;
 
-
 galeria.gestoHorizontal =
     false;
-
 
 galeria.ponteiroId =
     null;
 
-
 galeria.deslocamentoX =
     0;
-
 
 galeria.animando =
     false;
 
-
 videosPausadosPorSwipe =
     false;
 
-
 const deck =
     obterDeck();
-
 
 if (deck) {
 
@@ -5467,7 +5261,6 @@ if (!deck) {
 
 }
 
-
 deck.style.cursor =
     "grab";
 
@@ -5487,23 +5280,19 @@ const container =
         CONFIG.elementos.audioList
     );
 
-
 if (!container) {
 
     return;
 
 }
 
-
 container.innerHTML =
     "";
-
 
 const audios =
     obterPorTipo(
         "audio"
     );
-
 
 if (!audios.length) {
 
@@ -5513,7 +5302,6 @@ if (!audios.length) {
     return;
 
 }
-
 
 audios.forEach(
 
@@ -5529,7 +5317,6 @@ audios.forEach(
                 indice
             );
 
-
         if (card) {
 
             container.appendChild(
@@ -5541,7 +5328,6 @@ audios.forEach(
     }
 
 );
-
 
 renderizarIcones(
     container
@@ -5562,20 +5348,16 @@ const card =
         "article"
     );
 
-
 card.className =
     "portfolio-audio-card";
-
 
 const titulo =
 
     item._titulo ||
     `Áudio ${indice + 1}`;
 
-
 const descricao =
     item._descricao;
-
 
 card.innerHTML = `
 
@@ -5586,7 +5368,6 @@ card.innerHTML = `
             <i data-lucide="music-2"></i>
 
         </div>
-
 
         <div class="portfolio-audio-card-info">
 
@@ -5617,7 +5398,6 @@ card.innerHTML = `
 
     </div>
 
-
     <audio
         controls
         preload="metadata"
@@ -5625,7 +5405,6 @@ card.innerHTML = `
     ></audio>
 
 `;
-
 
 return card;
 
@@ -5653,19 +5432,14 @@ if (
 
 }
 
-
 prepararContainers();
-
 
 renderizarGaleria();
 
-
 renderizarAudios();
-
 
 inicializado =
     true;
-
 
 return portfolio;
 
@@ -5693,15 +5467,12 @@ if (
 
 }
 
-
 renderizar(
     portfolio
 );
 
-
 inicializado =
     true;
-
 
 return portfolio;
 
@@ -5727,20 +5498,17 @@ if (
 
 }
 
-
 portfolio =
 
     normalizarPortfolio(
         lista
     );
 
-
 galeria.indiceAtual =
 
     normalizarIndice(
         galeria.indiceAtual
     );
-
 
 return renderizar(
     portfolio
@@ -5830,7 +5598,6 @@ if (
 
 }
 
-
 if (
     galeria.animando
 ) {
@@ -5839,16 +5606,13 @@ if (
 
 }
 
-
 pausarTodosVideos();
-
 
 const novoIndice =
 
     normalizarIndice(
         indice
     );
-
 
 if (
     novoIndice ===
@@ -5865,14 +5629,11 @@ if (
 
 }
 
-
 galeria.animando =
     true;
 
-
 galeria.indiceAtual =
     novoIndice;
-
 
 /*
  * Atualiza as cores do fundo quando o usuário
@@ -5881,15 +5642,12 @@ galeria.indiceAtual =
 
 atualizarFundoDinamico();
 
-
 aplicarPosicoesDeck(
     0,
     true
 );
 
-
 atualizarIndicadoresGaleria();
-
 
 setTimeout(
 
@@ -5898,15 +5656,12 @@ setTimeout(
         galeria.animando =
             false;
 
-
         aplicarPosicoesDeck(
             0,
             false
         );
 
-
         atualizarIndicadoresGaleria();
-
 
         atualizarVideoAtivo();
 
@@ -5928,45 +5683,34 @@ function limpar() {
 
 desmontarInteracaoDeck();
 
-
 resetarFundoDinamico();
-
 
 portfolio =
     [];
 
-
 galeria.itens =
     [];
-
 
 galeria.indiceAtual =
     0;
 
-
 galeria.deslocamentoX =
     0;
-
 
 galeria.arrastando =
     false;
 
-
 galeria.gestoHorizontal =
     false;
-
 
 galeria.animando =
     false;
 
-
 ignorarProximoClique =
     false;
 
-
 videosPausadosPorSwipe =
     false;
-
 
 const portfolioGrid =
 
@@ -5974,20 +5718,17 @@ const portfolioGrid =
         CONFIG.elementos.portfolioGrid
     );
 
-
 const videoList =
 
     obterElemento(
         CONFIG.elementos.videoList
     );
 
-
 const audioList =
 
     obterElemento(
         CONFIG.elementos.audioList
     );
-
 
 if (portfolioGrid) {
 
@@ -5996,7 +5737,6 @@ if (portfolioGrid) {
 
 }
 
-
 if (videoList) {
 
     videoList.innerHTML =
@@ -6004,14 +5744,12 @@ if (videoList) {
 
 }
 
-
 if (audioList) {
 
     audioList.innerHTML =
         "";
 
 }
-
 
 inicializado =
     false;
@@ -6050,7 +5788,6 @@ avancarGaleria,
 
 voltarGaleria,
 
-
 estaInicializado:
 
     function () {
@@ -6058,7 +5795,6 @@ estaInicializado:
         return inicializado;
 
     },
-
 
 normalizarItem,
 

@@ -149,18 +149,66 @@ const estado = {
    ELEMENTOS
    ============================================================ */
 
+   /* ============================================================
+ELEMENTOS
+============================================================ */
+
+/*
+
+* Localiza elementos do formulário permanente do portfólio.
+*
+* O PerfilPortfolio pode receber um utilitário central
+* através de contexto.utils.el(), mas nunca deve depender
+* exclusivamente dele.
+*
+* Caso o utilitário central não encontre o elemento,
+* utilizamos diretamente document.getElementById().
+*
+* Os valores recebidos aqui são IDs, não seletores CSS.
+  */
+
 function obterElemento(id) {
 
-    if (
-        contexto?.utils &&
-        typeof contexto.utils.el === "function"
-    ) {
 
-        return contexto.utils.el(id);
+if (!id) {
+
+    return null;
+
+}
+
+
+/*
+ * Primeiro utiliza o resolvedor central do PerfilEditor,
+ * quando ele estiver disponível.
+ */
+
+if (
+    contexto?.utils &&
+    typeof contexto.utils.el === "function"
+) {
+
+    const elemento =
+        contexto.utils.el(id);
+
+
+    if (elemento) {
+
+        return elemento;
 
     }
 
-    return document.getElementById(id);
+}
+
+
+/*
+ * Fallback direto no HTML.
+ *
+ * O formulário do portfólio é permanente e utiliza
+ * IDs fixos definidos no HTML.
+ */
+
+return document.getElementById(id) || null;
+
 
 }
 

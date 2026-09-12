@@ -1,540 +1,462 @@
 /* =========================================================
-   MUSICALWORLD / ARTISTASHOW
-   PERFIL PÚBLICO — FUNDO DINÂMICO
+MUSICALWORLD — FUNDO DINÂMICO DO PERFIL PÚBLICO
+Arquivo: apresentar-perfil-fundo.css
 
-   Arquivo:
-   apresentar-perfil-fundo.css
+Responsabilidade:
 
-   Responsabilidade:
-
-   * Criar o fundo dinâmico da página.
-   * Usar as cores predominantes do portfólio.
-   * Aplicar o efeito diretamente no BODY.
-   * Ocupar toda a largura da página.
-   * Não criar painel ao redor do portfólio.
-   * Controlar a intensidade através da variável:
-
-       --perfil-fundo-opacidade
-
-   * Permitir que o JavaScript controle a intensidade
-     conforme o portfólio entra e sai da viewport.
-
-   IMPORTANTE:
-
-   Este arquivo NÃO estiliza os cards do portfólio.
-
-   O arquivo:
-
-       apresentar-perfil-portfolio.css
-
-   continua responsável exclusivamente pelo portfólio.
-
-   O JavaScript fornece:
-
-       --perfil-fundo-cor-1
-       --perfil-fundo-cor-2
-       --perfil-fundo-cor-3
-       --perfil-fundo-opacidade
-
-   O CSS é responsável somente pela apresentação visual.
-========================================================= */
-
+* Criar o fundo dinâmico de toda a página.
+* Receber as cores predominantes definidas pelo JavaScript.
+* Aplicar as cores através de gradientes suaves.
+* Manter o conteúdo do perfil acima do fundo.
+* Funcionar em imagens e vídeos quando o JS fornecer
+  as cores extraídas da mídia.
+  ========================================================= */
 
 /* =========================================================
-   VARIÁVEIS DE FALLBACK
 
-   Caso o JavaScript ainda não tenha calculado as cores,
-   utilizamos tons neutros.
+1. ESTRUTURA BASE
+   ========================================================= */
 
-   A intensidade começa em 0 para evitar que o efeito
-   apareça antes de o portfólio ser processado.
-========================================================= */
+html,
+body {
+min-height: 100%;
+}
 
 body {
+position: relative;
 
-    --perfil-fundo-cor-1:
-        rgba(167, 182, 198, 0.28);
 
-    --perfil-fundo-cor-2:
-        rgba(200, 210, 222, 0.18);
+/*
+ * Cria um contexto de empilhamento próprio.
+ * Isso permite que os elementos ::before e ::after
+ * permaneçam atrás do conteúdo sem desaparecer atrás
+ * do fundo padrão do documento.
+ */
+isolation: isolate;
 
-    --perfil-fundo-cor-3:
-        rgba(226, 232, 240, 0.10);
+/*
+ * Cor base da página.
+ * O fundo dinâmico será aplicado por cima através
+ * dos pseudo-elementos.
+ */
+background: #f5f7fb;
 
-    --perfil-fundo-opacidade: 0;
+/*
+ * Cores recebidas pelo JavaScript.
+ *
+ * O JS pode substituir essas variáveis conforme
+ * a mídia atualmente ativa no portfólio.
+ */
+--perfil-fundo-cor-1: rgba(167, 182, 198, 1);
+--perfil-fundo-cor-2: rgba(200, 210, 222, 1);
+--perfil-fundo-cor-3: rgba(226, 232, 240, 1);
+
+/*
+ * Controla a intensidade geral do fundo.
+ *
+ * O JavaScript altera esse valor conforme a
+ * visibilidade do card de portfólio.
+ */
+--perfil-fundo-opacidade: 0;
+
 
 }
 
-
 /* =========================================================
-   CAMADA PRINCIPAL DO FUNDO
-
-   O BODY recebe uma camada fixa atrás de toda a página.
-
-   Isso permite que o efeito ocupe toda a largura da tela,
-   independentemente da posição ou largura do conteúdo.
-
-   A intensidade é controlada pelo JavaScript através de:
-
-       --perfil-fundo-opacidade
+2. CAMADA PRINCIPAL DO FUNDO
 ========================================================= */
 
 body::before {
+content: "";
 
-    content: "";
 
-    position: fixed;
+position: fixed;
 
-    z-index: -10;
+inset: 0;
 
-    top: 0;
-    left: 50%;
+width: 100%;
+height: 100%;
 
-    width: 100vw;
-    height: 100vh;
+/*
+ * Fica atrás de todo o conteúdo da página,
+ * mas dentro do contexto criado pelo body.
+ */
+z-index: -1;
 
-    transform: translateX(-50%);
+pointer-events: none;
 
-    pointer-events: none;
+/*
+ * Gradientes grandes e suaves.
+ *
+ * A primeira cor recebe maior destaque.
+ */
+background:
+    radial-gradient(
+        circle at 18% 18%,
+        var(--perfil-fundo-cor-1) 0%,
+        transparent 42%
+    ),
 
-    background:
+    radial-gradient(
+        circle at 82% 30%,
+        var(--perfil-fundo-cor-2) 0%,
+        transparent 46%
+    ),
 
-        /* Mistura principal */
-        radial-gradient(
-            ellipse at 50% 18%,
+    radial-gradient(
+        circle at 50% 90%,
+        var(--perfil-fundo-cor-3) 0%,
+        transparent 50%
+    );
 
-            var(
-                --perfil-fundo-cor-1,
-                rgba(167, 182, 198, 0.28)
-            ) 0%,
+/*
+ * A intensidade é controlada pelo JS.
+ */
+opacity: var(--perfil-fundo-opacidade);
 
-            color-mix(
-                in srgb,
-                var(--perfil-fundo-cor-1, rgba(167, 182, 198, 0.28)) 45%,
-                var(--perfil-fundo-cor-2, rgba(200, 210, 222, 0.18))
-            ) 22%,
+/*
+ * Suaviza a troca entre uma mídia e outra.
+ */
+transition:
+    opacity 450ms ease,
+    background 450ms ease;
 
-            color-mix(
-                in srgb,
-                var(--perfil-fundo-cor-2, rgba(200, 210, 222, 0.18)) 50%,
-                var(--perfil-fundo-cor-3, rgba(226, 232, 240, 0.10))
-            ) 40%,
+/*
+ * Pequeno desfoque para deixar o efeito
+ * semelhante a fundos de plataformas de streaming.
+ */
+filter: blur(35px);
 
-            rgba(245, 247, 251, 0.45) 62%,
+transform: scale(1.08);
 
-            rgba(245, 247, 251, 1) 100%
-        ),
-
-        /* Mistura lateral esquerda */
-        radial-gradient(
-            ellipse at 20% 24%,
-
-            var(
-                --perfil-fundo-cor-1,
-                rgba(167, 182, 198, 0.20)
-            ) 0%,
-
-            var(
-                --perfil-fundo-cor-2,
-                rgba(200, 210, 222, 0.14)
-            ) 30%,
-
-            rgba(245, 247, 251, 0) 65%
-        ),
-
-        /* Mistura lateral direita */
-        radial-gradient(
-            ellipse at 80% 24%,
-
-            var(
-                --perfil-fundo-cor-3,
-                rgba(226, 232, 240, 0.12)
-            ) 0%,
-
-            var(
-                --perfil-fundo-cor-2,
-                rgba(200, 210, 222, 0.10)
-            ) 32%,
-
-            rgba(245, 247, 251, 0) 65%
-        );
-
-    opacity:
-        var(
-            --perfil-fundo-opacidade,
-            0
-        );
-
-    transition:
-        opacity 420ms ease;
 
 }
 
-
 /* =========================================================
-   DIFUSÃO DA MISTURA
-
-   Esta camada pega as cores já misturadas e espalha
-   suavemente pelo ambiente da página.
+3. CAMADA SECUNDÁRIA
 ========================================================= */
 
 body::after {
+content: "";
 
-    content: "";
 
-    position: fixed;
+position: fixed;
 
-    z-index: -9;
+inset: 0;
 
-    top: 0;
-    left: 50%;
+width: 100%;
+height: 100%;
 
-    width: 100vw;
-    height: 100vh;
+z-index: -1;
 
-    transform: translateX(-50%);
+pointer-events: none;
 
-    pointer-events: none;
+/*
+ * Segunda camada de luz.
+ *
+ * Usa as mesmas cores predominantes, mas com
+ * uma distribuição diferente para evitar que
+ * o fundo pareça apenas uma mancha de cor.
+ */
+background:
+    radial-gradient(
+        ellipse at 50% 0%,
+        var(--perfil-fundo-cor-1) 0%,
+        transparent 52%
+    ),
 
-    background:
+    radial-gradient(
+        ellipse at 100% 100%,
+        var(--perfil-fundo-cor-2) 0%,
+        transparent 55%
+    ),
 
-        radial-gradient(
-            ellipse at 50% 20%,
+    radial-gradient(
+        ellipse at 0% 100%,
+        var(--perfil-fundo-cor-3) 0%,
+        transparent 50%
+    );
 
-            color-mix(
-                in srgb,
-                var(--perfil-fundo-cor-1, rgba(167, 182, 198, 0.18)) 33%,
-                var(--perfil-fundo-cor-2, rgba(200, 210, 222, 0.14))
-            ) 0%,
+/*
+ * A segunda camada fica mais discreta.
+ */
+opacity: calc(
+    var(--perfil-fundo-opacidade) * 0.65
+);
 
-            color-mix(
-                in srgb,
-                var(--perfil-fundo-cor-2, rgba(200, 210, 222, 0.14)) 50%,
-                var(--perfil-fundo-cor-3, rgba(226, 232, 240, 0.10))
-            ) 28%,
+filter: blur(55px);
 
-            rgba(245, 247, 251, 0) 72%
-        );
+transform: scale(1.12);
 
-    filter:
-        blur(32px);
+transition:
+    opacity 500ms ease,
+    background 500ms ease;
 
-    opacity:
-        calc(
-            var(
-                --perfil-fundo-opacidade,
-                0
-            ) * 0.65
-        );
-
-    transition:
-        opacity 500ms ease;
 
 }
 
+/* =========================================================
+4. CONTEÚDO DO PERFIL
+========================================================= */
+
+/*
+
+* O conteúdo deve permanecer acima das camadas
+* de fundo.
+*
+* Não alteramos visualmente os componentes.
+* Apenas garantimos que eles tenham um nível
+* superior ao fundo.
+  */
+
+body > * {
+position: relative;
+z-index: 1;
+}
+
+/*
+
+* Exceção para elementos que possuem posição
+* fixed própria.
+*
+* Mantemos o comportamento original de elementos
+* fixos da interface.
+  */
+  body > .fixed,
+  body > [style*="position: fixed"] {
+  z-index: 100;
+  }
 
 /* =========================================================
-   CONTEÚDO DA PÁGINA
+5. CARD / DECK DO PORTFÓLIO
+========================================================= */
 
-   O conteúdo permanece acima das camadas do fundo.
+/*
 
-   Não adicionamos fundo ao portfólio.
+* O card continua transparente para permitir que
+* o fundo dinâmico seja percebido ao redor dele.
+  */
 
-   Não adicionamos borda.
+.profile-media-highlight,
+.portfolio-grid {
+position: relative;
+z-index: 1;
+}
 
-   Não adicionamos sombra.
+/*
 
-   O portfólio continua visualmente independente.
+* Evita que um fundo sólido do grid esconda
+* completamente o efeito dinâmico.
+  */
+
+.portfolio-grid {
+background: transparent;
+}
+
+/* =========================================================
+6. ÁREA DE DESTAQUE DA MÍDIA
 ========================================================= */
 
 .profile-media-highlight {
-
-    position: relative;
-
-    z-index: 1;
-
-    width: 100%;
-
-    box-sizing: border-box;
-
-    isolation: isolate;
-
+background: transparent;
 }
 
+/*
+
+* O próprio card mantém sua aparência normal.
+*
+* O fundo dinâmico aparece ao redor dele.
+  */
+
+.portfolio-deck {
+position: relative;
+z-index: 2;
+}
 
 /* =========================================================
-   PORTFÓLIO
-
-   O grid permanece completamente transparente.
-
-   Isso é importante porque o fundo agora pertence
-   ao BODY e não mais ao portfólio.
+7. VÍDEOS DO PORTFÓLIO
 ========================================================= */
 
-.profile-media-highlight .portfolio-grid {
+/*
 
-    position: relative;
+* O vídeo continua completamente visível.
+*
+* Não aplicamos opacity ou filtros que possam
+* interferir na leitura visual da mídia.
+  */
 
-    z-index: 2;
-
-    background: transparent;
-
+.portfolio-deck-media,
+.portfolio-video,
+video {
+position: relative;
 }
 
+/*
+
+* O vídeo não deve receber o z-index do fundo.
+  */
+
+.portfolio-deck-media video,
+.portfolio-video video {
+z-index: 2;
+}
 
 /* =========================================================
-   ESTADO VISÍVEL
-
-   Quando o JavaScript identifica que o portfólio está
-   dentro da viewport, adicionamos uma classe ao BODY.
-
-   A classe não é obrigatória para o funcionamento do efeito,
-   mas deixa o comportamento explícito e preparado para
-   futuras melhorias.
+8. ESTADO ATIVO DO FUNDO
 ========================================================= */
 
-body.perfil-fundo-dinamico-visivel::before {
+/*
 
-    transition:
-        opacity 420ms ease;
+* Quando o portfólio está visível na tela,
+* o JavaScript adiciona esta classe ao body.
+  */
 
+body.perfil-fundo-dinamico-visivel {
+--perfil-fundo-opacidade: 0.82;
 }
 
+/*
 
-body.perfil-fundo-dinamico-visivel::after {
+* Quando o portfólio não está visível,
+* reduzimos a intensidade.
+  */
 
-    transition:
-        opacity 500ms ease;
-
+body:not(.perfil-fundo-dinamico-visivel) {
+--perfil-fundo-opacidade: 0.12;
 }
-
 
 /* =========================================================
-   DESKTOP
-
-   No desktop o efeito pode ocupar uma área maior,
-   criando uma atmosfera mais ampla ao redor do conteúdo.
+9. TRANSIÇÃO SUAVE ENTRE MÍDIAS
 ========================================================= */
 
-@media (min-width: 901px) {
-
-    body::before {
-
-        background:
-            radial-gradient(
-                ellipse at 50% 18%,
-
-                var(
-                    --perfil-fundo-cor-1,
-                    rgba(167, 182, 198, 0.28)
-                ) 0%,
-
-                var(
-                    --perfil-fundo-cor-2,
-                    rgba(200, 210, 222, 0.17)
-                ) 28%,
-
-                var(
-                    --perfil-fundo-cor-3,
-                    rgba(226, 232, 240, 0.08)
-                ) 48%,
-
-                rgba(245, 247, 251, 0.72) 70%,
-
-                rgba(245, 247, 251, 1) 100%
-            );
-
-    }
-
-
-    body::after {
-
-        filter:
-            blur(32px);
-
-    }
-
+body::before,
+body::after {
+transition:
+opacity 500ms ease,
+filter 500ms ease;
 }
 
-
 /* =========================================================
-   TABLET
-
-   Reduzimos discretamente a concentração do efeito
-   para manter o conteúdo confortável visualmente.
+10. DESKTOP
 ========================================================= */
 
-@media (max-width: 900px) {
-
-    body::before {
-
-        background:
-            radial-gradient(
-                ellipse at 50% 20%,
-
-                var(
-                    --perfil-fundo-cor-1,
-                    rgba(167, 182, 198, 0.26)
-                ) 0%,
-
-                var(
-                    --perfil-fundo-cor-2,
-                    rgba(200, 210, 222, 0.16)
-                ) 28%,
-
-                var(
-                    --perfil-fundo-cor-3,
-                    rgba(226, 232, 240, 0.08)
-                ) 48%,
-
-                rgba(245, 247, 251, 0.76) 70%,
-
-                rgba(245, 247, 251, 1) 100%
-            );
-
-    }
+@media (min-width: 1024px) {
 
 
-    body::after {
+body::before {
+    filter: blur(45px);
 
-        filter:
-            blur(24px);
+    transform: scale(1.10);
+}
 
-    }
+body::after {
+    filter: blur(70px);
 
+    transform: scale(1.14);
 }
 
 
+}
+
 /* =========================================================
-   MOBILE
-
-   No celular o efeito fica mais concentrado e discreto.
-
-   Isso evita que a página inteira fique excessivamente
-   colorida enquanto o usuário navega.
+11. TABLET
 ========================================================= */
 
-@media (max-width: 600px) {
-
-    body::before {
-
-        background:
-            radial-gradient(
-                ellipse at 50% 19%,
-
-                var(
-                    --perfil-fundo-cor-1,
-                    rgba(167, 182, 198, 0.25)
-                ) 0%,
-
-                var(
-                    --perfil-fundo-cor-2,
-                    rgba(200, 210, 222, 0.15)
-                ) 29%,
-
-                var(
-                    --perfil-fundo-cor-3,
-                    rgba(226, 232, 240, 0.08)
-                ) 48%,
-
-                rgba(245, 247, 251, 0.78) 70%,
-
-                rgba(245, 247, 251, 1) 100%
-            );
-
-    }
+@media (min-width: 768px) and (max-width: 1023px) {
 
 
-    body::after {
+body::before {
+    filter: blur(40px);
 
-        filter:
-            blur(20px);
+    transform: scale(1.09);
+}
 
-        opacity:
-            calc(
-                var(
-                    --perfil-fundo-opacidade,
-                    0
-                ) * 0.65
-            );
+body::after {
+    filter: blur(60px);
 
-    }
-
+    transform: scale(1.12);
 }
 
 
-/* =========================================================
-   MOBILE PEQUENO
+}
 
-   Mantemos o efeito ainda mais suave em telas pequenas.
+/* =========================================================
+12. CELULAR
+========================================================= */
+
+@media (max-width: 767px) {
+
+
+body::before {
+    filter: blur(32px);
+
+    transform: scale(1.08);
+}
+
+body::after {
+    filter: blur(45px);
+
+    transform: scale(1.10);
+}
+
+
+}
+
+/* =========================================================
+13. CELULARES PEQUENOS
 ========================================================= */
 
 @media (max-width: 420px) {
 
-    body::before {
 
-        background:
-            radial-gradient(
-                ellipse at 50% 18%,
+body::before {
+    filter: blur(28px);
 
-                var(
-                    --perfil-fundo-cor-1,
-                    rgba(167, 182, 198, 0.23)
-                ) 0%,
+    transform: scale(1.07);
+}
 
-                var(
-                    --perfil-fundo-cor-2,
-                    rgba(200, 210, 222, 0.14)
-                ) 29%,
+body::after {
+    filter: blur(38px);
 
-                var(
-                    --perfil-fundo-cor-3,
-                    rgba(226, 232, 240, 0.07)
-                ) 48%,
-
-                rgba(245, 247, 251, 0.80) 70%,
-
-                rgba(245, 247, 251, 1) 100%
-            );
-
-    }
-
-
-    body::after {
-
-        filter:
-            blur(18px);
-
-        opacity:
-            calc(
-                var(
-                    --perfil-fundo-opacidade,
-                    0
-                ) * 0.60
-            );
-
-    }
-
+    transform: scale(1.09);
 }
 
 
+}
+
 /* =========================================================
-   REDUÇÃO DE MOVIMENTO
+14. CELULARES MUITO PEQUENOS
+========================================================= */
 
-   Respeita a preferência do sistema operacional.
+@media (max-width: 340px) {
 
-   O efeito continua existindo, mas sem transições.
+
+body::before {
+    filter: blur(24px);
+
+    transform: scale(1.06);
+}
+
+body::after {
+    filter: blur(32px);
+
+    transform: scale(1.08);
+}
+
+
+}
+
+/* =========================================================
+15. REDUÇÃO DE MOVIMENTO
 ========================================================= */
 
 @media (prefers-reduced-motion: reduce) {
 
-    body::before,
-    body::after {
 
-        transition: none;
+body::before,
+body::after {
+    transition: none;
+}
 
-        animation: none;
-
-    }
 
 }

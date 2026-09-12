@@ -2510,6 +2510,14 @@ async function iniciar() {
             contexto.PerfilEditorFoto.inicializar();
 
         }
+        if (
+            contexto.PerfilPortfolio &&
+            typeof contexto.PerfilPortfolio.inicializar === "function"
+        ) {
+
+            contexto.PerfilPortfolio.inicializar();
+
+        }
 
 
         /* =================================================
