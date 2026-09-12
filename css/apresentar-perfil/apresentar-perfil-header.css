@@ -1,323 +1,653 @@
-/* =========================================================
-   MUSICALWORLD — APRESENTAR PERFIL
-   HEADER / PERFIL
-   ========================================================= */
+/* ========================================================= 
+MUSICALWORLD — APRESENTAR PERFIL 
+HEADER / PERFIL 
+ 
+Responsabilidade deste arquivo: 
+ 
+* Estilizar a barra superior da página. 
+* Estilizar o bloco principal de identidade do perfil. 
+* Organizar foto, nome, tipo, localização, avaliação e gêneros. 
+* Manter a identidade visual limpa e alinhada à esquerda. 
+* Garantir que a foto permaneça perfeitamente circular. 
+  ========================================================= */ 
+ 
+/* ========================================================= 
+TOPBAR 
+========================================================= */ 
+ 
+.topbar { 
+position: sticky; 
+top: 0; 
+z-index: 100; 
+ 
+width: 100%; 
+height: 64px; 
+ 
+background: rgba(255, 255, 255, 0.97); 
+ 
+border-bottom: 1px solid #e8ebf1; 
+ 
+display: flex; 
+align-items: center; 
+justify-content: space-between; 
+ 
+padding: 0 18px; 
+ 
+backdrop-filter: blur(12px); 
+-webkit-backdrop-filter: blur(12px); 
+} 
+ 
+.topbar-left, 
+.topbar-right { 
+display: flex; 
+align-items: center; 
+} 
+ 
+.topbar-left { 
+gap: 12px; 
+} 
+ 
+.topbar-right { 
+gap: 8px; 
+} 
+ 
+.topbar-button { 
+width: 40px; 
+height: 40px; 
+ 
+border-radius: 12px; 
+ 
+background: #f4f5f8; 
+color: #475467; 
+ 
+display: flex; 
+align-items: center; 
+justify-content: center; 
+ 
+transition: 
+    background 0.2s ease, 
+    color 0.2s ease, 
+    transform 0.2s ease; 
+} 
+ 
+.topbar-button:hover { 
+background: #eceef3; 
+color: #172033; 
+} 
+ 
+.topbar-button:active { 
+transform: scale(0.96); 
+} 
+ 
+.topbar-button svg { 
+width: 19px; 
+height: 19px; 
+} 
+ 
+.topbar-heading { 
+min-width: 0; 
+ 
+display: flex; 
+flex-direction: column; 
+ 
+gap: 2px; 
+} 
+ 
+.topbar-title { 
+font-size: 15px; 
+line-height: 1.2; 
+ 
+font-weight: 750; 
+ 
+color: #172033; 
+ 
+white-space: nowrap; 
+overflow: hidden; 
+text-overflow: ellipsis; 
+} 
+ 
+.topbar-subtitle { 
+font-size: 11px; 
+line-height: 1.2; 
+ 
+color: #98a2b3; 
+} 
+ 
+/* ========================================================= 
+PÁGINA 
+========================================================= */ 
+ 
+.profile-page { 
+width: 100%; 
+max-width: 760px; 
+ 
+margin: 0 auto; 
+ 
+padding: 20px 14px 120px; 
+} 
+ 
+/* ========================================================= 
+CARD PRINCIPAL DO PERFIL 
+========================================================= */ 
+ 
+.profile-card { 
+    
+width: 100%; 
+ 
+background: #ffffff; 
+ 
+border: 1px solid #e7eaf0; 
+border-radius: 24px; 
+ 
+padding: 22px; 
+ 
+margin-bottom: 16px; 
+ 
+box-shadow: 
+    0 8px 28px rgba(15, 23, 42, 0.045); 
+} 
+ 
+/* ========================================================= 
+IDENTIDADE DO PERFIL 
+ 
+A estrutura visual agora é: 
+ 
+FOTO 
+ 
+Nome 
+Tipo artístico 
+Cidade - UF 
+★ 4,9 (27 avaliações) 
+Sertanejo · MPB · Pop 
+========================================================= */ 
+ 
+.profile-header { 
+width: 100%; 
+ 
+display: flex; 
+flex-direction: column; 
+align-items: flex-start; 
+ 
+gap: 0; 
+} 
+ 
+/* ========================================================= 
+FOTO DO PERFIL 
+ 
+A foto possui sempre largura e altura iguais. 
+O contêiner funciona como referência para o 
+posicionamento absoluto da imagem. 
+ 
+A imagem é posicionada exatamente pelo centro 
+do contêiner para evitar deslocamentos laterais 
+ou verticais. 
+========================================================= */ 
+ 
+.profile-avatar { 
+    position: relative !important; 
+ 
+    width: 112px !important; 
+    height: 112px !important; 
+ 
+    min-width: 112px !important; 
+    min-height: 112px !important; 
+ 
+    border-radius: 50% !important; 
+    overflow: hidden !important; 
+ 
+    aspect-ratio: 1 / 1 !important; 
+ 
+    flex: 0 0 112px !important; 
+    box-sizing: border-box !important; 
+ 
+    border: 1px solid #16803c; 
+} 
+ 
+.profile-avatar img { 
+    position: absolute !important; 
+ 
+    top: 50% !important; 
+    left: 50% !important; 
+ 
+    width: 100% !important; 
+    height: 100% !important; 
+ 
+    min-width: 100% !important; 
+    min-height: 100% !important; 
+ 
+    max-width: none !important; 
+    max-height: none !important; 
+ 
+    display: block !important; 
+ 
+    object-fit: cover !important; 
+    object-position: center center !important; 
+ 
+    margin: 0 !important; 
+    padding: 0 !important; 
+ 
+    border: 0 !important; 
+    border-radius: 50% !important; 
+ 
+    transform: translate(-50%, -50%) !important; 
+} 
+ 
+/* ========================================================= 
+INFORMAÇÕES DO PERFIL 
+========================================================= */ 
+ 
+.profile-info {
+    width: calc(100% - 8px);
 
-/* =========================================================
-   TOPBAR
-   ========================================================= */
-
-.topbar {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-
-    width: 100%;
-    height: 64px;
-
-    background: rgba(255, 255, 255, 0.97);
-
-    border-bottom: 1px solid #e8ebf1;
-
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    padding: 0 18px;
-
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-}
-
-.topbar-left,
-.topbar-right {
-    display: flex;
-    align-items: center;
-}
-
-.topbar-left {
-    gap: 12px;
-}
-
-.topbar-right {
-    gap: 8px;
-}
-
-.topbar-button {
-    width: 40px;
-    height: 40px;
-
-    border-radius: 12px;
-
-    background: #f4f5f8;
-    color: #475467;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    transition:
-        background 0.2s ease,
-        color 0.2s ease,
-        transform 0.2s ease;
-}
-
-.topbar-button:hover {
-    background: #eceef3;
-    color: #172033;
-}
-
-.topbar-button:active {
-    transform: scale(0.96);
-}
-
-.topbar-button svg {
-    width: 19px;
-    height: 19px;
-}
-
-.topbar-heading {
     min-width: 0;
 
     display: flex;
     flex-direction: column;
+    align-items: flex-start;
 
-    gap: 2px;
+}
+ 
+/* ========================================================= 
+NOME DO PERFIL 
+========================================================= */ 
+ 
+.profile-name-row { 
+width: 100%; 
+ 
+display: flex; 
+align-items: center; 
+justify-content: flex-start; 
+ 
+gap: 7px; 
+ 
+min-width: 0; 
+} 
+ 
+.profile-name { 
+margin: 0; 
+ 
+font-size: 25px; 
+line-height: 1.2; 
+ 
+font-weight: 750; 
+ 
+color: #172033; 
+ 
+word-break: break-word; 
+} 
+ 
+.verified-badge { 
+width: 20px; 
+height: 20px; 
+ 
+min-width: 20px; 
+ 
+border-radius: 50%; 
+ 
+background: #1677d2; 
+color: #ffffff; 
+ 
+display: flex; 
+align-items: center; 
+justify-content: center; 
+} 
+ 
+.verified-badge svg { 
+width: 12px; 
+height: 12px; 
+ 
+stroke-width: 3; 
+} 
+ 
+/* ========================================================= 
+TIPO ARTÍSTICO 
+========================================================= */ 
+ 
+.profile-category { 
+margin-top: 5px; 
+ 
+font-size: 14px; 
+line-height: 1.4; 
+ 
+font-weight: 600; 
+ 
+color: #475467; 
+} 
+ 
+/* ========================================================= 
+LOCALIZAÇÃO 
+========================================================= */ 
+ 
+.profile-location { 
+margin-top: 4px; 
+ 
+display: flex; 
+align-items: center; 
+justify-content: flex-start; 
+ 
+gap: 5px; 
+ 
+font-size: 13px; 
+line-height: 1.4; 
+ 
+color: #667085; 
+} 
+ 
+.profile-location svg { 
+width: 15px; 
+height: 15px; 
+ 
+flex-shrink: 0; 
+} 
+ 
+/* ========================================================= 
+AVALIAÇÃO RESUMIDA DO PERFIL 
+========================================================= */ 
+ 
+.profile-rating { 
+margin-top: 8px; 
+ 
+display: flex; 
+align-items: center; 
+justify-content: flex-start; 
+ 
+flex-wrap: wrap; 
+ 
+gap: 6px; 
+} 
+ 
+.rating-stars { 
+display: flex; 
+align-items: center; 
+ 
+gap: 2px; 
+} 
+ 
+.rating-stars svg { 
+width: 15px; 
+height: 15px; 
+ 
+color: #f59e0b; 
+ 
+fill: #f59e0b; 
+} 
+ 
+.rating-value { 
+font-size: 13px; 
+ 
+font-weight: 750; 
+ 
+color: #344054; 
+} 
+ 
+.rating-reviews { 
+font-size: 12px; 
+ 
+color: #667085; 
+} 
+ 
+/* ========================================================= 
+GÊNEROS / ESTILOS MUSICAIS 
+========================================================= */ 
+ 
+.profile-genres { 
+width: 100%; 
+ 
+margin-top: 10px; 
+} 
+ 
+.genre-list { 
+width: 100%; 
+ 
+display: flex; 
+align-items: center; 
+justify-content: flex-start; 
+ 
+flex-wrap: wrap; 
+ 
+gap: 6px 10px; 
+} 
+ 
+.profile-tag { 
+display: inline-flex; 
+align-items: center; 
+ 
+min-height: 24px; 
+ 
+font-size: 12px; 
+line-height: 1.3; 
+ 
+font-weight: 600; 
+ 
+color: #475467; 
+ 
+white-space: nowrap; 
+} 
+ 
+.profile-tag:not(:last-child)::after { 
+content: "·"; 
+ 
+margin-left: 10px; 
+ 
+color: #98a2b3; 
+} 
+ 
+/* ========================================================= 
+COMPATIBILIDADE COM .GENRE-TAG 
+========================================================= */ 
+ 
+.genre-tag { 
+display: inline-flex; 
+align-items: center; 
+ 
+min-height: 24px; 
+ 
+font-size: 12px; 
+line-height: 1.3; 
+ 
+font-weight: 600; 
+ 
+color: #475467; 
+ 
+background: transparent; 
+ 
+border: 0; 
+ 
+padding: 0; 
+} 
+ 
+/* ========================================================= 
+STATUS DO PERFIL 
+========================================================= */ 
+ 
+.profile-status { 
+display: inline-flex; 
+align-items: center; 
+ 
+margin-top: 9px; 
+ 
+padding: 5px 9px; 
+ 
+border-radius: 999px; 
+ 
+background: #ecfdf3; 
+color: #16803c; 
+ 
+font-size: 11px; 
+line-height: 1; 
+ 
+font-weight: 700; 
+} 
+ 
+/* ========================================================= 
+ESTADOS DO STATUS 
+========================================================= */ 
+ 
+.profile-status.status-ativo { 
+background: #ecfdf3; 
+color: #16803c; 
+} 
+ 
+.profile-status.status-inativo { 
+background: #fef3f2; 
+color: #b42318; 
+} 
+ 
+/* ========================================================= 
+FOTO SEM IMAGEM 
+========================================================= */ 
+ 
+.profile-avatar.sem-foto { 
+background: #eef1f6; 
+ 
+border-color: #e2e6ed; 
+} 
+ 
+.profile-avatar.sem-foto img { 
+display: none; 
+} 
+ 
+/* ========================================================= 
+RESPONSIVIDADE — CELULAR 
+========================================================= */ 
+ 
+@media (max-width: 480px) { 
+ 
+.profile-card { 
+    padding: 20px; 
+} 
+ 
+.profile-avatar {
+    width: 50px !important;
+    height:50px !important;
+
+    min-width: 50px !important;
+    min-height: 50px !important;
+
+    max-width: 88px !important;
+    max-height: 88px !important;
+
+    margin-bottom: 14px;
+
+    flex: 0 0 88px !important;
+
+    aspect-ratio: 1 / 1 !important;
+    
+}
+ 
+.profile-avatar img { 
+    width: 100% !important; 
+    height: 100% !important; 
+ 
+    min-width: 100% !important; 
+    min-height: 100% !important; 
+ 
+    max-width: none !important; 
+    max-height: none !important; 
+ 
+    top: 50% !important; 
+    left: 50% !important; 
+ 
+    transform: translate(-50%, -50%) !important; 
+ 
+    object-fit: cover !important; 
+    object-position: center center !important; 
+} 
+ 
+.profile-name { 
+    font-size: 23px; 
+} 
+ 
+.profile-category { 
+    font-size: 13px; 
+} 
+ 
+.profile-location { 
+    font-size: 13px; 
+} 
+ 
+.rating-value { 
+    font-size: 13px; 
+} 
+ 
+.rating-reviews { 
+    font-size: 12px; 
+} 
+ 
+} 
+ 
+/* ========================================================= 
+TELAS MUITO PEQUENAS 
+========================================================= */ 
+ 
+@media (max-width: 360px) { 
+ 
+.profile-page { 
+    padding-left: 10px; 
+    padding-right: 10px; 
+    
+} 
+ 
+.profile-card { 
+
+    padding: 18px; 
+} 
+ 
+.profile-avatar { 
+
+    width: 96px !important; 
+    height: 96px !important; 
+ 
+    min-width: 96px !important; 
+    min-height: 96px !important; 
+ 
+    max-width: 96px !important; 
+    max-height: 96px !important; 
+ 
+    flex: 0 0 96px !important; 
+ 
+    aspect-ratio: 1 / 1 !important; 
+} 
+ 
+.profile-avatar img { 
+    width: 100% !important; 
+    height: 100% !important; 
+ 
+    min-width: 100% !important; 
+    min-height: 100% !important; 
+ 
+    max-width: none !important; 
+    max-height: none !important; 
+ 
+    top: 50% !important; 
+    left: 50% !important; 
+ 
+    transform: translate(-50%, -50%) !important; 
+ 
+    object-fit: cover !important; 
+    object-position: center center !important; 
+} 
+ 
+.profile-name { 
+    font-size: 22px; 
+} 
+ 
 }
 
-.topbar-title {
-    font-size: 15px;
-    line-height: 1.2;
-
-    font-weight: 750;
-
-    color: #172033;
-
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.topbar-subtitle {
-    font-size: 11px;
-    line-height: 1.2;
-
-    color: #98a2b3;
-}
-
-/* =========================================================
-   PÁGINA
-   ========================================================= */
-
-.profile-page {
+.profile-identity {
     width: 100%;
-    max-width: 760px;
 
-    margin: 0 auto;
-
-    padding: 20px 14px 120px;
-}
-
-/* =========================================================
-   CARD PRINCIPAL DO PERFIL
-   ========================================================= */
-
-.profile-card {
-    width: 100%;
+    margin-top: 10px;
 
     background: #ffffff;
 
     border: 1px solid #e7eaf0;
-    border-radius: 24px;
+    border-radius: 15px;
 
-    padding: 22px;
-
-    margin-bottom: 16px;
+    padding: 15px;
 
     box-shadow:
         0 8px 28px rgba(15, 23, 42, 0.045);
-}
 
-.profile-header {
-    display: flex;
-    align-items: flex-start;
-
-    gap: 17px;
-}
-
-.profile-avatar {
-    position: relative;
-
-    width: 92px;
-    height: 92px;
-
-    min-width: 92px;
-
-    border-radius: 50%;
-
-    overflow: hidden;
-
-    background: #eef1f6;
-
-    border: 1px solid #e2e6ed;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    color: #667085;
-
-    font-size: 26px;
-    font-weight: 750;
-}
-
-.profile-avatar img {
-    width: 100%;
-    height: 100%;
-
-    object-fit: cover;
-}
-
-.profile-info {
-    flex: 1;
-    min-width: 0;
-}
-
-.profile-name-row {
-    display: flex;
-    align-items: center;
-
-    gap: 7px;
-
-    min-width: 0;
-}
-
-.profile-name {
-    font-size: 23px;
-    line-height: 1.2;
-
-    font-weight: 750;
-
-    color: #172033;
-
-    word-break: break-word;
-}
-
-.verified-badge {
-    width: 20px;
-    height: 20px;
-
-    min-width: 20px;
-
-    border-radius: 50%;
-
-    background: #1677d2;
-    color: #ffffff;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.verified-badge svg {
-    width: 12px;
-    height: 12px;
-
-    stroke-width: 3;
-}
-
-.profile-category {
-    margin-top: 5px;
-
-    font-size: 13px;
-    line-height: 1.4;
-
-    font-weight: 650;
-
-    color: #667085;
-}
-
-.profile-location {
-    margin-top: 8px;
-
-    display: flex;
-    align-items: center;
-
-    gap: 5px;
-
-    font-size: 13px;
-    line-height: 1.4;
-
-    color: #667085;
-}
-
-.profile-location svg {
-    width: 15px;
-    height: 15px;
-
-    flex-shrink: 0;
-}
-
-/* =========================================================
-   AVALIAÇÃO RESUMIDA DO PERFIL
-   ========================================================= */
-
-.profile-rating {
-    margin-top: 9px;
-
-    display: flex;
-    align-items: center;
-
-    flex-wrap: wrap;
-
-    gap: 7px;
-}
-
-.rating-stars {
-    display: flex;
-    align-items: center;
-
-    gap: 2px;
-}
-
-.rating-stars svg {
-    width: 15px;
-    height: 15px;
-
-    color: #f59e0b;
-
-    fill: #f59e0b;
-}
-
-.rating-value {
-    font-size: 13px;
-
-    font-weight: 750;
-
-    color: #344054;
-}
-
-.rating-reviews {
-    font-size: 12px;
-
-    color: #98a2b3;
-}
-
-.profile-status {
-    display: inline-flex;
-    align-items: center;
-
-    margin-top: 9px;
-
-    padding: 5px 9px;
-
-    border-radius: 999px;
-
-    background: #ecfdf3;
-    color: #16803c;
-
-    font-size: 11px;
-    line-height: 1;
-
-    font-weight: 700;
+    box-sizing: border-box;
 }

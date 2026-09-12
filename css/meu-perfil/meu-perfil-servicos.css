@@ -1,281 +1,645 @@
 /* =========================================================
-   MUSICALWORLD
-   MEU PERFIL
-   SERVIÇOS
-   ========================================================= */
+MUSICALWORLD — PERFIL PÚBLICO
+SERVIÇOS
+
+Responsabilidade:
+
+* Estilizar os serviços exibidos no perfil público.
+* Reproduzir o mesmo padrão visual utilizado na
+  página "Editar Perfil".
+* O PerfilPublicoServicos.js permanece responsável
+  somente pelos dados e pela renderização HTML.
+  ========================================================= */
 
 /* =========================================================
-   23. SERVIÇOS
-   ========================================================= */
+LISTA DE SERVIÇOS
+========================================================= */
 
 .services-list {
-  width: 100%;
 
-  display: flex;
-  flex-direction: column;
 
-  gap: 9px;
+width: 100%;
+
+min-width: 0;
+
+display: grid;
+
+gap: 10px;
+
+
 }
 
+/* =========================================================
+CARD DO SERVIÇO
+========================================================= */
+
 .service-card {
-  width: 100%;
 
-  display: flex;
-  align-items: flex-start;
 
-  gap: 12px;
+width: 100%;
 
-  padding: 13px;
+min-width: 0;
 
-  background: #f8faff;
+box-sizing: border-box;
 
-  border: 1px solid var(--mw-border-light);
+display: grid;
 
-  border-radius: 13px;
+grid-template-columns:
+    44px
+    minmax(0, 1fr)
+    auto;
 
-  transition:
-    background 0.2s ease,
-    border-color 0.2s ease,
-    box-shadow 0.2s ease,
-    transform 0.2s ease;
+align-items: center;
+
+gap: 12px;
+
+padding: 12px;
+
+border: 1px solid var(--mw-border);
+
+border-radius: 14px;
+
+background: #ffffff;
+
+transition:
+    border-color 0.18s ease,
+    background 0.18s ease,
+    box-shadow 0.18s ease;
+
+
 }
 
 .service-card:hover {
-  background: #fbfcff;
 
-  border-color: #dce4f2;
 
-  box-shadow:
-    0 3px 12px rgba(25, 40, 70, 0.045);
-}
+border-color: #dcd8f7;
 
-.service-icon {
-  width: 38px;
-  height: 38px;
+box-shadow:
+    0 5px 18px rgba(30, 35, 55, 0.05);
 
-  flex: 0 0 auto;
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  border-radius: 11px;
-
-  background: var(--mw-green-light);
-
-  color: var(--mw-green);
-}
-
-.service-icon svg {
-  width: 18px;
-  height: 18px;
-
-  stroke-width: 2;
-}
-
-.service-info {
-  min-width: 0;
-
-  flex: 1;
-
-  display: flex;
-  flex-direction: column;
-}
-
-.service-name {
-  margin: 0;
-
-  overflow: hidden;
-
-  color: var(--mw-text-dark);
-
-  font-size: 13px;
-  line-height: 18px;
-
-  font-weight: 800;
-
-  word-break: break-word;
-}
-
-.service-description {
-  margin-top: 4px;
-
-  color: #68748a;
-
-  font-size: 11px;
-  line-height: 16px;
-
-  white-space: pre-line;
-
-  word-break: break-word;
-}
-
-.service-meta {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-
-  gap: 5px;
-
-  margin-top: 7px;
-
-  color: #8992a4;
-
-  font-size: 10px;
-  line-height: 14px;
-
-  font-weight: 600;
-}
-
-.service-meta-separator {
-  color: #b3bac7;
-
-  font-size: 10px;
-}
-
-.service-price {
-  display: flex;
-  align-items: baseline;
-  flex-wrap: wrap;
-
-  gap: 4px;
-
-  margin-top: 8px;
-
-  color: #647086;
-
-  font-size: 10px;
-  line-height: 16px;
-
-  font-weight: 600;
-}
-
-.service-price strong {
-  color: var(--mw-text-dark);
-
-  font-size: 13px;
-  line-height: 17px;
-
-  font-weight: 800;
-}
-
-.service-status {
-  margin-top: 7px;
-}
-
-.service-status-active {
-  display: inline-flex;
-  align-items: center;
-
-  gap: 5px;
-
-  min-height: 23px;
-
-  padding: 3px 8px;
-
-  border-radius: 999px;
-
-  background: var(--mw-green-light);
-
-  color: var(--mw-green);
-
-  font-size: 9px;
-  line-height: 13px;
-
-  font-weight: 800;
-}
-
-.service-status-active svg {
-  width: 12px;
-  height: 12px;
-
-  stroke-width: 2.2;
-}
-
-.service-status-inactive {
-  display: inline-flex;
-  align-items: center;
-
-  min-height: 23px;
-
-  padding: 3px 8px;
-
-  border-radius: 999px;
-
-  background: var(--mw-red-light);
-
-  color: var(--mw-red);
-
-  font-size: 9px;
-  line-height: 13px;
-
-  font-weight: 800;
-}
-
-.service-tag {
-  display: inline-flex;
-  align-items: center;
-
-  min-height: 28px;
-
-  padding: 5px 10px;
-
-  background: var(--mw-green-light);
-
-  border: 1px solid #c9f0d7;
-
-  border-radius: 999px;
-
-  color: var(--mw-green);
-
-  font-size: 11px;
-  line-height: 16px;
-
-  font-weight: 700;
 }
 
 /* =========================================================
-   24. ESTADO VAZIO
-   ========================================================= */
+ÍCONE DO SERVIÇO
+========================================================= */
+
+.service-icon {
+
+
+width: 44px;
+
+height: 44px;
+
+min-width: 44px;
+
+display: grid;
+
+place-items: center;
+
+border-radius: 12px;
+
+background: var(--mw-primary-soft);
+
+color: var(--mw-primary);
+
+
+}
+
+.service-icon svg {
+
+
+width: 19px;
+
+height: 19px;
+
+display: block;
+
+
+}
+
+/* =========================================================
+INFORMAÇÕES DO SERVIÇO
+========================================================= */
+
+.service-info {
+
+
+min-width: 0;
+
+overflow: hidden;
+
+
+}
+
+/* =========================================================
+NOME
+========================================================= */
+
+.service-name {
+
+
+margin: 0;
+
+min-width: 0;
+
+overflow: hidden;
+
+color: var(--mw-text);
+
+font-size: 14px;
+
+line-height: 19px;
+
+font-weight: 800;
+
+text-overflow: ellipsis;
+
+white-space: nowrap;
+
+
+}
+
+/* =========================================================
+DESCRIÇÃO
+========================================================= */
+
+.service-description {
+
+
+margin: 5px 0 0;
+
+min-width: 0;
+
+overflow: hidden;
+
+color: var(--mw-muted);
+
+font-size: 12px;
+
+line-height: 17px;
+
+display: -webkit-box;
+
+-webkit-box-orient: vertical;
+
+-webkit-line-clamp: 2;
+
+overflow-wrap: anywhere;
+
+
+}
+
+/* =========================================================
+METADADOS
+========================================================= */
+
+.service-meta {
+
+
+display: flex;
+
+align-items: center;
+
+flex-wrap: wrap;
+
+gap: 8px;
+
+margin-top: 8px;
+
+min-width: 0;
+
+line-height: 15px;
+
+font-size: 11px;
+
+}
+
+.service-meta span {
+
+
+display: inline-flex;
+
+align-items: center;
+
+gap: 4px;
+
+color: var(--mw-muted);
+
+font-size: 11px;
+
+line-height: 15px;
+
+white-space: nowrap;
+
+
+}
+
+.service-meta-separator {
+
+
+color: #c4cad4;
+
+font-size: 9px;
+
+
+}
+
+/* =========================================================
+ÁREA LATERAL
+PREÇO + STATUS
+========================================================= */
+
+.service-side {
+
+
+min-width: 130px;
+
+display: flex;
+
+flex-direction: column;
+
+align-items: flex-end;
+
+justify-content: center;
+
+gap: 6px;
+
+
+}
+
+/* =========================================================
+PREÇO
+========================================================= */
+
+.service-price {
+
+
+min-width: max-content;
+
+display: flex;
+
+align-items: baseline;
+
+justify-content: flex-end;
+
+flex-wrap: wrap;
+
+gap: 4px;
+
+text-align: right;
+
+
+}
+
+.service-price strong {
+
+
+display: block;
+
+color: var(--mw-text);
+
+font-size: 13px;
+
+line-height: 1.2;
+
+font-weight: 850;
+
+text-align: right;
+
+white-space: nowrap;
+
+
+}
+
+/* =========================================================
+STATUS
+========================================================= */
+
+.service-status {
+
+
+display: flex;
+
+justify-content: flex-end;
+
+
+}
+
+.service-status-active {
+
+
+display: inline-flex;
+
+align-items: center;
+
+justify-content: center;
+
+width: fit-content;
+
+min-height: 21px;
+
+padding: 4px 8px;
+
+border-radius: 999px;
+
+background: #eaf8f2;
+
+color: var(--mw-success);
+
+font-size: 9px;
+
+line-height: 1;
+
+font-weight: 800;
+
+text-transform: uppercase;
+
+white-space: nowrap;
+
+
+}
+
+.service-status-active svg {
+
+
+width: 12px;
+
+height: 12px;
+
+margin-right: 5px;
+
+display: block;
+
+stroke-width: 2.2;
+
+
+}
+
+.service-status-inactive {
+
+
+display: inline-flex;
+
+align-items: center;
+
+justify-content: center;
+
+width: fit-content;
+
+min-height: 21px;
+
+padding: 4px 8px;
+
+border-radius: 999px;
+
+background: #f3f4f6;
+
+color: #858c9a;
+
+font-size: 9px;
+
+line-height: 1;
+
+font-weight: 800;
+
+text-transform: uppercase;
+
+white-space: nowrap;
+
+
+}
+
+/* =========================================================
+ESTADO VAZIO
+========================================================= */
 
 .empty-state {
-  min-height: 100px;
 
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
 
-  padding: 20px;
+min-height: 100px;
 
-  text-align: center;
+display: flex;
 
-  color: #929bad;
+flex-direction: column;
+
+align-items: center;
+
+justify-content: center;
+
+padding: 20px;
+
+text-align: center;
+
+color: #929bad;
+
+
 }
 
 .empty-state svg {
-  width: 25px;
-  height: 25px;
 
-  margin-bottom: 8px;
 
-  color: #b4bdcc;
+width: 25px;
 
-  stroke-width: 1.7;
+height: 25px;
+
+margin-bottom: 8px;
+
+color: #b4bdcc;
+
+stroke-width: 1.7;
+
+
 }
 
 .empty-state h4 {
-  color: #697489;
 
-  font-size: 12px;
-  line-height: 17px;
 
-  font-weight: 700;
+margin: 0;
+
+color: #697489;
+
+font-size: 12px;
+
+line-height: 17px;
+
+font-weight: 700;
+
+
 }
 
 .empty-state p {
-  margin-top: 3px;
 
-  font-size: 12px;
-  line-height: 17px;
+
+margin: 3px 0 0;
+
+color: #929bad;
+
+font-size: 11px;
+
+line-height: 17px;
+
+
+}
+
+/* =========================================================
+RESPONSIVIDADE
+========================================================= */
+
+@media (max-width: 700px) {
+
+
+.service-card {
+
+    grid-template-columns:
+        40px
+        minmax(0, 1fr)
+        auto;
+
+    gap: 9px;
+
+    padding: 9px;
+
+    border-radius: 12px;
+}
+
+
+.service-icon {
+
+    width: 40px;
+
+    height: 40px;
+
+    min-width: 40px;
+
+    border-radius: 10px;
+}
+
+
+.service-icon svg {
+
+    width: 17px;
+
+    height: 17px;
+}
+
+
+.service-name {
+
+    font-size: 13px; line-height: 18px;
+}
+
+
+.service-description {
+
+    font-size: 11px; line-height: 16px;
+}
+
+
+.service-meta {
+
+    font-size: 10px; line-height: 14px;
+}
+
+
+.service-meta span {
+
+    font-size: 10px; line-height: 14px;
+}
+
+
+.service-side {
+
+    min-width: 100px;
+
+    gap: 5px;
+}
+
+
+.service-price strong {
+
+    font-size: 12px; line-height: 17px;
+}
+
+
+.service-status-active,
+.service-status-inactive {
+
+    min-height: 19px;
+
+    padding: 3px 6px;
+
+    font-size: 8px;
+}
+
+
+}
+
+@media (max-width: 480px) {
+
+
+.service-card {
+
+    grid-template-columns:
+        38px
+        minmax(0, 1fr)
+        auto;
+
+    gap: 8px;
+
+    padding: 9px;
+}
+
+
+.service-icon {
+
+    width: 38px;
+
+    height: 38px;
+
+    min-width: 38px;
+}
+
+
+.service-icon svg {
+
+    width: 16px;
+
+    height: 16px;
+}
+
+
+.service-side {
+
+    min-width: 82px;
+}
+
+
+.service-price {
+
+    justify-content: flex-end;
+}
+
+
+.service-price strong {
+
+    font-size: 10px;
+}
+
+
+}
+
+/* =========================================================
+REDUÇÃO DE MOVIMENTO
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+
+.service-card {
+
+    transition: none;
+}
+
+
 }

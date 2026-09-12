@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+
+<head>
+
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+>
+
+<meta
+    name="theme-color"
+    content="#ffffff"
+>
+
+<title>Perfil | MusicalWorld</title>
+
+
+<!-- =====================================================
+     CSS PRINCIPAL
+
+     O arquivo agregador continua sendo utilizado porque
+     ele carrega os arquivos CSS específicos da página.
+     ===================================================== -->
+
+<link
+    rel="stylesheet"
+    href="css/apresentar-perfil/apresentar-perfil.css"
+>
+
+
+<!-- =====================================================
+     LUCIDE
+
+     Biblioteca utilizada para os ícones da página.
+     ===================================================== -->
+
+<script src="https://unpkg.com/lucide@latest"></script>
+
+
+</head>
+
+<body>
+
+
+<div class="app">
+
+
+    <!-- =====================================================
+         TOPBAR
+
+         Barra superior da página de perfil.
+         ===================================================== -->
+
+    <header class="topbar">
+
+        <div class="topbar-left">
+
+            <button
+                type="button"
+                class="topbar-button"
+                id="btnVoltar"
+                aria-label="Voltar"
+            >
+
+                <i data-lucide="arrow-left"></i>
+
+            </button>
+
+
+            <div class="topbar-heading">
+
+                <span
+                    class="topbar-title"
+                    id="topbarProfileTitle"
+                >
+                    Perfil
+                </span>
+
+
+                <span class="topbar-subtitle">
+                    MusicalWorld
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="topbar-right">
+
+            <button
+                type="button"
+                class="topbar-button"
+                id="btnCompartilhar"
+                aria-label="Compartilhar perfil"
+            >
+
+                <i data-lucide="share-2"></i>
+
+            </button>
+
+        </div>
+
+    </header>
+
+
+    <!-- =====================================================
+         CONTEÚDO PRINCIPAL
+
+         Nesta etapa estamos trabalhando nas primeiras
+         seções do perfil e adicionando gradualmente
+         as próximas áreas.
+         ===================================================== -->
+
+    <main class="profile-page">
+
+
+        <!-- =================================================
+             1. PORTFÓLIO PRINCIPAL
+
+             O ID #portfolioGrid é preservado porque o
+             ApresentarPerfilPortfolio.js utiliza esse
+             elemento para renderizar os trabalhos.
+             ================================================= -->
+
+        <section class="profile-media-highlight">
+
+            <div
+                class="portfolio-grid"
+                id="portfolioGrid"
+            >
+
+                <div class="empty-state">
+
+                    <i data-lucide="images"></i>
+
+                    <strong>
+                        Portfólio vazio
+                    </strong>
+
+                    <span>
+                        Este perfil ainda não adicionou trabalhos.
+                    </span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             2. IDENTIDADE DO ARTISTA
+
+             Ordem visual:
+
+             FOTO
+
+             Nome
+             Tipo artístico
+             Localização
+             Avaliação
+             Gêneros
+
+             O status permanece oculto e é mantido apenas
+             para compatibilidade com o JavaScript.
+             ================================================= -->
+
+        <section class="profile-identity">
+
+
+            <!-- =============================================
+                 CONTAINER DA IDENTIDADE
+                 ============================================= -->
+
+            <div class="profile-identity-container">
+
+
+                <!-- =============================================
+                     FOTO DO PERFIL
+                     ============================================= -->
+
+                <div
+                    class="profile-avatar"
+                    id="profileAvatar"
+                >
+
+                    <span id="profileInitials">
+                        --
+                    </span>
+
+                </div>
+
+
+                <!-- =============================================
+                     INFORMAÇÕES DO PERFIL
+                     ============================================= -->
+
+                <div class="profile-info">
+
+
+                    <!-- =========================================
+                         NOME
+                         ========================================= -->
+
+                    <div class="profile-name-row">
+
+                        <h1
+                            class="profile-name"
+                            id="profileName"
+                        >
+                            Carregando...
+                        </h1>
+
+
+                        <!--
+                            Mantido para compatibilidade com
+                            o ApresentarPerfilRender.js.
+                        -->
+
+                        <span
+                            class="verified-badge"
+                            id="verifiedBadge"
+                            aria-label="Perfil verificado"
+                            hidden
+                        >
+
+                            <i data-lucide="check"></i>
+
+                        </span>
+
+                    </div>
+
+
+                    <!-- =========================================
+                         TIPO / CATEGORIA
+                         ========================================= -->
+
+                    <p
+                        class="profile-category"
+                        id="profileCategory"
+                    >
+                        Carregando...
+                    </p>
+
+
+                    <!-- =========================================
+                         LOCALIZAÇÃO
+                         ========================================= -->
+
+                    <div
+                        class="profile-location"
+                        id="profileLocation"
+                    >
+
+                        <i data-lucide="map-pin"></i>
+
+                        <span>
+                            Localização não informada
+                        </span>
+
+                    </div>
+
+
+                    <!-- =========================================
+                         AVALIAÇÃO
+                         ========================================= -->
+
+                    <div
+                        class="profile-rating"
+                        id="profileRating"
+                    >
+
+                        <div class="rating-stars">
+
+                            <i data-lucide="star"></i>
+                            <i data-lucide="star"></i>
+                            <i data-lucide="star"></i>
+                            <i data-lucide="star"></i>
+                            <i data-lucide="star"></i>
+
+                        </div>
+
+
+                        <span
+                            class="rating-value"
+                            id="ratingValue"
+                        >
+                            0,0
+                        </span>
+
+
+                        <span
+                            class="rating-reviews"
+                            id="ratingReviews"
+                        >
+                            (0 avaliações)
+                        </span>
+
+                    </div>
+
+
+                    <!-- =========================================
+                         GÊNEROS
+                         ========================================= -->
+
+                    <div class="profile-genres">
+
+                        <div
+                            class="genre-list"
+                            id="genreList"
+                        >
+
+                            <span class="empty-inline">
+                                Nenhum gênero cadastrado.
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =========================================
+                         STATUS
+
+                         Mantido oculto para compatibilidade.
+                         ========================================= -->
+
+                    <div
+                        class="profile-status"
+                        id="profileStatus"
+                        hidden
+                    >
+                        Disponível para contratação
+                    </div>
+
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             3. SOBRE O ARTISTA
+
+             Todo o conteúdo permanece dentro do mesmo card.
+
+             O ID #profileBio é preservado porque o
+             ApresentarPerfilRender.js utiliza esse elemento
+             para inserir a biografia.
+             ================================================= -->
+
+        <section class="profile-about">
+
+
+            <!-- =============================================
+                 CABEÇALHO — SOBRE O ARTISTA
+                 ============================================= -->
+
+            <div class="profile-about-header">
+
+                <div class="profile-about-icon">
+
+                    <i data-lucide="user-round"></i>
+
+                </div>
+
+
+                <div>
+
+                    <h2 class="profile-about-title">
+                        Sobre o artista
+                    </h2>
+
+
+                    <p class="profile-about-subtitle">
+                        Conheça um pouco mais sobre este artista.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- =============================================
+                 BIOGRAFIA
+                 ============================================= -->
+
+            <div
+                class="profile-about-content"
+                id="profileBio"
+            >
+
+                <span class="empty-inline">
+                    Este artista ainda não adicionou uma apresentação.
+                </span>
+
+            </div>
+
+
+        </section>
+
+
+        <!-- =================================================
+             4. EXPERIÊNCIA PROFISSIONAL
+
+             Exibe as principais informações profissionais
+             do perfil utilizando os dados carregados pelo
+             ApresentarPerfilRender.js.
+
+             IDs mantidos:
+             - profileExperience
+             - profileArea
+             - profileType
+             - profileAvailability
+             ================================================= -->
+
+        <section class="profile-section profile-professional-section">
+
+
+            <div class="section-header">
+
+                <div class="section-title-row">
+
+                    <div class="section-title-icon">
+
+                        <i data-lucide="briefcase-business"></i>
+
+                    </div>
+
+                    <div>
+
+                        <h2 class="section-title">
+                            Experiência profissional
+                        </h2>
+
+                        <p class="section-subtitle">
+                            Informações sobre atuação e disponibilidade
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="info-grid">
+
+
+                <!-- EXPERIÊNCIA -->
+
+                <div
+                    class="info-card"
+                    id="professionalExperienceCard"
+                >
+
+                    <div class="info-card-heading">
+
+                        <div class="info-card-icon">
+
+                            <i data-lucide="clock-3"></i>
+
+                        </div>
+
+                        <span class="info-card-label">
+                            Experiência
+                        </span>
+
+                    </div>
+
+                    <span
+                        class="info-card-value"
+                        id="profileExperience"
+                    ></span>
+
+                </div>
+
+
+                <!-- ÁREA DE ATUAÇÃO -->
+
+                <div
+                    class="info-card"
+                    id="professionalAreaCard"
+                >
+
+                    <div class="info-card-heading">
+
+                        <div class="info-card-icon">
+
+                            <i data-lucide="map-pin"></i>
+
+                        </div>
+
+                        <span class="info-card-label">
+                            Área de atuação
+                        </span>
+
+                    </div>
+
+                    <span
+                        class="info-card-value"
+                        id="profileArea"
+                    ></span>
+
+                </div>
+
+
+                <!-- TIPO DE PERFIL -->
+
+                <div
+                    class="info-card"
+                    id="professionalTypeCard"
+                >
+
+                    <div class="info-card-heading">
+
+                        <div class="info-card-icon">
+
+                            <i data-lucide="badge-check"></i>
+
+                        </div>
+
+                        <span class="info-card-label">
+                            Tipo de perfil
+                        </span>
+
+                    </div>
+
+                    <span
+                        class="info-card-value"
+                        id="profileType"
+                    ></span>
+
+                </div>
+
+
+                <!-- DISPONIBILIDADE -->
+
+                <div
+                    class="info-card"
+                    id="professionalAvailabilityCard"
+                >
+
+                    <div class="info-card-heading">
+
+                        <div class="info-card-icon">
+
+                            <i data-lucide="calendar-check-2"></i>
+
+                        </div>
+
+                        <span class="info-card-label">
+                            Disponibilidade
+                        </span>
+
+                    </div>
+
+                    <span
+                        class="info-card-value"
+                        id="profileAvailability"
+                    ></span>
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
+        <!-- =================================================
+             5. SERVIÇOS
+
+             Nova seção adicionada à estrutura atual.
+
+             O ID #servicesList será preservado para que
+             o ApresentarPerfilServicos.js possa renderizar
+             os serviços cadastrados no perfil.
+             ================================================= -->
+
+        <section class="profile-section profile-services-section">
+
+
+            <div class="section-header">
+
+                <div class="section-title-row">
+
+                    <div class="section-title-icon">
+
+                        <i data-lucide="handshake"></i>
+
+                    </div>
+
+                    <div>
+
+                        <h2 class="section-title">
+                            Serviços
+                        </h2>
+
+                        <p class="section-subtitle">
+                            O que este artista oferece
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div
+                class="services-list"
+                id="servicesList"
+            >
+
+                <div class="empty-state">
+
+                    <i data-lucide="briefcase-business"></i>
+
+                    <strong>
+                        Nenhum serviço cadastrado
+                    </strong>
+
+                    <span>
+                        Nenhum serviço foi informado.
+                    </span>
+
+                </div>
+
+            </div>
+
+
+        </section>
+
+
+    </main>
+
+
+    <!-- =====================================================
+         SCRIPTS
+
+         Os módulos que já estavam funcionando permanecem
+         exatamente na mesma ordem.
+
+         O módulo de Serviços foi acrescentado depois do
+         Render, antes do módulo principal da página.
+         ===================================================== -->
+
+
+    <!-- =====================================================
+         SUPABASE
+         ===================================================== -->
+
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+
+
+    <!-- =====================================================
+         MÓDULOS CORE
+         ===================================================== -->
+
+    <script src="js/core/SupabaseClient.js"></script>
+
+    <script src="js/core/Sessao.js"></script>
+
+    <script src="js/core/UsuarioAtual.js"></script>
+
+    <script src="js/core/ControleSessao.js"></script>
+
+    <script src="js/core/RoteamentoPerfil.js"></script>
+
+
+    <!-- =====================================================
+         MÓDULOS DO PERFIL
+         ===================================================== -->
+
+    <script src="js/apresentar-perfil/ApresentarPerfilTipo.js"></script>
+
+    <script src="js/apresentar-perfil/ApresentarPerfilUtils.js"></script>
+
+    <script src="js/apresentar-perfil/ApresentarPerfilDados.js"></script>
+
+    <script src="js/apresentar-perfil/ApresentarPerfilPortfolio.js"></script>
+
+    <script src="js/apresentar-perfil/ApresentarPerfilRender.js"></script>
+
+    <script src="js/apresentar-perfil/ApresentarPerfilServicos.js"></script>
+
+    <script src="js/apresentar-perfil/ApresentarPerfil.js"></script>
+
+
+    <!-- =====================================================
+         INICIALIZAÇÃO DOS ÍCONES
+
+         O Lucide transforma os elementos
+         data-lucide em SVGs depois que o DOM é carregado.
+         ===================================================== -->
+
+    <script>
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            function () {
+
+                if (
+                    window.lucide &&
+                    typeof window.lucide.createIcons === "function"
+                ) {
+
+                    window.lucide.createIcons();
+
+                }
+
+            }
+        );
+
+    </script>
+
+
+</div>
+
+
+</body>
+
+</html>

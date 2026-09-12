@@ -68,7 +68,6 @@
 
     </div>
 
-
     <div class="topbar-right">
 
         <button
@@ -85,16 +84,61 @@
 </header>
 
 
+<!-- =================================================
+     CONTEÚDO PRINCIPAL
+     ================================================= -->
+
 <main class="profile-page">
 
 
     <!-- =================================================
-         CARD PRINCIPAL
+         DESTAQUE / PORTFÓLIO PRINCIPAL
+
+         O #portfolioGrid permanece com o mesmo ID
+         utilizado pelo ApresentarPerfilPortfolio.js.
+
+         O CSS futuro transformará esse conteúdo em uma
+         experiência horizontal de mídia, com swipe,
+         scroll-snap e próxima mídia parcialmente visível.
          ================================================= -->
 
-    <section class="profile-card">
+    <section class="profile-media-highlight">
 
-        <div class="profile-header">
+        <div
+            class="portfolio-grid"
+            id="portfolioGrid"
+        >
+
+            <div class="empty-state">
+
+                <i data-lucide="images"></i>
+
+                <strong>
+                    Portfólio vazio
+                </strong>
+
+                <span>
+                    Este perfil ainda não adicionou trabalhos.
+                </span>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =================================================
+         IDENTIDADE DO ARTISTA
+
+         Nome, tipo, localização, avaliação, status e
+         gêneros ficam juntos para formar a apresentação
+         principal do perfil.
+         ================================================= -->
+
+    <section class="profile-identity">
+
+        <div class="profile-identity-main">
 
             <div
                 class="profile-avatar"
@@ -196,14 +240,143 @@
 
         </div>
 
+
+        <!-- =================================================
+             GÊNEROS
+
+             O ID permanece #genreList para manter
+             compatibilidade com ApresentarPerfilRender.js.
+             ================================================= -->
+
+        <div class="profile-genres">
+
+            <div
+                class="genre-list"
+                id="genreList"
+            >
+
+                <span class="empty-inline">
+                    Nenhum gênero cadastrado.
+                </span>
+
+            </div>
+
+        </div>
+
     </section>
 
 
     <!-- =================================================
-         SOBRE
+         AÇÕES PRINCIPAIS
+
+         As ações também continuam disponíveis na barra
+         fixa inferior. Esta área funciona como CTA natural
+         dentro da apresentação.
          ================================================= -->
 
-    <section class="profile-section">
+    <section class="profile-primary-actions">
+
+        <button
+            type="button"
+            class="contact-button"
+            id="btnContato"
+        >
+
+            <i data-lucide="message-circle"></i>
+
+            <span>
+                Conversar
+            </span>
+
+        </button>
+
+
+        <button
+            type="button"
+            class="hire-button"
+            id="btnContratar"
+        >
+
+            <i data-lucide="calendar-check-2"></i>
+
+            <span>
+                Contratar
+            </span>
+
+        </button>
+
+    </section>
+
+
+    <!-- =================================================
+         CONHEÇA O TRABALHO
+         ================================================= -->
+
+    <section class="profile-section profile-work-section">
+
+        <div class="section-header">
+
+            <div class="section-title-row">
+
+                <i data-lucide="images"></i>
+
+                <div>
+
+                    <h2 class="section-title">
+                        Conheça o trabalho
+                    </h2>
+
+                    <p class="section-subtitle">
+                        Fotos, vídeos, apresentações e gravações
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             ÁUDIOS / COMPOSIÇÕES
+
+             Mantido dentro da área de trabalho para que
+             músicas e gravações façam parte do portfólio.
+             ================================================= -->
+
+        <div class="profile-work-audio">
+
+            <div
+                class="audio-list"
+                id="audioList"
+            >
+
+                <div class="empty-state">
+
+                    <i data-lucide="headphones"></i>
+
+                    <strong>
+                        Nenhum áudio cadastrado
+                    </strong>
+
+                    <span>
+                        Os áudios deste perfil aparecerão aqui.
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =================================================
+         SOBRE O ARTISTA
+         ================================================= -->
+
+    <section class="profile-section profile-about-section">
 
         <div class="section-header">
 
@@ -214,11 +387,11 @@
                 <div>
 
                     <h2 class="section-title">
-                        Sobre
+                        Sobre o artista
                     </h2>
 
                     <p class="section-subtitle">
-                        Conheça este perfil
+                        Conheça a trajetória profissional
                     </p>
 
                 </div>
@@ -228,12 +401,16 @@
         </div>
 
 
-        <p
-            class="profile-bio"
-            id="profileBio"
-        >
-            Nenhuma descrição profissional cadastrada.
-        </p>
+        <div class="profile-about-content">
+
+            <p
+                class="profile-bio"
+                id="profileBio"
+            >
+                Nenhuma descrição profissional cadastrada.
+            </p>
+
+        </div>
 
     </section>
 
@@ -242,7 +419,7 @@
          INFORMAÇÕES PROFISSIONAIS
          ================================================= -->
 
-    <section class="profile-section">
+    <section class="profile-section profile-professional-section">
 
         <div class="section-header">
 
@@ -253,8 +430,12 @@
                 <div>
 
                     <h2 class="section-title">
-                        Informações profissionais
+                        Experiência profissional
                     </h2>
+
+                    <p class="section-subtitle">
+                        Informações sobre atuação e disponibilidade
+                    </p>
 
                 </div>
 
@@ -358,53 +539,10 @@
 
 
     <!-- =================================================
-         GÊNEROS
-         ================================================= -->
-
-    <section class="profile-section">
-
-        <div class="section-header">
-
-            <div class="section-title-row">
-
-                <i data-lucide="music-2"></i>
-
-                <div>
-
-                    <h2 class="section-title">
-                        Gêneros musicais
-                    </h2>
-
-                    <p class="section-subtitle">
-                        Estilos musicais
-                    </p>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <div
-            class="genre-list"
-            id="genreList"
-        >
-
-            <span class="empty-inline">
-                Nenhum gênero cadastrado.
-            </span>
-
-        </div>
-
-    </section>
-
-
-    <!-- =================================================
          SERVIÇOS
          ================================================= -->
 
-    <section class="profile-section">
+    <section class="profile-section profile-services-section">
 
         <div class="section-header">
 
@@ -419,7 +557,7 @@
                     </h2>
 
                     <p class="section-subtitle">
-                        Serviços oferecidos por este perfil
+                        O que este artista oferece
                     </p>
 
                 </div>
@@ -454,116 +592,10 @@
 
 
     <!-- =================================================
-         PORTFÓLIO
+         PRÓXIMAS APRESENTAÇÕES / AGENDA
          ================================================= -->
 
-    <section class="profile-section">
-
-        <div class="section-header">
-
-            <div class="section-title-row">
-
-                <i data-lucide="images"></i>
-
-                <div>
-
-                    <h2 class="section-title">
-                        Portfólio
-                    </h2>
-
-                    <p class="section-subtitle">
-                        Trabalhos e apresentações
-                    </p>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <div
-            class="portfolio-grid"
-            id="portfolioGrid"
-        >
-
-            <div class="empty-state">
-
-                <i data-lucide="images"></i>
-
-                <strong>
-                    Portfólio vazio
-                </strong>
-
-                <span>
-                    Este perfil ainda não adicionou trabalhos.
-                </span>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- =================================================
-         ÁUDIOS
-         ================================================= -->
-
-    <section class="profile-section">
-
-        <div class="section-header">
-
-            <div class="section-title-row">
-
-                <i data-lucide="headphones"></i>
-
-                <div>
-
-                    <h2 class="section-title">
-                        Composições
-                    </h2>
-
-                    <p class="section-subtitle">
-                        Músicas e gravações
-                    </p>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <div
-            class="audio-list"
-            id="audioList"
-        >
-
-            <div class="empty-state">
-
-                <i data-lucide="headphones"></i>
-
-                <strong>
-                    Nenhum áudio cadastrado
-                </strong>
-
-                <span>
-                    Os áudios deste perfil aparecerão aqui.
-                </span>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- =================================================
-         AGENDA
-         ================================================= -->
-
-    <section class="profile-section">
+    <section class="profile-section profile-agenda-section">
 
         <div class="section-header">
 
@@ -574,11 +606,11 @@
                 <div>
 
                     <h2 class="section-title">
-                        Agenda
+                        Próximas apresentações
                     </h2>
 
                     <p class="section-subtitle">
-                        Disponibilidade para apresentações
+                        Onde e quando este artista estará se apresentando
                     </p>
 
                 </div>
@@ -693,7 +725,7 @@
          AVALIAÇÕES
          ================================================= -->
 
-    <section class="profile-section">
+    <section class="profile-section profile-reviews-section">
 
         <div class="section-header">
 
@@ -708,7 +740,7 @@
                     </h2>
 
                     <p class="section-subtitle">
-                        O que contratantes dizem sobre este perfil
+                        O que contratantes dizem sobre este artista
                     </p>
 
                 </div>
@@ -747,6 +779,8 @@
 
 <!-- =====================================================
      AÇÕES FIXAS DO PERFIL
+
+     Mantidas porque são importantes para conversão.
      ===================================================== -->
 
 <div class="profile-fixed-actions">
@@ -760,7 +794,7 @@
         <i data-lucide="message-circle"></i>
 
         <span>
-            Entrar em contato
+            Conversar
         </span>
 
     </button>
@@ -836,13 +870,21 @@
 
 <script>
 
-    document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
 
-        if (window.lucide) {
-            lucide.createIcons();
+            if (
+                window.lucide &&
+                typeof window.lucide.createIcons === "function"
+            ) {
+
+                window.lucide.createIcons();
+
+            }
+
         }
-
-    });
+    );
 
 </script>
 

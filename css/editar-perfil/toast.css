@@ -4,111 +4,129 @@
    ========================================================= */
 
 .toast {
-    position: fixed;
+position: fixed;
 
-    left: 50%;
-    bottom: 22px;
 
-    z-index: 50;
+left: 50%;
+bottom: 90px;
 
-    width: min(420px, calc(100% - 28px));
+z-index: 9999;
 
-    min-width: 0;
+width: min(420px, calc(100% - 28px));
 
-    display: flex;
+min-width: 0;
 
-    align-items: center;
+display: flex;
 
-    gap: 9px;
+align-items: center;
 
-    padding: 13px 15px;
+gap: 9px;
 
-    border: 1px solid #d8f1e6;
+padding: 13px 15px;
 
-    border-radius: 14px;
+border: 1px solid #d8f1e6;
 
-    background: #ffffff;
+border-radius: 14px;
 
-    color: #227653;
+background: #ffffff;
 
-    box-shadow:
-        0 12px 35px rgba(20, 25, 40, 0.16);
+color: #227653;
 
-    transform: translate(-50%, 120px);
+box-shadow:
+    0 12px 35px rgba(20, 25, 40, 0.16);
 
-    opacity: 0;
+transform: translate(-50%, 120px);
 
-    pointer-events: none;
+opacity: 0;
 
-    transition:
-        transform 0.25s ease,
-        opacity 0.25s ease;
+pointer-events: none;
 
-    font-size: 13px;
+transition:
+    transform 0.25s ease,
+    opacity 0.25s ease;
 
-    line-height: 18px;
+font-size: 13px;
 
-    font-weight: 700;
+line-height: 18px;
+
+font-weight: 700;
+
+
 }
 
 .toast svg {
-    width: 18px;
-    height: 18px;
+width: 18px;
+height: 18px;
 
-    min-width: 18px;
 
-    flex: 0 0 18px;
+min-width: 18px;
 
-    display: block;
+flex: 0 0 18px;
+
+display: block;
+
+
 }
 
 .toast span,
 .toast strong {
-    min-width: 0;
+min-width: 0;
 
-    overflow-wrap: anywhere;
+
+overflow-wrap: anywhere;
+
+
 }
 
 .toast.erro {
-    border-color: #f2d4d8;
+border-color: #f2d4d8;
 
-    color: var(--mw-danger);
+
+color: var(--mw-danger);
+
+
 }
 
-.toast.visivel {
-    transform: translate(-50%, 0);
+.toast.show {
+transform: translate(-50%, 0);
 
-    opacity: 1;
+
+opacity: 1;
+
+
 }
 
 /* ---------------------------------------------------------
-   Mobile
-   --------------------------------------------------------- */
+Mobile
+--------------------------------------------------------- */
 
 @media (max-width: 600px) {
 
-    .toast {
-        bottom: 16px;
 
-        width: calc(100% - 20px);
+.toast {
+    bottom: 82px;
 
-        padding: 12px 13px;
+    width: calc(100% - 20px);
 
-        border-radius: 12px;
+    padding: 12px 13px;
 
-        gap: 8px;
+    border-radius: 12px;
 
-        font-size: 12px;
+    gap: 8px;
 
-        line-height: 17px;
-    }
+    font-size: 12px;
 
-    .toast svg {
-        width: 17px;
-        height: 17px;
+    line-height: 17px;
+}
 
-        min-width: 17px;
+.toast svg {
+    width: 17px;
+    height: 17px;
 
-        flex-basis: 17px;
-    }
+    min-width: 17px;
+
+    flex-basis: 17px;
+}
+
+
 }

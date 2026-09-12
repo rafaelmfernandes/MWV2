@@ -1,34 +1,117 @@
 /* =========================================================
    MUSICALWORLD — APRESENTAR PERFIL
    INFORMAÇÕES
+
+   Responsabilidade:
+
+   - Estilizar a seção de informações profissionais.
+   - Controlar a grade de informações do perfil.
+   - Estilizar os ícones e valores dos campos profissionais.
+   - Permitir que cards individuais sejam ocultados pelo JavaScript.
+   - Estilizar a seção "Sobre o artista".
+   - Manter as duas áreas independentes para evitar conflitos.
    ========================================================= */
+
 
 /* =========================================================
+   =========================================================
    INFORMAÇÕES PROFISSIONAIS
+   =========================================================
    ========================================================= */
 
-.info-grid {
-    display: grid;
-
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-
-    column-gap: 28px;
-    row-gap: 24px;
+.profile-professional-section {
+    width: 100%;
 }
 
-.info-card {
+
+/* =========================================================
+   CABEÇALHO DA SEÇÃO PROFISSIONAL
+   ========================================================= */
+
+.profile-professional-section .section-title-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+}
+
+
+/* =========================================================
+   ÍCONE PRINCIPAL DA SEÇÃO
+   ========================================================= */
+
+.profile-professional-section .section-title-icon {
+    width: 32px;
+    height: 32px;
+
+    min-width: 32px;
+    min-height: 32px;
+
+    border-radius: 10px;
+
+    background: #f0ecff;
+    color: #6d4aff;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+}
+
+
+.profile-professional-section .section-title-icon svg {
+    width: 17px;
+    height: 17px;
+
+    display: block;
+
+    stroke-width: 2;
+}
+
+
+/* =========================================================
+   GRADE DE INFORMAÇÕES
+   ========================================================= */
+
+.profile-professional-section .info-grid {
+    width: 100%;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    column-gap: 28px;
+    row-gap: 22px;
+}
+
+
+/* =========================================================
+   CARD DE INFORMAÇÃO
+
+   Cada card representa uma informação independente:
+
+   - Experiência
+   - Área de atuação
+   - Tipo de perfil
+   - Disponibilidade
+
+   O JavaScript pode ocultar cada card individualmente.
+   ========================================================= */
+
+.profile-professional-section .info-card {
+    min-width: 0;
     min-height: 0;
 
     padding: 0;
 
-    border-radius: 0;
-
     background: transparent;
 
     border: 0;
+    border-radius: 0;
 
     display: flex;
-
     flex-direction: column;
 
     justify-content: flex-start;
@@ -36,17 +119,82 @@
     gap: 5px;
 }
 
-.info-card-heading {
+
+/* =========================================================
+   CARD OCULTO
+
+   Utilizado quando o campo não possui informação.
+   ========================================================= */
+
+.profile-professional-section .info-card[style*="display: none"] {
+    display: none !important;
+}
+
+
+.profile-professional-section .info-card.is-hidden {
+    display: none !important;
+}
+
+
+/* =========================================================
+   CABEÇALHO DO CAMPO
+   ========================================================= */
+
+.profile-professional-section .info-card-heading {
     display: flex;
 
     align-items: center;
 
-    gap: 6px;
+    gap: 7px;
 
     min-width: 0;
 }
 
-.info-card-heading svg {
+
+/* =========================================================
+   ÍCONE INDIVIDUAL DO CAMPO
+   ========================================================= */
+
+.profile-professional-section .info-card-icon {
+    width: 25px;
+    height: 25px;
+
+    min-width: 25px;
+    min-height: 25px;
+
+    border-radius: 8px;
+
+    background: #f5f7fb;
+    color: #98a2b3;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+}
+
+
+.profile-professional-section .info-card-icon svg {
+    width: 14px;
+    height: 14px;
+
+    min-width: 14px;
+
+    display: block;
+
+    stroke-width: 2;
+}
+
+
+/* =========================================================
+   COMPATIBILIDADE COM HTML ANTIGO
+
+   Caso algum card ainda tenha o SVG diretamente dentro
+   de .info-card-heading, ele continua sendo estilizado.
+   ========================================================= */
+
+.profile-professional-section .info-card-heading > svg {
     width: 14px;
     height: 14px;
 
@@ -61,19 +209,35 @@
     stroke-width: 2;
 }
 
-.info-card-heading .info-card-label {
-    min-width: 0;
-}
 
-.info-card-label {
+/* =========================================================
+   LABEL DO CAMPO
+   ========================================================= */
+
+.profile-professional-section .info-card-label {
+    min-width: 0;
+
     font-size: 11px;
 
     line-height: 1.3;
 
     color: #98a2b3;
+
+    font-weight: 500;
+
+    overflow-wrap: anywhere;
 }
 
-.info-card-value {
+
+/* =========================================================
+   VALOR DO CAMPO
+   ========================================================= */
+
+.profile-professional-section .info-card-value {
+    min-width: 0;
+
+    margin-left: 32px;
+
     font-size: 13px;
 
     line-height: 1.45;
@@ -83,4 +247,489 @@
     color: #344054;
 
     word-break: break-word;
+
+    overflow-wrap: anywhere;
+}
+
+
+/* =========================================================
+   SEÇÃO SEM INFORMAÇÕES
+
+   Quando o JavaScript ocultar todos os cards,
+   a seção inteira também será ocultada.
+
+   Esta regra apenas garante que a seção não deixe
+   espaçamento visual inesperado quando estiver vazia.
+   ========================================================= */
+
+.profile-professional-section:has(
+    .info-card[style*="display: none"]
+):not(:has(
+    .info-card:not([style*="display: none"])
+)) {
+    display: none;
+}
+
+
+/* =========================================================
+   =========================================================
+   SOBRE O ARTISTA
+   =========================================================
+   ========================================================= */
+
+
+/* =========================================================
+   CARD PRINCIPAL
+   ========================================================= */
+
+.profile-about {
+    width: 100%;
+
+    margin-top: 10px;
+
+    padding: 20px;
+
+    box-sizing: border-box;
+
+    background: #ffffff;
+
+    border: 1px solid #e7eaf0;
+
+
+    box-shadow:
+        0 8px 28px rgba(15, 23, 42, 0.045);
+}
+
+
+/* =========================================================
+   CABEÇALHO — SOBRE O ARTISTA
+   ========================================================= */
+
+.profile-about-header {
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    width: 100%;
+
+    margin: 0 0 16px;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   ÍCONE — SOBRE O ARTISTA
+   ========================================================= */
+
+.profile-about-icon {
+    width: 36px;
+    height: 36px;
+
+    min-width: 36px;
+    min-height: 36px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    box-sizing: border-box;
+
+    border-radius: 10px;
+
+    background: #f0ecff;;
+
+    color: #6d4aff;
+}
+
+
+.profile-about-icon svg {
+    width: 18px;
+    height: 18px;
+
+    display: block;
+
+    stroke-width: 2;
+}
+
+
+/* =========================================================
+   TÍTULO — SOBRE O ARTISTA
+   ========================================================= */
+
+.profile-about-title {
+    margin: 0;
+
+    font-size: 17px;
+
+    line-height: 1.3;
+
+    font-weight: 700;
+
+    color: #172033;
+}
+
+
+/* =========================================================
+   SUBTÍTULO — SOBRE O ARTISTA
+   ========================================================= */
+
+.profile-about-subtitle {
+    margin: 3px 0 0;
+
+    font-size: 12px;
+
+    line-height: 1.4;
+
+    color: #98a2b3;
+}
+
+
+/* =========================================================
+   CONTEÚDO DA BIOGRAFIA
+   ========================================================= */
+
+.profile-about-content {
+    width: 100%;
+
+    margin: 0;
+
+    padding: 0;
+
+    box-sizing: border-box;
+
+    font-size: 14px;
+
+    line-height: 1.7;
+
+    font-weight: 400;
+
+    color: #475467;
+
+    word-break: break-word;
+
+    overflow-wrap: anywhere;
+
+    white-space: pre-line;
+}
+
+
+/* =========================================================
+   ESTADO VAZIO
+   ========================================================= */
+
+.profile-about-content .empty-inline {
+    display: block;
+
+    margin: 0;
+
+    padding: 0;
+
+    font-size: 13px;
+
+    line-height: 1.5;
+
+    font-weight: 400;
+
+    color: #98a2b3;
+}
+
+
+/* =========================================================
+   =========================================================
+   CELULAR
+   =========================================================
+   ========================================================= */
+
+@media (max-width: 480px) {
+
+    /* =====================================================
+       SEÇÃO PROFISSIONAL
+       ===================================================== */
+
+    .profile-professional-section {
+        padding: 18px;
+    }
+
+
+    .profile-professional-section .section-title-row {
+        gap: 9px;
+    }
+
+
+    .profile-professional-section .section-title-icon {
+        width: 31px;
+        height: 31px;
+
+        min-width: 31px;
+        min-height: 31px;
+
+        border-radius: 9px;
+    }
+
+
+    .profile-professional-section .section-title-icon svg {
+        width: 16px;
+        height: 16px;
+    }
+
+
+    /* =====================================================
+       GRADE
+       ===================================================== */
+
+    .profile-professional-section .info-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        column-gap: 20px;
+        row-gap: 20px;
+    }
+
+
+    /* =====================================================
+       ÍCONE DOS CAMPOS
+       ===================================================== */
+
+    .profile-professional-section .info-card-icon {
+        width: 24px;
+        height: 24px;
+
+        min-width: 24px;
+        min-height: 24px;
+
+        border-radius: 7px;
+    }
+
+
+    .profile-professional-section .info-card-icon svg {
+        width: 13px;
+        height: 13px;
+    }
+
+
+    /* =====================================================
+       LABEL
+       ===================================================== */
+
+    .profile-professional-section .info-card-label {
+        font-size: 10.5px;
+    }
+
+
+    /* =====================================================
+       VALOR
+       ===================================================== */
+
+    .profile-professional-section .info-card-value {
+        margin-left: 31px;
+
+        font-size: 12.5px;
+
+        line-height: 1.45;
+    }
+
+
+    /* =====================================================
+       SOBRE O ARTISTA
+       ===================================================== */
+
+    .profile-about {
+
+        padding: 18px;
+
+        border-radius: 10px;
+    }
+
+
+    .profile-about-header {
+        gap: 10px;
+
+        margin-bottom: 14px;
+    }
+
+
+    .profile-about-icon {
+        width: 34px;
+        height: 34px;
+
+        min-width: 34px;
+        min-height: 34px;
+
+        border-radius: 9px;
+    }
+
+
+    .profile-about-icon svg {
+        width: 17px;
+        height: 17px;
+    }
+
+
+    .profile-about-title {
+        font-size: 16px;
+    }
+
+
+    .profile-about-subtitle {
+        font-size: 11px;
+    }
+
+
+    .profile-about-content {
+        font-size: 14px;
+
+        line-height: 1.65;
+    }
+
+}
+
+
+/* =========================================================
+   =========================================================
+   TELAS MUITO PEQUENAS
+   =========================================================
+   ========================================================= */
+
+@media (max-width: 360px) {
+
+    /* =====================================================
+       SEÇÃO PROFISSIONAL
+       ===================================================== */
+
+    .profile-professional-section {
+        padding: 16px;
+    }
+
+
+    .profile-professional-section .section-title-row {
+        gap: 8px;
+    }
+
+
+    .profile-professional-section .section-title-icon {
+        width: 30px;
+        height: 30px;
+
+        min-width: 30px;
+        min-height: 30px;
+
+        border-radius: 8px;
+    }
+
+
+    .profile-professional-section .section-title-icon svg {
+        width: 15px;
+        height: 15px;
+    }
+
+
+    /* =====================================================
+       GRADE
+
+       Em telas muito pequenas, os quatro campos passam
+       para uma única coluna para evitar compressão.
+       ===================================================== */
+
+    .profile-professional-section .info-grid {
+        grid-template-columns: 1fr;
+
+        column-gap: 0;
+
+        row-gap: 18px;
+    }
+
+
+    /* =====================================================
+       ÍCONES
+       ===================================================== */
+
+    .profile-professional-section .info-card-icon {
+        width: 24px;
+        height: 24px;
+
+        min-width: 24px;
+        min-height: 24px;
+    }
+
+
+    .profile-professional-section .info-card-icon svg {
+        width: 13px;
+        height: 13px;
+    }
+
+
+    /* =====================================================
+       VALORES
+       ===================================================== */
+
+    .profile-professional-section .info-card-value {
+        margin-left: 31px;
+
+        font-size: 12.5px;
+    }
+
+
+    /* =====================================================
+       SOBRE O ARTISTA
+       ===================================================== */
+
+    .profile-about {
+        padding: 16px;
+
+        border-radius: 20px;
+    }
+
+
+    .profile-about-header {
+        gap: 9px;
+
+        margin-bottom: 13px;
+    }
+
+
+    .profile-about-icon {
+        width: 32px;
+        height: 32px;
+
+        min-width: 32px;
+        min-height: 32px;
+
+        border-radius: 8px;
+    }
+
+
+    .profile-about-icon svg {
+        width: 16px;
+        height: 16px;
+    }
+
+
+    .profile-about-title {
+        font-size: 15px;
+    }
+
+
+    .profile-about-subtitle {
+        font-size: 10px;
+    }
+
+
+    .profile-about-content {
+        font-size: 13px;
+
+        line-height: 1.6;
+    }
+
+}
+
+/* =========================================================
+   ESPAÇAMENTO ENTRE SOBRE O ARTISTA E EXPERIÊNCIA
+   ========================================================= */
+
+.profile-about + .profile-professional-section {
+    margin-top: 10px;
 }

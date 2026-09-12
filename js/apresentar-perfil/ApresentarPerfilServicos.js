@@ -937,7 +937,7 @@ function criarCardServico(
 
                 <div class="service-icon">
 
-                    <i data-lucide="music-2"></i>
+                    <i data-lucide="guitar"></i>
 
                 </div>
 

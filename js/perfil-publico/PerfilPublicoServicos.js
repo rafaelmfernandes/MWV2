@@ -761,116 +761,102 @@ function renderizar(servicos = null) {
    RENDERIZAR SERVIÇO
    ===================================================== */
 
-function renderizarServico(
-    servico,
-    indice
-) {
-
-    const nome =
-        escaparHtml(
-            servico.nome ||
-            `Serviço ${indice + 1}`
-        );
+function renderizarServico(servico, indice) {
 
 
-    const descricao =
-        servico.descricao
-            ? escaparHtml(
-                servico.descricao
-            )
-            : "";
+const nome = escaparHtml(
+    servico.nome || `Serviço ${indice + 1}`
+);
+
+const descricao = servico.descricao
+    ? escaparHtml(servico.descricao)
+    : "";
+
+const preco = renderizarPreco(servico);
+
+const meta = renderizarMeta(servico);
+
+const status = renderizarStatus(servico);
+
+return `
+    <article
+        class="service-card"
+        data-service-index="${indice}"
+    >
+
+        <div class="service-icon">
+            <i
+                data-lucide="briefcase-business"
+                aria-hidden="true"
+            ></i>
+        </div>
 
 
-    const preco =
-        renderizarPreco(
-            servico
-        );
+        <div class="service-info">
+
+            <h4 class="service-name">
+                ${nome}
+            </h4>
 
 
-    const meta =
-        renderizarMeta(
-            servico
-        );
+            ${
+                descricao
+                    ? `
+                        <p class="service-description">
+                            ${descricao}
+                        </p>
+                    `
+                    : ""
+            }
 
 
-    const status =
-        renderizarStatus(
-            servico
-        );
+            ${
+                meta
+                    ? `
+                        <div class="service-meta">
+                            ${meta}
+                        </div>
+                    `
+                    : ""
+            }
+
+        </div>
 
 
-    return `
+        ${
+            preco || status
+                ? `
+                    <div class="service-side">
 
-        <article
-            class="service-card"
-            data-service-index="${indice}"
-        >
-
-            <div class="service-icon">
-
-                <i
-                    data-lucide="music-2"
-                    aria-hidden="true"
-                ></i>
-
-            </div>
-
-
-            <div class="service-info">
-
-                <h4 class="service-name">
-                    ${nome}
-                </h4>
+                        ${
+                            preco
+                                ? `
+                                    <div class="service-price">
+                                        ${preco}
+                                    </div>
+                                `
+                                : ""
+                        }
 
 
-                ${
-                    descricao
-                        ? `
-                            <p class="service-description">
-                                ${descricao}
-                            </p>
-                        `
-                        : ""
-                }
+                        ${
+                            status
+                                ? `
+                                    <div class="service-status">
+                                        ${status}
+                                    </div>
+                                `
+                                : ""
+                        }
 
+                    </div>
+                `
+                : ""
+        }
 
-                ${
-                    meta
-                        ? `
-                            <div class="service-meta">
-                                ${meta}
-                            </div>
-                        `
-                        : ""
-                }
+    </article>
+`;
 
-
-                ${
-                    preco
-                        ? `
-                            <div class="service-price">
-                                ${preco}
-                            </div>
-                        `
-                        : ""
-                }
-
-
-                ${
-                    status
-                        ? `
-                            <div class="service-status">
-                                ${status}
-                            </div>
-                        `
-                        : ""
-                }
-
-            </div>
-
-        </article>
-
-    `;
 
 }
 

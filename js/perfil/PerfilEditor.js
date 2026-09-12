@@ -18,6 +18,7 @@ Ele é responsável por:
 * coordenar PerfilAgenda;
 * coordenar PerfilServicos;
 * coordenar PerfilInstrumentos;
+* coordenar PerfilEstilos;
 * controlar eventos gerais do editor;
 * decidir qual módulo deve executar cada ação;
 * controlar a navegação do editor.
@@ -32,7 +33,8 @@ ESTE MÓDULO NÃO É RESPONSÁVEL POR:
 * fazer upload diretamente;
 * implementar o CRUD do portfólio;
 * implementar o CRUD da agenda;
-* implementar o CRUD de serviços.
+* implementar o CRUD de serviços;
+* implementar diretamente a seleção visual dos estilos.
 
 Essas responsabilidades ficam nos módulos especializados:
 
@@ -63,6 +65,9 @@ PerfilServicos.js
 PerfilInstrumentos.js
 → instrumentos.
 
+PerfilEstilos.js
+→ estilos musicais e seleção dos chips.
+
 IMPORTANTE SOBRE PUBLICAÇÃO:
 
 perfil_publicado NÃO é calculado neste arquivo.
@@ -91,607 +96,596 @@ os serviços cadastrados na tabela servicos_artistas.
 
 const PerfilEditor = (() => {
 
-    "use strict";
+
+"use strict";
 
 
-    /* ========================================================
-       CONTROLE DE INICIALIZAÇÃO
-       ======================================================== */
+/* ========================================================
+   CONTROLE DE INICIALIZAÇÃO
+   ======================================================== */
 
-    let inicializado = false;
+let inicializado = false;
 
-    let iniciando = false;
-
-
-    /* ========================================================
-       PÁGINAS
-       ======================================================== */
-
-    const PAGINA_EDITOR =
-        "editar-perfil.html";
+let iniciando = false;
 
 
-    const PAGINA_PERFIL =
-        "meu-perfil.html";
+/* ========================================================
+   PÁGINAS
+   ======================================================== */
+
+const PAGINA_EDITOR =
+    "editar-perfil.html";
 
 
-    /* ========================================================
-       UTILITÁRIO — PÁGINA ATUAL
-       ======================================================== */
-
-    function obterPaginaAtual() {
-
-        return (
-            window.location.pathname
-                .split("/")
-                .pop() ||
-            PAGINA_EDITOR
-        );
-
-    }
+const PAGINA_PERFIL =
+    "meu-perfil.html";
 
 
-    /* ========================================================
-       CONFIGURAÇÃO CENTRAL
-       ======================================================== */
+/* ========================================================
+   UTILITÁRIO — PÁGINA ATUAL
+   ======================================================== */
 
-    const CONFIG = {
+function obterPaginaAtual() {
 
-        paginaAtual:
-            obterPaginaAtual(),
+    return (
+        window.location.pathname
+            .split("/")
+            .pop() ||
+        PAGINA_EDITOR
+    );
 
-        paginaEditor:
-            PAGINA_EDITOR,
-
-        paginaPerfil:
-            PAGINA_PERFIL,
-
-
-        buckets: {
-
-            foto:
-                "perfil-musico",
-
-            portfolio:
-                "portfolio-musicos"
-
-        },
+}
 
 
-        tabelas: {
+/* ========================================================
+   CONFIGURAÇÃO CENTRAL
+   ======================================================== */
 
-            usuarios:
-                "usuarios",
+const CONFIG = {
 
-            perfis:
-                "perfis",
+    paginaAtual:
+        obterPaginaAtual(),
 
-            tiposPerfil:
-                "tipos_perfil",
+    paginaEditor:
+        PAGINA_EDITOR,
 
-            perfisArtistas:
-                "perfis_artistas"
-
-        }
-
-    };
+    paginaPerfil:
+        PAGINA_PERFIL,
 
 
-    /* ========================================================
-       ESTADO CENTRAL
-       ========================================================
+    buckets: {
 
-       O estado pertence ao orquestrador.
-
-       Os módulos UI e Dados recebem uma referência para este
-       mesmo objeto através do contexto.
-
-       Assim evitamos duplicação de estado entre arquivos.
-
-       Os módulos especializados também podem atualizar
-       partes específicas deste estado através do contexto.
-       ======================================================== */
-
-    const estado = {
-
-        usuarioAuth:
-            null,
-
-        usuario:
-            null,
-
-        perfil:
-            null,
-
-        perfilArtista:
-            null,
-
-
-        fotoArquivo:
-            null,
-
-
-        salvando:
-            false,
-
-
-        abaAtual:
-            "sobre",
-
+        foto:
+            "perfil-musico",
 
         portfolio:
-            [],
+            "portfolio-musicos"
 
-        agenda:
-            [],
+    },
 
 
-        tipoMedia:
-            "imagem",
+    tabelas: {
 
+        usuarios:
+            "usuarios",
 
-        editandoPortfolioId:
-            null,
+        perfis:
+            "perfis",
 
+        tiposPerfil:
+            "tipos_perfil",
 
-        editandoAgendaId:
-            null,
+        perfisArtistas:
+            "perfis_artistas"
 
+    }
 
-        servicosValores:
-            [],
+};
 
 
-        editandoServicoId:
-            null
+/* ========================================================
+   ESTADO CENTRAL
+   ========================================================
 
-    };
+   O estado pertence ao orquestrador.
 
+   Os módulos UI e Dados recebem uma referência para este
+   mesmo objeto através do contexto.
 
-    /* ========================================================
-       IDs DOS ELEMENTOS DA INTERFACE
-       ======================================================== */
+   Assim evitamos duplicação de estado entre arquivos.
 
-    const ids = {
+   Os módulos especializados também podem atualizar
+   partes específicas deste estado através do contexto.
+   ======================================================== */
 
-        nome:
-            "nome",
+const estado = {
 
-        nomeExibicao:
-            "nomeExibicao",
+    usuarioAuth:
+        null,
 
-        telefone:
-            "telefone",
+    usuario:
+        null,
 
-        localizacao:
-            "localizacao",
+    perfil:
+        null,
 
-        descricao:
-            "descricao",
+    perfilArtista:
+        null,
 
-        experiencia:
-            "experiencia",
 
-        areaAtendimento:
-            "areaAtendimento",
+    fotoArquivo:
+        null,
 
-        tipoArtista:
-            "tipoArtista",
 
-        disponivel:
-            "disponivel",
+    salvando:
+        false,
 
-        emailConta:
-            "emailConta",
 
+    abaAtual:
+        "sobre",
 
-        avatarImage:
-            "avatarImage",
 
-        avatarInitials:
-            "avatarInitials",
+    portfolio:
+        [],
 
-        fotoPreview:
-            "fotoPreview",
+    agenda:
+        [],
 
-        fotoPlaceholder:
-            "fotoPlaceholder",
 
-        fotoInput:
-            "fotoInput",
+    tipoMedia:
+        "imagem",
 
-        btnFoto:
-            "btnFoto",
 
+    editandoPortfolioId:
+        null,
 
-        form:
-            "formPerfil",
 
-        btnSalvar:
-            "btnSalvar",
+    editandoAgendaId:
+        null,
 
-        btnSalvarTopo:
-            "btnSalvarTopo",
 
-        btnVoltar:
-            "btnVoltar",
+    servicosValores:
+        [],
 
-        btnCancelar:
-            "btnCancelar",
 
+    editandoServicoId:
+        null
 
-        contadorDescricao:
-            "contadorDescricao",
+};
 
 
-        /* ====================================================
-           PORTFÓLIO
-           ==================================================== */
+/* ========================================================
+   IDs DOS ELEMENTOS DA INTERFACE
+   ======================================================== */
 
-        portfolioTitulo:
-            "portfolioTitulo",
+const ids = {
 
-        portfolioDescricao:
-            "portfolioDescricao",
+    nome:
+        "nome",
 
-        portfolioArquivo:
-            "portfolioArquivo",
+    nomeExibicao:
+        "nomeExibicao",
 
-        portfolioUrl:
-            "portfolioUrl",
+    telefone:
+        "telefone",
 
-        portfolioAjuda:
-            "portfolioAjuda",
+    localizacao:
+        "localizacao",
 
-        btnAdicionarPortfolio:
-            "btnAdicionarPortfolio",
+    descricao:
+        "descricao",
 
-        portfolioEditList:
-            "portfolioEditList",
+    experiencia:
+        "experiencia",
 
+    areaAtendimento:
+        "areaAtendimento",
 
-        /* ====================================================
-           AGENDA
-           ==================================================== */
+    tipoArtista:
+        "tipoArtista",
 
-        agendaTitulo:
-            "agendaTitulo",
+    disponivel:
+        "disponivel",
 
-        agendaTipo:
-            "agendaTipo",
+    emailConta:
+        "emailConta",
 
-        agendaInicio:
-            "agendaInicio",
 
-        agendaFim:
-            "agendaFim",
+    avatarImage:
+        "avatarImage",
 
-        agendaLocalizacao:
-            "agendaLocalizacao",
+    avatarInitials:
+        "avatarInitials",
 
-        agendaDescricao:
-            "agendaDescricao",
+    fotoPreview:
+        "fotoPreview",
 
-        agendaStatus:
-            "agendaStatus",
+    fotoPlaceholder:
+        "fotoPlaceholder",
 
-        btnAdicionarAgenda:
-            "btnAdicionarAgenda",
+    fotoInput:
+        "fotoInput",
 
-        agendaEditList:
-            "agendaEditList",
+    btnFoto:
+        "btnFoto",
 
 
-        /* ====================================================
-           SERVIÇOS
-           ==================================================== */
+    form:
+        "formPerfil",
 
-        servicoNome:
-            "servicoNome",
+    btnSalvar:
+        "btnSalvar",
 
-        servicoDescricao:
-            "servicoDescricao",
+    btnSalvarTopo:
+        "btnSalvarTopo",
 
-        servicoDuracao:
-            "servicoDuracao",
+    btnVoltar:
+        "btnVoltar",
 
-        servicoTipoPreco:
-            "servicoTipoPreco",
+    btnCancelar:
+        "btnCancelar",
 
-        servicoValor:
-            "servicoValor",
 
-        servicoAtivo:
-            "servicoAtivo",
+    contadorDescricao:
+        "contadorDescricao",
 
-        campoValorServico:
-            "campoValorServico",
 
-        btnAdicionarServico:
-            "btnAdicionarServico",
+    /* ====================================================
+       PORTFÓLIO
+       ==================================================== */
 
-        btnCancelarServico:
-            "btnCancelarServico",
+    portfolioTitulo:
+        "portfolioTitulo",
 
-        servicosList:
-            "servicosList",
+    portfolioDescricao:
+        "portfolioDescricao",
 
+    portfolioArquivo:
+        "portfolioArquivo",
 
-        /* ====================================================
-           INTERFACE GERAL
-           ==================================================== */
+    portfolioUrl:
+        "portfolioUrl",
 
-        toast:
-            "toast",
+    portfolioAjuda:
+        "portfolioAjuda",
 
-        toastMessage:
-            "toastMessage",
+    btnAdicionarPortfolio:
+        "btnAdicionarPortfolio",
 
+    portfolioEditList:
+        "portfolioEditList",
 
-        loadingOverlay:
-            "loadingOverlay",
 
-        loadingText:
-            "loadingText"
+    /* ====================================================
+       AGENDA
+       ==================================================== */
 
-    };
+    agendaTitulo:
+        "agendaTitulo",
 
+    agendaTipo:
+        "agendaTipo",
 
-    /* ========================================================
-       CONTEXTO COMPARTILHADO
-       ========================================================
+    agendaInicio:
+        "agendaInicio",
 
-       Todos os módulos recebem o mesmo contexto.
+    agendaFim:
+        "agendaFim",
 
-       Isso evita dependências circulares e permite que:
+    agendaLocalizacao:
+        "agendaLocalizacao",
 
-       PerfilEditorUI
-       PerfilEditorDados
-       PerfilEditorFoto
-       PerfilAbas
-       PerfilPortfolio
-       PerfilAgenda
-       PerfilServicos
-       PerfilInstrumentos
+    agendaDescricao:
+        "agendaDescricao",
 
-       trabalhem sobre o mesmo estado.
-       ======================================================== */
+    agendaStatus:
+        "agendaStatus",
 
-    const contexto = {
+    btnAdicionarAgenda:
+        "btnAdicionarAgenda",
 
-        CONFIG,
+    agendaEditList:
+        "agendaEditList",
 
-        estado,
 
-        ids,
+    /* ====================================================
+       SERVIÇOS
+       ==================================================== */
 
+    servicoNome:
+        "servicoNome",
 
-        get supabase() {
+    servicoDescricao:
+        "servicoDescricao",
 
-            return window.supabaseClient;
+    servicoDuracao:
+        "servicoDuracao",
 
-        },
+    servicoTipoPreco:
+        "servicoTipoPreco",
 
+    servicoValor:
+        "servicoValor",
 
-        get el() {
+    servicoAtivo:
+        "servicoAtivo",
 
-            if (
-                window.PerfilUtils &&
-                typeof window.PerfilUtils.el === "function"
-            ) {
+    campoValorServico:
+        "campoValorServico",
 
-                return window.PerfilUtils.el;
+    btnAdicionarServico:
+        "btnAdicionarServico",
 
-            }
+    btnCancelarServico:
+        "btnCancelarServico",
 
+    servicosList:
+        "servicosList",
 
-            return el;
 
-        },
+    /* ====================================================
+       INTERFACE GERAL
+       ==================================================== */
 
+    toast:
+        "toast",
 
-        get utils() {
+    toastMessage:
+        "toastMessage",
 
-            return window.PerfilUtils || null;
+
+    loadingOverlay:
+        "loadingOverlay",
+
+    loadingText:
+        "loadingText"
+
+};
+
+
+/* ========================================================
+   CONTEXTO COMPARTILHADO
+   ========================================================
+
+   Todos os módulos recebem o mesmo contexto.
+
+   Isso evita dependências circulares e permite que:
+
+   PerfilEditorUI
+   PerfilEditorDados
+   PerfilEditorFoto
+   PerfilAbas
+   PerfilPortfolio
+   PerfilAgenda
+   PerfilServicos
+   PerfilInstrumentos
+   PerfilEstilos
+
+   trabalhem sobre o mesmo estado.
+   ======================================================== */
+
+const contexto = {
+
+    CONFIG,
+
+    estado,
+
+    ids,
+
+
+    get supabase() {
+
+        return window.supabaseClient;
+
+    },
+
+
+    get el() {
+
+        if (
+            window.PerfilUtils &&
+            typeof window.PerfilUtils.el === "function"
+        ) {
+
+            return window.PerfilUtils.el;
 
         }
 
-    };
+
+        return el;
+
+    },
 
 
-    /* ========================================================
-       ELEMENTO HTML
-       ======================================================== */
+    get utils() {
 
-    function el(id) {
+        return window.PerfilUtils || null;
 
-        if (!id) {
+    }
 
-            return null;
-
-        }
+};
 
 
-        return document.getElementById(id);
+/* ========================================================
+   ELEMENTO HTML
+   ======================================================== */
+
+function el(id) {
+
+    if (!id) {
+
+        return null;
 
     }
 
 
-    /* ========================================================
-       TIPO ARTÍSTICO
-       ========================================================
+    return document.getElementById(id);
 
-       Estas funções ficam aqui porque representam operações
-       de coordenação utilizadas por outros módulos.
+}
 
-       A definição dos tipos continua pertencendo ao
-       PerfilEditorTipo.js.
-       ======================================================== */
 
-    function preencherTipoArtista(
-        campoTipo,
-        tipoBanco
+/* ========================================================
+   TIPO ARTÍSTICO
+   ========================================================
+
+   Estas funções ficam aqui porque representam operações
+   de coordenação utilizadas por outros módulos.
+
+   A definição dos tipos continua pertencendo ao
+   PerfilEditorTipo.js.
+   ======================================================== */
+
+function preencherTipoArtista(
+    campoTipo,
+    tipoBanco
+) {
+
+    if (!campoTipo) {
+
+        return;
+
+    }
+
+
+    if (
+        window.PerfilEditorUI &&
+        typeof window.PerfilEditorUI.preencherTipoArtista === "function"
     ) {
 
-        if (!campoTipo) {
+        window.PerfilEditorUI.preencherTipoArtista(
+            campoTipo,
+            tipoBanco
+        );
 
-            return;
+        return;
 
-        }
-
-
-        if (
-            window.PerfilEditorUI &&
-            typeof window.PerfilEditorUI.preencherTipoArtista === "function"
-        ) {
-
-            window.PerfilEditorUI.preencherTipoArtista(
-                campoTipo,
-                tipoBanco
-            );
-
-            return;
-
-        }
+    }
 
 
-        console.warn(
-            "PerfilEditor: PerfilEditorUI.preencherTipoArtista não está disponível."
+    console.warn(
+        "PerfilEditor: PerfilEditorUI.preencherTipoArtista não está disponível."
+    );
+
+}
+
+
+function obterTipoConfigurado(valor) {
+
+    if (
+        window.PerfilEditorTipo &&
+        typeof window.PerfilEditorTipo.identificar === "function"
+    ) {
+
+        return window.PerfilEditorTipo.identificar(
+            valor
         );
 
     }
 
 
-    function obterTipoConfigurado(valor) {
+    return null;
 
-        if (
-            window.PerfilEditorTipo &&
-            typeof window.PerfilEditorTipo.identificar === "function"
-        ) {
-
-            return window.PerfilEditorTipo.identificar(
-                valor
-            );
-
-        }
+}
 
 
-        return null;
+function resolverTipo(valor) {
 
-    }
-
-
-    function resolverTipo(valor) {
-
-        if (
-            window.PerfilEditorTipo &&
-            typeof window.PerfilEditorTipo.resolver === "function"
-        ) {
-
-            return window.PerfilEditorTipo.resolver(
-                valor
-            );
-
-        }
-
-
-        return null;
-
-    }
-
-
-    function tipoPossuiRecurso(
-        recurso,
-        tipo
+    if (
+        window.PerfilEditorTipo &&
+        typeof window.PerfilEditorTipo.resolver === "function"
     ) {
 
-        if (
-            window.PerfilEditorTipo &&
-            typeof window.PerfilEditorTipo.possuiRecurso === "function"
-        ) {
-
-            return window.PerfilEditorTipo.possuiRecurso(
-                recurso,
-                tipo
-            );
-
-        }
-
-
-        return false;
+        return window.PerfilEditorTipo.resolver(
+            valor
+        );
 
     }
 
 
-    function tipoPossuiInstrumentos(
-        tipo
+    return null;
+
+}
+
+
+function tipoPossuiRecurso(
+    recurso,
+    tipo
+) {
+
+    if (
+        window.PerfilEditorTipo &&
+        typeof window.PerfilEditorTipo.possuiRecurso === "function"
     ) {
 
-        if (
-            window.PerfilEditorTipo &&
-            typeof window.PerfilEditorTipo.possuiInstrumentos === "function"
-        ) {
-
-            return window.PerfilEditorTipo.possuiInstrumentos(
-                tipo
-            );
-
-        }
-
-
-        return false;
+        return window.PerfilEditorTipo.possuiRecurso(
+            recurso,
+            tipo
+        );
 
     }
 
 
-    /* ========================================================
-       CONFIGURAR INSTRUMENTOS POR TIPO
-       ======================================================== */
+    return false;
 
-    function configurarInstrumentosPorTipo() {
-
-        const tipoAtual =
-            estado.perfilArtista?.tipo_artista;
+}
 
 
-        const tipoConfigurado =
-            resolverTipo(
-                tipoAtual
-            );
+function tipoPossuiInstrumentos(
+    tipo
+) {
+
+    if (
+        window.PerfilEditorTipo &&
+        typeof window.PerfilEditorTipo.possuiInstrumentos === "function"
+    ) {
+
+        return window.PerfilEditorTipo.possuiInstrumentos(
+            tipo
+        );
+
+    }
 
 
-        const campoInstrumentos =
-            el("campoInstrumentos");
+    return false;
+
+}
 
 
-        const possuiInstrumentos =
-            tipoPossuiInstrumentos(
-                tipoConfigurado ||
-                tipoAtual
-            );
+/* ========================================================
+   CONFIGURAR INSTRUMENTOS POR TIPO
+   ======================================================== */
+
+function configurarInstrumentosPorTipo() {
+
+    const tipoAtual =
+        estado.perfilArtista?.tipo_artista;
 
 
-        if (!possuiInstrumentos) {
-
-            if (
-                window.PerfilInstrumentos &&
-                typeof window.PerfilInstrumentos.destruir === "function"
-            ) {
-
-                window.PerfilInstrumentos.destruir();
-
-            }
+    const tipoConfigurado =
+        resolverTipo(
+            tipoAtual
+        );
 
 
-            if (campoInstrumentos) {
-
-                campoInstrumentos.style.display =
-                    "none";
-
-            }
+    const campoInstrumentos =
+        el("campoInstrumentos");
 
 
-            return;
+    const possuiInstrumentos =
+        tipoPossuiInstrumentos(
+            tipoConfigurado ||
+            tipoAtual
+        );
+
+
+    if (!possuiInstrumentos) {
+
+        if (
+            window.PerfilInstrumentos &&
+            typeof window.PerfilInstrumentos.destruir === "function"
+        ) {
+
+            window.PerfilInstrumentos.destruir();
 
         }
 
@@ -699,308 +693,576 @@ const PerfilEditor = (() => {
         if (campoInstrumentos) {
 
             campoInstrumentos.style.display =
-                "";
+                "none";
 
         }
 
 
-        if (
-            window.PerfilInstrumentos &&
-            typeof window.PerfilInstrumentos.inicializar === "function"
-        ) {
-
-            window.PerfilInstrumentos.inicializar();
-
-        }
-
-
-        if (
-            window.PerfilInstrumentos &&
-            typeof window.PerfilInstrumentos.carregar === "function"
-        ) {
-
-            window.PerfilInstrumentos.carregar(
-                estado.perfilArtista?.instrumentos || []
-            );
-
-        }
+        return;
 
     }
 
 
-    /* ========================================================
-       CONFIGURAR PORTFÓLIO
-       ======================================================== */
+    if (campoInstrumentos) {
 
-    async function configurarPortfolioPorTipo() {
+        campoInstrumentos.style.display =
+            "";
 
-        if (!window.PerfilPortfolio) {
-
-            console.warn(
-                "PerfilEditor: PerfilPortfolio não está disponível."
-            );
-
-            return [];
-
-        }
+    }
 
 
-        if (
-            typeof window.PerfilPortfolio.configurar === "function"
-        ) {
+    if (
+        window.PerfilInstrumentos &&
+        typeof window.PerfilInstrumentos.inicializar === "function"
+    ) {
 
-            window.PerfilPortfolio.configurar(
-                contexto
-            );
+        window.PerfilInstrumentos.inicializar();
 
-        }
-
-
-        if (
-            typeof window.PerfilPortfolio.carregar === "function"
-        ) {
-
-            const resultado =
-                await window.PerfilPortfolio.carregar();
+    }
 
 
-            if (Array.isArray(resultado)) {
+    if (
+        window.PerfilInstrumentos &&
+        typeof window.PerfilInstrumentos.carregar === "function"
+    ) {
 
-                estado.portfolio =
-                    resultado;
+        window.PerfilInstrumentos.carregar(
+            estado.perfilArtista?.instrumentos || []
+        );
 
-            }
+    }
+
+}
 
 
-            return resultado || [];
+/* ========================================================
+   CONFIGURAR ESTILOS MUSICAIS
+   ========================================================
 
-        }
+   O PerfilEstilos é responsável por:
 
+   * criar os chips de estilos;
+   * controlar seleção múltipla;
+   * carregar estilos já existentes;
+   * manter o estado dos estilos.
+
+   O PerfilEditor somente coordena o módulo.
+
+   O salvamento no Supabase continua pertencendo ao
+   PerfilEditorDados.js.
+   ======================================================== */
+
+function configurarEstilos() {
+
+    if (!window.PerfilEstilos) {
+
+        console.warn(
+            "PerfilEditor: PerfilEstilos não está disponível."
+        );
+
+        return;
+
+    }
+
+
+    if (
+        typeof window.PerfilEstilos.configurar === "function"
+    ) {
+
+        window.PerfilEstilos.configurar(
+            contexto
+        );
+
+    }
+
+
+    if (
+        typeof window.PerfilEstilos.inicializar === "function"
+    ) {
+
+        window.PerfilEstilos.inicializar();
+
+    }
+
+}
+
+
+/* ========================================================
+   CARREGAR ESTILOS MUSICAIS
+   ======================================================== */
+
+function carregarEstilos() {
+
+    if (!window.PerfilEstilos) {
+
+        return;
+
+    }
+
+
+    if (
+        typeof window.PerfilEstilos.carregar !== "function"
+    ) {
+
+        return;
+
+    }
+
+
+    window.PerfilEstilos.carregar(
+        estado.perfilArtista?.estilos || []
+    );
+
+}
+
+
+/* ========================================================
+   CONFIGURAR PORTFÓLIO
+   ======================================================== */
+
+async function configurarPortfolioPorTipo() {
+
+    if (!window.PerfilPortfolio) {
+
+        console.warn(
+            "PerfilEditor: PerfilPortfolio não está disponível."
+        );
 
         return [];
 
     }
 
 
-    /* ========================================================
-       CONFIGURAÇÃO DOS MÓDULOS
-       ======================================================== */
+    if (
+        typeof window.PerfilPortfolio.configurar === "function"
+    ) {
 
-    function configurarModulos() {
+        window.PerfilPortfolio.configurar(
+            contexto
+        );
 
-        /*
-         * Disponibilizamos os módulos no contexto central.
-         */
-
-        contexto.PerfilEditorUI =
-            window.PerfilEditorUI || null;
+    }
 
 
-        contexto.PerfilEditorDados =
-            window.PerfilEditorDados || null;
+    if (
+        typeof window.PerfilPortfolio.carregar === "function"
+    ) {
+
+        const resultado =
+            await window.PerfilPortfolio.carregar();
 
 
-        contexto.PerfilEditorTipo =
-            window.PerfilEditorTipo || null;
+        if (Array.isArray(resultado)) {
 
-
-        contexto.PerfilEditorFoto =
-            window.PerfilEditorFoto || null;
-
-
-        contexto.PerfilAbas =
-            window.PerfilAbas || null;
-
-
-        contexto.PerfilPortfolio =
-            window.PerfilPortfolio || null;
-
-
-        contexto.PerfilAgenda =
-            window.PerfilAgenda || null;
-
-
-        contexto.PerfilServicos =
-            window.PerfilServicos || null;
-
-
-        contexto.PerfilInstrumentos =
-            window.PerfilInstrumentos || null;
-
-
-        /*
-         * Funções de coordenação disponíveis para os módulos.
-         */
-
-        contexto.preencherTipoArtista =
-            preencherTipoArtista;
-
-
-        contexto.obterTipoConfigurado =
-            obterTipoConfigurado;
-
-
-        contexto.resolverTipo =
-            resolverTipo;
-
-
-        contexto.tipoPossuiRecurso =
-            tipoPossuiRecurso;
-
-
-        contexto.tipoPossuiInstrumentos =
-            tipoPossuiInstrumentos;
-
-
-        contexto.configurarInstrumentosPorTipo =
-            configurarInstrumentosPorTipo;
-
-
-        contexto.configurarPortfolioPorTipo =
-            configurarPortfolioPorTipo;
-
-
-        /* ====================================================
-           UI
-           ==================================================== */
-
-        if (
-            contexto.PerfilEditorUI &&
-            typeof contexto.PerfilEditorUI.configurar === "function"
-        ) {
-
-            contexto.PerfilEditorUI.configurar(
-                contexto
-            );
-
-        } else {
-
-            console.warn(
-                "PerfilEditor: PerfilEditorUI não está disponível."
-            );
+            estado.portfolio =
+                resultado;
 
         }
 
 
-        /* ====================================================
-           DADOS
-           ==================================================== */
+        return resultado || [];
 
-        if (
-            contexto.PerfilEditorDados &&
-            typeof contexto.PerfilEditorDados.configurar === "function"
-        ) {
-
-            contexto.PerfilEditorDados.configurar(
-                contexto
-            );
-
-        } else {
-
-            console.warn(
-                "PerfilEditor: PerfilEditorDados não está disponível."
-            );
-
-        }
+    }
 
 
-        /* ====================================================
-           FOTO
-           ==================================================== */
+    return [];
 
-        if (
-            contexto.PerfilEditorFoto &&
-            typeof contexto.PerfilEditorFoto.configurar === "function"
-        ) {
-
-            contexto.PerfilEditorFoto.configurar(
-                contexto
-            );
-
-        }
+}
 
 
-        /* ====================================================
-           ABAS
-           ==================================================== */
+/* ========================================================
+   CONFIGURAÇÃO DOS MÓDULOS
+   ======================================================== */
 
-        if (
-            contexto.PerfilAbas &&
-            typeof contexto.PerfilAbas.configurar === "function"
-        ) {
+function configurarModulos() {
 
-            contexto.PerfilAbas.configurar(
-                contexto
-            );
+    /*
+     * Disponibilizamos os módulos no contexto central.
+     */
 
-        }
+    contexto.PerfilEditorUI =
+        window.PerfilEditorUI || null;
 
 
-        /* ====================================================
-           PORTFÓLIO
-           ==================================================== */
-
-        if (
-            contexto.PerfilPortfolio &&
-            typeof contexto.PerfilPortfolio.configurar === "function"
-        ) {
-
-            contexto.PerfilPortfolio.configurar(
-                contexto
-            );
-
-        }
+    contexto.PerfilEditorDados =
+        window.PerfilEditorDados || null;
 
 
-        /* ====================================================
-           AGENDA
-           ==================================================== */
-
-        if (
-            contexto.PerfilAgenda &&
-            typeof contexto.PerfilAgenda.configurar === "function"
-        ) {
-
-            contexto.PerfilAgenda.configurar(
-                contexto
-            );
-
-        }
+    contexto.PerfilEditorTipo =
+        window.PerfilEditorTipo || null;
 
 
-        /* ====================================================
-           SERVIÇOS
-           ====================================================
-
-           O PerfilServicos é responsável pelo próprio estado,
-           carregamento, renderização e CRUD.
-
-           O Editor somente fornece o contexto.
-           ==================================================== */
-
-        if (
-            contexto.PerfilServicos &&
-            typeof contexto.PerfilServicos.configurar === "function"
-        ) {
-
-            contexto.PerfilServicos.configurar(
-                contexto
-            );
-
-        }
+    contexto.PerfilEditorFoto =
+        window.PerfilEditorFoto || null;
 
 
-        /* ====================================================
-           INSTRUMENTOS
-           ==================================================== */
+    contexto.PerfilAbas =
+        window.PerfilAbas || null;
 
-        if (
-            contexto.PerfilInstrumentos &&
-            typeof contexto.PerfilInstrumentos.configurar === "function"
-        ) {
 
-            contexto.PerfilInstrumentos.configurar(
-                contexto
+    contexto.PerfilPortfolio =
+        window.PerfilPortfolio || null;
+
+
+    contexto.PerfilAgenda =
+        window.PerfilAgenda || null;
+
+
+    contexto.PerfilServicos =
+        window.PerfilServicos || null;
+
+
+    contexto.PerfilInstrumentos =
+        window.PerfilInstrumentos || null;
+
+
+    contexto.PerfilEstilos =
+        window.PerfilEstilos || null;
+
+
+    /*
+     * Funções de coordenação disponíveis para os módulos.
+     */
+
+    contexto.preencherTipoArtista =
+        preencherTipoArtista;
+
+
+    contexto.obterTipoConfigurado =
+        obterTipoConfigurado;
+
+
+    contexto.resolverTipo =
+        resolverTipo;
+
+
+    contexto.tipoPossuiRecurso =
+        tipoPossuiRecurso;
+
+
+    contexto.tipoPossuiInstrumentos =
+        tipoPossuiInstrumentos;
+
+
+    contexto.configurarInstrumentosPorTipo =
+        configurarInstrumentosPorTipo;
+
+
+    contexto.configurarEstilos =
+        configurarEstilos;
+
+
+    contexto.carregarEstilos =
+        carregarEstilos;
+
+
+    contexto.configurarPortfolioPorTipo =
+        configurarPortfolioPorTipo;
+
+
+    /* ====================================================
+       UI
+       ==================================================== */
+
+    if (
+        contexto.PerfilEditorUI &&
+        typeof contexto.PerfilEditorUI.configurar === "function"
+    ) {
+
+        contexto.PerfilEditorUI.configurar(
+            contexto
+        );
+
+    } else {
+
+        console.warn(
+            "PerfilEditor: PerfilEditorUI não está disponível."
+        );
+
+    }
+
+
+    /* ====================================================
+       DADOS
+       ==================================================== */
+
+    if (
+        contexto.PerfilEditorDados &&
+        typeof contexto.PerfilEditorDados.configurar === "function"
+    ) {
+
+        contexto.PerfilEditorDados.configurar(
+            contexto
+        );
+
+    } else {
+
+        console.warn(
+            "PerfilEditor: PerfilEditorDados não está disponível."
+        );
+
+    }
+
+
+    /* ====================================================
+       FOTO
+       ==================================================== */
+
+    if (
+        contexto.PerfilEditorFoto &&
+        typeof contexto.PerfilEditorFoto.configurar === "function"
+    ) {
+
+        contexto.PerfilEditorFoto.configurar(
+            contexto
+        );
+
+    }
+
+
+    /* ====================================================
+       ABAS
+       ==================================================== */
+
+    if (
+        contexto.PerfilAbas &&
+        typeof contexto.PerfilAbas.configurar === "function"
+    ) {
+
+        contexto.PerfilAbas.configurar(
+            contexto
+        );
+
+    }
+
+
+    /* ====================================================
+       PORTFÓLIO
+       ==================================================== */
+
+    if (
+        contexto.PerfilPortfolio &&
+        typeof contexto.PerfilPortfolio.configurar === "function"
+    ) {
+
+        contexto.PerfilPortfolio.configurar(
+            contexto
+        );
+
+    }
+
+
+    /* ====================================================
+       AGENDA
+       ==================================================== */
+
+    if (
+        contexto.PerfilAgenda &&
+        typeof contexto.PerfilAgenda.configurar === "function"
+    ) {
+
+        contexto.PerfilAgenda.configurar(
+            contexto
+        );
+
+    }
+
+
+    /* ====================================================
+       SERVIÇOS
+       ====================================================
+
+       O PerfilServicos é responsável pelo próprio estado,
+       carregamento, renderização e CRUD.
+
+       O Editor somente fornece o contexto.
+       ==================================================== */
+
+    if (
+        contexto.PerfilServicos &&
+        typeof contexto.PerfilServicos.configurar === "function"
+    ) {
+
+        contexto.PerfilServicos.configurar(
+            contexto
+        );
+
+    }
+
+
+    /* ====================================================
+       INSTRUMENTOS
+       ==================================================== */
+
+    if (
+        contexto.PerfilInstrumentos &&
+        typeof contexto.PerfilInstrumentos.configurar === "function"
+    ) {
+
+        contexto.PerfilInstrumentos.configurar(
+            contexto
+        );
+
+    }
+
+
+    /* ====================================================
+       ESTILOS MUSICAIS
+       ==================================================== */
+
+    if (
+        contexto.PerfilEstilos &&
+        typeof contexto.PerfilEstilos.configurar === "function"
+    ) {
+
+        contexto.PerfilEstilos.configurar(
+            contexto
+        );
+
+    }
+
+}
+
+
+/* ========================================================
+   CARREGAR DADOS
+   ========================================================
+
+   Primeiro carregamos o perfil principal.
+
+   Depois que PerfilEditorDados termina, os módulos que
+   possuem dados próprios são carregados.
+
+   Cada módulo continua responsável por sua própria
+   consulta e renderização.
+   ======================================================== */
+
+async function carregarDados() {
+
+    if (
+        !contexto.PerfilEditorDados ||
+        typeof contexto.PerfilEditorDados.carregarDados !== "function"
+    ) {
+
+        throw new Error(
+            "PerfilEditorDados não está disponível."
+        );
+
+    }
+
+
+    const resultado =
+        await contexto.PerfilEditorDados.carregarDados();
+
+
+    if (!resultado) {
+
+        return null;
+
+    }
+
+
+    /* ====================================================
+       ESTILOS MUSICAIS
+       ====================================================
+
+       Inicializamos/carregamos os estilos antes do
+       preenchimento visual do formulário.
+
+       Assim, quando PerfilEditorUI tentar marcar os
+       estilos existentes, os chips já estarão disponíveis.
+       ==================================================== */
+
+    configurarEstilos();
+
+
+    /* ====================================================
+       PREENCHIMENTO DA INTERFACE PRINCIPAL
+       ==================================================== */
+
+    if (
+        contexto.PerfilEditorUI &&
+        typeof contexto.PerfilEditorUI.preencherFormulario === "function"
+    ) {
+
+        contexto.PerfilEditorUI.preencherFormulario();
+
+    }
+
+
+    /*
+     * Garantimos novamente o carregamento dos estilos
+     * depois do preenchimento do formulário.
+
+     * Isso mantém o módulo como fonte oficial da seleção
+     * dos estilos e também garante que os valores vindos
+     * do banco permaneçam sincronizados.
+     */
+
+    carregarEstilos();
+
+
+    /* ====================================================
+       INSTRUMENTOS
+       ==================================================== */
+
+    configurarInstrumentosPorTipo();
+
+
+    /* ====================================================
+       PORTFÓLIO
+       ==================================================== */
+
+    try {
+
+        await configurarPortfolioPorTipo();
+
+    } catch (erroPortfolio) {
+
+        console.error(
+            "PerfilEditor: erro ao carregar portfólio:",
+            erroPortfolio
+        );
+
+    }
+
+
+    /* ====================================================
+       SERVIÇOS
+       ====================================================
+
+       IMPORTANTE:
+
+       O PerfilServicos.carregar() já:
+
+       * consulta servicos_artistas;
+       * atualiza PerfilServicos.estado.lista;
+       * atualiza estado.servicosValores;
+       * renderiza servicosList.
+
+       Portanto, não copiamos novamente o retorno para o
+       estado aqui.
+
+       Isso evita que o Editor sobrescreva ou interfira
+       no estado próprio do módulo de serviços.
+
+       Os valores dos serviços também permanecem intactos.
+       ==================================================== */
+
+    if (
+        contexto.PerfilServicos &&
+        typeof contexto.PerfilServicos.carregar === "function"
+    ) {
+
+        try {
+
+            await contexto.PerfilServicos.carregar();
+
+        } catch (erroServicos) {
+
+            console.error(
+                "PerfilEditor: erro ao carregar serviços:",
+                erroServicos
             );
 
         }
@@ -1008,871 +1270,974 @@ const PerfilEditor = (() => {
     }
 
 
-    /* ========================================================
-       CARREGAR DADOS
-       ========================================================
+    /* ====================================================
+       AGENDA
+       ==================================================== */
 
-       Primeiro carregamos o perfil principal.
+    if (
+        contexto.PerfilAgenda &&
+        typeof contexto.PerfilAgenda.carregar === "function"
+    ) {
 
-       Depois que PerfilEditorDados termina, os módulos que
-       possuem dados próprios são carregados.
+        try {
 
-       Cada módulo continua responsável por sua própria
-       consulta e renderização.
-       ======================================================== */
+            const agenda =
+                await contexto.PerfilAgenda.carregar();
 
-    async function carregarDados() {
+
+            if (Array.isArray(agenda)) {
+
+                estado.agenda =
+                    agenda;
+
+            }
+
+        } catch (erroAgenda) {
+
+            console.error(
+                "PerfilEditor: erro ao carregar agenda:",
+                erroAgenda
+            );
+
+        }
+
+    }
+
+
+    return resultado;
+
+}
+
+
+/* ========================================================
+   PREENCHER FORMULÁRIO
+   ======================================================== */
+
+function preencherFormulario() {
+
+    if (
+        contexto.PerfilEditorUI &&
+        typeof contexto.PerfilEditorUI.preencherFormulario === "function"
+    ) {
+
+        return contexto.PerfilEditorUI.preencherFormulario();
+
+    }
+
+
+    console.warn(
+        "PerfilEditor: PerfilEditorUI.preencherFormulario não está disponível."
+    );
+
+}
+
+
+/* ========================================================
+   PREENCHER AVATAR
+   ======================================================== */
+
+function preencherAvatar() {
+
+    if (
+        contexto.PerfilEditorUI &&
+        typeof contexto.PerfilEditorUI.preencherAvatar === "function"
+    ) {
+
+        return contexto.PerfilEditorUI.preencherAvatar();
+
+    }
+
+
+    console.warn(
+        "PerfilEditor: PerfilEditorUI.preencherAvatar não está disponível."
+    );
+
+}
+
+
+/* ========================================================
+   ATUALIZAR CONTADOR
+   ======================================================== */
+
+function atualizarContador() {
+
+    if (
+        contexto.PerfilEditorUI &&
+        typeof contexto.PerfilEditorUI.atualizarContador === "function"
+    ) {
+
+        return contexto.PerfilEditorUI.atualizarContador();
+
+    }
+
+}
+
+
+/* ========================================================
+   SALVAR ABA SOBRE
+   ========================================================
+
+   A validação e o preparo dos dados pertencem ao fluxo
+   do editor.
+
+   A persistência fica no PerfilEditorDados.
+
+   O CRUD de serviços continua fora deste método.
+   ======================================================== */
+
+async function salvarSobre() {
+
+    if (estado.salvando) {
+
+        return;
+
+    }
+
+
+    const campoNome =
+        el(ids.nome);
+
+
+    const campoNomeExibicao =
+        el(ids.nomeExibicao);
+
+
+    const campoTelefone =
+        el(ids.telefone);
+
+
+    const campoLocalizacao =
+        el(ids.localizacao);
+
+
+    const campoDescricao =
+        el(ids.descricao);
+
+
+    const campoExperiencia =
+        el(ids.experiencia);
+
+
+    const campoArea =
+        el(ids.areaAtendimento);
+
+
+    const campoTipo =
+        el(ids.tipoArtista);
+
+
+    const campoDisponivel =
+        el(ids.disponivel);
+
+
+    const campoPerfilPublicado =
+        el("perfilPublicado");
+
+
+    const nome =
+        String(
+            campoNome?.value || ""
+        ).trim();
+
+
+    const nomeExibicao =
+        String(
+            campoNomeExibicao?.value || ""
+        ).trim();
+
+
+    const telefone =
+        String(
+            campoTelefone?.value || ""
+        ).trim();
+
+
+    const localizacao =
+        String(
+            campoLocalizacao?.value || ""
+        ).trim();
+
+
+    const descricao =
+        String(
+            campoDescricao?.value || ""
+        ).trim();
+
+
+    const experiencia =
+        String(
+            campoExperiencia?.value || ""
+        ).trim();
+
+
+    const areaAtendimento =
+        String(
+            campoArea?.value || ""
+        ).trim();
+
+
+    const tipoSelecionado =
+        String(
+            campoTipo?.value || ""
+        ).trim();
+
+
+    const disponivel =
+        campoDisponivel
+            ? Boolean(
+                campoDisponivel.checked
+            )
+            : true;
+
+
+    /*
+     * PUBLICAÇÃO
+     *
+     * O valor vem exclusivamente do checkbox.
+     *
+     * Não existe regra de completude neste módulo.
+     */
+
+    const perfilPublicado =
+        campoPerfilPublicado
+            ? Boolean(
+                campoPerfilPublicado.checked
+            )
+            : estado.perfil?.perfil_publicado === true;
+
+
+    /* ====================================================
+       VALIDAÇÕES BÁSICAS
+       ==================================================== */
+
+    if (!nome) {
+
+        mostrarToast(
+            "Informe seu nome.",
+            "erro"
+        );
+
+        campoNome?.focus();
+
+        return;
+
+    }
+
+
+    if (!nomeExibicao) {
+
+        mostrarToast(
+            "Informe o nome de exibição.",
+            "erro"
+        );
+
+        campoNomeExibicao?.focus();
+
+        return;
+
+    }
+
+
+    if (
+        descricao.length >
+        1000
+    ) {
+
+        mostrarToast(
+            "A descrição pode ter no máximo 1000 caracteres.",
+            "erro"
+        );
+
+        campoDescricao?.focus();
+
+        return;
+
+    }
+
+
+    /* ====================================================
+       TIPO ARTÍSTICO
+       ==================================================== */
+
+    let tipoValidado =
+        resolverTipo(
+            tipoSelecionado
+        );
+
+
+    if (!tipoValidado) {
+
+        const tipoDaPagina =
+            contexto.PerfilEditorTipo &&
+            typeof contexto.PerfilEditorTipo.obterTipoDaPaginaAtual === "function"
+
+                ? contexto.PerfilEditorTipo.obterTipoDaPaginaAtual()
+
+                : null;
+
+
+        tipoValidado =
+            tipoDaPagina ||
+            null;
+
+    }
+
+
+    if (!tipoValidado) {
+
+        mostrarToast(
+            "Selecione um tipo artístico válido.",
+            "erro"
+        );
+
+        campoTipo?.focus();
+
+        return;
+
+    }
+
+
+    /* ====================================================
+       VERIFICAR ALTERAÇÃO DO TIPO
+       ==================================================== */
+
+    const tipoAnterior =
+        resolverTipo(
+            estado.perfilArtista?.tipo_artista
+        );
+
+
+    const tipoMudou =
+        Boolean(
+            tipoAnterior?.nome &&
+            tipoValidado?.nome &&
+            tipoAnterior.nome !== tipoValidado.nome
+        );
+
+
+    if (tipoMudou) {
+
+        const confirmar =
+            window.confirm(
+                `O tipo artístico será alterado de "${tipoAnterior.nome}" para "${tipoValidado.nome}". Deseja continuar?`
+            );
+
+
+        if (!confirmar) {
+
+            return;
+
+        }
+
+    }
+
+
+    /* ====================================================
+       INSTRUMENTOS
+       ==================================================== */
+
+    let instrumentos = [];
+
+
+    if (
+        tipoPossuiInstrumentos(
+            tipoValidado
+        )
+    ) {
+
+        if (
+            contexto.PerfilInstrumentos &&
+            typeof contexto.PerfilInstrumentos.obterSelecionados === "function"
+        ) {
+
+            instrumentos =
+                contexto.PerfilInstrumentos.obterSelecionados();
+
+        } else if (
+            contexto.PerfilInstrumentos &&
+            typeof contexto.PerfilInstrumentos.obterValores === "function"
+        ) {
+
+            instrumentos =
+                contexto.PerfilInstrumentos.obterValores();
+
+        } else {
+
+            instrumentos =
+                Array.isArray(
+                    estado.perfilArtista?.instrumentos
+                )
+                    ? estado.perfilArtista.instrumentos
+                    : [];
+
+        }
+
+    }
+
+
+    /* ====================================================
+       ESTILOS MUSICAIS
+       ====================================================
+
+       Os estilos agora são controlados exclusivamente pelo
+       PerfilEstilos.js.
+
+       O módulo mantém o estado da seleção e entrega os
+       valores para o PerfilEditorDados.js.
+
+       O fallback para PerfilUtils permanece apenas como
+       compatibilidade caso o módulo ainda não esteja
+       disponível por algum motivo.
+       ==================================================== */
+
+    let estilos = [];
+
+
+    if (
+        contexto.PerfilEstilos &&
+        typeof contexto.PerfilEstilos.obterSelecionados === "function"
+    ) {
+
+        estilos =
+            contexto.PerfilEstilos.obterSelecionados() || [];
+
+    } else if (
+        window.PerfilEstilos &&
+        typeof window.PerfilEstilos.obterSelecionados === "function"
+    ) {
+
+        estilos =
+            window.PerfilEstilos.obterSelecionados() || [];
+
+    } else if (
+        window.PerfilUtils &&
+        typeof window.PerfilUtils.obterChipsSelecionados === "function"
+    ) {
+
+        estilos =
+            window.PerfilUtils.obterChipsSelecionados(
+                "estilos"
+            ) || [];
+
+    } else if (
+        window.PerfilUtils &&
+        typeof window.PerfilUtils.obterValoresChips === "function"
+    ) {
+
+        estilos =
+            window.PerfilUtils.obterValoresChips(
+                "estilos"
+            ) || [];
+
+    } else {
+
+        estilos =
+            Array.isArray(
+                estado.perfilArtista?.estilos
+            )
+                ? estado.perfilArtista.estilos
+                : [];
+
+    }
+
+
+    /* ====================================================
+       CHIPS DE SERVIÇOS DO PERFIL
+       ====================================================
+
+       Estes valores pertencem ao perfil artístico.
+
+       Eles NÃO substituem os serviços cadastrados na
+       tabela servicos_artistas.
+
+       PerfilServicos continua responsável pelos serviços
+       com nome, descrição, duração e preço.
+       ==================================================== */
+
+    let servicos = [];
+
+
+    if (
+        window.PerfilUtils &&
+        typeof window.PerfilUtils.obterChipsSelecionados === "function"
+    ) {
+
+        servicos =
+            window.PerfilUtils.obterChipsSelecionados(
+                "servicos"
+            ) || [];
+
+    } else if (
+        window.PerfilUtils &&
+        typeof window.PerfilUtils.obterValoresChips === "function"
+    ) {
+
+        servicos =
+            window.PerfilUtils.obterValoresChips(
+                "servicos"
+            ) || [];
+
+    } else {
+
+        servicos =
+            Array.isArray(
+                estado.perfilArtista?.servicos
+            )
+                ? estado.perfilArtista.servicos
+                : [];
+
+    }
+
+
+    /* ====================================================
+       INICIAR SALVAMENTO
+       ==================================================== */
+
+    estado.salvando =
+        true;
+
+
+    bloquearBotoesSalvar(
+        true
+    );
+
+
+    mostrarLoading(
+        true,
+        "Salvando perfil..."
+    );
+
+
+    try {
+
+        /* =================================================
+           FOTO
+           ================================================= */
+
+        let fotoUrl =
+            estado.perfilArtista?.foto_url ||
+            estado.usuario?.foto_url ||
+            null;
+
+
+        if (
+            contexto.PerfilEditorFoto &&
+            typeof contexto.PerfilEditorFoto.fazerUpload === "function"
+        ) {
+
+            const resultadoFoto =
+                await contexto.PerfilEditorFoto.fazerUpload();
+
+
+            if (
+                resultadoFoto &&
+                typeof resultadoFoto === "string"
+            ) {
+
+                fotoUrl =
+                    resultadoFoto;
+
+            } else if (
+                resultadoFoto?.url
+            ) {
+
+                fotoUrl =
+                    resultadoFoto.url;
+
+            }
+
+        }
+
+
+        /* =================================================
+           DADOS PARA O MÓDULO DE PERSISTÊNCIA
+           ================================================= */
+
+        const dadosSalvar = {
+
+            nome,
+
+            nomeExibicao,
+
+            telefone,
+
+            localizacao,
+
+            descricao,
+
+            experiencia,
+
+            areaAtendimento,
+
+            tipoValidado,
+
+            disponivel,
+
+            instrumentos,
+
+            estilos,
+
+            servicos,
+
+            fotoUrl,
+
+            perfilPublicado
+
+        };
+
 
         if (
             !contexto.PerfilEditorDados ||
-            typeof contexto.PerfilEditorDados.carregarDados !== "function"
+            typeof contexto.PerfilEditorDados.salvarPerfil !== "function"
         ) {
 
             throw new Error(
-                "PerfilEditorDados não está disponível."
+                "PerfilEditorDados.salvarPerfil não está disponível."
             );
 
         }
 
 
         const resultado =
-            await contexto.PerfilEditorDados.carregarDados();
+            await contexto.PerfilEditorDados.salvarPerfil(
+                dadosSalvar
+            );
 
 
-        if (!resultado) {
+        /* =================================================
+           REFLETIR PUBLICAÇÃO CONFIRMADA PELO BANCO
+           ================================================= */
 
-            return null;
+        if (
+            resultado?.perfilPublicado !== undefined
+        ) {
+
+            if (
+                contexto.PerfilEditorUI &&
+                typeof contexto.PerfilEditorUI.atualizarPublicacaoConfirmada === "function"
+            ) {
+
+                contexto.PerfilEditorUI.atualizarPublicacaoConfirmada(
+                    resultado.perfilPublicado
+                );
+
+            }
 
         }
 
 
-        /* ====================================================
-           PREENCHIMENTO DA INTERFACE PRINCIPAL
-           ==================================================== */
+        /* =================================================
+           ATUALIZAR TIPO LOCAL
+           ================================================= */
+
+        if (
+            resultado?.perfilArtista?.tipo_artista
+        ) {
+
+            estado.perfilArtista.tipo_artista =
+                resultado.perfilArtista.tipo_artista;
+
+        }
+
+
+        /*
+         * Mantemos os estilos salvos também no estado central.
+         *
+         * Isso evita que uma próxima operação local perca
+         * a seleção que acabou de ser persistida.
+         */
+
+        if (
+            Array.isArray(
+                resultado?.perfilArtista?.estilos
+            )
+        ) {
+
+            estado.perfilArtista.estilos =
+                [
+                    ...resultado.perfilArtista.estilos
+                ];
+
+        } else {
+
+            estado.perfilArtista.estilos =
+                [
+                    ...estilos
+                ];
+
+        }
+
 
         if (
             contexto.PerfilEditorUI &&
-            typeof contexto.PerfilEditorUI.preencherFormulario === "function"
+            typeof contexto.PerfilEditorUI.atualizarTipo === "function"
         ) {
 
-            contexto.PerfilEditorUI.preencherFormulario();
+            contexto.PerfilEditorUI.atualizarTipo(
+                estado.perfilArtista?.tipo_artista
+            );
 
         }
 
 
-        /* ====================================================
-           INSTRUMENTOS
-           ==================================================== */
+        /* =================================================
+           ATUALIZAR INSTRUMENTOS
+           ================================================= */
 
         configurarInstrumentosPorTipo();
 
 
-        /* ====================================================
-           PORTFÓLIO
-           ==================================================== */
+        /* =================================================
+           AVATAR
+           ================================================= */
 
-        try {
-
-            await configurarPortfolioPorTipo();
-
-        } catch (erroPortfolio) {
-
-            console.error(
-                "PerfilEditor: erro ao carregar portfólio:",
-                erroPortfolio
-            );
-
-        }
+        preencherAvatar();
 
 
-        /* ====================================================
-           SERVIÇOS
-           ====================================================
-
-           IMPORTANTE:
-
-           O PerfilServicos.carregar() já:
-
-           * consulta servicos_artistas;
-           * atualiza PerfilServicos.estado.lista;
-           * atualiza estado.servicosValores;
-           * renderiza servicosList.
-
-           Portanto, não copiamos novamente o retorno para o
-           estado aqui.
-
-           Isso evita que o Editor sobrescreva ou interfira
-           no estado próprio do módulo de serviços.
-
-           Os valores dos serviços também permanecem intactos.
-           ==================================================== */
-
-        if (
-            contexto.PerfilServicos &&
-            typeof contexto.PerfilServicos.carregar === "function"
-        ) {
-
-            try {
-
-                await contexto.PerfilServicos.carregar();
-
-            } catch (erroServicos) {
-
-                console.error(
-                    "PerfilEditor: erro ao carregar serviços:",
-                    erroServicos
-                );
-
-            }
-
-        }
+        estado.fotoArquivo =
+            null;
 
 
-        /* ====================================================
-           AGENDA
-           ==================================================== */
-
-        if (
-            contexto.PerfilAgenda &&
-            typeof contexto.PerfilAgenda.carregar === "function"
-        ) {
-
-            try {
-
-                const agenda =
-                    await contexto.PerfilAgenda.carregar();
+        mostrarLoading(
+            false
+        );
 
 
-                if (Array.isArray(agenda)) {
-
-                    estado.agenda =
-                        agenda;
-
-                }
-
-            } catch (erroAgenda) {
-
-                console.error(
-                    "PerfilEditor: erro ao carregar agenda:",
-                    erroAgenda
-                );
-
-            }
-
-        }
+        mostrarToast(
+            "Perfil salvo com sucesso.",
+            "sucesso"
+        );
 
 
         return resultado;
 
-    }
+    } catch (erro) {
+
+        console.error(
+            "PerfilEditor: erro ao salvar perfil:",
+            erro
+        );
 
 
-    /* ========================================================
-       PREENCHER FORMULÁRIO
-       ======================================================== */
-
-    function preencherFormulario() {
-
-        if (
-            contexto.PerfilEditorUI &&
-            typeof contexto.PerfilEditorUI.preencherFormulario === "function"
-        ) {
-
-            return contexto.PerfilEditorUI.preencherFormulario();
-
-        }
+        mostrarLoading(
+            false
+        );
 
 
-        console.warn(
-            "PerfilEditor: PerfilEditorUI.preencherFormulario não está disponível."
+        mostrarToast(
+            erro?.message ||
+            "Não foi possível salvar o perfil.",
+            "erro"
+        );
+
+
+        return null;
+
+    } finally {
+
+        estado.salvando =
+            false;
+
+
+        bloquearBotoesSalvar(
+            false
         );
 
     }
 
+}
 
-    /* ========================================================
-       PREENCHER AVATAR
-       ======================================================== */
 
-    function preencherAvatar() {
+/* ========================================================
+   BLOQUEAR BOTÕES DE SALVAMENTO
+   ======================================================== */
 
-        if (
-            contexto.PerfilEditorUI &&
-            typeof contexto.PerfilEditorUI.preencherAvatar === "function"
-        ) {
+function bloquearBotoesSalvar(
+    bloquear
+) {
 
-            return contexto.PerfilEditorUI.preencherAvatar();
+    const botoes = [
 
-        }
+        el(ids.btnSalvar),
 
+        el(ids.btnSalvarTopo)
 
-        console.warn(
-            "PerfilEditor: PerfilEditorUI.preencherAvatar não está disponível."
-        );
+    ];
 
-    }
 
+    botoes.forEach(
+        (botao) => {
 
-    /* ========================================================
-       ATUALIZAR CONTADOR
-       ======================================================== */
-
-    function atualizarContador() {
-
-        if (
-            contexto.PerfilEditorUI &&
-            typeof contexto.PerfilEditorUI.atualizarContador === "function"
-        ) {
-
-            return contexto.PerfilEditorUI.atualizarContador();
-
-        }
-
-    }
-
-
-    /* ========================================================
-       SALVAR ABA SOBRE
-       ========================================================
-
-       A validação e o preparo dos dados pertencem ao fluxo
-       do editor.
-
-       A persistência fica no PerfilEditorDados.
-
-       O CRUD de serviços continua fora deste método.
-       ======================================================== */
-
-    async function salvarSobre() {
-
-        if (estado.salvando) {
-
-            return;
-
-        }
-
-
-        const campoNome =
-            el(ids.nome);
-
-
-        const campoNomeExibicao =
-            el(ids.nomeExibicao);
-
-
-        const campoTelefone =
-            el(ids.telefone);
-
-
-        const campoLocalizacao =
-            el(ids.localizacao);
-
-
-        const campoDescricao =
-            el(ids.descricao);
-
-
-        const campoExperiencia =
-            el(ids.experiencia);
-
-
-        const campoArea =
-            el(ids.areaAtendimento);
-
-
-        const campoTipo =
-            el(ids.tipoArtista);
-
-
-        const campoDisponivel =
-            el(ids.disponivel);
-
-
-        const campoPerfilPublicado =
-            el("perfilPublicado");
-
-
-        const nome =
-            String(
-                campoNome?.value || ""
-            ).trim();
-
-
-        const nomeExibicao =
-            String(
-                campoNomeExibicao?.value || ""
-            ).trim();
-
-
-        const telefone =
-            String(
-                campoTelefone?.value || ""
-            ).trim();
-
-
-        const localizacao =
-            String(
-                campoLocalizacao?.value || ""
-            ).trim();
-
-
-        const descricao =
-            String(
-                campoDescricao?.value || ""
-            ).trim();
-
-
-        const experiencia =
-            String(
-                campoExperiencia?.value || ""
-            ).trim();
-
-
-        const areaAtendimento =
-            String(
-                campoArea?.value || ""
-            ).trim();
-
-
-        const tipoSelecionado =
-            String(
-                campoTipo?.value || ""
-            ).trim();
-
-
-        const disponivel =
-            campoDisponivel
-                ? Boolean(
-                    campoDisponivel.checked
-                )
-                : true;
-
-
-        /*
-         * PUBLICAÇÃO
-         *
-         * O valor vem exclusivamente do checkbox.
-         *
-         * Não existe regra de completude neste módulo.
-         */
-
-        const perfilPublicado =
-            campoPerfilPublicado
-                ? Boolean(
-                    campoPerfilPublicado.checked
-                )
-                : estado.perfil?.perfil_publicado === true;
-
-
-        /* ====================================================
-           VALIDAÇÕES BÁSICAS
-           ==================================================== */
-
-        if (!nome) {
-
-            mostrarToast(
-                "Informe seu nome.",
-                "erro"
-            );
-
-            campoNome?.focus();
-
-            return;
-
-        }
-
-
-        if (!nomeExibicao) {
-
-            mostrarToast(
-                "Informe o nome de exibição.",
-                "erro"
-            );
-
-            campoNomeExibicao?.focus();
-
-            return;
-
-        }
-
-
-        if (
-            descricao.length >
-            1000
-        ) {
-
-            mostrarToast(
-                "A descrição pode ter no máximo 1000 caracteres.",
-                "erro"
-            );
-
-            campoDescricao?.focus();
-
-            return;
-
-        }
-
-
-        /* ====================================================
-           TIPO ARTÍSTICO
-           ==================================================== */
-
-        let tipoValidado =
-            resolverTipo(
-                tipoSelecionado
-            );
-
-
-        if (!tipoValidado) {
-
-            const tipoDaPagina =
-                contexto.PerfilEditorTipo &&
-                typeof contexto.PerfilEditorTipo.obterTipoDaPaginaAtual === "function"
-
-                    ? contexto.PerfilEditorTipo.obterTipoDaPaginaAtual()
-
-                    : null;
-
-
-            tipoValidado =
-                tipoDaPagina ||
-                null;
-
-        }
-
-
-        if (!tipoValidado) {
-
-            mostrarToast(
-                "Selecione um tipo artístico válido.",
-                "erro"
-            );
-
-            campoTipo?.focus();
-
-            return;
-
-        }
-
-
-        /* ====================================================
-           VERIFICAR ALTERAÇÃO DO TIPO
-           ==================================================== */
-
-        const tipoAnterior =
-            resolverTipo(
-                estado.perfilArtista?.tipo_artista
-            );
-
-
-        const tipoMudou =
-            Boolean(
-                tipoAnterior?.nome &&
-                tipoValidado?.nome &&
-                tipoAnterior.nome !== tipoValidado.nome
-            );
-
-
-        if (tipoMudou) {
-
-            const confirmar =
-                window.confirm(
-                    `O tipo artístico será alterado de "${tipoAnterior.nome}" para "${tipoValidado.nome}". Deseja continuar?`
-                );
-
-
-            if (!confirmar) {
+            if (!botao) {
 
                 return;
 
             }
 
-        }
 
-
-        /* ====================================================
-           INSTRUMENTOS
-           ==================================================== */
-
-        let instrumentos = [];
-
-
-        if (
-            tipoPossuiInstrumentos(
-                tipoValidado
-            )
-        ) {
-
-            if (
-                contexto.PerfilInstrumentos &&
-                typeof contexto.PerfilInstrumentos.obterSelecionados === "function"
-            ) {
-
-                instrumentos =
-                    contexto.PerfilInstrumentos.obterSelecionados();
-
-            } else if (
-                contexto.PerfilInstrumentos &&
-                typeof contexto.PerfilInstrumentos.obterValores === "function"
-            ) {
-
-                instrumentos =
-                    contexto.PerfilInstrumentos.obterValores();
-
-            } else {
-
-                instrumentos =
-                    Array.isArray(
-                        estado.perfilArtista?.instrumentos
-                    )
-                        ? estado.perfilArtista.instrumentos
-                        : [];
-
-            }
-
-        }
-
-
-        /* ====================================================
-           ESTILOS E CHIPS DE SERVIÇOS
-           ====================================================
-
-           Estes valores pertencem ao perfil artístico.
-
-           Eles NÃO substituem os serviços cadastrados na
-           tabela servicos_artistas.
-
-           PerfilServicos continua responsável pelos serviços
-           com nome, descrição, duração e preço.
-           ==================================================== */
-
-        let estilos = [];
-
-        let servicos = [];
-
-
-        if (
-            window.PerfilUtils &&
-            typeof window.PerfilUtils.obterChipsSelecionados === "function"
-        ) {
-
-            estilos =
-                window.PerfilUtils.obterChipsSelecionados(
-                    "estilos"
-                ) || [];
-
-
-            servicos =
-                window.PerfilUtils.obterChipsSelecionados(
-                    "servicos"
-                ) || [];
-
-        } else if (
-            window.PerfilUtils &&
-            typeof window.PerfilUtils.obterValoresChips === "function"
-        ) {
-
-            estilos =
-                window.PerfilUtils.obterValoresChips(
-                    "estilos"
-                ) || [];
-
-
-            servicos =
-                window.PerfilUtils.obterValoresChips(
-                    "servicos"
-                ) || [];
-
-        } else {
-
-            estilos =
-                Array.isArray(
-                    estado.perfilArtista?.estilos
-                )
-                    ? estado.perfilArtista.estilos
-                    : [];
-
-
-            servicos =
-                Array.isArray(
-                    estado.perfilArtista?.servicos
-                )
-                    ? estado.perfilArtista.servicos
-                    : [];
-
-        }
-
-
-        /* ====================================================
-           INICIAR SALVAMENTO
-           ==================================================== */
-
-        estado.salvando =
-            true;
-
-
-        bloquearBotoesSalvar(
-            true
-        );
-
-
-        mostrarLoading(
-            true,
-            "Salvando perfil..."
-        );
-
-
-        try {
-
-            /* =================================================
-               FOTO
-               ================================================= */
-
-            let fotoUrl =
-                estado.perfilArtista?.foto_url ||
-                estado.usuario?.foto_url ||
-                null;
-
-
-            if (
-                contexto.PerfilEditorFoto &&
-                typeof contexto.PerfilEditorFoto.fazerUpload === "function"
-            ) {
-
-                const resultadoFoto =
-                    await contexto.PerfilEditorFoto.fazerUpload();
-
-
-                if (
-                    resultadoFoto &&
-                    typeof resultadoFoto === "string"
-                ) {
-
-                    fotoUrl =
-                        resultadoFoto;
-
-                } else if (
-                    resultadoFoto?.url
-                ) {
-
-                    fotoUrl =
-                        resultadoFoto.url;
-
-                }
-
-            }
-
-
-            /* =================================================
-               DADOS PARA O MÓDULO DE PERSISTÊNCIA
-               ================================================= */
-
-            const dadosSalvar = {
-
-                nome,
-
-                nomeExibicao,
-
-                telefone,
-
-                localizacao,
-
-                descricao,
-
-                experiencia,
-
-                areaAtendimento,
-
-                tipoValidado,
-
-                disponivel,
-
-                instrumentos,
-
-                estilos,
-
-                servicos,
-
-                fotoUrl,
-
-                perfilPublicado
-
-            };
-
-
-            if (
-                !contexto.PerfilEditorDados ||
-                typeof contexto.PerfilEditorDados.salvarPerfil !== "function"
-            ) {
-
-                throw new Error(
-                    "PerfilEditorDados.salvarPerfil não está disponível."
-                );
-
-            }
-
-
-            const resultado =
-                await contexto.PerfilEditorDados.salvarPerfil(
-                    dadosSalvar
+            botao.disabled =
+                Boolean(
+                    bloquear
                 );
 
 
-            /* =================================================
-               REFLETIR PUBLICAÇÃO CONFIRMADA PELO BANCO
-               ================================================= */
+            botao.setAttribute(
+                "aria-busy",
+                bloquear
+                    ? "true"
+                    : "false"
+            );
 
-            if (
-                resultado?.perfilPublicado !== undefined
-            ) {
+        }
+    );
 
-                if (
-                    contexto.PerfilEditorUI &&
-                    typeof contexto.PerfilEditorUI.atualizarPublicacaoConfirmada === "function"
-                ) {
+}
 
-                    contexto.PerfilEditorUI.atualizarPublicacaoConfirmada(
-                        resultado.perfilPublicado
+
+/* ========================================================
+   LOADING
+   ======================================================== */
+
+function mostrarLoading(
+mostrar,
+texto
+) {
+
+
+const overlay =
+    el(ids.loadingOverlay);
+
+
+const loadingText =
+    el(ids.loadingText);
+
+
+if (!overlay) {
+
+    return;
+
+}
+
+
+if (loadingText && texto) {
+
+    loadingText.textContent =
+        texto;
+
+}
+
+
+overlay.style.display =
+    mostrar
+        ? "grid"
+        : "none";
+
+
+}
+
+
+
+/* ========================================================
+   TOAST
+   ======================================================== */
+
+function mostrarToast(
+    mensagem,
+    tipo
+) {
+
+    const toast =
+        el(ids.toast);
+
+
+    const toastMessage =
+        el(ids.toastMessage);
+
+
+    if (toastMessage) {
+
+        toastMessage.textContent =
+            mensagem || "";
+
+    }
+
+
+    if (toast) {
+
+        toast.dataset.tipo =
+            tipo || "info";
+
+
+        toast.classList.add(
+            "show"
+        );
+
+
+        window.clearTimeout(
+            toast._perfilEditorTimeout
+        );
+
+
+        toast._perfilEditorTimeout =
+            window.setTimeout(
+                () => {
+
+                    toast.classList.remove(
+                        "show"
                     );
 
-                }
-
-            }
-
-
-            /* =================================================
-               ATUALIZAR TIPO LOCAL
-               ================================================= */
-
-            if (
-                resultado?.perfilArtista?.tipo_artista
-            ) {
-
-                estado.perfilArtista.tipo_artista =
-                    resultado.perfilArtista.tipo_artista;
-
-            }
-
-
-            if (
-                contexto.PerfilEditorUI &&
-                typeof contexto.PerfilEditorUI.atualizarTipo === "function"
-            ) {
-
-                contexto.PerfilEditorUI.atualizarTipo(
-                    estado.perfilArtista?.tipo_artista
-                );
-
-            }
-
-
-            /* =================================================
-               ATUALIZAR INSTRUMENTOS
-               ================================================= */
-
-            configurarInstrumentosPorTipo();
-
-
-            /* =================================================
-               AVATAR
-               ================================================= */
-
-            preencherAvatar();
-
-
-            estado.fotoArquivo =
-                null;
-
-
-            mostrarLoading(
-                false
+                },
+                3500
             );
 
+    } else {
 
-            mostrarToast(
-                "Perfil salvo com sucesso.",
-                "sucesso"
-            );
+        /*
+         * Fallback apenas quando não existe componente
+         * de toast na página.
+         */
 
-
-            return resultado;
-
-        } catch (erro) {
+        if (
+            tipo === "erro"
+        ) {
 
             console.error(
-                "PerfilEditor: erro ao salvar perfil:",
-                erro
-            );
-
-
-            mostrarLoading(
-                false
-            );
-
-
-            mostrarToast(
-                erro?.message ||
-                "Não foi possível salvar o perfil.",
-                "erro"
-            );
-
-
-            return null;
-
-        } finally {
-
-            estado.salvando =
-                false;
-
-
-            bloquearBotoesSalvar(
-                false
+                mensagem
             );
 
         }
 
     }
 
+}
 
-    /* ========================================================
-       BLOQUEAR BOTÕES DE SALVAMENTO
-       ======================================================== */
 
-    function bloquearBotoesSalvar(
-        bloquear
+/* ========================================================
+   EVENTOS
+   ======================================================== */
+
+function inicializarEventos() {
+
+    const formulario =
+        el(ids.form);
+
+
+    if (
+        formulario &&
+        !formulario.dataset.perfilEditorInicializado
     ) {
 
-        const botoes = [
-
-            el(ids.btnSalvar),
-
-            el(ids.btnSalvarTopo)
-
-        ];
+        formulario.dataset.perfilEditorInicializado =
+            "true";
 
 
-        botoes.forEach(
-            (botao) => {
+        formulario.addEventListener(
+            "submit",
+            (evento) => {
 
-                if (!botao) {
+                evento.preventDefault();
 
-                    return;
-
-                }
-
-
-                botao.disabled =
-                    Boolean(
-                        bloquear
-                    );
-
-
-                botao.setAttribute(
-                    "aria-busy",
-                    bloquear
-                        ? "true"
-                        : "false"
-                );
+                salvarSobre();
 
             }
         );
@@ -1880,601 +2245,480 @@ const PerfilEditor = (() => {
     }
 
 
-    /* ========================================================
-       LOADING
-       ======================================================== */
+    const botaoSalvar =
+        el(ids.btnSalvar);
 
-    function mostrarLoading(
-        mostrar,
-        texto
+
+    if (
+        botaoSalvar &&
+        !botaoSalvar.dataset.perfilEditorInicializado
     ) {
 
-        const overlay =
-            el(ids.loadingOverlay);
+        botaoSalvar.dataset.perfilEditorInicializado =
+            "true";
 
 
-        const loadingText =
-            el(ids.loadingText);
+        botaoSalvar.addEventListener(
+            "click",
+            (evento) => {
 
+                evento.preventDefault();
 
-        if (!overlay) {
-
-            return;
-
-        }
-
-
-        if (loadingText && texto) {
-
-            loadingText.textContent =
-                texto;
-
-        }
-
-
-        overlay.style.display =
-            mostrar
-                ? "flex"
-                : "none";
-
-    }
-
-
-    /* ========================================================
-       TOAST
-       ======================================================== */
-
-    function mostrarToast(
-        mensagem,
-        tipo
-    ) {
-
-        const toast =
-            el(ids.toast);
-
-
-        const toastMessage =
-            el(ids.toastMessage);
-
-
-        if (toastMessage) {
-
-            toastMessage.textContent =
-                mensagem || "";
-
-        }
-
-
-        if (toast) {
-
-            toast.dataset.tipo =
-                tipo || "info";
-
-
-            toast.classList.add(
-                "show"
-            );
-
-
-            window.clearTimeout(
-                toast._perfilEditorTimeout
-            );
-
-
-            toast._perfilEditorTimeout =
-                window.setTimeout(
-                    () => {
-
-                        toast.classList.remove(
-                            "show"
-                        );
-
-                    },
-                    3500
-                );
-
-        } else {
-
-            /*
-             * Fallback apenas quando não existe componente
-             * de toast na página.
-             */
-
-            if (
-                tipo === "erro"
-            ) {
-
-                console.error(
-                    mensagem
-                );
+                salvarSobre();
 
             }
-
-        }
+        );
 
     }
 
 
-    /* ========================================================
-       EVENTOS
-       ======================================================== */
+    const campoDescricao =
+        el(ids.descricao);
 
-    function inicializarEventos() {
 
-        const formulario =
-            el(ids.form);
+    if (
+        campoDescricao &&
+        !campoDescricao.dataset.perfilEditorInicializado
+    ) {
 
+        campoDescricao.dataset.perfilEditorInicializado =
+            "true";
 
-        if (
-            formulario &&
-            !formulario.dataset.perfilEditorInicializado
-        ) {
 
-            formulario.dataset.perfilEditorInicializado =
-                "true";
-
-
-            formulario.addEventListener(
-                "submit",
-                (evento) => {
-
-                    evento.preventDefault();
-
-                    salvarSobre();
-
-                }
-            );
-
-        }
-
-
-        const botaoSalvar =
-            el(ids.btnSalvar);
-
-
-        if (
-            botaoSalvar &&
-            !botaoSalvar.dataset.perfilEditorInicializado
-        ) {
-
-            botaoSalvar.dataset.perfilEditorInicializado =
-                "true";
-
-
-            botaoSalvar.addEventListener(
-                "click",
-                (evento) => {
-
-                    evento.preventDefault();
-
-                    salvarSobre();
-
-                }
-            );
-
-        }
-
-
-        const campoDescricao =
-            el(ids.descricao);
-
-
-        if (
-            campoDescricao &&
-            !campoDescricao.dataset.perfilEditorInicializado
-        ) {
-
-            campoDescricao.dataset.perfilEditorInicializado =
-                "true";
-
-
-            campoDescricao.addEventListener(
-                "input",
-                atualizarContador
-            );
-
-        }
-
-
-        const botaoSalvarTopo =
-            el(ids.btnSalvarTopo);
-
-
-        if (
-            botaoSalvarTopo &&
-            !botaoSalvarTopo.dataset.perfilEditorInicializado
-        ) {
-
-            botaoSalvarTopo.dataset.perfilEditorInicializado =
-                "true";
-
-
-            botaoSalvarTopo.addEventListener(
-                "click",
-                (evento) => {
-
-                    evento.preventDefault();
-
-
-                    switch (
-                        estado.abaAtual
-                    ) {
-
-                        case "portfolio":
-
-                            if (
-                                contexto.PerfilPortfolio &&
-                                typeof contexto.PerfilPortfolio.salvar === "function"
-                            ) {
-
-                                contexto.PerfilPortfolio.salvar();
-
-                            }
-
-                            break;
-
-
-                        case "agenda":
-
-                            if (
-                                contexto.PerfilAgenda &&
-                                typeof contexto.PerfilAgenda.salvar === "function"
-                            ) {
-
-                                contexto.PerfilAgenda.salvar();
-
-                            }
-
-                            break;
-
-
-                        case "servicos":
-
-                            if (
-                                contexto.PerfilServicos &&
-                                typeof contexto.PerfilServicos.salvar === "function"
-                            ) {
-
-                                contexto.PerfilServicos.salvar();
-
-                            }
-
-                            break;
-
-
-                        case "sobre":
-
-                        default:
-
-                            salvarSobre();
-
-                            break;
-
-                    }
-
-                }
-            );
-
-        }
-
-
-        const botaoVoltar =
-            el(ids.btnVoltar);
-
-
-        if (
-            botaoVoltar &&
-            !botaoVoltar.dataset.perfilEditorInicializado
-        ) {
-
-            botaoVoltar.dataset.perfilEditorInicializado =
-                "true";
-
-
-            botaoVoltar.addEventListener(
-                "click",
-                (evento) => {
-
-                    evento.preventDefault();
-
-                    voltarPerfil();
-
-                }
-            );
-
-        }
-
-
-        const botaoCancelar =
-            el(ids.btnCancelar);
-
-
-        if (
-            botaoCancelar &&
-            !botaoCancelar.dataset.perfilEditorInicializado
-        ) {
-
-            botaoCancelar.dataset.perfilEditorInicializado =
-                "true";
-
-
-            botaoCancelar.addEventListener(
-                "click",
-                (evento) => {
-
-                    evento.preventDefault();
-
-                    voltarPerfil();
-
-                }
-            );
-
-        }
+        campoDescricao.addEventListener(
+            "input",
+            atualizarContador
+        );
 
     }
 
 
-    /* ========================================================
-       VOLTAR PARA O PERFIL
-       ======================================================== */
+    const botaoSalvarTopo =
+        el(ids.btnSalvarTopo);
 
-    function voltarPerfil() {
 
-        window.location.href =
-            CONFIG.paginaPerfil;
+    if (
+        botaoSalvarTopo &&
+        !botaoSalvarTopo.dataset.perfilEditorInicializado
+    ) {
+
+        botaoSalvarTopo.dataset.perfilEditorInicializado =
+            "true";
+
+
+        botaoSalvarTopo.addEventListener(
+            "click",
+            (evento) => {
+
+                evento.preventDefault();
+
+
+                switch (
+                    estado.abaAtual
+                ) {
+
+                    case "portfolio":
+
+                        if (
+                            contexto.PerfilPortfolio &&
+                            typeof contexto.PerfilPortfolio.salvar === "function"
+                        ) {
+
+                            contexto.PerfilPortfolio.salvar();
+
+                        }
+
+                        break;
+
+
+                    case "agenda":
+
+                        if (
+                            contexto.PerfilAgenda &&
+                            typeof contexto.PerfilAgenda.salvar === "function"
+                        ) {
+
+                            contexto.PerfilAgenda.salvar();
+
+                        }
+
+                        break;
+
+
+                    case "servicos":
+
+                        if (
+                            contexto.PerfilServicos &&
+                            typeof contexto.PerfilServicos.salvar === "function"
+                        ) {
+
+                            contexto.PerfilServicos.salvar();
+
+                        }
+
+                        break;
+
+
+                    case "sobre":
+
+                    default:
+
+                        salvarSobre();
+
+                        break;
+
+                }
+
+            }
+        );
 
     }
 
 
-    /* ========================================================
-       INICIALIZAÇÃO
-       ======================================================== */
+    const botaoVoltar =
+        el(ids.btnVoltar);
 
-    async function iniciar() {
 
-        if (
-            inicializado ||
-            iniciando
-        ) {
+    if (
+        botaoVoltar &&
+        !botaoVoltar.dataset.perfilEditorInicializado
+    ) {
 
-            return;
+        botaoVoltar.dataset.perfilEditorInicializado =
+            "true";
+
+
+        botaoVoltar.addEventListener(
+            "click",
+            (evento) => {
+
+                evento.preventDefault();
+
+                voltarPerfil();
+
+            }
+        );
+
+    }
+
+
+    const botaoCancelar =
+        el(ids.btnCancelar);
+
+
+    if (
+        botaoCancelar &&
+        !botaoCancelar.dataset.perfilEditorInicializado
+    ) {
+
+        botaoCancelar.dataset.perfilEditorInicializado =
+            "true";
+
+
+        botaoCancelar.addEventListener(
+            "click",
+            (evento) => {
+
+                evento.preventDefault();
+
+                voltarPerfil();
+
+            }
+        );
+
+    }
+
+}
+
+
+/* ========================================================
+   VOLTAR PARA O PERFIL
+   ======================================================== */
+
+function voltarPerfil() {
+
+    window.location.href =
+        CONFIG.paginaPerfil;
+
+}
+
+
+/* ========================================================
+   INICIALIZAÇÃO
+   ======================================================== */
+
+async function iniciar() {
+
+    if (
+        inicializado ||
+        iniciando
+    ) {
+
+        return;
+
+    }
+
+
+    iniciando =
+        true;
+
+
+    try {
+
+        if (!window.PerfilEditorTipo) {
+
+            console.warn(
+                "PerfilEditor: PerfilEditorTipo não foi carregado."
+            );
 
         }
 
+
+        configurarModulos();
+
+
+        /* =================================================
+           ABAS
+           ================================================= */
+
+        if (
+            contexto.PerfilAbas &&
+            typeof contexto.PerfilAbas.inicializar === "function"
+        ) {
+
+            contexto.PerfilAbas.inicializar();
+
+        }
+
+
+        /* =================================================
+           EVENTOS GERAIS
+           ================================================= */
+
+        inicializarEventos();
+
+
+        /* =================================================
+           FOTO
+           ================================================= */
+
+        if (
+            contexto.PerfilEditorFoto &&
+            typeof contexto.PerfilEditorFoto.inicializar === "function"
+        ) {
+
+            contexto.PerfilEditorFoto.inicializar();
+
+        }
+
+
+        /* =================================================
+           AGENDA
+           ================================================= */
+
+        if (
+            contexto.PerfilAgenda &&
+            typeof contexto.PerfilAgenda.inicializar === "function"
+        ) {
+
+            contexto.PerfilAgenda.inicializar();
+
+        }
+
+
+        /* =================================================
+           SERVIÇOS
+           =================================================
+
+           O módulo é inicializado antes do carregamento
+           dos dados porque ele precisa registrar seus
+           eventos dos campos de serviço.
+
+           O carregamento real acontece depois que o
+           PerfilEditorDados disponibiliza o perfil_id.
+           ================================================= */
+
+        if (
+            contexto.PerfilServicos &&
+            typeof contexto.PerfilServicos.inicializar === "function"
+        ) {
+
+            contexto.PerfilServicos.inicializar();
+
+        }
+
+
+        /* =================================================
+           ESTILOS MUSICAIS
+           =================================================
+
+           O módulo é inicializado antes do carregamento
+           dos dados para que os chips já existam quando
+           o PerfilEditorUI preencher o formulário.
+           ================================================= */
+
+        if (
+            contexto.PerfilEstilos &&
+            typeof contexto.PerfilEstilos.inicializar === "function"
+        ) {
+
+            contexto.PerfilEstilos.inicializar();
+
+        }
+
+
+        /* =================================================
+           CHIPS
+           ================================================= */
+
+        if (
+            window.PerfilUtils &&
+            typeof window.PerfilUtils.inicializarChips === "function"
+        ) {
+
+            window.PerfilUtils.inicializarChips();
+
+        }
+
+
+        /* =================================================
+           CARREGAR DADOS
+           ================================================= */
+
+        await carregarDados();
+
+
+        inicializado =
+            true;
+
+    } catch (erro) {
+
+        console.error(
+            "PerfilEditor: erro durante inicialização:",
+            erro
+        );
+
+
+        mostrarToast(
+            erro?.message ||
+            "Não foi possível carregar o editor de perfil.",
+            "erro"
+        );
+
+    } finally {
 
         iniciando =
-            true;
-
-
-        try {
-
-            if (!window.PerfilEditorTipo) {
-
-                console.warn(
-                    "PerfilEditor: PerfilEditorTipo não foi carregado."
-                );
-
-            }
-
-
-            configurarModulos();
-
-
-            /* =================================================
-               ABAS
-               ================================================= */
-
-            if (
-                contexto.PerfilAbas &&
-                typeof contexto.PerfilAbas.inicializar === "function"
-            ) {
-
-                contexto.PerfilAbas.inicializar();
-
-            }
-
-
-            /* =================================================
-               EVENTOS GERAIS
-               ================================================= */
-
-            inicializarEventos();
-
-
-            /* =================================================
-               FOTO
-               ================================================= */
-
-            if (
-                contexto.PerfilEditorFoto &&
-                typeof contexto.PerfilEditorFoto.inicializar === "function"
-            ) {
-
-                contexto.PerfilEditorFoto.inicializar();
-
-            }
-
-
-            /* =================================================
-               AGENDA
-               ================================================= */
-
-            if (
-                contexto.PerfilAgenda &&
-                typeof contexto.PerfilAgenda.inicializar === "function"
-            ) {
-
-                contexto.PerfilAgenda.inicializar();
-
-            }
-
-
-            /* =================================================
-               SERVIÇOS
-               =================================================
-
-               O módulo é inicializado antes do carregamento
-               dos dados porque ele precisa registrar seus
-               eventos dos campos de serviço.
-
-               O carregamento real acontece depois que o
-               PerfilEditorDados disponibiliza o perfil_id.
-               ================================================= */
-
-            if (
-                contexto.PerfilServicos &&
-                typeof contexto.PerfilServicos.inicializar === "function"
-            ) {
-
-                contexto.PerfilServicos.inicializar();
-
-            }
-
-
-            /* =================================================
-               CHIPS
-               ================================================= */
-
-            if (
-                window.PerfilUtils &&
-                typeof window.PerfilUtils.inicializarChips === "function"
-            ) {
-
-                window.PerfilUtils.inicializarChips();
-
-            }
-
-
-            /* =================================================
-               CARREGAR DADOS
-               ================================================= */
-
-            await carregarDados();
-
-
-            inicializado =
-                true;
-
-        } catch (erro) {
-
-            console.error(
-                "PerfilEditor: erro durante inicialização:",
-                erro
-            );
-
-
-            mostrarToast(
-                erro?.message ||
-                "Não foi possível carregar o editor de perfil.",
-                "erro"
-            );
-
-        } finally {
-
-            iniciando =
-                false;
-
-        }
+            false;
 
     }
 
-
-    /* ========================================================
-       API PÚBLICA
-       ======================================================== */
-
-    return {
-
-        CONFIG,
-
-        estado,
-
-        ids,
-
-        contexto,
+}
 
 
-        iniciar,
+/* ========================================================
+   API PÚBLICA
+   ======================================================== */
 
-        carregarDados,
+return {
 
+    CONFIG,
 
-        preencherFormulario,
+    estado,
 
-        preencherAvatar,
+    ids,
 
-
-        salvarSobre,
-
-
-        inicializarEventos,
-
-
-        atualizarContador,
+    contexto,
 
 
-        voltarPerfil,
+    iniciar,
+
+    carregarDados,
 
 
-        preencherTipoArtista,
+    preencherFormulario,
+
+    preencherAvatar,
 
 
-        obterPaginaAtual,
+    salvarSobre,
 
 
-        obterTipoConfigurado,
+    inicializarEventos,
 
 
-        resolverTipo,
+    atualizarContador,
 
 
-        tipoPossuiRecurso,
+    voltarPerfil,
 
 
-        tipoPossuiInstrumentos,
+    preencherTipoArtista,
 
 
-        configurarInstrumentosPorTipo,
+    obterPaginaAtual,
 
 
-        configurarPortfolioPorTipo
+    obterTipoConfigurado,
 
-    };
+
+    resolverTipo,
+
+
+    tipoPossuiRecurso,
+
+
+    tipoPossuiInstrumentos,
+
+
+    configurarInstrumentosPorTipo,
+
+
+    configurarEstilos,
+
+
+    carregarEstilos,
+
+
+    configurarPortfolioPorTipo
+
+};
 
 
 })();
 
-
 /* ============================================================
-   EXPOSIÇÃO GLOBAL
-   ============================================================ */
+EXPOSIÇÃO GLOBAL
+============================================================ */
 
 window.PerfilEditor =
-    PerfilEditor;
-
+PerfilEditor;
 
 /* ============================================================
-   INICIALIZAÇÃO AUTOMÁTICA
-   ============================================================ */
+INICIALIZAÇÃO AUTOMÁTICA
+============================================================ */
 
 if (
-    document.readyState === "loading"
+document.readyState === "loading"
 ) {
 
-    document.addEventListener(
-        "DOMContentLoaded",
-        () => {
 
-            PerfilEditor.iniciar();
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
 
-        },
-        {
-            once: true
-        }
-    );
+        PerfilEditor.iniciar();
+
+    },
+    {
+        once: true
+    }
+);
+
 
 } else {
 
-    PerfilEditor.iniciar();
+
+PerfilEditor.iniciar();
+
 
 }
