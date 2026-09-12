@@ -1,0 +1,371 @@
+/*
+=========================================================
+MUSICALWORLD — EDITAR PERFIL
+Arquivo principal de estilos
+
+Este arquivo NÃO contém os estilos diretamente.
+Ele apenas organiza e carrega os módulos de CSS
+responsáveis por cada parte da tela.
+=========================================================
+
+
+---------------------------------------------------------
+01. base.css
+---------------------------------------------------------
+Responsabilidade:
+- Configurações gerais do editor.
+- Reset básico dos elementos.
+- Variáveis de cores.
+- Cores principais do sistema.
+- Tipografia.
+- Fundo geral da página.
+- Configurações globais de botões, inputs e elementos.
+
+Em resumo:
+Define a base visual utilizada por todos os outros CSS.
+---------------------------------------------------------
+*/
+
+@import url("./base.css");
+
+
+/*
+---------------------------------------------------------
+02. topbar.css
+---------------------------------------------------------
+Responsabilidade:
+- Barra superior do Editar Perfil.
+- Botão Voltar.
+- Título da página.
+- Texto auxiliar da barra superior.
+- Botão Salvar localizado no topo.
+- Estados de hover e botão desabilitado.
+
+Em resumo:
+Controla toda a barra superior da página.
+---------------------------------------------------------
+*/
+
+@import url("./topbar.css");
+
+
+/*
+---------------------------------------------------------
+03. cards.css
+---------------------------------------------------------
+Responsabilidade:
+- Container principal do editor.
+- Cards brancos do formulário.
+- Card da foto.
+- Cabeçalhos das seções.
+- Ícones dos cabeçalhos.
+- Área de informações da conta.
+- E-mail da conta.
+
+Em resumo:
+Controla a estrutura visual dos cartões e cabeçalhos.
+---------------------------------------------------------
+*/
+
+@import url("./cards.css");
+
+
+/*
+---------------------------------------------------------
+04. abas.css
+---------------------------------------------------------
+Responsabilidade:
+- Sistema de abas do Editar Perfil.
+- Aba Perfil.
+- Aba Portfólio.
+- Aba Agenda.
+- Aba Serviços.
+- Estado ativo das abas.
+- Exibição e ocultação dos painéis.
+
+Em resumo:
+Controla a navegação visual entre as áreas do editor.
+---------------------------------------------------------
+*/
+
+@import url("./abas.css");
+
+
+/*
+---------------------------------------------------------
+05. campos.css
+---------------------------------------------------------
+Responsabilidade:
+- Labels.
+- Inputs.
+- Textareas.
+- Selects.
+- Campos de texto.
+- Campos de telefone.
+- Campo de localização.
+- Campo de experiência.
+- Campo de descrição.
+- Contador de caracteres.
+- Textos auxiliares.
+- Campos agrupados em duas colunas.
+- Campo de upload de arquivo.
+
+Em resumo:
+Controla a aparência dos campos de preenchimento.
+---------------------------------------------------------
+*/
+
+@import url("./campos.css");
+
+
+/*
+---------------------------------------------------------
+06. foto.css
+---------------------------------------------------------
+Responsabilidade:
+- Área da foto do perfil.
+- Avatar.
+- Imagem do usuário.
+- Inicial/nome quando não existe foto.
+- Botão para alterar foto.
+- Texto de orientação do upload.
+
+Em resumo:
+Controla tudo relacionado à foto do perfil.
+---------------------------------------------------------
+*/
+
+@import url("./foto.css");
+
+
+/*
+---------------------------------------------------------
+07. chips.css
+---------------------------------------------------------
+Responsabilidade:
+- Chips de seleção.
+- Estilos musicais.
+- Especialidades.
+- Instrumentos.
+- Serviços selecionáveis.
+- Estado normal dos chips.
+- Estado selecionado dos chips.
+- Efeito ao passar o mouse.
+
+Em resumo:
+Controla todos os campos de seleção por chips.
+---------------------------------------------------------
+*/
+
+@import url("./chips.css");
+
+
+/*
+---------------------------------------------------------
+08. switch.css
+---------------------------------------------------------
+Responsabilidade:
+- Interruptor de disponibilidade.
+- Estado disponível.
+- Estado indisponível.
+- Animação do botão.
+- Texto associado ao switch.
+- Controle de visibilidade relacionado aos painéis.
+
+Em resumo:
+Controla os switches e seus estados.
+---------------------------------------------------------
+*/
+
+@import url("./switch.css");
+
+
+/*
+---------------------------------------------------------
+09. portfolio.css
+---------------------------------------------------------
+Responsabilidade:
+- Aba de Portfólio.
+- Seleção entre foto, vídeo e áudio.
+- Cards dos trabalhos.
+- Miniaturas.
+- Informações do trabalho.
+- Botão editar.
+- Botão excluir.
+- Botão de destaque.
+- Identificação de item em destaque.
+- Layout dos itens do portfólio.
+
+Em resumo:
+Controla toda a apresentação e edição do portfólio.
+---------------------------------------------------------
+*/
+
+@import url("./portfolio.css");
+
+
+/*
+---------------------------------------------------------
+10. agenda.css
+---------------------------------------------------------
+Responsabilidade:
+- Cards de compromissos.
+- Data do evento.
+- Título do evento.
+- Localização.
+- Status.
+- Botão editar agenda.
+- Botão excluir agenda.
+- Organização dos eventos.
+
+Em resumo:
+Controla visualmente a agenda do artista.
+---------------------------------------------------------
+*/
+
+@import url("./agenda.css");
+
+
+/*
+---------------------------------------------------------
+11. servicos.css
+---------------------------------------------------------
+Responsabilidade:
+- Lista de serviços.
+- Cards de serviços.
+- Ícone do serviço.
+- Nome do serviço.
+- Descrição.
+- Informações complementares.
+- Preço.
+- Status ativo/inativo.
+- Botão editar serviço.
+- Botão excluir serviço.
+
+Em resumo:
+Controla a área de Serviços e Valores.
+---------------------------------------------------------
+*/
+
+@import url("./servicos.css");
+
+
+/*
+---------------------------------------------------------
+12. botoes.css
+---------------------------------------------------------
+Responsabilidade:
+- Botão principal Salvar.
+- Botão Cancelar.
+- Botão Adicionar.
+- Área de ações finais.
+- Estados de hover.
+- Estados de clique.
+- Estados desabilitados.
+- Botões gerais relacionados às ações do editor.
+
+Em resumo:
+Controla os botões e ações principais do formulário.
+---------------------------------------------------------
+*/
+
+@import url("./botoes.css");
+
+
+/*
+---------------------------------------------------------
+13. estados.css
+---------------------------------------------------------
+Responsabilidade:
+- Estados vazios.
+- Portfólio sem itens.
+- Agenda sem eventos.
+- Serviços sem itens.
+- Mensagens informativas quando não existe conteúdo.
+
+Em resumo:
+Controla as telas/áreas quando ainda não existem dados.
+---------------------------------------------------------
+*/
+
+@import url("./estados.css");
+
+
+/*
+---------------------------------------------------------
+14. toast.css
+---------------------------------------------------------
+Responsabilidade:
+- Mensagens rápidas do sistema.
+- Mensagem de sucesso.
+- Mensagem de erro.
+- Animação de entrada e saída.
+- Posicionamento do aviso na tela.
+
+Em resumo:
+Controla as notificações rápidas do editor.
+---------------------------------------------------------
+*/
+
+@import url("./toast.css");
+
+
+/*
+---------------------------------------------------------
+15. loading.css
+---------------------------------------------------------
+Responsabilidade:
+- Tela de carregamento.
+- Overlay.
+- Caixa de carregamento.
+- Spinner.
+- Animação de carregamento.
+
+Em resumo:
+Controla o estado de carregamento da página.
+---------------------------------------------------------
+*/
+
+@import url("./loading.css");
+
+
+/*
+---------------------------------------------------------
+16. responsivo.css
+---------------------------------------------------------
+Responsabilidade:
+- Adaptação para celulares.
+- Adaptação para telas pequenas.
+- Adaptação para tablets.
+- Ajuste das abas.
+- Ajuste dos cards.
+- Ajuste dos campos.
+- Ajuste do portfólio.
+- Ajuste da agenda.
+- Ajuste dos serviços.
+- Ajuste dos botões.
+- Ajustes específicos para telas muito pequenas.
+
+Em resumo:
+Faz o Editar Perfil funcionar corretamente em diferentes
+tamanhos de tela.
+---------------------------------------------------------
+*/
+
+@import url("./responsivo.css");
+
+
+/*
+---------------------------------------------------------
+17. acessibilidade.css
+---------------------------------------------------------
+Responsabilidade:
+- Área segura de dispositivos móveis.
+- Focus visível para teclado/acessibilidade.
+- Redução de animações quando o usuário solicita.
+- Melhorias relacionadas à acessibilidade.
+
+Em resumo:
+Cuida dos detalhes de acessibilidade e compatibilidade.
+---------------------------------------------------------
+*/

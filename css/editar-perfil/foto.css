@@ -1,0 +1,288 @@
+/* =========================================================
+   MUSICALWORLD — EDITAR PERFIL
+   FOTO DO PERFIL
+   ========================================================= */
+
+.foto-editor {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    text-align: center;
+}
+
+/* ---------------------------------------------------------
+   Área da pré-visualização
+   --------------------------------------------------------- */
+
+.foto-preview-wrapper {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    flex: 0 0 120px;
+}
+
+/* ---------------------------------------------------------
+   Foto
+   --------------------------------------------------------- */
+
+.foto-preview {
+    position: relative;
+
+    width: 120px;
+    height: 120px;
+
+    max-width: none;
+
+    display: block;
+
+    object-fit: cover;
+
+    border-radius: 50%;
+
+    background: var(--mw-primary-soft);
+
+    border: 4px solid #ffffff;
+
+    box-shadow: 0 5px 20px rgba(60, 65, 90, 0.12);
+}
+
+/* ---------------------------------------------------------
+   Placeholder quando não existe foto
+   --------------------------------------------------------- */
+
+.foto-placeholder {
+    position: absolute;
+
+    inset: 0;
+
+    width: 120px;
+    height: 120px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: var(--mw-primary-soft);
+
+    color: var(--mw-primary);
+
+    border: 4px solid #ffffff;
+
+    box-shadow: 0 5px 20px rgba(60, 65, 90, 0.12);
+
+    font-size: 32px;
+    font-weight: 800;
+
+    overflow: hidden;
+}
+
+/* ---------------------------------------------------------
+   Imagem dentro do preview
+   --------------------------------------------------------- */
+
+.foto-preview-wrapper img {
+    width: 120px;
+    height: 120px;
+
+    max-width: none;
+
+    object-fit: cover;
+
+    border-radius: 50%;
+}
+
+/* ---------------------------------------------------------
+   Ações da foto
+   --------------------------------------------------------- */
+
+.foto-acoes {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    margin-top: 14px;
+}
+
+/* ---------------------------------------------------------
+   Botão alterar foto
+   --------------------------------------------------------- */
+
+.btn-foto {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
+
+    min-height: 40px;
+
+    padding: 9px 15px;
+
+    border: 1px solid var(--mw-border);
+
+    border-radius: 12px;
+
+    background: #ffffff;
+
+    color: var(--mw-text);
+
+    font-size: 13px;
+    font-weight: 750;
+
+    cursor: pointer;
+
+    transition:
+        background 0.18s ease,
+        border-color 0.18s ease,
+        color 0.18s ease,
+        transform 0.18s ease;
+}
+
+.btn-foto svg {
+    width: 16px;
+    height: 16px;
+
+    flex: 0 0 16px;
+}
+
+.btn-foto:hover {
+    border-color: #cfc9ff;
+
+    background: var(--mw-primary-soft);
+
+    color: var(--mw-primary);
+}
+
+.btn-foto:active {
+    transform: translateY(1px);
+}
+
+/* ---------------------------------------------------------
+   Botão remover foto
+   --------------------------------------------------------- */
+
+.btn-remover-foto {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 6px;
+
+    min-height: 40px;
+
+    padding: 9px 13px;
+
+    border: 1px solid #f0d4d8;
+
+    border-radius: 12px;
+
+    background: #ffffff;
+
+    color: var(--mw-danger);
+
+    font-size: 13px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        background 0.18s ease,
+        border-color 0.18s ease,
+        color 0.18s ease,
+        transform 0.18s ease;
+}
+
+.btn-remover-foto svg {
+    width: 15px;
+    height: 15px;
+
+    flex: 0 0 15px;
+}
+
+.btn-remover-foto:hover {
+    background: #fff4f5;
+
+    border-color: #e8b8bf;
+
+    color: #c83b4b;
+}
+
+.btn-remover-foto:active {
+    transform: translateY(1px);
+}
+
+/* ---------------------------------------------------------
+   Texto auxiliar
+   --------------------------------------------------------- */
+
+.foto-ajuda {
+    margin: 9px 0 0;
+
+    color: var(--mw-muted);
+
+    font-size: 11px;
+
+    line-height: 16px;
+}
+
+/* ---------------------------------------------------------
+   Input de arquivo
+   --------------------------------------------------------- */
+
+#inputFoto {
+    display: none;
+}
+
+/* ---------------------------------------------------------
+   Proteção contra imagens gigantes
+   --------------------------------------------------------- */
+
+.foto-editor img {
+    max-width: none;
+}
+
+@media (max-width: 600px) {
+
+    .foto-preview-wrapper {
+        width: 104px;
+        height: 104px;
+        flex-basis: 104px;
+    }
+
+    .foto-preview {
+        width: 104px;
+        height: 104px;
+    }
+
+    .foto-placeholder {
+        width: 104px;
+        height: 104px;
+    }
+
+    .foto-preview-wrapper img {
+        width: 104px;
+        height: 104px;
+    }
+
+    .foto-acoes {
+        gap: 6px;
+    }
+
+    .btn-foto,
+    .btn-remover-foto {
+        min-height: 38px;
+
+        padding: 8px 11px;
+
+        font-size: 12px;
+    }
+}

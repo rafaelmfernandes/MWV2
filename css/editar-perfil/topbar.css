@@ -1,0 +1,261 @@
+/* =========================================================
+   MUSICALWORLD — EDITAR PERFIL
+   TOPBAR
+   ========================================================= */
+
+.topbar {
+    position: sticky;
+
+    top: 0;
+
+    z-index: 20;
+
+    width: 100%;
+    height: 72px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 16px;
+
+    padding: 0 18px;
+
+    background: rgba(255, 255, 255, 0.96);
+
+    border-bottom: 1px solid var(--mw-border);
+
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+}
+
+/* ---------------------------------------------------------
+   Área esquerda
+   --------------------------------------------------------- */
+
+.topbar-left {
+    min-width: 0;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    flex: 1;
+}
+
+/* ---------------------------------------------------------
+   Botão voltar
+   --------------------------------------------------------- */
+
+.btn-voltar {
+    width: 40px;
+    height: 40px;
+
+    min-width: 40px;
+
+    display: grid;
+    place-items: center;
+
+    padding: 0;
+
+    border: 0;
+    border-radius: 12px;
+
+    background: transparent;
+
+    color: var(--mw-text);
+
+    cursor: pointer;
+
+    flex: 0 0 40px;
+
+    transition:
+        background 0.18s ease,
+        color 0.18s ease;
+}
+
+.btn-voltar:hover {
+    background: #f1f3f7;
+}
+
+.btn-voltar:active {
+    transform: translateY(1px);
+}
+
+.btn-voltar svg {
+    width: 20px;
+    height: 20px;
+
+    display: block;
+}
+
+/* ---------------------------------------------------------
+   Título
+   --------------------------------------------------------- */
+
+.topbar-title {
+    min-width: 0;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+}
+
+/* Título principal */
+
+.topbar-title h1 {
+    margin: 0;
+
+    color: var(--mw-text);
+
+    font-size: 20px;
+
+    line-height: 1.15;
+
+    font-weight: 750;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+/* Texto auxiliar, caso exista */
+
+.topbar-title p {
+    margin: 2px 0 0;
+
+    color: var(--mw-muted);
+
+    font-size: 11px;
+
+    line-height: 16px;
+}
+
+/* ---------------------------------------------------------
+   Botão salvar
+   --------------------------------------------------------- */
+
+.btn-salvar-topo {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 6px;
+
+    min-height: 40px;
+
+    padding: 8px 4px;
+
+    border: 0;
+
+    background: transparent;
+
+    color: var(--mw-primary);
+
+    font-size: 14px;
+
+    line-height: 20px;
+
+    font-weight: 800;
+
+    white-space: nowrap;
+
+    cursor: pointer;
+
+    flex: 0 0 auto;
+
+    transition:
+        color 0.18s ease,
+        opacity 0.18s ease;
+}
+
+.btn-salvar-topo svg {
+    width: 17px;
+    height: 17px;
+
+    flex: 0 0 17px;
+}
+
+.btn-salvar-topo:hover {
+    color: var(--mw-primary-dark);
+}
+
+.btn-salvar-topo:active {
+    transform: translateY(1px);
+}
+
+.btn-salvar-topo:disabled {
+    opacity: 0.5;
+
+    cursor: wait;
+}
+
+/* ---------------------------------------------------------
+   Proteção contra textos muito grandes
+   --------------------------------------------------------- */
+
+.topbar-left,
+.topbar-title {
+    overflow: hidden;
+}
+
+.topbar-title * {
+    max-width: 100%;
+}
+
+/* ---------------------------------------------------------
+   Responsivo
+   --------------------------------------------------------- */
+
+@media (max-width: 600px) {
+
+    .topbar {
+        height: 64px;
+
+        gap: 10px;
+
+        padding: 0 12px;
+    }
+
+    .topbar-left {
+        gap: 9px;
+    }
+
+    .btn-voltar {
+        width: 38px;
+        height: 38px;
+
+        min-width: 38px;
+
+        flex-basis: 38px;
+
+        border-radius: 10px;
+    }
+
+    .btn-voltar svg {
+        width: 19px;
+        height: 19px;
+    }
+
+    .topbar-title h1 {
+        font-size: 17px;
+    }
+
+    .topbar-title p {
+        font-size: 10px;
+    }
+
+    .btn-salvar-topo {
+        min-height: 38px;
+
+        font-size: 13px;
+    }
+}

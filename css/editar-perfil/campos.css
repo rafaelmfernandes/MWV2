@@ -1,0 +1,299 @@
+/* =========================================================
+   MUSICALWORLD — EDITAR PERFIL
+   CAMPOS DO FORMULÁRIO
+   ========================================================= */
+
+/* ---------------------------------------------------------
+   Campo individual
+   --------------------------------------------------------- */
+
+.campo {
+    position: relative;
+    min-width: 0;
+    margin-top: 17px;
+}
+
+.campo:first-of-type {
+    margin-top: 0;
+}
+
+/* ---------------------------------------------------------
+   Labels
+   --------------------------------------------------------- */
+
+.campo label {
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: #343d50;
+
+    font-size: 12px;
+    line-height: 17px;
+
+    font-weight: 800;
+}
+
+/* ---------------------------------------------------------
+   Inputs, textarea e select
+   --------------------------------------------------------- */
+
+.campo input,
+.campo textarea,
+.campo select {
+    width: 100%;
+    max-width: 100%;
+
+    border: 1px solid var(--mw-border);
+    border-radius: 13px;
+
+    outline: 0;
+
+    background: #ffffff;
+    color: var(--mw-text);
+
+    padding: 12px 13px;
+
+    font-size: 14px;
+    line-height: 20px;
+
+    transition:
+        border-color 0.18s ease,
+        box-shadow 0.18s ease,
+        background 0.18s ease;
+}
+
+/* ---------------------------------------------------------
+   Inputs e selects
+   --------------------------------------------------------- */
+
+.campo input,
+.campo select {
+    min-height: 46px;
+}
+
+/* ---------------------------------------------------------
+   Textarea
+   --------------------------------------------------------- */
+
+.campo textarea {
+    min-height: 112px;
+
+    resize: vertical;
+
+    line-height: 1.5;
+}
+
+/* ---------------------------------------------------------
+   Placeholder
+   --------------------------------------------------------- */
+
+.campo input::placeholder,
+.campo textarea::placeholder {
+    color: #a4abbb;
+    opacity: 1;
+}
+
+/* ---------------------------------------------------------
+   Foco
+   --------------------------------------------------------- */
+
+.campo input:focus,
+.campo textarea:focus,
+.campo select:focus {
+    border-color: #b9adff;
+
+    box-shadow:
+        0 0 0 4px rgba(109, 74, 255, 0.08);
+}
+
+/* ---------------------------------------------------------
+   Campos desabilitados / somente leitura
+   --------------------------------------------------------- */
+
+.campo input:disabled,
+.campo input[readonly],
+.campo textarea:disabled,
+.campo textarea[readonly],
+.campo select:disabled {
+    background: #f5f6f8;
+
+    color: #737c8e;
+
+    cursor: not-allowed;
+}
+
+/* ---------------------------------------------------------
+   Texto auxiliar
+   --------------------------------------------------------- */
+
+.campo-ajuda {
+    display: block;
+
+    margin-top: 7px;
+
+    color: var(--mw-muted);
+
+    font-size: 11px;
+    line-height: 1.45;
+}
+
+/* ---------------------------------------------------------
+   Contador de caracteres
+   Compatível com:
+   .contador
+   .contador-caracteres
+   --------------------------------------------------------- */
+
+.contador,
+.contador-caracteres {
+    color: #9ba2b2;
+
+    font-size: 10px;
+    line-height: 15px;
+
+    pointer-events: none;
+}
+
+/* Contador dentro de textarea */
+
+.campo .contador {
+    position: absolute;
+
+    right: 11px;
+    bottom: 9px;
+}
+
+/* Contador utilizado pelo HTML universal */
+
+.contador-caracteres {
+    display: flex;
+
+    justify-content: flex-end;
+
+    margin-top: 5px;
+}
+
+/* ---------------------------------------------------------
+   Grades de campos
+   --------------------------------------------------------- */
+
+.campo-grid,
+.form-grid {
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 12px;
+
+    min-width: 0;
+}
+
+/* Campos dentro da grade não precisam do
+   espaçamento superior do primeiro elemento */
+
+.campo-grid > .campo,
+.form-grid > .campo {
+    min-width: 0;
+}
+
+/* ---------------------------------------------------------
+   Campo de arquivo
+   --------------------------------------------------------- */
+
+.campo input[type="file"] {
+    padding: 9px;
+
+    cursor: pointer;
+}
+
+/* ---------------------------------------------------------
+   Botão nativo do upload
+   --------------------------------------------------------- */
+
+.campo input[type="file"]::file-selector-button {
+    margin-right: 10px;
+
+    padding: 7px 11px;
+
+    border: 1px solid var(--mw-border);
+    border-radius: 9px;
+
+    background: #f7f8fb;
+    color: #596276;
+
+    font-size: 11px;
+    line-height: 16px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+.campo input[type="file"]::file-selector-button:hover {
+    background: var(--mw-primary-soft);
+
+    color: var(--mw-primary);
+
+    border-color: #cfc7ff;
+}
+
+/* ---------------------------------------------------------
+   Select
+   --------------------------------------------------------- */
+
+.campo select {
+    appearance: auto;
+
+    cursor: pointer;
+}
+
+/* ---------------------------------------------------------
+   Proteção contra conteúdo muito grande
+   --------------------------------------------------------- */
+
+.campo,
+.campo label,
+.campo input,
+.campo textarea,
+.campo select,
+.campo-ajuda {
+    min-width: 0;
+}
+
+/* ---------------------------------------------------------
+   Responsivo
+   --------------------------------------------------------- */
+
+@media (max-width: 600px) {
+
+    .campo {
+        margin-top: 15px;
+    }
+
+    .campo-grid,
+    .form-grid {
+        grid-template-columns: 1fr;
+
+        gap: 0;
+    }
+
+    .campo label {
+        font-size: 12px;
+    }
+
+    .campo input,
+    .campo textarea,
+    .campo select {
+        font-size: 14px;
+    }
+
+    .campo input,
+    .campo select {
+        min-height: 44px;
+    }
+
+    .campo textarea {
+        min-height: 105px;
+    }
+}

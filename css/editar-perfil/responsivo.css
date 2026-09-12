@@ -1,0 +1,219 @@
+/* =========================================================
+   MUSICALWORLD — EDITAR PERFIL
+   RESPONSIVIDADE GERAL
+   ========================================================= */
+
+/* ---------------------------------------------------------
+   DESKTOP
+   --------------------------------------------------------- */
+
+@media (min-width: 700px) {
+
+    .editar-perfil-container {
+        margin-top: 30px;
+    }
+
+    .acoes-finais {
+        grid-template-columns: 1fr 180px;
+    }
+}
+
+/* ---------------------------------------------------------
+   TABLET / CELULAR
+   --------------------------------------------------------- */
+
+@media (max-width: 699px) {
+
+    .editar-perfil-container {
+        width: min(100% - 20px, 760px);
+
+        margin-top: 12px;
+    }
+}
+
+/* ---------------------------------------------------------
+   CELULAR
+   --------------------------------------------------------- */
+
+@media (max-width: 520px) {
+
+    .topbar {
+        top: env(safe-area-inset-top);
+
+        height: 66px;
+
+        padding:
+            0
+            13px;
+    }
+
+    .topbar-title h1 {
+        font-size: 18px;
+    }
+
+    .editor-tabs {
+        top: 66px;
+    }
+
+    .editor-tab {
+        flex-direction: column;
+
+        gap: 3px;
+
+        min-height: 42px;
+
+        font-size: 10px;
+    }
+
+    .editor-tab svg {
+        width: 15px;
+        height: 15px;
+
+        min-width: 15px;
+
+        flex-basis: 15px;
+    }
+
+    .campo-grid,
+    .form-grid {
+        grid-template-columns: 1fr;
+
+        gap: 0;
+    }
+
+    .acoes-finais {
+        grid-template-columns: 1fr;
+    }
+
+    .foto-acoes {
+        flex-wrap: wrap;
+    }
+}
+
+/* ---------------------------------------------------------
+   CELULARES PEQUENOS
+   --------------------------------------------------------- */
+
+@media (max-width: 380px) {
+
+    .topbar {
+        gap: 7px;
+
+        padding:
+            0
+            9px;
+    }
+
+    .btn-voltar {
+        width: 36px;
+        height: 36px;
+
+        min-width: 36px;
+
+        flex-basis: 36px;
+    }
+
+    .topbar-title h1 {
+        font-size: 17px;
+    }
+
+    .topbar-title p {
+        font-size: 9px;
+    }
+
+    .btn-salvar-topo {
+        font-size: 12px;
+    }
+
+    .editor-tabs {
+        gap: 2px;
+
+        padding: 3px;
+    }
+
+    .editor-tab {
+        min-height: 40px;
+
+        gap: 2px;
+
+        font-size: 9px;
+    }
+
+    .editor-tab svg {
+        width: 14px;
+        height: 14px;
+
+        min-width: 14px;
+
+        flex-basis: 14px;
+    }
+
+    .editor-tab span {
+        font-size: 9px;
+    }
+
+    .portfolio-tipo {
+        min-height: 40px;
+
+        gap: 4px;
+
+        font-size: 9px;
+    }
+
+    .perfil-card {
+        padding: 16px;
+    }
+
+    .perfil-card.foto-card {
+        padding:
+            20px
+            16px;
+    }
+
+    .secao-cabecalho {
+        gap: 8px;
+    }
+
+    .secao-icone {
+        width: 34px;
+        height: 34px;
+
+        min-width: 34px;
+
+        flex-basis: 34px;
+    }
+
+    .secao-cabecalho h2 {
+        font-size: 14px;
+    }
+
+    .secao-cabecalho p {
+        font-size: 10px;
+    }
+}
+
+/* ---------------------------------------------------------
+   SAFE AREA — DISPOSITIVOS COM NOTCH
+   --------------------------------------------------------- */
+
+@supports (padding: env(safe-area-inset-top)) {
+
+    .topbar {
+        padding-left:
+            max(12px, env(safe-area-inset-left));
+
+        padding-right:
+            max(12px, env(safe-area-inset-right));
+    }
+
+    @media (max-width: 520px) {
+
+        .topbar {
+            padding-left:
+                max(13px, env(safe-area-inset-left));
+
+            padding-right:
+                max(13px, env(safe-area-inset-right));
+        }
+    }
+}

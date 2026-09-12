@@ -1,0 +1,224 @@
+/* =========================================================
+   MUSICALWORLD — EDITAR PERFIL
+   CARDS E ESTRUTURA DAS SEÇÕES
+   ========================================================= */
+
+/* ---------------------------------------------------------
+   Container principal
+   --------------------------------------------------------- */
+
+.editar-perfil-container {
+    width: min(760px, calc(100% - 28px));
+    margin: 22px auto 0;
+}
+
+/* ---------------------------------------------------------
+   Cards principais
+   --------------------------------------------------------- */
+
+.perfil-card {
+    width: 100%;
+
+    margin-bottom: 16px;
+    padding: 22px;
+
+    background: var(--mw-card);
+
+    border: 1px solid var(--mw-border);
+    border-radius: var(--mw-radius);
+
+    box-shadow: var(--mw-shadow);
+}
+
+/* ---------------------------------------------------------
+   Cabeçalho das seções
+   --------------------------------------------------------- */
+
+.secao-cabecalho {
+    display: flex;
+    align-items: flex-start;
+
+    gap: 12px;
+
+    margin-bottom: 22px;
+
+    min-width: 0;
+}
+
+/* ---------------------------------------------------------
+   Ícone da seção
+   --------------------------------------------------------- */
+
+.secao-icone {
+    width: 40px;
+    height: 40px;
+
+    min-width: 40px;
+    flex: 0 0 40px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 12px;
+
+    background: var(--mw-primary-soft);
+    color: var(--mw-primary);
+}
+
+.secao-icone svg {
+    width: 19px;
+    height: 19px;
+
+    display: block;
+}
+
+/* ---------------------------------------------------------
+   Conteúdo do cabeçalho
+   --------------------------------------------------------- */
+
+.secao-cabecalho > div {
+    min-width: 0;
+}
+
+.secao-cabecalho h2 {
+    margin: 1px 0 4px;
+
+    color: var(--mw-text);
+
+    font-size: 16px;
+    line-height: 22px;
+    font-weight: 750;
+}
+
+.secao-cabecalho p {
+    margin: 0;
+
+    color: var(--mw-muted);
+
+    font-size: 12px;
+    line-height: 1.45;
+}
+
+/* ---------------------------------------------------------
+   Card específico da foto
+   --------------------------------------------------------- */
+
+.perfil-card.foto-card {
+    padding: 26px 22px;
+}
+
+/* ---------------------------------------------------------
+   Card de informações da conta
+   --------------------------------------------------------- */
+
+.conta-card {
+    background: #fbfbfd;
+}
+
+/* ---------------------------------------------------------
+   Área do e-mail da conta
+   --------------------------------------------------------- */
+
+.conta-email {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 4px;
+
+    padding: 13px 14px;
+
+    border-radius: 13px;
+
+    background: #f4f5f8;
+}
+
+.conta-email span {
+    color: var(--mw-muted);
+
+    font-size: 11px;
+    line-height: 16px;
+
+    font-weight: 700;
+}
+
+.conta-email strong {
+    color: var(--mw-text);
+
+    overflow-wrap: anywhere;
+
+    font-size: 13px;
+    line-height: 18px;
+
+    font-weight: 650;
+}
+
+/* ---------------------------------------------------------
+   Títulos internos
+   --------------------------------------------------------- */
+
+.perfil-card h2,
+.perfil-card h3 {
+    color: var(--mw-text);
+}
+
+/* ---------------------------------------------------------
+   Proteção contra conteúdo estourando o card
+   --------------------------------------------------------- */
+
+.perfil-card,
+.secao-cabecalho,
+.secao-cabecalho > div,
+.conta-email {
+    min-width: 0;
+}
+
+/* ---------------------------------------------------------
+   Responsivo
+   --------------------------------------------------------- */
+
+@media (max-width: 600px) {
+
+    .editar-perfil-container {
+        width: min(100% - 20px, 760px);
+        margin-top: 14px;
+    }
+
+    .perfil-card {
+        margin-bottom: 12px;
+        padding: 18px;
+    }
+
+    .perfil-card.foto-card {
+        padding: 22px 18px;
+    }
+
+    .secao-cabecalho {
+        gap: 10px;
+        margin-bottom: 18px;
+    }
+
+    .secao-icone {
+        width: 36px;
+        height: 36px;
+
+        min-width: 36px;
+        flex-basis: 36px;
+
+        border-radius: 10px;
+    }
+
+    .secao-icone svg {
+        width: 17px;
+        height: 17px;
+    }
+
+    .secao-cabecalho h2 {
+        font-size: 15px;
+        line-height: 21px;
+    }
+
+    .secao-cabecalho p {
+        font-size: 11px;
+    }
+}

@@ -1,0 +1,331 @@
+/* =========================================================
+   MUSICALWORLD — EDITAR PERFIL
+   AGENDA
+   ========================================================= */
+
+.agenda-edit-card {
+    width: 100%;
+
+    min-width: 0;
+
+    display: grid;
+
+    grid-template-columns: 62px minmax(0, 1fr) auto;
+
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 12px;
+
+    border: 1px solid var(--mw-border);
+
+    border-radius: 14px;
+
+    background: #ffffff;
+
+    transition:
+        border-color 0.18s ease,
+        background 0.18s ease,
+        box-shadow 0.18s ease;
+}
+
+.agenda-edit-card:hover {
+    border-color: #dcd8f7;
+
+    box-shadow:
+        0 5px 18px rgba(30, 35, 55, 0.05);
+}
+
+/* ---------------------------------------------------------
+   Data
+   --------------------------------------------------------- */
+
+.agenda-data {
+    width: 62px;
+    height: 62px;
+
+    min-width: 62px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 12px;
+
+    background: var(--mw-primary-soft);
+
+    color: var(--mw-primary);
+
+    overflow: hidden;
+}
+
+.agenda-data strong {
+    display: block;
+
+    font-size: 19px;
+
+    line-height: 1;
+
+    font-weight: 800;
+}
+
+.agenda-data span {
+    display: block;
+
+    margin-top: 3px;
+
+    font-size: 9px;
+
+    line-height: 12px;
+
+    font-weight: 800;
+
+    text-transform: uppercase;
+
+    white-space: nowrap;
+}
+
+/* ---------------------------------------------------------
+   Informações
+   --------------------------------------------------------- */
+
+.agenda-edit-info {
+    min-width: 0;
+
+    overflow: hidden;
+}
+
+.agenda-edit-info strong {
+    display: block;
+
+    min-width: 0;
+
+    margin-bottom: 4px;
+
+    overflow: hidden;
+
+    color: var(--mw-text);
+
+    font-size: 13px;
+
+    line-height: 18px;
+
+    font-weight: 800;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+}
+
+.agenda-edit-info span {
+    display: block;
+
+    min-width: 0;
+
+    margin-top: 3px;
+
+    overflow: hidden;
+
+    color: var(--mw-muted);
+
+    font-size: 11px;
+
+    line-height: 15px;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+}
+
+/* ---------------------------------------------------------
+   Status
+   --------------------------------------------------------- */
+
+.agenda-status {
+    display: inline-flex !important;
+
+    align-items: center;
+
+    width: fit-content;
+
+    max-width: 100%;
+
+    margin-top: 6px !important;
+
+    padding: 4px 8px;
+
+    border-radius: 999px;
+
+    background: #f3f5f8;
+
+    color: #687184 !important;
+
+    font-size: 9px !important;
+
+    line-height: 12px;
+
+    font-weight: 800;
+
+    text-transform: uppercase;
+
+    white-space: nowrap;
+}
+
+/* ---------------------------------------------------------
+   Ações
+   --------------------------------------------------------- */
+
+.agenda-edit-card .media-edit-actions {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: flex-end;
+
+    gap: 6px;
+
+    flex: 0 0 auto;
+}
+
+.btn-agenda-editar,
+.btn-agenda-excluir {
+    width: 34px;
+    height: 34px;
+
+    min-width: 34px;
+
+    padding: 0;
+
+    display: grid;
+
+    place-items: center;
+
+    border: 1px solid var(--mw-border);
+
+    border-radius: 10px;
+
+    background: #ffffff;
+
+    cursor: pointer;
+
+    transition:
+        background 0.16s ease,
+        border-color 0.16s ease,
+        color 0.16s ease,
+        transform 0.12s ease;
+}
+
+.btn-agenda-editar svg,
+.btn-agenda-excluir svg {
+    width: 16px;
+    height: 16px;
+
+    display: block;
+}
+
+.btn-agenda-editar {
+    color: var(--mw-primary);
+}
+
+.btn-agenda-editar:hover {
+    border-color: #cfc7ff;
+
+    background: var(--mw-primary-soft);
+
+    color: var(--mw-primary-dark);
+}
+
+.btn-agenda-excluir {
+    color: var(--mw-danger);
+}
+
+.btn-agenda-excluir:hover {
+    border-color: #efc1c7;
+
+    background: #fff1f3;
+
+    color: #c93647;
+}
+
+.btn-agenda-editar:active,
+.btn-agenda-excluir:active {
+    transform: scale(0.94);
+}
+
+/* ---------------------------------------------------------
+   Mobile
+   --------------------------------------------------------- */
+
+@media (max-width: 600px) {
+
+    .agenda-edit-card {
+        grid-template-columns: 52px minmax(0, 1fr) auto;
+
+        gap: 9px;
+
+        padding: 9px;
+
+        border-radius: 12px;
+    }
+
+    .agenda-data {
+        width: 52px;
+        height: 52px;
+
+        min-width: 52px;
+
+        border-radius: 10px;
+    }
+
+    .agenda-data strong {
+        font-size: 16px;
+    }
+
+    .agenda-data span {
+        font-size: 8px;
+    }
+
+    .agenda-edit-info strong {
+        font-size: 12px;
+
+        line-height: 17px;
+    }
+
+    .agenda-edit-info span {
+        font-size: 10px;
+
+        line-height: 14px;
+    }
+
+    .agenda-status {
+        margin-top: 5px !important;
+
+        padding: 3px 7px;
+
+        font-size: 8px !important;
+    }
+
+    .agenda-edit-card .media-edit-actions {
+        gap: 4px;
+    }
+
+    .btn-agenda-editar,
+    .btn-agenda-excluir {
+        width: 31px;
+        height: 31px;
+
+        min-width: 31px;
+
+        border-radius: 9px;
+    }
+
+    .btn-agenda-editar svg,
+    .btn-agenda-excluir svg {
+        width: 14px;
+        height: 14px;
+    }
+}

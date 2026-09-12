@@ -1,0 +1,147 @@
+/* =========================================================
+   MUSICALWORLD — EDITAR PERFIL
+   LOADING / CARREGAMENTO
+   ========================================================= */
+
+.loading-overlay {
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 100;
+
+    display: none;
+
+    place-items: center;
+
+    padding: 20px;
+
+    background: rgba(247, 248, 251, 0.78);
+
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+
+.loading-overlay.visivel {
+    display: grid;
+}
+
+.loading-box {
+    width: min(300px, calc(100% - 40px));
+
+    min-width: 0;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    gap: 7px;
+
+    padding: 24px;
+
+    border: 1px solid var(--mw-border);
+
+    border-radius: 18px;
+
+    background: #ffffff;
+
+    box-shadow: var(--mw-shadow);
+
+    text-align: center;
+}
+
+.loading-box strong {
+    display: block;
+
+    max-width: 100%;
+
+    color: var(--mw-text);
+
+    font-size: 14px;
+
+    line-height: 19px;
+
+    font-weight: 800;
+
+    overflow-wrap: anywhere;
+}
+
+.loading-box span {
+    display: block;
+
+    max-width: 100%;
+
+    color: var(--mw-muted);
+
+    font-size: 11px;
+
+    line-height: 16px;
+
+    overflow-wrap: anywhere;
+}
+
+.spinner {
+    width: 30px;
+    height: 30px;
+
+    min-width: 30px;
+
+    margin-bottom: 5px;
+
+    border: 3px solid #e8e5ff;
+
+    border-top-color: var(--mw-primary);
+
+    border-radius: 50%;
+
+    animation: girar 0.75s linear infinite;
+}
+
+@keyframes girar {
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ---------------------------------------------------------
+   Mobile
+   --------------------------------------------------------- */
+
+@media (max-width: 600px) {
+
+    .loading-overlay {
+        padding: 16px;
+    }
+
+    .loading-box {
+        width: min(280px, calc(100% - 20px));
+
+        padding: 21px 18px;
+
+        border-radius: 16px;
+    }
+
+    .loading-box strong {
+        font-size: 13px;
+
+        line-height: 18px;
+    }
+
+    .loading-box span {
+        font-size: 10px;
+
+        line-height: 15px;
+    }
+
+    .spinner {
+        width: 28px;
+        height: 28px;
+
+        min-width: 28px;
+
+        margin-bottom: 4px;
+    }
+}

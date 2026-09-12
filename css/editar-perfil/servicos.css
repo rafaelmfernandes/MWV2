@@ -1,0 +1,440 @@
+/* =========================================================
+   MUSICALWORLD — EDITAR PERFIL
+   SERVIÇOS
+   ========================================================= */
+
+.acoes-servico {
+    display: grid;
+
+    gap: 9px;
+
+    margin-top: 20px;
+
+    width: 100%;
+}
+
+.acoes-servico .btn-adicionar {
+    margin-top: 0;
+}
+
+.servicos-edit-list {
+    width: 100%;
+
+    display: grid;
+
+    gap: 10px;
+
+    margin-bottom: 20px;
+
+    min-width: 0;
+}
+
+.servico-edit-card {
+    width: 100%;
+
+    min-width: 0;
+
+    display: grid;
+
+    grid-template-columns: 44px minmax(0, 1fr) auto auto;
+
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 12px;
+
+    border: 1px solid var(--mw-border);
+
+    border-radius: 14px;
+
+    background: #ffffff;
+
+    transition:
+        border-color 0.18s ease,
+        background 0.18s ease,
+        box-shadow 0.18s ease;
+}
+
+.servico-edit-card:hover {
+    border-color: #dcd8f7;
+
+    box-shadow:
+        0 5px 18px rgba(30, 35, 55, 0.05);
+}
+
+/* ---------------------------------------------------------
+   Ícone
+   --------------------------------------------------------- */
+
+.servico-edit-icone {
+    width: 44px;
+    height: 44px;
+
+    min-width: 44px;
+
+    display: grid;
+
+    place-items: center;
+
+    border-radius: 12px;
+
+    background: var(--mw-primary-soft);
+
+    color: var(--mw-primary);
+}
+
+.servico-edit-icone svg {
+    width: 19px;
+    height: 19px;
+
+    display: block;
+}
+
+/* ---------------------------------------------------------
+   Informações
+   --------------------------------------------------------- */
+
+.servico-edit-info {
+    min-width: 0;
+
+    overflow: hidden;
+}
+
+.servico-edit-info h3 {
+    margin: 0;
+
+    min-width: 0;
+
+    overflow: hidden;
+
+    color: var(--mw-text);
+
+    font-size: 13px;
+
+    line-height: 1.3;
+
+    font-weight: 800;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+}
+
+.servico-edit-info p {
+    margin: 5px 0 0;
+
+    min-width: 0;
+
+    overflow: hidden;
+
+    color: var(--mw-muted);
+
+    font-size: 11px;
+
+    line-height: 1.4;
+
+    display: -webkit-box;
+
+    -webkit-box-orient: vertical;
+
+    -webkit-line-clamp: 2;
+}
+
+/* ---------------------------------------------------------
+   Metadados
+   --------------------------------------------------------- */
+
+.servico-edit-meta {
+    display: flex;
+
+    align-items: center;
+
+    flex-wrap: wrap;
+
+    gap: 8px;
+
+    margin-top: 7px;
+
+    min-width: 0;
+}
+
+.servico-edit-meta span {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 4px;
+
+    color: var(--mw-muted);
+
+    font-size: 10px;
+
+    line-height: 1.2;
+
+    white-space: nowrap;
+}
+
+.servico-edit-meta svg {
+    width: 12px;
+    height: 12px;
+
+    min-width: 12px;
+
+    flex: 0 0 12px;
+
+    display: block;
+}
+
+/* ---------------------------------------------------------
+   Preço
+   --------------------------------------------------------- */
+
+.servico-edit-preco {
+    min-width: 130px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: flex-end;
+
+    justify-content: center;
+
+    gap: 6px;
+}
+
+.servico-edit-preco strong {
+    display: block;
+
+    color: var(--mw-text);
+
+    font-size: 13px;
+
+    line-height: 1.2;
+
+    font-weight: 850;
+
+    text-align: right;
+
+    white-space: nowrap;
+}
+
+/* ---------------------------------------------------------
+   Status
+   --------------------------------------------------------- */
+
+.servico-status {
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: fit-content;
+
+    min-height: 21px;
+
+    padding: 4px 8px;
+
+    border-radius: 999px;
+
+    font-size: 9px;
+
+    line-height: 1;
+
+    font-weight: 800;
+
+    text-transform: uppercase;
+
+    white-space: nowrap;
+}
+
+.servico-status.ativo {
+    background: #eaf8f2;
+
+    color: var(--mw-success);
+}
+
+.servico-status.inativo {
+    background: #f3f4f6;
+
+    color: #858c9a;
+}
+
+/* ---------------------------------------------------------
+   Ações
+   --------------------------------------------------------- */
+
+.servico-edit-card .media-edit-actions {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: flex-end;
+
+    gap: 6px;
+
+    flex: 0 0 auto;
+}
+
+.btn-editar-servico,
+.servico-edit-card .btn-excluir {
+    width: 36px;
+    height: 36px;
+
+    min-width: 36px;
+
+    padding: 0;
+
+    display: grid;
+
+    place-items: center;
+
+    border: 1px solid var(--mw-border);
+
+    border-radius: 10px;
+
+    background: #ffffff;
+
+    cursor: pointer;
+
+    transition:
+        background 0.16s ease,
+        border-color 0.16s ease,
+        color 0.16s ease,
+        transform 0.12s ease;
+}
+
+.btn-editar-servico svg,
+.servico-edit-card .btn-excluir svg {
+    width: 16px;
+    height: 16px;
+
+    display: block;
+}
+
+.btn-editar-servico {
+    color: var(--mw-primary);
+}
+
+.btn-editar-servico:hover {
+    border-color: #cfc7ff;
+
+    background: var(--mw-primary-soft);
+
+    color: var(--mw-primary-dark);
+}
+
+.servico-edit-card .btn-excluir {
+    color: var(--mw-danger);
+}
+
+.servico-edit-card .btn-excluir:hover {
+    border-color: #efc1c7;
+
+    background: #fff1f3;
+
+    color: #c93647;
+}
+
+.btn-editar-servico:active,
+.servico-edit-card .btn-excluir:active {
+    transform: scale(0.94);
+}
+
+/* ---------------------------------------------------------
+   Responsivo
+   --------------------------------------------------------- */
+
+@media (max-width: 600px) {
+
+    .servico-edit-card {
+        grid-template-columns: 40px minmax(0, 1fr) auto;
+
+        gap: 9px;
+
+        padding: 9px;
+
+        border-radius: 12px;
+    }
+
+    .servico-edit-icone {
+        width: 40px;
+        height: 40px;
+
+        min-width: 40px;
+
+        border-radius: 10px;
+    }
+
+    .servico-edit-icone svg {
+        width: 17px;
+        height: 17px;
+    }
+
+    .servico-edit-info h3 {
+        font-size: 12px;
+    }
+
+    .servico-edit-info p {
+        font-size: 10px;
+    }
+
+    .servico-edit-meta {
+        gap: 6px;
+
+        margin-top: 6px;
+    }
+
+    .servico-edit-meta span {
+        font-size: 9px;
+    }
+
+    .servico-edit-meta svg {
+        width: 11px;
+        height: 11px;
+
+        min-width: 11px;
+
+        flex-basis: 11px;
+    }
+
+    .servico-edit-preco {
+        min-width: 0;
+
+        gap: 5px;
+    }
+
+    .servico-edit-preco strong {
+        font-size: 11px;
+    }
+
+    .servico-status {
+        min-height: 19px;
+
+        padding: 3px 6px;
+
+        font-size: 8px;
+    }
+
+    .servico-edit-card .media-edit-actions {
+        gap: 4px;
+    }
+
+    .btn-editar-servico,
+    .servico-edit-card .btn-excluir {
+        width: 31px;
+        height: 31px;
+
+        min-width: 31px;
+
+        border-radius: 9px;
+    }
+
+    .btn-editar-servico svg,
+    .servico-edit-card .btn-excluir svg {
+        width: 14px;
+        height: 14px;
+    }
+}

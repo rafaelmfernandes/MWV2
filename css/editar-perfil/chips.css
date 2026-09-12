@@ -1,0 +1,129 @@
+/* =========================================================
+   MUSICALWORLD — EDITAR PERFIL
+   CHIPS / SELEÇÕES
+   ========================================================= */
+
+.chips {
+    width: 100%;
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    align-items: center;
+
+    gap: 8px;
+
+    min-width: 0;
+}
+
+.chip {
+    min-width: 0;
+    min-height: 36px;
+
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 6px;
+
+    padding: 7px 12px;
+
+    border: 1px solid var(--mw-border);
+
+    border-radius: 999px;
+
+    background: #ffffff;
+
+    color: #586176;
+
+    font-size: 12px;
+
+    line-height: 18px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    white-space: nowrap;
+
+    transition:
+        background 0.16s ease,
+        border-color 0.16s ease,
+        color 0.16s ease,
+        transform 0.16s ease;
+}
+
+.chip:hover {
+    border-color: #cfc7ff;
+
+    background: #faf9ff;
+
+    color: var(--mw-primary);
+}
+
+.chip:active {
+    transform: translateY(1px);
+}
+
+.chip.ativo {
+    border-color: var(--mw-primary);
+
+    background: var(--mw-primary-soft);
+
+    color: var(--mw-primary);
+}
+
+.chip svg {
+    width: 14px;
+    height: 14px;
+
+    min-width: 14px;
+
+    flex: 0 0 14px;
+
+    display: block;
+}
+
+/* ---------------------------------------------------------
+   Containers específicos
+   --------------------------------------------------------- */
+
+.estilos-container,
+.servicos-container,
+.instrumentos-container {
+    width: 100%;
+
+    min-width: 0;
+}
+
+/* ---------------------------------------------------------
+   Mobile
+   --------------------------------------------------------- */
+
+@media (max-width: 600px) {
+
+    .chips {
+        gap: 6px;
+    }
+
+    .chip {
+        min-height: 34px;
+
+        padding: 6px 10px;
+
+        font-size: 11px;
+
+        line-height: 17px;
+    }
+
+    .chip svg {
+        width: 13px;
+        height: 13px;
+
+        min-width: 13px;
+
+        flex-basis: 13px;
+    }
+}

@@ -1,0 +1,1672 @@
+/* =========================================================
+   MUSICALWORLD — EDITAR PERFIL
+   PORTFÓLIO
+========================================================= */
+
+
+/* =========================================================
+   FORMULÁRIO DE PORTFÓLIO
+========================================================= */
+
+.portfolio-form {
+
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 18px;
+
+    margin-top: 20px;
+    margin-bottom: 22px;
+
+    padding: 18px;
+
+    border: 1px solid var(--mw-border);
+    border-radius: 18px;
+
+    background: #ffffff;
+
+    box-sizing: border-box;
+
+}
+
+
+/* =========================================================
+   CABEÇALHO DO FORMULÁRIO
+========================================================= */
+
+.portfolio-form-header {
+
+    width: 100%;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 11px;
+
+    min-width: 0;
+
+}
+
+
+.portfolio-form-icon {
+
+    width: 38px;
+    height: 38px;
+
+    min-width: 38px;
+
+    display: grid;
+
+    place-items: center;
+
+    border-radius: 11px;
+
+    background: var(--mw-primary-soft);
+
+    color: var(--mw-primary);
+
+}
+
+
+.portfolio-form-icon svg {
+
+    width: 18px;
+    height: 18px;
+
+    display: block;
+
+}
+
+
+.portfolio-form-header > div:last-child {
+
+    min-width: 0;
+
+}
+
+
+.portfolio-form-header h3 {
+
+    margin: 0;
+
+    color: var(--mw-text);
+
+    font-size: 14px;
+
+    line-height: 19px;
+
+    font-weight: 800;
+
+}
+
+
+.portfolio-form-header p {
+
+    margin: 3px 0 0;
+
+    color: var(--mw-muted);
+
+    font-size: 11px;
+
+    line-height: 16px;
+
+    font-weight: 500;
+
+}
+
+
+/* =========================================================
+   CAMPOS
+========================================================= */
+
+.portfolio-form .campo {
+
+    width: 100%;
+
+    min-width: 0;
+
+    display: flex;
+
+    flex-direction: column;
+
+}
+
+
+.portfolio-form .campo label {
+
+    display: block;
+
+    margin: 0 0 6px;
+
+    color: var(--mw-text);
+
+    font-size: 12px;
+
+    line-height: 17px;
+
+    font-weight: 800;
+
+}
+
+
+.portfolio-form .campo-ajuda {
+
+    display: block;
+
+    margin: 0 0 7px;
+
+    color: var(--mw-muted);
+
+    font-size: 10px;
+
+    line-height: 15px;
+
+    font-weight: 500;
+
+}
+
+
+/* =========================================================
+   INPUTS E TEXTAREA
+========================================================= */
+
+.portfolio-form .campo input,
+.portfolio-form .campo textarea {
+
+    width: 100%;
+
+    min-width: 0;
+
+    box-sizing: border-box;
+
+    border: 1px solid var(--mw-border);
+
+    border-radius: 12px;
+
+    background: #ffffff;
+
+    color: var(--mw-text);
+
+    font-family: inherit;
+
+    font-size: 13px;
+
+    line-height: 20px;
+
+    outline: none;
+
+    transition:
+        border-color 0.18s ease,
+        box-shadow 0.18s ease,
+        background 0.18s ease;
+
+}
+
+
+.portfolio-form .campo input {
+
+    min-height: 44px;
+
+    padding: 0 13px;
+
+}
+
+
+.portfolio-form .campo textarea {
+
+    min-height: 96px;
+
+    padding: 11px 13px;
+
+    resize: vertical;
+
+}
+
+
+.portfolio-form .campo input::placeholder,
+.portfolio-form .campo textarea::placeholder {
+
+    color: #a4aab7;
+
+}
+
+
+.portfolio-form .campo input:hover,
+.portfolio-form .campo textarea:hover {
+
+    border-color: #cfd3dc;
+
+}
+
+
+.portfolio-form .campo input:focus,
+.portfolio-form .campo textarea:focus {
+
+    border-color: var(--mw-primary);
+
+    box-shadow:
+        0 0 0 3px rgba(109, 74, 255, 0.08);
+
+    background: #ffffff;
+
+}
+
+
+/* =========================================================
+   SELETOR DE TIPO DE MÍDIA
+========================================================= */
+
+.portfolio-tipo-tabs {
+
+    width: 100%;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+    gap: 8px;
+
+    margin: 0;
+
+}
+
+
+.portfolio-tipo {
+
+    width: 100%;
+
+    min-width: 0;
+    min-height: 44px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
+
+    padding: 0 10px;
+
+    box-sizing: border-box;
+
+    border: 1px solid var(--mw-border);
+
+    border-radius: 12px;
+
+    background: #ffffff;
+
+    color: var(--mw-muted);
+
+    font-family: inherit;
+
+    font-size: 12px;
+
+    line-height: 18px;
+
+    font-weight: 800;
+
+    cursor: pointer;
+
+    transition:
+        background 0.18s ease,
+        border-color 0.18s ease,
+        color 0.18s ease,
+        transform 0.12s ease;
+
+}
+
+
+.portfolio-tipo svg {
+
+    width: 16px;
+    height: 16px;
+
+    min-width: 16px;
+
+    flex: 0 0 16px;
+
+    display: block;
+
+}
+
+
+.portfolio-tipo span {
+
+    min-width: 0;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+
+}
+
+
+.portfolio-tipo:hover {
+
+    border-color: #cfc7ff;
+
+    background: #faf9ff;
+
+    color: var(--mw-primary);
+
+}
+
+
+.portfolio-tipo:active {
+
+    transform: scale(0.98);
+
+}
+
+
+.portfolio-tipo.ativo {
+
+    border-color: var(--mw-primary);
+
+    background: var(--mw-primary-soft);
+
+    color: var(--mw-primary);
+
+}
+
+
+/* =========================================================
+   GRUPO DE CAMPOS
+========================================================= */
+
+.portfolio-form-grid {
+
+    width: 100%;
+
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1fr);
+
+    gap: 16px;
+
+    min-width: 0;
+
+}
+
+
+/* =========================================================
+   CAMPO DE ARQUIVO
+========================================================= */
+
+.portfolio-form .portfolio-arquivo-group {
+
+    width: 100%;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 7px;
+
+    min-width: 0;
+
+}
+
+
+.portfolio-form .portfolio-arquivo-group > label {
+
+    display: block;
+
+    margin: 0;
+
+    color: var(--mw-text);
+
+    font-size: 12px;
+
+    line-height: 17px;
+
+    font-weight: 800;
+
+}
+
+
+.portfolio-form .portfolio-arquivo-group input[type="file"] {
+
+    width: 100%;
+
+    min-height: 48px;
+
+    box-sizing: border-box;
+
+    padding: 8px 10px;
+
+    border: 1px dashed #cdd2dd;
+
+    border-radius: 12px;
+
+    background: #fafbfc;
+
+    color: var(--mw-muted);
+
+    font-family: inherit;
+
+    font-size: 12px;
+
+    line-height: 20px;
+
+    cursor: pointer;
+
+    transition:
+        border-color 0.18s ease,
+        background 0.18s ease;
+
+}
+
+
+.portfolio-form .portfolio-arquivo-group input[type="file"]:hover {
+
+    border-color: var(--mw-primary);
+
+    background: #faf9ff;
+
+}
+
+
+.portfolio-form .portfolio-arquivo-group input[type="file"]:focus {
+
+    outline: none;
+
+    border-color: var(--mw-primary);
+
+    box-shadow:
+        0 0 0 3px rgba(109, 74, 255, 0.08);
+
+}
+
+
+.portfolio-form .portfolio-arquivo-group input[type="file"]::file-selector-button {
+
+    margin-right: 10px;
+
+    padding: 7px 11px;
+
+    border: 0;
+
+    border-radius: 8px;
+
+    background: var(--mw-primary-soft);
+
+    color: var(--mw-primary);
+
+    font-family: inherit;
+
+    font-size: 11px;
+
+    line-height: 16px;
+
+    font-weight: 800;
+
+    cursor: pointer;
+
+}
+
+
+/* =========================================================
+   AJUDA DO ARQUIVO
+========================================================= */
+
+.portfolio-form .portfolio-ajuda,
+.portfolio-form #portfolioAjuda {
+
+    display: block;
+
+    margin: 0;
+
+    color: var(--mw-muted);
+
+    font-size: 10px;
+
+    line-height: 15px;
+
+    font-weight: 500;
+
+}
+
+
+/* =========================================================
+   CAMPO DE URL
+========================================================= */
+
+.portfolio-form .portfolio-url-group {
+
+    width: 100%;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 7px;
+
+    min-width: 0;
+
+}
+
+
+.portfolio-form .portfolio-url-group label {
+
+    display: block;
+
+    margin: 0;
+
+    color: var(--mw-text);
+
+    font-size: 12px;
+
+    line-height: 17px;
+
+    font-weight: 800;
+
+}
+
+
+.portfolio-form .portfolio-url-group input {
+
+    width: 100%;
+
+    min-height: 44px;
+
+    box-sizing: border-box;
+
+    padding: 0 13px;
+
+    border: 1px solid var(--mw-border);
+
+    border-radius: 12px;
+
+    background: #ffffff;
+
+    color: var(--mw-text);
+
+    font-family: inherit;
+
+    font-size: 13px;
+
+    line-height: 20px;
+
+    outline: none;
+
+    transition:
+        border-color 0.18s ease,
+        box-shadow 0.18s ease;
+
+}
+
+
+.portfolio-form .portfolio-url-group input::placeholder {
+
+    color: #a4aab7;
+
+}
+
+
+.portfolio-form .portfolio-url-group input:hover {
+
+    border-color: #cfd3dc;
+
+}
+
+
+.portfolio-form .portfolio-url-group input:focus {
+
+    border-color: var(--mw-primary);
+
+    box-shadow:
+        0 0 0 3px rgba(109, 74, 255, 0.08);
+
+}
+
+
+.portfolio-form .portfolio-url-group .campo-ajuda {
+
+    margin: 0;
+
+}
+
+
+/* =========================================================
+   AÇÃO DO FORMULÁRIO
+========================================================= */
+
+.portfolio-form .portfolio-form-actions {
+
+    width: 100%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: flex-end;
+
+    gap: 8px;
+
+    padding-top: 2px;
+
+}
+
+
+.portfolio-form #btnAdicionarPortfolio {
+
+    min-height: 42px;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 7px;
+
+    padding: 0 16px;
+
+    border: 1px solid var(--mw-primary);
+
+    border-radius: 11px;
+
+    background: var(--mw-primary);
+
+    color: #ffffff;
+
+    font-family: inherit;
+
+    font-size: 12px;
+
+    line-height: 18px;
+
+    font-weight: 800;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 4px 12px rgba(109, 74, 255, 0.14);
+
+    transition:
+        background 0.18s ease,
+        border-color 0.18s ease,
+        box-shadow 0.18s ease,
+        transform 0.12s ease;
+
+}
+
+
+.portfolio-form #btnAdicionarPortfolio svg {
+
+    width: 15px;
+    height: 15px;
+
+    display: block;
+
+    flex: 0 0 15px;
+
+}
+
+
+.portfolio-form #btnAdicionarPortfolio:hover {
+
+    background: var(--mw-primary-dark);
+
+    border-color: var(--mw-primary-dark);
+
+    box-shadow:
+        0 6px 16px rgba(109, 74, 255, 0.18);
+
+}
+
+
+.portfolio-form #btnAdicionarPortfolio:active {
+
+    transform: scale(0.97);
+
+    box-shadow:
+        0 3px 8px rgba(109, 74, 255, 0.12);
+
+}
+
+
+.portfolio-form #btnAdicionarPortfolio:disabled {
+
+    opacity: 0.6;
+
+    cursor: not-allowed;
+
+    transform: none;
+
+    box-shadow: none;
+
+}
+
+
+/* =========================================================
+   MODO DE EDIÇÃO
+========================================================= */
+
+.portfolio-form.portfolio-form-editando {
+
+    border-color: #d8d0ff;
+
+    background: #fdfcff;
+
+    box-shadow:
+        0 0 0 2px rgba(109, 74, 255, 0.04);
+
+}
+
+
+/* =========================================================
+   LISTA
+========================================================= */
+
+.portfolio-edit-list,
+.agenda-edit-list {
+
+    width: 100%;
+
+    display: grid;
+
+    gap: 10px;
+
+    min-width: 0;
+
+}
+
+
+/* =========================================================
+   CARD DE MÍDIA
+========================================================= */
+
+.portfolio-edit-list .media-edit-card {
+
+    width: 100%;
+
+    min-width: 0;
+
+    display: grid;
+
+    grid-template-columns:
+        74px
+        minmax(0, 1fr)
+        auto;
+
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 11px;
+
+    border: 1px solid var(--mw-border);
+
+    border-radius: 14px;
+
+    background: #ffffff;
+
+    box-sizing: border-box;
+
+    transition:
+        border-color 0.18s ease,
+        background 0.18s ease,
+        box-shadow 0.18s ease;
+
+}
+
+
+.portfolio-edit-list .media-edit-card:hover {
+
+    border-color: #dcd8f7;
+
+    box-shadow:
+        0 5px 18px rgba(30, 35, 55, 0.05);
+
+}
+
+
+/* =========================================================
+   PREVIEW
+========================================================= */
+
+.portfolio-edit-list .media-edit-preview {
+
+    width: 74px;
+    height: 74px;
+
+    min-width: 74px;
+
+    display: grid;
+
+    place-items: center;
+
+    overflow: hidden;
+
+    border-radius: 11px;
+
+    background: var(--mw-primary-soft);
+
+    color: var(--mw-primary);
+
+}
+
+
+.portfolio-edit-list .media-edit-preview img,
+.portfolio-edit-list .media-edit-preview video {
+
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    max-width: 100%;
+    max-height: 100%;
+
+    object-fit: cover;
+
+}
+
+
+.portfolio-edit-list .media-edit-preview audio {
+
+    width: calc(100% - 10px);
+
+    max-width: 100%;
+
+    height: 30px;
+
+}
+
+
+.portfolio-edit-list .media-edit-preview svg {
+
+    width: 25px;
+    height: 25px;
+
+    display: block;
+
+}
+
+
+.portfolio-edit-list .media-edit-preview-audio {
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 6px;
+
+    padding: 7px;
+
+}
+
+
+.portfolio-edit-list .media-edit-preview-audio svg {
+
+    width: 22px;
+    height: 22px;
+
+}
+
+
+/* =========================================================
+   INFORMAÇÕES
+========================================================= */
+
+.portfolio-edit-list .media-edit-info {
+
+    min-width: 0;
+
+    overflow: hidden;
+
+}
+
+
+.portfolio-edit-list .media-edit-type {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 5px;
+
+    margin-bottom: 5px;
+
+    color: var(--mw-primary);
+
+    font-size: 10px;
+
+    line-height: 14px;
+
+    font-weight: 800;
+
+}
+
+
+.portfolio-edit-list .media-edit-type svg {
+
+    width: 13px;
+    height: 13px;
+
+    min-width: 13px;
+
+    flex: 0 0 13px;
+
+    display: block;
+
+}
+
+
+.portfolio-edit-list .media-edit-info h3 {
+
+    margin: 0;
+
+    min-width: 0;
+
+    overflow: hidden;
+
+    color: var(--mw-text);
+
+    font-size: 13px;
+
+    line-height: 1.3;
+
+    font-weight: 800;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+
+}
+
+
+.portfolio-edit-list .media-edit-info p {
+
+    margin: 5px 0 0;
+
+    min-width: 0;
+
+    overflow: hidden;
+
+    color: var(--mw-muted);
+
+    font-size: 11px;
+
+    line-height: 1.4;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+
+}
+
+
+/* =========================================================
+   DESTAQUE DENTRO DA INFORMAÇÃO
+========================================================= */
+
+.portfolio-edit-list .media-edit-destaque {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 4px;
+
+    width: fit-content;
+
+    max-width: 100%;
+
+    margin-top: 7px;
+
+    padding: 4px 7px;
+
+    border-radius: 999px;
+
+    background: var(--mw-primary-soft);
+
+    color: var(--mw-primary);
+
+    font-size: 9px;
+
+    line-height: 1;
+
+    font-weight: 800;
+
+    white-space: nowrap;
+
+}
+
+
+.portfolio-edit-list .media-edit-destaque svg {
+
+    width: 11px;
+    height: 11px;
+
+    min-width: 11px;
+
+    fill: var(--mw-primary);
+
+    stroke: var(--mw-primary);
+
+}
+
+
+/* =========================================================
+   AÇÕES
+========================================================= */
+
+.portfolio-edit-list .media-edit-actions {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: flex-end;
+
+    gap: 6px;
+
+    flex: 0 0 auto;
+
+}
+
+
+.btn-editar-portfolio,
+.portfolio-edit-list .btn-excluir {
+
+    width: 34px;
+    height: 34px;
+
+    min-width: 34px;
+
+    padding: 0;
+
+    display: grid;
+
+    place-items: center;
+
+    border: 1px solid var(--mw-border);
+
+    border-radius: 10px;
+
+    background: #ffffff;
+
+    cursor: pointer;
+
+    transition:
+        background 0.16s ease,
+        border-color 0.16s ease,
+        color 0.16s ease,
+        transform 0.12s ease;
+
+}
+
+
+.btn-editar-portfolio svg,
+.portfolio-edit-list .btn-excluir svg {
+
+    width: 16px;
+    height: 16px;
+
+    display: block;
+
+}
+
+
+.btn-editar-portfolio {
+
+    color: var(--mw-primary);
+
+}
+
+
+.btn-editar-portfolio:hover {
+
+    border-color: #cfc7ff;
+
+    background: var(--mw-primary-soft);
+
+    color: var(--mw-primary-dark);
+
+}
+
+
+.portfolio-edit-list .btn-excluir {
+
+    color: var(--mw-danger);
+
+}
+
+
+.portfolio-edit-list .btn-excluir:hover {
+
+    border-color: #efc1c7;
+
+    background: #fff1f3;
+
+    color: #c93647;
+
+}
+
+
+.btn-editar-portfolio:active,
+.portfolio-edit-list .btn-excluir:active {
+
+    transform: scale(0.94);
+
+}
+
+
+/* =========================================================
+   BOTÃO DE DESTAQUE
+========================================================= */
+
+.btn-destaque {
+
+    width: 34px;
+    height: 34px;
+
+    min-width: 34px;
+
+    display: grid;
+
+    place-items: center;
+
+    padding: 0;
+
+    border: 1px solid var(--mw-border);
+
+    border-radius: 10px;
+
+    background: #ffffff;
+
+    color: #a1a7b5;
+
+    cursor: pointer;
+
+    transition:
+        background 0.18s ease,
+        border-color 0.18s ease,
+        color 0.18s ease,
+        transform 0.15s ease;
+
+}
+
+
+.btn-destaque svg {
+
+    width: 17px;
+    height: 17px;
+
+    display: block;
+
+    stroke-width: 2;
+
+    fill: none;
+
+    transition:
+        fill 0.18s ease,
+        stroke 0.18s ease,
+        transform 0.18s ease;
+
+}
+
+
+.btn-destaque:hover {
+
+    border-color: #cfc7ff;
+
+    background: var(--mw-primary-soft);
+
+    color: var(--mw-primary);
+
+}
+
+
+.btn-destaque:active {
+
+    transform: scale(0.94);
+
+}
+
+
+.btn-destaque.ativo {
+
+    border-color: var(--mw-primary);
+
+    background: var(--mw-primary-soft);
+
+    color: var(--mw-primary);
+
+}
+
+
+.btn-destaque.ativo svg {
+
+    fill: var(--mw-primary);
+
+    stroke: var(--mw-primary);
+
+    transform: scale(1.08);
+
+}
+
+
+/* =========================================================
+   CARD DESTACADO
+========================================================= */
+
+.media-edit-card.portfolio-card-destaque {
+
+    border-color: #d8d0ff;
+
+    box-shadow:
+        0 0 0 2px rgba(109, 74, 255, 0.06);
+
+}
+
+
+/* =========================================================
+   LABEL DE DESTAQUE
+========================================================= */
+
+.portfolio-destaque-label {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 5px;
+
+    width: fit-content;
+
+    max-width: 100%;
+
+    margin-top: 8px;
+
+    padding: 5px 9px;
+
+    border: 1px solid #d8d0ff;
+
+    border-radius: 999px;
+
+    background: var(--mw-primary-soft);
+
+    color: var(--mw-primary);
+
+    font-size: 10px;
+
+    line-height: 1;
+
+    font-weight: 800;
+
+    white-space: nowrap;
+
+}
+
+
+.portfolio-destaque-label svg {
+
+    width: 12px;
+    height: 12px;
+
+    min-width: 12px;
+
+    flex: 0 0 12px;
+
+    fill: var(--mw-primary);
+
+    stroke: var(--mw-primary);
+
+    stroke-width: 2;
+
+}
+
+
+/* =========================================================
+   RESPONSIVO
+========================================================= */
+
+@media (max-width: 600px) {
+
+
+    /* -----------------------------------------------------
+       FORMULÁRIO
+    ----------------------------------------------------- */
+
+    .portfolio-form {
+
+        gap: 15px;
+
+        margin-top: 16px;
+        margin-bottom: 18px;
+
+        padding: 14px;
+
+        border-radius: 15px;
+
+    }
+
+
+    /* -----------------------------------------------------
+       CABEÇALHO
+    ----------------------------------------------------- */
+
+    .portfolio-form-header {
+
+        gap: 9px;
+
+    }
+
+
+    .portfolio-form-icon {
+
+        width: 34px;
+        height: 34px;
+
+        min-width: 34px;
+
+        border-radius: 10px;
+
+    }
+
+
+    .portfolio-form-icon svg {
+
+        width: 16px;
+        height: 16px;
+
+    }
+
+
+    .portfolio-form-header h3 {
+
+        font-size: 13px;
+
+        line-height: 18px;
+
+    }
+
+
+    .portfolio-form-header p {
+
+        font-size: 10px;
+
+        line-height: 14px;
+
+    }
+
+
+    /* -----------------------------------------------------
+       TIPOS DE MÍDIA
+    ----------------------------------------------------- */
+
+    .portfolio-tipo-tabs {
+
+        gap: 5px;
+
+    }
+
+
+    .portfolio-tipo {
+
+        min-height: 40px;
+
+        gap: 4px;
+
+        padding: 0 5px;
+
+        border-radius: 10px;
+
+        font-size: 10px;
+
+        line-height: 15px;
+
+    }
+
+
+    .portfolio-tipo svg {
+
+        width: 14px;
+        height: 14px;
+
+        min-width: 14px;
+
+        flex-basis: 14px;
+
+    }
+
+
+    /* -----------------------------------------------------
+       CAMPOS
+    ----------------------------------------------------- */
+
+    .portfolio-form .campo label,
+    .portfolio-form .portfolio-arquivo-group > label,
+    .portfolio-form .portfolio-url-group label {
+
+        font-size: 11px;
+
+        line-height: 16px;
+
+    }
+
+
+    .portfolio-form .campo-ajuda,
+    .portfolio-form .portfolio-ajuda,
+    .portfolio-form #portfolioAjuda {
+
+        font-size: 9px;
+
+        line-height: 14px;
+
+    }
+
+
+    .portfolio-form .campo input {
+
+        min-height: 42px;
+
+        padding: 0 11px;
+
+        font-size: 12px;
+
+    }
+
+
+    .portfolio-form .campo textarea {
+
+        min-height: 88px;
+
+        padding: 10px 11px;
+
+        font-size: 12px;
+
+    }
+
+
+    /* -----------------------------------------------------
+       ARQUIVO
+    ----------------------------------------------------- */
+
+    .portfolio-form .portfolio-arquivo-group input[type="file"] {
+
+        min-height: 46px;
+
+        padding: 7px 8px;
+
+        font-size: 10px;
+
+    }
+
+
+    .portfolio-form .portfolio-arquivo-group input[type="file"]::file-selector-button {
+
+        margin-right: 7px;
+
+        padding: 6px 9px;
+
+        font-size: 10px;
+
+    }
+
+
+    /* -----------------------------------------------------
+       URL
+    ----------------------------------------------------- */
+
+    .portfolio-form .portfolio-url-group input {
+
+        min-height: 42px;
+
+        padding: 0 11px;
+
+        font-size: 12px;
+
+    }
+
+
+    /* -----------------------------------------------------
+       BOTÃO
+    ----------------------------------------------------- */
+
+    .portfolio-form .portfolio-form-actions {
+
+        justify-content: stretch;
+
+    }
+
+
+    .portfolio-form #btnAdicionarPortfolio {
+
+        width: 100%;
+
+        min-height: 42px;
+
+        padding: 0 14px;
+
+    }
+
+
+    /* -----------------------------------------------------
+       LISTA
+    ----------------------------------------------------- */
+
+    .portfolio-edit-list .media-edit-card {
+
+        grid-template-columns:
+            58px
+            minmax(0, 1fr)
+            auto;
+
+        gap: 9px;
+
+        padding: 9px;
+
+    }
+
+
+    .portfolio-edit-list .media-edit-preview {
+
+        width: 58px;
+        height: 58px;
+
+        min-width: 58px;
+
+        border-radius: 9px;
+
+    }
+
+
+    .portfolio-edit-list .media-edit-preview svg {
+
+        width: 21px;
+        height: 21px;
+
+    }
+
+
+    .portfolio-edit-list .media-edit-preview audio {
+
+        width: calc(100% - 6px);
+
+        height: 26px;
+
+    }
+
+
+    /* -----------------------------------------------------
+       INFORMAÇÕES
+    ----------------------------------------------------- */
+
+    .portfolio-edit-list .media-edit-type {
+
+        font-size: 9px;
+
+    }
+
+
+    .portfolio-edit-list .media-edit-info h3 {
+
+        font-size: 12px;
+
+    }
+
+
+    .portfolio-edit-list .media-edit-info p {
+
+        font-size: 10px;
+
+    }
+
+
+    /* -----------------------------------------------------
+       AÇÕES
+    ----------------------------------------------------- */
+
+    .portfolio-edit-list .media-edit-actions {
+
+        gap: 4px;
+
+    }
+
+
+    .btn-editar-portfolio,
+    .portfolio-edit-list .btn-excluir,
+    .btn-destaque {
+
+        width: 31px;
+        height: 31px;
+
+        min-width: 31px;
+
+        border-radius: 9px;
+
+    }
+
+
+    .btn-editar-portfolio svg,
+    .portfolio-edit-list .btn-excluir svg {
+
+        width: 14px;
+        height: 14px;
+
+    }
+
+
+    .btn-destaque svg {
+
+        width: 15px;
+        height: 15px;
+
+    }
+
+}

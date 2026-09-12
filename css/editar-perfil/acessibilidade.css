@@ -1,0 +1,52 @@
+/* =========================================================
+   MUSICALWORLD — EDITAR PERFIL
+   ACESSIBILIDADE
+   ========================================================= */
+
+/* ---------------------------------------------------------
+   SAFE AREA
+   --------------------------------------------------------- */
+
+@supports (padding: env(safe-area-inset-top)) {
+
+    body {
+        padding-bottom:
+            calc(40px + env(safe-area-inset-bottom));
+    }
+}
+
+/* ---------------------------------------------------------
+   FOCO VISÍVEL
+   --------------------------------------------------------- */
+
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+    outline: 3px solid rgba(109, 74, 255, 0.18);
+
+    outline-offset: 2px;
+}
+
+/* ---------------------------------------------------------
+   REDUÇÃO DE MOVIMENTO
+   --------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+
+    html {
+        scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+
+        animation-iteration-count: 1 !important;
+
+        transition-duration: 0.01ms !important;
+
+        scroll-behavior: auto !important;
+    }
+}
