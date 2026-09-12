@@ -1,906 +1,946 @@
 <!DOCTYPE html>
+
 <html lang="pt-BR">
 
 <head>
 
-    <meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+<meta charset="UTF-8">
 
-    <title>Editar Perfil | MusicalWorld</title>
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
 
-    <link
-        rel="stylesheet"
-        href="css/editar-perfil/editar-perfil.css"
-    >
+<title>Editar Perfil | MusicalWorld</title>
 
-    <link
-        rel="preconnect"
-        href="https://fonts.googleapis.com"
-    >
+<link
+    rel="stylesheet"
+    href="css/editar-perfil/editar-perfil.css"
+>
 
-    <link
-        rel="preconnect"
-        href="https://fonts.googleapis.com"
-        crossorigin
-    >
+<link
+    rel="preconnect"
+    href="https://fonts.googleapis.com"
+>
 
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-        rel="stylesheet"
-    >
+<link
+    rel="preconnect"
+    href="https://fonts.googleapis.com"
+    crossorigin
+>
+
+<link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+>
+
 
 </head>
-
 
 <body>
 
 
-    <!-- =====================================================
-         TOPBAR
-    ====================================================== -->
+<!-- =====================================================
+     TOPBAR
+====================================================== -->
 
-    <header class="topbar">
+<header class="topbar">
 
-        <div class="topbar-left">
+    <div class="topbar-left">
 
-            <button
-                type="button"
-                class="btn-voltar"
-                id="btnVoltar"
-                aria-label="Voltar"
-            >
+        <button
+            type="button"
+            class="btn-voltar"
+            id="btnVoltar"
+            aria-label="Voltar"
+        >
 
-                <i data-lucide="arrow-left"></i>
+            <i data-lucide="arrow-left"></i>
 
-            </button>
+        </button>
 
 
-            <div class="topbar-title">
+        <div class="topbar-title">
 
-                <h1>
-                    Editar perfil
-                </h1>
+            <h1>
+                Editar perfil
+            </h1>
 
-                <p id="topbarProfileSubtitle">
-                    Meu perfil
-                </p>
+            <p id="topbarProfileSubtitle">
+                Meu perfil
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="topbar-right">
+
+        <button
+            type="button"
+            class="btn-salvar-topo"
+            id="btnSalvarTopo"
+        >
+            Salvar
+        </button>
+
+    </div>
+
+</header>
+
+
+
+<!-- =====================================================
+     CONTEÚDO PRINCIPAL
+====================================================== -->
+
+<main class="editar-perfil-container">
+
+
+    <!-- =================================================
+         STATUS
+    ================================================== -->
+
+    <div
+        id="mensagemStatus"
+        class="mensagem-status"
+        style="display: none;"
+    ></div>
+
+
+
+    <!-- =================================================
+         ABAS
+    ================================================== -->
+
+    <nav
+        class="editor-tabs"
+        aria-label="Seções do perfil"
+    >
+
+        <button
+            type="button"
+            class="editor-tab ativo"
+            data-editor-tab="informacoes"
+        >
+
+            <i data-lucide="user-round"></i>
+
+            <span>
+                Informações
+            </span>
+
+        </button>
+
+
+        <button
+            type="button"
+            class="editor-tab"
+            data-editor-tab="portfolio"
+        >
+
+            <i data-lucide="images"></i>
+
+            <span>
+                Portfólio
+            </span>
+
+        </button>
+
+
+        <button
+            type="button"
+            class="editor-tab"
+            data-editor-tab="agenda"
+        >
+
+            <i data-lucide="calendar-days"></i>
+
+            <span>
+                Agenda
+            </span>
+
+        </button>
+
+
+        <button
+            type="button"
+            class="editor-tab"
+            data-editor-tab="servicos"
+        >
+
+            <i data-lucide="briefcase-business"></i>
+
+            <span>
+                Serviços
+            </span>
+
+        </button>
+
+    </nav>
+
+
+
+    <!-- =================================================
+         ABA — INFORMAÇÕES
+    ================================================== -->
+
+    <section
+        class="editor-panel ativo"
+        data-editor-panel="informacoes"
+    >
+
+
+        <!-- =============================================
+             FOTO DO PERFIL
+        ============================================== -->
+
+        <section class="perfil-card foto-card">
+
+            <div class="secao-cabecalho">
+
+                <div class="secao-icone">
+
+                    <i data-lucide="camera"></i>
+
+                </div>
+
+
+                <div>
+
+                    <h2>
+                        Foto do perfil
+                    </h2>
+
+                    <p>
+                        Escolha uma foto que represente você.
+                    </p>
+
+                </div>
 
             </div>
 
-        </div>
 
+            <div class="foto-editor">
 
-        <div class="topbar-right">
+                <div class="foto-preview-wrapper">
 
-            <button
-                type="button"
-                class="btn-salvar-topo"
-                id="btnSalvarTopo"
-            >
-                Salvar
-            </button>
-
-        </div>
-
-    </header>
-
-
-
-    <!-- =====================================================
-         CONTEÚDO PRINCIPAL
-    ====================================================== -->
-
-    <main class="editar-perfil-container">
-
-
-        <!-- =================================================
-             STATUS
-        ================================================== -->
-
-        <div
-            id="mensagemStatus"
-            class="mensagem-status"
-            style="display: none;"
-        ></div>
-
-
-
-        <!-- =================================================
-             ABAS
-        ================================================== -->
-
-        <nav
-            class="editor-tabs"
-            aria-label="Seções do perfil"
-        >
-
-            <button
-                type="button"
-                class="editor-tab ativo"
-                data-editor-tab="informacoes"
-            >
-
-                <i data-lucide="user-round"></i>
-
-                <span>
-                    Informações
-                </span>
-
-            </button>
-
-
-            <button
-                type="button"
-                class="editor-tab"
-                data-editor-tab="portfolio"
-            >
-
-                <i data-lucide="images"></i>
-
-                <span>
-                    Portfólio
-                </span>
-
-            </button>
-
-
-            <button
-                type="button"
-                class="editor-tab"
-                data-editor-tab="agenda"
-            >
-
-                <i data-lucide="calendar-days"></i>
-
-                <span>
-                    Agenda
-                </span>
-
-            </button>
-
-
-            <button
-                type="button"
-                class="editor-tab"
-                data-editor-tab="servicos"
-            >
-
-                <i data-lucide="briefcase-business"></i>
-
-                <span>
-                    Serviços
-                </span>
-
-            </button>
-
-        </nav>
-
-
-
-        <!-- =================================================
-             ABA — INFORMAÇÕES
-        ================================================== -->
-
-        <section
-            class="editor-panel ativo"
-            data-editor-panel="informacoes"
-        >
-
-
-            <!-- =============================================
-                 FOTO DO PERFIL
-            ============================================== -->
-
-            <section class="perfil-card foto-card">
-
-                <div class="secao-cabecalho">
-
-                    <div class="secao-icone">
-
-                        <i data-lucide="camera"></i>
-
-                    </div>
-
-
-                    <div>
-
-                        <h2>
-                            Foto do perfil
-                        </h2>
-
-                        <p>
-                            Escolha uma foto que represente você.
-                        </p>
-
-                    </div>
-
-                </div>
-
-
-                <div class="foto-editor">
-
-                    <div class="foto-preview-wrapper">
-
-                        <img
-                            id="fotoPreview"
-                            src=""
-                            alt="Foto do perfil"
-                            class="foto-preview"
-                        >
-
-
-                        <div
-                            id="fotoPlaceholder"
-                            class="foto-placeholder"
-                        >
-
-                            <i data-lucide="user"></i>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="foto-acoes">
-
-                        <label
-                            for="inputFoto"
-                            class="btn-foto"
-                        >
-
-                            <i data-lucide="upload"></i>
-
-                            Alterar foto
-
-                        </label>
-
-
-                        <input
-                            type="file"
-                            id="inputFoto"
-                            accept="image/*"
-                        >
-
-
-                        <button
-                            type="button"
-                            id="btnRemoverFoto"
-                            class="btn-remover-foto"
-                        >
-
-                            <i data-lucide="trash-2"></i>
-
-                            Remover
-
-                        </button>
-
-                    </div>
-
-
-                    <span class="foto-ajuda">
-                        JPG ou PNG. Recomendamos uma imagem quadrada.
-                    </span>
-
-                </div>
-
-            </section>
-
-
-
-            <!-- =============================================
-                 INFORMAÇÕES PESSOAIS
-            ============================================== -->
-
-            <section class="perfil-card">
-
-                <div class="secao-cabecalho">
-
-                    <div class="secao-icone">
-
-                        <i data-lucide="user-round"></i>
-
-                    </div>
-
-
-                    <div>
-
-                        <h2>
-                            Informações pessoais
-                        </h2>
-
-                        <p>
-                            Essas informações ajudam outras pessoas a conhecer você.
-                        </p>
-
-                    </div>
-
-                </div>
-
-
-                <div class="form-grid">
-
-
-                    <div class="campo">
-
-                        <label for="nome">
-                            Nome completo
-                        </label>
-
-                        <input
-                            type="text"
-                            id="nome"
-                            name="nome"
-                            placeholder="Digite seu nome completo"
-                            autocomplete="name"
-                        >
-
-                    </div>
-
-
-                    <div class="campo">
-
-                        <label for="nomeExibicao">
-                            Nome de exibição
-                        </label>
-
-                        <span class="campo-ajuda">
-                            Esse é o nome que aparecerá publicamente no seu perfil.
-                        </span>
-
-                        <input
-                            type="text"
-                            id="nomeExibicao"
-                            name="nomeExibicao"
-                            placeholder="Como você quer ser chamado?"
-                            maxlength="80"
-                        >
-
-                    </div>
-
-
-                    <div class="campo">
-
-                        <label for="telefone">
-                            Telefone
-                        </label>
-
-                        <input
-                            type="tel"
-                            id="telefone"
-                            name="telefone"
-                            placeholder="(00) 00000-0000"
-                            autocomplete="tel"
-                        >
-
-                    </div>
-
-
-                    <div class="campo">
-
-                        <label for="tipoArtista">
-                            Tipo de perfil
-                        </label>
-
-                        <span class="campo-ajuda">
-                            Escolha como você deseja se apresentar no MusicalWorld.
-                        </span>
-
-                        <select
-                            id="tipoArtista"
-                            name="tipoArtista"
-                        >
-
-                            <option value="">
-                                Selecione seu tipo de perfil
-                            </option>
-
-                            <option value="Cantor(a)">
-                                Cantor(a)
-                            </option>
-
-                            <option value="Músico(a)">
-                                Músico(a)
-                            </option>
-
-                            <option value="Banda">
-                                Banda
-                            </option>
-
-                            <option value="Dupla musical">
-                                Dupla musical
-                            </option>
-
-                            <option value="DJ">
-                                DJ
-                            </option>
-
-                            <option value="Dançarino(a)">
-                                Dançarino(a)
-                            </option>
-
-                            <option value="Grupo de dança">
-                                Grupo de dança
-                            </option>
-
-                            <option value="MC">
-                                MC
-                            </option>
-
-                            <option value="Compositor(a)">
-                                Compositor(a)
-                            </option>
-
-                            <option value="Produtor(a) musical">
-                                Produtor(a) musical
-                            </option>
-
-                        </select>
-
-                    </div>
-
-                </div>
-
-            </section>
-
-
-
-            <!-- =============================================
-                 LOCALIZAÇÃO
-            ============================================== -->
-
-            <section class="perfil-card">
-
-                <div class="secao-cabecalho">
-
-                    <div class="secao-icone">
-
-                        <i data-lucide="map-pin"></i>
-
-                    </div>
-
-
-                    <div>
-
-                        <h2>
-                            Localização e atendimento
-                        </h2>
-
-                        <p>
-                            Informe onde você está e onde pode realizar seus trabalhos.
-                        </p>
-
-                    </div>
-
-                </div>
-
-
-                <div class="form-grid">
-
-
-                    <div class="campo">
-
-                        <label for="localizacao">
-                            Localização
-                        </label>
-
-                        <input
-                            type="text"
-                            id="localizacao"
-                            name="localizacao"
-                            placeholder="Ex.: Goiânia/GO"
-                        >
-
-                    </div>
-
-
-                    <div class="campo">
-
-                        <label for="areaAtendimento">
-                            Área de atendimento
-                        </label>
-
-                        <input
-                            type="text"
-                            id="areaAtendimento"
-                            name="areaAtendimento"
-                            placeholder="Ex.: Goiânia e região"
-                        >
-
-                    </div>
-
-                </div>
-
-            </section>
-
-
-
-            <!-- =============================================
-                 SOBRE
-            ============================================== -->
-
-            <section class="perfil-card">
-
-                <div class="secao-cabecalho">
-
-                    <div class="secao-icone">
-
-                        <i data-lucide="file-text"></i>
-
-                    </div>
-
-
-                    <div>
-
-                        <h2>
-                            Sobre você
-                        </h2>
-
-                        <p>
-                            Conte um pouco sobre sua experiência e seu trabalho.
-                        </p>
-
-                    </div>
-
-                </div>
-
-
-                <div class="campo">
-
-                    <label for="descricao">
-                        Descrição
-                    </label>
-
-                    <textarea
-                        id="descricao"
-                        name="descricao"
-                        rows="6"
-                        maxlength="1000"
-                        placeholder="Conte um pouco sobre você, sua trajetória e seu trabalho..."
-                    ></textarea>
-
-
-                    <div class="contador-caracteres">
-
-                        <span id="contadorDescricao">
-                            0
-                        </span>
-
-                        /1000
-
-                    </div>
-
-                </div>
-
-
-                <div class="campo">
-
-                    <label for="experiencia">
-                        Experiência
-                    </label>
-
-                    <textarea
-                        id="experiencia"
-                        name="experiencia"
-                        rows="4"
-                        placeholder="Conte sobre sua experiência profissional..."
-                    ></textarea>
-
-                </div>
-
-            </section>
-
-
-
-            <!-- =============================================
-                 ESTILOS / ESPECIALIDADES
-            ============================================== -->
-
-            <section class="perfil-card">
-
-                <div class="secao-cabecalho">
-
-                    <div class="secao-icone">
-
-                        <i data-lucide="sparkles"></i>
-
-                    </div>
-
-
-                    <div>
-
-                        <h2>
-                            Estilos e especialidades
-                        </h2>
-
-                        <p>
-                            Selecione os estilos e áreas que representam seu trabalho.
-                        </p>
-
-                    </div>
-
-                </div>
-
-
-                <div class="campo">
-
-                    <label>
-                        Estilos musicais
-                    </label>
-
-                    <span class="campo-ajuda">
-                        Selecione os estilos musicais que representam seu trabalho.
-                    </span>
-
-
-                    <div
-                        class="chips estilos-container"
-                        id="estilos"
-                    ></div>
-
-                </div>
-
-
-                <div
-                    class="campo campo-instrumentos"
-                    id="campoInstrumentos"
-                >
-
-                    <label>
-                        Instrumentos que toca
-                    </label>
-
-                    <span class="campo-ajuda">
-                        Selecione um ou mais instrumentos que você toca.
-                    </span>
-
-
-                    <div
-                        class="chips instrumentos-container"
-                        id="instrumentos"
-                    ></div>
-
-                </div>
-
-
-                <div class="campo">
-
-                    <label>
-                        Áreas de atuação
-                    </label>
-
-                    <span class="campo-ajuda">
-                        Selecione os serviços que você oferece.
-                    </span>
-
-
-                    <div
-                        class="chips servicos-container"
-                        id="servicos"
-                    ></div>
-
-                </div>
-
-            </section>
-
-
-
-            <!-- =============================================
-                 DISPONIBILIDADE
-            ============================================== -->
-
-            <section class="perfil-card">
-
-                <div class="secao-cabecalho">
-
-                    <div class="secao-icone">
-
-                        <i data-lucide="calendar-check"></i>
-
-                    </div>
-
-
-                    <div>
-
-                        <h2>
-                            Disponibilidade
-                        </h2>
-
-                        <p>
-                            Informe se você está disponível para novos trabalhos.
-                        </p>
-
-                    </div>
-
-                </div>
-
-
-                <label
-                    class="switch-row"
-                    for="disponivel"
-                >
-
-                    <span>
-
-                        <strong>
-                            Estou disponível para trabalhos
-                        </strong>
-
-                        <small>
-                            Seu perfil poderá aparecer como disponível para contratação.
-                        </small>
-
-                    </span>
-
-
-                    <input
-                        type="checkbox"
-                        id="disponivel"
-                        name="disponivel"
+                    <img
+                        id="fotoPreview"
+                        src=""
+                        alt="Foto do perfil"
+                        class="foto-preview"
                     >
 
 
-                    <span class="switch"></span>
+                    <div
+                        id="fotoPlaceholder"
+                        class="foto-placeholder"
+                    >
 
-                </label>
-
-            </section>
-
-
-
-            <!-- =============================================
-                 CONTA
-            ============================================== -->
-
-            <section class="perfil-card conta-card">
-
-                <div class="secao-cabecalho">
-
-                    <div class="secao-icone">
-
-                        <i data-lucide="shield-check"></i>
-
-                    </div>
-
-
-                    <div>
-
-                        <h2>
-                            Conta
-                        </h2>
-
-                        <p>
-                            Informações relacionadas ao acesso da sua conta.
-                        </p>
+                        <i data-lucide="user"></i>
 
                     </div>
 
                 </div>
 
 
-                <div class="campo">
+                <div class="foto-acoes">
 
-                    <label for="emailConta">
-                        E-mail da conta
+                    <label
+                        for="inputFoto"
+                        class="btn-foto"
+                    >
+
+                        <i data-lucide="upload"></i>
+
+                        Alterar foto
+
                     </label>
 
+
                     <input
-                        type="email"
-                        id="emailConta"
-                        name="emailConta"
-                        readonly
+                        type="file"
+                        id="inputFoto"
+                        accept="image/*"
                     >
 
-                    <span class="campo-ajuda">
-                        O e-mail de acesso não pode ser alterado por aqui.
-                    </span>
 
-                </div>
+                    <button
+                        type="button"
+                        id="btnRemoverFoto"
+                        class="btn-remover-foto"
+                    >
 
-            </section>
+                        <i data-lucide="trash-2"></i>
 
+                        Remover
 
-
-            <!-- =============================================
-                 PUBLICAÇÃO
-            ============================================== -->
-
-            <section class="perfil-card perfil-publicacao-card">
-
-                <div class="secao-cabecalho">
-
-                    <div class="secao-icone">
-
-                        <i data-lucide="globe-2"></i>
-
-                    </div>
-
-
-                    <div>
-
-                        <h2>
-                            Publicação do perfil
-                        </h2>
-
-                        <p>
-                            Controle se seu perfil pode ser encontrado por outras pessoas.
-                        </p>
-
-                    </div>
+                    </button>
 
                 </div>
 
 
-                <label
-                    class="switch-row"
-                    for="perfilPublicado"
-                >
+                <span class="foto-ajuda">
+                    JPG ou PNG. Recomendamos uma imagem quadrada.
+                </span>
 
-                    <span>
-
-                        <strong>
-                            Perfil público
-                        </strong>
-
-                        <small>
-                            Permitir que outras pessoas encontrem e visualizem seu perfil.
-                        </small>
-
-                    </span>
-
-
-                    <input
-                        type="checkbox"
-                        id="perfilPublicado"
-                        name="perfilPublicado"
-                    >
-
-
-                    <span class="switch"></span>
-
-                </label>
-
-            </section>
+            </div>
 
         </section>
 
 
 
-        <!-- =================================================
-             ABA — PORTFÓLIO
-        ================================================== -->
+        <!-- =============================================
+             INFORMAÇÕES PESSOAIS
+        ============================================== -->
 
-        <section
-            class="editor-panel"
-            data-editor-panel="portfolio"
-        >
+        <section class="perfil-card">
 
-            <section class="perfil-card">
+            <div class="secao-cabecalho">
 
-                <!-- =========================================
-                     CABEÇALHO DO PORTFÓLIO
-                ========================================== -->
+                <div class="secao-icone">
 
-                <div class="secao-cabecalho">
+                    <i data-lucide="user-round"></i>
 
-                    <div class="secao-icone">
+                </div>
 
-                        <i data-lucide="images"></i>
+
+                <div>
+
+                    <h2>
+                        Informações pessoais
+                    </h2>
+
+                    <p>
+                        Essas informações ajudam outras pessoas a conhecer você.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="form-grid">
+
+
+                <div class="campo">
+
+                    <label for="nome">
+                        Nome completo
+                    </label>
+
+                    <input
+                        type="text"
+                        id="nome"
+                        name="nome"
+                        placeholder="Digite seu nome completo"
+                        autocomplete="name"
+                    >
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label for="nomeExibicao">
+                        Nome de exibição
+                    </label>
+
+                    <span class="campo-ajuda">
+                        Esse é o nome que aparecerá publicamente no seu perfil.
+                    </span>
+
+                    <input
+                        type="text"
+                        id="nomeExibicao"
+                        name="nomeExibicao"
+                        placeholder="Como você quer ser chamado?"
+                        maxlength="80"
+                    >
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label for="telefone">
+                        Telefone
+                    </label>
+
+                    <input
+                        type="tel"
+                        id="telefone"
+                        name="telefone"
+                        placeholder="(00) 00000-0000"
+                        autocomplete="tel"
+                    >
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label for="tipoArtista">
+                        Tipo de perfil
+                    </label>
+
+                    <span class="campo-ajuda">
+                        Escolha como você deseja se apresentar no MusicalWorld.
+                    </span>
+
+                    <select
+                        id="tipoArtista"
+                        name="tipoArtista"
+                    >
+
+                        <option value="">
+                            Selecione seu tipo de perfil
+                        </option>
+
+                        <option value="Cantor(a)">
+                            Cantor(a)
+                        </option>
+
+                        <option value="Músico(a)">
+                            Músico(a)
+                        </option>
+
+                        <option value="Banda">
+                            Banda
+                        </option>
+
+                        <option value="Dupla musical">
+                            Dupla musical
+                        </option>
+
+                        <option value="DJ">
+                            DJ
+                        </option>
+
+                        <option value="Dançarino(a)">
+                            Dançarino(a)
+                        </option>
+
+                        <option value="Grupo de dança">
+                            Grupo de dança
+                        </option>
+
+                        <option value="MC">
+                            MC
+                        </option>
+
+                        <option value="Compositor(a)">
+                            Compositor(a)
+                        </option>
+
+                        <option value="Produtor(a) musical">
+                            Produtor(a) musical
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =============================================
+             LOCALIZAÇÃO
+        ============================================== -->
+
+        <section class="perfil-card">
+
+            <div class="secao-cabecalho">
+
+                <div class="secao-icone">
+
+                    <i data-lucide="map-pin"></i>
+
+                </div>
+
+
+                <div>
+
+                    <h2>
+                        Localização e atendimento
+                    </h2>
+
+                    <p>
+                        Informe onde você está e onde pode realizar seus trabalhos.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="form-grid">
+
+
+                <div class="campo">
+
+                    <label for="localizacao">
+                        Localização
+                    </label>
+
+                    <input
+                        type="text"
+                        id="localizacao"
+                        name="localizacao"
+                        placeholder="Ex.: Goiânia/GO"
+                    >
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label for="areaAtendimento">
+                        Área de atendimento
+                    </label>
+
+                    <input
+                        type="text"
+                        id="areaAtendimento"
+                        name="areaAtendimento"
+                        placeholder="Ex.: Goiânia e região"
+                    >
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =============================================
+             SOBRE
+        ============================================== -->
+
+        <section class="perfil-card">
+
+            <div class="secao-cabecalho">
+
+                <div class="secao-icone">
+
+                    <i data-lucide="file-text"></i>
+
+                </div>
+
+
+                <div>
+
+                    <h2>
+                        Sobre você
+                    </h2>
+
+                    <p>
+                        Conte um pouco sobre sua experiência e seu trabalho.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="campo">
+
+                <label for="descricao">
+                    Descrição
+                </label>
+
+                <textarea
+                    id="descricao"
+                    name="descricao"
+                    rows="6"
+                    maxlength="1000"
+                    placeholder="Conte um pouco sobre você, sua trajetória e seu trabalho..."
+                ></textarea>
+
+
+                <div class="contador-caracteres">
+
+                    <span id="contadorDescricao">
+                        0
+                    </span>
+
+                    /1000
+
+                </div>
+
+            </div>
+
+
+            <div class="campo">
+
+                <label for="experiencia">
+                    Experiência
+                </label>
+
+                <textarea
+                    id="experiencia"
+                    name="experiencia"
+                    rows="4"
+                    placeholder="Conte sobre sua experiência profissional..."
+                ></textarea>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =============================================
+             ESTILOS / ESPECIALIDADES
+        ============================================== -->
+
+        <section class="perfil-card">
+
+            <div class="secao-cabecalho">
+
+                <div class="secao-icone">
+
+                    <i data-lucide="sparkles"></i>
+
+                </div>
+
+
+                <div>
+
+                    <h2>
+                        Estilos e especialidades
+                    </h2>
+
+                    <p>
+                        Selecione os estilos e áreas que representam seu trabalho.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="campo">
+
+                <label>
+                    Estilos musicais
+                </label>
+
+                <span class="campo-ajuda">
+                    Selecione os estilos musicais que representam seu trabalho.
+                </span>
+
+
+                <div
+                    class="chips estilos-container"
+                    id="estilos"
+                ></div>
+
+            </div>
+
+
+            <div
+                class="campo campo-instrumentos"
+                id="campoInstrumentos"
+            >
+
+                <label>
+                    Instrumentos que toca
+                </label>
+
+                <span class="campo-ajuda">
+                    Selecione um ou mais instrumentos que você toca.
+                </span>
+
+
+                <div
+                    class="chips instrumentos-container"
+                    id="instrumentos"
+                ></div>
+
+            </div>
+
+
+            <div class="campo">
+
+                <label>
+                    Áreas de atuação
+                </label>
+
+                <span class="campo-ajuda">
+                    Selecione os serviços que você oferece.
+                </span>
+
+
+                <div
+                    class="chips servicos-container"
+                    id="servicos"
+                ></div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =============================================
+             DISPONIBILIDADE
+        ============================================== -->
+
+        <section class="perfil-card">
+
+            <div class="secao-cabecalho">
+
+                <div class="secao-icone">
+
+                    <i data-lucide="calendar-check"></i>
+
+                </div>
+
+
+                <div>
+
+                    <h2>
+                        Disponibilidade
+                    </h2>
+
+                    <p>
+                        Informe se você está disponível para novos trabalhos.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <label
+                class="switch-row"
+                for="disponivel"
+            >
+
+                <span>
+
+                    <strong>
+                        Estou disponível para trabalhos
+                    </strong>
+
+                    <small>
+                        Seu perfil poderá aparecer como disponível para contratação.
+                    </small>
+
+                </span>
+
+
+                <input
+                    type="checkbox"
+                    id="disponivel"
+                    name="disponivel"
+                >
+
+
+                <span class="switch"></span>
+
+            </label>
+
+        </section>
+
+
+
+        <!-- =============================================
+             CONTA
+        ============================================== -->
+
+        <section class="perfil-card conta-card">
+
+            <div class="secao-cabecalho">
+
+                <div class="secao-icone">
+
+                    <i data-lucide="shield-check"></i>
+
+                </div>
+
+
+                <div>
+
+                    <h2>
+                        Conta
+                    </h2>
+
+                    <p>
+                        Informações relacionadas ao acesso da sua conta.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="campo">
+
+                <label for="emailConta">
+                    E-mail da conta
+                </label>
+
+                <input
+                    type="email"
+                    id="emailConta"
+                    name="emailConta"
+                    readonly
+                >
+
+                <span class="campo-ajuda">
+                    O e-mail de acesso não pode ser alterado por aqui.
+                </span>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =============================================
+             PUBLICAÇÃO
+        ============================================== -->
+
+        <section class="perfil-card perfil-publicacao-card">
+
+            <div class="secao-cabecalho">
+
+                <div class="secao-icone">
+
+                    <i data-lucide="globe-2"></i>
+
+                </div>
+
+
+                <div>
+
+                    <h2>
+                        Publicação do perfil
+                    </h2>
+
+                    <p>
+                        Controle se seu perfil pode ser encontrado por outras pessoas.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <label
+                class="switch-row"
+                for="perfilPublicado"
+            >
+
+                <span>
+
+                    <strong>
+                        Perfil público
+                    </strong>
+
+                    <small>
+                        Permitir que outras pessoas encontrem e visualizem seu perfil.
+                    </small>
+
+                </span>
+
+
+                <input
+                    type="checkbox"
+                    id="perfilPublicado"
+                    name="perfilPublicado"
+                >
+
+
+                <span class="switch"></span>
+
+            </label>
+
+        </section>
+
+    </section>
+
+
+
+    <!-- =================================================
+         ABA — PORTFÓLIO
+    ================================================== -->
+
+    <section
+        class="editor-panel"
+        data-editor-panel="portfolio"
+    >
+
+        <section class="perfil-card">
+
+            <!-- =========================================
+                 CABEÇALHO DO PORTFÓLIO
+            ========================================== -->
+
+            <div class="secao-cabecalho">
+
+                <div class="secao-icone">
+
+                    <i data-lucide="images"></i>
+
+                </div>
+
+
+                <div>
+
+                    <h2>
+                        Portfólio
+                    </h2>
+
+                    <p>
+                        Apresente o seu trabalho com imagens, vídeos e áudio.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- =========================================
+                 FORMULÁRIO DE NOVO ITEM
+            ========================================== -->
+
+            <div
+                id="portfolioForm"
+                class="portfolio-form"
+            >
+
+
+                <!-- =====================================
+                     CABEÇALHO DO FORMULÁRIO
+                ====================================== -->
+
+                <div class="portfolio-form-header">
+
+                    <div class="portfolio-form-icon">
+
+                        <i data-lucide="plus"></i>
 
                     </div>
 
 
                     <div>
 
-                        <h2>
-                            Portfólio
-                        </h2>
+                        <h3>
+                            Novo item
+                        </h3>
 
                         <p>
-                            Apresente o seu trabalho com imagens, vídeos e áudio.
+                            Adicione um trabalho ao seu portfólio.
                         </p>
 
                     </div>
@@ -908,234 +948,74 @@
                 </div>
 
 
-                <!-- =========================================
-                     FORMULÁRIO DE NOVO ITEM
-                ========================================== -->
 
-                <div
-                    id="portfolioForm"
-                    class="portfolio-form"
-                >
+                <!-- =====================================
+                     TIPO DE CONTEÚDO
+                ====================================== -->
 
+                <div class="campo">
 
-                    <!-- =====================================
-                         CABEÇALHO DO FORMULÁRIO
-                    ====================================== -->
+                    <label>
+                        Tipo de conteúdo
+                    </label>
 
-                    <div class="portfolio-form-header">
+                    <span class="campo-ajuda">
+                        Escolha o tipo de conteúdo que deseja adicionar.
+                    </span>
 
-                        <div class="portfolio-form-icon">
 
-                            <i data-lucide="plus"></i>
-
-                        </div>
-
-
-                        <div>
-
-                            <h3>
-                                Novo item
-                            </h3>
-
-                            <p>
-                                Adicione um trabalho ao seu portfólio.
-                            </p>
-
-                        </div>
-
-                    </div>
-
-
-
-                    <!-- =====================================
-                         TIPO DE CONTEÚDO
-                    ====================================== -->
-
-                    <div class="campo">
-
-                        <label>
-                            Tipo de conteúdo
-                        </label>
-
-                        <span class="campo-ajuda">
-                            Escolha o tipo de conteúdo que deseja adicionar.
-                        </span>
-
-
-                        <div
-                            class="portfolio-tipo-tabs"
-                            role="group"
-                            aria-label="Tipo de conteúdo"
-                        >
-
-                            <button
-                                type="button"
-                                class="portfolio-tipo ativo"
-                                data-tipo="imagem"
-                                data-media-type="imagem"
-                                aria-pressed="true"
-                            >
-
-                                <i data-lucide="image"></i>
-
-                                <span>
-                                    Imagem
-                                </span>
-
-                            </button>
-
-
-                            <button
-                                type="button"
-                                class="portfolio-tipo"
-                                data-tipo="video"
-                                data-media-type="video"
-                                aria-pressed="false"
-                            >
-
-                                <i data-lucide="video"></i>
-
-                                <span>
-                                    Vídeo
-                                </span>
-
-                            </button>
-
-
-                            <button
-                                type="button"
-                                class="portfolio-tipo"
-                                data-tipo="audio"
-                                data-media-type="audio"
-                                aria-pressed="false"
-                            >
-
-                                <i data-lucide="music-2"></i>
-
-                                <span>
-                                    Áudio
-                                </span>
-
-                            </button>
-
-                        </div>
-
-                    </div>
-
-
-
-                    <!-- =====================================
-                         TÍTULO
-                    ====================================== -->
-
-                    <div class="campo">
-
-                        <label for="portfolioTitulo">
-                            Título
-                        </label>
-
-                        <input
-                            type="text"
-                            id="portfolioTitulo"
-                            name="portfolioTitulo"
-                            placeholder="Ex.: Apresentação ao vivo"
-                            maxlength="120"
-                        >
-
-                    </div>
-
-
-
-                    <!-- =====================================
-                         DESCRIÇÃO
-                    ====================================== -->
-
-                    <div class="campo">
-
-                        <label for="portfolioDescricao">
-                            Descrição
-                        </label>
-
-                        <textarea
-                            id="portfolioDescricao"
-                            name="portfolioDescricao"
-                            rows="4"
-                            maxlength="1000"
-                            placeholder="Descreva este trabalho..."
-                        ></textarea>
-
-                    </div>
-
-
-
-                    <!-- =====================================
-                         ARQUIVO
-                    ====================================== -->
-
-                    <div class="portfolio-arquivo-group">
-
-                        <label for="portfolioArquivo">
-                            Arquivo
-                        </label>
-
-                        <input
-                            type="file"
-                            id="portfolioArquivo"
-                            name="portfolioArquivo"
-                            accept="image/*"
-                        >
-
-                        <span
-                            id="portfolioAjuda"
-                            class="portfolio-ajuda"
-                        >
-                            Adicione uma imagem ao seu portfólio.
-                        </span>
-
-                    </div>
-
-
-
-                    <!-- =====================================
-                         LINK EXTERNO
-                    ====================================== -->
-
-                    <div class="portfolio-url-group">
-
-                        <label for="portfolioUrl">
-                            Link externo
-                        </label>
-
-                        <input
-                            type="url"
-                            id="portfolioUrl"
-                            name="portfolioUrl"
-                            placeholder="https://..."
-                        >
-
-                        <span class="campo-ajuda">
-                            Você também pode adicionar um link externo para este trabalho.
-                        </span>
-
-                    </div>
-
-
-
-                    <!-- =====================================
-                         AÇÃO
-                    ====================================== -->
-
-                    <div class="portfolio-form-actions">
+                    <div
+                        class="portfolio-tipo-tabs"
+                        role="group"
+                        aria-label="Tipo de conteúdo"
+                    >
 
                         <button
                             type="button"
-                            id="btnAdicionarPortfolio"
+                            class="portfolio-tipo ativo"
+                            data-tipo="imagem"
+                            data-media-type="imagem"
+                            aria-pressed="true"
                         >
 
-                            <i data-lucide="plus"></i>
+                            <i data-lucide="image"></i>
 
                             <span>
-                                Adicionar ao portfólio
+                                Imagem
+                            </span>
+
+                        </button>
+
+
+                        <button
+                            type="button"
+                            class="portfolio-tipo"
+                            data-tipo="video"
+                            data-media-type="video"
+                            aria-pressed="false"
+                        >
+
+                            <i data-lucide="video"></i>
+
+                            <span>
+                                Vídeo
+                            </span>
+
+                        </button>
+
+
+                        <button
+                            type="button"
+                            class="portfolio-tipo"
+                            data-tipo="audio"
+                            data-media-type="audio"
+                            aria-pressed="false"
+                        >
+
+                            <i data-lucide="music-2"></i>
+
+                            <span>
+                                Áudio
                             </span>
 
                         </button>
@@ -1146,296 +1026,628 @@
 
 
 
-                <!-- =========================================
-                     ITENS EXISTENTES
-                ========================================== -->
+                <!-- =====================================
+                     TÍTULO
+                ====================================== -->
 
-                <div
-                    id="portfolioEditList"
-                    class="portfolio-edit-list"
-                ></div>
+                <div class="campo">
 
-            </section>
+                    <label for="portfolioTitulo">
+                        Título
+                    </label>
 
-        </section>
-
-
-
-        <!-- =================================================
-             ABA — AGENDA
-        ================================================== -->
-
-        <section
-            class="editor-panel"
-            data-editor-panel="agenda"
-        >
-
-            <section class="perfil-card">
-
-                <div class="secao-cabecalho">
-
-                    <div class="secao-icone">
-
-                        <i data-lucide="calendar-days"></i>
-
-                    </div>
-
-
-                    <div>
-
-                        <h2>
-                            Agenda
-                        </h2>
-
-                        <p>
-                            Cadastre apresentações, eventos e compromissos.
-                        </p>
-
-                    </div>
+                    <input
+                        type="text"
+                        id="portfolioTitulo"
+                        name="portfolioTitulo"
+                        placeholder="Ex.: Apresentação ao vivo"
+                        maxlength="120"
+                    >
 
                 </div>
 
 
-                <div class="agenda-form">
 
-                    <div class="form-grid">
+                <!-- =====================================
+                     DESCRIÇÃO
+                ====================================== -->
 
+                <div class="campo">
 
-                        <div class="campo">
+                    <label for="portfolioDescricao">
+                        Descrição
+                    </label>
 
-                            <label for="agendaTitulo">
-                                Título
-                            </label>
+                    <textarea
+                        id="portfolioDescricao"
+                        name="portfolioDescricao"
+                        rows="4"
+                        maxlength="1000"
+                        placeholder="Descreva este trabalho..."
+                    ></textarea>
 
-                            <input
-                                type="text"
-                                id="agendaTitulo"
-                                placeholder="Ex.: Show no evento"
-                            >
-
-                        </div>
-
-
-                        <div class="campo">
-
-                            <label for="agendaTipo">
-                                Tipo
-                            </label>
-
-                            <select id="agendaTipo">
-
-                                <option value="">
-                                    Selecione
-                                </option>
-
-                                <option value="show">
-                                    Show
-                                </option>
-
-                                <option value="evento">
-                                    Evento
-                                </option>
-
-                                <option value="casamento">
-                                    Casamento
-                                </option>
-
-                                <option value="aniversario">
-                                    Aniversário
-                                </option>
-
-                                <option value="corporativo">
-                                    Corporativo
-                                </option>
-
-                                <option value="outro">
-                                    Outro
-                                </option>
-
-                            </select>
-
-                        </div>
+                </div>
 
 
-                        <div class="campo">
 
-                            <label for="agendaInicio">
-                                Data e horário de início
-                            </label>
+                <!-- =====================================
+                     ARQUIVO
+                ====================================== -->
 
-                            <input
-                                type="datetime-local"
-                                id="agendaInicio"
-                            >
+                <div class="portfolio-arquivo-group">
 
-                        </div>
+                    <label for="portfolioArquivo">
+                        Arquivo
+                    </label>
 
+                    <input
+                        type="file"
+                        id="portfolioArquivo"
+                        name="portfolioArquivo"
+                        accept="image/*"
+                    >
 
-                        <div class="campo">
+                    <span
+                        id="portfolioAjuda"
+                        class="portfolio-ajuda"
+                    >
+                        Adicione uma imagem ao seu portfólio.
+                    </span>
 
-                            <label for="agendaFim">
-                                Data e horário de término
-                            </label>
-
-                            <input
-                                type="datetime-local"
-                                id="agendaFim"
-                            >
-
-                        </div>
-
-
-                        <div class="campo">
-
-                            <label for="agendaLocalizacao">
-                                Localização
-                            </label>
-
-                            <input
-                                type="text"
-                                id="agendaLocalizacao"
-                                placeholder="Ex.: Goiânia/GO"
-                            >
-
-                        </div>
+                </div>
 
 
-                        <div class="campo">
 
-                            <label for="agendaStatus">
-                                Status
-                            </label>
+                <!-- =====================================
+                     LINK EXTERNO
+                ====================================== -->
 
-                            <select id="agendaStatus">
+                <div class="portfolio-url-group">
 
-                                <option value="confirmado">
-                                    Confirmado
-                                </option>
+                    <label for="portfolioUrl">
+                        Link externo
+                    </label>
 
-                                <option value="pendente">
-                                    Pendente
-                                </option>
+                    <input
+                        type="url"
+                        id="portfolioUrl"
+                        name="portfolioUrl"
+                        placeholder="https://..."
+                    >
 
-                                <option value="cancelado">
-                                    Cancelado
-                                </option>
+                    <span class="campo-ajuda">
+                        Você também pode adicionar um link externo para este trabalho.
+                    </span>
 
-                            </select>
-
-                        </div>
+                </div>
 
 
-                        <div class="campo">
 
-                            <label for="agendaDescricao">
-                                Descrição
-                            </label>
+                <!-- =====================================
+                     AÇÃO
+                ====================================== -->
 
-                            <textarea
-                                id="agendaDescricao"
-                                rows="3"
-                                placeholder="Informações adicionais sobre o evento..."
-                            ></textarea>
-
-                        </div>
-
-                    </div>
-
+                <div class="portfolio-form-actions">
 
                     <button
                         type="button"
-                        id="btnAdicionarAgenda"
-                        class="btn-adicionar"
+                        id="btnAdicionarPortfolio"
                     >
 
                         <i data-lucide="plus"></i>
 
-                        Adicionar agenda
+                        <span>
+                            Adicionar ao portfólio
+                        </span>
 
                     </button>
 
                 </div>
 
+            </div>
 
-                <div
-                    id="agendaEditList"
-                    class="agenda-edit-list"
-                ></div>
 
-            </section>
+
+            <!-- =========================================
+                 ITENS EXISTENTES
+            ========================================== -->
+
+            <div
+                id="portfolioEditList"
+                class="portfolio-edit-list"
+            ></div>
 
         </section>
 
+    </section>
 
 
-        <!-- =================================================
-             ABA — SERVIÇOS
-        ================================================== -->
 
-        <section
-            class="editor-panel"
-            data-editor-panel="servicos"
-        >
+    <!-- =================================================
+         ABA — AGENDA
+    ================================================== -->
 
-            <section class="perfil-card">
+    <section
+        class="editor-panel"
+        data-editor-panel="agenda"
+    >
 
-                <div class="secao-cabecalho">
+        <section class="perfil-card">
 
-                    <div class="secao-icone">
+            <div class="secao-cabecalho">
 
-                        <i data-lucide="briefcase-business"></i>
+                <div class="secao-icone">
+
+                    <i data-lucide="calendar-days"></i>
+
+                </div>
+
+
+                <div>
+
+                    <h2>
+                        Agenda
+                    </h2>
+
+                    <p>
+                        Cadastre apresentações, eventos e compromissos.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="agenda-form">
+
+                <div class="form-grid">
+
+
+                    <div class="campo">
+
+                        <label for="agendaTitulo">
+                            Título
+                        </label>
+
+                        <input
+                            type="text"
+                            id="agendaTitulo"
+                            placeholder="Ex.: Show no evento"
+                        >
 
                     </div>
 
 
-                    <div>
+                    <div class="campo">
 
-                        <h2>
-                            Serviços e valores
-                        </h2>
+                        <label for="agendaTipo">
+                            Tipo
+                        </label>
 
-                        <p>
-                            Cadastre os serviços que você oferece e seus valores.
-                        </p>
+                        <select id="agendaTipo">
+
+                            <option value="">
+                                Selecione
+                            </option>
+
+                            <option value="show">
+                                Show
+                            </option>
+
+                            <option value="evento">
+                                Evento
+                            </option>
+
+                            <option value="casamento">
+                                Casamento
+                            </option>
+
+                            <option value="aniversario">
+                                Aniversário
+                            </option>
+
+                            <option value="corporativo">
+                                Corporativo
+                            </option>
+
+                            <option value="outro">
+                                Outro
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="campo">
+
+                        <label for="agendaInicio">
+                            Data e horário de início
+                        </label>
+
+                        <input
+                            type="datetime-local"
+                            id="agendaInicio"
+                        >
+
+                    </div>
+
+
+                    <div class="campo">
+
+                        <label for="agendaFim">
+                            Data e horário de término
+                        </label>
+
+                        <input
+                            type="datetime-local"
+                            id="agendaFim"
+                        >
+
+                    </div>
+
+
+                    <div class="campo">
+
+                        <label for="agendaLocalizacao">
+                            Localização
+                        </label>
+
+                        <input
+                            type="text"
+                            id="agendaLocalizacao"
+                            placeholder="Ex.: Goiânia/GO"
+                        >
+
+                    </div>
+
+
+                    <div class="campo">
+
+                        <label for="agendaStatus">
+                            Status
+                        </label>
+
+                        <select id="agendaStatus">
+
+                            <option value="confirmado">
+                                Confirmado
+                            </option>
+
+                            <option value="pendente">
+                                Pendente
+                            </option>
+
+                            <option value="cancelado">
+                                Cancelado
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="campo">
+
+                        <label for="agendaDescricao">
+                            Descrição
+                        </label>
+
+                        <textarea
+                            id="agendaDescricao"
+                            rows="3"
+                            placeholder="Informações adicionais sobre o evento..."
+                        ></textarea>
 
                     </div>
 
                 </div>
 
 
-                <div
-                    id="servicosEditList"
-                    class="servicos-edit-list"
-                ></div>
-
-
                 <button
                     type="button"
-                    id="btnAdicionarServico"
+                    id="btnAdicionarAgenda"
                     class="btn-adicionar"
                 >
 
                     <i data-lucide="plus"></i>
 
-                    Adicionar serviço
+                    Adicionar agenda
 
                 </button>
 
-            </section>
+            </div>
+
+
+            <div
+                id="agendaEditList"
+                class="agenda-edit-list"
+            ></div>
 
         </section>
 
+    </section>
 
 
-        <!-- =================================================
-             AÇÕES FINAIS
-        ================================================== -->
 
-        <div class="acoes-finais">
+    <!-- =================================================
+         ABA — SERVIÇOS
+    ================================================== -->
+
+    <section
+        class="editor-panel"
+        data-editor-panel="servicos"
+    >
+
+        <section class="perfil-card">
+
+            <div class="secao-cabecalho">
+
+                <div class="secao-icone">
+
+                    <i data-lucide="briefcase-business"></i>
+
+                </div>
+
+
+                <div>
+
+                    <h2>
+                        Serviços e valores
+                    </h2>
+
+                    <p>
+                        Cadastre os serviços que você oferece e seus valores.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="servicosList"
+                class="servicos-edit-list"
+            ></div>
+
+
+            <!--
+                 Instrução para adicionar um novo serviço.
+                 Este é o único conteúdo acrescentado nesta versão.
+            -->
+
+            <p class="servico-instrucao">
+                Para adicionar um novo serviço, clique no botão abaixo.
+            </p>
+
 
             <button
                 type="button"
-                id="btnCancelar"
+                id="btnAdicionarServico"
+                class="btn-adicionar"
+            >
+
+                <i data-lucide="plus"></i>
+
+                Adicionar serviço
+
+            </button>
+
+        </section>
+
+    </section>
+
+
+
+    <!-- =================================================
+         AÇÕES FINAIS
+    ================================================== -->
+
+    <div class="acoes-finais">
+
+        <button
+            type="button"
+            id="btnCancelar"
+            class="btn-cancelar"
+        >
+            Cancelar
+        </button>
+
+
+        <button
+            type="button"
+            id="btnSalvar"
+            class="btn-salvar"
+        >
+
+            <i data-lucide="save"></i>
+
+            Salvar alterações
+
+        </button>
+
+    </div>
+
+</main>
+
+
+
+<!-- =====================================================
+     MODAL — SERVIÇO
+====================================================== -->
+
+<div
+    id="modalServico"
+    class="modal-overlay"
+    style="display: none;"
+>
+
+    <div class="modal">
+
+
+        <div class="modal-header">
+
+            <div>
+
+                <h2>
+                    Adicionar serviço
+                </h2>
+
+                <p>
+                    Cadastre um serviço que você oferece.
+                </p>
+
+            </div>
+
+
+            <button
+                type="button"
+                id="btnFecharModalServico"
+                class="btn-fechar-modal"
+                aria-label="Fechar"
+            >
+
+                <i data-lucide="x"></i>
+
+            </button>
+
+        </div>
+
+
+        <div class="modal-body">
+
+
+            <div class="campo">
+
+                <label for="servicoNome">
+                    Nome do serviço
+                </label>
+
+                <input
+                    type="text"
+                    id="servicoNome"
+                    placeholder="Ex.: Show acústico"
+                >
+
+            </div>
+
+
+            <div class="campo">
+
+                <label for="servicoDescricao">
+                    Descrição
+                </label>
+
+                <textarea
+                    id="servicoDescricao"
+                    rows="4"
+                    placeholder="Descreva o serviço..."
+                ></textarea>
+
+            </div>
+
+
+            <div class="form-grid">
+
+
+                <div class="campo">
+
+                    <label for="servicoDuracao">
+                        Duração
+                    </label>
+
+                    <input
+                        type="text"
+                        id="servicoDuracao"
+                        placeholder="Ex.: 2 horas"
+                    >
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label for="servicoTipoPreco">
+                        Tipo de preço
+                    </label>
+
+                    <select id="servicoTipoPreco">
+
+                        <option value="fixo">
+                            Valor fixo
+                        </option>
+
+                        <option value="a_partir_de">
+                            A partir de
+                        </option>
+
+                        <option value="sob_consulta">
+                            Sob consulta
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <div
+                class="campo"
+                id="campoValorServico"
+            >
+
+                <label for="servicoValor">
+                    Valor
+                </label>
+
+                <input
+                    type="number"
+                    id="servicoValor"
+                    min="0"
+                    step="0.01"
+                    placeholder="0,00"
+                >
+
+            </div>
+
+
+            <label
+                class="switch-row"
+                for="servicoAtivo"
+            >
+
+                <span>
+
+                    <strong>
+                        Serviço ativo
+                    </strong>
+
+                    <small>
+                        Permitir que este serviço apareça no seu perfil.
+                    </small>
+
+                </span>
+
+
+                <input
+                    type="checkbox"
+                    id="servicoAtivo"
+                    checked
+                >
+
+                <span class="switch"></span>
+
+            </label>
+
+        </div>
+
+
+        <div class="modal-footer">
+
+            <button
+                type="button"
+                id="btnCancelarServico"
                 class="btn-cancelar"
             >
                 Cancelar
@@ -1444,328 +1656,133 @@
 
             <button
                 type="button"
-                id="btnSalvar"
+                id="btnSalvarServico"
                 class="btn-salvar"
             >
-
-                <i data-lucide="save"></i>
-
-                Salvar alterações
-
+                Salvar
             </button>
 
         </div>
 
-    </main>
+    </div>
 
+</div>
 
 
-    <!-- =====================================================
-         MODAL — SERVIÇO
-    ====================================================== -->
 
-    <div
-        id="modalServico"
-        class="modal-overlay"
-        style="display: none;"
-    >
+<!-- =====================================================
+     TOAST
+====================================================== -->
 
-        <div class="modal">
+<div
+    id="toast"
+    class="toast"
+    aria-live="polite"
+    aria-atomic="true"
+>
 
+    <i data-lucide="check-circle"></i>
 
-            <div class="modal-header">
+    <span id="toastMessage"></span>
 
-                <div>
+</div>
 
-                    <h2>
-                        Adicionar serviço
-                    </h2>
 
-                    <p>
-                        Cadastre um serviço que você oferece.
-                    </p>
 
-                </div>
+<!-- =====================================================
+     LOADING
+====================================================== -->
 
+<div
+    id="loadingOverlay"
+    class="loading-overlay"
+    aria-hidden="true"
+>
 
-                <button
-                    type="button"
-                    id="btnFecharModalServico"
-                    class="btn-fechar-modal"
-                    aria-label="Fechar"
-                >
+    <div class="loading-box">
 
-                    <i data-lucide="x"></i>
+        <div class="spinner"></div>
 
-                </button>
+        <strong>
+            Aguarde...
+        </strong>
 
-            </div>
-
-
-            <div class="modal-body">
-
-
-                <div class="campo">
-
-                    <label for="servicoNome">
-                        Nome do serviço
-                    </label>
-
-                    <input
-                        type="text"
-                        id="servicoNome"
-                        placeholder="Ex.: Show acústico"
-                    >
-
-                </div>
-
-
-                <div class="campo">
-
-                    <label for="servicoDescricao">
-                        Descrição
-                    </label>
-
-                    <textarea
-                        id="servicoDescricao"
-                        rows="4"
-                        placeholder="Descreva o serviço..."
-                    ></textarea>
-
-                </div>
-
-
-                <div class="form-grid">
-
-
-                    <div class="campo">
-
-                        <label for="servicoDuracao">
-                            Duração
-                        </label>
-
-                        <input
-                            type="text"
-                            id="servicoDuracao"
-                            placeholder="Ex.: 2 horas"
-                        >
-
-                    </div>
-
-
-                    <div class="campo">
-
-                        <label for="servicoTipoPreco">
-                            Tipo de preço
-                        </label>
-
-                        <select id="servicoTipoPreco">
-
-                            <option value="fixo">
-                                Valor fixo
-                            </option>
-
-                            <option value="a_partir">
-                                A partir de
-                            </option>
-
-                            <option value="sob_consulta">
-                                Sob consulta
-                            </option>
-
-                        </select>
-
-                    </div>
-
-                </div>
-
-
-                <div
-                    class="campo"
-                    id="campoValorServico"
-                >
-
-                    <label for="servicoValor">
-                        Valor
-                    </label>
-
-                    <input
-                        type="number"
-                        id="servicoValor"
-                        min="0"
-                        step="0.01"
-                        placeholder="0,00"
-                    >
-
-                </div>
-
-
-                <label
-                    class="switch-row"
-                    for="servicoAtivo"
-                >
-
-                    <span>
-
-                        <strong>
-                            Serviço ativo
-                        </strong>
-
-                        <small>
-                            Permitir que este serviço apareça no seu perfil.
-                        </small>
-
-                    </span>
-
-
-                    <input
-                        type="checkbox"
-                        id="servicoAtivo"
-                        checked
-                    >
-
-                    <span class="switch"></span>
-
-                </label>
-
-            </div>
-
-
-            <div class="modal-footer">
-
-                <button
-                    type="button"
-                    id="btnCancelarServico"
-                    class="btn-cancelar"
-                >
-                    Cancelar
-                </button>
-
-
-                <button
-                    type="button"
-                    id="btnSalvarServico"
-                    class="btn-salvar"
-                >
-                    Salvar
-                </button>
-
-            </div>
-
-        </div>
+        <span id="loadingText">
+            Carregando informações do perfil.
+        </span>
 
     </div>
 
-
-
-    <!-- =====================================================
-         TOAST
-    ====================================================== -->
-
-    <div
-        id="toast"
-        class="toast"
-        aria-live="polite"
-        aria-atomic="true"
-    >
-
-        <i data-lucide="check-circle"></i>
-
-        <span id="toastMessage"></span>
-
-    </div>
+</div>
 
 
 
-    <!-- =====================================================
-         LOADING
-    ====================================================== -->
+<!-- =====================================================
+     SCRIPTS
+====================================================== -->
 
-    <div
-        id="loadingOverlay"
-        class="loading-overlay"
-        aria-hidden="true"
-    >
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-        <div class="loading-box">
-
-            <div class="spinner"></div>
-
-            <strong>
-                Aguarde...
-            </strong>
-
-            <span id="loadingText">
-                Carregando informações do perfil.
-            </span>
-
-        </div>
-
-    </div>
+<script src="https://unpkg.com/lucide@latest"></script>
 
 
+<!-- CORE -->
 
-    <!-- =====================================================
-         SCRIPTS
-    ====================================================== -->
+<script src="js/core/SupabaseClient.js"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/core/Sessao.js"></script>
 
-    <script src="https://unpkg.com/lucide@latest"></script>
+<script src="js/core/UsuarioAtual.js"></script>
 
+<script src="js/core/ControleSessao.js"></script>
 
-    <!-- CORE -->
-
-    <script src="js/core/SupabaseClient.js"></script>
-
-    <script src="js/core/Sessao.js"></script>
-
-    <script src="js/core/UsuarioAtual.js"></script>
-
-    <script src="js/core/ControleSessao.js"></script>
-
-    <script src="js/core/RoteamentoPerfil.js"></script>
+<script src="js/core/RoteamentoPerfil.js"></script>
 
 
-    <!-- MÓDULOS DO EDITOR -->
+<!-- MÓDULOS DO EDITOR -->
 
-    <script src="js/perfil/PerfilUtils.js"></script>
+<script src="js/perfil/PerfilUtils.js"></script>
 
-    <script src="js/perfil/PerfilAbas.js"></script>
+<script src="js/perfil/PerfilAbas.js"></script>
 
-    <script src="js/perfil/PerfilEditorFoto.js"></script>
+<script src="js/perfil/PerfilEditorFoto.js"></script>
 
-    <script src="js/perfil/PerfilEditorTipo.js"></script>
+<script src="js/perfil/PerfilEditorTipo.js"></script>
 
-    <script src="js/perfil/PerfilPortfolio.js"></script>
+<script src="js/perfil/PerfilPortfolio.js"></script>
 
-    <script src="js/perfil/PerfilAgenda.js"></script>
+<script src="js/perfil/PerfilAgenda.js"></script>
 
-    <script src="js/perfil/PerfilServicos.js"></script>
+<script src="js/perfil/PerfilServicos.js"></script>
 
-    <script src="js/perfil/PerfilInstrumentos.js"></script>
+<script src="js/perfil/PerfilInstrumentos.js"></script>
 
-    <script src="js/perfil/PerfilEditor.js"></script>
+<script src="js/perfil/PerfilEditorUI.js"></script>
+
+<script src="js/perfil/PerfilEditorDados.js"></script>
+
+<script src="js/perfil/PerfilEditor.js"></script>
 
 
-    <!-- ÍCONES -->
+<!-- ÍCONES -->
 
-    <script>
+<script>
 
-        document.addEventListener(
-            "DOMContentLoaded",
-            function () {
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
 
-                if (window.lucide) {
+            if (window.lucide) {
 
-                    lucide.createIcons();
-
-                }
+                lucide.createIcons();
 
             }
-        );
 
-    </script>
+        }
+    );
+
+</script>
+
 
 </body>
 

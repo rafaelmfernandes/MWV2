@@ -1,6 +1,20 @@
 /* =========================================================
    MUSICALWORLD — EDITAR PERFIL
    SERVIÇOS
+
+   Responsabilidade:
+   - Estilizar a lista de serviços do perfil.
+   - Estilizar os cards individuais.
+   - Estilizar editar/excluir.
+   - Estilizar o modal de criação/edição.
+
+   A lógica de carregar, salvar, editar e excluir permanece
+   no PerfilServicos.js.
+   ========================================================= */
+
+
+/* =========================================================
+   AÇÕES
    ========================================================= */
 
 .acoes-servico {
@@ -17,7 +31,13 @@
     margin-top: 0;
 }
 
-.servicos-edit-list {
+
+/* =========================================================
+   LISTA DE SERVIÇOS
+   ========================================================= */
+
+.servicos-edit-list,
+#servicosList {
     width: 100%;
 
     display: grid;
@@ -29,10 +49,17 @@
     min-width: 0;
 }
 
+
+/* =========================================================
+   CARD DO SERVIÇO
+   ========================================================= */
+
 .servico-edit-card {
     width: 100%;
 
     min-width: 0;
+
+    box-sizing: border-box;
 
     display: grid;
 
@@ -63,9 +90,10 @@
         0 5px 18px rgba(30, 35, 55, 0.05);
 }
 
-/* ---------------------------------------------------------
-   Ícone
-   --------------------------------------------------------- */
+
+/* =========================================================
+   ÍCONE DO SERVIÇO
+   ========================================================= */
 
 .servico-edit-icone {
     width: 44px;
@@ -91,9 +119,10 @@
     display: block;
 }
 
-/* ---------------------------------------------------------
-   Informações
-   --------------------------------------------------------- */
+
+/* =========================================================
+   INFORMAÇÕES DO SERVIÇO
+   ========================================================= */
 
 .servico-edit-info {
     min-width: 0;
@@ -141,9 +170,10 @@
     -webkit-line-clamp: 2;
 }
 
-/* ---------------------------------------------------------
-   Metadados
-   --------------------------------------------------------- */
+
+/* =========================================================
+   METADADOS
+   ========================================================= */
 
 .servico-edit-meta {
     display: flex;
@@ -186,9 +216,10 @@
     display: block;
 }
 
-/* ---------------------------------------------------------
-   Preço
-   --------------------------------------------------------- */
+
+/* =========================================================
+   PREÇO
+   ========================================================= */
 
 .servico-edit-preco {
     min-width: 130px;
@@ -220,9 +251,10 @@
     white-space: nowrap;
 }
 
-/* ---------------------------------------------------------
-   Status
-   --------------------------------------------------------- */
+
+/* =========================================================
+   STATUS
+   ========================================================= */
 
 .servico-status {
     display: inline-flex;
@@ -262,9 +294,10 @@
     color: #858c9a;
 }
 
-/* ---------------------------------------------------------
-   Ações
-   --------------------------------------------------------- */
+
+/* =========================================================
+   AÇÕES DO CARD
+   ========================================================= */
 
 .servico-edit-card .media-edit-actions {
     display: flex;
@@ -343,14 +376,721 @@
     transform: scale(0.94);
 }
 
-/* ---------------------------------------------------------
-   Responsivo
-   --------------------------------------------------------- */
+
+/* =========================================================
+   MODAL — FUNDO
+   ========================================================= */
+
+.modal-overlay {
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 9999;
+
+    display: none;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 24px;
+
+    background: rgba(15, 23, 42, 0.48);
+
+    backdrop-filter: blur(5px);
+
+    -webkit-backdrop-filter: blur(5px);
+
+    overflow-y: auto;
+
+    box-sizing: border-box;
+}
+
+
+/*
+   Quando o JavaScript adiciona esta classe ao body,
+   impedimos que a página role por trás do modal.
+*/
+
+body.modal-aberto {
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   MODAL — CONTAINER
+   ========================================================= */
+
+.modal-overlay .modal {
+    position: relative;
+
+    width: 100%;
+
+    max-width: 560px;
+
+    max-height: calc(100vh - 48px);
+
+    display: flex;
+
+    flex-direction: column;
+
+    overflow: hidden;
+
+    margin: auto;
+
+    border: 1px solid rgba(15, 23, 42, 0.08);
+
+    border-radius: 22px;
+
+    background: #ffffff;
+
+    box-shadow:
+        0 24px 70px rgba(15, 23, 42, 0.18),
+        0 8px 25px rgba(15, 23, 42, 0.08);
+
+    animation: modalServicoEntrada 0.18s ease-out;
+}
+
+@keyframes modalServicoEntrada {
+
+    from {
+        opacity: 0;
+
+        transform: translateY(12px) scale(0.985);
+    }
+
+    to {
+        opacity: 1;
+
+        transform: translateY(0) scale(1);
+    }
+}
+
+
+/* =========================================================
+   CABEÇALHO DO MODAL
+   ========================================================= */
+
+.modal-overlay .modal-header {
+    display: flex;
+
+    align-items: flex-start;
+
+    justify-content: space-between;
+
+    gap: 18px;
+
+    padding: 22px 24px 18px;
+
+    border-bottom: 1px solid var(--mw-border);
+
+    background: #ffffff;
+}
+
+.modal-overlay .modal-header > div {
+    min-width: 0;
+}
+
+.modal-overlay .modal-header h2 {
+    margin: 0;
+
+    color: var(--mw-text);
+
+    font-size: 18px;
+
+    line-height: 1.25;
+
+    font-weight: 800;
+}
+
+.modal-overlay .modal-header p {
+    margin: 6px 0 0;
+
+    color: var(--mw-muted);
+
+    font-size: 12px;
+
+    line-height: 1.45;
+}
+
+
+/* =========================================================
+   BOTÃO FECHAR
+   ========================================================= */
+
+.btn-fechar-modal {
+    width: 36px;
+    height: 36px;
+
+    min-width: 36px;
+
+    padding: 0;
+
+    display: grid;
+
+    place-items: center;
+
+    border: 1px solid var(--mw-border);
+
+    border-radius: 10px;
+
+    background: #ffffff;
+
+    color: var(--mw-muted);
+
+    cursor: pointer;
+
+    transition:
+        background 0.16s ease,
+        border-color 0.16s ease,
+        color 0.16s ease,
+        transform 0.12s ease;
+}
+
+.btn-fechar-modal svg {
+    width: 17px;
+    height: 17px;
+
+    display: block;
+}
+
+.btn-fechar-modal:hover {
+    border-color: #d7dce5;
+
+    background: #f6f8fb;
+
+    color: var(--mw-text);
+}
+
+.btn-fechar-modal:active {
+    transform: scale(0.94);
+}
+
+
+/* =========================================================
+   CORPO DO MODAL
+   ========================================================= */
+
+.modal-overlay .modal-body {
+    padding: 22px 24px;
+
+    overflow-y: auto;
+
+    background: #ffffff;
+}
+
+
+/* =========================================================
+   CAMPOS
+   ========================================================= */
+
+.modal-overlay .campo {
+    width: 100%;
+
+    min-width: 0;
+
+    margin-bottom: 17px;
+}
+
+.modal-overlay .campo:last-child {
+    margin-bottom: 0;
+}
+
+.modal-overlay .campo label {
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: var(--mw-text);
+
+    font-size: 11px;
+
+    line-height: 1.3;
+
+    font-weight: 750;
+}
+
+
+/* =========================================================
+   INPUTS / TEXTAREA / SELECT
+   ========================================================= */
+
+.modal-overlay .campo input,
+.modal-overlay .campo textarea,
+.modal-overlay .campo select {
+    width: 100%;
+
+    box-sizing: border-box;
+
+    border: 1px solid var(--mw-border);
+
+    border-radius: 11px;
+
+    background: #ffffff;
+
+    color: var(--mw-text);
+
+    font-family: inherit;
+
+    font-size: 13px;
+
+    line-height: 1.4;
+
+    outline: none;
+
+    transition:
+        border-color 0.16s ease,
+        box-shadow 0.16s ease,
+        background 0.16s ease;
+}
+
+.modal-overlay .campo input,
+.modal-overlay .campo select {
+    height: 42px;
+
+    padding: 0 12px;
+}
+
+.modal-overlay .campo textarea {
+    min-height: 104px;
+
+    padding: 11px 12px;
+
+    resize: vertical;
+}
+
+.modal-overlay .campo input::placeholder,
+.modal-overlay .campo textarea::placeholder {
+    color: #a1a8b5;
+
+    opacity: 1;
+}
+
+.modal-overlay .campo input:hover,
+.modal-overlay .campo textarea:hover,
+.modal-overlay .campo select:hover {
+    border-color: #cfd5df;
+}
+
+.modal-overlay .campo input:focus,
+.modal-overlay .campo textarea:focus,
+.modal-overlay .campo select:focus {
+    border-color: var(--mw-primary);
+
+    box-shadow:
+        0 0 0 3px rgba(22, 119, 210, 0.10);
+
+    background: #ffffff;
+}
+
+
+/* =========================================================
+   GRID DO FORMULÁRIO
+   ========================================================= */
+
+.modal-overlay .form-grid {
+    width: 100%;
+
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1fr)
+        minmax(0, 1fr);
+
+    gap: 14px;
+}
+
+
+/* =========================================================
+   CAMPO DE VALOR
+   ========================================================= */
+
+#campoValorServico {
+    transition:
+        opacity 0.16s ease,
+        max-height 0.16s ease,
+        margin 0.16s ease;
+}
+
+#servicoValor {
+    appearance: textfield;
+
+    -moz-appearance: textfield;
+}
+
+#servicoValor::-webkit-outer-spin-button,
+#servicoValor::-webkit-inner-spin-button {
+    margin: 0;
+
+    -webkit-appearance: none;
+}
+
+
+/* =========================================================
+   SWITCH — SERVIÇO ATIVO
+   ========================================================= */
+
+.modal-overlay .switch-row {
+    width: 100%;
+
+    min-height: 48px;
+
+    box-sizing: border-box;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 14px;
+
+    margin-top: 4px;
+
+    padding: 11px 13px;
+
+    border: 1px solid var(--mw-border);
+
+    border-radius: 12px;
+
+    background: #f9fafc;
+
+    color: var(--mw-text);
+
+    cursor: pointer;
+
+    user-select: none;
+}
+
+.modal-overlay .switch-row > span:first-child {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 2px;
+
+    min-width: 0;
+}
+
+.modal-overlay .switch-row strong {
+    color: var(--mw-text);
+
+    font-size: 12px;
+
+    line-height: 1.3;
+
+    font-weight: 750;
+}
+
+.modal-overlay .switch-row small {
+    color: var(--mw-muted);
+
+    font-size: 10px;
+
+    line-height: 1.3;
+}
+
+
+/* =========================================================
+   CHECKBOX NATIVO
+   ========================================================= */
+
+.modal-overlay .switch-row input[type="checkbox"] {
+    position: absolute;
+
+    width: 1px;
+    height: 1px;
+
+    margin: -1px;
+
+    padding: 0;
+
+    overflow: hidden;
+
+    clip: rect(0, 0, 0, 0);
+
+    white-space: nowrap;
+
+    border: 0;
+}
+
+
+/* =========================================================
+   SWITCH VISUAL
+   ========================================================= */
+
+.modal-overlay .switch-row .switch {
+    position: relative;
+
+    width: 42px;
+    height: 24px;
+
+    min-width: 42px;
+
+    display: block;
+
+    border-radius: 999px;
+
+    background: #d9dee7;
+
+    transition:
+        background 0.18s ease,
+        box-shadow 0.18s ease;
+}
+
+.modal-overlay .switch-row .switch::after {
+    content: "";
+
+    position: absolute;
+
+    top: 3px;
+    left: 3px;
+
+    width: 18px;
+    height: 18px;
+
+    border-radius: 50%;
+
+    background: #ffffff;
+
+    box-shadow:
+        0 1px 4px rgba(15, 23, 42, 0.20);
+
+    transition:
+        transform 0.18s ease;
+}
+
+.modal-overlay .switch-row input[type="checkbox"]:checked + .switch {
+    background: var(--mw-primary);
+}
+
+.modal-overlay .switch-row input[type="checkbox"]:checked + .switch::after {
+    transform: translateX(18px);
+}
+
+.modal-overlay .switch-row input[type="checkbox"]:focus-visible + .switch {
+    box-shadow:
+        0 0 0 3px rgba(22, 119, 210, 0.12);
+}
+
+
+/* =========================================================
+   RODAPÉ DO MODAL
+   ========================================================= */
+
+.modal-overlay .modal-footer {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: flex-end;
+
+    gap: 9px;
+
+    padding: 16px 24px 20px;
+
+    border-top: 1px solid var(--mw-border);
+
+    background: #ffffff;
+}
+
+
+/* =========================================================
+   BOTÃO CANCELAR
+   ========================================================= */
+
+.modal-overlay .btn-cancelar {
+    min-height: 40px;
+
+    padding: 0 16px;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 7px;
+
+    border: 1px solid var(--mw-border);
+
+    border-radius: 10px;
+
+    background: #ffffff;
+
+    color: var(--mw-text);
+
+    font-family: inherit;
+
+    font-size: 12px;
+
+    font-weight: 750;
+
+    cursor: pointer;
+
+    transition:
+        background 0.16s ease,
+        border-color 0.16s ease,
+        color 0.16s ease,
+        transform 0.12s ease;
+}
+
+.modal-overlay .btn-cancelar:hover {
+    border-color: #cfd5df;
+
+    background: #f6f8fb;
+}
+
+.modal-overlay .btn-cancelar:active {
+    transform: scale(0.97);
+}
+
+
+/* =========================================================
+   BOTÃO SALVAR
+   ========================================================= */
+
+.modal-overlay .btn-salvar {
+    min-height: 40px;
+
+    padding: 0 17px;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 7px;
+
+    border: 1px solid var(--mw-primary);
+
+    border-radius: 10px;
+
+    background: var(--mw-primary);
+
+    color: #ffffff;
+
+    font-family: inherit;
+
+    font-size: 12px;
+
+    font-weight: 800;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 4px 12px rgba(22, 119, 210, 0.16);
+
+    transition:
+        background 0.16s ease,
+        border-color 0.16s ease,
+        box-shadow 0.16s ease,
+        transform 0.12s ease;
+}
+
+.modal-overlay .btn-salvar svg {
+    width: 15px;
+    height: 15px;
+
+    display: block;
+}
+
+.modal-overlay .btn-salvar:hover {
+    border-color: var(--mw-primary-dark);
+
+    background: var(--mw-primary-dark);
+
+    box-shadow:
+        0 6px 16px rgba(22, 119, 210, 0.20);
+}
+
+.modal-overlay .btn-salvar:active {
+    transform: scale(0.97);
+}
+
+.modal-overlay .btn-salvar:disabled,
+.modal-overlay .btn-cancelar:disabled {
+    opacity: 0.6;
+
+    cursor: not-allowed;
+
+    transform: none;
+
+    box-shadow: none;
+}
+
+
+/* =========================================================
+   RESPONSIVIDADE — MODAL
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    .modal-overlay {
+        align-items: flex-end;
+
+        padding: 12px;
+    }
+
+    .modal-overlay .modal {
+        max-width: 100%;
+
+        max-height: calc(100vh - 24px);
+
+        border-radius: 20px;
+    }
+
+    .modal-overlay .modal-header {
+        padding: 18px 18px 15px;
+    }
+
+    .modal-overlay .modal-header h2 {
+        font-size: 16px;
+    }
+
+    .modal-overlay .modal-header p {
+        font-size: 11px;
+    }
+
+    .modal-overlay .modal-body {
+        padding: 18px;
+    }
+
+    .modal-overlay .modal-footer {
+        padding: 13px 18px 17px;
+    }
+}
+
+
+/* =========================================================
+   RESPONSIVIDADE — CARD DE SERVIÇO
+   ========================================================= */
 
 @media (max-width: 600px) {
 
+    /*
+       O card possui quatro áreas:
+       1. ícone
+       2. informações
+       3. preço/status
+       4. ações
+
+       Mantemos as quatro áreas no celular para evitar que
+       preço e botões sejam empurrados para uma linha
+       incorreta.
+    */
+
     .servico-edit-card {
-        grid-template-columns: 40px minmax(0, 1fr) auto;
+        grid-template-columns:
+            40px
+            minmax(0, 1fr)
+            auto;
+
+        grid-template-areas:
+            "icone info acoes"
+            "icone preco acoes";
 
         gap: 9px;
 
@@ -365,12 +1105,20 @@
 
         min-width: 40px;
 
+        grid-area: icone;
+
+        align-self: start;
+
         border-radius: 10px;
     }
 
     .servico-edit-icone svg {
         width: 17px;
         height: 17px;
+    }
+
+    .servico-edit-info {
+        grid-area: info;
     }
 
     .servico-edit-info h3 {
@@ -401,13 +1149,19 @@
     }
 
     .servico-edit-preco {
+        grid-area: preco;
+
         min-width: 0;
+
+        align-items: flex-start;
 
         gap: 5px;
     }
 
     .servico-edit-preco strong {
         font-size: 11px;
+
+        text-align: left;
     }
 
     .servico-status {
@@ -419,7 +1173,13 @@
     }
 
     .servico-edit-card .media-edit-actions {
+        grid-area: acoes;
+
         gap: 4px;
+
+        align-self: center;
+
+        flex-direction: column;
     }
 
     .btn-editar-servico,
@@ -437,4 +1197,116 @@
         width: 14px;
         height: 14px;
     }
+}
+
+
+/* =========================================================
+   RESPONSIVIDADE — MODAL EM TELAS PEQUENAS
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    .modal-overlay {
+        padding: 8px;
+    }
+
+    .modal-overlay .modal {
+        max-height: calc(100vh - 16px);
+
+        border-radius: 18px;
+    }
+
+    .modal-overlay .modal-header {
+        gap: 10px;
+
+        padding: 16px 16px 13px;
+    }
+
+    .modal-overlay .modal-body {
+        padding: 16px;
+    }
+
+    .modal-overlay .modal-footer {
+        padding: 12px 16px 15px;
+    }
+
+    .modal-overlay .form-grid {
+        grid-template-columns: 1fr;
+
+        gap: 0;
+    }
+
+    .modal-overlay .campo input,
+    .modal-overlay .campo select {
+        height: 40px;
+    }
+
+    .modal-overlay .campo textarea {
+        min-height: 96px;
+    }
+
+    .modal-overlay .modal-footer .btn-cancelar,
+    .modal-overlay .modal-footer .btn-salvar {
+        flex: 1;
+
+        min-height: 40px;
+    }
+}
+
+
+/* =========================================================
+   ACESSIBILIDADE
+   ========================================================= */
+
+.modal-overlay button:focus-visible,
+.modal-overlay input:focus-visible,
+.modal-overlay textarea:focus-visible,
+.modal-overlay select:focus-visible {
+    outline: none;
+}
+
+
+/* =========================================================
+   REDUÇÃO DE MOVIMENTO
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .servico-edit-card,
+    .btn-editar-servico,
+    .servico-edit-card .btn-excluir,
+    .btn-fechar-modal,
+    .modal-overlay .btn-cancelar,
+    .modal-overlay .btn-salvar,
+    .modal-overlay .switch-row .switch,
+    .modal-overlay .switch-row .switch::after,
+    .modal-overlay .campo input,
+    .modal-overlay .campo textarea,
+    .modal-overlay .campo select {
+        transition: none;
+    }
+
+    .modal-overlay .modal {
+        animation: none;
+    }
+}
+
+
+/* =========================================================
+   INSTRUÇÃO — SERVIÇOS
+
+   Orienta o usuário sobre como iniciar o cadastro de um
+   novo serviço. É apenas um texto auxiliar visual.
+   ========================================================= */
+
+.servico-instrucao {
+    margin: 0 0 9px;
+
+    color: var(--mw-muted);
+
+    font-size: 11px;
+
+    line-height: 1.45;
+
+    font-weight: 500;
 }
