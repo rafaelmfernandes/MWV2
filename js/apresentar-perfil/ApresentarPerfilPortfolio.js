@@ -28,6 +28,7 @@ completamente visível.
 Calcular cores predominantes das imagens e vídeos
 do portfólio.
 Alimentar o fundo dinâmico de toda a página.
+Realizar transições suaves entre as paletas de cores.
 Controlar a intensidade do fundo conforme o portfólio
 entra ou sai da viewport.
 Manter compatibilidade com os demais módulos
@@ -108,22 +109,19 @@ let videosPausadosPorSwipe = false;
 
 /* =========================================================
 FUNDO DINÂMICO DA PÁGINA
-========================
 
 Este estado controla as cores utilizadas pelo fundo
 dinâmico de toda a página pública.
 
-IMPORTANTE:
+O JavaScript:
 
-O JavaScript NÃO cria o gradiente.
-
-O JavaScript apenas:
-
-1. analisa a imagem ou um frame do vídeo ativo;
+1. analisa a imagem ou frame do vídeo ativo;
 2. identifica as cores predominantes;
 3. envia as cores para o BODY;
-4. calcula a intensidade de visibilidade;
-5. informa essa intensidade ao CSS.
+4. realiza a transição suave entre a paleta anterior
+   e a nova paleta;
+5. calcula a intensidade de visibilidade;
+6. informa essa intensidade ao CSS.
 
 O arquivo:
 
@@ -132,7 +130,6 @@ apresentar-perfil-fundo.css
 é responsável por desenhar o efeito visual.
 
 O #portfolioGrid NÃO recebe mais o fundo dinâmico.
-
 ========================================================= */
 
 let fundoDinamico = {
@@ -142,7 +139,34 @@ chaveAtual: "",
 
 processamento: 0,
 
-scrollRegistrado: false
+scrollRegistrado: false,
+
+/*
+ * Guarda as três cores que estão atualmente
+ * sendo exibidas no BODY.
+ *
+ * Isso permite que uma nova transição comece
+ * exatamente de onde a animação anterior parou.
+ */
+
+coresAtuais: null,
+
+/*
+ * Identificador da animação requestAnimationFrame.
+ *
+ * Quando uma nova mídia é selecionada antes da
+ * transição anterior terminar, cancelamos a animação
+ * anterior e iniciamos uma nova a partir das cores
+ * atuais.
+ */
+
+animacaoId: null,
+
+/*
+ * Duração da transição das cores.
+ */
+
+duracaoTransicao: 800
 
 
 };
@@ -372,7 +396,7 @@ FUNDO DINÂMICO DA PÁGINA
 
 * Retorna o BODY da página.
 *
-* O fundo dinâmico agora pertence à página inteira,
+* O fundo dinâmico pertence à página inteira,
 * e não mais ao container do portfólio.
   */
 
@@ -407,37 +431,138 @@ return [
 
 /*
 
-* Aplica as cores fallback ao BODY.
+* Converte uma cor CSS rgba/rgb em objeto RGB.
+*
+* Esta função existe para que possamos interpolar
+* matematicamente as cores durante a transição.
   */
 
-function aplicarCoresFundoFallback() {
+function converterCssParaRgb(cor) {
 
 
-const body =
-    obterBody();
+if (!cor) {
 
-if (!body) {
-
-    return;
+    return null;
 
 }
 
-const cores =
-    obterCoresFallbackDinamica();
+const texto =
+    String(cor).trim();
 
-body.style.setProperty(
-    "--perfil-fundo-cor-1",
-    cores[0]
-);
+const correspondencia =
+    texto.match(
+        /rgba?\(\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)(?:\s*,\s*([\d.]+))?\s*\)/i
+    );
 
-body.style.setProperty(
-    "--perfil-fundo-cor-2",
-    cores[1]
-);
+if (!correspondencia) {
 
-body.style.setProperty(
-    "--perfil-fundo-cor-3",
-    cores[2]
+    return null;
+
+}
+
+return {
+
+    r:
+        Number(
+            correspondencia[1]
+        ),
+
+    g:
+        Number(
+            correspondencia[2]
+        ),
+
+    b:
+        Number(
+            correspondencia[3]
+        ),
+
+    a:
+        correspondencia[4] !== undefined
+
+            ? Number(
+                correspondencia[4]
+            )
+
+            : 1
+
+};
+
+
+}
+
+/*
+
+* Interpola duas cores RGB.
+*
+* progresso:
+* 0 = cor inicial
+* 1 = cor final
+  */
+
+function interpolarCor(
+corInicial,
+corFinal,
+progresso
+) {
+
+
+const inicial =
+    converterCssParaRgb(
+        corInicial
+    );
+
+const final =
+    converterCssParaRgb(
+        corFinal
+    );
+
+if (
+    !inicial ||
+    !final
+) {
+
+    return corFinal;
+
+}
+
+const r =
+
+    inicial.r +
+    (
+        (final.r - inicial.r) *
+        progresso
+    );
+
+const g =
+
+    inicial.g +
+    (
+        (final.g - inicial.g) *
+        progresso
+    );
+
+const b =
+
+    inicial.b +
+    (
+        (final.b - inicial.b) *
+        progresso
+    );
+
+const a =
+
+    inicial.a +
+    (
+        (final.a - inicial.a) *
+        progresso
+    );
+
+return converterRgbParaCss(
+    r,
+    g,
+    b,
+    a
 );
 
 
@@ -445,13 +570,74 @@ body.style.setProperty(
 
 /*
 
-* Aplica as três cores calculadas ao BODY.
+* Função de easing utilizada na transição.
 *
-* O JavaScript apenas fornece os valores.
-* O CSS continua responsável pelo gradiente.
+* Começa suavemente, acelera no meio e desacelera
+* novamente antes de chegar à cor final.
   */
 
-function aplicarCoresFundoDinamico(
+function aplicarEasingSuave(
+progresso
+) {
+
+
+return (
+    progresso < 0.5
+
+        ? 2 *
+            progresso *
+            progresso
+
+        : 1 -
+            (
+                Math.pow(
+                    -2 *
+                    progresso +
+                    2,
+                    2
+                ) /
+                2
+            )
+);
+
+
+}
+
+/*
+
+* Interrompe uma animação de cores que ainda esteja
+* em andamento.
+  */
+
+function cancelarTransicaoCores() {
+
+
+if (
+    fundoDinamico.animacaoId !== null
+) {
+
+    cancelAnimationFrame(
+        fundoDinamico.animacaoId
+    );
+
+    fundoDinamico.animacaoId =
+        null;
+
+}
+
+
+}
+
+/*
+
+* Aplica uma paleta de cores imediatamente ao BODY.
+*
+* Esta função é utilizada somente quando ainda não
+* existe uma paleta anterior válida ou quando precisamos
+* fazer uma alteração instantânea.
+  */
+
+function aplicarCoresFundoImediatamente(
 cores
 ) {
 
@@ -465,8 +651,6 @@ if (
     cores.length < 3
 ) {
 
-    aplicarCoresFundoFallback();
-
     return;
 
 }
@@ -484,6 +668,299 @@ body.style.setProperty(
 body.style.setProperty(
     "--perfil-fundo-cor-3",
     cores[2]
+);
+
+fundoDinamico.coresAtuais = [
+
+    cores[0],
+
+    cores[1],
+
+    cores[2]
+
+];
+
+
+}
+
+/*
+
+* Faz a transição suave entre a paleta atual e a nova.
+*
+* IMPORTANTE:
+*
+* A animação ocorre nas próprias variáveis CSS.
+* O CSS continua responsável pelo gradiente.
+*
+* Dessa maneira não alteramos o restante da estrutura
+* visual da página.
+  */
+
+function animarCoresFundo(
+novasCores
+) {
+
+
+const body =
+    obterBody();
+
+if (
+    !body ||
+    !Array.isArray(novasCores) ||
+    novasCores.length < 3
+) {
+
+    return;
+
+}
+
+const destino = [
+
+    novasCores[0],
+
+    novasCores[1],
+
+    novasCores[2]
+
+];
+
+/*
+ * Se não temos uma paleta anterior válida,
+ * aplicamos a primeira diretamente.
+ */
+
+if (
+    !Array.isArray(
+        fundoDinamico.coresAtuais
+    ) ||
+    fundoDinamico.coresAtuais.length < 3
+) {
+
+    cancelarTransicaoCores();
+
+    aplicarCoresFundoImediatamente(
+        destino
+    );
+
+    return;
+
+}
+
+/*
+ * Se a paleta atual já é igual à nova,
+ * não precisamos criar uma nova animação.
+ */
+
+if (
+
+    fundoDinamico.coresAtuais[0] ===
+        destino[0] &&
+
+    fundoDinamico.coresAtuais[1] ===
+        destino[1] &&
+
+    fundoDinamico.coresAtuais[2] ===
+        destino[2]
+
+) {
+
+    return;
+
+}
+
+cancelarTransicaoCores();
+
+const origem = [
+
+    fundoDinamico.coresAtuais[0],
+
+    fundoDinamico.coresAtuais[1],
+
+    fundoDinamico.coresAtuais[2]
+
+];
+
+const inicio =
+    performance.now();
+
+const duracao =
+    fundoDinamico.duracaoTransicao;
+
+function animar(
+    agora
+) {
+
+    const tempoDecorrido =
+        agora -
+        inicio;
+
+    let progresso =
+
+        Math.min(
+
+            1,
+
+            tempoDecorrido /
+            duracao
+
+        );
+
+    progresso =
+        aplicarEasingSuave(
+            progresso
+        );
+
+    const coresInterpoladas = [
+
+        interpolarCor(
+            origem[0],
+            destino[0],
+            progresso
+        ),
+
+        interpolarCor(
+            origem[1],
+            destino[1],
+            progresso
+        ),
+
+        interpolarCor(
+            origem[2],
+            destino[2],
+            progresso
+        )
+
+    ];
+
+    body.style.setProperty(
+        "--perfil-fundo-cor-1",
+        coresInterpoladas[0]
+    );
+
+    body.style.setProperty(
+        "--perfil-fundo-cor-2",
+        coresInterpoladas[1]
+    );
+
+    body.style.setProperty(
+        "--perfil-fundo-cor-3",
+        coresInterpoladas[2]
+    );
+
+    /*
+     * Guarda exatamente a cor que está sendo
+     * exibida neste momento.
+     *
+     * Isso permite interromper a animação sem
+     * causar um salto visual.
+     */
+
+    fundoDinamico.coresAtuais =
+        coresInterpoladas;
+
+    if (
+        progresso < 1
+    ) {
+
+        fundoDinamico.animacaoId =
+
+            requestAnimationFrame(
+                animar
+            );
+
+        return;
+
+    }
+
+    /*
+     * Garante que o estado final seja exatamente
+     * a paleta solicitada.
+     */
+
+    fundoDinamico.coresAtuais = [
+
+        destino[0],
+
+        destino[1],
+
+        destino[2]
+
+    ];
+
+    body.style.setProperty(
+        "--perfil-fundo-cor-1",
+        destino[0]
+    );
+
+    body.style.setProperty(
+        "--perfil-fundo-cor-2",
+        destino[1]
+    );
+
+    body.style.setProperty(
+        "--perfil-fundo-cor-3",
+        destino[2]
+    );
+
+    fundoDinamico.animacaoId =
+        null;
+
+}
+
+fundoDinamico.animacaoId =
+    requestAnimationFrame(
+        animar
+    );
+
+
+}
+
+/*
+
+* Aplica as cores fallback ao BODY.
+*
+* Agora também passa pela transição suave.
+  */
+
+function aplicarCoresFundoFallback() {
+
+
+const cores =
+    obterCoresFallbackDinamica();
+
+animarCoresFundo(
+    cores
+);
+
+
+}
+
+/*
+
+* Aplica as três cores calculadas ao BODY.
+*
+* O JavaScript fornece os valores.
+* O CSS continua responsável pelo gradiente.
+  */
+
+function aplicarCoresFundoDinamico(
+cores
+) {
+
+
+if (
+    !Array.isArray(cores) ||
+    cores.length < 3
+) {
+
+    aplicarCoresFundoFallback();
+
+    return;
+
+}
+
+animarCoresFundo(
+    cores
 );
 
 
@@ -750,7 +1227,7 @@ EXTRAÇÃO DAS CORES
 * * imagens;
 * * frames de vídeos.
 *
-* Não alteramos a lógica de seleção das cores.
+* A lógica de seleção das cores foi preservada.
   */
 
 function extrairCoresDoCanvas(
@@ -1288,8 +1765,6 @@ CORES DO VÍDEO
 
 * Extrai as cores predominantes do frame atual do vídeo.
 *
-* IMPORTANTE:
-*
 * Esta função NÃO modifica o vídeo.
 *
 * Ela apenas desenha um frame do <video> em um canvas
@@ -1297,9 +1772,8 @@ CORES DO VÍDEO
 *
 * O vídeo precisa estar carregado e ter dimensões válidas.
 *
-* Como o vídeo está sendo reproduzido no próprio domínio
-* / Storage, o canvas poderá ser lido normalmente quando
-* não houver bloqueio de CORS.
+* Caso o navegador bloqueie a leitura dos pixels por CORS,
+* o fallback continua sendo utilizado.
   */
 
 function extrairCoresVideo(
@@ -1414,9 +1888,6 @@ return new Promise(
             /*
              * Mantemos a proporção do vídeo para que
              * a análise represente corretamente a mídia.
-             *
-             * O canvas pequeno serve apenas para
-             * identificar as cores predominantes.
              */
 
             const proporcaoVideo =
@@ -1529,13 +2000,15 @@ return new Promise(
 * Atualiza o fundo de acordo com o card atualmente ativo.
 *
 * Imagens:
-* * utiliza extrairCoresImagem().
+* utiliza extrairCoresImagem().
 *
 * Vídeos:
-* * utiliza o próprio elemento <video>;
-* * captura o frame atual;
-* * extrai as cores desse frame.
-    */
+* utiliza o próprio elemento <video>;
+* captura o frame atual;
+* extrai as cores desse frame.
+*
+* A aplicação das cores é feita com transição suave.
+  */
 
 function atualizarFundoDinamico() {
 
@@ -1597,12 +2070,11 @@ const processamentoAtual =
 
     ++fundoDinamico.processamento;
 
+
 /*
  * =====================================================
  * VÍDEO
  * =====================================================
- *
- * Agora o vídeo também participa do fundo dinâmico.
  */
 
 if (
@@ -1705,6 +2177,7 @@ if (
 
         };
 
+
     /*
      * Se o vídeo já possui dados suficientes,
      * fazemos a análise imediatamente.
@@ -1737,12 +2210,11 @@ if (
 
 }
 
+
 /*
  * =====================================================
  * ÁUDIO / OUTROS
  * =====================================================
- *
- * O áudio não possui imagem visual para análise.
  */
 
 if (
@@ -1756,6 +2228,7 @@ if (
     return;
 
 }
+
 
 /*
  * =====================================================
@@ -1841,14 +2314,24 @@ function resetarFundoDinamico() {
 const body =
     obterBody();
 
+cancelarTransicaoCores();
+
 fundoDinamico.chaveAtual =
     "";
 
 fundoDinamico.processamento++;
 
+fundoDinamico.coresAtuais =
+    null;
+
 if (body) {
 
-    aplicarCoresFundoFallback();
+    const cores =
+        obterCoresFallbackDinamica();
+
+    aplicarCoresFundoImediatamente(
+        cores
+    );
 
     body.style.setProperty(
         "--perfil-fundo-opacidade",
@@ -2709,6 +3192,19 @@ const video =
 
 video.className =
     "portfolio-deck-media";
+
+/*
+ * Permite que o navegador faça a requisição do vídeo
+ * preparada para leitura via canvas quando o servidor
+ * fornecer os cabeçalhos CORS necessários.
+ *
+ * Isso não resolve CORS sozinho, mas é necessário
+ * para que o canvas possa ler os pixels quando o
+ * Storage permitir esse acesso.
+ */
+
+video.crossOrigin =
+    "anonymous";
 
 video.src =
     item._url;
@@ -5638,6 +6134,8 @@ galeria.indiceAtual =
 /*
  * Atualiza as cores do fundo quando o usuário
  * navega diretamente pelas bolinhas.
+ *
+ * A troca agora ocorre através da transição suave.
  */
 
 atualizarFundoDinamico();
