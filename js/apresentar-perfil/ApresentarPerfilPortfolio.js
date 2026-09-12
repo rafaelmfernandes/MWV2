@@ -226,7 +226,7 @@ video: {
      * permita o autoplay.
      */
 
-    muted: true,
+    muted: false,
 
     /*
      * Reproduz automaticamente quando ficar totalmente
@@ -3221,10 +3221,6 @@ video.muted =
 video.defaultMuted =
     CONFIG.video.muted;
 
-video.setAttribute(
-    "muted",
-    ""
-);
 
 video.preload =
     "metadata";
@@ -5240,9 +5236,6 @@ if (
 
 }
 
-video.muted = true;
-
-video.defaultMuted = true;
 
 if (
     !video.paused
