@@ -1678,3 +1678,115 @@ if (
 
     iniciar();
 }
+
+(function (window) {
+
+
+"use strict";
+
+
+/* =====================================================
+   MUSICALWORLD — BOTÃO VOLTAR DO PERFIL
+
+   Arquivo:
+   ApresentarPerfilVoltar.js
+
+   Responsabilidade:
+
+   - Controlar exclusivamente o botão "Voltar".
+   - Retornar para a última página registrada
+     no histórico do navegador.
+   - Não definir uma página fixa como destino.
+   - Não interferir nos demais módulos do perfil.
+
+   Observação:
+
+   O uso de history.back() permite que o usuário
+   retorne exatamente para a página que estava
+   acessando antes de abrir o perfil.
+   ===================================================== */
+
+
+function inicializarBotaoVoltar() {
+
+    const botaoVoltar =
+        document.getElementById("btnVoltar");
+
+
+    if (!botaoVoltar) {
+
+        console.warn(
+            "ApresentarPerfilVoltar: botão #btnVoltar não encontrado."
+        );
+
+        return;
+
+    }
+
+
+    /*
+     * Capturamos o clique diretamente no botão.
+     *
+     * O listener fica isolado neste módulo para que
+     * a lógica de navegação não fique misturada com
+     * o restante do ApresentarPerfil.js.
+     */
+
+    botaoVoltar.addEventListener(
+        "click",
+        function (evento) {
+
+            evento.preventDefault();
+
+            evento.stopPropagation();
+
+
+            /*
+             * history.back() retorna exatamente para
+             * a entrada anterior do histórico.
+             */
+
+            if (window.history.length > 1) {
+
+                window.history.back();
+
+                return;
+
+            }
+
+
+            /*
+             * Caso o perfil tenha sido aberto diretamente
+             * e não exista uma página anterior disponível,
+             * não fazemos uma navegação artificial.
+             */
+
+            console.warn(
+                "ApresentarPerfilVoltar: não existe página anterior no histórico."
+            );
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   INICIALIZAÇÃO
+   ===================================================== */
+
+if (document.readyState === "loading") {
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        inicializarBotaoVoltar
+    );
+
+} else {
+
+    inicializarBotaoVoltar();
+
+}
+
+
+})(window);

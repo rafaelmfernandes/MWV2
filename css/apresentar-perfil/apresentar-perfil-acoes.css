@@ -227,3 +227,330 @@
     font-weight: 650;
     white-space: nowrap;
 }
+
+/* =========================================================
+BARRA FIXA DE AÇÕES DO PERFIL
+
+Responsabilidade:
+
+* Manter as principais ações sempre disponíveis.
+* Fixar a barra na parte inferior da tela.
+* Respeitar a área segura dos dispositivos móveis.
+  ========================================================= */
+
+.profile-action-bar {
+
+
+position: fixed;
+
+left: 0;
+right: 0;
+bottom: 0;
+
+width: 100%;
+
+background: #ffffff;
+
+border-top: 1px solid #e7ebf2;
+
+box-shadow:
+    0 -4px 18px rgba(15, 23, 42, 0.08);
+
+z-index: 1000;
+
+padding:
+    10px
+    16px
+    calc(10px + env(safe-area-inset-bottom));
+
+
+}
+
+/* =========================================================
+CONTAINER DOS BOTÕES
+========================================================= */
+
+.profile-action-container {
+
+
+width: 100%;
+
+max-width: 760px;
+
+margin: 0 auto;
+
+display: flex;
+
+align-items: center;
+
+gap: 10px;
+
+
+}
+
+/* =========================================================
+CONFIGURAÇÃO BASE DOS BOTÕES
+========================================================= */
+
+.profile-action-button {
+
+
+height: 48px;
+
+padding: 0;
+
+border-radius: 14px;
+
+border: 1px solid transparent;
+
+display: flex;
+
+align-items: center;
+
+justify-content: center;
+
+gap: 8px;
+
+font-family: inherit;
+
+font-size: 14px;
+
+font-weight: 600;
+
+line-height: 1;
+
+cursor: pointer;
+
+transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.15s ease;
+
+-webkit-tap-highlight-color: transparent;
+
+
+}
+
+/* =========================================================
+ÍCONES
+========================================================= */
+
+.profile-action-button svg {
+
+
+width: 19px;
+
+height: 19px;
+
+flex-shrink: 0;
+
+stroke-width: 2;
+
+
+}
+
+/* =========================================================
+BOTÃO MANDAR MENSAGEM
+
+Somente o ícone.
+Fica compacto à esquerda.
+========================================================= */
+
+.profile-action-message {
+
+
+flex: 0 0 52px;
+
+width: 52px;
+
+background: #ffffff;
+
+border-color: #d8dee8;
+
+color: #172033;
+
+
+}
+
+/* Ícone do botão de mensagem */
+
+.profile-action-message svg {
+
+
+width: 20px;
+
+height: 20px;
+
+
+}
+
+/* Hover */
+
+.profile-action-message:hover {
+
+
+background: #f8fafc;
+
+border-color: #c8d1df;
+
+
+}
+
+/* Pressionado */
+
+.profile-action-message:active {
+
+
+background: #f1f5f9;
+
+transform: translateY(1px);
+
+
+}
+
+/* =========================================================
+BOTÃO CONTRATAR
+
+Ação principal.
+Ocupa todo o espaço restante da barra.
+========================================================= */
+
+.profile-action-hire {
+
+
+flex: 1;
+
+min-width: 0;
+
+height: 52px;
+
+background: #1677d2;
+
+border-color: #1677d2;
+
+color: #ffffff;
+
+box-shadow:
+    0 4px 12px rgba(22, 119, 210, 0.20);
+
+
+}
+
+/* Ícone do botão contratar */
+
+.profile-action-hire svg {
+
+
+width: 20px;
+
+height: 20px;
+
+
+}
+
+/* Hover */
+
+.profile-action-hire:hover {
+
+
+background: #1268bc;
+
+border-color: #1268bc;
+
+
+}
+
+/* Pressionado */
+
+.profile-action-hire:active {
+
+
+transform: translateY(1px);
+
+box-shadow:
+    0 2px 7px rgba(22, 119, 210, 0.18);
+
+
+}
+
+/* =========================================================
+FOCO DE ACESSIBILIDADE
+========================================================= */
+
+.profile-action-button:focus-visible {
+
+
+outline: 3px solid rgba(56, 189, 248, 0.35);
+
+outline-offset: 2px;
+
+
+}
+
+/* =========================================================
+ESPAÇO INFERIOR DO CONTEÚDO
+
+Evita que a barra fixa cubra a última seção.
+========================================================= */
+
+.profile-page {
+
+
+padding-bottom:
+    calc(90px + env(safe-area-inset-bottom));
+
+
+}
+
+/* =========================================================
+TELAS PEQUENAS
+
+Mantém o botão de mensagem compacto e o botão
+Contratar como ação dominante.
+========================================================= */
+
+@media (max-width: 360px) {
+
+
+.profile-action-bar {
+
+    padding-left: 12px;
+
+    padding-right: 12px;
+
+}
+
+
+.profile-action-container {
+
+    gap: 8px;
+
+}
+
+
+.profile-action-message {
+
+    flex: 0 0 50px;
+
+    width: 50px;
+
+}
+
+
+.profile-action-hire {
+
+    height: 50px;
+
+}
+
+
+.profile-action-button {
+
+    font-size: 13px;
+
+}
+
+
+}

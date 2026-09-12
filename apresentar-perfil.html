@@ -4,28 +4,41 @@
 
 <head>
 
-
 <meta charset="UTF-8">
 
 <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+name="viewport"
+content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+
 >
 
 <meta
-    name="theme-color"
-    content="#ffffff"
+name="theme-color"
+content="#ffffff"
+
 >
 
 <title>Perfil | MusicalWorld</title>
+
+<!-- =====================================================
+     CSS PRINCIPAL
+
+     O arquivo agregador continua sendo utilizado porque
+     ele carrega os arquivos CSS específicos da página.
+     ===================================================== -->
 
 <link
     rel="stylesheet"
     href="css/apresentar-perfil/apresentar-perfil.css"
 >
 
-<script src="https://unpkg.com/lucide@latest"></script>
+<!-- =====================================================
+     LUCIDE
 
+     Biblioteca utilizada para os ícones da página.
+     ===================================================== -->
+
+<script src="https://unpkg.com/lucide@latest"></script>
 
 </head>
 
@@ -33,780 +46,543 @@
 
 <div class="app">
 
+<!-- =====================================================
+     TOPBAR
 
-<!-- =================================================
-     TOPO
-     ================================================= -->
+     Barra superior da página de perfil.
+     ===================================================== -->
 
 <header class="topbar">
 
-    <div class="topbar-left">
 
-        <button
-            type="button"
-            class="topbar-button"
-            id="btnVoltar"
-            aria-label="Voltar"
-        >
-            <i data-lucide="arrow-left"></i>
-        </button>
-
-        <div class="topbar-heading">
-
-            <span
-                class="topbar-title"
-                id="topbarProfileTitle"
-            >
-                Perfil
-            </span>
-
-            <span class="topbar-subtitle">
-                MusicalWorld
-            </span>
-
-        </div>
-
-    </div>
-
-    <div class="topbar-right">
-
-        <button
-            type="button"
-            class="topbar-button"
-            id="btnCompartilhar"
-            aria-label="Compartilhar perfil"
-        >
-            <i data-lucide="share-2"></i>
-        </button>
-
-    </div>
-
-</header>
-
-
-<!-- =================================================
-     CONTEÚDO PRINCIPAL
-     ================================================= -->
-
-<main class="profile-page">
-
-
-    <!-- =================================================
-         DESTAQUE / PORTFÓLIO PRINCIPAL
-
-         O #portfolioGrid permanece com o mesmo ID
-         utilizado pelo ApresentarPerfilPortfolio.js.
-
-         O CSS futuro transformará esse conteúdo em uma
-         experiência horizontal de mídia, com swipe,
-         scroll-snap e próxima mídia parcialmente visível.
-         ================================================= -->
-
-    <section class="profile-media-highlight">
-
-        <div
-            class="portfolio-grid"
-            id="portfolioGrid"
-        >
-
-            <div class="empty-state">
-
-                <i data-lucide="images"></i>
-
-                <strong>
-                    Portfólio vazio
-                </strong>
-
-                <span>
-                    Este perfil ainda não adicionou trabalhos.
-                </span>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- =================================================
-         IDENTIDADE DO ARTISTA
-
-         Nome, tipo, localização, avaliação, status e
-         gêneros ficam juntos para formar a apresentação
-         principal do perfil.
-         ================================================= -->
-
-    <section class="profile-identity">
-
-        <div class="profile-identity-main">
-
-            <div
-                class="profile-avatar"
-                id="profileAvatar"
-            >
-
-                <span id="profileInitials">
-                    --
-                </span>
-
-            </div>
-
-
-            <div class="profile-info">
-
-                <div class="profile-name-row">
-
-                    <h1
-                        class="profile-name"
-                        id="profileName"
-                    >
-                        Carregando...
-                    </h1>
-
-                    <span
-                        class="verified-badge"
-                        id="verifiedBadge"
-                        aria-label="Perfil verificado"
-                        hidden
-                    >
-                        <i data-lucide="check"></i>
-                    </span>
-
-                </div>
-
-
-                <p
-                    class="profile-category"
-                    id="profileCategory"
-                >
-                    Carregando...
-                </p>
-
-
-                <div
-                    class="profile-location"
-                    id="profileLocation"
-                >
-
-                    <i data-lucide="map-pin"></i>
-
-                    <span>
-                        Localização não informada
-                    </span>
-
-                </div>
-
-
-                <div
-                    class="profile-rating"
-                    id="profileRating"
-                >
-
-                    <div class="rating-stars">
-
-                        <i data-lucide="star"></i>
-                        <i data-lucide="star"></i>
-                        <i data-lucide="star"></i>
-                        <i data-lucide="star"></i>
-                        <i data-lucide="star"></i>
-
-                    </div>
-
-                    <span
-                        class="rating-value"
-                        id="ratingValue"
-                    >
-                        0,0
-                    </span>
-
-                    <span
-                        class="rating-reviews"
-                        id="ratingReviews"
-                    >
-                        (0 avaliações)
-                    </span>
-
-                </div>
-
-
-                <div
-                    class="profile-status"
-                    id="profileStatus"
-                >
-                    Disponível para contratação
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- =================================================
-             GÊNEROS
-
-             O ID permanece #genreList para manter
-             compatibilidade com ApresentarPerfilRender.js.
-             ================================================= -->
-
-        <div class="profile-genres">
-
-            <div
-                class="genre-list"
-                id="genreList"
-            >
-
-                <span class="empty-inline">
-                    Nenhum gênero cadastrado.
-                </span>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- =================================================
-         AÇÕES PRINCIPAIS
-
-         As ações também continuam disponíveis na barra
-         fixa inferior. Esta área funciona como CTA natural
-         dentro da apresentação.
-         ================================================= -->
-
-    <section class="profile-primary-actions">
-
-        <button
-            type="button"
-            class="contact-button"
-            id="btnContato"
-        >
-
-            <i data-lucide="message-circle"></i>
-
-            <span>
-                Conversar
-            </span>
-
-        </button>
-
-
-        <button
-            type="button"
-            class="hire-button"
-            id="btnContratar"
-        >
-
-            <i data-lucide="calendar-check-2"></i>
-
-            <span>
-                Contratar
-            </span>
-
-        </button>
-
-    </section>
-
-
-    <!-- =================================================
-         CONHEÇA O TRABALHO
-         ================================================= -->
-
-    <section class="profile-section profile-work-section">
-
-        <div class="section-header">
-
-            <div class="section-title-row">
-
-                <i data-lucide="images"></i>
-
-                <div>
-
-                    <h2 class="section-title">
-                        Conheça o trabalho
-                    </h2>
-
-                    <p class="section-subtitle">
-                        Fotos, vídeos, apresentações e gravações
-                    </p>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- =================================================
-             ÁUDIOS / COMPOSIÇÕES
-
-             Mantido dentro da área de trabalho para que
-             músicas e gravações façam parte do portfólio.
-             ================================================= -->
-
-        <div class="profile-work-audio">
-
-            <div
-                class="audio-list"
-                id="audioList"
-            >
-
-                <div class="empty-state">
-
-                    <i data-lucide="headphones"></i>
-
-                    <strong>
-                        Nenhum áudio cadastrado
-                    </strong>
-
-                    <span>
-                        Os áudios deste perfil aparecerão aqui.
-                    </span>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- =================================================
-         SOBRE O ARTISTA
-         ================================================= -->
-
-    <section class="profile-section profile-about-section">
-
-        <div class="section-header">
-
-            <div class="section-title-row">
-
-                <i data-lucide="user-round"></i>
-
-                <div>
-
-                    <h2 class="section-title">
-                        Sobre o artista
-                    </h2>
-
-                    <p class="section-subtitle">
-                        Conheça a trajetória profissional
-                    </p>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <div class="profile-about-content">
-
-            <p
-                class="profile-bio"
-                id="profileBio"
-            >
-                Nenhuma descrição profissional cadastrada.
-            </p>
-
-        </div>
-
-    </section>
-
-
-    <!-- =================================================
-         INFORMAÇÕES PROFISSIONAIS
-         ================================================= -->
-
-    <section class="profile-section profile-professional-section">
-
-        <div class="section-header">
-
-            <div class="section-title-row">
-
-                <i data-lucide="briefcase-business"></i>
-
-                <div>
-
-                    <h2 class="section-title">
-                        Experiência profissional
-                    </h2>
-
-                    <p class="section-subtitle">
-                        Informações sobre atuação e disponibilidade
-                    </p>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <div class="info-grid">
-
-            <div class="info-card">
-
-                <div class="info-card-heading">
-
-                    <i data-lucide="clock-3"></i>
-
-                    <span class="info-card-label">
-                        Experiência
-                    </span>
-
-                </div>
-
-                <span
-                    class="info-card-value"
-                    id="profileExperience"
-                >
-                    Não informada
-                </span>
-
-            </div>
-
-
-            <div class="info-card">
-
-                <div class="info-card-heading">
-
-                    <i data-lucide="map-pin"></i>
-
-                    <span class="info-card-label">
-                        Área de atuação
-                    </span>
-
-                </div>
-
-                <span
-                    class="info-card-value"
-                    id="profileArea"
-                >
-                    Não informada
-                </span>
-
-            </div>
-
-
-            <div class="info-card">
-
-                <div class="info-card-heading">
-
-                    <i data-lucide="badge-check"></i>
-
-                    <span class="info-card-label">
-                        Tipo de perfil
-                    </span>
-
-                </div>
-
-                <span
-                    class="info-card-value"
-                    id="profileType"
-                >
-                    Carregando...
-                </span>
-
-            </div>
-
-
-            <div class="info-card">
-
-                <div class="info-card-heading">
-
-                    <i data-lucide="calendar-check-2"></i>
-
-                    <span class="info-card-label">
-                        Disponibilidade
-                    </span>
-
-                </div>
-
-                <span
-                    class="info-card-value"
-                    id="profileAvailability"
-                >
-                    Disponível
-                </span>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- =================================================
-         SERVIÇOS
-         ================================================= -->
-
-    <section class="profile-section profile-services-section">
-
-        <div class="section-header">
-
-            <div class="section-title-row">
-
-                <i data-lucide="handshake"></i>
-
-                <div>
-
-                    <h2 class="section-title">
-                        Serviços
-                    </h2>
-
-                    <p class="section-subtitle">
-                        O que este artista oferece
-                    </p>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <div
-            class="services-list"
-            id="servicesList"
-        >
-
-            <div class="empty-state">
-
-                <i data-lucide="briefcase-business"></i>
-
-                <strong>
-                    Nenhum serviço cadastrado
-                </strong>
-
-                <span>
-                    Nenhum serviço foi informado.
-                </span>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- =================================================
-         PRÓXIMAS APRESENTAÇÕES / AGENDA
-         ================================================= -->
-
-    <section class="profile-section profile-agenda-section">
-
-        <div class="section-header">
-
-            <div class="section-title-row">
-
-                <i data-lucide="calendar-days"></i>
-
-                <div>
-
-                    <h2 class="section-title">
-                        Próximas apresentações
-                    </h2>
-
-                    <p class="section-subtitle">
-                        Onde e quando este artista estará se apresentando
-                    </p>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <div
-            class="agenda-list"
-            id="agendaList"
-        >
-
-            <div class="agenda-calendar">
-
-                <div class="agenda-calendar-header">
-
-                    <button
-                        type="button"
-                        class="agenda-month-button"
-                        id="btnAgendaMesAnterior"
-                        aria-label="Mês anterior"
-                    >
-                        <i data-lucide="chevron-left"></i>
-                    </button>
-
-
-                    <strong
-                        class="agenda-month-title"
-                        id="agendaMesTitulo"
-                    >
-                        Carregando...
-                    </strong>
-
-
-                    <button
-                        type="button"
-                        class="agenda-month-button"
-                        id="btnAgendaMesProximo"
-                        aria-label="Próximo mês"
-                    >
-                        <i data-lucide="chevron-right"></i>
-                    </button>
-
-                </div>
-
-
-                <div class="agenda-weekdays">
-
-                    <span>SEG</span>
-                    <span>TER</span>
-                    <span>QUA</span>
-                    <span>QUI</span>
-                    <span>SEX</span>
-                    <span>SÁB</span>
-                    <span>DOM</span>
-
-                </div>
-
-
-                <div
-                    class="agenda-calendar-grid"
-                    id="agendaCalendarGrid"
-                ></div>
-
-
-                <div class="agenda-legend">
-
-                    <span class="agenda-legend-item">
-
-                        <span class="agenda-legend-dot disponivel"></span>
-
-                        <span>
-                            Disponível
-                        </span>
-
-                    </span>
-
-
-                    <span class="agenda-legend-item">
-
-                        <span class="agenda-legend-dot agendado"></span>
-
-                        <span>
-                            Agendado
-                        </span>
-
-                    </span>
-
-
-                    <span class="agenda-legend-item">
-
-                        <span class="agenda-legend-dot indisponivel"></span>
-
-                        <span>
-                            Indisponível
-                        </span>
-
-                    </span>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- =================================================
-         AVALIAÇÕES
-         ================================================= -->
-
-    <section class="profile-section profile-reviews-section">
-
-        <div class="section-header">
-
-            <div class="section-title-row">
-
-                <i data-lucide="star"></i>
-
-                <div>
-
-                    <h2 class="section-title">
-                        Avaliações
-                    </h2>
-
-                    <p class="section-subtitle">
-                        O que contratantes dizem sobre este artista
-                    </p>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <div
-            class="reviews-list"
-            id="reviewsList"
-        >
-
-            <div class="empty-state">
-
-                <i data-lucide="star"></i>
-
-                <strong>
-                    Ainda não há avaliações
-                </strong>
-
-                <span>
-                    As avaliações aparecerão aqui após os trabalhos realizados.
-                </span>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-</main>
-
-
-<!-- =====================================================
-     AÇÕES FIXAS DO PERFIL
-
-     Mantidas porque são importantes para conversão.
-     ===================================================== -->
-
-<div class="profile-fixed-actions">
+<div class="topbar-left">
 
     <button
         type="button"
-        class="contact-button"
-        id="btnContato"
+        class="topbar-button"
+        id="btnVoltar"
+        aria-label="Voltar"
     >
 
-        <i data-lucide="message-circle"></i>
-
-        <span>
-            Conversar
-        </span>
+        <i data-lucide="arrow-left"></i>
 
     </button>
 
 
+    <div class="topbar-heading">
+
+        <span
+            class="topbar-title"
+            id="topbarProfileTitle"
+        >
+            Perfil
+        </span>
+
+
+        <span class="topbar-subtitle">
+            MusicalWorld
+        </span>
+
+    </div>
+
+</div>
+
+
+<div class="topbar-right">
+
     <button
         type="button"
-        class="hire-button"
+        class="topbar-button"
+        id="btnCompartilhar"
+        aria-label="Compartilhar perfil"
+    >
+
+        <i data-lucide="share-2"></i>
+
+    </button>
+
+</div>
+
+
+</header>
+
+<!-- =====================================================
+     CONTEÚDO PRINCIPAL
+     ===================================================== -->
+
+<main class="profile-page">
+
+
+<!-- =================================================
+     1. PORTFÓLIO PRINCIPAL
+     ================================================= -->
+
+<section class="profile-media-highlight">
+
+    <div
+        class="portfolio-grid"
+        id="portfolioGrid"
+    >
+
+        <div class="empty-state">
+
+            <i data-lucide="images"></i>
+
+            <strong>
+                Portfólio vazio
+            </strong>
+
+            <span>
+                Este perfil ainda não adicionou trabalhos.
+            </span>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =================================================
+     2. IDENTIDADE DO ARTISTA
+     ================================================= -->
+
+<section class="profile-identity">
+
+    <div class="profile-identity-container">
+
+
+        <!-- FOTO DO PERFIL -->
+
+        <div
+            class="profile-avatar"
+            id="profileAvatar"
+        >
+
+            <span id="profileInitials">
+                --
+            </span>
+
+        </div>
+
+
+        <!-- INFORMAÇÕES DO PERFIL -->
+
+        <div class="profile-info">
+
+
+            <!-- NOME -->
+
+            <div class="profile-name-row">
+
+                <h1
+                    class="profile-name"
+                    id="profileName"
+                >
+                    Carregando...
+                </h1>
+
+
+                <span
+                    class="verified-badge"
+                    id="verifiedBadge"
+                    aria-label="Perfil verificado"
+                    hidden
+                >
+
+                    <i data-lucide="check"></i>
+
+                </span>
+
+            </div>
+
+
+            <!-- TIPO / CATEGORIA -->
+
+            <p
+                class="profile-category"
+                id="profileCategory"
+            >
+                Carregando...
+            </p>
+
+
+            <!-- LOCALIZAÇÃO -->
+
+            <div
+                class="profile-location"
+                id="profileLocation"
+            >
+
+                <i data-lucide="map-pin"></i>
+
+                <span>
+                    Localização não informada
+                </span>
+
+            </div>
+
+
+            <!-- AVALIAÇÃO -->
+
+            <div
+                class="profile-rating"
+                id="profileRating"
+            >
+
+                <div class="rating-stars">
+
+                    <i data-lucide="star"></i>
+                    <i data-lucide="star"></i>
+                    <i data-lucide="star"></i>
+                    <i data-lucide="star"></i>
+                    <i data-lucide="star"></i>
+
+                </div>
+
+
+                <span
+                    class="rating-value"
+                    id="ratingValue"
+                >
+                    0,0
+                </span>
+
+
+                <span
+                    class="rating-reviews"
+                    id="ratingReviews"
+                >
+                    (0 avaliações)
+                </span>
+
+            </div>
+
+
+            <!-- GÊNEROS -->
+
+            <div class="profile-genres">
+
+                <div
+                    class="genre-list"
+                    id="genreList"
+                >
+
+                    <span class="empty-inline">
+                        Nenhum gênero cadastrado.
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- STATUS
+
+                 Mantido oculto para compatibilidade. -->
+
+            <div
+                class="profile-status"
+                id="profileStatus"
+                hidden
+            >
+                Disponível para contratação
+            </div>
+
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =================================================
+     3. SOBRE O ARTISTA
+     ================================================= -->
+
+<section class="profile-about">
+
+
+    <div class="profile-about-header">
+
+        <div class="profile-about-icon">
+
+            <i data-lucide="user-round"></i>
+
+        </div>
+
+
+        <div>
+
+            <h2 class="profile-about-title">
+                Sobre o artista
+            </h2>
+
+
+            <p class="profile-about-subtitle">
+                Conheça um pouco mais sobre este artista.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div
+        class="profile-about-content"
+        id="profileBio"
+    >
+
+        <span class="empty-inline">
+            Este artista ainda não adicionou uma apresentação.
+        </span>
+
+    </div>
+
+
+</section>
+
+
+<!-- =================================================
+     4. EXPERIÊNCIA PROFISSIONAL
+     ================================================= -->
+
+<section class="profile-section profile-professional-section">
+
+
+    <div class="section-header">
+
+        <div class="section-title-row">
+
+            <div class="section-title-icon">
+
+                <i data-lucide="briefcase-business"></i>
+
+            </div>
+
+            <div>
+
+                <h2 class="section-title">
+                    Experiência profissional
+                </h2>
+
+                <p class="section-subtitle">
+                    Informações sobre atuação e disponibilidade
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="info-grid">
+
+
+        <!-- EXPERIÊNCIA -->
+
+        <div
+            class="info-card"
+            id="professionalExperienceCard"
+        >
+
+            <div class="info-card-heading">
+
+                <div class="info-card-icon">
+
+                    <i data-lucide="clock-3"></i>
+
+                </div>
+
+                <span class="info-card-label">
+                    Experiência
+                </span>
+
+            </div>
+
+            <span
+                class="info-card-value"
+                id="profileExperience"
+            ></span>
+
+        </div>
+
+
+        <!-- ÁREA DE ATUAÇÃO -->
+
+        <div
+            class="info-card"
+            id="professionalAreaCard"
+        >
+
+            <div class="info-card-heading">
+
+                <div class="info-card-icon">
+
+                    <i data-lucide="map-pin"></i>
+
+                </div>
+
+                <span class="info-card-label">
+                    Área de atuação
+                </span>
+
+            </div>
+
+            <span
+                class="info-card-value"
+                id="profileArea"
+            ></span>
+
+        </div>
+
+
+        <!-- TIPO DE PERFIL -->
+
+        <div
+            class="info-card"
+            id="professionalTypeCard"
+        >
+
+            <div class="info-card-heading">
+
+                <div class="info-card-icon">
+
+                    <i data-lucide="badge-check"></i>
+
+                </div>
+
+                <span class="info-card-label">
+                    Tipo de perfil
+                </span>
+
+            </div>
+
+            <span
+                class="info-card-value"
+                id="profileType"
+            ></span>
+
+        </div>
+
+
+        <!-- DISPONIBILIDADE -->
+
+        <div
+            class="info-card"
+            id="professionalAvailabilityCard"
+        >
+
+            <div class="info-card-heading">
+
+                <div class="info-card-icon">
+
+                    <i data-lucide="calendar-check-2"></i>
+
+                </div>
+
+                <span class="info-card-label">
+                    Disponibilidade
+                </span>
+
+            </div>
+
+            <span
+                class="info-card-value"
+                id="profileAvailability"
+            ></span>
+
+        </div>
+
+
+    </div>
+
+
+</section>
+
+
+<!-- =================================================
+     5. SERVIÇOS
+     ================================================= -->
+
+<section class="profile-section profile-services-section">
+
+
+    <div class="section-header">
+
+        <div class="section-title-row">
+
+            <div class="section-title-icon">
+
+                <i data-lucide="handshake"></i>
+
+            </div>
+
+            <div>
+
+                <h2 class="section-title">
+                    Serviços
+                </h2>
+
+                <p class="section-subtitle">
+                    O que este artista oferece
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div
+        class="services-list"
+        id="servicesList"
+    >
+
+        <div class="empty-state">
+
+            <i data-lucide="briefcase-business"></i>
+
+            <strong>
+                Nenhum serviço cadastrado
+            </strong>
+
+            <span>
+                Nenhum serviço foi informado.
+            </span>
+
+        </div>
+
+    </div>
+
+
+</section>
+
+
+</main>
+
+<!-- =====================================================
+     BARRA FIXA DE AÇÕES
+     ===================================================== -->
+
+<div class="profile-action-bar">
+
+
+<div class="profile-action-container">
+
+
+    <!-- BOTÃO CONTRATAR -->
+
+    <button
+        type="button"
+        class="profile-action-button profile-action-hire"
         id="btnContratar"
     >
 
-        <i data-lucide="calendar-check-2"></i>
+        <i data-lucide="handshake"></i>
 
         <span>
             Contratar
@@ -814,26 +590,36 @@
 
     </button>
 
+
+    <!-- BOTÃO MANDAR MENSAGEM -->
+
+    <button
+        type="button"
+        class="profile-action-button profile-action-message"
+        id="btnMandarMensagem"
+    >
+
+        <i data-lucide="message-circle"></i>
+
+    </button>
+
+
 </div>
 
 
-<!-- =====================================================
-     TOAST
-     ===================================================== -->
-
-<div
-    class="toast"
-    id="toast"
-    role="status"
-    aria-live="polite"
-></div>
-
+</div>
 
 <!-- =====================================================
      SCRIPTS
      ===================================================== -->
 
+<!-- SUPABASE -->
+
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+
+<!-- =====================================================
+     MÓDULOS CORE
+     ===================================================== -->
 
 <script src="js/core/SupabaseClient.js"></script>
 
@@ -845,6 +631,10 @@
 
 <script src="js/core/RoteamentoPerfil.js"></script>
 
+<!-- =====================================================
+     MÓDULOS DO PERFIL
+     ===================================================== -->
+
 <script src="js/apresentar-perfil/ApresentarPerfilTipo.js"></script>
 
 <script src="js/apresentar-perfil/ApresentarPerfilUtils.js"></script>
@@ -853,20 +643,21 @@
 
 <script src="js/apresentar-perfil/ApresentarPerfilPortfolio.js"></script>
 
-<script src="js/apresentar-perfil/ApresentarPerfilServicos.js"></script>
-
-<script src="js/apresentar-perfil/ApresentarPerfilAgenda.js"></script>
-
-<script src="js/apresentar-perfil/ApresentarPerfilAvaliacoes.js"></script>
-
 <script src="js/apresentar-perfil/ApresentarPerfilRender.js"></script>
 
-<script src="js/apresentar-perfil/ApresentarPerfilAcoes.js"></script>
-
-<script src="js/apresentar-perfil/ApresentarPerfilSecoes.js"></script>
+<script src="js/apresentar-perfil/ApresentarPerfilServicos.js"></script>
 
 <script src="js/apresentar-perfil/ApresentarPerfil.js"></script>
 
+<!-- =====================================================
+     CONTROLE DO BOTÃO VOLTAR
+     ===================================================== -->
+
+<script src="js/apresentar-perfil/ApresentarPerfilVoltar.js"></script>
+
+<!-- =====================================================
+     INICIALIZAÇÃO DOS ÍCONES
+     ===================================================== -->
 
 <script>
 
@@ -887,7 +678,6 @@
     );
 
 </script>
-
 
 </div>
 
