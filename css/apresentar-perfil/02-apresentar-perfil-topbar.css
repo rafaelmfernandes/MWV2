@@ -3,14 +3,57 @@
    03 — TOPBAR
 
    Responsabilidade:
+
    - Estilizar a barra superior da página.
    - Controlar navegação, título e ações do topo.
    - Manter o cabeçalho fixo durante a rolagem.
+   - Manter a topbar transparente sobre o conteúdo.
+   - Adaptar automaticamente o contraste ao fundo dinâmico.
+   - Controlar o estado sólido quando a seção "Sobre"
+     se aproxima do topo.
+
+   ESTADOS:
+
+   .topbar
+       Topbar transparente.
+
+   .topbar-fundo-claro
+       Fundo abaixo da topbar predominantemente claro.
+       Conteúdo escuro.
+
+   .topbar-fundo-escuro
+       Fundo abaixo da topbar predominantemente escuro.
+       Conteúdo claro.
+
+   .topbar.topbar-scrolled
+       Fundo branco + conteúdo escuro.
+
+   IMPORTANTE:
+
+   O JavaScript continua responsável por:
+
+   - adicionar .topbar-scrolled;
+   - detectar as cores do fundo dinâmico;
+   - definir as variáveis de contraste da topbar.
+
+   Este arquivo apenas apresenta visualmente esse estado.
+
+   Não utilizamos mix-blend-mode para determinar contraste.
    ========================================================= */
 
 
 /* =========================================================
-   TOPBAR
+   TOPBAR — ESTADO NORMAL
+
+   A topbar permanece transparente.
+
+   O fundo dinâmico do portfólio pode aparecer atrás dela.
+
+   As variáveis abaixo recebem seus valores dinamicamente
+   pelo PortfolioUtils.js.
+
+   Caso o JavaScript ainda não tenha definido essas variáveis,
+   utilizamos os valores escuros como fallback.
    ========================================================= */
 
 .topbar {
@@ -21,9 +64,9 @@
     width: 100%;
     height: 64px;
 
-    background: rgba(255, 255, 255, 0.97);
+    background: transparent;
 
-    border-bottom: 1px solid #e8ebf1;
+    border-bottom: 1px solid transparent;
 
     display: flex;
     align-items: center;
@@ -31,8 +74,14 @@
 
     padding: 0 18px;
 
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+
+    transition:
+        background 0.35s ease,
+        border-color 0.35s ease,
+        backdrop-filter 0.35s ease,
+        -webkit-backdrop-filter 0.35s ease;
 }
 
 
@@ -56,7 +105,14 @@
 
 
 /* =========================================================
-   BOTÕES DA TOPBAR
+   BOTÕES DA TOPBAR — ESTADO NORMAL
+   =========================================================
+
+   O fundo, borda, cor e sombra são controlados pelas
+   variáveis definidas pelo PortfolioUtils.js.
+
+   Isso permite que o botão acompanhe a luminosidade da
+   mídia atualmente ativa.
    ========================================================= */
 
 .topbar-button {
@@ -65,36 +121,140 @@
 
     border-radius: 12px;
 
-    background: #f4f5f8;
-    color: #475467;
+    background: var(
+        --perfil-topbar-botao-fundo,
+        rgba(255, 255, 255, 0.72)
+    );
+
+    border: 1px solid var(
+        --perfil-topbar-botao-borda,
+        rgba(255, 255, 255, 0.85)
+    );
+
+    color: var(
+        --perfil-topbar-botao-cor,
+        #475467
+    );
 
     display: flex;
     align-items: center;
     justify-content: center;
 
+    box-shadow: var(
+        --perfil-topbar-botao-sombra,
+        0 2px 8px rgba(15, 23, 42, 0.08)
+    );
+
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+
     transition:
-        background 0.2s ease,
-        color 0.2s ease,
+        background 0.35s ease,
+        border-color 0.35s ease,
+        color 0.35s ease,
+        box-shadow 0.35s ease,
         transform 0.2s ease;
 }
 
+
+/* =========================================================
+   BOTÕES — HOVER
+   ========================================================= */
+
 .topbar-button:hover {
-    background: #eceef3;
-    color: #172033;
+    background:
+        color-mix(
+            in srgb,
+            var(
+                --perfil-topbar-botao-fundo,
+                rgba(255, 255, 255, 0.72)
+            ),
+            var(
+                --perfil-topbar-botao-cor,
+                #475467
+            ) 10%
+        );
 }
 
-.topbar-button:active {
-    transform: scale(0.96);
-}
+
+/* =========================================================
+   ÍCONES DOS BOTÕES
+   ========================================================= */
 
 .topbar-button svg {
     width: 19px;
     height: 19px;
+
+    color: var(
+        --perfil-topbar-botao-cor,
+        #475467
+    );
+
+    mix-blend-mode: normal;
+
+    transition:
+        color 0.35s ease,
+        stroke 0.35s ease;
 }
 
 
 /* =========================================================
    TÍTULO DA TOPBAR
+   ========================================================= */
+
+.topbar-title {
+    font-size: 15px;
+    line-height: 1.2;
+
+    font-weight: 750;
+
+    color: var(
+        --perfil-topbar-texto,
+        #172033
+    );
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    mix-blend-mode: normal;
+
+    transition:
+        color 0.35s ease;
+}
+
+
+/* =========================================================
+   SUBTÍTULO DA TOPBAR
+   ========================================================= */
+
+.topbar-subtitle {
+    font-size: 11px;
+    line-height: 1.2;
+
+    font-weight: 500;
+
+    color: var(
+        --perfil-topbar-subtexto,
+        #667085
+    );
+
+    opacity: 1;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    mix-blend-mode: normal;
+
+    transition:
+        color 0.35s ease,
+        opacity 0.35s ease;
+}
+
+
+/* =========================================================
+   CABEÇALHO DO TÍTULO
    ========================================================= */
 
 .topbar-heading {
@@ -106,22 +266,209 @@
     gap: 2px;
 }
 
-.topbar-title {
-    font-size: 15px;
-    line-height: 1.2;
 
-    font-weight: 750;
+/* =========================================================
+   BOTÃO — ESTADO ATIVO
+   ========================================================= */
 
-    color: #172033;
-
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+.topbar-button:active {
+    transform: scale(0.96);
 }
 
-.topbar-subtitle {
-    font-size: 11px;
-    line-height: 1.2;
 
-    color: #98a2b3;
+/* =========================================================
+   FUNDO ESCURO — GARANTIA DE CONTRASTE
+
+   O PortfolioUtils.js adiciona:
+
+       .topbar-fundo-escuro
+
+   quando identifica que a mídia ativa possui luminosidade
+   baixa.
+
+   As variáveis inline já fazem o trabalho principal.
+
+   Estas regras funcionam como garantia visual adicional.
+   ========================================================= */
+
+.topbar.topbar-fundo-escuro:not(.topbar-scrolled) {
+
+    --perfil-topbar-texto: #ffffff;
+
+    --perfil-topbar-subtexto:
+        rgba(255, 255, 255, 0.78);
+
+    --perfil-topbar-botao-fundo:
+        rgba(15, 23, 42, 0.30);
+
+    --perfil-topbar-botao-borda:
+        rgba(255, 255, 255, 0.24);
+
+    --perfil-topbar-botao-cor:
+        #ffffff;
+
+    --perfil-topbar-botao-sombra:
+        0 2px 8px rgba(0, 0, 0, 0.20);
+}
+
+
+/* =========================================================
+   FUNDO CLARO — GARANTIA DE CONTRASTE
+   ========================================================= */
+
+.topbar.topbar-fundo-claro:not(.topbar-scrolled) {
+
+    --perfil-topbar-texto: #172033;
+
+    --perfil-topbar-subtexto:
+        #667085;
+
+    --perfil-topbar-botao-fundo:
+        rgba(255, 255, 255, 0.72);
+
+    --perfil-topbar-botao-borda:
+        rgba(255, 255, 255, 0.85);
+
+    --perfil-topbar-botao-cor:
+        #475467;
+
+    --perfil-topbar-botao-sombra:
+        0 2px 8px rgba(15, 23, 42, 0.08);
+}
+
+
+/* =========================================================
+   TOPBAR — ESTADO SÓLIDO
+
+   Quando o JavaScript adiciona:
+
+       .topbar-scrolled
+
+   a topbar passa a possuir seu próprio fundo branco.
+
+   Neste estado, o contraste dinâmico do portfólio NÃO deve
+   alterar o conteúdo.
+
+   Portanto, o estado sólido possui prioridade visual.
+   ========================================================= */
+
+.topbar.topbar-scrolled {
+
+    background:
+        rgba(255, 255, 255, 0.97);
+
+    border-bottom-color:
+        #e8ebf1;
+
+    backdrop-filter:
+        blur(12px);
+
+    -webkit-backdrop-filter:
+        blur(12px);
+}
+
+
+/* =========================================================
+   ESTADO SÓLIDO — BOTÕES
+   ========================================================= */
+
+.topbar-scrolled .topbar-button {
+
+    background:
+        #f4f5f8;
+
+    border-color:
+        #e7eaf0;
+
+    color:
+        #475467;
+
+    box-shadow:
+        0 2px 8px rgba(15, 23, 42, 0.06);
+
+    mix-blend-mode:
+        normal;
+}
+
+
+.topbar-scrolled .topbar-button:hover {
+
+    background:
+        #eceef3;
+
+    border-color:
+        #dfe3ea;
+
+    color:
+        #172033;
+
+    box-shadow:
+        0 4px 12px rgba(15, 23, 42, 0.08);
+}
+
+
+/* =========================================================
+   ESTADO SÓLIDO — ÍCONES
+   ========================================================= */
+
+.topbar-scrolled .topbar-button svg {
+
+    color:
+        #475467;
+
+    mix-blend-mode:
+        normal;
+}
+
+
+/* =========================================================
+   ESTADO SÓLIDO — TÍTULO
+   ========================================================= */
+
+.topbar-scrolled .topbar-title {
+
+    color:
+        #172033;
+
+    mix-blend-mode:
+        normal;
+}
+
+
+/* =========================================================
+   ESTADO SÓLIDO — SUBTÍTULO
+   ========================================================= */
+
+.topbar-scrolled .topbar-subtitle {
+
+    color:
+        #98a2b3;
+
+    opacity:
+        1;
+
+    mix-blend-mode:
+        normal;
+}
+
+
+/* =========================================================
+   ACESSIBILIDADE
+   =========================================================
+
+   Usuários que preferem menos movimento recebem transições
+   instantâneas.
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .topbar,
+    .topbar-button,
+    .topbar-button svg,
+    .topbar-title,
+    .topbar-subtitle {
+
+        transition:
+            none;
+    }
 }

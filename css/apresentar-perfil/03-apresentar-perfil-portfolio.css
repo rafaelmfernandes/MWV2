@@ -184,7 +184,6 @@
     z-index: -1;
 }
 
-
 /* =========================================================
    BOTÕES DE NAVEGAÇÃO DA GALERIA
 
@@ -195,10 +194,24 @@
    • Manter os controles discretos.
    • Permanecer fora da mídia principal.
 
-   O JavaScript controla somente o clique e a navegação.
+   Os controles foram reduzidos visualmente para que
+   não disputem atenção com o conteúdo do portfólio.
+
+   O JavaScript controla somente:
+   • clique;
+   • navegação;
+   • estado.
+
+   O CSS controla somente:
+   • aparência;
+   • tamanho;
+   • posição;
+   • estados visuais.
    ========================================================= */
 
 .portfolio-deck-nav {
+
+    display: none !important;
 
     position: absolute;
 
@@ -206,9 +219,9 @@
 
     z-index: 60;
 
-    width: 38px;
+    width: 32px;
 
-    height: 38px;
+    height: 32px;
 
     box-sizing: border-box;
 
@@ -223,18 +236,21 @@
     padding: 0;
 
     border:
-        1px solid rgba(23, 32, 51, 0.10);
+        1px solid rgba(255, 255, 255, 0.42);
 
     border-radius: 50%;
 
     background:
-        rgba(255, 255, 255, 0.94);
+        rgba(255, 255, 255, 0.62);
 
-    color: #172033;
+    color: #475467;
 
     box-shadow:
-        0 8px 18px rgba(23, 32, 51, 0.14),
-        0 2px 5px rgba(23, 32, 51, 0.08);
+        0 3px 10px rgba(23, 32, 51, 0.10);
+
+    backdrop-filter: blur(6px);
+
+    -webkit-backdrop-filter: blur(6px);
 
     transform:
         translateY(-50%);
@@ -246,6 +262,8 @@
     -webkit-appearance: none;
 
     outline: none;
+
+    opacity: 0.72;
 
     transition:
         transform 180ms ease,
@@ -262,7 +280,7 @@
 
 .portfolio-deck-nav-prev {
 
-    left: 4%;
+    left: 1%;
 }
 
 
@@ -272,7 +290,7 @@
 
 .portfolio-deck-nav-next {
 
-    right: 4%;
+    right: 1%;
 }
 
 
@@ -282,35 +300,42 @@
 
 .portfolio-deck-nav svg {
 
-    width: 18px;
+    width: 15px;
 
-    height: 18px;
+    height: 15px;
 
     display: block;
 
-    stroke-width: 2.2;
+    stroke-width: 2;
 }
 
 
 /* =========================================================
    HOVER DOS BOTÕES DE NAVEGAÇÃO
 
-   O comportamento continua aqui porque pertence
-   especificamente aos controles da galeria.
+   No desktop, o controle ganha um pouco de presença
+   somente quando o usuário interage diretamente com ele.
+
+   Dessa forma, parado, o botão fica discreto.
+   Ao passar o mouse, ele fica claramente utilizável.
    ========================================================= */
 
 @media (hover: hover) and (pointer: fine) {
 
     .portfolio-deck-nav:hover {
 
-        background: #ffffff;
+        opacity: 1;
+
+        background:
+            rgba(255, 255, 255, 0.88);
 
         border-color:
-            rgba(23, 32, 51, 0.16);
+            rgba(23, 32, 51, 0.12);
+
+        color: #172033;
 
         box-shadow:
-            0 10px 22px rgba(23, 32, 51, 0.18),
-            0 3px 7px rgba(23, 32, 51, 0.10);
+            0 5px 14px rgba(23, 32, 51, 0.14);
     }
 
 
@@ -337,24 +362,30 @@
 
 .portfolio-deck-nav:active {
 
+    opacity: 1;
+
     transform:
         translateY(-50%)
-        scale(0.94);
+        scale(0.92);
 }
 
 
 /* =========================================================
    FOCO DOS BOTÕES
+
+   Mantém acessibilidade sem deixar o estado normal
+   visualmente pesado.
    ========================================================= */
 
 .portfolio-deck-nav:focus-visible {
+
+    opacity: 1;
 
     outline:
         2px solid rgba(22, 119, 210, 0.35);
 
     outline-offset: 3px;
 }
-
 
 /* =========================================================
    CARDS DO DECK
@@ -388,9 +419,9 @@
 
     left: 50%;
 
-    width: 70%;
+    width: 86%;
 
-    max-width: 270px;
+    max-width: 360px;
 
     aspect-ratio: 9 / 16;
 
@@ -400,8 +431,7 @@
 
     background: #ffffff;
 
-    border:
-        1px solid rgba(23, 32, 51, 0.08);
+   border: 1px solid f1f1f1;
 
     box-shadow:
         0 18px 30px rgba(23, 32, 51, 0.22),
@@ -723,26 +753,25 @@
         0
         auto;
 
-    width: 10px;
+    width: 7px;
 
-    height: 5px;
+    height: 7px;
 
-    min-width: 6px;
+    min-width: 7px;
 
-    min-height: 6px;
+    min-height: 7px;
 
     margin: 0;
 
     padding: 0;
 
-    border:
-        1px solid #464646;
+    border: 0;
 
     border-radius: 999px;
 
-    background: #cbd5e1;
+    background: rgba(23, 32, 51, 0.28);
 
-    opacity: 0.72;
+    opacity: 0.65;
 
     cursor: pointer;
 
@@ -755,11 +784,12 @@
     outline: none;
 
     transition:
-        width 180ms ease,
-        height 180ms ease,
-        transform 180ms ease,
-        background 180ms ease,
-        opacity 180ms ease;
+        width 220ms ease,
+        height 220ms ease,
+        background 220ms ease,
+        opacity 220ms ease,
+        transform 220ms ease,
+        box-shadow 220ms ease;
 }
 
 
@@ -769,19 +799,22 @@
 
 .portfolio-deck-indicador[aria-current="true"] {
 
-    width: 20px;
+    width: 22px;
 
-    height: 5px;
+    height: 7px;
 
-    min-width: 5px;
+    min-width: 22px;
 
-    min-height: 8px;
+    min-height: 7px;
 
-    background: black;
+    background: #172033;
 
     opacity: 1;
 
-    transform: scale(1.05);
+    transform: scale(1);
+
+    box-shadow:
+        0 2px 6px rgba(23, 32, 51, 0.18);
 }
 
 
@@ -808,13 +841,17 @@
 
         opacity: 1;
 
-        transform: scale(1.12);
+        background: #64748b;
+
+        transform: scale(1.15);
     }
 
 
     .portfolio-deck-indicador[aria-current="true"]:hover {
 
-        transform: scale(1.08);
+        background: #172033;
+
+        transform: scale(1);
     }
 }
 

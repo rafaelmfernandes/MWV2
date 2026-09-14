@@ -11,25 +11,30 @@
 
    Responsabilidade:
 
-   - Voltar
-   - Compartilhar perfil
-   - Copiar link
-   - Entrar em contato
-   - Contratar perfil
-   - Mostrar mensagens/toasts
-   - Navegação relacionada às ações
+   - Voltar para a página anterior
+   - Compartilhar o perfil
+   - Copiar o link do perfil
+   - Abrir contato via WhatsApp
+   - Iniciar contratação do perfil
+   - Exibir mensagens/toasts
+   - Controlar ações dos botões do perfil público
 
    Este módulo NÃO:
 
    - consulta o Supabase
-   - carrega dados
-   - renderiza HTML de conteúdo
-   - controla seções
-   - identifica tipos de perfil
+   - carrega dados do perfil
+   - renderiza conteúdo do perfil
+   - controla abas/seções
+   - identifica os dados principais do perfil
 
-   Ele apenas executa ações sobre o estado já carregado.
+   Ele trabalha somente com o estado já carregado
+   pelo módulo principal ApresentarPerfil.js.
    ========================================================= */
 
+
+/* =========================================================
+   CONFIGURAÇÃO
+   ========================================================= */
 
 const CONFIG = {
 
@@ -45,10 +50,10 @@ const CONFIG = {
         cantor: "contratar-musico.html",
         musico: "contratar-musico.html",
         banda: "contratar-musico.html",
-        dupla: "contratar-musico.html",
+        dupla_musical: "contratar-musico.html",
         dj: "contratar-musico.html",
         dancarino: "contratar-musico.html",
-        grupo_danca: "contratar-musico.html",
+        grupo_de_danca: "contratar-musico.html",
         mc: "contratar-musico.html",
         compositor: "contratar-musico.html",
         produtor_musical: "contratar-musico.html"
@@ -56,11 +61,15 @@ const CONFIG = {
 };
 
 
+/* =========================================================
+   ESTADO INTERNO
+   ========================================================= */
+
 let estadoAtual = null;
 
 
 /* =========================================================
-   ELEMENTOS
+   OBTENÇÃO DE ELEMENTOS
    ========================================================= */
 
 function obterElemento(id) {
@@ -74,7 +83,7 @@ function obterElemento(id) {
 
 
 /* =========================================================
-   NORMALIZAÇÃO
+   NORMALIZAÇÃO DE TEXTO
    ========================================================= */
 
 function normalizarTexto(valor) {
@@ -86,6 +95,10 @@ function normalizarTexto(valor) {
     return String(valor).trim();
 }
 
+
+/* =========================================================
+   NORMALIZAÇÃO DE TIPO DE PERFIL
+   ========================================================= */
 
 function normalizarTipo(tipo) {
 
@@ -99,7 +112,7 @@ function normalizarTipo(tipo) {
 
 
 /* =========================================================
-   EXTRAÇÃO DE DADOS
+   OBTENÇÃO DOS DADOS DO ESTADO
    ========================================================= */
 
 function obterUsuario() {
@@ -134,9 +147,13 @@ function obterPerfilArtista() {
 
 function obterPerfilId() {
 
-    if (estadoAtual && estadoAtual.perfilId) {
+    if (
+        estadoAtual &&
+        estadoAtual.perfilId
+    ) {
         return estadoAtual.perfilId;
     }
+
 
     if (
         estadoAtual &&
@@ -146,21 +163,35 @@ function obterPerfilId() {
         return estadoAtual.dados.perfilId;
     }
 
+
     return "";
 }
 
 
+/* =========================================================
+   OBTENÇÃO DO TIPO DE PERFIL
+   ========================================================= */
+
 function obterTipoPerfil() {
 
-    if (estadoAtual && estadoAtual.tipoPerfil) {
-        return normalizarTipo(estadoAtual.tipoPerfil);
+    if (
+        estadoAtual &&
+        estadoAtual.tipoPerfil
+    ) {
+        return normalizarTipo(
+            estadoAtual.tipoPerfil
+        );
     }
+
 
     const perfil = obterPerfil();
 
+
     if (perfil.tipo_perfil) {
 
-        if (typeof perfil.tipo_perfil === "object") {
+        if (
+            typeof perfil.tipo_perfil === "object"
+        ) {
 
             return normalizarTipo(
                 perfil.tipo_perfil.nome ||
@@ -170,12 +201,18 @@ function obterTipoPerfil() {
             );
         }
 
-        return normalizarTipo(perfil.tipo_perfil);
+
+        return normalizarTipo(
+            perfil.tipo_perfil
+        );
     }
+
 
     if (perfil.tipo) {
 
-        if (typeof perfil.tipo === "object") {
+        if (
+            typeof perfil.tipo === "object"
+        ) {
 
             return normalizarTipo(
                 perfil.tipo.nome ||
@@ -185,8 +222,12 @@ function obterTipoPerfil() {
             );
         }
 
-        return normalizarTipo(perfil.tipo);
+
+        return normalizarTipo(
+            perfil.tipo
+        );
     }
+
 
     return "";
 }
@@ -202,7 +243,9 @@ function obterNomePerfil() {
     const perfil = obterPerfil();
     const perfilArtista = obterPerfilArtista();
 
+
     return normalizarTexto(
+
         perfilArtista.nome_artistico ||
         perfilArtista.nome_artistico_publico ||
         perfil.nome_artistico ||
@@ -210,12 +253,13 @@ function obterNomePerfil() {
         usuario.nome ||
         usuario.nome_completo ||
         "Perfil"
+
     );
 }
 
 
 /* =========================================================
-   TELEFONE
+   OBTENÇÃO DO TELEFONE
    ========================================================= */
 
 function obterTelefone() {
@@ -224,7 +268,9 @@ function obterTelefone() {
     const perfil = obterPerfil();
     const perfilArtista = obterPerfilArtista();
 
+
     return normalizarTexto(
+
         perfilArtista.telefone ||
         perfilArtista.whatsapp ||
         perfilArtista.celular ||
@@ -235,6 +281,7 @@ function obterTelefone() {
         usuario.whatsapp ||
         usuario.celular ||
         ""
+
     );
 }
 
@@ -252,24 +299,37 @@ function normalizarTelefone(telefone) {
 
 function mostrarToast(mensagem) {
 
-    const toast = obterElemento(CONFIG.elementos.toast);
+    const toast = obterElemento(
+        CONFIG.elementos.toast
+    );
+
 
     if (!toast) {
+
         console.log(mensagem);
+
         return;
     }
+
 
     toast.textContent = mensagem;
 
     toast.classList.add("show");
 
-    clearTimeout(toast._timeout);
 
-    toast._timeout = setTimeout(function () {
+    clearTimeout(
+        toast._timeout
+    );
 
-        toast.classList.remove("show");
 
-    }, 3000);
+    toast._timeout = setTimeout(
+        function () {
+
+            toast.classList.remove("show");
+
+        },
+        3000
+    );
 }
 
 
@@ -277,16 +337,90 @@ function mostrarToast(mensagem) {
    VOLTAR
    ========================================================= */
 
+/* =========================================================
+   VOLTAR
+   ========================================================= */
+
 function voltar() {
 
-    if (window.history.length > 1) {
+    console.log(
+        "ApresentarPerfilAcoes: botão voltar acionado."
+    );
+
+    /*
+     * Guarda informações para diagnóstico.
+     */
+
+    console.log(
+        "ApresentarPerfilAcoes: history.length =",
+        window.history.length
+    );
+
+    console.log(
+        "ApresentarPerfilAcoes: document.referrer =",
+        document.referrer
+    );
+
+
+    /*
+     * Primeiro tenta utilizar o histórico do navegador/WebView.
+     */
+
+    if (
+        window.history &&
+        window.history.length > 1
+    ) {
+
+        console.log(
+            "ApresentarPerfilAcoes: tentando retornar pelo histórico."
+        );
+
 
         window.history.back();
+
+
+        /*
+         * Em alguns ambientes WebView/Capacitor,
+         * o history.back() pode não produzir navegação.
+         *
+         * Por isso temos um fallback.
+         */
+
+        setTimeout(function () {
+
+            /*
+             * Se ainda estivermos na mesma página,
+             * significa que o histórico não conseguiu
+             * realizar a navegação.
+             */
+
+            console.warn(
+                "ApresentarPerfilAcoes: histórico não realizou a navegação. Usando fallback."
+            );
+
+
+            window.location.href =
+                "index.html";
+
+        }, 500);
+
 
         return;
     }
 
-    window.location.href = "index.html";
+
+    /*
+     * Se não existe histórico suficiente,
+     * retorna diretamente para a página inicial.
+     */
+
+    console.log(
+        "ApresentarPerfilAcoes: nenhum histórico disponível. Indo para index.html."
+    );
+
+
+    window.location.href =
+        "index.html";
 }
 
 
@@ -308,6 +442,12 @@ async function copiarLink() {
 
     const link = obterLinkPerfil();
 
+
+    /*
+     * Primeiro tenta utilizar a API moderna
+     * da área de transferência.
+     */
+
     try {
 
         if (
@@ -317,7 +457,9 @@ async function copiarLink() {
 
             await navigator.clipboard.writeText(link);
 
-            mostrarToast("Link do perfil copiado.");
+            mostrarToast(
+                "Link do perfil copiado."
+            );
 
             return true;
         }
@@ -331,9 +473,16 @@ async function copiarLink() {
     }
 
 
+    /*
+     * Fallback para ambientes onde
+     * navigator.clipboard não está disponível.
+     */
+
     try {
 
-        const textarea = document.createElement("textarea");
+        const textarea =
+            document.createElement("textarea");
+
 
         textarea.value = link;
 
@@ -341,18 +490,28 @@ async function copiarLink() {
         textarea.style.left = "-9999px";
         textarea.style.top = "-9999px";
 
-        document.body.appendChild(textarea);
+
+        document.body.appendChild(
+            textarea
+        );
+
 
         textarea.focus();
         textarea.select();
 
-        const sucesso = document.execCommand("copy");
+
+        const sucesso =
+            document.execCommand("copy");
+
 
         textarea.remove();
 
+
         if (sucesso) {
 
-            mostrarToast("Link do perfil copiado.");
+            mostrarToast(
+                "Link do perfil copiado."
+            );
 
             return true;
         }
@@ -365,20 +524,33 @@ async function copiarLink() {
         );
     }
 
-    mostrarToast("Não foi possível copiar o link.");
+
+    mostrarToast(
+        "Não foi possível copiar o link."
+    );
+
 
     return false;
 }
 
 
 /* =========================================================
-   COMPARTILHAR
+   COMPARTILHAR PERFIL
    ========================================================= */
 
 async function compartilharPerfil() {
 
-    const nome = obterNomePerfil();
-    const link = obterLinkPerfil();
+    const nome =
+        obterNomePerfil();
+
+    const link =
+        obterLinkPerfil();
+
+
+    /*
+     * Em dispositivos que possuem
+     * Web Share API, abre o compartilhamento nativo.
+     */
 
     if (navigator.share) {
 
@@ -387,14 +559,25 @@ async function compartilharPerfil() {
             await navigator.share({
 
                 title: nome,
-                text: "Confira o perfil de " + nome + " no MusicalWorld.",
+
+                text:
+                    "Confira o perfil de " +
+                    nome +
+                    " no MusicalWorld.",
+
                 url: link
 
             });
 
+
             return true;
 
         } catch (erro) {
+
+            /*
+             * O usuário pode simplesmente ter
+             * fechado/cancelado o compartilhamento.
+             */
 
             if (
                 erro &&
@@ -403,6 +586,7 @@ async function compartilharPerfil() {
                 return false;
             }
 
+
             console.warn(
                 "Compartilhamento cancelado ou indisponível:",
                 erro
@@ -410,6 +594,11 @@ async function compartilharPerfil() {
         }
     }
 
+
+    /*
+     * Se o compartilhamento nativo não estiver
+     * disponível, copia o link automaticamente.
+     */
 
     return copiarLink();
 }
@@ -421,7 +610,9 @@ async function compartilharPerfil() {
 
 function abrirContato() {
 
-    const telefone = obterTelefone();
+    const telefone =
+        obterTelefone();
+
 
     if (!telefone) {
 
@@ -433,7 +624,11 @@ function abrirContato() {
     }
 
 
-    const numero = normalizarTelefone(telefone);
+    const numero =
+        normalizarTelefone(
+            telefone
+        );
+
 
     if (!numero) {
 
@@ -445,17 +640,22 @@ function abrirContato() {
     }
 
 
-    let numeroWhatsApp = numero;
+    let numeroWhatsApp =
+        numero;
 
 
     /*
-     * Se o número já vier com DDI, mantém.
-     * Caso contrário, adiciona o código do Brasil.
+     * Caso o telefone não possua
+     * código internacional, assume Brasil.
      */
 
-    if (!numeroWhatsApp.startsWith("55")) {
+    if (
+        !numeroWhatsApp.startsWith("55")
+    ) {
 
-        numeroWhatsApp = "55" + numeroWhatsApp;
+        numeroWhatsApp =
+            "55" +
+            numeroWhatsApp;
     }
 
 
@@ -467,10 +667,16 @@ function abrirContato() {
         "https://wa.me/" +
         numeroWhatsApp +
         "?text=" +
-        encodeURIComponent(mensagem);
+        encodeURIComponent(
+            mensagem
+        );
 
 
-    window.open(url, "_blank");
+    window.open(
+        url,
+        "_blank"
+    );
+
 
     return true;
 }
@@ -482,7 +688,9 @@ function abrirContato() {
 
 function contratarPerfil() {
 
-    const tipo = obterTipoPerfil();
+    const tipo =
+        obterTipoPerfil();
+
 
     const pagina =
         CONFIG.paginasContratacao[tipo];
@@ -498,11 +706,18 @@ function contratarPerfil() {
     }
 
 
-    const perfilId = obterPerfilId();
+    const perfilId =
+        obterPerfilId();
 
 
-    const parametros = new URLSearchParams();
+    const parametros =
+        new URLSearchParams();
 
+
+    /*
+     * Envia o ID do perfil para a página
+     * de contratação.
+     */
 
     if (perfilId) {
 
@@ -513,6 +728,10 @@ function contratarPerfil() {
     }
 
 
+    /*
+     * Envia também o tipo do perfil.
+     */
+
     if (tipo) {
 
         parametros.set(
@@ -522,7 +741,9 @@ function contratarPerfil() {
     }
 
 
-    const query = parametros.toString();
+    const query =
+        parametros.toString();
+
 
     const destino =
         query
@@ -530,7 +751,9 @@ function contratarPerfil() {
             : pagina;
 
 
-    window.location.href = destino;
+    window.location.href =
+        destino;
+
 
     return true;
 }
@@ -543,88 +766,122 @@ function contratarPerfil() {
 function configurarBotoes() {
 
     const btnVoltar =
-        obterElemento(CONFIG.elementos.voltar);
+        obterElemento(
+            CONFIG.elementos.voltar
+        );
+
 
     const btnCompartilhar =
-        obterElemento(CONFIG.elementos.compartilhar);
+        obterElemento(
+            CONFIG.elementos.compartilhar
+        );
+
 
     const btnContato =
-        obterElemento(CONFIG.elementos.contato);
+        obterElemento(
+            CONFIG.elementos.contato
+        );
+
 
     const btnContratar =
-        obterElemento(CONFIG.elementos.contratar);
+        obterElemento(
+            CONFIG.elementos.contratar
+        );
 
+
+    /* -----------------------------------------------------
+       BOTÃO VOLTAR
+       ----------------------------------------------------- */
 
     if (btnVoltar) {
 
-        btnVoltar.onclick = voltar;
+        btnVoltar.onclick =
+            voltar;
     }
 
+
+    /* -----------------------------------------------------
+       BOTÃO COMPARTILHAR
+       ----------------------------------------------------- */
 
     if (btnCompartilhar) {
 
-        btnCompartilhar.onclick = function (evento) {
+        btnCompartilhar.onclick =
+            function (evento) {
 
-            if (evento) {
-                evento.preventDefault();
-            }
+                if (evento) {
+                    evento.preventDefault();
+                }
 
-            compartilharPerfil();
-        };
+                compartilharPerfil();
+            };
     }
 
+
+    /* -----------------------------------------------------
+       BOTÃO CONTATO
+       ----------------------------------------------------- */
 
     if (btnContato) {
 
-        btnContato.onclick = function (evento) {
+        btnContato.onclick =
+            function (evento) {
 
-            if (evento) {
-                evento.preventDefault();
-            }
+                if (evento) {
+                    evento.preventDefault();
+                }
 
-            abrirContato();
-        };
+                abrirContato();
+            };
     }
 
 
+    /* -----------------------------------------------------
+       BOTÃO CONTRATAR
+       ----------------------------------------------------- */
+
     if (btnContratar) {
 
-        btnContratar.onclick = function (evento) {
+        btnContratar.onclick =
+            function (evento) {
 
-            if (evento) {
-                evento.preventDefault();
-            }
+                if (evento) {
+                    evento.preventDefault();
+                }
 
-            contratarPerfil();
-        };
+                contratarPerfil();
+            };
     }
 }
 
 
 /* =========================================================
-   CONFIGURAÇÃO
+   CONFIGURAÇÃO DO MÓDULO
    ========================================================= */
 
 function configurar(estado) {
 
-    estadoAtual = estado || null;
+    estadoAtual =
+        estado || null;
+
 
     configurarBotoes();
 }
 
 
 /* =========================================================
-   ATUALIZAR ESTADO
+   ATUALIZAÇÃO DO ESTADO
    ========================================================= */
 
 function atualizarEstado(estado) {
 
-    estadoAtual = estado || null;
+    estadoAtual =
+        estado || null;
 }
 
 
 /* =========================================================
-   LIMPAR
+   LIMPEZA DO MÓDULO
    ========================================================= */
 
 function limpar() {
@@ -633,23 +890,31 @@ function limpar() {
 
 
     const elementos = [
+
         CONFIG.elementos.voltar,
         CONFIG.elementos.compartilhar,
         CONFIG.elementos.contato,
         CONFIG.elementos.contratar
+
     ];
 
 
-    elementos.forEach(function (id) {
+    elementos.forEach(
+        function (id) {
 
-        const elemento = obterElemento(id);
+            const elemento =
+                obterElemento(id);
 
-        if (!elemento) {
-            return;
+
+            if (!elemento) {
+                return;
+            }
+
+
+            elemento.onclick =
+                null;
         }
-
-        elemento.onclick = null;
-    });
+    );
 }
 
 

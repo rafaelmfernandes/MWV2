@@ -1,199 +1,298 @@
-/* =========================================================
-MUSICALWORLD — APRESENTAR PERFIL
-02 — FUNDO DINÂMICO
+css
+/*
+=========================================================
+MUSICALWORLD — FUNDO DINÂMICO DO PERFIL PÚBLICO
+Arquivo: 02-apresentar-perfil-fundo.css
 
 Responsabilidade:
 
-• Controlar exclusivamente o fundo visual da página.
-• Criar profundidade através de gradientes suaves.
-• Adaptar o fundo às cores utilizadas pelo MusicalWorld.
-• Criar um efeito visual dinâmico e discreto.
-• Não controlar cards, textos, portfólio ou componentes.
+- Manter o fundo geral da página em tom neutro.
+- Criar o fundo dinâmico baseado nas cores do portfólio.
+- Fazer o efeito ocupar toda a largura da viewport.
+- Permitir que o efeito apareça atrás do topbar transparente.
+- Permitir que o efeito apareça na região do portfólio.
+- Fazer a transição vertical para o fundo original.
+- Impedir que o efeito invada as seções de identidade,
+  sobre, experiência e serviços.
+- Evitar bordas laterais ou aparência de "caixa".
+=========================================================
+*/
 
-IMPORTANTE:
-
-Este arquivo não deve receber regras de componentes.
-Toda alteração relacionada ao fundo geral da página
-deve ser feita aqui.
-========================================================= */
 
 /* =========================================================
-FUNDO PRINCIPAL DA PÁGINA
-========================================================= */
+   1. FUNDO BASE DA PÁGINA
+   ========================================================= */
 
+html,
 body {
-position: relative;
-
-
-min-height: 100vh;
-
-background:
-    linear-gradient(
-        180deg,
-        #f8faff 0%,
-        #f5f7fb 45%,
-        #f3f5fa 100%
-    );
-
-color: #172033;
-
-
+    background: #f5f7fb;
+    overflow-x: hidden;
 }
+
 
 /* =========================================================
-CAMADA DINÂMICA DO FUNDO
-========================================================= */
-
-body::before {
-content: "";
-
-
-position: fixed;
-
-top: -180px;
-left: -180px;
-
-width: 520px;
-height: 520px;
-
-border-radius: 50%;
-
-background:
-    radial-gradient(
-        circle,
-        rgba(109, 74, 255, 0.10) 0%,
-        rgba(109, 74, 255, 0.05) 38%,
-        rgba(109, 74, 255, 0) 72%
-    );
-
-pointer-events: none;
-
-z-index: -1;
-
-animation:
-    fundoMovimentoSuperior
-    14s
-    ease-in-out
-    infinite
-    alternate;
-
-
-}
-
-/* =========================================================
-SEGUNDA CAMADA DINÂMICA
-========================================================= */
-
-body::after {
-content: "";
-
-
-position: fixed;
-
-right: -200px;
-bottom: -220px;
-
-width: 560px;
-height: 560px;
-
-border-radius: 50%;
-
-background:
-    radial-gradient(
-        circle,
-        rgba(56, 189, 248, 0.09) 0%,
-        rgba(56, 189, 248, 0.04) 40%,
-        rgba(56, 189, 248, 0) 72%
-    );
-
-pointer-events: none;
-
-z-index: -1;
-
-animation:
-    fundoMovimentoInferior
-    18s
-    ease-in-out
-    infinite
-    alternate;
-
-
-}
-
-/* =========================================================
-MOVIMENTO — CAMADA SUPERIOR
-========================================================= */
-
-@keyframes fundoMovimentoSuperior {
-
-
-0% {
-    transform:
-        translate3d(0, 0, 0)
-        scale(1);
-}
-
-100% {
-    transform:
-        translate3d(80px, 50px, 0)
-        scale(1.12);
-}
-
-
-}
-
-/* =========================================================
-MOVIMENTO — CAMADA INFERIOR
-========================================================= */
-
-@keyframes fundoMovimentoInferior {
-
-
-0% {
-    transform:
-        translate3d(0, 0, 0)
-        scale(1);
-}
-
-100% {
-    transform:
-        translate3d(-70px, -50px, 0)
-        scale(1.10);
-}
-
-
-}
-
-/* =========================================================
-CONTROLE DE EMPILHAMENTO
-
-Mantém o conteúdo da aplicação acima das camadas
-decorativas do fundo.
-========================================================= */
+   2. CONTAINER PRINCIPAL
+   ---------------------------------------------------------
+   O .app é usado como referência para o fundo porque
+   contém tanto o topbar quanto o profile-page.
+   ========================================================= */
 
 .app {
-position: relative;
+    position: relative;
+    isolation: isolate;
 
+    /*
+    Altura padrão do fundo dinâmico.
 
-z-index: 0;
-
-
+    O PortfolioUtils.js poderá substituir esse valor
+    dinamicamente.
+    */
+    --perfil-fundo-altura: 1200px;
 }
 
-/* =========================================================
-ACESSIBILIDADE
 
-Usuários que preferem reduzir movimento não recebem
-a animação das camadas decorativas.
-========================================================= */
+/* =========================================================
+   3. CAMADA DO FUNDO DINÂMICO
+   ---------------------------------------------------------
+   Essa camada:
+
+   - começa no topo do .app;
+   - ocupa toda a largura da viewport;
+   - aparece atrás do topbar;
+   - utiliza as cores extraídas do portfólio;
+   - desaparece gradualmente na vertical.
+   ========================================================= */
+
+.app::before {
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    left: 50%;
+
+    width: 100vw;
+    height: var(--perfil-fundo-altura);
+
+    transform: translateX(-50%);
+
+    pointer-events: none;
+
+    z-index: 0;
+
+    /*
+    Gradiente vertical.
+
+    A cor mais forte fica no topo.
+    Depois ocorre uma transição gradual entre as cores
+    extraídas do conteúdo ativo do portfólio.
+    No final, o fundo se torna completamente transparente.
+    */
+
+    background:
+        linear-gradient(
+            180deg,
+
+            var(
+                --perfil-fundo-cor-1,
+                rgba(167, 182, 198, 0.30)
+            ) 0%,
+
+            var(
+                --perfil-fundo-cor-1,
+                rgba(167, 182, 198, 0.30)
+            ) 18%,
+
+            var(
+                --perfil-fundo-cor-2,
+                rgba(200, 210, 222, 0.18)
+            ) 45%,
+
+            var(
+                --perfil-fundo-cor-3,
+                rgba(226, 232, 222, 0.12)
+            ) 68%,
+
+            transparent 100%
+        );
+
+    /*
+    Intensidade geral controlada pelo JavaScript.
+    */
+    opacity: var(--perfil-fundo-opacidade, 0);
+
+    border: 0;
+    box-shadow: none;
+
+    transition: opacity 220ms ease;
+}
+
+
+/* =========================================================
+   4. CONTEÚDO ACIMA DA CAMADA DINÂMICA
+   ========================================================= */
+
+.app > .topbar {
+    z-index: 100;
+}
+.app > .profile-page,
+.app > .profile-action-bar {
+    position: relative;
+    z-index: 1;
+}
+
+
+/* =========================================================
+   5. TOPBAR
+   ---------------------------------------------------------
+   O topbar permanece transparente para permitir que o
+   fundo dinâmico apareça atrás dele.
+   ========================================================= */
+
+.app > .topbar {
+    background: transparent;
+}
+
+
+/* =========================================================
+   6. PÁGINA PRINCIPAL DO PERFIL
+   ---------------------------------------------------------
+   A página principal permanece transparente.
+
+   As seções internas determinam onde o fundo original
+   deve voltar a aparecer.
+   ========================================================= */
+
+.app > .profile-page {
+    background: transparent;
+}
+
+
+/* =========================================================
+   7. ÁREA DO PORTFÓLIO
+   ---------------------------------------------------------
+   O portfólio continua transparente para que o fundo
+   dinâmico seja percebido ao redor do card.
+   ========================================================= */
+
+.profile-media-highlight {
+    background: transparent;
+}
+
+
+.portfolio-grid {
+    background: transparent;
+}
+
+
+.portfolio-deck {
+    background: transparent;
+}
+
+
+/* =========================================================
+   8. IDENTIDADE DO ARTISTA
+   ---------------------------------------------------------
+   A identidade NÃO deve mais ficar transparente.
+
+   O fundo original da página volta a partir desta seção.
+
+   Isso impede que a cor do portfólio apareça atrás de:
+
+   - foto;
+   - nome;
+   - localização;
+   - tipo de artista;
+   - informações principais.
+   ========================================================= */
+
+.profile-identity {
+    background: #f5f7fb;
+}
+
+
+/* =========================================================
+   9. SEÇÃO "SOBRE O ARTISTA"
+   ========================================================= */
+
+.profile-about {
+    background: #f5f7fb;
+}
+
+
+/* =========================================================
+   10. SEÇÃO PROFISSIONAL
+   ========================================================= */
+
+.profile-professional-section {
+    background: #f5f7fb;
+}
+
+
+/* =========================================================
+   11. SEÇÃO DE SERVIÇOS
+   ========================================================= */
+
+.profile-services-section {
+    background: #f5f7fb;
+}
+
+
+/* =========================================================
+   12. PROTEÇÃO DAS SEÇÕES INFERIORES
+   ---------------------------------------------------------
+   Garante que essas áreas tenham uma camada própria
+   acima do fundo dinâmico.
+   ========================================================= */
+
+.profile-identity,
+.profile-about,
+.profile-professional-section,
+.profile-services-section {
+    position: relative;
+    z-index: 2;
+}
+
+
+/* =========================================================
+   13. PROTEÇÃO PARA ELEMENTOS INTERNOS
+   ========================================================= */
+
+.profile-identity *,
+.profile-about *,
+.profile-professional-section *,
+.profile-services-section * {
+    position: relative;
+}
+
+
+/* =========================================================
+   14. REDUÇÃO DE MOVIMENTO
+   ========================================================= */
 
 @media (prefers-reduced-motion: reduce) {
 
-
-body::before,
-body::after {
-    animation: none;
+    .app::before {
+        transition: none;
+    }
 }
 
 
+/* =========================================================
+   15. TELAS MENORES
+   ========================================================= */
+
+@media (max-width: 768px) {
+
+    .app::before {
+        width: 100vw;
+        left: 50%;
+        transform: translateX(-50%);
+    }
 }
+
+
+/* =========================================================
+   FIM DO ARQUIVO
+========================================================= */
+

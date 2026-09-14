@@ -1,1547 +1,1359 @@
 (function (window) {
 
+
 "use strict";
 
 /* =========================================================
-MUSICALWORLD / ARTISTASHOW — PORTFÓLIO DO PERFIL PÚBLICO
+   MUSICALWORLD / ARTISTASHOW — PORTFÓLIO DO PERFIL PÚBLICO
 
-Arquivo:
-ApresentarPerfilPortfolio.js
+   Arquivo:
+   ApresentarPerfilPortfolio.js
 
-Responsabilidade:
+   Responsabilidade:
 
-Normalizar os itens de portfólio recebidos do banco.
-Renderizar imagens, vídeos e áudios.
-Controlar a galeria principal do perfil público.
-Criar o efeito de deck empilhado.
-Manter o formato visual vertical 9:16.
-Controlar swipe/arraste lateral.
-Permitir navegação pelos botões laterais.
-Manter o deck circular.
-Criar e atualizar os indicadores de paginação.
-Permitir navegação pelas bolinhas.
-Controlar reprodução automática dos vídeos.
-Pausar vídeos durante swipe.
-Pausar vídeos quando saem completamente da viewport.
-Reproduzir novamente quando o vídeo volta a ficar
-completamente visível.
-Calcular cores predominantes das imagens e vídeos
-do portfólio.
-Alimentar o fundo dinâmico de toda a página.
-Realizar transições suaves entre as paletas de cores.
-Controlar a intensidade do fundo conforme o portfólio
-entra ou sai da viewport.
-Manter compatibilidade com os demais módulos
-da página pública.
+   - Normalizar os itens de portfólio.
+   - Renderizar imagens, vídeos e áudios.
+   - Controlar a galeria principal.
+   - Controlar o deck empilhado.
+   - Controlar swipe/arraste lateral.
+   - Controlar navegação pelos botões.
+   - Controlar indicadores.
+   - Controlar reprodução dos vídeos.
+   - Controlar o observer dos vídeos.
+   - Calcular as cores predominantes da mídia.
+   - Alimentar o fundo dinâmico da página.
+   - Expor a API pública do módulo.
 
-Relação com outros módulos:
+   IMPORTANTE:
 
-ApresentarPerfil.js
-chama este módulo para renderizar o portfólio.
+   Esta versão reorganiza o código por responsabilidade,
+   preservando as funções, classes, configurações e
+   comportamento da versão anterior.
 
-PerfilPublico / módulos de dados
-fornecem os dados do portfólio.
+   Relação com outros módulos:
 
-apresentar-perfil-portfolio.css
-controla a apresentação visual do portfólio.
+   - ApresentarPerfil.js
+   - PerfilPublico / módulos de dados
+   - CSS do perfil público
+   - ApresentarPerfilFundo / variáveis CSS do fundo
 
-apresentar-perfil-fundo.css
-controla visualmente o fundo dinâmico da página
-utilizando as variáveis fornecidas por este módulo.
+   Elementos HTML utilizados:
 
-O HTML fornece:
-#portfolioGrid
-#videoList
-#audioList
-========================================================= */
+   - #portfolioGrid
+   - #videoList
+   - #audioList
+   ========================================================= */
+
 
 /* =========================================================
-ESTADO
-========================================================= */
+   01. ESTADO PRINCIPAL DO MÓDULO
+   ========================================================= */
 
 let portfolio = [];
 
 let inicializado = false;
 
+/*
+ * Estado completo da galeria.
+ */
 let galeria = {
 
+    itens: [],
 
-itens: [],
+    indiceAtual: 0,
 
-indiceAtual: 0,
+    arrastando: false,
 
-arrastando: false,
+    gestoHorizontal: false,
 
-gestoHorizontal: false,
+    inicioX: 0,
 
-inicioX: 0,
+    inicioY: 0,
 
-inicioY: 0,
+    deslocamentoX: 0,
 
-deslocamentoX: 0,
+    ponteiroId: null,
 
-ponteiroId: null,
+    bloqueado: false,
 
-bloqueado: false,
-
-animando: false
-
+    animando: false
 
 };
 
+/*
+ * Evita que um clique seja executado imediatamente
+ * depois de um swipe.
+ */
 let ignorarProximoClique = false;
 
+/*
+ * Controla se os eventos do deck já foram registrados.
+ */
 let eventosDeckRegistrados = false;
 
+
 /* =========================================================
-OBSERVER DOS VÍDEOS
-========================================================= */
+   02. ESTADO DOS VÍDEOS
+   ========================================================= */
 
 let observerVideos = null;
 
 /*
-
-* Indica se o usuário está realizando um swipe horizontal.
-* Enquanto estiver true, nenhum vídeo deve reproduzir.
-  */
-
+ * Durante um swipe horizontal nenhum vídeo deve
+ * iniciar ou continuar reproduzindo.
+ */
 let videosPausadosPorSwipe = false;
 
+
 /* =========================================================
-FUNDO DINÂMICO DA PÁGINA
+   03. ESTADO DO FUNDO DINÂMICO
+   ========================================================= */
 
-Este estado controla as cores utilizadas pelo fundo
-dinâmico de toda a página pública.
-
-O JavaScript:
-
-1. analisa a imagem ou frame do vídeo ativo;
-2. identifica as cores predominantes;
-3. envia as cores para o BODY;
-4. realiza a transição suave entre a paleta anterior
-   e a nova paleta;
-5. calcula a intensidade de visibilidade;
-6. informa essa intensidade ao CSS.
-
-O arquivo:
-
-apresentar-perfil-fundo.css
-
-é responsável por desenhar o efeito visual.
-
-O #portfolioGrid NÃO recebe mais o fundo dinâmico.
-========================================================= */
-
+/*
+ * O fundo dinâmico pertence à página inteira.
+ *
+ * O módulo:
+ *
+ * 1. identifica a mídia ativa;
+ * 2. calcula as cores predominantes;
+ * 3. envia as cores para as variáveis CSS do BODY;
+ * 4. anima a transição entre as paletas;
+ * 5. controla a intensidade conforme o portfólio
+ *    entra ou sai da viewport.
+ */
 let fundoDinamico = {
 
+    chaveAtual: "",
 
-chaveAtual: "",
+    processamento: 0,
 
-processamento: 0,
+    scrollRegistrado: false,
 
-scrollRegistrado: false,
+    /*
+     * Guarda a paleta atualmente exibida.
+     *
+     * Isso permite iniciar uma nova transição
+     * exatamente de onde a anterior parou.
+     */
+    coresAtuais: null,
 
-/*
- * Guarda as três cores que estão atualmente
- * sendo exibidas no BODY.
- *
- * Isso permite que uma nova transição comece
- * exatamente de onde a animação anterior parou.
- */
+    /*
+     * requestAnimationFrame da transição atual.
+     */
+    animacaoId: null,
 
-coresAtuais: null,
-
-/*
- * Identificador da animação requestAnimationFrame.
- *
- * Quando uma nova mídia é selecionada antes da
- * transição anterior terminar, cancelamos a animação
- * anterior e iniciamos uma nova a partir das cores
- * atuais.
- */
-
-animacaoId: null,
-
-/*
- * Duração da transição das cores.
- */
-
-duracaoTransicao: 800
-
+    /*
+     * Duração da transição entre paletas.
+     */
+    duracaoTransicao: 800
 
 };
 
+
 /* =========================================================
-CONFIGURAÇÃO
-========================================================= */
+   04. CONFIGURAÇÃO
+   ========================================================= */
 
 const CONFIG = {
 
+    elementos: {
 
-elementos: {
+        portfolioGrid: "portfolioGrid",
 
-    portfolioGrid: "portfolioGrid",
+        videoList: "videoList",
 
-    videoList: "videoList",
+        audioList: "audioList"
 
-    audioList: "audioList"
-
-},
-
-deck: {
-
-    limiteSwipe: 0.20,
-
-    limitePixels: 55,
-
-    duracao: 360,
-
-    deslocamentoProximo: 28,
-
-    deslocamentoVertical: 9,
-
-    escalaProximo: 0.92,
-
-    escalaDistante: 0.88,
-
-    rotacaoMaxima: 4,
-
-    blurProximo: "2px",
-
-    blurDistante: "3px"
-
-},
-
-video: {
+    },
 
     /*
-     * O vídeo precisa estar completamente visível
-     * para iniciar automaticamente.
+     * Configurações do deck visual.
      */
+    deck: {
 
-    visibilidadeMinima: 1,
+        limiteSwipe: 0.20,
+
+        limitePixels: 55,
+
+        duracao: 360,
+
+        deslocamentoProximo: 28,
+
+        deslocamentoVertical: 9,
+
+        escalaProximo: 0.92,
+
+        escalaDistante: 0.88,
+
+        rotacaoMaxima: 4,
+
+        blurProximo: "2px",
+
+        blurDistante: "3px"
+
+    },
 
     /*
-     * O vídeo começa sem áudio para que o navegador
-     * permita o autoplay.
+     * Configurações relacionadas aos vídeos.
      */
+    video: {
 
-    muted: false,
+        /*
+         * O vídeo precisa estar completamente visível
+         * para iniciar automaticamente.
+         */
+        visibilidadeMinima: 1,
+
+        /*
+         * Mantido conforme comportamento atual.
+         */
+        muted: false,
+
+        /*
+         * Mantido para compatibilidade com a configuração
+         * existente do módulo.
+         */
+        autoplay: true
+
+    },
 
     /*
-     * Reproduz automaticamente quando ficar totalmente
-     * visível.
+     * Configurações do fundo dinâmico.
      */
+    fundoDinamico: {
 
-    autoplay: true
+        ativado: true,
 
-},
+        /*
+         * Canvas pequeno utilizado para análise da mídia.
+         */
+        larguraCanvas: 40,
 
-/* =====================================================
-   CONFIGURAÇÃO DO FUNDO DINÂMICO
-   ===================================================== */
+        alturaCanvas: 40,
 
-fundoDinamico: {
+        /*
+         * Analisa um pixel a cada X posições.
+         */
+        passoAmostragem: 2,
 
-    ativado: true,
+        /*
+         * Distância mínima entre cores selecionadas.
+         */
+        distanciaMinimaCores: 55,
 
-    /*
-     * Tamanho reduzido do canvas utilizado para
-     * análise das imagens e dos frames de vídeo.
-     */
+        /*
+         * Cores utilizadas quando não é possível
+         * analisar a mídia.
+         */
+        corFallback1:
+            "rgba(167, 182, 198, 0.30)",
 
-    larguraCanvas: 40,
+        corFallback2:
+            "rgba(200, 210, 222, 0.18)",
 
-    alturaCanvas: 40,
-
-    /*
-     * Analisa um pixel a cada X posições.
-     */
-
-    passoAmostragem: 2,
-
-    /*
-     * Distância mínima entre as cores escolhidas.
-     *
-     * Isso evita que as três cores sejam praticamente
-     * iguais.
-     */
-
-    distanciaMinimaCores: 55,
-
-    /*
-     * Cores utilizadas quando não é possível analisar
-     * a mídia.
-     */
-
-    corFallback1:
-        "rgba(167, 182, 198, 0.30)",
-
-    corFallback2:
-        "rgba(200, 210, 222, 0.18)",
-
-    corFallback3:
-        "rgba(226, 232, 240, 0.12)"
-
-}
-
-
-};
-
-/* =========================================================
-UTILITÁRIOS
-========================================================= */
-
-function obterUtils() {
-
-
-if (window.PerfilUtils) {
-
-    return window.PerfilUtils;
-
-}
-
-return null;
-
-
-}
-
-function obterElemento(id) {
-
-
-if (!id) {
-
-    return null;
-
-}
-
-return document.getElementById(id);
-
-
-}
-
-function escaparHtml(valor) {
-
-
-if (
-    valor === null ||
-    valor === undefined
-) {
-
-    return "";
-
-}
-
-return String(valor)
-
-    .replace(/&/g, "&amp;")
-
-    .replace(/</g, "&lt;")
-
-    .replace(/>/g, "&gt;")
-
-    .replace(/"/g, "&quot;")
-
-    .replace(/'/g, "&#039;");
-
-
-}
-
-function renderizarIcones(container) {
-
-
-if (!container) {
-
-    return;
-
-}
-
-try {
-
-    if (
-        window.lucide &&
-        typeof window.lucide.createIcons ===
-        "function"
-    ) {
-
-        window.lucide.createIcons({
-
-            attrs: {
-
-                "stroke-width": 1.8
-
-            }
-
-        });
+        corFallback3:
+            "rgba(226, 232, 240, 0.12)"
 
     }
 
-} catch (erro) {
-
-    console.warn(
-        "ApresentarPerfilPortfolio: não foi possível atualizar ícones.",
-        erro
-    );
-
-}
-
-
-}
-
-/* =========================================================
-FUNDO DINÂMICO DA PÁGINA
-========================================================= */
-
-/*
-
-* Retorna o BODY da página.
-*
-* O fundo dinâmico pertence à página inteira,
-* e não mais ao container do portfólio.
-  */
-
-function obterBody() {
-
-
-return document.body || null;
-
-
-}
-
-/*
-
-* Retorna as cores fallback configuradas.
-  */
-
-function obterCoresFallbackDinamica() {
-
-
-return [
-
-    CONFIG.fundoDinamico.corFallback1,
-
-    CONFIG.fundoDinamico.corFallback2,
-
-    CONFIG.fundoDinamico.corFallback3
-
-];
-
-
-}
-
-/*
-
-* Converte uma cor CSS rgba/rgb em objeto RGB.
-*
-* Esta função existe para que possamos interpolar
-* matematicamente as cores durante a transição.
-  */
-
-function converterCssParaRgb(cor) {
-
-
-if (!cor) {
-
-    return null;
-
-}
-
-const texto =
-    String(cor).trim();
-
-const correspondencia =
-    texto.match(
-        /rgba?\(\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)(?:\s*,\s*([\d.]+))?\s*\)/i
-    );
-
-if (!correspondencia) {
-
-    return null;
-
-}
-
-return {
-
-    r:
-        Number(
-            correspondencia[1]
-        ),
-
-    g:
-        Number(
-            correspondencia[2]
-        ),
-
-    b:
-        Number(
-            correspondencia[3]
-        ),
-
-    a:
-        correspondencia[4] !== undefined
-
-            ? Number(
-                correspondencia[4]
-            )
-
-            : 1
-
 };
 
 
-}
+/* =========================================================
+   05. UTILITÁRIOS GERAIS
+   ========================================================= */
 
 /*
-
-* Interpola duas cores RGB.
-*
-* progresso:
-* 0 = cor inicial
-* 1 = cor final
-  */
-
-function interpolarCor(
-corInicial,
-corFinal,
-progresso
-) {
-
-
-const inicial =
-    converterCssParaRgb(
-        corInicial
-    );
-
-const final =
-    converterCssParaRgb(
-        corFinal
-    );
-
-if (
-    !inicial ||
-    !final
-) {
-
-    return corFinal;
-
-}
-
-const r =
-
-    inicial.r +
-    (
-        (final.r - inicial.r) *
-        progresso
-    );
-
-const g =
-
-    inicial.g +
-    (
-        (final.g - inicial.g) *
-        progresso
-    );
-
-const b =
-
-    inicial.b +
-    (
-        (final.b - inicial.b) *
-        progresso
-    );
-
-const a =
-
-    inicial.a +
-    (
-        (final.a - inicial.a) *
-        progresso
-    );
-
-return converterRgbParaCss(
-    r,
-    g,
-    b,
-    a
-);
-
-
-}
-
-/*
-
-* Função de easing utilizada na transição.
-*
-* Começa suavemente, acelera no meio e desacelera
-* novamente antes de chegar à cor final.
-  */
-
-function aplicarEasingSuave(
-progresso
-) {
-
-
-return (
-    progresso < 0.5
-
-        ? 2 *
-            progresso *
-            progresso
-
-        : 1 -
-            (
-                Math.pow(
-                    -2 *
-                    progresso +
-                    2,
-                    2
-                ) /
-                2
-            )
-);
-
-
-}
-
-/*
-
-* Interrompe uma animação de cores que ainda esteja
-* em andamento.
-  */
-
-function cancelarTransicaoCores() {
-
-
-if (
-    fundoDinamico.animacaoId !== null
-) {
-
-    cancelAnimationFrame(
-        fundoDinamico.animacaoId
-    );
-
-    fundoDinamico.animacaoId =
-        null;
-
-}
-
-
-}
-
-/*
-
-* Aplica uma paleta de cores imediatamente ao BODY.
-*
-* Esta função é utilizada somente quando ainda não
-* existe uma paleta anterior válida ou quando precisamos
-* fazer uma alteração instantânea.
-  */
-
-function aplicarCoresFundoImediatamente(
-cores
-) {
-
-
-const body =
-    obterBody();
-
-if (
-    !body ||
-    !Array.isArray(cores) ||
-    cores.length < 3
-) {
-
-    return;
-
-}
-
-body.style.setProperty(
-    "--perfil-fundo-cor-1",
-    cores[0]
-);
-
-body.style.setProperty(
-    "--perfil-fundo-cor-2",
-    cores[1]
-);
-
-body.style.setProperty(
-    "--perfil-fundo-cor-3",
-    cores[2]
-);
-
-fundoDinamico.coresAtuais = [
-
-    cores[0],
-
-    cores[1],
-
-    cores[2]
-
-];
-
-
-}
-
-/*
-
-* Faz a transição suave entre a paleta atual e a nova.
-*
-* IMPORTANTE:
-*
-* A animação ocorre nas próprias variáveis CSS.
-* O CSS continua responsável pelo gradiente.
-*
-* Dessa maneira não alteramos o restante da estrutura
-* visual da página.
-  */
-
-function animarCoresFundo(
-novasCores
-) {
-
-
-const body =
-    obterBody();
-
-if (
-    !body ||
-    !Array.isArray(novasCores) ||
-    novasCores.length < 3
-) {
-
-    return;
-
-}
-
-const destino = [
-
-    novasCores[0],
-
-    novasCores[1],
-
-    novasCores[2]
-
-];
-
-/*
- * Se não temos uma paleta anterior válida,
- * aplicamos a primeira diretamente.
+ * Mantido para compatibilidade com a estrutura anterior.
  */
+function obterUtils() {
 
-if (
-    !Array.isArray(
-        fundoDinamico.coresAtuais
-    ) ||
-    fundoDinamico.coresAtuais.length < 3
-) {
+    if (window.PerfilUtils) {
 
-    cancelarTransicaoCores();
+        return window.PerfilUtils;
 
-    aplicarCoresFundoImediatamente(
-        destino
-    );
+    }
 
-    return;
+    return null;
 
 }
+
 
 /*
- * Se a paleta atual já é igual à nova,
- * não precisamos criar uma nova animação.
+ * Busca um elemento pelo ID.
  */
+function obterElemento(id) {
 
-if (
+    if (!id) {
 
-    fundoDinamico.coresAtuais[0] ===
-        destino[0] &&
+        return null;
 
-    fundoDinamico.coresAtuais[1] ===
-        destino[1] &&
+    }
 
-    fundoDinamico.coresAtuais[2] ===
-        destino[2]
-
-) {
-
-    return;
+    return document.getElementById(id);
 
 }
 
-cancelarTransicaoCores();
 
-const origem = [
+/*
+ * Escapa valores antes de inseri-los em HTML.
+ */
+function escaparHtml(valor) {
 
-    fundoDinamico.coresAtuais[0],
+    if (
+        valor === null ||
+        valor === undefined
+    ) {
 
-    fundoDinamico.coresAtuais[1],
+        return "";
 
-    fundoDinamico.coresAtuais[2]
+    }
 
-];
+    return String(valor)
 
-const inicio =
-    performance.now();
+        .replace(/&/g, "&amp;")
 
-const duracao =
-    fundoDinamico.duracaoTransicao;
+        .replace(/</g, "&lt;")
 
-function animar(
-    agora
-) {
+        .replace(/>/g, "&gt;")
 
-    const tempoDecorrido =
-        agora -
-        inicio;
+        .replace(/"/g, "&quot;")
 
-    let progresso =
+        .replace(/'/g, "&#039;");
 
-        Math.min(
+}
 
-            1,
 
-            tempoDecorrido /
-            duracao
+/*
+ * Atualiza os ícones Lucide criados dinamicamente.
+ */
+function renderizarIcones(container) {
 
+    if (!container) {
+
+        return;
+
+    }
+
+    try {
+
+        if (
+            window.lucide &&
+            typeof window.lucide.createIcons ===
+            "function"
+        ) {
+
+            window.lucide.createIcons({
+
+                attrs: {
+
+                    "stroke-width": 1.8
+
+                }
+
+            });
+
+        }
+
+    } catch (erro) {
+
+        console.warn(
+            "ApresentarPerfilPortfolio: não foi possível atualizar ícones.",
+            erro
         );
 
-    progresso =
-        aplicarEasingSuave(
-            progresso
-        );
+    }
 
-    const coresInterpoladas = [
+}
 
-        interpolarCor(
-            origem[0],
-            destino[0],
-            progresso
-        ),
 
-        interpolarCor(
-            origem[1],
-            destino[1],
-            progresso
-        ),
+/* =========================================================
+   06. FUNDO DINÂMICO — UTILITÁRIOS
+   ========================================================= */
 
-        interpolarCor(
-            origem[2],
-            destino[2],
-            progresso
-        )
+/*
+ * Retorna o BODY.
+ */
+function obterBody() {
+
+    return document.body || null;
+
+}
+
+
+/*
+ * Retorna as cores fallback.
+ */
+function obterCoresFallbackDinamica() {
+
+    return [
+
+        CONFIG.fundoDinamico.corFallback1,
+
+        CONFIG.fundoDinamico.corFallback2,
+
+        CONFIG.fundoDinamico.corFallback3
 
     ];
 
+}
+
+
+/*
+ * Converte rgb()/rgba() em objeto RGB.
+ */
+function converterCssParaRgb(cor) {
+
+    if (!cor) {
+
+        return null;
+
+    }
+
+    const texto =
+        String(cor).trim();
+
+    const correspondencia =
+        texto.match(
+            /rgba?\(\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)(?:\s*,\s*([\d.]+))?\s*\)/i
+        );
+
+    if (!correspondencia) {
+
+        return null;
+
+    }
+
+    return {
+
+        r:
+            Number(
+                correspondencia[1]
+            ),
+
+        g:
+            Number(
+                correspondencia[2]
+            ),
+
+        b:
+            Number(
+                correspondencia[3]
+            ),
+
+        a:
+            correspondencia[4] !== undefined
+
+                ? Number(
+                    correspondencia[4]
+                )
+
+                : 1
+
+    };
+
+}
+
+
+/*
+ * Interpola duas cores.
+ */
+function interpolarCor(
+    corInicial,
+    corFinal,
+    progresso
+) {
+
+    const inicial =
+        converterCssParaRgb(
+            corInicial
+        );
+
+    const final =
+        converterCssParaRgb(
+            corFinal
+        );
+
+    if (
+        !inicial ||
+        !final
+    ) {
+
+        return corFinal;
+
+    }
+
+    const r =
+
+        inicial.r +
+        (
+            (final.r - inicial.r) *
+            progresso
+        );
+
+    const g =
+
+        inicial.g +
+        (
+            (final.g - inicial.g) *
+            progresso
+        );
+
+    const b =
+
+        inicial.b +
+        (
+            (final.b - inicial.b) *
+            progresso
+        );
+
+    const a =
+
+        inicial.a +
+        (
+            (final.a - inicial.a) *
+            progresso
+        );
+
+    return converterRgbParaCss(
+        r,
+        g,
+        b,
+        a
+    );
+
+}
+
+
+/*
+ * Easing suave da transição de cores.
+ */
+function aplicarEasingSuave(progresso) {
+
+    return (
+
+        progresso < 0.5
+
+            ? 2 *
+                progresso *
+                progresso
+
+            : 1 -
+                (
+                    Math.pow(
+                        -2 *
+                        progresso +
+                        2,
+                        2
+                    ) /
+                    2
+                )
+
+    );
+
+}
+
+
+/*
+ * Cancela a animação de cores em andamento.
+ */
+function cancelarTransicaoCores() {
+
+    if (
+        fundoDinamico.animacaoId !== null
+    ) {
+
+        cancelAnimationFrame(
+            fundoDinamico.animacaoId
+        );
+
+        fundoDinamico.animacaoId =
+            null;
+
+    }
+
+}
+
+
+/*
+ * Aplica uma paleta imediatamente.
+ */
+function aplicarCoresFundoImediatamente(cores) {
+
+    const body =
+        obterBody();
+
+    if (
+        !body ||
+        !Array.isArray(cores) ||
+        cores.length < 3
+    ) {
+
+        return;
+
+    }
+
     body.style.setProperty(
         "--perfil-fundo-cor-1",
-        coresInterpoladas[0]
+        cores[0]
     );
 
     body.style.setProperty(
         "--perfil-fundo-cor-2",
-        coresInterpoladas[1]
+        cores[1]
     );
 
     body.style.setProperty(
         "--perfil-fundo-cor-3",
-        coresInterpoladas[2]
+        cores[2]
     );
 
-    /*
-     * Guarda exatamente a cor que está sendo
-     * exibida neste momento.
-     *
-     * Isso permite interromper a animação sem
-     * causar um salto visual.
-     */
+    fundoDinamico.coresAtuais = [
 
-    fundoDinamico.coresAtuais =
-        coresInterpoladas;
+        cores[0],
+
+        cores[1],
+
+        cores[2]
+
+    ];
+
+}
+
+
+/*
+ * Anima a transição entre duas paletas.
+ */
+function animarCoresFundo(novasCores) {
+
+    const body =
+        obterBody();
 
     if (
-        progresso < 1
+        !body ||
+        !Array.isArray(novasCores) ||
+        novasCores.length < 3
     ) {
 
-        fundoDinamico.animacaoId =
+        return;
 
-            requestAnimationFrame(
-                animar
-            );
+    }
+
+    const destino = [
+
+        novasCores[0],
+
+        novasCores[1],
+
+        novasCores[2]
+
+    ];
+
+    /*
+     * Primeira paleta: aplicação imediata.
+     */
+    if (
+        !Array.isArray(
+            fundoDinamico.coresAtuais
+        ) ||
+        fundoDinamico.coresAtuais.length < 3
+    ) {
+
+        cancelarTransicaoCores();
+
+        aplicarCoresFundoImediatamente(
+            destino
+        );
 
         return;
 
     }
 
     /*
-     * Garante que o estado final seja exatamente
-     * a paleta solicitada.
+     * Evita uma animação desnecessária.
      */
+    if (
 
-    fundoDinamico.coresAtuais = [
+        fundoDinamico.coresAtuais[0] ===
+            destino[0] &&
 
-        destino[0],
+        fundoDinamico.coresAtuais[1] ===
+            destino[1] &&
 
-        destino[1],
+        fundoDinamico.coresAtuais[2] ===
+            destino[2]
 
-        destino[2]
+    ) {
+
+        return;
+
+    }
+
+    cancelarTransicaoCores();
+
+    const origem = [
+
+        fundoDinamico.coresAtuais[0],
+
+        fundoDinamico.coresAtuais[1],
+
+        fundoDinamico.coresAtuais[2]
 
     ];
 
-    body.style.setProperty(
-        "--perfil-fundo-cor-1",
-        destino[0]
-    );
+    const inicio =
+        performance.now();
 
-    body.style.setProperty(
-        "--perfil-fundo-cor-2",
-        destino[1]
-    );
+    const duracao =
+        fundoDinamico.duracaoTransicao;
 
-    body.style.setProperty(
-        "--perfil-fundo-cor-3",
-        destino[2]
-    );
 
-    fundoDinamico.animacaoId =
-        null;
+    function animar(agora) {
 
-}
+        const tempoDecorrido =
+            agora - inicio;
 
-fundoDinamico.animacaoId =
-    requestAnimationFrame(
-        animar
-    );
+        let progresso =
 
+            Math.min(
 
-}
+                1,
 
-/*
+                tempoDecorrido /
+                duracao
 
-* Aplica as cores fallback ao BODY.
-*
-* Agora também passa pela transição suave.
-  */
+            );
 
-function aplicarCoresFundoFallback() {
+        progresso =
+            aplicarEasingSuave(
+                progresso
+            );
 
+        const coresInterpoladas = [
 
-const cores =
-    obterCoresFallbackDinamica();
+            interpolarCor(
+                origem[0],
+                destino[0],
+                progresso
+            ),
 
-animarCoresFundo(
-    cores
-);
+            interpolarCor(
+                origem[1],
+                destino[1],
+                progresso
+            ),
 
+            interpolarCor(
+                origem[2],
+                destino[2],
+                progresso
+            )
 
-}
+        ];
 
-/*
-
-* Aplica as três cores calculadas ao BODY.
-*
-* O JavaScript fornece os valores.
-* O CSS continua responsável pelo gradiente.
-  */
-
-function aplicarCoresFundoDinamico(
-cores
-) {
-
-
-if (
-    !Array.isArray(cores) ||
-    cores.length < 3
-) {
-
-    aplicarCoresFundoFallback();
-
-    return;
-
-}
-
-animarCoresFundo(
-    cores
-);
-
-
-}
-
-/*
-
-* Calcula a intensidade do fundo com base na
-* quantidade do portfólio atualmente visível.
-  */
-
-function atualizarIntensidadeFundo() {
-
-
-const body =
-    obterBody();
-
-const portfolioGrid =
-    obterElemento(
-        CONFIG.elementos.portfolioGrid
-    );
-
-if (
-    !body ||
-    !portfolioGrid
-) {
-
-    return;
-
-}
-
-const rect =
-    portfolioGrid.getBoundingClientRect();
-
-const viewportHeight =
-    window.innerHeight ||
-    document.documentElement.clientHeight;
-
-if (
-    rect.bottom <= 0 ||
-    rect.top >= viewportHeight
-) {
-
-    body.style.setProperty(
-        "--perfil-fundo-opacidade",
-        "0"
-    );
-
-    body.classList.remove(
-        "perfil-fundo-dinamico-visivel"
-    );
-
-    return;
-
-}
-
-const altura =
-    Math.max(
-        1,
-        rect.height
-    );
-
-const visivel =
-
-    Math.min(
-        rect.bottom,
-        viewportHeight
-    ) -
-
-    Math.max(
-        rect.top,
-        0
-    );
-
-let percentual =
-
-    visivel /
-    Math.min(
-        altura,
-        viewportHeight
-    );
-
-percentual =
-
-    Math.max(
-        0,
-        Math.min(
-            1,
-            percentual
-        )
-    );
-
-const intensidade =
-    percentual * 0.85;
-
-body.style.setProperty(
-    "--perfil-fundo-opacidade",
-    intensidade.toFixed(3)
-);
-
-body.classList.add(
-    "perfil-fundo-dinamico-visivel"
-);
-
-
-}
-
-/*
-
-* Registra os eventos responsáveis por acompanhar
-* a posição do portfólio na tela.
-  */
-
-function configurarControleVisibilidadeFundo() {
-
-
-if (
-    fundoDinamico.scrollRegistrado
-) {
-
-    atualizarIntensidadeFundo();
-
-    return;
-
-}
-
-window.addEventListener(
-    "scroll",
-    atualizarIntensidadeFundo,
-    {
-        passive: true
-    }
-);
-
-window.addEventListener(
-    "resize",
-    atualizarIntensidadeFundo
-);
-
-fundoDinamico.scrollRegistrado =
-    true;
-
-atualizarIntensidadeFundo();
-
-
-}
-
-/*
-
-* Calcula uma aproximação simples da saturação da cor.
-  */
-
-function calcularSaturacao(
-r,
-g,
-b
-) {
-
-
-const maior =
-    Math.max(
-        r,
-        g,
-        b
-    );
-
-const menor =
-    Math.min(
-        r,
-        g,
-        b
-    );
-
-if (
-    maior === 0
-) {
-
-    return 0;
-
-}
-
-return (
-    maior -
-    menor
-) / maior;
-
-
-}
-
-/*
-
-* Calcula a distância entre duas cores RGB.
-  */
-
-function calcularDistanciaCores(
-corA,
-corB
-) {
-
-
-const diferencaR =
-    corA.r -
-    corB.r;
-
-const diferencaG =
-    corA.g -
-    corB.g;
-
-const diferencaB =
-    corA.b -
-    corB.b;
-
-return Math.sqrt(
-
-    (
-        diferencaR *
-        diferencaR
-    ) +
-
-    (
-        diferencaG *
-        diferencaG
-    ) +
-
-    (
-        diferencaB *
-        diferencaB
-    )
-
-);
-
-
-}
-
-/*
-
-* Converte valores RGB para uma cor CSS rgba().
-  */
-
-function converterRgbParaCss(
-r,
-g,
-b,
-a
-) {
-
-
-return `rgba(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)}, ${a})`;
-
-
-}
-
-/* =========================================================
-EXTRAÇÃO DAS CORES
-========================================================= */
-
-/*
-
-* Função central responsável por transformar os pixels
-* de um canvas em três cores predominantes.
-*
-* Esta função é compartilhada por:
-*
-* * imagens;
-* * frames de vídeos.
-*
-* A lógica de seleção das cores foi preservada.
-  */
-
-function extrairCoresDoCanvas(
-contexto
-) {
-
-
-if (!contexto) {
-
-    return null;
-
-}
-
-try {
-
-    const dados =
-        contexto.getImageData(
-
-            0,
-            0,
-
-            CONFIG.fundoDinamico.larguraCanvas,
-            CONFIG.fundoDinamico.alturaCanvas
-
-        ).data;
-
-    const agrupamentos =
-        new Map();
-
-    const passo =
-
-        Math.max(
-
-            1,
-
-            CONFIG.fundoDinamico
-                .passoAmostragem
-
+        body.style.setProperty(
+            "--perfil-fundo-cor-1",
+            coresInterpoladas[0]
         );
 
-    for (
-        let y = 0;
-        y < CONFIG.fundoDinamico.alturaCanvas;
-        y += passo
-    ) {
+        body.style.setProperty(
+            "--perfil-fundo-cor-2",
+            coresInterpoladas[1]
+        );
 
-        for (
-            let x = 0;
-            x < CONFIG.fundoDinamico.larguraCanvas;
-            x += passo
+        body.style.setProperty(
+            "--perfil-fundo-cor-3",
+            coresInterpoladas[2]
+        );
+
+        fundoDinamico.coresAtuais =
+            coresInterpoladas;
+
+        if (
+            progresso < 1
         ) {
 
-            const posicao =
+            fundoDinamico.animacaoId =
 
-                (
-                    (
-                        y *
-                        CONFIG.fundoDinamico.larguraCanvas
-                    ) +
-                    x
-                ) *
-                4;
-
-            const r =
-                dados[posicao];
-
-            const g =
-                dados[posicao + 1];
-
-            const b =
-                dados[posicao + 2];
-
-            const a =
-                dados[posicao + 3];
-
-            if (
-                a < 180
-            ) {
-
-                continue;
-
-            }
-
-            if (
-                r +
-                g +
-                b >
-                720
-            ) {
-
-                continue;
-
-            }
-
-            if (
-                r +
-                g +
-                b <
-                35
-            ) {
-
-                continue;
-
-            }
-
-            const tamanhoGrupo =
-                24;
-
-            const qr =
-
-                Math.min(
-
-                    255,
-
-                    Math.round(
-                        r /
-                        tamanhoGrupo
-                    ) *
-                    tamanhoGrupo
-
+                requestAnimationFrame(
+                    animar
                 );
 
-            const qg =
-
-                Math.min(
-
-                    255,
-
-                    Math.round(
-                        g /
-                        tamanhoGrupo
-                    ) *
-                    tamanhoGrupo
-
-                );
-
-            const qb =
-
-                Math.min(
-
-                    255,
-
-                    Math.round(
-                        b /
-                        tamanhoGrupo
-                    ) *
-                    tamanhoGrupo
-
-                );
-
-            const chave =
-
-                `${qr},${qg},${qb}`;
-
-            const saturacao =
-
-                calcularSaturacao(
-                    r,
-                    g,
-                    b
-                );
-
-            const peso =
-
-                1 +
-                (
-                    saturacao *
-                    0.75
-                );
-
-            if (
-                agrupamentos.has(
-                    chave
-                )
-            ) {
-
-                const grupo =
-
-                    agrupamentos.get(
-                        chave
-                    );
-
-                grupo.peso +=
-                    peso;
-
-                grupo.quantidade +=
-                    1;
-
-            } else {
-
-                agrupamentos.set(
-
-                    chave,
-
-                    {
-
-                        r: qr,
-
-                        g: qg,
-
-                        b: qb,
-
-                        peso: peso,
-
-                        quantidade: 1
-
-                    }
-
-                );
-
-            }
+            return;
 
         }
 
-    }
+        /*
+         * Garante exatamente a paleta final.
+         */
+        fundoDinamico.coresAtuais = [
 
-    const grupos =
+            destino[0],
 
-        Array.from(
-            agrupamentos.values()
+            destino[1],
+
+            destino[2]
+
+        ];
+
+        body.style.setProperty(
+            "--perfil-fundo-cor-1",
+            destino[0]
         );
 
-    if (!grupos.length) {
+        body.style.setProperty(
+            "--perfil-fundo-cor-2",
+            destino[1]
+        );
+
+        body.style.setProperty(
+            "--perfil-fundo-cor-3",
+            destino[2]
+        );
+
+        fundoDinamico.animacaoId =
+            null;
+
+    }
+
+
+    fundoDinamico.animacaoId =
+        requestAnimationFrame(
+            animar
+        );
+
+}
+
+
+/*
+ * Aplica fallback utilizando a mesma transição suave.
+ */
+function aplicarCoresFundoFallback() {
+
+    const cores =
+        obterCoresFallbackDinamica();
+
+    animarCoresFundo(
+        cores
+    );
+
+}
+
+
+/*
+ * Aplica uma paleta calculada.
+ */
+function aplicarCoresFundoDinamico(cores) {
+
+    if (
+        !Array.isArray(cores) ||
+        cores.length < 3
+    ) {
+
+        aplicarCoresFundoFallback();
+
+        return;
+
+    }
+
+    animarCoresFundo(
+        cores
+    );
+
+}
+
+
+/* =========================================================
+   07. FUNDO DINÂMICO — VISIBILIDADE
+   ========================================================= */
+
+/*
+ * Calcula a intensidade do fundo conforme a área
+ * do portfólio atualmente visível.
+ */
+function atualizarIntensidadeFundo() {
+
+    const body =
+        obterBody();
+
+    const portfolioGrid =
+        obterElemento(
+            CONFIG.elementos.portfolioGrid
+        );
+
+    if (
+        !body ||
+        !portfolioGrid
+    ) {
+
+        return;
+
+    }
+
+    const rect =
+        portfolioGrid.getBoundingClientRect();
+
+    const viewportHeight =
+        window.innerHeight ||
+        document.documentElement.clientHeight;
+
+    if (
+        rect.bottom <= 0 ||
+        rect.top >= viewportHeight
+    ) {
+
+        body.style.setProperty(
+            "--perfil-fundo-opacidade",
+            "0"
+        );
+
+        body.classList.remove(
+            "perfil-fundo-dinamico-visivel"
+        );
+
+        return;
+
+    }
+
+    const altura =
+        Math.max(
+            1,
+            rect.height
+        );
+
+    const visivel =
+
+        Math.min(
+            rect.bottom,
+            viewportHeight
+        ) -
+
+        Math.max(
+            rect.top,
+            0
+        );
+
+    let percentual =
+
+        visivel /
+        Math.min(
+            altura,
+            viewportHeight
+        );
+
+    percentual =
+
+        Math.max(
+            0,
+            Math.min(
+                1,
+                percentual
+            )
+        );
+
+    const intensidade =
+        percentual * 0.85;
+
+    body.style.setProperty(
+        "--perfil-fundo-opacidade",
+        intensidade.toFixed(3)
+    );
+
+    body.classList.add(
+        "perfil-fundo-dinamico-visivel"
+    );
+
+}
+
+
+/*
+ * Registra os eventos de scroll e resize apenas uma vez.
+ */
+function configurarControleVisibilidadeFundo() {
+
+    if (
+        fundoDinamico.scrollRegistrado
+    ) {
+
+        atualizarIntensidadeFundo();
+
+        return;
+
+    }
+
+    window.addEventListener(
+        "scroll",
+        atualizarIntensidadeFundo,
+        {
+            passive: true
+        }
+    );
+
+    window.addEventListener(
+        "resize",
+        atualizarIntensidadeFundo
+    );
+
+    fundoDinamico.scrollRegistrado =
+        true;
+
+    atualizarIntensidadeFundo();
+
+}
+
+
+/* =========================================================
+   08. FUNDO DINÂMICO — ANÁLISE DE CORES
+   ========================================================= */
+
+/*
+ * Calcula uma aproximação simples da saturação.
+ */
+function calcularSaturacao(
+    r,
+    g,
+    b
+) {
+
+    const maior =
+        Math.max(
+            r,
+            g,
+            b
+        );
+
+    const menor =
+        Math.min(
+            r,
+            g,
+            b
+        );
+
+    if (
+        maior === 0
+    ) {
+
+        return 0;
+
+    }
+
+    return (
+        maior -
+        menor
+    ) / maior;
+
+}
+
+
+/*
+ * Calcula a distância entre duas cores.
+ */
+function calcularDistanciaCores(
+    corA,
+    corB
+) {
+
+    const diferencaR =
+        corA.r -
+        corB.r;
+
+    const diferencaG =
+        corA.g -
+        corB.g;
+
+    const diferencaB =
+        corA.b -
+        corB.b;
+
+    return Math.sqrt(
+
+        (
+            diferencaR *
+            diferencaR
+        ) +
+
+        (
+            diferencaG *
+            diferencaG
+        ) +
+
+        (
+            diferencaB *
+            diferencaB
+        )
+
+    );
+
+}
+
+
+/*
+ * Converte RGB para rgba().
+ */
+function converterRgbParaCss(
+    r,
+    g,
+    b,
+    a
+) {
+
+    return `rgba(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)}, ${a})`;
+
+}
+
+
+/*
+ * Analisa os pixels de um canvas e retorna
+ * três cores predominantes.
+ */
+function extrairCoresDoCanvas(contexto) {
+
+    if (!contexto) {
 
         return null;
 
     }
 
-    grupos.sort(
+    try {
 
-        function (
-            a,
-            b
-        ) {
+        const dados =
+            contexto.getImageData(
 
-            return (
-                b.peso -
-                a.peso
+                0,
+                0,
+
+                CONFIG.fundoDinamico.larguraCanvas,
+                CONFIG.fundoDinamico.alturaCanvas
+
+            ).data;
+
+        const agrupamentos =
+            new Map();
+
+        const passo =
+
+            Math.max(
+
+                1,
+
+                CONFIG.fundoDinamico
+                    .passoAmostragem
+
             );
 
-        }
-
-    );
-
-    const selecionadas = [];
-
-    for (
-        let indice = 0;
-        indice < grupos.length;
-        indice++
-    ) {
-
-        const candidata =
-            grupos[indice];
-
-        let muitoParecida =
-            false;
 
         for (
-            let j = 0;
-            j < selecionadas.length;
-            j++
+            let y = 0;
+            y < CONFIG.fundoDinamico.alturaCanvas;
+            y += passo
         ) {
 
-            const distancia =
-
-                calcularDistanciaCores(
-
-                    candidata,
-
-                    selecionadas[j]
-
-                );
-
-            if (
-                distancia <
-                CONFIG.fundoDinamico
-                    .distanciaMinimaCores
+            for (
+                let x = 0;
+                x < CONFIG.fundoDinamico.larguraCanvas;
+                x += passo
             ) {
 
-                muitoParecida =
-                    true;
+                const posicao =
 
-                break;
+                    (
+                        (
+                            y *
+                            CONFIG.fundoDinamico.larguraCanvas
+                        ) +
+                        x
+                    ) *
+                    4;
+
+                const r =
+                    dados[posicao];
+
+                const g =
+                    dados[posicao + 1];
+
+                const b =
+                    dados[posicao + 2];
+
+                const a =
+                    dados[posicao + 3];
+
+
+                if (
+                    a < 180
+                ) {
+
+                    continue;
+
+                }
+
+                if (
+                    r +
+                    g +
+                    b >
+                    720
+                ) {
+
+                    continue;
+
+                }
+
+                if (
+                    r +
+                    g +
+                    b <
+                    35
+                ) {
+
+                    continue;
+
+                }
+
+
+                const tamanhoGrupo =
+                    24;
+
+                const qr =
+
+                    Math.min(
+
+                        255,
+
+                        Math.round(
+                            r /
+                            tamanhoGrupo
+                        ) *
+                        tamanhoGrupo
+
+                    );
+
+                const qg =
+
+                    Math.min(
+
+                        255,
+
+                        Math.round(
+                            g /
+                            tamanhoGrupo
+                        ) *
+                        tamanhoGrupo
+
+                    );
+
+                const qb =
+
+                    Math.min(
+
+                        255,
+
+                        Math.round(
+                            b /
+                            tamanhoGrupo
+                        ) *
+                        tamanhoGrupo
+
+                    );
+
+                const chave =
+                    `${qr},${qg},${qb}`;
+
+                const saturacao =
+
+                    calcularSaturacao(
+                        r,
+                        g,
+                        b
+                    );
+
+                const peso =
+
+                    1 +
+                    (
+                        saturacao *
+                        0.75
+                    );
+
+
+                if (
+                    agrupamentos.has(
+                        chave
+                    )
+                ) {
+
+                    const grupo =
+
+                        agrupamentos.get(
+                            chave
+                        );
+
+                    grupo.peso +=
+                        peso;
+
+                    grupo.quantidade +=
+                        1;
+
+                } else {
+
+                    agrupamentos.set(
+
+                        chave,
+
+                        {
+
+                            r: qr,
+
+                            g: qg,
+
+                            b: qb,
+
+                            peso: peso,
+
+                            quantidade: 1
+
+                        }
+
+                    );
+
+                }
 
             }
 
         }
 
-        if (
-            muitoParecida
-        ) {
 
-            continue;
+        const grupos =
+
+            Array.from(
+                agrupamentos.values()
+            );
+
+
+        if (!grupos.length) {
+
+            return null;
 
         }
 
-        selecionadas.push(
-            candidata
+
+        grupos.sort(
+
+            function (
+                a,
+                b
+            ) {
+
+                return (
+                    b.peso -
+                    a.peso
+                );
+
+            }
+
         );
 
-        if (
-            selecionadas.length >= 3
-        ) {
 
-            break;
+        const selecionadas = [];
 
-        }
-
-    }
-
-    if (
-        selecionadas.length < 3
-    ) {
 
         for (
             let indice = 0;
@@ -1549,19 +1361,59 @@ try {
             indice++
         ) {
 
+            const candidata =
+                grupos[indice];
+
+            let muitoParecida =
+                false;
+
+
+            for (
+                let j = 0;
+                j < selecionadas.length;
+                j++
+            ) {
+
+                const distancia =
+
+                    calcularDistanciaCores(
+
+                        candidata,
+
+                        selecionadas[j]
+
+                    );
+
+
+                if (
+                    distancia <
+                    CONFIG.fundoDinamico
+                        .distanciaMinimaCores
+                ) {
+
+                    muitoParecida =
+                        true;
+
+                    break;
+
+                }
+
+            }
+
+
             if (
-                selecionadas.indexOf(
-                    grupos[indice]
-                ) !== -1
+                muitoParecida
             ) {
 
                 continue;
 
             }
 
+
             selecionadas.push(
-                grupos[indice]
+                candidata
             );
+
 
             if (
                 selecionadas.length >= 3
@@ -1573,518 +1425,463 @@ try {
 
         }
 
-    }
 
-    if (
-        !selecionadas.length
-    ) {
+        /*
+         * Caso não existam três cores suficientemente
+         * diferentes, completa com os grupos restantes.
+         */
+        if (
+            selecionadas.length < 3
+        ) {
+
+            for (
+                let indice = 0;
+                indice < grupos.length;
+                indice++
+            ) {
+
+                if (
+                    selecionadas.indexOf(
+                        grupos[indice]
+                    ) !== -1
+                ) {
+
+                    continue;
+
+                }
+
+                selecionadas.push(
+                    grupos[indice]
+                );
+
+                if (
+                    selecionadas.length >= 3
+                ) {
+
+                    break;
+
+                }
+
+            }
+
+        }
+
+
+        if (
+            !selecionadas.length
+        ) {
+
+            return null;
+
+        }
+
+
+        const primeira =
+            selecionadas[0];
+
+        const segunda =
+            selecionadas[1] ||
+            primeira;
+
+        const terceira =
+            selecionadas[2] ||
+            segunda ||
+            primeira;
+
+
+        return [
+
+            converterRgbParaCss(
+                primeira.r,
+                primeira.g,
+                primeira.b,
+                1
+            ),
+
+            converterRgbParaCss(
+                segunda.r,
+                segunda.g,
+                segunda.b,
+                1
+            ),
+
+            converterRgbParaCss(
+                terceira.r,
+                terceira.g,
+                terceira.b,
+                1
+            )
+
+        ];
+
+    } catch (erro) {
+
+        console.warn(
+            "ApresentarPerfilPortfolio: não foi possível analisar os pixels da mídia.",
+            erro
+        );
 
         return null;
 
     }
 
-    const primeira =
-        selecionadas[0];
-
-    const segunda =
-        selecionadas[1] ||
-        primeira;
-
-    const terceira =
-        selecionadas[2] ||
-        segunda ||
-        primeira;
-
-    return [
-
-        converterRgbParaCss(
-            primeira.r,
-            primeira.g,
-            primeira.b,
-            1
-        ),
-
-        converterRgbParaCss(
-            segunda.r,
-            segunda.g,
-            segunda.b,
-            1
-        ),
-
-        converterRgbParaCss(
-            terceira.r,
-            terceira.g,
-            terceira.b,
-            1
-        )
-
-    ];
-
-} catch (erro) {
-
-    console.warn(
-        "ApresentarPerfilPortfolio: não foi possível analisar os pixels da mídia.",
-        erro
-    );
-
-    return null;
-
 }
 
-
-}
 
 /*
+ * Extrai cores de uma imagem sem alterar o <img>
+ * utilizado visualmente no card.
+ */
+function extrairCoresImagem(url) {
 
-* Extrai as cores predominantes de uma imagem.
-*
-* A imagem é carregada em um objeto Image separado.
-* Não alteramos o <img> que aparece no card.
-  */
+    return new Promise(
 
-function extrairCoresImagem(
-url
-) {
+        function (resolver) {
 
-
-return new Promise(
-
-    function (
-        resolver
-    ) {
-
-        if (!url) {
-
-            resolver(null);
-
-            return;
-
-        }
-
-        const canvas =
-            document.createElement(
-                "canvas"
-            );
-
-        canvas.width =
-            CONFIG.fundoDinamico.larguraCanvas;
-
-        canvas.height =
-            CONFIG.fundoDinamico.alturaCanvas;
-
-        const contexto =
-
-            canvas.getContext(
-                "2d",
-                {
-                    willReadFrequently: true
-                }
-            );
-
-        if (!contexto) {
-
-            resolver(null);
-
-            return;
-
-        }
-
-        const imagem =
-            new Image();
-
-        imagem.crossOrigin =
-            "anonymous";
-
-        imagem.onload =
-            function () {
-
-                try {
-
-                    contexto.clearRect(
-
-                        0,
-                        0,
-                        canvas.width,
-                        canvas.height
-
-                    );
-
-                    contexto.drawImage(
-
-                        imagem,
-
-                        0,
-                        0,
-
-                        canvas.width,
-                        canvas.height
-
-                    );
-
-                    resolver(
-                        extrairCoresDoCanvas(
-                            contexto
-                        )
-                    );
-
-                } catch (erro) {
-
-                    console.warn(
-                        "ApresentarPerfilPortfolio: não foi possível analisar as cores da imagem.",
-                        erro
-                    );
-
-                    resolver(null);
-
-                }
-
-            };
-
-        imagem.onerror =
-            function () {
+            if (!url) {
 
                 resolver(null);
 
-            };
-
-        imagem.src =
-            url;
-
-    }
-
-);
-
-
-}
-
-/* =========================================================
-CORES DO VÍDEO
-========================================================= */
-
-/*
-
-* Extrai as cores predominantes do frame atual do vídeo.
-*
-* Esta função NÃO modifica o vídeo.
-*
-* Ela apenas desenha um frame do <video> em um canvas
-* pequeno e utiliza a mesma análise de cores das imagens.
-*
-* O vídeo precisa estar carregado e ter dimensões válidas.
-*
-* Caso o navegador bloqueie a leitura dos pixels por CORS,
-* o fallback continua sendo utilizado.
-  */
-
-function extrairCoresVideo(
-video
-) {
-
-
-return new Promise(
-
-    function (
-        resolver
-    ) {
-
-        if (
-            !video
-        ) {
-
-            resolver(null);
-
-            return;
-
-        }
-
-        const largura =
-            video.videoWidth;
-
-        const altura =
-            video.videoHeight;
-
-        if (
-            !largura ||
-            !altura
-        ) {
-
-            /*
-             * O vídeo ainda não possui metadata suficiente.
-             *
-             * Esperamos o carregamento e tentamos novamente.
-             */
-
-            const tentarNovamente =
-                function () {
-
-                    extrairCoresVideo(
-                        video
-                    ).then(
-                        resolver
-                    );
-
-                };
-
-            video.addEventListener(
-                "loadeddata",
-                tentarNovamente,
-                {
-                    once: true
-                }
-            );
-
-            video.addEventListener(
-                "loadedmetadata",
-                tentarNovamente,
-                {
-                    once: true
-                }
-            );
-
-            return;
-
-        }
-
-        const canvas =
-            document.createElement(
-                "canvas"
-            );
-
-        canvas.width =
-            CONFIG.fundoDinamico.larguraCanvas;
-
-        canvas.height =
-            CONFIG.fundoDinamico.alturaCanvas;
-
-        const contexto =
-
-            canvas.getContext(
-                "2d",
-                {
-                    willReadFrequently: true
-                }
-            );
-
-        if (!contexto) {
-
-            resolver(null);
-
-            return;
-
-        }
-
-        try {
-
-            contexto.clearRect(
-
-                0,
-                0,
-
-                canvas.width,
-                canvas.height
-
-            );
-
-            /*
-             * Mantemos a proporção do vídeo para que
-             * a análise represente corretamente a mídia.
-             */
-
-            const proporcaoVideo =
-                largura / altura;
-
-            const proporcaoCanvas =
-                canvas.width / canvas.height;
-
-            let larguraDesenho =
-                canvas.width;
-
-            let alturaDesenho =
-                canvas.height;
-
-            let deslocamentoX = 0;
-
-            let deslocamentoY = 0;
-
-            if (
-                proporcaoVideo >
-                proporcaoCanvas
-            ) {
-
-                /*
-                 * Vídeo mais largo que o canvas.
-                 */
-
-                alturaDesenho =
-                    canvas.height;
-
-                larguraDesenho =
-                    alturaDesenho *
-                    proporcaoVideo;
-
-                deslocamentoX =
-                    (
-                        canvas.width -
-                        larguraDesenho
-                    ) / 2;
-
-            } else {
-
-                /*
-                 * Vídeo mais alto que o canvas.
-                 */
-
-                larguraDesenho =
-                    canvas.width;
-
-                alturaDesenho =
-                    larguraDesenho /
-                    proporcaoVideo;
-
-                deslocamentoY =
-                    (
-                        canvas.height -
-                        alturaDesenho
-                    ) / 2;
+                return;
 
             }
 
-            contexto.drawImage(
-
-                video,
-
-                deslocamentoX,
-                deslocamentoY,
-
-                larguraDesenho,
-                alturaDesenho
-
-            );
-
-            const cores =
-                extrairCoresDoCanvas(
-                    contexto
+            const canvas =
+                document.createElement(
+                    "canvas"
                 );
 
-            resolver(
-                cores
-            );
+            canvas.width =
+                CONFIG.fundoDinamico.larguraCanvas;
 
-        } catch (erro) {
+            canvas.height =
+                CONFIG.fundoDinamico.alturaCanvas;
 
-            /*
-             * Se o navegador bloquear getImageData()
-             * por CORS, utilizamos o fallback.
-             *
-             * Isso não interfere na reprodução do vídeo.
-             */
+            const contexto =
 
-            console.warn(
-                "ApresentarPerfilPortfolio: não foi possível analisar o frame do vídeo.",
-                erro
-            );
+                canvas.getContext(
+                    "2d",
+                    {
+                        willReadFrequently: true
+                    }
+                );
 
-            resolver(null);
+
+            if (!contexto) {
+
+                resolver(null);
+
+                return;
+
+            }
+
+
+            const imagem =
+                new Image();
+
+            imagem.crossOrigin =
+                "anonymous";
+
+
+            imagem.onload =
+                function () {
+
+                    try {
+
+                        contexto.clearRect(
+
+                            0,
+                            0,
+                            canvas.width,
+                            canvas.height
+
+                        );
+
+                        contexto.drawImage(
+
+                            imagem,
+
+                            0,
+                            0,
+
+                            canvas.width,
+                            canvas.height
+
+                        );
+
+
+                        resolver(
+                            extrairCoresDoCanvas(
+                                contexto
+                            )
+                        );
+
+                    } catch (erro) {
+
+                        console.warn(
+                            "ApresentarPerfilPortfolio: não foi possível analisar as cores da imagem.",
+                            erro
+                        );
+
+                        resolver(null);
+
+                    }
+
+                };
+
+
+            imagem.onerror =
+                function () {
+
+                    resolver(null);
+
+                };
+
+
+            imagem.src =
+                url;
 
         }
 
-    }
-
-);
-
+    );
 
 }
 
+
 /*
+ * Extrai cores do frame atual de um vídeo.
+ */
+function extrairCoresVideo(video) {
 
-* Atualiza o fundo de acordo com o card atualmente ativo.
-*
-* Imagens:
-* utiliza extrairCoresImagem().
-*
-* Vídeos:
-* utiliza o próprio elemento <video>;
-* captura o frame atual;
-* extrai as cores desse frame.
-*
-* A aplicação das cores é feita com transição suave.
-  */
+    return new Promise(
 
+        function (resolver) {
+
+            if (!video) {
+
+                resolver(null);
+
+                return;
+
+            }
+
+            const largura =
+                video.videoWidth;
+
+            const altura =
+                video.videoHeight;
+
+
+            if (
+                !largura ||
+                !altura
+            ) {
+
+                const tentarNovamente =
+                    function () {
+
+                        extrairCoresVideo(
+                            video
+                        ).then(
+                            resolver
+                        );
+
+                    };
+
+
+                video.addEventListener(
+                    "loadeddata",
+                    tentarNovamente,
+                    {
+                        once: true
+                    }
+                );
+
+                video.addEventListener(
+                    "loadedmetadata",
+                    tentarNovamente,
+                    {
+                        once: true
+                    }
+                );
+
+                return;
+
+            }
+
+
+            const canvas =
+                document.createElement(
+                    "canvas"
+                );
+
+            canvas.width =
+                CONFIG.fundoDinamico.larguraCanvas;
+
+            canvas.height =
+                CONFIG.fundoDinamico.alturaCanvas;
+
+
+            const contexto =
+
+                canvas.getContext(
+                    "2d",
+                    {
+                        willReadFrequently: true
+                    }
+                );
+
+
+            if (!contexto) {
+
+                resolver(null);
+
+                return;
+
+            }
+
+
+            try {
+
+                contexto.clearRect(
+
+                    0,
+                    0,
+
+                    canvas.width,
+                    canvas.height
+
+                );
+
+
+                const proporcaoVideo =
+                    largura / altura;
+
+                const proporcaoCanvas =
+                    canvas.width / canvas.height;
+
+
+                let larguraDesenho =
+                    canvas.width;
+
+                let alturaDesenho =
+                    canvas.height;
+
+                let deslocamentoX = 0;
+
+                let deslocamentoY = 0;
+
+
+                if (
+                    proporcaoVideo >
+                    proporcaoCanvas
+                ) {
+
+                    alturaDesenho =
+                        canvas.height;
+
+                    larguraDesenho =
+                        alturaDesenho *
+                        proporcaoVideo;
+
+                    deslocamentoX =
+                        (
+                            canvas.width -
+                            larguraDesenho
+                        ) / 2;
+
+                } else {
+
+                    larguraDesenho =
+                        canvas.width;
+
+                    alturaDesenho =
+                        larguraDesenho /
+                        proporcaoVideo;
+
+                    deslocamentoY =
+                        (
+                            canvas.height -
+                            alturaDesenho
+                        ) / 2;
+
+                }
+
+
+                contexto.drawImage(
+
+                    video,
+
+                    deslocamentoX,
+                    deslocamentoY,
+
+                    larguraDesenho,
+                    alturaDesenho
+
+                );
+
+
+                const cores =
+                    extrairCoresDoCanvas(
+                        contexto
+                    );
+
+
+                resolver(
+                    cores
+                );
+
+            } catch (erro) {
+
+                console.warn(
+                    "ApresentarPerfilPortfolio: não foi possível analisar o frame do vídeo.",
+                    erro
+                );
+
+                resolver(null);
+
+            }
+
+        }
+
+    );
+
+}
+
+
+/*
+ * Atualiza o fundo com base no item ativo.
+ */
 function atualizarFundoDinamico() {
 
+    if (
+        !CONFIG.fundoDinamico.ativado
+    ) {
 
-if (
-    !CONFIG.fundoDinamico.ativado
-) {
+        return;
 
-    return;
+    }
 
-}
+    const body =
+        obterBody();
 
-const body =
-    obterBody();
+    if (!body) {
 
-if (!body) {
+        return;
 
-    return;
-
-}
-
-const item =
-    galeria.itens[
-        galeria.indiceAtual
-    ];
-
-if (!item) {
-
-    fundoDinamico.chaveAtual =
-        "";
-
-    aplicarCoresFundoFallback();
-
-    atualizarIntensidadeFundo();
-
-    return;
-
-}
-
-const chave =
-
-    `${item._tipo}|${item._url}`;
-
-if (
-    chave ===
-    fundoDinamico.chaveAtual
-) {
-
-    atualizarIntensidadeFundo();
-
-    return;
-
-}
-
-fundoDinamico.chaveAtual =
-    chave;
-
-const processamentoAtual =
-
-    ++fundoDinamico.processamento;
+    }
 
 
-/*
- * =====================================================
- * VÍDEO
- * =====================================================
- */
+    const item =
+        galeria.itens[
+            galeria.indiceAtual
+        ];
 
-if (
-    item._tipo === "video"
-) {
 
-    const video =
-        obterVideoAtivo();
+    if (!item) {
 
-    if (!video) {
+        fundoDinamico.chaveAtual =
+            "";
 
         aplicarCoresFundoFallback();
 
@@ -2094,299 +1891,427 @@ if (
 
     }
 
-    const iniciarAnaliseVideo =
-        function () {
 
-            /*
-             * O processamento pode ter mudado enquanto
-             * o vídeo carregava.
-             */
+    const chave =
+        `${item._tipo}|${item._url}`;
 
-            if (
-                processamentoAtual !==
-                fundoDinamico.processamento
-            ) {
-
-                return;
-
-            }
-
-            extrairCoresVideo(
-                video
-            )
-
-                .then(
-
-                    function (cores) {
-
-                        if (
-                            processamentoAtual !==
-                            fundoDinamico.processamento
-                        ) {
-
-                            return;
-
-                        }
-
-                        if (
-                            Array.isArray(cores) &&
-                            cores.length >= 3
-                        ) {
-
-                            aplicarCoresFundoDinamico(
-                                cores
-                            );
-
-                        } else {
-
-                            aplicarCoresFundoFallback();
-
-                        }
-
-                        atualizarIntensidadeFundo();
-
-                    }
-
-                )
-
-                .catch(
-
-                    function (erro) {
-
-                        if (
-                            processamentoAtual !==
-                            fundoDinamico.processamento
-                        ) {
-
-                            return;
-
-                        }
-
-                        console.warn(
-                            "ApresentarPerfilPortfolio: erro ao calcular fundo dinâmico do vídeo.",
-                            erro
-                        );
-
-                        aplicarCoresFundoFallback();
-
-                        atualizarIntensidadeFundo();
-
-                    }
-
-                );
-
-        };
-
-
-    /*
-     * Se o vídeo já possui dados suficientes,
-     * fazemos a análise imediatamente.
-     */
 
     if (
-        video.readyState >= 2
+        chave ===
+        fundoDinamico.chaveAtual
     ) {
 
-        iniciarAnaliseVideo();
+        atualizarIntensidadeFundo();
 
-    } else {
-
-        /*
-         * Caso ainda esteja carregando, esperamos
-         * os dados do vídeo ficarem disponíveis.
-         */
-
-        video.addEventListener(
-            "loadeddata",
-            iniciarAnaliseVideo,
-            {
-                once: true
-            }
-        );
+        return;
 
     }
 
-    return;
 
-}
-
-
-/*
- * =====================================================
- * ÁUDIO / OUTROS
- * =====================================================
- */
-
-if (
-    item._tipo !== "imagem"
-) {
-
-    aplicarCoresFundoFallback();
-
-    atualizarIntensidadeFundo();
-
-    return;
-
-}
+    fundoDinamico.chaveAtual =
+        chave;
 
 
-/*
- * =====================================================
- * IMAGEM
- * =====================================================
- */
+    const processamentoAtual =
 
-extrairCoresImagem(
-    item._url
-)
+        ++fundoDinamico.processamento;
 
-    .then(
 
-        function (cores) {
+    /*
+     * -----------------------------------------------------
+     * VÍDEO
+     * -----------------------------------------------------
+     */
+    if (
+        item._tipo === "video"
+    ) {
 
-            if (
-                processamentoAtual !==
-                fundoDinamico.processamento
-            ) {
+        const video =
+            obterVideoAtivo();
 
-                return;
 
-            }
-
-            if (
-                Array.isArray(cores) &&
-                cores.length >= 3
-            ) {
-
-                aplicarCoresFundoDinamico(
-                    cores
-                );
-
-            } else {
-
-                aplicarCoresFundoFallback();
-
-            }
-
-            atualizarIntensidadeFundo();
-
-        }
-
-    )
-
-    .catch(
-
-        function (erro) {
-
-            if (
-                processamentoAtual !==
-                fundoDinamico.processamento
-            ) {
-
-                return;
-
-            }
-
-            console.warn(
-                "ApresentarPerfilPortfolio: erro ao calcular fundo dinâmico.",
-                erro
-            );
+        if (!video) {
 
             aplicarCoresFundoFallback();
 
             atualizarIntensidadeFundo();
 
+            return;
+
         }
 
-    );
 
+        const iniciarAnaliseVideo =
+            function () {
+
+                if (
+                    processamentoAtual !==
+                    fundoDinamico.processamento
+                ) {
+
+                    return;
+
+                }
+
+
+                extrairCoresVideo(
+                    video
+                )
+
+                    .then(
+
+                        function (cores) {
+
+                            if (
+                                processamentoAtual !==
+                                fundoDinamico.processamento
+                            ) {
+
+                                return;
+
+                            }
+
+
+                            if (
+                                Array.isArray(cores) &&
+                                cores.length >= 3
+                            ) {
+
+                                aplicarCoresFundoDinamico(
+                                    cores
+                                );
+
+                            } else {
+
+                                aplicarCoresFundoFallback();
+
+                            }
+
+
+                            atualizarIntensidadeFundo();
+
+                        }
+
+                    )
+
+                    .catch(
+
+                        function (erro) {
+
+                            if (
+                                processamentoAtual !==
+                                fundoDinamico.processamento
+                            ) {
+
+                                return;
+
+                            }
+
+
+                            console.warn(
+                                "ApresentarPerfilPortfolio: erro ao calcular fundo dinâmico do vídeo.",
+                                erro
+                            );
+
+                            aplicarCoresFundoFallback();
+
+                            atualizarIntensidadeFundo();
+
+                        }
+
+                    );
+
+            };
+
+
+        if (
+            video.readyState >= 2
+        ) {
+
+            iniciarAnaliseVideo();
+
+        } else {
+
+            video.addEventListener(
+                "loadeddata",
+                iniciarAnaliseVideo,
+                {
+                    once: true
+                }
+            );
+
+        }
+
+        return;
+
+    }
+
+
+    /*
+     * -----------------------------------------------------
+     * ÁUDIO / OUTROS
+     * -----------------------------------------------------
+     */
+    if (
+        item._tipo !== "imagem"
+    ) {
+
+        aplicarCoresFundoFallback();
+
+        atualizarIntensidadeFundo();
+
+        return;
+
+    }
+
+
+    /*
+     * -----------------------------------------------------
+     * IMAGEM
+     * -----------------------------------------------------
+     */
+    extrairCoresImagem(
+        item._url
+    )
+
+        .then(
+
+            function (cores) {
+
+                if (
+                    processamentoAtual !==
+                    fundoDinamico.processamento
+                ) {
+
+                    return;
+
+                }
+
+
+                if (
+                    Array.isArray(cores) &&
+                    cores.length >= 3
+                ) {
+
+                    aplicarCoresFundoDinamico(
+                        cores
+                    );
+
+                } else {
+
+                    aplicarCoresFundoFallback();
+
+                }
+
+
+                atualizarIntensidadeFundo();
+
+            }
+
+        )
+
+        .catch(
+
+            function (erro) {
+
+                if (
+                    processamentoAtual !==
+                    fundoDinamico.processamento
+                ) {
+
+                    return;
+
+                }
+
+
+                console.warn(
+                    "ApresentarPerfilPortfolio: erro ao calcular fundo dinâmico.",
+                    erro
+                );
+
+                aplicarCoresFundoFallback();
+
+                atualizarIntensidadeFundo();
+
+            }
+
+        );
 
 }
+
 
 /*
-
-* Reseta completamente o estado do fundo dinâmico.
-  */
-
+ * Reseta o estado do fundo dinâmico.
+ */
 function resetarFundoDinamico() {
 
+    const body =
+        obterBody();
 
-const body =
-    obterBody();
+    cancelarTransicaoCores();
 
-cancelarTransicaoCores();
+    fundoDinamico.chaveAtual =
+        "";
 
-fundoDinamico.chaveAtual =
-    "";
+    fundoDinamico.processamento++;
 
-fundoDinamico.processamento++;
+    fundoDinamico.coresAtuais =
+        null;
 
-fundoDinamico.coresAtuais =
-    null;
 
-if (body) {
+    if (body) {
 
-    const cores =
-        obterCoresFallbackDinamica();
+        const cores =
+            obterCoresFallbackDinamica();
 
-    aplicarCoresFundoImediatamente(
-        cores
-    );
+        aplicarCoresFundoImediatamente(
+            cores
+        );
 
-    body.style.setProperty(
-        "--perfil-fundo-opacidade",
-        "0"
-    );
+        body.style.setProperty(
+            "--perfil-fundo-opacidade",
+            "0"
+        );
 
-    body.classList.remove(
-        "perfil-fundo-dinamico-visivel"
-    );
+        body.classList.remove(
+            "perfil-fundo-dinamico-visivel"
+        );
+
+    }
 
 }
 
-
-}
 
 /* =========================================================
-NORMALIZAÇÃO
-========================================================= */
+   09. NORMALIZAÇÃO DOS DADOS
+   ========================================================= */
 
-function normalizarTipoMidia(
-item
-) {
+/*
+ * Normaliza o tipo de mídia.
+ */
+function normalizarTipoMidia(item) {
+
+    if (!item) {
+
+        return "imagem";
+
+    }
+
+    const tipoOriginal =
+
+        String(
+
+            item.tipo_midia ||
+
+            item.tipoMidia ||
+
+            item.tipo ||
+
+            item.media_type ||
+
+            item.mediaType ||
+
+            ""
+
+        )
+
+            .toLowerCase()
+
+            .trim();
 
 
-if (!item) {
+    const url =
+
+        String(
+
+            item.url ||
+
+            item.arquivo_url ||
+
+            item.arquivoUrl ||
+
+            item.media_url ||
+
+            item.mediaUrl ||
+
+            item.caminho ||
+
+            item.src ||
+
+            ""
+
+        )
+
+            .toLowerCase();
+
+
+    if (
+
+        tipoOriginal.includes("video") ||
+
+        tipoOriginal.includes("vídeo") ||
+
+        tipoOriginal === "mp4" ||
+
+        tipoOriginal === "webm" ||
+
+        tipoOriginal === "mov" ||
+
+        url.endsWith(".mp4") ||
+
+        url.endsWith(".webm") ||
+
+        url.endsWith(".mov")
+
+    ) {
+
+        return "video";
+
+    }
+
+
+    if (
+
+        tipoOriginal.includes("audio") ||
+
+        tipoOriginal.includes("áudio") ||
+
+        tipoOriginal === "mp3" ||
+
+        tipoOriginal === "wav" ||
+
+        tipoOriginal === "ogg" ||
+
+        url.endsWith(".mp3") ||
+
+        url.endsWith(".wav") ||
+
+        url.endsWith(".ogg")
+
+    ) {
+
+        return "audio";
+
+    }
+
 
     return "imagem";
 
 }
 
-const tipoOriginal =
 
-    String(
+/*
+ * Obtém a URL da mídia.
+ */
+function obterUrlMidia(item) {
 
-        item.tipo_midia ||
+    if (!item) {
 
-        item.tipoMidia ||
+        return "";
 
-        item.tipo ||
+    }
 
-        item.media_type ||
-
-        item.mediaType ||
-
-        ""
-
-    )
-
-        .toLowerCase()
-
-        .trim();
-
-const url =
-
-    String(
+    return (
 
         item.url ||
 
@@ -2402,370 +2327,156 @@ const url =
 
         item.src ||
 
+        item.public_url ||
+
+        item.publicUrl ||
+
         ""
 
-    )
-
-        .toLowerCase();
-
-if (
-
-    tipoOriginal.includes("video") ||
-
-    tipoOriginal.includes("vídeo") ||
-
-    tipoOriginal === "mp4" ||
-
-    tipoOriginal === "webm" ||
-
-    tipoOriginal === "mov" ||
-
-    url.endsWith(".mp4") ||
-
-    url.endsWith(".webm") ||
-
-    url.endsWith(".mov")
-
-) {
-
-    return "video";
+    );
 
 }
 
-if (
 
-    tipoOriginal.includes("audio") ||
+/*
+ * Obtém o título.
+ */
+function obterTitulo(item) {
 
-    tipoOriginal.includes("áudio") ||
+    if (!item) {
 
-    tipoOriginal === "mp3" ||
-
-    tipoOriginal === "wav" ||
-
-    tipoOriginal === "ogg" ||
-
-    url.endsWith(".mp3") ||
-
-    url.endsWith(".wav") ||
-
-    url.endsWith(".ogg")
-
-) {
-
-    return "audio";
-
-}
-
-return "imagem";
-
-
-}
-
-function obterUrlMidia(
-item
-) {
-
-
-if (!item) {
-
-    return "";
-
-}
-
-return (
-
-    item.url ||
-
-    item.arquivo_url ||
-
-    item.arquivoUrl ||
-
-    item.media_url ||
-
-    item.mediaUrl ||
-
-    item.caminho ||
-
-    item.src ||
-
-    item.public_url ||
-
-    item.publicUrl ||
-
-    ""
-
-);
-
-
-}
-
-function obterTitulo(
-item
-) {
-
-
-if (!item) {
-
-    return "";
-
-}
-
-return (
-
-    item.titulo ||
-
-    item.nome ||
-
-    item.nome_arquivo ||
-
-    item.nomeArquivo ||
-
-    item.title ||
-
-    ""
-
-);
-
-
-}
-
-function obterDescricao(
-item
-) {
-
-
-if (!item) {
-
-    return "";
-
-}
-
-return (
-
-    item.descricao ||
-
-    item.description ||
-
-    item.texto ||
-
-    item.legenda ||
-
-    ""
-
-);
-
-
-}
-
-function normalizarItem(
-item,
-indice
-) {
-
-
-if (!item) {
-
-    return null;
-
-}
-
-const url =
-    obterUrlMidia(item);
-
-if (!url) {
-
-    return null;
-
-}
-
-return {
-
-    ...item,
-
-    _indice: indice,
-
-    _tipo:
-        normalizarTipoMidia(item),
-
-    _url: url,
-
-    _titulo:
-        obterTitulo(item),
-
-    _descricao:
-        obterDescricao(item)
-
-};
-
-
-}
-
-function normalizarPortfolio(
-lista
-) {
-
-
-if (!Array.isArray(lista)) {
-
-    return [];
-
-}
-
-return lista
-
-    .map(function (
-        item,
-        indice
-    ) {
-
-        return normalizarItem(
-            item,
-            indice
-        );
-
-    })
-
-    .filter(Boolean);
-
-
-}
-
-function obterPorTipo(
-tipo
-) {
-
-
-return portfolio.filter(
-
-    function (item) {
-
-        return (
-
-            item &&
-
-            item._tipo === tipo
-
-        );
+        return "";
 
     }
 
-);
+    return (
 
+        item.titulo ||
+
+        item.nome ||
+
+        item.nome_arquivo ||
+
+        item.nomeArquivo ||
+
+        item.title ||
+
+        ""
+
+    );
 
 }
 
-/* =========================================================
-ESTADO VAZIO
-========================================================= */
 
-function renderizarEstadoVazio(
-container,
-mensagem
+/*
+ * Obtém a descrição.
+ */
+function obterDescricao(item) {
+
+    if (!item) {
+
+        return "";
+
+    }
+
+    return (
+
+        item.descricao ||
+
+        item.description ||
+
+        item.texto ||
+
+        item.legenda ||
+
+        ""
+
+    );
+
+}
+
+
+/*
+ * Normaliza um item individual.
+ */
+function normalizarItem(
+    item,
+    indice
 ) {
 
+    if (!item) {
 
-if (!container) {
+        return null;
 
-    return;
+    }
 
-}
+    const url =
+        obterUrlMidia(item);
 
-container.innerHTML = `
+    if (!url) {
 
-    <div class="portfolio-estado-vazio">
+        return null;
 
-        <div class="portfolio-estado-vazio-icone">
+    }
 
-            <i data-lucide="images"></i>
+    return {
 
-        </div>
+        ...item,
 
-        <p>
+        _indice: indice,
 
-            ${escaparHtml(
+        _tipo:
+            normalizarTipoMidia(item),
 
-                mensagem ||
+        _url: url,
 
-                "Este artista ainda não adicionou trabalhos ao portfólio."
+        _titulo:
+            obterTitulo(item),
 
-            )}
+        _descricao:
+            obterDescricao(item)
 
-        </p>
-
-    </div>
-
-`;
-
-renderizarIcones(container);
-
-
-}
-
-/* =========================================================
-PREPARAÇÃO DOS CONTAINERS
-========================================================= */
-
-function prepararContainers() {
-
-
-const videoList =
-
-    obterElemento(
-        CONFIG.elementos.videoList
-    );
-
-const audioList =
-
-    obterElemento(
-        CONFIG.elementos.audioList
-    );
-
-if (videoList) {
-
-    videoList.classList.add(
-        "portfolio-container-preparado"
-    );
-
-}
-
-if (audioList) {
-
-    audioList.classList.add(
-        "portfolio-container-preparado"
-    );
+    };
 
 }
 
 
+/*
+ * Normaliza toda a lista.
+ */
+function normalizarPortfolio(lista) {
+
+    if (!Array.isArray(lista)) {
+
+        return [];
+
+    }
+
+    return lista
+
+        .map(function (
+            item,
+            indice
+        ) {
+
+            return normalizarItem(
+                item,
+                indice
+            );
+
+        })
+
+        .filter(Boolean);
+
 }
 
-/* =========================================================
-GALERIA PRINCIPAL
-========================================================= */
 
-function renderizarGaleria() {
+/*
+ * Retorna itens de determinado tipo.
+ */
+function obterPorTipo(tipo) {
 
-
-const container =
-
-    obterElemento(
-        CONFIG.elementos.portfolioGrid
-    );
-
-if (!container) {
-
-    return;
-
-}
-
-desmontarInteracaoDeck();
-
-container.innerHTML =
-    "";
-
-const itensGaleria =
-
-    portfolio.filter(
+    return portfolio.filter(
 
         function (item) {
 
@@ -2773,13 +2484,7 @@ const itensGaleria =
 
                 item &&
 
-                (
-
-                    item._tipo === "imagem" ||
-
-                    item._tipo === "video"
-
-                )
+                item._tipo === tipo
 
             );
 
@@ -2787,611 +2492,343 @@ const itensGaleria =
 
     );
 
-galeria.itens =
-    itensGaleria;
-
-if (!itensGaleria.length) {
-
-    galeria.indiceAtual =
-        0;
-
-    galeria.deslocamentoX =
-        0;
-
-    resetarFundoDinamico();
-
-    renderizarEstadoVazio(
-
-        container,
-
-        "Este artista ainda não adicionou trabalhos ao portfólio."
-
-    );
-
-    return;
-
 }
 
-galeria.indiceAtual =
 
-    Math.min(
+/* =========================================================
+   10. ESTADO VAZIO E CONTAINERS
+   ========================================================= */
 
-        galeria.indiceAtual,
+function renderizarEstadoVazio(
+    container,
+    mensagem
+) {
 
-        itensGaleria.length - 1
+    if (!container) {
 
-    );
+        return;
 
-if (itensGaleria.length > 1) {
+    }
 
-    criarBotoesNavegacaoGaleria(
+    container.innerHTML = `
+
+        <div class="portfolio-estado-vazio">
+
+            <div class="portfolio-estado-vazio-icone">
+
+                <i data-lucide="images"></i>
+
+            </div>
+
+            <p>
+
+                ${escaparHtml(
+
+                    mensagem ||
+
+                    "Este artista ainda não adicionou trabalhos ao portfólio."
+
+                )}
+
+            </p>
+
+        </div>
+
+    `;
+
+    renderizarIcones(
         container
     );
 
 }
 
-const deck =
-    document.createElement("div");
 
-deck.className =
-    "portfolio-deck";
+/*
+ * Prepara os containers secundários do portfólio.
+ */
+function prepararContainers() {
 
-deck.setAttribute(
-    "aria-label",
-    "Galeria de trabalhos do artista"
-);
+    const videoList =
 
-itensGaleria.forEach(
+        obterElemento(
+            CONFIG.elementos.videoList
+        );
 
-    function (
-        item,
-        indice
-    ) {
+    const audioList =
 
-        let card = null;
+        obterElemento(
+            CONFIG.elementos.audioList
+        );
 
-        if (
-            item._tipo === "video"
+
+    if (videoList) {
+
+        videoList.classList.add(
+            "portfolio-container-preparado"
+        );
+
+    }
+
+
+    if (audioList) {
+
+        audioList.classList.add(
+            "portfolio-container-preparado"
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   11. RENDERIZAÇÃO DA GALERIA
+   ========================================================= */
+
+function renderizarGaleria() {
+
+    const container =
+
+        obterElemento(
+            CONFIG.elementos.portfolioGrid
+        );
+
+
+    if (!container) {
+
+        return;
+
+    }
+
+
+    desmontarInteracaoDeck();
+
+    container.innerHTML =
+        "";
+
+
+    const itensGaleria =
+
+        portfolio.filter(
+
+            function (item) {
+
+                return (
+
+                    item &&
+
+                    (
+
+                        item._tipo === "imagem" ||
+
+                        item._tipo === "video"
+
+                    )
+
+                );
+
+            }
+
+        );
+
+
+    galeria.itens =
+        itensGaleria;
+
+
+    if (!itensGaleria.length) {
+
+        galeria.indiceAtual =
+            0;
+
+        galeria.deslocamentoX =
+            0;
+
+        resetarFundoDinamico();
+
+
+        renderizarEstadoVazio(
+
+            container,
+
+            "Este artista ainda não adicionou trabalhos ao portfólio."
+
+        );
+
+        return;
+
+    }
+
+
+    galeria.indiceAtual =
+
+        Math.min(
+
+            galeria.indiceAtual,
+
+            itensGaleria.length - 1
+
+        );
+
+
+    if (itensGaleria.length > 1) {
+
+        criarBotoesNavegacaoGaleria(
+            container
+        );
+
+    }
+
+
+    const deck =
+        document.createElement("div");
+
+    deck.className =
+        "portfolio-deck";
+
+    deck.setAttribute(
+        "aria-label",
+        "Galeria de trabalhos do artista"
+    );
+
+
+    itensGaleria.forEach(
+
+        function (
+            item,
+            indice
         ) {
 
-            card =
+            let card = null;
 
-                criarCardGaleriaVideo(
 
-                    item,
+            if (
+                item._tipo === "video"
+            ) {
 
-                    indice
+                card =
 
+                    criarCardGaleriaVideo(
+
+                        item,
+
+                        indice
+
+                    );
+
+            } else {
+
+                card =
+
+                    criarCardGaleriaImagem(
+
+                        item,
+
+                        indice
+
+                    );
+
+            }
+
+
+            if (card) {
+
+                deck.appendChild(
+                    card
                 );
 
-        } else {
-
-            card =
-
-                criarCardGaleriaImagem(
-
-                    item,
-
-                    indice
-
-                );
+            }
 
         }
 
-        if (card) {
+    );
 
-            deck.appendChild(
-                card
-            );
 
-        }
+    container.appendChild(
+        deck
+    );
+
+
+    criarIndicadoresGaleria(
+
+        container,
+
+        itensGaleria.length
+
+    );
+
+
+    configurarErrosImagens(
+        deck
+    );
+
+    configurarErrosVideos(
+        deck
+    );
+
+    configurarDeck();
+
+    configurarObserverVideos();
+
+
+    /*
+     * Após os cards existirem no DOM,
+     * calcula o fundo da mídia ativa.
+     */
+    atualizarFundoDinamico();
+
+    configurarControleVisibilidadeFundo();
+
+    renderizarIcones(
+        container
+    );
+
+}
+
+
+/* =========================================================
+   12. NAVEGAÇÃO LATERAL
+   ========================================================= */
+
+function criarBotoesNavegacaoGaleria(container) {
+
+    if (!container) {
+
+        return;
 
     }
 
-);
 
-container.appendChild(
-    deck
-);
+    const botaoAnterior =
+        document.createElement("button");
 
-criarIndicadoresGaleria(
-
-    container,
-
-    itensGaleria.length
-
-);
-
-configurarErrosImagens(
-    deck
-);
-
-configurarErrosVideos(
-    deck
-);
-
-configurarDeck();
-
-configurarObserverVideos();
-
-/*
- * Depois que os cards existem no DOM,
- * calculamos a cor da mídia atualmente ativa.
- */
-
-atualizarFundoDinamico();
-
-configurarControleVisibilidadeFundo();
-
-renderizarIcones(
-    container
-);
-
-
-}
-
-/* =========================================================
-BOTÕES DE NAVEGAÇÃO LATERAL
-========================================================= */
-
-function criarBotoesNavegacaoGaleria(
-container
-) {
-
-
-if (!container) {
-
-    return;
-
-}
-
-const botaoAnterior =
-    document.createElement("button");
-
-botaoAnterior.type =
-    "button";
-
-botaoAnterior.className =
-    "portfolio-deck-nav portfolio-deck-nav-prev";
-
-botaoAnterior.setAttribute(
-    "aria-label",
-    "Trabalho anterior"
-);
-
-botaoAnterior.setAttribute(
-    "title",
-    "Trabalho anterior"
-);
-
-botaoAnterior.innerHTML = `
-
-    <i
-        data-lucide="chevron-left"
-        aria-hidden="true"
-    ></i>
-
-`;
-
-botaoAnterior.addEventListener(
-
-    "click",
-
-    function (evento) {
-
-        evento.preventDefault();
-
-        evento.stopPropagation();
-
-        pausarTodosVideos();
-
-        voltarGaleria();
-
-    }
-
-);
-
-const botaoProximo =
-    document.createElement("button");
-
-botaoProximo.type =
-    "button";
-
-botaoProximo.className =
-    "portfolio-deck-nav portfolio-deck-nav-next";
-
-botaoProximo.setAttribute(
-    "aria-label",
-    "Próximo trabalho"
-);
-
-botaoProximo.setAttribute(
-    "title",
-    "Próximo trabalho"
-);
-
-botaoProximo.innerHTML = `
-
-    <i
-        data-lucide="chevron-right"
-        aria-hidden="true"
-    ></i>
-
-`;
-
-botaoProximo.addEventListener(
-
-    "click",
-
-    function (evento) {
-
-        evento.preventDefault();
-
-        evento.stopPropagation();
-
-        pausarTodosVideos();
-
-        avancarGaleria();
-
-    }
-
-);
-
-container.appendChild(
-    botaoAnterior
-);
-
-container.appendChild(
-    botaoProximo
-);
-
-
-}
-
-/* =========================================================
-CONFIGURAÇÃO VISUAL BASE DO CARD
-========================================================= */
-
-function configurarEstiloCard(
-card
-) {
-
-
-if (!card) {
-
-    return;
-
-}
-
-card.style.transition =
-
-    `transform ${CONFIG.deck.duracao}ms cubic-bezier(.22,.61,.36,1), ` +
-
-    `opacity ${CONFIG.deck.duracao}ms ease, ` +
-
-    `filter ${CONFIG.deck.duracao}ms ease`;
-
-
-}
-
-/* =========================================================
-CARD DE IMAGEM
-========================================================= */
-
-function criarCardGaleriaImagem(
-item,
-indice
-) {
-
-
-const card =
-
-    document.createElement(
-        "article"
-    );
-
-card.className =
-    "portfolio-deck-card";
-
-card.dataset.indice =
-    String(indice);
-
-card.dataset.tipo =
-    "imagem";
-
-card.setAttribute(
-    "aria-label",
-    item._titulo ||
-    `Imagem ${indice + 1} do portfólio`
-);
-
-configurarEstiloCard(
-    card
-);
-
-const imagem =
-
-    document.createElement(
-        "img"
-    );
-
-imagem.className =
-    "portfolio-deck-media";
-
-imagem.src =
-    item._url;
-
-imagem.alt =
-    item._titulo ||
-    "Trabalho do artista";
-
-imagem.loading =
-
-    indice === 0
-        ? "eager"
-        : "lazy";
-
-imagem.draggable =
-    false;
-
-card.appendChild(
-    imagem
-);
-
-adicionarLegendaCard(
-    card,
-    item
-);
-
-return card;
-
-
-}
-
-/* =========================================================
-CARD DE VÍDEO
-========================================================= */
-
-function criarCardGaleriaVideo(
-item,
-indice
-) {
-
-
-const card =
-
-    document.createElement(
-        "article"
-    );
-
-card.className =
-
-    "portfolio-deck-card portfolio-deck-card-video";
-
-card.dataset.indice =
-    String(indice);
-
-card.dataset.tipo =
-    "video";
-
-card.setAttribute(
-    "aria-label",
-    item._titulo ||
-    `Vídeo ${indice + 1} do portfólio`
-);
-
-configurarEstiloCard(
-    card
-);
-
-const video =
-
-    document.createElement(
-        "video"
-    );
-
-video.className =
-    "portfolio-deck-media";
-
-/*
- * Permite que o navegador faça a requisição do vídeo
- * preparada para leitura via canvas quando o servidor
- * fornecer os cabeçalhos CORS necessários.
- *
- * Isso não resolve CORS sozinho, mas é necessário
- * para que o canvas possa ler os pixels quando o
- * Storage permitir esse acesso.
- */
-
-video.crossOrigin =
-    "anonymous";
-
-video.src =
-    item._url;
-
-video.controls =
-    true;
-
-video.autoplay =
-    false;
-
-video.muted =
-    CONFIG.video.muted;
-
-video.defaultMuted =
-    CONFIG.video.muted;
-
-
-video.preload =
-    "metadata";
-
-video.playsInline =
-    true;
-
-video.setAttribute(
-    "webkit-playsinline",
-    ""
-);
-
-video.dataset.autoplayControlado =
-    "true";
-
-card.appendChild(
-    video
-);
-
-adicionarLegendaCard(
-    card,
-    item
-);
-
-return card;
-
-
-}
-
-/* =========================================================
-LEGENDA
-========================================================= */
-
-function adicionarLegendaCard(
-card,
-item
-) {
-
-
-if (
-    !item._titulo &&
-    !item._descricao
-) {
-
-    return;
-
-}
-
-const informacoes =
-
-    document.createElement(
-        "div"
-    );
-
-informacoes.className =
-    "portfolio-deck-caption";
-
-if (item._titulo) {
-
-    const titulo =
-
-        document.createElement(
-            "strong"
-        );
-
-    titulo.textContent =
-        item._titulo;
-
-    informacoes.appendChild(
-        titulo
-    );
-
-}
-
-if (item._descricao) {
-
-    const descricao =
-
-        document.createElement(
-            "span"
-        );
-
-    descricao.textContent =
-        item._descricao;
-
-    informacoes.appendChild(
-        descricao
-    );
-
-}
-
-card.appendChild(
-    informacoes
-);
-
-
-}
-
-/* =========================================================
-INDICADORES DE PAGINAÇÃO
-========================================================= */
-
-function criarIndicadoresGaleria(
-container,
-quantidade
-) {
-
-
-removerIndicadoresGaleria();
-
-if (
-    !container ||
-    quantidade <= 1
-) {
-
-    return;
-
-}
-
-const indicadores =
-
-    document.createElement(
-        "div"
-    );
-
-indicadores.className =
-    "portfolio-deck-indicadores";
-
-indicadores.setAttribute(
-    "aria-label",
-    "Navegação da galeria"
-);
-
-for (
-    let indice = 0;
-    indice < quantidade;
-    indice++
-) {
-
-    const botao =
-
-        document.createElement(
-            "button"
-        );
-
-    botao.type =
+    botaoAnterior.type =
         "button";
 
-    botao.className =
-        "portfolio-deck-indicador";
+    botaoAnterior.className =
+        "portfolio-deck-nav portfolio-deck-nav-prev";
 
-    botao.dataset.indice =
-        String(indice);
-
-    botao.setAttribute(
+    botaoAnterior.setAttribute(
         "aria-label",
-        `Ir para o item ${indice + 1}`
+        "Trabalho anterior"
     );
 
-    botao.setAttribute(
-        "aria-current",
-
-        indice ===
-        galeria.indiceAtual
-
-            ? "true"
-
-            : "false"
+    botaoAnterior.setAttribute(
+        "title",
+        "Trabalho anterior"
     );
 
-    botao.addEventListener(
+    botaoAnterior.innerHTML = `
+
+        <i
+            data-lucide="chevron-left"
+            aria-hidden="true"
+        ></i>
+
+    `;
+
+
+    botaoAnterior.addEventListener(
 
         "click",
 
@@ -3403,727 +2840,959 @@ for (
 
             pausarTodosVideos();
 
-            const alvo =
-
-                Number(
-                    botao.dataset.indice
-                );
-
-            irParaItem(
-                alvo
-            );
+            voltarGaleria();
 
         }
 
     );
 
-    indicadores.appendChild(
-        botao
+
+    const botaoProximo =
+        document.createElement("button");
+
+    botaoProximo.type =
+        "button";
+
+    botaoProximo.className =
+        "portfolio-deck-nav portfolio-deck-nav-next";
+
+    botaoProximo.setAttribute(
+        "aria-label",
+        "Próximo trabalho"
+    );
+
+    botaoProximo.setAttribute(
+        "title",
+        "Próximo trabalho"
+    );
+
+    botaoProximo.innerHTML = `
+
+        <i
+            data-lucide="chevron-right"
+            aria-hidden="true"
+        ></i>
+
+    `;
+
+
+    botaoProximo.addEventListener(
+
+        "click",
+
+        function (evento) {
+
+            evento.preventDefault();
+
+            evento.stopPropagation();
+
+            pausarTodosVideos();
+
+            avancarGaleria();
+
+        }
+
+    );
+
+
+    container.appendChild(
+        botaoAnterior
+    );
+
+    container.appendChild(
+        botaoProximo
     );
 
 }
 
-container.appendChild(
-    indicadores
-);
 
+/* =========================================================
+   13. CARDS DO PORTFÓLIO
+   ========================================================= */
+
+/*
+ * Configura apenas a transição do card.
+ *
+ * Dimensões, largura e proporção continuam sob
+ * responsabilidade do CSS.
+ */
+function configurarEstiloCard(card) {
+
+    if (!card) {
+
+        return;
+
+    }
+
+    card.style.transition =
+
+        `transform ${CONFIG.deck.duracao}ms cubic-bezier(.22,.61,.36,1), ` +
+
+        `opacity ${CONFIG.deck.duracao}ms ease, ` +
+
+        `filter ${CONFIG.deck.duracao}ms ease`;
 
 }
+
+
+/*
+ * Cria card de imagem.
+ */
+function criarCardGaleriaImagem(
+    item,
+    indice
+) {
+
+    const card =
+
+        document.createElement(
+            "article"
+        );
+
+    card.className =
+        "portfolio-deck-card";
+
+    card.dataset.indice =
+        String(indice);
+
+    card.dataset.tipo =
+        "imagem";
+
+    card.setAttribute(
+        "aria-label",
+        item._titulo ||
+        `Imagem ${indice + 1} do portfólio`
+    );
+
+
+    configurarEstiloCard(
+        card
+    );
+
+
+    const imagem =
+
+        document.createElement(
+            "img"
+        );
+
+    imagem.className =
+        "portfolio-deck-media";
+
+    imagem.src =
+        item._url;
+
+    imagem.alt =
+        item._titulo ||
+        "Trabalho do artista";
+
+    imagem.loading =
+
+        indice === 0
+            ? "eager"
+            : "lazy";
+
+    imagem.draggable =
+        false;
+
+
+    card.appendChild(
+        imagem
+    );
+
+
+    adicionarLegendaCard(
+        card,
+        item
+    );
+
+
+    return card;
+
+}
+
+
+/*
+ * Cria card de vídeo.
+ */
+function criarCardGaleriaVideo(
+    item,
+    indice
+) {
+
+    const card =
+
+        document.createElement(
+            "article"
+        );
+
+    card.className =
+
+        "portfolio-deck-card portfolio-deck-card-video";
+
+    card.dataset.indice =
+        String(indice);
+
+    card.dataset.tipo =
+        "video";
+
+    card.setAttribute(
+        "aria-label",
+        item._titulo ||
+        `Vídeo ${indice + 1} do portfólio`
+    );
+
+
+    configurarEstiloCard(
+        card
+    );
+
+
+    const video =
+
+        document.createElement(
+            "video"
+        );
+
+    video.className =
+        "portfolio-deck-media";
+
+
+    /*
+     * Permite leitura via canvas quando o Storage
+     * fornecer os cabeçalhos CORS necessários.
+     */
+    video.crossOrigin =
+        "anonymous";
+
+    video.src =
+        item._url;
+
+    video.controls =
+        true;
+
+    video.autoplay =
+        false;
+
+    video.muted =
+        CONFIG.video.muted;
+
+    video.defaultMuted =
+        CONFIG.video.muted;
+
+    video.preload =
+        "metadata";
+
+    video.playsInline =
+        true;
+
+    video.setAttribute(
+        "webkit-playsinline",
+        ""
+    );
+
+    video.dataset.autoplayControlado =
+        "true";
+
+
+    card.appendChild(
+        video
+    );
+
+
+    adicionarLegendaCard(
+        card,
+        item
+    );
+
+
+    return card;
+
+}
+
+
+/*
+ * Adiciona título e descrição.
+ */
+function adicionarLegendaCard(
+    card,
+    item
+) {
+
+    if (
+        !item._titulo &&
+        !item._descricao
+    ) {
+
+        return;
+
+    }
+
+
+    const informacoes =
+
+        document.createElement(
+            "div"
+        );
+
+    informacoes.className =
+        "portfolio-deck-caption";
+
+
+    if (item._titulo) {
+
+        const titulo =
+
+            document.createElement(
+                "strong"
+            );
+
+        titulo.textContent =
+            item._titulo;
+
+        informacoes.appendChild(
+            titulo
+        );
+
+    }
+
+
+    if (item._descricao) {
+
+        const descricao =
+
+            document.createElement(
+                "span"
+            );
+
+        descricao.textContent =
+            item._descricao;
+
+        informacoes.appendChild(
+            descricao
+        );
+
+    }
+
+
+    card.appendChild(
+        informacoes
+    );
+
+}
+
+
+/* =========================================================
+   14. INDICADORES DA GALERIA
+   ========================================================= */
+
+function criarIndicadoresGaleria(
+    container,
+    quantidade
+) {
+
+    removerIndicadoresGaleria();
+
+
+    if (
+        !container ||
+        quantidade <= 1
+    ) {
+
+        return;
+
+    }
+
+
+    const indicadores =
+
+        document.createElement(
+            "div"
+        );
+
+    indicadores.className =
+        "portfolio-deck-indicadores";
+
+    indicadores.setAttribute(
+        "aria-label",
+        "Navegação da galeria"
+    );
+
+
+    for (
+        let indice = 0;
+        indice < quantidade;
+        indice++
+    ) {
+
+        const botao =
+
+            document.createElement(
+                "button"
+            );
+
+        botao.type =
+            "button";
+
+        botao.className =
+            "portfolio-deck-indicador";
+
+        botao.dataset.indice =
+            String(indice);
+
+        botao.setAttribute(
+            "aria-label",
+            `Ir para o item ${indice + 1}`
+        );
+
+        botao.setAttribute(
+            "aria-current",
+
+            indice ===
+            galeria.indiceAtual
+
+                ? "true"
+
+                : "false"
+        );
+
+
+        botao.addEventListener(
+
+            "click",
+
+            function (evento) {
+
+                evento.preventDefault();
+
+                evento.stopPropagation();
+
+                pausarTodosVideos();
+
+
+                const alvo =
+
+                    Number(
+                        botao.dataset.indice
+                    );
+
+
+                irParaItem(
+                    alvo
+                );
+
+            }
+
+        );
+
+
+        indicadores.appendChild(
+            botao
+        );
+
+    }
+
+
+    container.appendChild(
+        indicadores
+    );
+
+}
+
 
 function removerIndicadoresGaleria() {
 
+    const container =
 
-const container =
+        obterElemento(
+            CONFIG.elementos.portfolioGrid
+        );
 
-    obterElemento(
-        CONFIG.elementos.portfolioGrid
-    );
 
-if (!container) {
+    if (!container) {
 
-    return;
+        return;
+
+    }
+
+
+    const indicadores =
+
+        container.querySelector(
+            ".portfolio-deck-indicadores"
+        );
+
+
+    if (indicadores) {
+
+        indicadores.remove();
+
+    }
 
 }
 
-const indicadores =
-
-    container.querySelector(
-        ".portfolio-deck-indicadores"
-    );
-
-if (indicadores) {
-
-    indicadores.remove();
-
-}
-
-
-}
 
 function atualizarIndicadoresGaleria() {
 
+    const container =
 
-const container =
-
-    obterElemento(
-        CONFIG.elementos.portfolioGrid
-    );
-
-if (!container) {
-
-    return;
-
-}
-
-const indicadores =
-
-    container.querySelectorAll(
-        ".portfolio-deck-indicador"
-    );
-
-if (!indicadores.length) {
-
-    return;
-
-}
-
-indicadores.forEach(
-
-    function (
-        botao,
-        indice
-    ) {
-
-        const ativo =
-
-            indice ===
-            galeria.indiceAtual;
-
-        botao.setAttribute(
-
-            "aria-current",
-
-            ativo
-                ? "true"
-                : "false"
-
+        obterElemento(
+            CONFIG.elementos.portfolioGrid
         );
+
+
+    if (!container) {
+
+        return;
 
     }
 
-);
+
+    const indicadores =
+
+        container.querySelectorAll(
+            ".portfolio-deck-indicador"
+        );
 
 
-}
+    if (!indicadores.length) {
 
-/* =========================================================
-ERROS DE IMAGEM
-========================================================= */
+        return;
 
-function configurarErrosImagens(
-container
-) {
+    }
 
 
-if (!container) {
+    indicadores.forEach(
 
-    return;
+        function (
+            botao,
+            indice
+        ) {
 
-}
+            const ativo =
 
-const imagens =
+                indice ===
+                galeria.indiceAtual;
 
-    container.querySelectorAll(
-        "img.portfolio-deck-media"
+
+            botao.setAttribute(
+
+                "aria-current",
+
+                ativo
+                    ? "true"
+                    : "false"
+
+            );
+
+        }
+
     );
 
-imagens.forEach(
+}
 
-    function (imagem) {
 
-        imagem.addEventListener(
+/* =========================================================
+   15. TRATAMENTO DE ERROS DE MÍDIA
+   ========================================================= */
 
-            "error",
+function configurarErrosImagens(container) {
 
-            function () {
+    if (!container) {
 
-                imagem.style.display =
-                    "none";
+        return;
 
-                const card =
+    }
 
-                    imagem.closest(
-                        ".portfolio-deck-card"
+
+    const imagens =
+
+        container.querySelectorAll(
+            "img.portfolio-deck-media"
+        );
+
+
+    imagens.forEach(
+
+        function (imagem) {
+
+            imagem.addEventListener(
+
+                "error",
+
+                function () {
+
+                    imagem.style.display =
+                        "none";
+
+
+                    const card =
+
+                        imagem.closest(
+                            ".portfolio-deck-card"
+                        );
+
+
+                    if (!card) {
+
+                        return;
+
+                    }
+
+
+                    card.classList.add(
+                        "portfolio-media-erro"
                     );
 
-                if (!card) {
 
-                    return;
+                    const mensagem =
+
+                        document.createElement(
+                            "div"
+                        );
+
+                    mensagem.className =
+                        "portfolio-media-erro-mensagem";
+
+                    mensagem.textContent =
+                        "Não foi possível carregar esta imagem.";
+
+
+                    card.appendChild(
+                        mensagem
+                    );
+
+
+                    ajustarAlturaDeck();
 
                 }
 
-                card.classList.add(
-                    "portfolio-media-erro"
-                );
+            );
 
-                const mensagem =
+        }
 
-                    document.createElement(
-                        "div"
-                    );
+    );
 
-                mensagem.className =
-                    "portfolio-media-erro-mensagem";
+}
 
-                mensagem.textContent =
-                    "Não foi possível carregar esta imagem.";
 
-                card.appendChild(
-                    mensagem
-                );
+function configurarErrosVideos(container) {
 
-                ajustarAlturaDeck();
+    if (!container) {
 
-            }
-
-        );
+        return;
 
     }
 
-);
+
+    const videos =
+
+        container.querySelectorAll(
+            "video.portfolio-deck-media"
+        );
 
 
-}
+    videos.forEach(
 
-/* =========================================================
-ERROS DE VÍDEO
-========================================================= */
+        function (video) {
 
-function configurarErrosVideos(
-container
-) {
+            video.addEventListener(
+
+                "error",
+
+                function () {
+
+                    video.controls =
+                        false;
 
 
-if (!container) {
+                    const card =
 
-    return;
+                        video.closest(
+                            ".portfolio-deck-card"
+                        );
 
-}
 
-const videos =
+                    if (!card) {
 
-    container.querySelectorAll(
-        "video.portfolio-deck-media"
-    );
+                        return;
 
-videos.forEach(
+                    }
 
-    function (video) {
 
-        video.addEventListener(
-
-            "error",
-
-            function () {
-
-                video.controls =
-                    false;
-
-                const card =
-
-                    video.closest(
-                        ".portfolio-deck-card"
+                    card.classList.add(
+                        "portfolio-media-erro"
                     );
-
-                if (!card) {
-
-                    return;
 
                 }
 
-                card.classList.add(
-                    "portfolio-media-erro"
-                );
+            );
 
-            }
+        }
 
-        );
-
-    }
-
-);
-
+    );
 
 }
 
+
 /* =========================================================
-DECK
-========================================================= */
+   16. DECK — ACESSO AOS ELEMENTOS
+   ========================================================= */
 
 function obterDeck() {
 
+    const container =
 
-const container =
+        obterElemento(
+            CONFIG.elementos.portfolioGrid
+        );
 
-    obterElemento(
-        CONFIG.elementos.portfolioGrid
+
+    if (!container) {
+
+        return null;
+
+    }
+
+
+    return container.querySelector(
+        ".portfolio-deck"
     );
 
-if (!container) {
-
-    return null;
-
 }
 
-return container.querySelector(
-    ".portfolio-deck"
-);
-
-
-}
 
 function obterCardsDeck() {
 
-
-const deck =
-    obterDeck();
-
-if (!deck) {
-
-    return [];
-
-}
-
-return Array.from(
-
-    deck.querySelectorAll(
-        ".portfolio-deck-card"
-    )
-
-);
+    const deck =
+        obterDeck();
 
 
-}
+    if (!deck) {
 
-function obterCardPorIndice(
-indice
-) {
+        return [];
 
-
-const deck =
-    obterDeck();
-
-if (!deck) {
-
-    return null;
-
-}
-
-return deck.querySelector(
-
-    `.portfolio-deck-card[data-indice="${indice}"]`
-
-);
+    }
 
 
-}
+    return Array.from(
 
-function normalizarIndice(
-indice
-) {
+        deck.querySelectorAll(
+            ".portfolio-deck-card"
+        )
 
-
-const total =
-    galeria.itens.length;
-
-if (!total) {
-
-    return 0;
-
-}
-
-let resultado =
-    Number(indice);
-
-if (
-    !Number.isFinite(
-        resultado
-    )
-) {
-
-    resultado = 0;
-
-}
-
-resultado =
-    Math.round(
-        resultado
     );
 
-resultado =
-    (
+}
+
+
+function obterCardPorIndice(indice) {
+
+    const deck =
+        obterDeck();
+
+
+    if (!deck) {
+
+        return null;
+
+    }
+
+
+    return deck.querySelector(
+
+        `.portfolio-deck-card[data-indice="${indice}"]`
+
+    );
+
+}
+
+
+function normalizarIndice(indice) {
+
+    const total =
+        galeria.itens.length;
+
+
+    if (!total) {
+
+        return 0;
+
+    }
+
+
+    let resultado =
+        Number(indice);
+
+
+    if (
+        !Number.isFinite(
+            resultado
+        )
+    ) {
+
+        resultado = 0;
+
+    }
+
+
+    resultado =
+        Math.round(
+            resultado
+        );
+
+
+    resultado =
 
         (
 
-            resultado %
-            total
+            (
 
-        ) +
-
-        total
-
-    ) %
-
-    total;
-
-return resultado;
-
-
-}
-
-function obterDiferencaCircular(
-indice,
-atual,
-total
-) {
-
-
-if (total <= 1) {
-
-    return 0;
-
-}
-
-let diferenca =
-    indice - atual;
-
-if (
-    diferenca >
-    total / 2
-) {
-
-    diferenca -=
-        total;
-
-}
-
-if (
-    diferenca <
-    -(total / 2)
-) {
-
-    diferenca +=
-        total;
-
-}
-
-return diferenca;
-
-
-}
-
-/* =========================================================
-POSICIONAMENTO DO DECK
-========================================================= */
-
-function aplicarPosicoesDeck(
-deslocamento = 0,
-animar = true
-) {
-
-
-const cards =
-    obterCardsDeck();
-
-const total =
-    cards.length;
-
-if (!total) {
-
-    return;
-
-}
-
-const dx =
-    Number(deslocamento) || 0;
-
-const progresso =
-
-    Math.min(
-
-        Math.abs(dx) / 140,
-
-        1
-
-    );
-
-cards.forEach(
-
-    function (card) {
-
-        const indice =
-
-            Number(
-                card.dataset.indice
-            );
-
-        const diferenca =
-
-            obterDiferencaCircular(
-
-                indice,
-
-                galeria.indiceAtual,
-
+                resultado %
                 total
 
-            );
+            ) +
 
-        if (animar) {
+            total
 
-            card.style.transition = `
+        ) %
 
-                transform ${CONFIG.deck.duracao}ms ease,
+        total;
 
-                opacity ${CONFIG.deck.duracao}ms ease,
 
-                filter ${CONFIG.deck.duracao}ms ease
+    return resultado;
 
-            `;
+}
 
-        } else {
 
-            card.style.transition =
-                "none";
+function obterDiferencaCircular(
+    indice,
+    atual,
+    total
+) {
 
-        }
+    if (total <= 1) {
 
-        card.style.pointerEvents =
-            "none";
+        return 0;
 
-        card.style.opacity =
-            "0";
+    }
 
-        card.style.zIndex =
-            "5";
 
-        let x = 0;
+    let diferenca =
+        indice - atual;
 
-        let y = 0;
 
-        let escala =
-            CONFIG.deck.escalaDistante;
+    if (
+        diferenca >
+        total / 2
+    ) {
 
-        let rotacao = 0;
+        diferenca -=
+            total;
 
-        if (
-            diferenca === 0
-        ) {
+    }
 
-            x = dx;
 
-            y = 0;
+    if (
+        diferenca <
+        -(total / 2)
+    ) {
 
-            escala = 1;
+        diferenca +=
+            total;
 
-            card.style.filter =
-                "blur(0px)";
+    }
 
-            rotacao =
 
-                Math.max(
+    return diferenca;
 
-                    -CONFIG.deck.rotacaoMaxima,
+}
 
-                    Math.min(
 
-                        CONFIG.deck.rotacaoMaxima,
+/* =========================================================
+   17. DECK — POSICIONAMENTO
+   ========================================================= */
 
-                        dx / 35
+function aplicarPosicoesDeck(
+    deslocamento = 0,
+    animar = true
+) {
 
-                    )
+    const cards =
+        obterCardsDeck();
+
+    const total =
+        cards.length;
+
+
+    if (!total) {
+
+        return;
+
+    }
+
+
+    const dx =
+        Number(deslocamento) || 0;
+
+
+    const progresso =
+
+        Math.min(
+
+            Math.abs(dx) / 140,
+
+            1
+
+        );
+
+
+    cards.forEach(
+
+        function (card) {
+
+            const indice =
+
+                Number(
+                    card.dataset.indice
+                );
+
+
+            const diferenca =
+
+                obterDiferencaCircular(
+
+                    indice,
+
+                    galeria.indiceAtual,
+
+                    total
 
                 );
 
-            card.style.opacity =
-                "1";
 
-            card.style.zIndex =
-                "40";
+            if (animar) {
+
+                card.style.transition = `
+
+                    transform ${CONFIG.deck.duracao}ms ease,
+
+                    opacity ${CONFIG.deck.duracao}ms ease,
+
+                    filter ${CONFIG.deck.duracao}ms ease
+
+                `;
+
+            } else {
+
+                card.style.transition =
+                    "none";
+
+            }
+
 
             card.style.pointerEvents =
-
-                galeria.arrastando
-
-                    ? "none"
-
-                    : "auto";
-
-        }
-
-        else if (
-            diferenca === 1
-        ) {
-
-            const deslocamentoBase =
-                CONFIG.deck.deslocamentoProximo;
-
-            const yBase =
-                CONFIG.deck.deslocamentoVertical;
-
-            const escalaBase =
-                CONFIG.deck.escalaProximo;
-
-            if (
-                galeria.arrastando &&
-                dx < 0
-            ) {
-
-                const fator =
-                    progresso;
-
-                x =
-                    deslocamentoBase *
-                    (1 - fator);
-
-                y =
-                    yBase *
-                    (1 - fator);
-
-                escala =
-                    escalaBase +
-                    (
-                        (1 - escalaBase) *
-                        fator
-                    );
-
-                const blurInicial =
-
-                    parseFloat(
-
-                        CONFIG.deck.blurProximo
-
-                    ) || 0;
-
-                const blur =
-
-                    blurInicial *
-                    (1 - fator);
-
-                card.style.filter =
-                    `blur(${blur}px)`;
-
-            } else {
-
-                x =
-                    deslocamentoBase;
-
-                y =
-                    yBase;
-
-                escala =
-                    escalaBase;
-
-                card.style.filter =
-
-                    `blur(${CONFIG.deck.blurProximo})`;
-
-            }
-
-            card.style.opacity =
-                "1";
-
-            card.style.zIndex =
-                "20";
-
-        }
-
-        else if (
-            diferenca === -1
-        ) {
-
-            const deslocamentoBase =
-
-                -CONFIG.deck.deslocamentoProximo;
-
-            const yBase =
-                CONFIG.deck.deslocamentoVertical;
-
-            const escalaBase =
-                CONFIG.deck.escalaProximo;
-
-            if (
-                galeria.arrastando &&
-                dx > 0
-            ) {
-
-                const fator =
-                    progresso;
-
-                x =
-                    deslocamentoBase *
-                    (1 - fator);
-
-                y =
-                    yBase *
-                    (1 - fator);
-
-                escala =
-                    escalaBase +
-                    (
-                        (1 - escalaBase) *
-                        fator
-                    );
-
-                const blurInicial =
-
-                    parseFloat(
-
-                        CONFIG.deck.blurProximo
-
-                    ) || 0;
-
-                const blur =
-
-                    blurInicial *
-                    (1 - fator);
-
-                card.style.filter =
-                    `blur(${blur}px)`;
-
-            } else {
-
-                x =
-                    deslocamentoBase;
-
-                y =
-                    yBase;
-
-                escala =
-                    escalaBase;
-
-                card.style.filter =
-
-                    `blur(${CONFIG.deck.blurProximo})`;
-
-            }
-
-            card.style.opacity =
-                "1";
-
-            card.style.zIndex =
-                "19";
-
-        }
-
-        else {
-
-            x = 0;
-
-            y = 14;
-
-            escala =
-                CONFIG.deck.escalaDistante;
+                "none";
 
             card.style.opacity =
                 "0";
@@ -4131,115 +3800,431 @@ cards.forEach(
             card.style.zIndex =
                 "5";
 
-            card.style.pointerEvents =
-                "none";
 
-            card.style.filter =
+            let x = 0;
 
-                `blur(${CONFIG.deck.blurDistante})`;
+            let y = 0;
+
+            let escala =
+                CONFIG.deck.escalaDistante;
+
+            let rotacao = 0;
+
+
+            /*
+             * CARD ATIVO
+             */
+            if (
+                diferenca === 0
+            ) {
+
+                x = dx;
+
+                y = 0;
+
+                escala = 1;
+
+                card.style.filter =
+                    "blur(0px)";
+
+
+                rotacao =
+
+                    Math.max(
+
+                        -CONFIG.deck.rotacaoMaxima,
+
+                        Math.min(
+
+                            CONFIG.deck.rotacaoMaxima,
+
+                            dx / 35
+
+                        )
+
+                    );
+
+
+                card.style.opacity =
+                    "1";
+
+                card.style.zIndex =
+                    "40";
+
+
+                card.style.pointerEvents =
+
+                    galeria.arrastando
+
+                        ? "none"
+
+                        : "auto";
+
+            }
+
+
+            /*
+             * PRÓXIMO CARD
+             */
+            else if (
+                diferenca === 1
+            ) {
+
+                const deslocamentoBase =
+                    CONFIG.deck.deslocamentoProximo;
+
+                const yBase =
+                    CONFIG.deck.deslocamentoVertical;
+
+                const escalaBase =
+                    CONFIG.deck.escalaProximo;
+
+
+                if (
+                    galeria.arrastando &&
+                    dx < 0
+                ) {
+
+                    const fator =
+                        progresso;
+
+
+                    x =
+                        deslocamentoBase *
+                        (1 - fator);
+
+
+                    y =
+                        yBase *
+                        (1 - fator);
+
+
+                    escala =
+                        escalaBase +
+                        (
+                            (1 - escalaBase) *
+                            fator
+                        );
+
+
+                    const blurInicial =
+
+                        parseFloat(
+
+                            CONFIG.deck.blurProximo
+
+                        ) || 0;
+
+
+                    const blur =
+
+                        blurInicial *
+                        (1 - fator);
+
+
+                    card.style.filter =
+                        `blur(${blur}px)`;
+
+                } else {
+
+                    x =
+                        deslocamentoBase;
+
+                    y =
+                        yBase;
+
+                    escala =
+                        escalaBase;
+
+                    card.style.filter =
+
+                        `blur(${CONFIG.deck.blurProximo})`;
+
+                }
+
+
+                card.style.opacity =
+                    "1";
+
+                card.style.zIndex =
+                    "20";
+
+            }
+
+
+            /*
+             * CARD ANTERIOR
+             */
+            else if (
+                diferenca === -1
+            ) {
+
+                const deslocamentoBase =
+
+                    -CONFIG.deck.deslocamentoProximo;
+
+                const yBase =
+                    CONFIG.deck.deslocamentoVertical;
+
+                const escalaBase =
+                    CONFIG.deck.escalaProximo;
+
+
+                if (
+                    galeria.arrastando &&
+                    dx > 0
+                ) {
+
+                    const fator =
+                        progresso;
+
+
+                    x =
+                        deslocamentoBase *
+                        (1 - fator);
+
+
+                    y =
+                        yBase *
+                        (1 - fator);
+
+
+                    escala =
+                        escalaBase +
+                        (
+                            (1 - escalaBase) *
+                            fator
+                        );
+
+
+                    const blurInicial =
+
+                        parseFloat(
+
+                            CONFIG.deck.blurProximo
+
+                        ) || 0;
+
+
+                    const blur =
+
+                        blurInicial *
+                        (1 - fator);
+
+
+                    card.style.filter =
+                        `blur(${blur}px)`;
+
+                } else {
+
+                    x =
+                        deslocamentoBase;
+
+                    y =
+                        yBase;
+
+                    escala =
+                        escalaBase;
+
+                    card.style.filter =
+
+                        `blur(${CONFIG.deck.blurProximo})`;
+
+                }
+
+
+                card.style.opacity =
+                    "1";
+
+                card.style.zIndex =
+                    "19";
+
+            }
+
+
+            /*
+             * CARDS DISTANTES
+             */
+            else {
+
+                x = 0;
+
+                y = 14;
+
+                escala =
+                    CONFIG.deck.escalaDistante;
+
+                card.style.opacity =
+                    "0";
+
+                card.style.zIndex =
+                    "5";
+
+                card.style.pointerEvents =
+                    "none";
+
+                card.style.filter =
+
+                    `blur(${CONFIG.deck.blurDistante})`;
+
+            }
+
+
+            /*
+             * A largura e proporção do card não são
+             * controladas pelo JS.
+             *
+             * O JS controla apenas posição,
+             * rotação, escala, opacidade e blur.
+             */
+            card.style.transform =
+
+                `translate3d(calc(-50% + ${x}px), ${y}px, 0) ` +
+
+                `rotate(${rotacao}deg) ` +
+
+                `scale(${escala})`;
 
         }
 
-        card.style.transform =
+    );
 
-            `translate3d(calc(-50% + ${x}px), ${y}px, 0) ` +
 
-            `rotate(${rotacao}deg) ` +
+    atualizarIndicadoresGaleria();
 
-            `scale(${escala})`;
+    atualizarVideoAtivo();
 
-    }
-
-);
-
-atualizarIndicadoresGaleria();
-
-atualizarVideoAtivo();
-
-ajustarAlturaDeck();
-
+    ajustarAlturaDeck();
 
 }
 
+
 /* =========================================================
-ALTURA DO DECK
-========================================================= */
+   18. ALTURA DO DECK
+   ========================================================= */
 
 function ajustarAlturaDeck() {
 
+    const deck =
+        obterDeck();
 
-const deck =
-    obterDeck();
 
-if (!deck) {
+    if (!deck) {
 
-    return;
-
-}
-
-const cards =
-    obterCardsDeck();
-
-if (!cards.length) {
-
-    return;
-
-}
-
-let maiorAltura = 0;
-
-cards.forEach(
-
-    function (card) {
-
-        const altura =
-
-            card.offsetHeight ||
-
-            card.scrollHeight ||
-
-            0;
-
-        if (
-            altura >
-            maiorAltura
-        ) {
-
-            maiorAltura =
-                altura;
-
-        }
+        return;
 
     }
 
-);
 
-if (
-    maiorAltura > 0
-) {
+    const cards =
+        obterCardsDeck();
 
-    deck.style.height =
-        `${maiorAltura + 36}px`;
 
-}
+    if (!cards.length) {
 
-const imagens =
+        return;
 
-    deck.querySelectorAll(
-        "img"
+    }
+
+
+    let maiorAltura = 0;
+
+
+    cards.forEach(
+
+        function (card) {
+
+            const altura =
+
+                card.offsetHeight ||
+
+                card.scrollHeight ||
+
+                0;
+
+
+            if (
+                altura >
+                maiorAltura
+            ) {
+
+                maiorAltura =
+                    altura;
+
+            }
+
+        }
+
     );
 
-imagens.forEach(
 
-    function (imagem) {
+    if (
+        maiorAltura > 0
+    ) {
 
-        if (
-            !imagem.complete
-        ) {
+        deck.style.height =
+            `${maiorAltura + 36}px`;
 
-            imagem.addEventListener(
+    }
 
-                "load",
+
+    const imagens =
+
+        deck.querySelectorAll(
+            "img"
+        );
+
+
+    imagens.forEach(
+
+        function (imagem) {
+
+            if (
+                !imagem.complete
+            ) {
+
+                imagem.addEventListener(
+
+                    "load",
+
+                    ajustarAlturaDeck,
+
+                    {
+                        once: true
+                    }
+
+                );
+
+            }
+
+        }
+
+    );
+
+
+    const videos =
+
+        deck.querySelectorAll(
+            "video"
+        );
+
+
+    videos.forEach(
+
+        function (video) {
+
+            if (
+                video.readyState >= 1
+            ) {
+
+                return;
+
+            }
+
+
+            video.addEventListener(
+
+                "loadedmetadata",
 
                 ajustarAlturaDeck,
 
@@ -4251,308 +4236,420 @@ imagens.forEach(
 
         }
 
-    }
-
-);
-
-const videos =
-
-    deck.querySelectorAll(
-        "video"
     );
-
-videos.forEach(
-
-    function (video) {
-
-        if (
-            video.readyState >= 1
-        ) {
-
-            return;
-
-        }
-
-        video.addEventListener(
-
-            "loadedmetadata",
-
-            ajustarAlturaDeck,
-
-            {
-                once: true
-            }
-
-        );
-
-    }
-
-);
-
 
 }
 
+
 /* =========================================================
-CONFIGURAÇÃO INICIAL DO DECK
-========================================================= */
+   19. EVENTOS DO DECK
+   ========================================================= */
 
 function configurarDeck() {
 
+    const deck =
+        obterDeck();
 
-const deck =
-    obterDeck();
 
-if (!deck) {
+    if (!deck) {
 
-    return;
+        return;
+
+    }
+
+
+    aplicarPosicoesDeck(
+        0,
+        false
+    );
+
+
+    configurarEventosDeck();
+
+    ajustarAlturaDeck();
 
 }
 
-aplicarPosicoesDeck(
-    0,
-    false
-);
-
-configurarEventosDeck();
-
-ajustarAlturaDeck();
-
-
-}
-
-/* =========================================================
-EVENTOS
-========================================================= */
 
 function configurarEventosDeck() {
 
-
-const deck =
-    obterDeck();
-
-if (!deck) {
-
-    return;
-
-}
-
-removerEventosDeck();
-
-deck.addEventListener(
-    "pointerdown",
-    iniciarArrasteDeck
-);
-
-deck.addEventListener(
-    "pointermove",
-    moverArrasteDeck
-);
-
-deck.addEventListener(
-    "pointerup",
-    finalizarArrasteDeck
-);
-
-deck.addEventListener(
-    "pointercancel",
-    cancelarArrasteDeck
-);
-
-deck.addEventListener(
-    "click",
-    controlarCliqueDepoisSwipe
-);
-
-window.addEventListener(
-    "resize",
-    ajustarDeckNoResize
-);
-
-eventosDeckRegistrados =
-    true;
+    const deck =
+        obterDeck();
 
 
-}
+    if (!deck) {
 
-function removerEventosDeck() {
+        return;
+
+    }
 
 
-const deck =
-    obterDeck();
+    removerEventosDeck();
 
-if (
-    !deck &&
-    !eventosDeckRegistrados
-) {
 
-    return;
-
-}
-
-if (deck) {
-
-    deck.removeEventListener(
+    deck.addEventListener(
         "pointerdown",
         iniciarArrasteDeck
     );
 
-    deck.removeEventListener(
+    deck.addEventListener(
         "pointermove",
         moverArrasteDeck
     );
 
-    deck.removeEventListener(
+    deck.addEventListener(
         "pointerup",
         finalizarArrasteDeck
     );
 
-    deck.removeEventListener(
+    deck.addEventListener(
         "pointercancel",
         cancelarArrasteDeck
     );
 
-    deck.removeEventListener(
+    deck.addEventListener(
         "click",
         controlarCliqueDepoisSwipe
     );
 
-}
 
-window.removeEventListener(
-    "resize",
-    ajustarDeckNoResize
-);
-
-eventosDeckRegistrados =
-    false;
+    window.addEventListener(
+        "resize",
+        ajustarDeckNoResize
+    );
 
 
-}
-
-/* =========================================================
-INÍCIO DO ARRASTE
-========================================================= */
-
-function iniciarArrasteDeck(
-evento
-) {
-
-
-if (
-    galeria.bloqueado ||
-    galeria.animando ||
-    galeria.itens.length <= 1
-) {
-
-    return;
-
-}
-
-if (
-    evento.pointerType === "mouse" &&
-    evento.button !== 0
-) {
-
-    return;
-
-}
-
-galeria.arrastando =
-    true;
-
-galeria.gestoHorizontal =
-    false;
-
-galeria.inicioX =
-    evento.clientX;
-
-galeria.inicioY =
-    evento.clientY;
-
-galeria.deslocamentoX =
-    0;
-
-galeria.ponteiroId =
-    evento.pointerId;
-
-ignorarProximoClique =
-    false;
-
-videosPausadosPorSwipe =
-    true;
-
-pausarTodosVideos();
-
-const deck =
-    obterDeck();
-
-if (deck) {
-
-    deck.style.cursor =
-        "grab";
+    eventosDeckRegistrados =
+        true;
 
 }
 
 
-}
+function removerEventosDeck() {
 
-/* =========================================================
-MOVIMENTO DO ARRASTE
-========================================================= */
+    const deck =
+        obterDeck();
 
-function moverArrasteDeck(
-evento
-) {
-
-
-if (
-    !galeria.arrastando ||
-    galeria.ponteiroId !== evento.pointerId
-) {
-
-    return;
-
-}
-
-const deslocamentoX =
-
-    evento.clientX -
-    galeria.inicioX;
-
-const deslocamentoY =
-
-    evento.clientY -
-    galeria.inicioY;
-
-if (
-    !galeria.gestoHorizontal
-) {
 
     if (
-        Math.abs(deslocamentoX) < 8 &&
-        Math.abs(deslocamentoY) < 8
+        !deck &&
+        !eventosDeckRegistrados
     ) {
 
         return;
 
     }
 
+
+    if (deck) {
+
+        deck.removeEventListener(
+            "pointerdown",
+            iniciarArrasteDeck
+        );
+
+        deck.removeEventListener(
+            "pointermove",
+            moverArrasteDeck
+        );
+
+        deck.removeEventListener(
+            "pointerup",
+            finalizarArrasteDeck
+        );
+
+        deck.removeEventListener(
+            "pointercancel",
+            cancelarArrasteDeck
+        );
+
+        deck.removeEventListener(
+            "click",
+            controlarCliqueDepoisSwipe
+        );
+
+    }
+
+
+    window.removeEventListener(
+        "resize",
+        ajustarDeckNoResize
+    );
+
+
+    eventosDeckRegistrados =
+        false;
+
+}
+
+
+/* =========================================================
+   20. GESTO — INÍCIO
+   ========================================================= */
+
+function iniciarArrasteDeck(evento) {
+
     if (
-        Math.abs(deslocamentoY) >
-        Math.abs(deslocamentoX)
+        galeria.bloqueado ||
+        galeria.animando ||
+        galeria.itens.length <= 1
     ) {
 
-        galeria.arrastando =
-            false;
+        return;
+
+    }
+
+
+    if (
+        evento.pointerType === "mouse" &&
+        evento.button !== 0
+    ) {
+
+        return;
+
+    }
+
+
+    galeria.arrastando =
+        true;
+
+    galeria.gestoHorizontal =
+        false;
+
+    galeria.inicioX =
+        evento.clientX;
+
+    galeria.inicioY =
+        evento.clientY;
+
+    galeria.deslocamentoX =
+        0;
+
+    galeria.ponteiroId =
+        evento.pointerId;
+
+
+    ignorarProximoClique =
+        false;
+
+    videosPausadosPorSwipe =
+        true;
+
+
+    pausarTodosVideos();
+
+
+    const deck =
+        obterDeck();
+
+
+    if (deck) {
+
+        deck.style.cursor =
+            "grab";
+
+    }
+
+}
+
+
+/* =========================================================
+   21. GESTO — MOVIMENTO
+   ========================================================= */
+
+function moverArrasteDeck(evento) {
+
+    if (
+        !galeria.arrastando ||
+        galeria.ponteiroId !== evento.pointerId
+    ) {
+
+        return;
+
+    }
+
+
+    const deslocamentoX =
+
+        evento.clientX -
+        galeria.inicioX;
+
+
+    const deslocamentoY =
+
+        evento.clientY -
+        galeria.inicioY;
+
+
+    if (
+        !galeria.gestoHorizontal
+    ) {
+
+        if (
+            Math.abs(deslocamentoX) < 8 &&
+            Math.abs(deslocamentoY) < 8
+        ) {
+
+            return;
+
+        }
+
+
+        /*
+         * Se o gesto for vertical, devolvemos o controle
+         * para o scroll normal da página.
+         */
+        if (
+            Math.abs(deslocamentoY) >
+            Math.abs(deslocamentoX)
+        ) {
+
+            galeria.arrastando =
+                false;
+
+            galeria.gestoHorizontal =
+                false;
+
+            galeria.ponteiroId =
+                null;
+
+            videosPausadosPorSwipe =
+                false;
+
+            atualizarVideoAtivo();
+
+            return;
+
+        }
+
+
+        galeria.gestoHorizontal =
+            true;
+
+
+        const deck =
+            obterDeck();
+
+
+        if (
+            deck &&
+            deck.setPointerCapture
+        ) {
+
+            try {
+
+                deck.setPointerCapture(
+                    evento.pointerId
+                );
+
+            } catch (erro) {
+
+                console.warn(
+                    "ApresentarPerfilPortfolio: não foi possível capturar o ponteiro.",
+                    erro
+                );
+
+            }
+
+        }
+
+    }
+
+
+    if (
+        !galeria.gestoHorizontal
+    ) {
+
+        return;
+
+    }
+
+
+    evento.preventDefault();
+
+
+    galeria.deslocamentoX =
+        deslocamentoX;
+
+
+    aplicarPosicoesDeck(
+        deslocamentoX,
+        false
+    );
+
+
+    const deck =
+        obterDeck();
+
+
+    if (deck) {
+
+        deck.style.cursor =
+            "grabbing";
+
+    }
+
+}
+
+
+/* =========================================================
+   22. GESTO — FINALIZAÇÃO
+   ========================================================= */
+
+function finalizarArrasteDeck(evento) {
+
+    if (
+        !galeria.arrastando ||
+        galeria.ponteiroId !== evento.pointerId
+    ) {
+
+        return;
+
+    }
+
+
+    const deslocamento =
+        galeria.deslocamentoX;
+
+
+    const deck =
+        obterDeck();
+
+
+    liberarCapturaPonteiro(
+        deck,
+        evento.pointerId
+    );
+
+
+    galeria.arrastando =
+        false;
+
+    galeria.ponteiroId =
+        null;
+
+
+    /*
+     * Gesto que não se tornou horizontal.
+     */
+    if (
+        !galeria.gestoHorizontal
+    ) {
+
+        galeria.deslocamentoX =
+            0;
 
         galeria.gestoHorizontal =
             false;
 
-        galeria.ponteiroId =
-            null;
-
         videosPausadosPorSwipe =
             false;
+
+
+        aplicarPosicoesDeck(
+            0,
+            true
+        );
 
         atualizarVideoAtivo();
 
@@ -4560,27 +4657,182 @@ if (
 
     }
 
+
     galeria.gestoHorizontal =
-        true;
+        false;
+
+
+    const largura =
+
+        deck
+            ? deck.clientWidth
+            : window.innerWidth;
+
+
+    const limitePorPorcentagem =
+
+        largura *
+        CONFIG.deck.limiteSwipe;
+
+
+    const limite =
+
+        Math.max(
+            CONFIG.deck.limitePixels,
+            limitePorPorcentagem
+        );
+
+
+    ignorarProximoClique =
+
+        Math.abs(deslocamento) >=
+        limite;
+
+
+    if (
+        Math.abs(deslocamento) >=
+        limite
+    ) {
+
+        if (
+            deslocamento < 0
+        ) {
+
+            avancarGaleria();
+
+        } else {
+
+            voltarGaleria();
+
+        }
+
+    } else {
+
+        restaurarCardAtual();
+
+    }
+
+
+    galeria.deslocamentoX =
+        0;
+
+    videosPausadosPorSwipe =
+        false;
+
+
+    setTimeout(
+
+        function () {
+
+            atualizarVideoAtivo();
+
+        },
+
+        CONFIG.deck.duracao + 40
+
+    );
+
+}
+
+
+/* =========================================================
+   23. GESTO — CANCELAMENTO
+   ========================================================= */
+
+function cancelarArrasteDeck(evento) {
+
+    if (
+        !galeria.arrastando
+    ) {
+
+        return;
+
+    }
+
 
     const deck =
         obterDeck();
 
+
+    liberarCapturaPonteiro(
+        deck,
+        evento
+            ? evento.pointerId
+            : galeria.ponteiroId
+    );
+
+
+    galeria.arrastando =
+        false;
+
+    galeria.gestoHorizontal =
+        false;
+
+    galeria.ponteiroId =
+        null;
+
+    galeria.deslocamentoX =
+        0;
+
+    videosPausadosPorSwipe =
+        false;
+
+
+    restaurarCardAtual();
+
+
+    setTimeout(
+
+        function () {
+
+            atualizarVideoAtivo();
+
+        },
+
+        CONFIG.deck.duracao + 40
+
+    );
+
+}
+
+
+/*
+ * Libera a captura do ponteiro.
+ */
+function liberarCapturaPonteiro(
+    deck,
+    ponteiroId
+) {
+
     if (
-        deck &&
-        deck.setPointerCapture
+        !deck ||
+        ponteiroId === null ||
+        ponteiroId === undefined
+    ) {
+
+        return;
+
+    }
+
+
+    if (
+        typeof deck.hasPointerCapture ===
+        "function" &&
+        deck.hasPointerCapture(
+            ponteiroId
+        )
     ) {
 
         try {
 
-            deck.setPointerCapture(
-                evento.pointerId
+            deck.releasePointerCapture(
+                ponteiroId
             );
 
         } catch (erro) {
 
             console.warn(
-                "ApresentarPerfilPortfolio: não foi possível capturar o ponteiro.",
+                "ApresentarPerfilPortfolio: erro ao liberar captura do ponteiro.",
                 erro
             );
 
@@ -4590,948 +4842,430 @@ if (
 
 }
 
-if (
-    !galeria.gestoHorizontal
-) {
-
-    return;
-
-}
-
-evento.preventDefault();
-
-galeria.deslocamentoX =
-    deslocamentoX;
-
-aplicarPosicoesDeck(
-    deslocamentoX,
-    false
-);
-
-const deck =
-    obterDeck();
-
-if (deck) {
-
-    deck.style.cursor =
-        "grabbing";
-
-}
-
-
-}
 
 /* =========================================================
-FINALIZAÇÃO DO ARRASTE
-========================================================= */
+   24. NAVEGAÇÃO DO DECK
+   ========================================================= */
 
-function finalizarArrasteDeck(
-evento
-) {
+function avancarGaleria() {
+
+    if (
+        galeria.animando ||
+        galeria.itens.length <= 1
+    ) {
+
+        return;
+
+    }
 
 
-if (
-    !galeria.arrastando ||
-    galeria.ponteiroId !== evento.pointerId
-) {
+    pausarTodosVideos();
 
-    return;
 
-}
+    galeria.animando =
+        true;
 
-const deslocamento =
-    galeria.deslocamentoX;
 
-const deck =
-    obterDeck();
+    const novoIndice =
 
-liberarCapturaPonteiro(
-    deck,
-    evento.pointerId
-);
+        normalizarIndice(
 
-galeria.arrastando =
-    false;
+            galeria.indiceAtual + 1
 
-galeria.ponteiroId =
-    null;
+        );
 
-if (
-    !galeria.gestoHorizontal
-) {
 
-    galeria.deslocamentoX =
-        0;
+    galeria.indiceAtual =
+        novoIndice;
 
-    galeria.gestoHorizontal =
-        false;
 
-    videosPausadosPorSwipe =
-        false;
+    atualizarFundoDinamico();
+
 
     aplicarPosicoesDeck(
         0,
         true
     );
 
-    atualizarVideoAtivo();
 
-    return;
+    atualizarIndicadoresGaleria();
 
-}
 
-galeria.gestoHorizontal =
-    false;
+    setTimeout(
 
-const largura =
+        function () {
 
-    deck
-        ? deck.clientWidth
-        : window.innerWidth;
+            galeria.animando =
+                false;
 
-const limitePorPorcentagem =
 
-    largura *
-    CONFIG.deck.limiteSwipe;
+            aplicarPosicoesDeck(
+                0,
+                false
+            );
 
-const limite =
 
-    Math.max(
-        CONFIG.deck.limitePixels,
-        limitePorPorcentagem
-    );
+            atualizarIndicadoresGaleria();
 
-ignorarProximoClique =
+            atualizarVideoAtivo();
 
-    Math.abs(deslocamento) >=
-    limite;
+        },
 
-if (
-    Math.abs(deslocamento) >=
-    limite
-) {
-
-    if (
-        deslocamento < 0
-    ) {
-
-        avancarGaleria();
-
-    } else {
-
-        voltarGaleria();
-
-    }
-
-} else {
-
-    restaurarCardAtual();
-
-}
-
-galeria.deslocamentoX =
-    0;
-
-videosPausadosPorSwipe =
-    false;
-
-setTimeout(
-
-    function () {
-
-        atualizarVideoAtivo();
-
-    },
-
-    CONFIG.deck.duracao + 40
-
-);
-
-
-}
-
-/* =========================================================
-CANCELAMENTO
-========================================================= */
-
-function cancelarArrasteDeck(
-evento
-) {
-
-
-if (
-    !galeria.arrastando
-) {
-
-    return;
-
-}
-
-const deck =
-    obterDeck();
-
-liberarCapturaPonteiro(
-    deck,
-    evento
-        ? evento.pointerId
-        : galeria.ponteiroId
-);
-
-galeria.arrastando =
-    false;
-
-galeria.gestoHorizontal =
-    false;
-
-galeria.ponteiroId =
-    null;
-
-galeria.deslocamentoX =
-    0;
-
-videosPausadosPorSwipe =
-    false;
-
-restaurarCardAtual();
-
-setTimeout(
-
-    function () {
-
-        atualizarVideoAtivo();
-
-    },
-
-    CONFIG.deck.duracao + 40
-
-);
-
-
-}
-
-/* =========================================================
-CAPTURA DO PONTEIRO
-========================================================= */
-
-function liberarCapturaPonteiro(
-deck,
-ponteiroId
-) {
-
-
-if (
-    !deck ||
-    ponteiroId === null ||
-    ponteiroId === undefined
-) {
-
-    return;
-
-}
-
-if (
-    typeof deck.hasPointerCapture ===
-    "function" &&
-    deck.hasPointerCapture(
-        ponteiroId
-    )
-) {
-
-    try {
-
-        deck.releasePointerCapture(
-            ponteiroId
-        );
-
-    } catch (erro) {
-
-        console.warn(
-            "ApresentarPerfilPortfolio: erro ao liberar captura do ponteiro.",
-            erro
-        );
-
-    }
-
-}
-
-
-}
-
-/* =========================================================
-AVANÇAR
-========================================================= */
-
-function avancarGaleria() {
-
-
-if (
-    galeria.animando ||
-    galeria.itens.length <= 1
-) {
-
-    return;
-
-}
-
-pausarTodosVideos();
-
-galeria.animando =
-    true;
-
-const novoIndice =
-
-    normalizarIndice(
-
-        galeria.indiceAtual + 1
+        CONFIG.deck.duracao + 30
 
     );
 
-galeria.indiceAtual =
-    novoIndice;
-
-atualizarFundoDinamico();
-
-aplicarPosicoesDeck(
-    0,
-    true
-);
-
-atualizarIndicadoresGaleria();
-
-setTimeout(
-
-    function () {
-
-        galeria.animando =
-            false;
-
-        aplicarPosicoesDeck(
-            0,
-            false
-        );
-
-        atualizarIndicadoresGaleria();
-
-        atualizarVideoAtivo();
-
-    },
-
-    CONFIG.deck.duracao + 30
-
-);
-
-
 }
 
-/* =========================================================
-VOLTAR
-========================================================= */
 
 function voltarGaleria() {
 
+    if (
+        galeria.animando ||
+        galeria.itens.length <= 1
+    ) {
 
-if (
-    galeria.animando ||
-    galeria.itens.length <= 1
-) {
+        return;
 
-    return;
+    }
 
-}
 
-pausarTodosVideos();
+    pausarTodosVideos();
 
-galeria.animando =
-    true;
 
-const novoIndice =
+    galeria.animando =
+        true;
 
-    normalizarIndice(
 
-        galeria.indiceAtual - 1
+    const novoIndice =
+
+        normalizarIndice(
+
+            galeria.indiceAtual - 1
+
+        );
+
+
+    galeria.indiceAtual =
+        novoIndice;
+
+
+    atualizarFundoDinamico();
+
+
+    aplicarPosicoesDeck(
+        0,
+        true
+    );
+
+
+    atualizarIndicadoresGaleria();
+
+
+    setTimeout(
+
+        function () {
+
+            galeria.animando =
+                false;
+
+
+            aplicarPosicoesDeck(
+                0,
+                false
+            );
+
+
+            atualizarIndicadoresGaleria();
+
+            atualizarVideoAtivo();
+
+        },
+
+        CONFIG.deck.duracao + 30
 
     );
 
-galeria.indiceAtual =
-    novoIndice;
-
-atualizarFundoDinamico();
-
-aplicarPosicoesDeck(
-    0,
-    true
-);
-
-atualizarIndicadoresGaleria();
-
-setTimeout(
-
-    function () {
-
-        galeria.animando =
-            false;
-
-        aplicarPosicoesDeck(
-            0,
-            false
-        );
-
-        atualizarIndicadoresGaleria();
-
-        atualizarVideoAtivo();
-
-    },
-
-    CONFIG.deck.duracao + 30
-
-);
-
-
 }
 
-/* =========================================================
-RESTAURAR CARD
-========================================================= */
 
 function restaurarCardAtual() {
 
+    if (
+        galeria.animando
+    ) {
 
-if (
-    galeria.animando
-) {
+        return;
 
-    return;
+    }
+
+
+    pausarTodosVideos();
+
+
+    aplicarPosicoesDeck(
+        0,
+        true
+    );
+
+
+    setTimeout(
+
+        function () {
+
+            aplicarPosicoesDeck(
+                0,
+                false
+            );
+
+            atualizarVideoAtivo();
+
+        },
+
+        CONFIG.deck.duracao + 30
+
+    );
 
 }
 
-pausarTodosVideos();
 
-aplicarPosicoesDeck(
-    0,
-    true
-);
+/*
+ * Evita o clique que pode acontecer logo após um swipe.
+ */
+function controlarCliqueDepoisSwipe(evento) {
 
-setTimeout(
+    if (
+        ignorarProximoClique
+    ) {
 
-    function () {
+        evento.preventDefault();
 
-        aplicarPosicoesDeck(
-            0,
-            false
-        );
+        evento.stopPropagation();
 
-        atualizarVideoAtivo();
+        ignorarProximoClique =
+            false;
 
-    },
-
-    CONFIG.deck.duracao + 30
-
-);
-
+    }
 
 }
+
 
 /* =========================================================
-CLIQUE APÓS SWIPE
-========================================================= */
-
-function controlarCliqueDepoisSwipe(
-evento
-) {
-
-
-if (
-    ignorarProximoClique
-) {
-
-    evento.preventDefault();
-
-    evento.stopPropagation();
-
-    ignorarProximoClique =
-        false;
-
-}
-
-
-}
-
-/* =========================================================
-CONTROLE DOS VÍDEOS
-========================================================= */
+   25. CONTROLE DOS VÍDEOS
+   ========================================================= */
 
 function obterVideosDeck() {
 
-
-const deck =
-    obterDeck();
-
-if (!deck) {
-
-    return [];
-
-}
-
-return Array.from(
-
-    deck.querySelectorAll(
-        "video.portfolio-deck-media"
-    )
-
-);
+    const deck =
+        obterDeck();
 
 
-}
+    if (!deck) {
 
-function pausarTodosVideos() {
-
-
-const videos =
-    obterVideosDeck();
-
-videos.forEach(
-
-    function (video) {
-
-        try {
-
-            if (!video.paused) {
-
-                video.pause();
-
-            }
-
-        } catch (erro) {
-
-            console.warn(
-                "ApresentarPerfilPortfolio: não foi possível pausar vídeo.",
-                erro
-            );
-
-        }
+        return [];
 
     }
 
-);
 
+    return Array.from(
 
-}
+        deck.querySelectorAll(
+            "video.portfolio-deck-media"
+        )
 
-function obterVideoAtivo() {
-
-
-const card =
-    obterCardPorIndice(
-        galeria.indiceAtual
     );
 
-if (!card) {
+}
 
-    return null;
+
+/*
+ * Pausa todos os vídeos existentes no deck.
+ */
+function pausarTodosVideos() {
+
+    const videos =
+        obterVideosDeck();
+
+
+    videos.forEach(
+
+        function (video) {
+
+            try {
+
+                if (!video.paused) {
+
+                    video.pause();
+
+                }
+
+            } catch (erro) {
+
+                console.warn(
+                    "ApresentarPerfilPortfolio: não foi possível pausar vídeo.",
+                    erro
+                );
+
+            }
+
+        }
+
+    );
 
 }
 
-return card.querySelector(
-    "video.portfolio-deck-media"
-);
+
+/*
+ * Retorna o vídeo do card ativo.
+ */
+function obterVideoAtivo() {
+
+    const card =
+        obterCardPorIndice(
+            galeria.indiceAtual
+        );
 
 
-}
+    if (!card) {
 
-function estaCompletamenteVisivel(
-elemento
-) {
+        return null;
+
+    }
 
 
-if (!elemento) {
-
-    return false;
-
-}
-
-const rect =
-    elemento.getBoundingClientRect();
-
-const alturaViewport =
-    window.innerHeight ||
-    document.documentElement.clientHeight;
-
-const larguraViewport =
-    window.innerWidth ||
-    document.documentElement.clientWidth;
-
-const tolerancia =
-    1;
-
-return (
-
-    rect.top >= -tolerancia &&
-
-    rect.left >= -tolerancia &&
-
-    rect.bottom <=
-        alturaViewport + tolerancia &&
-
-    rect.right <=
-        larguraViewport + tolerancia
-
-);
-
+    return card.querySelector(
+        "video.portfolio-deck-media"
+    );
 
 }
 
+
+/*
+ * Verifica se o elemento está completamente dentro
+ * da viewport.
+ */
+function estaCompletamenteVisivel(elemento) {
+
+    if (!elemento) {
+
+        return false;
+
+    }
+
+
+    const rect =
+        elemento.getBoundingClientRect();
+
+
+    const alturaViewport =
+        window.innerHeight ||
+        document.documentElement.clientHeight;
+
+
+    const larguraViewport =
+        window.innerWidth ||
+        document.documentElement.clientWidth;
+
+
+    const tolerancia =
+        1;
+
+
+    return (
+
+        rect.top >= -tolerancia &&
+
+        rect.left >= -tolerancia &&
+
+        rect.bottom <=
+            alturaViewport + tolerancia &&
+
+        rect.right <=
+            larguraViewport + tolerancia
+
+    );
+
+}
+
+
+/*
+ * Tenta reproduzir o vídeo.
+ *
+ * O comportamento de áudio permanece igual ao atual:
+ * não força mute.
+ */
 function reproduzirVideoSePermitido(video) {
-    if (!video) return;
 
-    /*
-     * O navegador pode bloquear autoplay com áudio
-     * quando o usuário ainda não interagiu com a página.
-     *
-     * Não forçamos mute.
-     * Se o navegador permitir, reproduz com áudio.
-     * Se bloquear, simplesmente aguardamos a interação
-     * do usuário.
-     */
+    if (!video) {
+
+        return;
+
+    }
+
 
     video.muted = false;
+
     video.defaultMuted = false;
 
-    const tentativa = video.play();
 
-    if (tentativa && typeof tentativa.catch === "function") {
-        tentativa.catch((erro) => {
+    const tentativa =
+        video.play();
 
-            if (erro && erro.name === "NotAllowedError") {
-                console.info(
-                    "ApresentarPerfilPortfolio: autoplay aguardando interação do usuário."
+
+    if (
+        tentativa &&
+        typeof tentativa.catch ===
+        "function"
+    ) {
+
+        tentativa.catch(
+
+            function (erro) {
+
+                if (
+                    erro &&
+                    erro.name ===
+                    "NotAllowedError"
+                ) {
+
+                    console.info(
+                        "ApresentarPerfilPortfolio: autoplay aguardando interação do usuário."
+                    );
+
+                    return;
+
+                }
+
+
+                console.warn(
+                    "ApresentarPerfilPortfolio: não foi possível reproduzir o vídeo.",
+                    erro
                 );
-
-                return;
-            }
-
-            console.warn(
-                "ApresentarPerfilPortfolio: não foi possível reproduzir o vídeo.",
-                erro
-            );
-        });
-    }
-}
-
-function atualizarVideoAtivo() {
-
-
-const videos =
-    obterVideosDeck();
-
-if (!videos.length) {
-
-    return;
-
-}
-
-videos.forEach(
-
-    function (video) {
-
-        const card =
-            video.closest(
-                ".portfolio-deck-card"
-            );
-
-        if (!card) {
-
-            return;
-
-        }
-
-        const indice =
-            Number(
-                card.dataset.indice
-            );
-
-        if (
-            indice !==
-            galeria.indiceAtual
-        ) {
-
-            if (
-                !video.paused
-            ) {
-
-                try {
-
-                    video.pause();
-
-                } catch (erro) {
-
-                    console.warn(
-                        "ApresentarPerfilPortfolio: não foi possível pausar vídeo.",
-                        erro
-                    );
-
-                }
-
-            }
-
-            return;
-
-        }
-
-        if (
-            videosPausadosPorSwipe ||
-            galeria.arrastando ||
-            galeria.animando
-        ) {
-
-            if (
-                !video.paused
-            ) {
-
-                try {
-
-                    video.pause();
-
-                } catch (erro) {
-
-                    console.warn(
-                        "ApresentarPerfilPortfolio: não foi possível pausar vídeo.",
-                        erro
-                    );
-
-                }
-
-            }
-
-            return;
-
-        }
-
-        if (
-            estaCompletamenteVisivel(
-                card
-            )
-        ) {
-
-            reproduzirVideoSePermitido(
-                video
-            );
-
-        } else {
-
-            if (
-                !video.paused
-            ) {
-
-                try {
-
-                    video.pause();
-
-                } catch (erro) {
-
-                    console.warn(
-                        "ApresentarPerfilPortfolio: não foi possível pausar vídeo.",
-                        erro
-                    );
-
-                }
-
-            }
-
-        }
-
-    }
-
-);
-
-
-}
-
-/* =========================================================
-OBSERVER DOS VÍDEOS
-========================================================= */
-
-function configurarObserverVideos() {
-
-
-destruirObserverVideos();
-
-const deck =
-    obterDeck();
-
-if (!deck) {
-
-    return;
-
-}
-
-const videos =
-    obterVideosDeck();
-
-if (!videos.length) {
-
-    return;
-
-}
-
-try {
-
-    observerVideos =
-        new IntersectionObserver(
-
-            function (
-                entradas
-            ) {
-
-                entradas.forEach(
-
-                    function (
-                        entrada
-                    ) {
-
-                        const card =
-                            entrada.target;
-
-                        const video =
-                            card.querySelector(
-                                "video.portfolio-deck-media"
-                            );
-
-                        if (!video) {
-
-                            return;
-
-                        }
-
-                        const indice =
-                            Number(
-                                card.dataset.indice
-                            );
-
-                        if (
-                            indice !==
-                            galeria.indiceAtual
-                        ) {
-
-                            if (
-                                !video.paused
-                            ) {
-
-                                try {
-
-                                    video.pause();
-
-                                } catch (erro) {
-
-                                    console.warn(
-                                        "ApresentarPerfilPortfolio: não foi possível pausar vídeo.",
-                                        erro
-                                    );
-
-                                }
-
-                            }
-
-                            return;
-
-                        }
-
-                        if (
-                            videosPausadosPorSwipe ||
-                            galeria.arrastando ||
-                            galeria.animando
-                        ) {
-
-                            if (
-                                !video.paused
-                            ) {
-
-                                try {
-
-                                    video.pause();
-
-                                } catch (erro) {
-
-                                    console.warn(
-                                        "ApresentarPerfilPortfolio: não foi possível pausar vídeo.",
-                                        erro
-                                    );
-
-                                }
-
-                            }
-
-                            return;
-
-                        }
-
-                        if (
-                            entrada.isIntersecting &&
-                            entrada.intersectionRatio >=
-                            CONFIG.video.visibilidadeMinima
-                        ) {
-
-                            /*
-                             * O vídeo já está no DOM e agora
-                             * está completamente visível.
-                             *
-                             * Aproveitamos este momento para
-                             * atualizar as cores do fundo.
-                             */
-
-                            atualizarFundoDinamico();
-
-                            reproduzirVideoSePermitido(
-                                video
-                            );
-
-                        } else {
-
-                            if (
-                                !video.paused
-                            ) {
-
-                                try {
-
-                                    video.pause();
-
-                                } catch (erro) {
-
-                                    console.warn(
-                                        "ApresentarPerfilPortfolio: não foi possível pausar vídeo.",
-                                        erro
-                                    );
-
-                                }
-
-                            }
-
-                        }
-
-                    }
-
-                );
-
-            },
-
-            {
-
-                threshold: [
-
-                    0,
-
-                    0.5,
-
-                    0.75,
-
-                    0.99,
-
-                    1
-
-                ]
 
             }
 
         );
+
+    }
+
+}
+
+
+/*
+ * Atualiza o estado de reprodução de todos os vídeos.
+ */
+function atualizarVideoAtivo() {
+
+    const videos =
+        obterVideosDeck();
+
+
+    if (!videos.length) {
+
+        return;
+
+    }
+
 
     videos.forEach(
 
@@ -5542,9 +5276,550 @@ try {
                     ".portfolio-deck-card"
                 );
 
+
+            if (!card) {
+
+                return;
+
+            }
+
+
+            const indice =
+                Number(
+                    card.dataset.indice
+                );
+
+
+            /*
+             * Vídeo que não é o card ativo.
+             */
+            if (
+                indice !==
+                galeria.indiceAtual
+            ) {
+
+                if (
+                    !video.paused
+                ) {
+
+                    try {
+
+                        video.pause();
+
+                    } catch (erro) {
+
+                        console.warn(
+                            "ApresentarPerfilPortfolio: não foi possível pausar vídeo.",
+                            erro
+                        );
+
+                    }
+
+                }
+
+                return;
+
+            }
+
+
+            /*
+             * Durante swipe ou animação,
+             * o vídeo permanece pausado.
+             */
+            if (
+                videosPausadosPorSwipe ||
+                galeria.arrastando ||
+                galeria.animando
+            ) {
+
+                if (
+                    !video.paused
+                ) {
+
+                    try {
+
+                        video.pause();
+
+                    } catch (erro) {
+
+                        console.warn(
+                            "ApresentarPerfilPortfolio: não foi possível pausar vídeo.",
+                            erro
+                        );
+
+                    }
+
+                }
+
+                return;
+
+            }
+
+
+            /*
+             * Só reproduz quando o card estiver
+             * completamente visível.
+             */
+            if (
+                estaCompletamenteVisivel(
+                    card
+                )
+            ) {
+
+                reproduzirVideoSePermitido(
+                    video
+                );
+
+            } else {
+
+                if (
+                    !video.paused
+                ) {
+
+                    try {
+
+                        video.pause();
+
+                    } catch (erro) {
+
+                        console.warn(
+                            "ApresentarPerfilPortfolio: não foi possível pausar vídeo.",
+                            erro
+                        );
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    );
+
+}
+
+
+/* =========================================================
+   26. INTERSECTION OBSERVER DOS VÍDEOS
+   ========================================================= */
+
+function configurarObserverVideos() {
+
+    destruirObserverVideos();
+
+
+    const deck =
+        obterDeck();
+
+
+    if (!deck) {
+
+        return;
+
+    }
+
+
+    const videos =
+        obterVideosDeck();
+
+
+    if (!videos.length) {
+
+        return;
+
+    }
+
+
+    try {
+
+        observerVideos =
+
+            new IntersectionObserver(
+
+                function (entradas) {
+
+                    entradas.forEach(
+
+                        function (entrada) {
+
+                            const card =
+                                entrada.target;
+
+
+                            const video =
+                                card.querySelector(
+                                    "video.portfolio-deck-media"
+                                );
+
+
+                            if (!video) {
+
+                                return;
+
+                            }
+
+
+                            const indice =
+                                Number(
+                                    card.dataset.indice
+                                );
+
+
+                            /*
+                             * Card que não está ativo.
+                             */
+                            if (
+                                indice !==
+                                galeria.indiceAtual
+                            ) {
+
+                                if (
+                                    !video.paused
+                                ) {
+
+                                    try {
+
+                                        video.pause();
+
+                                    } catch (erro) {
+
+                                        console.warn(
+                                            "ApresentarPerfilPortfolio: não foi possível pausar vídeo.",
+                                            erro
+                                        );
+
+                                    }
+
+                                }
+
+                                return;
+
+                            }
+
+
+                            /*
+                             * Swipe/animação.
+                             */
+                            if (
+                                videosPausadosPorSwipe ||
+                                galeria.arrastando ||
+                                galeria.animando
+                            ) {
+
+                                if (
+                                    !video.paused
+                                ) {
+
+                                    try {
+
+                                        video.pause();
+
+                                    } catch (erro) {
+
+                                        console.warn(
+                                            "ApresentarPerfilPortfolio: não foi possível pausar vídeo.",
+                                            erro
+                                        );
+
+                                    }
+
+                                }
+
+                                return;
+
+                            }
+
+
+                            /*
+                             * Card completamente visível.
+                             */
+                            if (
+                                entrada.isIntersecting &&
+                                entrada.intersectionRatio >=
+                                CONFIG.video.visibilidadeMinima
+                            ) {
+
+                                /*
+                                 * Aproveita a entrada completa
+                                 * do card para atualizar o fundo.
+                                 */
+                                atualizarFundoDinamico();
+
+
+                                reproduzirVideoSePermitido(
+                                    video
+                                );
+
+                            } else {
+
+                                if (
+                                    !video.paused
+                                ) {
+
+                                    try {
+
+                                        video.pause();
+
+                                    } catch (erro) {
+
+                                        console.warn(
+                                            "ApresentarPerfilPortfolio: não foi possível pausar vídeo.",
+                                            erro
+                                        );
+
+                                    }
+
+                                }
+
+                            }
+
+                        }
+
+                    );
+
+                },
+
+                {
+
+                    threshold: [
+
+                        0,
+
+                        0.5,
+
+                        0.75,
+
+                        0.99,
+
+                        1
+
+                    ]
+
+                }
+
+            );
+
+
+        videos.forEach(
+
+            function (video) {
+
+                const card =
+                    video.closest(
+                        ".portfolio-deck-card"
+                    );
+
+
+                if (card) {
+
+                    observerVideos.observe(
+                        card
+                    );
+
+                }
+
+            }
+
+        );
+
+
+        requestAnimationFrame(
+
+            function () {
+
+                atualizarVideoAtivo();
+
+            }
+
+        );
+
+
+    } catch (erro) {
+
+        console.warn(
+            "ApresentarPerfilPortfolio: não foi possível criar observer dos vídeos.",
+            erro
+        );
+
+    }
+
+}
+
+
+function destruirObserverVideos() {
+
+    if (observerVideos) {
+
+        try {
+
+            observerVideos.disconnect();
+
+        } catch (erro) {
+
+            console.warn(
+                "ApresentarPerfilPortfolio: erro ao desconectar observer dos vídeos.",
+                erro
+            );
+
+        }
+
+
+        observerVideos =
+            null;
+
+    }
+
+}
+
+
+/* =========================================================
+   27. RESIZE
+   ========================================================= */
+
+function ajustarDeckNoResize() {
+
+    aplicarPosicoesDeck(
+
+        galeria.arrastando
+            ? galeria.deslocamentoX
+            : 0,
+
+        false
+
+    );
+
+
+    ajustarAlturaDeck();
+
+    atualizarVideoAtivo();
+
+    atualizarIntensidadeFundo();
+
+}
+
+
+/* =========================================================
+   28. DESMONTAGEM DO DECK
+   ========================================================= */
+
+function desmontarInteracaoDeck() {
+
+    removerEventosDeck();
+
+    destruirObserverVideos();
+
+    pausarTodosVideos();
+
+
+    galeria.arrastando =
+        false;
+
+    galeria.gestoHorizontal =
+        false;
+
+    galeria.ponteiroId =
+        null;
+
+    galeria.deslocamentoX =
+        0;
+
+    galeria.animando =
+        false;
+
+
+    videosPausadosPorSwipe =
+        false;
+
+
+    const deck =
+        obterDeck();
+
+
+    if (deck) {
+
+        resetarEstiloContainerDeck(
+            deck
+        );
+
+    }
+
+}
+
+
+function resetarEstiloContainerDeck(deck) {
+
+    if (!deck) {
+
+        return;
+
+    }
+
+
+    deck.style.cursor =
+        "grab";
+
+}
+
+
+/* =========================================================
+   29. ÁUDIOS
+   ========================================================= */
+
+function renderizarAudios() {
+
+    const container =
+
+        obterElemento(
+            CONFIG.elementos.audioList
+        );
+
+
+    if (!container) {
+
+        return;
+
+    }
+
+
+    container.innerHTML =
+        "";
+
+
+    const audios =
+        obterPorTipo(
+            "audio"
+        );
+
+
+    if (!audios.length) {
+
+        container.innerHTML =
+            "";
+
+        return;
+
+    }
+
+
+    audios.forEach(
+
+        function (
+            item,
+            indice
+        ) {
+
+            const card =
+
+                criarCardAudio(
+                    item,
+                    indice
+                );
+
+
             if (card) {
 
-                observerVideos.observe(
+                container.appendChild(
                     card
                 );
 
@@ -5554,298 +5829,177 @@ try {
 
     );
 
-    requestAnimationFrame(
 
-        function () {
-
-            atualizarVideoAtivo();
-
-        }
-
-    );
-
-} catch (erro) {
-
-    console.warn(
-        "ApresentarPerfilPortfolio: não foi possível criar observer dos vídeos.",
-        erro
+    renderizarIcones(
+        container
     );
 
 }
 
-
-}
-
-function destruirObserverVideos() {
-
-
-if (observerVideos) {
-
-    try {
-
-        observerVideos.disconnect();
-
-    } catch (erro) {
-
-        console.warn(
-            "ApresentarPerfilPortfolio: erro ao desconectar observer dos vídeos.",
-            erro
-        );
-
-    }
-
-    observerVideos =
-        null;
-
-}
-
-
-}
-
-/* =========================================================
-RESIZE
-========================================================= */
-
-function ajustarDeckNoResize() {
-
-
-aplicarPosicoesDeck(
-
-    galeria.arrastando
-        ? galeria.deslocamentoX
-        : 0,
-
-    false
-
-);
-
-ajustarAlturaDeck();
-
-atualizarVideoAtivo();
-
-atualizarIntensidadeFundo();
-
-
-}
-
-/* =========================================================
-DESMONTAR INTERAÇÃO
-========================================================= */
-
-function desmontarInteracaoDeck() {
-
-
-removerEventosDeck();
-
-destruirObserverVideos();
-
-pausarTodosVideos();
-
-galeria.arrastando =
-    false;
-
-galeria.gestoHorizontal =
-    false;
-
-galeria.ponteiroId =
-    null;
-
-galeria.deslocamentoX =
-    0;
-
-galeria.animando =
-    false;
-
-videosPausadosPorSwipe =
-    false;
-
-const deck =
-    obterDeck();
-
-if (deck) {
-
-    resetarEstiloContainerDeck(
-        deck
-    );
-
-}
-
-
-}
-
-function resetarEstiloContainerDeck(
-deck
-) {
-
-
-if (!deck) {
-
-    return;
-
-}
-
-deck.style.cursor =
-    "grab";
-
-
-}
-
-/* =========================================================
-ÁUDIOS
-========================================================= */
-
-function renderizarAudios() {
-
-
-const container =
-
-    obterElemento(
-        CONFIG.elementos.audioList
-    );
-
-if (!container) {
-
-    return;
-
-}
-
-container.innerHTML =
-    "";
-
-const audios =
-    obterPorTipo(
-        "audio"
-    );
-
-if (!audios.length) {
-
-    container.innerHTML =
-        "";
-
-    return;
-
-}
-
-audios.forEach(
-
-    function (
-        item,
-        indice
-    ) {
-
-        const card =
-
-            criarCardAudio(
-                item,
-                indice
-            );
-
-        if (card) {
-
-            container.appendChild(
-                card
-            );
-
-        }
-
-    }
-
-);
-
-renderizarIcones(
-    container
-);
-
-
-}
 
 function criarCardAudio(
-item,
-indice
+    item,
+    indice
 ) {
 
+    const card =
 
-const card =
+        document.createElement(
+            "article"
+        );
 
-    document.createElement(
-        "article"
+
+    card.className =
+        "portfolio-audio-card";
+
+
+    const titulo =
+
+        item._titulo ||
+        `Áudio ${indice + 1}`;
+
+
+    const descricao =
+        item._descricao;
+
+
+    card.innerHTML = `
+
+        <div class="portfolio-audio-card-conteudo">
+
+            <div class="portfolio-audio-card-icone">
+
+                <i data-lucide="music-2"></i>
+
+            </div>
+
+            <div class="portfolio-audio-card-info">
+
+                <strong>
+
+                    ${escaparHtml(titulo)}
+
+                </strong>
+
+                ${
+                    descricao
+
+                        ? `
+
+                            <span>
+
+                                ${escaparHtml(descricao)}
+
+                            </span>
+
+                        `
+
+                        : ""
+
+                }
+
+            </div>
+
+        </div>
+
+        <audio
+            controls
+            preload="metadata"
+            src="${escaparHtml(item._url)}"
+        ></audio>
+
+    `;
+
+
+    return card;
+
+}
+
+
+/* =========================================================
+   30. CICLO DE RENDERIZAÇÃO
+   ========================================================= */
+
+function renderizar(lista) {
+
+    if (
+        Array.isArray(lista)
+    ) {
+
+        portfolio =
+
+            normalizarPortfolio(
+                lista
+            );
+
+    }
+
+
+    prepararContainers();
+
+    renderizarGaleria();
+
+    renderizarAudios();
+
+
+    inicializado =
+        true;
+
+
+    return portfolio;
+
+}
+
+
+/* =========================================================
+   31. INICIALIZAÇÃO
+   ========================================================= */
+
+function inicializar(lista) {
+
+    if (
+        Array.isArray(lista)
+    ) {
+
+        portfolio =
+
+            normalizarPortfolio(
+                lista
+            );
+
+    }
+
+
+    renderizar(
+        portfolio
     );
 
-card.className =
-    "portfolio-audio-card";
 
-const titulo =
+    inicializado =
+        true;
 
-    item._titulo ||
-    `Áudio ${indice + 1}`;
 
-const descricao =
-    item._descricao;
-
-card.innerHTML = `
-
-    <div class="portfolio-audio-card-conteudo">
-
-        <div class="portfolio-audio-card-icone">
-
-            <i data-lucide="music-2"></i>
-
-        </div>
-
-        <div class="portfolio-audio-card-info">
-
-            <strong>
-
-                ${escaparHtml(titulo)}
-
-            </strong>
-
-            ${
-                descricao
-
-                    ? `
-
-                        <span>
-
-                            ${escaparHtml(descricao)}
-
-                        </span>
-
-                    `
-
-                    : ""
-
-            }
-
-        </div>
-
-    </div>
-
-    <audio
-        controls
-        preload="metadata"
-        src="${escaparHtml(item._url)}"
-    ></audio>
-
-`;
-
-return card;
-
+    return portfolio;
 
 }
 
+
 /* =========================================================
-RENDERIZAÇÃO COMPLETA
-========================================================= */
+   32. ATUALIZAÇÃO
+   ========================================================= */
 
-function renderizar(
-lista
-) {
+function atualizar(lista) {
 
+    if (
+        !Array.isArray(lista)
+    ) {
 
-if (
-    Array.isArray(lista)
-) {
+        return renderizar(
+            portfolio
+        );
+
+    }
+
 
     portfolio =
 
@@ -5853,67 +6007,13 @@ if (
             lista
         );
 
-}
 
-prepararContainers();
+    galeria.indiceAtual =
 
-renderizarGaleria();
-
-renderizarAudios();
-
-inicializado =
-    true;
-
-return portfolio;
-
-
-}
-
-/* =========================================================
-INICIALIZAÇÃO
-========================================================= */
-
-function inicializar(
-lista
-) {
-
-
-if (
-    Array.isArray(lista)
-) {
-
-    portfolio =
-
-        normalizarPortfolio(
-            lista
+        normalizarIndice(
+            galeria.indiceAtual
         );
 
-}
-
-renderizar(
-    portfolio
-);
-
-inicializado =
-    true;
-
-return portfolio;
-
-
-}
-
-/* =========================================================
-ATUALIZAÇÃO
-========================================================= */
-
-function atualizar(
-lista
-) {
-
-
-if (
-    !Array.isArray(lista)
-) {
 
     return renderizar(
         portfolio
@@ -5921,322 +6021,314 @@ if (
 
 }
 
-portfolio =
-
-    normalizarPortfolio(
-        lista
-    );
-
-galeria.indiceAtual =
-
-    normalizarIndice(
-        galeria.indiceAtual
-    );
-
-return renderizar(
-    portfolio
-);
-
-
-}
 
 /* =========================================================
-GETTERS
-========================================================= */
+   33. GETTERS
+   ========================================================= */
 
 function obterPortfolio() {
 
-
-return portfolio.slice();
-
+    return portfolio.slice();
 
 }
+
 
 function obterImagens() {
 
-
-return obterPorTipo(
-    "imagem"
-);
-
+    return obterPorTipo(
+        "imagem"
+    );
 
 }
+
 
 function obterVideos() {
 
-
-return obterPorTipo(
-    "video"
-);
-
+    return obterPorTipo(
+        "video"
+    );
 
 }
+
 
 function obterAudios() {
 
-
-return obterPorTipo(
-    "audio"
-);
-
+    return obterPorTipo(
+        "audio"
+    );
 
 }
+
 
 function obterEstadoGaleria() {
 
+    return {
 
-return {
+        indiceAtual:
+            galeria.indiceAtual,
 
-    indiceAtual:
-        galeria.indiceAtual,
+        total:
+            galeria.itens.length,
 
-    total:
-        galeria.itens.length,
+        arrastando:
+            galeria.arrastando,
 
-    arrastando:
-        galeria.arrastando,
+        animando:
+            galeria.animando
 
-    animando:
-        galeria.animando
-
-};
-
+    };
 
 }
+
 
 /* =========================================================
-NAVEGAÇÃO DIRETA
-========================================================= */
+   34. NAVEGAÇÃO DIRETA
+   ========================================================= */
 
-function irParaItem(
-indice
-) {
+function irParaItem(indice) {
+
+    if (
+        !galeria.itens.length
+    ) {
+
+        return;
+
+    }
 
 
-if (
-    !galeria.itens.length
-) {
+    if (
+        galeria.animando
+    ) {
 
-    return;
+        return;
 
-}
+    }
 
-if (
-    galeria.animando
-) {
 
-    return;
+    pausarTodosVideos();
 
-}
 
-pausarTodosVideos();
+    const novoIndice =
 
-const novoIndice =
-
-    normalizarIndice(
-        indice
-    );
-
-if (
-    novoIndice ===
-    galeria.indiceAtual
-) {
-
-    atualizarIndicadoresGaleria();
-
-    atualizarVideoAtivo();
-
-    atualizarFundoDinamico();
-
-    return;
-
-}
-
-galeria.animando =
-    true;
-
-galeria.indiceAtual =
-    novoIndice;
-
-/*
- * Atualiza as cores do fundo quando o usuário
- * navega diretamente pelas bolinhas.
- *
- * A troca agora ocorre através da transição suave.
- */
-
-atualizarFundoDinamico();
-
-aplicarPosicoesDeck(
-    0,
-    true
-);
-
-atualizarIndicadoresGaleria();
-
-setTimeout(
-
-    function () {
-
-        galeria.animando =
-            false;
-
-        aplicarPosicoesDeck(
-            0,
-            false
+        normalizarIndice(
+            indice
         );
+
+
+    /*
+     * Se já estamos no item solicitado,
+     * apenas sincroniza o estado visual.
+     */
+    if (
+        novoIndice ===
+        galeria.indiceAtual
+    ) {
 
         atualizarIndicadoresGaleria();
 
         atualizarVideoAtivo();
 
-    },
+        atualizarFundoDinamico();
 
-    CONFIG.deck.duracao + 30
+        return;
 
-);
+    }
 
+
+    galeria.animando =
+        true;
+
+    galeria.indiceAtual =
+        novoIndice;
+
+
+    atualizarFundoDinamico();
+
+
+    aplicarPosicoesDeck(
+        0,
+        true
+    );
+
+
+    atualizarIndicadoresGaleria();
+
+
+    setTimeout(
+
+        function () {
+
+            galeria.animando =
+                false;
+
+
+            aplicarPosicoesDeck(
+                0,
+                false
+            );
+
+
+            atualizarIndicadoresGaleria();
+
+            atualizarVideoAtivo();
+
+        },
+
+        CONFIG.deck.duracao + 30
+
+    );
 
 }
 
+
 /* =========================================================
-LIMPEZA
-========================================================= */
+   35. LIMPEZA COMPLETA
+   ========================================================= */
 
 function limpar() {
 
+    desmontarInteracaoDeck();
 
-desmontarInteracaoDeck();
+    resetarFundoDinamico();
 
-resetarFundoDinamico();
 
-portfolio =
-    [];
+    portfolio =
+        [];
 
-galeria.itens =
-    [];
 
-galeria.indiceAtual =
-    0;
+    galeria.itens =
+        [];
 
-galeria.deslocamentoX =
-    0;
+    galeria.indiceAtual =
+        0;
 
-galeria.arrastando =
-    false;
+    galeria.deslocamentoX =
+        0;
 
-galeria.gestoHorizontal =
-    false;
+    galeria.arrastando =
+        false;
 
-galeria.animando =
-    false;
+    galeria.gestoHorizontal =
+        false;
 
-ignorarProximoClique =
-    false;
+    galeria.animando =
+        false;
 
-videosPausadosPorSwipe =
-    false;
 
-const portfolioGrid =
+    ignorarProximoClique =
+        false;
 
-    obterElemento(
-        CONFIG.elementos.portfolioGrid
-    );
+    videosPausadosPorSwipe =
+        false;
 
-const videoList =
 
-    obterElemento(
-        CONFIG.elementos.videoList
-    );
+    const portfolioGrid =
 
-const audioList =
+        obterElemento(
+            CONFIG.elementos.portfolioGrid
+        );
 
-    obterElemento(
-        CONFIG.elementos.audioList
-    );
 
-if (portfolioGrid) {
+    const videoList =
 
-    portfolioGrid.innerHTML =
-        "";
+        obterElemento(
+            CONFIG.elementos.videoList
+        );
+
+
+    const audioList =
+
+        obterElemento(
+            CONFIG.elementos.audioList
+        );
+
+
+    if (portfolioGrid) {
+
+        portfolioGrid.innerHTML =
+            "";
+
+    }
+
+
+    if (videoList) {
+
+        videoList.innerHTML =
+            "";
+
+    }
+
+
+    if (audioList) {
+
+        audioList.innerHTML =
+            "";
+
+    }
+
+
+    inicializado =
+        false;
 
 }
 
-if (videoList) {
-
-    videoList.innerHTML =
-        "";
-
-}
-
-if (audioList) {
-
-    audioList.innerHTML =
-        "";
-
-}
-
-inicializado =
-    false;
-
-
-}
 
 /* =========================================================
-API PÚBLICA
-========================================================= */
+   36. API PÚBLICA
+   ========================================================= */
 
 const ApresentarPerfilPortfolio = {
 
+    renderizar,
 
-renderizar,
+    inicializar,
 
-inicializar,
+    atualizar,
 
-atualizar,
+    limpar,
 
-limpar,
+    obterPortfolio,
 
-obterPortfolio,
+    obterImagens,
 
-obterImagens,
+    obterVideos,
 
-obterVideos,
+    obterAudios,
 
-obterAudios,
+    obterEstadoGaleria,
 
-obterEstadoGaleria,
+    irParaItem,
 
-irParaItem,
+    avancarGaleria,
 
-avancarGaleria,
+    voltarGaleria,
 
-voltarGaleria,
+    estaInicializado:
 
-estaInicializado:
+        function () {
 
-    function () {
+            return inicializado;
 
-        return inicializado;
+        },
 
-    },
+    normalizarItem,
 
-normalizarItem,
-
-normalizarPortfolio
-
+    normalizarPortfolio
 
 };
 
+
 /* =========================================================
-DISPONIBILIZAÇÃO GLOBAL
-========================================================= */
+   37. DISPONIBILIZAÇÃO GLOBAL
+   ========================================================= */
 
 window.ApresentarPerfilPortfolio =
-ApresentarPerfilPortfolio;
+    ApresentarPerfilPortfolio;
+
 
 console.log(
-"ApresentarPerfilPortfolio.js carregado."
+    "ApresentarPerfilPortfolio.js carregado."
 );
+
 
 })(window);

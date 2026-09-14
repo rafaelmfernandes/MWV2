@@ -798,6 +798,19 @@ async function carregarServicos() {
    CARREGAR PORTFÓLIO
 ===================================================== */
 
+/* =====================================================
+   CARREGAR PORTFÓLIO
+
+   Responsabilidade:
+
+   • Buscar os itens públicos do portfólio.
+   • Considerar somente itens ativos.
+   • Preservar a ordem cadastrada.
+   • Colocar o item marcado como destaque
+     como primeiro item do portfólio público.
+   • Manter os demais itens na ordem original.
+===================================================== */
+
 async function carregarPortfolio() {
 
     const supabase =
@@ -881,16 +894,87 @@ async function carregarPortfolio() {
     }
 
 
-    portfolio =
+    const itens =
         Array.isArray(resultado.data)
             ? resultado.data
             : [];
 
 
+    /*
+     * =====================================================
+     * ORGANIZAÇÃO DO PORTFÓLIO
+     *
+     * O campo destaque_catalogo é utilizado pelo editor
+     * de perfil para indicar qual item deve aparecer
+     * primeiro no perfil público.
+     *
+     * Não alteramos a ordem dos demais itens.
+     * =====================================================
+     */
+
+    const itemDestaque =
+        itens.find(
+            item =>
+                item &&
+                (
+                    item.destaque_catalogo === true ||
+                    item.destaque_catalogo === "true" ||
+                    item.destaque_catalogo === 1 ||
+                    item.destaque_catalogo === "1"
+                )
+        );
+
+
+    if (itemDestaque) {
+
+        const demaisItens =
+            itens.filter(
+                item =>
+                    item !== itemDestaque
+            );
+
+
+        portfolio = [
+            itemDestaque,
+            ...demaisItens
+        ];
+
+
+        console.log(
+            "ApresentarPerfilDados: item de destaque encontrado e colocado como primeiro item do portfólio.",
+            itemDestaque
+        );
+
+    } else {
+
+        /*
+         * Nenhum destaque foi definido.
+         *
+         * Nesse caso preservamos exatamente a ordem
+         * retornada pelo Supabase.
+         */
+
+        portfolio = [
+            ...itens
+        ];
+
+
+        console.log(
+            "ApresentarPerfilDados: nenhum item de destaque definido. Ordem original preservada."
+        );
+
+    }
+
+
+    console.log(
+        "ApresentarPerfilDados: portfólio carregado:",
+        portfolio
+    );
+
+
     return portfolio;
 
 }
-
 
 /* =====================================================
    CARREGAR AGENDA

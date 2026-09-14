@@ -5,15 +5,16 @@
    Arquivo: ApresentarPerfil.js
 
    Responsabilidade:
-   - Controlar o carregamento do perfil público
-   - Obter o ID do perfil pela URL
-   - Carregar os dados através de ApresentarPerfilDados
-   - Identificar o tipo específico do perfil
-   - Configurar os módulos de renderização
-   - Renderizar o perfil
-   - Configurar ações
-   - Configurar seções
-   - Preparar a página para diferentes tipos de perfil
+   - Controlar o carregamento do perfil público.
+   - Obter o ID do perfil pela URL.
+   - Carregar os dados através de ApresentarPerfilDados.
+   - Identificar o tipo específico do perfil.
+   - Configurar os módulos de renderização.
+   - Renderizar o perfil.
+   - Configurar ações.
+   - Configurar seções.
+   - Controlar a topbar dinâmica durante a rolagem.
+   - Preparar a página para diferentes tipos de perfil.
 
    IMPORTANTE:
    O tipo específico do artista vem de:
@@ -48,6 +49,275 @@ const estado = {
 
     recursos: null
 };
+
+
+/* =========================================================
+   CONTROLE DA TOPBAR DINÂMICA
+=========================================================
+
+   A topbar começa transparente.
+
+   Quando a seção "Sobre o artista" se aproxima da topbar,
+   a classe:
+
+       .topbar-scrolled
+
+   é adicionada.
+
+   O CSS 03-apresentar-perfil-topbar.css controla a
+   aparência visual de cada estado.
+
+   Esta lógica fica neste arquivo porque depende da
+   estrutura geral da página de apresentação.
+
+   O listener é armazenado para impedir que chamadas
+   futuras de recarregar() criem múltiplos listeners.
+========================================================= */
+
+let topbarScrollHandler = null;
+
+let topbarResizeHandler = null;
+
+let topbarAnimationFrame = null;
+
+
+/* =========================================================
+   CONFIGURAR TOPBAR DINÂMICA
+========================================================= */
+function configurarTopbarDinamica() {
+
+    const topbar = document.querySelector(".topbar");
+    const secaoSobre = document.querySelector(".profile-about");
+
+    if (!topbar || !secaoSobre) {
+        console.warn(
+            "ApresentarPerfil: elementos necessários para a topbar dinâmica não encontrados."
+        );
+        return;
+    }
+
+
+    /*
+     * Remove listeners anteriores para evitar
+     * múltiplas execuções da mesma lógica.
+     */
+    if (topbarScrollHandler) {
+        window.removeEventListener(
+            "scroll",
+            topbarScrollHandler
+        );
+
+        topbarScrollHandler = null;
+    }
+
+
+    if (topbarResizeHandler) {
+        window.removeEventListener(
+            "resize",
+            topbarResizeHandler
+        );
+
+        topbarResizeHandler = null;
+    }
+
+
+    if (topbarAnimationFrame) {
+        window.cancelAnimationFrame(
+            topbarAnimationFrame
+        );
+
+        topbarAnimationFrame = null;
+    }
+
+
+    /*
+     * Guarda a posição original da seção "Sobre o artista".
+     *
+     * Essa posição representa o ponto exato em que a seção
+     * começa a existir na página antes da rolagem.
+     */
+    let posicaoInicialSobre =
+        secaoSobre.getBoundingClientRect().top +
+        window.scrollY;
+
+
+    /*
+     * Atualiza o ponto inicial caso a janela seja redimensionada.
+     */
+    function atualizarPosicaoInicial() {
+
+        posicaoInicialSobre =
+            secaoSobre.getBoundingClientRect().top +
+            window.scrollY;
+    }
+
+
+    /*
+     * Verifica se a seção "Sobre o artista" já alcançou
+     * a área da topbar.
+     *
+     * Quando o topo da seção chega exatamente no limite
+     * inferior da topbar, o fundo sólido é ativado.
+     */
+    function atualizarEstadoTopbar() {
+
+        if (!topbar || !secaoSobre) {
+            return;
+        }
+
+
+        const alturaTopbar =
+            topbar.offsetHeight || 64;
+
+
+        /*
+         * Posição atual do topo da seção no documento.
+         */
+        const posicaoAtualSobre =
+            posicaoInicialSobre -
+            window.scrollY;
+
+
+        /*
+         * A seção chegou na topbar quando sua posição
+         * vertical é igual ou menor à altura dela.
+         */
+        const margemAtivacao = 180;
+
+        const deveAtivar =
+            posicaoAtualSobre <= alturaTopbar + margemAtivacao;
+
+
+        if (deveAtivar) {
+
+            if (
+                !topbar.classList.contains(
+                    "topbar-scrolled"
+                )
+            ) {
+
+                topbar.classList.add(
+                    "topbar-scrolled"
+                );
+
+                console.log(
+                    "ApresentarPerfil: topbar entrou no estado sólido."
+                );
+            }
+
+        } else {
+
+            if (
+                topbar.classList.contains(
+                    "topbar-scrolled"
+                )
+            ) {
+
+                topbar.classList.remove(
+                    "topbar-scrolled"
+                );
+
+                console.log(
+                    "ApresentarPerfil: topbar voltou ao estado transparente."
+                );
+            }
+        }
+    }
+
+
+    /*
+     * Evita executar a atualização dezenas de vezes
+     * durante o mesmo ciclo de renderização.
+     */
+    function solicitarAtualizacao() {
+
+        if (
+            topbarAnimationFrame !== null
+        ) {
+            return;
+        }
+
+
+        topbarAnimationFrame =
+            window.requestAnimationFrame(
+                function () {
+
+                    topbarAnimationFrame =
+                        null;
+
+                    atualizarEstadoTopbar();
+                }
+            );
+    }
+
+
+    /*
+     * Evento de rolagem.
+     */
+    topbarScrollHandler =
+        function () {
+
+            solicitarAtualizacao();
+        };
+
+
+    window.addEventListener(
+        "scroll",
+        topbarScrollHandler,
+        {
+            passive: true
+        }
+    );
+
+
+    /*
+     * Evento de redimensionamento.
+     *
+     * A posição da seção pode mudar quando:
+     * - a janela muda de tamanho;
+     * - o conteúdo muda de altura;
+     * - o layout é recalculado.
+     */
+    topbarResizeHandler =
+        function () {
+
+            atualizarPosicaoInicial();
+
+            solicitarAtualizacao();
+        };
+
+
+    window.addEventListener(
+        "resize",
+        topbarResizeHandler
+    );
+
+
+    /*
+     * Executa imediatamente para determinar
+     * o estado inicial da topbar.
+     */
+    atualizarEstadoTopbar();
+
+
+    /*
+     * Executa novamente depois que o navegador
+     * terminar o primeiro ciclo de renderização.
+     */
+    window.requestAnimationFrame(
+        function () {
+
+            atualizarPosicaoInicial();
+
+            atualizarEstadoTopbar();
+        }
+    );
+
+
+    console.log(
+        "ApresentarPerfil: topbar dinâmica configurada."
+    );
+}
 
 
 /* =========================================================
@@ -845,12 +1115,6 @@ async function renderizarPortfolio() {
 
     try {
 
-        /*
-         * O módulo ApresentarPerfilPortfolio.js
-         * espera receber diretamente o array
-         * do portfólio.
-         */
-
         if (
             typeof modulo.renderizar === "function"
         ) {
@@ -1042,11 +1306,6 @@ async function renderizarAgenda() {
 
 
     try {
-
-        /*
-         * A Agenda recebe diretamente o array
-         * agenda carregado pelo ApresentarPerfilDados.
-         */
 
         if (
             typeof modulo.renderizar === "function"
@@ -1509,6 +1768,20 @@ async function carregar() {
 
 
         /* -------------------------------------------------
+           TOPBAR DINÂMICA
+
+           A renderização do perfil já aconteceu neste
+           ponto, portanto a seção .profile-about deve
+           estar disponível.
+
+           A topbar será atualizada imediatamente e também
+           durante a rolagem.
+        ------------------------------------------------- */
+
+        configurarTopbarDinamica();
+
+
+        /* -------------------------------------------------
            FINALIZAÇÃO
         ------------------------------------------------- */
 
@@ -1678,115 +1951,3 @@ if (
 
     iniciar();
 }
-
-(function (window) {
-
-
-"use strict";
-
-
-/* =====================================================
-   MUSICALWORLD — BOTÃO VOLTAR DO PERFIL
-
-   Arquivo:
-   ApresentarPerfilVoltar.js
-
-   Responsabilidade:
-
-   - Controlar exclusivamente o botão "Voltar".
-   - Retornar para a última página registrada
-     no histórico do navegador.
-   - Não definir uma página fixa como destino.
-   - Não interferir nos demais módulos do perfil.
-
-   Observação:
-
-   O uso de history.back() permite que o usuário
-   retorne exatamente para a página que estava
-   acessando antes de abrir o perfil.
-   ===================================================== */
-
-
-function inicializarBotaoVoltar() {
-
-    const botaoVoltar =
-        document.getElementById("btnVoltar");
-
-
-    if (!botaoVoltar) {
-
-        console.warn(
-            "ApresentarPerfilVoltar: botão #btnVoltar não encontrado."
-        );
-
-        return;
-
-    }
-
-
-    /*
-     * Capturamos o clique diretamente no botão.
-     *
-     * O listener fica isolado neste módulo para que
-     * a lógica de navegação não fique misturada com
-     * o restante do ApresentarPerfil.js.
-     */
-
-    botaoVoltar.addEventListener(
-        "click",
-        function (evento) {
-
-            evento.preventDefault();
-
-            evento.stopPropagation();
-
-
-            /*
-             * history.back() retorna exatamente para
-             * a entrada anterior do histórico.
-             */
-
-            if (window.history.length > 1) {
-
-                window.history.back();
-
-                return;
-
-            }
-
-
-            /*
-             * Caso o perfil tenha sido aberto diretamente
-             * e não exista uma página anterior disponível,
-             * não fazemos uma navegação artificial.
-             */
-
-            console.warn(
-                "ApresentarPerfilVoltar: não existe página anterior no histórico."
-            );
-
-        }
-    );
-
-}
-
-
-/* =====================================================
-   INICIALIZAÇÃO
-   ===================================================== */
-
-if (document.readyState === "loading") {
-
-    document.addEventListener(
-        "DOMContentLoaded",
-        inicializarBotaoVoltar
-    );
-
-} else {
-
-    inicializarBotaoVoltar();
-
-}
-
-
-})(window);
