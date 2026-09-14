@@ -1,0 +1,199 @@
+/* =========================================================
+MUSICALWORLD — APRESENTAR PERFIL
+02 — FUNDO DINÂMICO
+
+Responsabilidade:
+
+• Controlar exclusivamente o fundo visual da página.
+• Criar profundidade através de gradientes suaves.
+• Adaptar o fundo às cores utilizadas pelo MusicalWorld.
+• Criar um efeito visual dinâmico e discreto.
+• Não controlar cards, textos, portfólio ou componentes.
+
+IMPORTANTE:
+
+Este arquivo não deve receber regras de componentes.
+Toda alteração relacionada ao fundo geral da página
+deve ser feita aqui.
+========================================================= */
+
+/* =========================================================
+FUNDO PRINCIPAL DA PÁGINA
+========================================================= */
+
+body {
+position: relative;
+
+
+min-height: 100vh;
+
+background:
+    linear-gradient(
+        180deg,
+        #f8faff 0%,
+        #f5f7fb 45%,
+        #f3f5fa 100%
+    );
+
+color: #172033;
+
+
+}
+
+/* =========================================================
+CAMADA DINÂMICA DO FUNDO
+========================================================= */
+
+body::before {
+content: "";
+
+
+position: fixed;
+
+top: -180px;
+left: -180px;
+
+width: 520px;
+height: 520px;
+
+border-radius: 50%;
+
+background:
+    radial-gradient(
+        circle,
+        rgba(109, 74, 255, 0.10) 0%,
+        rgba(109, 74, 255, 0.05) 38%,
+        rgba(109, 74, 255, 0) 72%
+    );
+
+pointer-events: none;
+
+z-index: -1;
+
+animation:
+    fundoMovimentoSuperior
+    14s
+    ease-in-out
+    infinite
+    alternate;
+
+
+}
+
+/* =========================================================
+SEGUNDA CAMADA DINÂMICA
+========================================================= */
+
+body::after {
+content: "";
+
+
+position: fixed;
+
+right: -200px;
+bottom: -220px;
+
+width: 560px;
+height: 560px;
+
+border-radius: 50%;
+
+background:
+    radial-gradient(
+        circle,
+        rgba(56, 189, 248, 0.09) 0%,
+        rgba(56, 189, 248, 0.04) 40%,
+        rgba(56, 189, 248, 0) 72%
+    );
+
+pointer-events: none;
+
+z-index: -1;
+
+animation:
+    fundoMovimentoInferior
+    18s
+    ease-in-out
+    infinite
+    alternate;
+
+
+}
+
+/* =========================================================
+MOVIMENTO — CAMADA SUPERIOR
+========================================================= */
+
+@keyframes fundoMovimentoSuperior {
+
+
+0% {
+    transform:
+        translate3d(0, 0, 0)
+        scale(1);
+}
+
+100% {
+    transform:
+        translate3d(80px, 50px, 0)
+        scale(1.12);
+}
+
+
+}
+
+/* =========================================================
+MOVIMENTO — CAMADA INFERIOR
+========================================================= */
+
+@keyframes fundoMovimentoInferior {
+
+
+0% {
+    transform:
+        translate3d(0, 0, 0)
+        scale(1);
+}
+
+100% {
+    transform:
+        translate3d(-70px, -50px, 0)
+        scale(1.10);
+}
+
+
+}
+
+/* =========================================================
+CONTROLE DE EMPILHAMENTO
+
+Mantém o conteúdo da aplicação acima das camadas
+decorativas do fundo.
+========================================================= */
+
+.app {
+position: relative;
+
+
+z-index: 0;
+
+
+}
+
+/* =========================================================
+ACESSIBILIDADE
+
+Usuários que preferem reduzir movimento não recebem
+a animação das camadas decorativas.
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+
+body::before,
+body::after {
+    animation: none;
+}
+
+
+}

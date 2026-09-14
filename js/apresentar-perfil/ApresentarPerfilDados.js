@@ -4,26 +4,23 @@ Arquivo: ApresentarPerfilDados.js
 
 Responsabilidade:
 
-* Carregar um perfil público pelo ID informado na URL.
-* Buscar os dados do usuário proprietário.
-* Identificar o tipo do perfil.
-* Buscar dados artísticos.
-* Buscar serviços.
-* Buscar portfólio.
-* Buscar agenda.
-* Buscar avaliações.
-* Entregar os dados para os módulos de apresentação.
+• Carregar os dados públicos de um perfil.
+• Buscar usuário, perfil artístico, serviços, portfólio,
+agenda e avaliações.
+• Trabalhar com o perfil informado pela URL.
+• NÃO depender do usuário atualmente logado para carregar
+o perfil visualizado.
 
 IMPORTANTE:
 
-* Este arquivo NÃO depende do usuário logado.
-* Este arquivo NÃO carrega carteira.
-* Este arquivo NÃO carrega transações.
-* Este arquivo NÃO contém regras específicas de
-  apresentação visual.
-* O perfil é identificado através de ?id= na URL.
-* O ID do perfil é tratado como UUID/string.
-  ========================================================= */
+Este módulo é responsável pela comunicação com o Supabase
+referente aos dados públicos do perfil.
+
+O diagnóstico dos serviços foi mantido neste arquivo para
+identificar se o problema está na consulta ao Supabase,
+nas políticas RLS ou no módulo de renderização.
+
+========================================================= */
 
 (function (window) {
 
@@ -33,27 +30,35 @@ IMPORTANTE:
 
 /* =====================================================
    CONFIGURAÇÃO
-   ===================================================== */
+===================================================== */
 
 const CONFIG = {
 
     tabelas: {
 
-        usuarios: "usuarios",
+        usuarios:
+            "usuarios",
 
-        perfis: "perfis",
+        perfis:
+            "perfis",
 
-        tiposPerfil: "tipos_perfil",
+        tiposPerfil:
+            "tipos_perfil",
 
-        perfisArtistas: "perfis_artistas",
+        perfisArtistas:
+            "perfis_artistas",
 
-        servicos: "servicos_artistas",
+        servicos:
+            "servicos_artistas",
 
-        portfolio: "portfolio_musicos",
+        portfolio:
+            "portfolio_musicos",
 
-        agenda: "agenda_musicos",
+        agenda:
+            "agenda_musicos",
 
-        avaliacoes: "avaliacoes_musicos"
+        avaliacoes:
+            "avaliacoes_musicos"
 
     }
 
@@ -62,7 +67,7 @@ const CONFIG = {
 
 /* =====================================================
    ESTADO INTERNO
-   ===================================================== */
+===================================================== */
 
 let clienteSupabase = null;
 
@@ -88,89 +93,71 @@ let carregado = false;
 
 
 /* =====================================================
-   OBTER CLIENTE SUPABASE
-   ===================================================== */
+   UTILITÁRIOS
+===================================================== */
 
 function obterClienteSupabase() {
 
-    if (window.supabaseClient) {
-        return window.supabaseClient;
+    if (clienteSupabase) {
+
+        return clienteSupabase;
+
     }
 
-    if (window._supabase) {
-        return window._supabase;
+
+    if (
+        window.supabaseClient &&
+        typeof window.supabaseClient
+            .from === "function"
+    ) {
+
+        clienteSupabase =
+            window.supabaseClient;
+
+        return clienteSupabase;
+
     }
 
-    if (window.supabase) {
-        return window.supabase;
+
+    if (
+        window._supabase &&
+        typeof window._supabase
+            .from === "function"
+    ) {
+
+        clienteSupabase =
+            window._supabase;
+
+        return clienteSupabase;
+
     }
+
+
+    if (
+        window.supabase &&
+        typeof window.supabase
+            .from === "function"
+    ) {
+
+        clienteSupabase =
+            window.supabase;
+
+        return clienteSupabase;
+
+    }
+
+
+    console.error(
+        "ApresentarPerfilDados: cliente Supabase não encontrado."
+    );
+
 
     return null;
 
 }
 
 
-/* =====================================================
-   CONFIGURAR CLIENTE
-   ===================================================== */
-
-function configurarCliente() {
-
-    clienteSupabase =
-        obterClienteSupabase();
-
-
-    if (!clienteSupabase) {
-
-        console.error(
-            "ApresentarPerfilDados: cliente Supabase não encontrado."
-        );
-
-        return false;
-
-    }
-
-
-    return true;
-
-}
-
-
-/* =====================================================
-   OBTER ID DO PERFIL PELA URL
-   ===================================================== */
-
 function obterPerfilIdDaUrl() {
-
-    /*
-     * Primeiro utiliza o módulo de utilidades,
-     * caso ele esteja disponível.
-     */
-
-    if (
-        window.ApresentarPerfilUtils &&
-        typeof window.ApresentarPerfilUtils
-            .obterPerfilIdUrl === "function"
-    ) {
-
-        const id =
-            window.ApresentarPerfilUtils
-                .obterPerfilIdUrl();
-
-        if (id) {
-            return String(id).trim();
-        }
-
-    }
-
-
-    /*
-     * Fallback direto pela URL.
-     *
-     * IMPORTANTE:
-     * O ID pode ser UUID.
-     * Portanto NÃO utilizamos Number().
-     */
 
     try {
 
@@ -180,30 +167,17 @@ function obterPerfilIdDaUrl() {
             );
 
 
-        const valor =
-            parametros.get("id");
-
-
-        if (!valor) {
-            return null;
-        }
-
-
-        const id =
-            String(valor).trim();
-
-
-        if (!id) {
-            return null;
-        }
-
-
-        return id;
+        return (
+            parametros.get("id") ||
+            parametros.get("perfil_id") ||
+            parametros.get("perfilId") ||
+            null
+        );
 
     } catch (erro) {
 
         console.error(
-            "Erro ao obter ID do perfil pela URL:",
+            "ApresentarPerfilDados: erro ao obter ID da URL.",
             erro
         );
 
@@ -215,44 +189,77 @@ function obterPerfilIdDaUrl() {
 }
 
 
-/* =====================================================
-   NORMALIZAR TIPO
-   ===================================================== */
+function normalizarId(valor) {
 
-function normalizarTipo(tipo) {
+    if (
+        valor === null ||
+        valor === undefined
+    ) {
 
-    if (!tipo) {
         return null;
+
+    }
+
+
+    const texto =
+        String(valor).trim();
+
+
+    return texto || null;
+
+}
+
+
+function obterTipoPerfilDoObjeto(
+    dados
+) {
+
+    if (!dados) {
+
+        return null;
+
     }
 
 
     if (
-        window.ApresentarPerfilTipo &&
-        typeof window.ApresentarPerfilTipo
-            .obterTipo === "function"
+        typeof dados.tipo === "object" &&
+        dados.tipo
     ) {
 
-        return window.ApresentarPerfilTipo
-            .obterTipo(tipo);
+        return (
+            dados.tipo.nome ||
+            dados.tipo.tipo ||
+            dados.tipo.chave ||
+            null
+        );
 
     }
 
 
-    return tipo;
+    return (
+        dados.tipo ||
+        dados.tipo_perfil ||
+        dados.tipoPerfil ||
+        null
+    );
 
 }
 
 
 /* =====================================================
-   BUSCAR PERFIL
-   ===================================================== */
+   CARREGAR PERFIL
+===================================================== */
 
 async function carregarPerfil() {
 
-    if (!clienteSupabase) {
+    const supabase =
+        obterClienteSupabase();
+
+
+    if (!supabase) {
 
         throw new Error(
-            "Cliente Supabase não configurado."
+            "Cliente Supabase não disponível."
         );
 
     }
@@ -261,21 +268,25 @@ async function carregarPerfil() {
     if (!perfilId) {
 
         throw new Error(
-            "ID do perfil não informado na URL."
+            "ID do perfil não informado."
         );
 
     }
 
 
+    console.log(
+        "ApresentarPerfilDados: carregando perfil:",
+        perfilId
+    );
+
+
     const {
         data,
         error
-    } = await clienteSupabase
-
+    } = await supabase
         .from(
             CONFIG.tabelas.perfis
         )
-
         .select(`
             *,
             tipo:tipos_perfil (
@@ -283,19 +294,17 @@ async function carregarPerfil() {
                 nome
             )
         `)
-
         .eq(
             "id",
             perfilId
         )
-
         .maybeSingle();
 
 
     if (error) {
 
         console.error(
-            "Erro ao carregar perfil:",
+            "ApresentarPerfilDados: erro ao carregar perfil.",
             error
         );
 
@@ -305,72 +314,26 @@ async function carregarPerfil() {
     }
 
 
-    if (!data) {
-
-        throw new Error(
-            "Perfil não encontrado."
-        );
-
-    }
-
-
     perfil =
-        data;
+        data || null;
 
-
-    /*
-     * O relacionamento pode chegar como objeto
-     * ou como array dependendo da configuração
-     * do relacionamento no Supabase.
-     */
-
-    let tipo =
-        data.tipo;
-
-
-    if (Array.isArray(tipo)) {
-        tipo = tipo[0] || null;
-    }
-
-
-    /*
-     * Primeiro tenta obter o tipo através do
-     * relacionamento com tipos_perfil.
-     */
 
     tipoPerfil =
-        normalizarTipo(
-            tipo
-                ? (
-                    tipo.nome ||
-                    tipo.tipo ||
-                    tipo
-                )
-                : ""
+        obterTipoPerfilDoObjeto(
+            perfil
         );
 
 
-    /*
-     * Fallback caso o relacionamento não tenha
-     * sido retornado.
-     */
-
-    if (!tipoPerfil && data.tipo_perfil) {
-
-        tipoPerfil =
-            normalizarTipo(
-                data.tipo_perfil
-            );
-
-    }
+    console.log(
+        "ApresentarPerfilDados: perfil carregado:",
+        perfil
+    );
 
 
-    /*
-     * Guarda também o objeto bruto do relacionamento.
-     */
-
-    perfil.tipo =
-        tipo;
+    console.log(
+        "ApresentarPerfilDados: tipo do perfil:",
+        tipoPerfil
+    );
 
 
     return perfil;
@@ -379,30 +342,33 @@ async function carregarPerfil() {
 
 
 /* =====================================================
-   BUSCAR USUÁRIO
-   ===================================================== */
+   CARREGAR USUÁRIO
+===================================================== */
 
 async function carregarUsuario() {
 
-    if (!clienteSupabase) {
+    const supabase =
+        obterClienteSupabase();
+
+
+    if (!supabase) {
+
         return null;
+
     }
 
 
-    if (!perfil) {
-        return null;
-    }
-
-
-    const usuarioId =
-        perfil.usuario_id;
-
-
-    if (!usuarioId) {
+    if (
+        !perfil ||
+        !perfil.usuario_id
+    ) {
 
         console.warn(
-            "Perfil público sem usuario_id."
+            "ApresentarPerfilDados: perfil não possui usuario_id."
         );
+
+
+        usuario = null;
 
         return null;
 
@@ -412,31 +378,29 @@ async function carregarUsuario() {
     const {
         data,
         error
-    } = await clienteSupabase
-
+    } = await supabase
         .from(
             CONFIG.tabelas.usuarios
         )
-
         .select("*")
-
         .eq(
             "id",
-            usuarioId
+            perfil.usuario_id
         )
-
         .maybeSingle();
 
 
     if (error) {
 
-        console.error(
-            "Erro ao carregar usuário do perfil:",
+        console.warn(
+            "ApresentarPerfilDados: erro ao carregar usuário.",
             error
         );
 
 
-        throw error;
+        usuario = null;
+
+        return null;
 
     }
 
@@ -451,77 +415,48 @@ async function carregarUsuario() {
 
 
 /* =====================================================
-   BUSCAR PERFIL ARTÍSTICO
-   ===================================================== */
+   CARREGAR PERFIL ARTÍSTICO
+===================================================== */
 
 async function carregarPerfilArtista() {
 
-    if (!clienteSupabase) {
+    const supabase =
+        obterClienteSupabase();
+
+
+    if (!supabase) {
+
         return null;
+
     }
 
-
-    if (!perfilId) {
-        return null;
-    }
-
-
-    /*
-     * perfis_artistas é utilizado pelos perfis
-     * artísticos.
-     *
-     * Contratantes podem não possuir registro
-     * nessa tabela.
-     */
 
     const {
         data,
         error
-    } = await clienteSupabase
-
+    } = await supabase
         .from(
             CONFIG.tabelas.perfisArtistas
         )
-
         .select("*")
-
         .eq(
             "perfil_id",
             perfilId
         )
-
         .maybeSingle();
 
 
     if (error) {
 
-        /*
-         * Ausência de perfil artístico não deve
-         * impedir a apresentação de um contratante.
-         */
+        console.warn(
+            "ApresentarPerfilDados: erro ao carregar perfil artístico.",
+            error
+        );
 
-        if (
-            error.code === "PGRST116" ||
-            error.message
-                ?.toLowerCase()
-                .includes("multiple")
-        ) {
 
-            console.warn(
-                "Não foi possível obter perfil artístico:",
-                error
-            );
+        perfilArtista = null;
 
-        } else {
-
-            console.error(
-                "Erro ao carregar perfil artístico:",
-                error
-            );
-
-            throw error;
-
-        }
+        return null;
 
     }
 
@@ -530,29 +465,105 @@ async function carregarPerfilArtista() {
         data || null;
 
 
+    if (
+        perfilArtista &&
+        perfilArtista.tipo_artista
+    ) {
+
+        tipoPerfil =
+            perfilArtista.tipo_artista;
+
+    }
+
+
+    console.log(
+        "ApresentarPerfilDados: perfil artístico:",
+        perfilArtista
+    );
+
+
+    console.log(
+        "ApresentarPerfilDados: tipo artístico final:",
+        tipoPerfil
+    );
+
+
     return perfilArtista;
 
 }
 
 
 /* =====================================================
-   BUSCAR SERVIÇOS
-   ===================================================== */
+   CARREGAR SERVIÇOS
+===================================================== */
 
 async function carregarServicos() {
 
-    if (!clienteSupabase) {
+    const supabase =
+        obterClienteSupabase();
+
+
+    servicos = [];
+
+
+    if (!supabase) {
+
+        console.error(
+            "ApresentarPerfilDados: não foi possível carregar serviços porque o Supabase não está disponível."
+        );
+
+
         return [];
+
     }
 
 
     if (!perfilId) {
+
+        console.error(
+            "ApresentarPerfilDados: não foi possível carregar serviços porque o perfilId está vazio."
+        );
+
+
         return [];
+
     }
 
 
+    console.group(
+        "ApresentarPerfilDados — DIAGNÓSTICO DE SERVIÇOS"
+    );
+
+
+    console.log(
+        "Perfil visualizado:",
+        perfilId
+    );
+
+
+    console.log(
+        "Tipo do perfil:",
+        tipoPerfil
+    );
+
+
+    console.log(
+        "Perfil completo:",
+        perfil
+    );
+
+
+    console.log(
+        "Perfil artístico:",
+        perfilArtista
+    );
+
+
     /*
-     * Nem todo perfil possui serviços.
+     * Verifica se o tipo de perfil permite serviços.
+     *
+     * Todos os tipos artísticos atuais do MusicalWorld
+     * possuem serviços habilitados.
      */
 
     if (
@@ -564,9 +575,107 @@ async function carregarServicos() {
             .possuiServicos(tipoPerfil)
     ) {
 
+        console.warn(
+            "ApresentarPerfilDados: o tipo deste perfil não possui serviços habilitados:",
+            tipoPerfil
+        );
+
+
+        console.groupEnd();
+
+
         servicos = [];
 
-        return servicos;
+
+        return [];
+
+    }
+
+
+    console.log(
+        "Executando consulta:",
+        `from("${CONFIG.tabelas.servicos}")`
+    );
+
+
+    console.log(
+        "Filtro utilizado:",
+        {
+            perfil_id: perfilId
+        }
+    );
+
+
+    /*
+     * CONSULTA PRINCIPAL
+     *
+     * IMPORTANTE:
+     * A consulta utiliza o perfil visualizado.
+     *
+     * Não utiliza o usuário logado.
+     */
+
+    let resultado =
+        await supabase
+            .from(
+                CONFIG.tabelas.servicos
+            )
+            .select("*")
+            .eq(
+                "perfil_id",
+                perfilId
+            )
+            .order(
+                "created_at",
+                {
+                    ascending: false
+                }
+            );
+
+
+    console.log(
+        "Resultado bruto da consulta de serviços:",
+        resultado
+    );
+
+
+    /*
+     * Alguns ambientes podem não possuir created_at.
+     *
+     * Nesse caso repetimos a consulta sem ordenar
+     * por created_at.
+     */
+
+    if (
+        resultado.error &&
+        String(
+            resultado.error.message || ""
+        )
+            .toLowerCase()
+            .includes("created_at")
+    ) {
+
+        console.warn(
+            "ApresentarPerfilDados: coluna created_at não encontrada. Repetindo consulta sem order."
+        );
+
+
+        resultado =
+            await supabase
+                .from(
+                    CONFIG.tabelas.servicos
+                )
+                .select("*")
+                .eq(
+                    "perfil_id",
+                    perfilId
+                );
+
+
+        console.log(
+            "Resultado da consulta alternativa:",
+            resultado
+        );
 
     }
 
@@ -574,75 +683,110 @@ async function carregarServicos() {
     const {
         data,
         error
-    } = await clienteSupabase
+    } = resultado;
 
-        .from(
-            CONFIG.tabelas.servicos
-        )
 
-        .select("*")
-
-        .eq(
-            "perfil_id",
-            perfilId
-        )
-
-        .order(
-            "created_at",
-            {
-                ascending: false
-            }
-        );
-
+    /* =================================================
+       DIAGNÓSTICO DE ERRO
+    ================================================= */
 
     if (error) {
 
-        /*
-         * Algumas versões da tabela podem não
-         * possuir created_at.
-         */
-
-        const resultadoAlternativo =
-            await clienteSupabase
-
-                .from(
-                    CONFIG.tabelas.servicos
-                )
-
-                .select("*")
-
-                .eq(
-                    "perfil_id",
-                    perfilId
-                );
+        console.error(
+            "ApresentarPerfilDados: ERRO AO BUSCAR SERVIÇOS.",
+            error
+        );
 
 
-        if (
-            resultadoAlternativo.error
-        ) {
-
-            console.error(
-                "Erro ao carregar serviços:",
-                error
-            );
+        console.error(
+            "Código do erro:",
+            error.code
+        );
 
 
-            throw error;
-
-        }
-
-
-        servicos =
-            resultadoAlternativo.data || [];
+        console.error(
+            "Mensagem:",
+            error.message
+        );
 
 
-        return servicos;
+        console.error(
+            "Detalhes:",
+            error.details
+        );
+
+
+        console.error(
+            "Hint:",
+            error.hint
+        );
+
+
+        console.error(
+            "Perfil que estava sendo consultado:",
+            perfilId
+        );
+
+
+        console.error(
+            "Se funciona no próprio perfil mas falha em outro perfil, verifique especialmente as políticas RLS da tabela servicos_artistas."
+        );
+
+
+        console.groupEnd();
+
+
+        servicos = [];
+
+
+        return [];
 
     }
 
 
+    /* =================================================
+       DADOS RECEBIDOS
+    ================================================= */
+
     servicos =
-        data || [];
+        Array.isArray(data)
+            ? data
+            : [];
+
+
+    console.log(
+        "Quantidade de serviços encontrados:",
+        servicos.length
+    );
+
+
+    console.log(
+        "Serviços encontrados:",
+        servicos
+    );
+
+
+    if (!servicos.length) {
+
+        console.warn(
+            "ApresentarPerfilDados: a consulta retornou ZERO serviços para este perfil."
+        );
+
+
+        console.warn(
+            "Isso pode significar que não existem serviços cadastrados para este perfil ou que o Supabase/RLS não está permitindo visualizar os registros."
+        );
+
+    } else {
+
+        console.log(
+            "ApresentarPerfilDados: serviços encontrados com sucesso."
+        );
+
+    }
+
+
+    console.groupEnd();
 
 
     return servicos;
@@ -651,119 +795,71 @@ async function carregarServicos() {
 
 
 /* =====================================================
-   BUSCAR PORTFÓLIO
-   ===================================================== */
+   CARREGAR PORTFÓLIO
+===================================================== */
 
 async function carregarPortfolio() {
 
-    if (!clienteSupabase) {
+    const supabase =
+        obterClienteSupabase();
+
+
+    if (!supabase) {
+
         return [];
-    }
-
-
-    if (!perfilId) {
-        return [];
-    }
-
-
-    if (
-        window.ApresentarPerfilTipo &&
-        tipoPerfil &&
-        typeof window.ApresentarPerfilTipo
-            .possuiPortfolio === "function" &&
-        !window.ApresentarPerfilTipo
-            .possuiPortfolio(tipoPerfil)
-    ) {
-
-        portfolio = [];
-
-        return portfolio;
 
     }
 
-
-    /*
-     * Primeira tentativa:
-     * somente itens ativos.
-     */
 
     let resultado =
-        await clienteSupabase
-
+        await supabase
             .from(
                 CONFIG.tabelas.portfolio
             )
-
             .select("*")
-
             .eq(
                 "perfil_id",
                 perfilId
             )
-
             .eq(
                 "ativo",
                 true
             )
-
             .order(
-                "created_at",
+                "ordem",
                 {
-                    ascending: false
+                    ascending: true
                 }
             );
 
 
     /*
-     * Algumas instalações podem não possuir
-     * a coluna ativo.
+     * Fallback caso a coluna ordem
+     * não exista.
      */
 
-    if (resultado.error) {
+    if (
+        resultado.error &&
+        String(
+            resultado.error.message || ""
+        )
+            .toLowerCase()
+            .includes("ordem")
+    ) {
 
         resultado =
-            await clienteSupabase
-
+            await supabase
                 .from(
                     CONFIG.tabelas.portfolio
                 )
-
                 .select("*")
-
                 .eq(
                     "perfil_id",
                     perfilId
                 )
-
-                .order(
-                    "created_at",
-                    {
-                        ascending: false
-                    }
-                );
-
-    }
-
-
-    /*
-     * Último fallback sem created_at.
-     */
-
-    if (resultado.error) {
-
-        resultado =
-            await clienteSupabase
-
-                .from(
-                    CONFIG.tabelas.portfolio
-                )
-
-                .select("*"
-                )
-
                 .eq(
-                    "perfil_id",
-                    perfilId
+                    "ativo",
+                    true
                 );
 
     }
@@ -771,19 +867,24 @@ async function carregarPortfolio() {
 
     if (resultado.error) {
 
-        console.error(
-            "Erro ao carregar portfólio:",
+        console.warn(
+            "ApresentarPerfilDados: erro ao carregar portfólio.",
             resultado.error
         );
 
 
-        throw resultado.error;
+        portfolio = [];
+
+
+        return [];
 
     }
 
 
     portfolio =
-        resultado.data || [];
+        Array.isArray(resultado.data)
+            ? resultado.data
+            : [];
 
 
     return portfolio;
@@ -792,51 +893,32 @@ async function carregarPortfolio() {
 
 
 /* =====================================================
-   BUSCAR AGENDA
-   ===================================================== */
+   CARREGAR AGENDA
+===================================================== */
 
 async function carregarAgenda() {
 
-    if (!clienteSupabase) {
+    const supabase =
+        obterClienteSupabase();
+
+
+    if (!supabase) {
+
         return [];
-    }
-
-
-    if (!perfilId) {
-        return [];
-    }
-
-
-    if (
-        window.ApresentarPerfilTipo &&
-        tipoPerfil &&
-        typeof window.ApresentarPerfilTipo
-            .possuiAgenda === "function" &&
-        !window.ApresentarPerfilTipo
-            .possuiAgenda(tipoPerfil)
-    ) {
-
-        agenda = [];
-
-        return agenda;
 
     }
 
 
     let resultado =
-        await clienteSupabase
-
+        await supabase
             .from(
                 CONFIG.tabelas.agenda
             )
-
             .select("*")
-
             .eq(
                 "perfil_id",
                 perfilId
             )
-
             .order(
                 "data_inicio",
                 {
@@ -845,22 +927,21 @@ async function carregarAgenda() {
             );
 
 
-    /*
-     * Fallback caso a tabela não possua
-     * data_inicio.
-     */
-
-    if (resultado.error) {
+    if (
+        resultado.error &&
+        String(
+            resultado.error.message || ""
+        )
+            .toLowerCase()
+            .includes("data_inicio")
+    ) {
 
         resultado =
-            await clienteSupabase
-
+            await supabase
                 .from(
                     CONFIG.tabelas.agenda
                 )
-
                 .select("*")
-
                 .eq(
                     "perfil_id",
                     perfilId
@@ -871,19 +952,24 @@ async function carregarAgenda() {
 
     if (resultado.error) {
 
-        console.error(
-            "Erro ao carregar agenda:",
+        console.warn(
+            "ApresentarPerfilDados: erro ao carregar agenda.",
             resultado.error
         );
 
 
-        throw resultado.error;
+        agenda = [];
+
+
+        return [];
 
     }
 
 
     agenda =
-        resultado.data || [];
+        Array.isArray(resultado.data)
+            ? resultado.data
+            : [];
 
 
     return agenda;
@@ -892,51 +978,32 @@ async function carregarAgenda() {
 
 
 /* =====================================================
-   BUSCAR AVALIAÇÕES
-   ===================================================== */
+   CARREGAR AVALIAÇÕES
+===================================================== */
 
 async function carregarAvaliacoes() {
 
-    if (!clienteSupabase) {
+    const supabase =
+        obterClienteSupabase();
+
+
+    if (!supabase) {
+
         return [];
-    }
-
-
-    if (!perfilId) {
-        return [];
-    }
-
-
-    if (
-        window.ApresentarPerfilTipo &&
-        tipoPerfil &&
-        typeof window.ApresentarPerfilTipo
-            .possuiAvaliacoes === "function" &&
-        !window.ApresentarPerfilTipo
-            .possuiAvaliacoes(tipoPerfil)
-    ) {
-
-        avaliacoes = [];
-
-        return avaliacoes;
 
     }
 
 
     let resultado =
-        await clienteSupabase
-
+        await supabase
             .from(
                 CONFIG.tabelas.avaliacoes
             )
-
             .select("*")
-
             .eq(
                 "perfil_id",
                 perfilId
             )
-
             .order(
                 "created_at",
                 {
@@ -945,22 +1012,21 @@ async function carregarAvaliacoes() {
             );
 
 
-    /*
-     * Caso a tabela ainda esteja em desenvolvimento
-     * ou não possua created_at, tenta novamente.
-     */
-
-    if (resultado.error) {
+    if (
+        resultado.error &&
+        String(
+            resultado.error.message || ""
+        )
+            .toLowerCase()
+            .includes("created_at")
+    ) {
 
         resultado =
-            await clienteSupabase
-
+            await supabase
                 .from(
                     CONFIG.tabelas.avaliacoes
                 )
-
                 .select("*")
-
                 .eq(
                     "perfil_id",
                     perfilId
@@ -971,27 +1037,24 @@ async function carregarAvaliacoes() {
 
     if (resultado.error) {
 
-        /*
-         * As avaliações são um módulo independente.
-         * Se a tabela ainda não estiver pronta, não
-         * devemos impedir que o perfil público abra.
-         */
-
         console.warn(
-            "Não foi possível carregar avaliações:",
+            "ApresentarPerfilDados: erro ao carregar avaliações.",
             resultado.error
         );
 
 
         avaliacoes = [];
 
-        return avaliacoes;
+
+        return [];
 
     }
 
 
     avaliacoes =
-        resultado.data || [];
+        Array.isArray(resultado.data)
+            ? resultado.data
+            : [];
 
 
     return avaliacoes;
@@ -1001,131 +1064,116 @@ async function carregarAvaliacoes() {
 
 /* =====================================================
    CARREGAR TUDO
-   ===================================================== */
+===================================================== */
 
 async function carregarTudo(
     opcoes = {}
 ) {
 
-    if (
-        carregado &&
-        !opcoes.forcar
-    ) {
-
-        return obterEstado();
-
-    }
-
-
-    /*
-     * Configura o cliente Supabase.
-     */
-
-    if (!configurarCliente()) {
-
-        throw new Error(
-            "Supabase não está disponível."
-        );
-
-    }
-
-
-    /*
-     * Obtém o ID informado na URL.
-     *
-     * Pode ser UUID.
-     */
-
-    perfilId =
+    const idRecebido =
         opcoes.perfilId ||
         obterPerfilIdDaUrl();
 
 
-    if (
-        perfilId === null ||
-        perfilId === undefined ||
-        String(perfilId).trim() === ""
-    ) {
+    perfilId =
+        normalizarId(
+            idRecebido
+        );
+
+
+    if (!perfilId) {
 
         throw new Error(
-            "Nenhum ID de perfil foi informado."
+            "Não foi possível identificar o perfil que deve ser carregado."
         );
 
     }
 
 
+    console.log(
+        "=============================================="
+    );
+
+
+    console.log(
+        "ApresentarPerfilDados: INICIANDO CARREGAMENTO"
+    );
+
+
+    console.log(
+        "Perfil ID:",
+        perfilId
+    );
+
+
+    console.log(
+        "URL:",
+        window.location.href
+    );
+
+
+    console.log(
+        "=============================================="
+    );
+
+
     /*
-     * Sempre trabalha com o ID como string.
-     * Isso preserva UUIDs sem alteração.
-     */
-
-    perfilId =
-        String(perfilId).trim();
-
-
-    /*
-     * Carrega primeiro perfil, usuário e perfil
-     * artístico porque os demais módulos dependem
-     * do perfilId e do tipo identificado.
+     * Primeiro carregamos os dados principais.
+     *
+     * Isso é importante porque tipoPerfil e perfilArtista
+     * podem ser necessários para determinar quais recursos
+     * o perfil possui.
      */
 
     await carregarPerfil();
 
+
     await carregarUsuario();
+
 
     await carregarPerfilArtista();
 
 
     /*
-     * Os módulos complementares podem ser carregados
-     * em paralelo.
+     * Depois carregamos os recursos complementares
+     * simultaneamente.
      */
 
-    const tarefas = [];
+    await Promise.all([
 
+        carregarPortfolio(),
 
-    if (opcoes.portfolio !== false) {
+        carregarServicos(),
 
-        tarefas.push(
-            carregarPortfolio()
-        );
+        carregarAgenda(),
 
-    }
+        carregarAvaliacoes()
 
-
-    if (opcoes.servicos !== false) {
-
-        tarefas.push(
-            carregarServicos()
-        );
-
-    }
-
-
-    if (opcoes.agenda !== false) {
-
-        tarefas.push(
-            carregarAgenda()
-        );
-
-    }
-
-
-    if (opcoes.avaliacoes !== false) {
-
-        tarefas.push(
-            carregarAvaliacoes()
-        );
-
-    }
-
-
-    await Promise.all(
-        tarefas
-    );
+    ]);
 
 
     carregado = true;
+
+
+    console.log(
+        "ApresentarPerfilDados: carregamento concluído."
+    );
+
+
+    console.log(
+        "Resumo dos dados:",
+        {
+            perfilId,
+            tipoPerfil,
+            usuario,
+            perfil,
+            perfilArtista,
+            servicos,
+            portfolio,
+            agenda,
+            avaliacoes
+        }
+    );
 
 
     return obterEstado();
@@ -1134,8 +1182,8 @@ async function carregarTudo(
 
 
 /* =====================================================
-   OBTER ESTADO COMPLETO
-   ===================================================== */
+   OBTER ESTADO
+===================================================== */
 
 function obterEstado() {
 
@@ -1165,7 +1213,9 @@ function obterEstado() {
 
         avaliacoes: [
             ...avaliacoes
-        ]
+        ],
+
+        carregado
 
     };
 
@@ -1173,22 +1223,8 @@ function obterEstado() {
 
 
 /* =====================================================
-   GETTERS
-   ===================================================== */
-
-function obterPerfilId() {
-
-    return perfilId;
-
-}
-
-
-function obterUsuario() {
-
-    return usuario;
-
-}
-
+   OBTER PERFIL
+===================================================== */
 
 function obterPerfil() {
 
@@ -1197,6 +1233,21 @@ function obterPerfil() {
 }
 
 
+/* =====================================================
+   OBTER USUÁRIO
+===================================================== */
+
+function obterUsuario() {
+
+    return usuario;
+
+}
+
+
+/* =====================================================
+   OBTER PERFIL ARTÍSTICO
+===================================================== */
+
 function obterPerfilArtista() {
 
     return perfilArtista;
@@ -1204,12 +1255,20 @@ function obterPerfilArtista() {
 }
 
 
+/* =====================================================
+   OBTER TIPO
+===================================================== */
+
 function obterTipoPerfil() {
 
     return tipoPerfil;
 
 }
 
+
+/* =====================================================
+   OBTER SERVIÇOS
+===================================================== */
 
 function obterServicos() {
 
@@ -1220,6 +1279,10 @@ function obterServicos() {
 }
 
 
+/* =====================================================
+   OBTER PORTFÓLIO
+===================================================== */
+
 function obterPortfolio() {
 
     return [
@@ -1229,6 +1292,10 @@ function obterPortfolio() {
 }
 
 
+/* =====================================================
+   OBTER AGENDA
+===================================================== */
+
 function obterAgenda() {
 
     return [
@@ -1237,6 +1304,10 @@ function obterAgenda() {
 
 }
 
+
+/* =====================================================
+   OBTER AVALIAÇÕES
+===================================================== */
 
 function obterAvaliacoes() {
 
@@ -1248,123 +1319,30 @@ function obterAvaliacoes() {
 
 
 /* =====================================================
-   CARREGAMENTOS INDIVIDUAIS
-   ===================================================== */
+   OBTER ID DO PERFIL
+===================================================== */
 
-async function carregarSomentePerfil(
-    id
-) {
+function obterPerfilId() {
 
-    if (!configurarCliente()) {
-
-        throw new Error(
-            "Supabase não está disponível."
-        );
-
-    }
-
-
-    perfilId =
-        id ||
-        obterPerfilIdDaUrl();
-
-
-    if (!perfilId) {
-
-        throw new Error(
-            "Nenhum ID de perfil foi informado."
-        );
-
-    }
-
-
-    perfilId =
-        String(perfilId).trim();
-
-
-    await carregarPerfil();
-
-
-    return {
-
-        perfil,
-
-        tipoPerfil,
-
-        perfilId
-
-    };
-
-}
-
-
-async function carregarSomenteServicos() {
-
-    if (!configurarCliente()) {
-
-        throw new Error(
-            "Supabase não está disponível."
-        );
-
-    }
-
-
-    return carregarServicos();
-
-}
-
-
-async function carregarSomentePortfolio() {
-
-    if (!configurarCliente()) {
-
-        throw new Error(
-            "Supabase não está disponível."
-        );
-
-    }
-
-
-    return carregarPortfolio();
-
-}
-
-
-async function carregarSomenteAgenda() {
-
-    if (!configurarCliente()) {
-
-        throw new Error(
-            "Supabase não está disponível."
-        );
-
-    }
-
-
-    return carregarAgenda();
-
-}
-
-
-async function carregarSomenteAvaliacoes() {
-
-    if (!configurarCliente()) {
-
-        throw new Error(
-            "Supabase não está disponível."
-        );
-
-    }
-
-
-    return carregarAvaliacoes();
+    return perfilId;
 
 }
 
 
 /* =====================================================
-   LIMPAR ESTADO
-   ===================================================== */
+   VERIFICAR CARREGAMENTO
+===================================================== */
+
+function estaCarregado() {
+
+    return carregado;
+
+}
+
+
+/* =====================================================
+   LIMPAR
+===================================================== */
 
 function limpar() {
 
@@ -1393,13 +1371,11 @@ function limpar() {
 
 /* =====================================================
    OBJETO PÚBLICO
-   ===================================================== */
+===================================================== */
 
 const ApresentarPerfilDados = {
 
-    configurarCliente,
-
-    obterPerfilIdDaUrl,
+    carregarTudo,
 
     carregarPerfil,
 
@@ -1415,25 +1391,11 @@ const ApresentarPerfilDados = {
 
     carregarAvaliacoes,
 
-    carregarTudo,
-
-    carregarSomentePerfil,
-
-    carregarSomenteServicos,
-
-    carregarSomentePortfolio,
-
-    carregarSomenteAgenda,
-
-    carregarSomenteAvaliacoes,
-
     obterEstado,
 
-    obterPerfilId,
+    obterPerfil,
 
     obterUsuario,
-
-    obterPerfil,
 
     obterPerfilArtista,
 
@@ -1447,6 +1409,10 @@ const ApresentarPerfilDados = {
 
     obterAvaliacoes,
 
+    obterPerfilId,
+
+    estaCarregado,
+
     limpar
 
 };
@@ -1454,15 +1420,15 @@ const ApresentarPerfilDados = {
 
 /* =====================================================
    DISPONIBILIZAR GLOBALMENTE
-   ===================================================== */
+===================================================== */
 
 window.ApresentarPerfilDados =
     ApresentarPerfilDados;
 
 
 /* =====================================================
-   CONFIRMAÇÃO DE CARREGAMENTO
-   ===================================================== */
+   CONFIRMAÇÃO
+===================================================== */
 
 console.log(
     "ApresentarPerfilDados.js carregado."

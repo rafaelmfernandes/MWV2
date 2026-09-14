@@ -1,0 +1,259 @@
+/* =========================================================
+   MUSICALWORLD / ARTISTASHOW
+   PERFIL PÚBLICO — ESTADOS
+
+   Arquivo:
+   10-apresentar-perfil-estados.css
+
+   Responsabilidade:
+
+   • Controlar estados vazios da página.
+   • Controlar mensagens exibidas quando não existe conteúdo.
+   • Controlar ícones e textos dos estados vazios.
+
+   IMPORTANTE:
+
+   Este arquivo não controla o conteúdo normal das seções.
+   Ele controla somente a apresentação dos estados em que
+   determinado conteúdo ainda não foi cadastrado.
+   ========================================================= */
+
+
+/* =========================================================
+   ESTADO VAZIO DO PORTFÓLIO
+
+   Exibido quando o perfil ainda não possui trabalhos
+   cadastrados no portfólio.
+   ========================================================= */
+
+.portfolio-grid .portfolio-estado-vazio {
+
+    width: 100%;
+
+    box-sizing: border-box;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    margin: 0;
+
+    padding:
+        40px
+        20px;
+
+    text-align: center;
+}
+
+
+/* =========================================================
+   ÍCONE DO ESTADO VAZIO
+   ========================================================= */
+
+.portfolio-grid .portfolio-estado-vazio-icone {
+
+    width: 52px;
+
+    height: 52px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    margin:
+        0
+        0
+        14px;
+
+    border-radius: 16px;
+
+    background: #f1f5f9;
+
+    color: #64748b;
+}
+
+
+/* =========================================================
+   SVG DO ÍCONE
+   ========================================================= */
+
+.portfolio-grid .portfolio-estado-vazio-icone svg {
+
+    width: 24px;
+
+    height: 24px;
+
+    display: block;
+}
+
+
+/* =========================================================
+   TEXTO DO ESTADO VAZIO
+   ========================================================= */
+
+.portfolio-grid .portfolio-estado-vazio p {
+
+    max-width: 320px;
+
+    margin: 0;
+
+    padding: 0;
+
+    color: #64748b;
+
+    font-size: 14px;
+
+    line-height: 1.5;
+
+    text-align: center;
+}
+
+/* =========================================================
+   MUSICALWORLD — APRESENTAR PERFIL
+   TOAST / MENSAGENS TEMPORÁRIAS
+
+   Responsabilidade:
+
+   • Apresentar mensagens temporárias ao usuário.
+   • Controlar entrada e saída visual do toast.
+   ========================================================= */
+
+
+/* =========================================================
+   TOAST
+   ========================================================= */
+
+.toast {
+
+    position: fixed;
+
+    left: 50%;
+
+    bottom: 90px;
+
+    z-index: 500;
+
+    width: max-content;
+
+    max-width: calc(100% - 30px);
+
+    padding:
+        11px
+        15px;
+
+    border-radius: 11px;
+
+    background: #172033;
+
+    color: #ffffff;
+
+    font-size: 12px;
+
+    line-height: 1.4;
+
+    font-weight: 600;
+
+    text-align: center;
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    transform:
+        translate(
+            -50%,
+            18px
+        );
+
+    transition:
+        opacity 0.25s ease,
+        transform 0.25s ease;
+}
+
+
+/* =========================================================
+   TOAST VISÍVEL
+   ========================================================= */
+
+.toast.show {
+
+    opacity: 1;
+
+    transform:
+        translate(
+            -50%,
+            0
+        );
+}
+
+/* =========================================================
+   ESTADO VAZIO — TEXTO INLINE
+   ========================================================= */
+
+.empty-inline {
+    font-size: 12px;
+    line-height: 1.5;
+
+    color: #98a2b3;
+}
+
+
+/* =========================================================
+   ESTADO VAZIO — CARD
+   ========================================================= */
+
+.empty-state {
+    width: 100%;
+
+    min-height: 135px;
+
+    padding: 24px 18px;
+
+    border-radius: 15px;
+
+    background: #fafbfc;
+
+    border: 1px dashed #dce1e8;
+
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+
+    gap: 7px;
+}
+
+.empty-state svg {
+    width: 27px;
+    height: 27px;
+
+    margin-bottom: 3px;
+
+    color: #a1aab8;
+}
+
+.empty-state strong {
+    font-size: 13px;
+    line-height: 1.4;
+
+    color: #667085;
+}
+
+.empty-state span,
+.empty-state p {
+    max-width: 340px;
+
+    font-size: 11px;
+    line-height: 1.55;
+
+    color: #98a2b3;
+}

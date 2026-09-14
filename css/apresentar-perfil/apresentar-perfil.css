@@ -3,13 +3,91 @@
    CSS PRINCIPAL
    ========================================================= */
 
-@import url("./apresentar-perfil-base.css");
-@import url("./apresentar-perfil-header.css");
-@import url("./apresentar-perfil-secoes.css");
-@import url("./apresentar-perfil-info.css");
-@import url("./apresentar-perfil-servicos.css");
-@import url("./apresentar-perfil-portfolio.css");
-@import url("./apresentar-perfil-agenda.css");
-@import url("./apresentar-perfil-avaliacoes.css");
-@import url("./apresentar-perfil-acoes.css");
-@import url("./apresentar-perfil-responsivo.css");
+
+
+/* =========================================================
+   MUSICALWORLD — APRESENTAR PERFIL
+   ARQUIVO AGREGADOR DE CSS
+
+   Este arquivo é o único CSS chamado diretamente pelo HTML.
+
+   Responsabilidade:
+   Carregar todos os módulos CSS da página na ordem correta.
+   ========================================================= */
+
+
+/* =========================================================
+   01. BASE
+   ========================================================= */
+
+@import url("./01-apresentar-perfil-base.css");
+
+
+/* =========================================================
+   02. FUNDO
+   ========================================================= */
+
+@import url("./02-apresentar-perfil-topbar.css");
+
+
+/* =========================================================
+   03. TOPBAR
+   ========================================================= */
+
+@import url("./03-apresentar-perfil-portfolio.css");
+
+
+/* =========================================================
+   04. PORTFÓLIO
+   ========================================================= */
+
+@import url("./04-apresentar-perfil-identidade.css");
+
+
+/* =========================================================
+   05. IDENTIDADE
+   ========================================================= */
+
+@import url("./05-apresentar-perfil-sobre.css");
+
+
+/* =========================================================
+   06. SOBRE
+   ========================================================= */
+
+@import url("./06-apresentar-perfil-experiencia.css");
+
+
+/* =========================================================
+   07. EXPERIÊNCIA PROFISSIONAL
+   ========================================================= */
+
+@import url("./07-apresentar-perfil-servicos.css");
+
+
+/* =========================================================
+   08. SERVIÇOS
+   ========================================================= */
+
+@import url("./08-apresentar-perfil-acoes.css");
+
+
+/* =========================================================
+   09. AÇÕES
+   ========================================================= */
+
+@import url("./09-apresentar-perfil-estados.css");
+
+
+/* =========================================================
+   10. ESTADOS
+   ========================================================= */
+
+@import url("./10-apresentar-perfil-responsivo.css");
+
+
+/* =========================================================
+   11. RESPONSIVIDADE
+   ========================================================= */
+
+@import url("./11-apresentar-perfil-fundo.css");

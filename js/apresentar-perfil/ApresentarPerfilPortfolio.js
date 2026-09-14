@@ -5180,107 +5180,41 @@ return (
 
 }
 
-function reproduzirVideoSePermitido(
-video
-) {
+function reproduzirVideoSePermitido(video) {
+    if (!video) return;
 
+    /*
+     * O navegador pode bloquear autoplay com áudio
+     * quando o usuário ainda não interagiu com a página.
+     *
+     * Não forçamos mute.
+     * Se o navegador permitir, reproduz com áudio.
+     * Se bloquear, simplesmente aguardamos a interação
+     * do usuário.
+     */
 
-if (!video) {
+    video.muted = false;
+    video.defaultMuted = false;
 
-    return;
+    const tentativa = video.play();
 
-}
+    if (tentativa && typeof tentativa.catch === "function") {
+        tentativa.catch((erro) => {
 
-if (
-    videosPausadosPorSwipe ||
-    galeria.arrastando ||
-    galeria.animando
-) {
-
-    return;
-
-}
-
-const card =
-    video.closest(
-        ".portfolio-deck-card"
-    );
-
-if (!card) {
-
-    return;
-
-}
-
-const indice =
-    Number(
-        card.dataset.indice
-    );
-
-if (
-    indice !==
-    galeria.indiceAtual
-) {
-
-    return;
-
-}
-
-if (
-    !estaCompletamenteVisivel(
-        card
-    )
-) {
-
-    return;
-
-}
-
-
-if (
-    !video.paused
-) {
-
-    return;
-
-}
-
-try {
-
-    const promessa =
-        video.play();
-
-    if (
-        promessa &&
-        typeof promessa.catch ===
-        "function"
-    ) {
-
-        promessa.catch(
-
-            function (erro) {
-
-                console.warn(
-                    "ApresentarPerfilPortfolio: autoplay do vídeo foi bloqueado pelo navegador.",
-                    erro
+            if (erro && erro.name === "NotAllowedError") {
+                console.info(
+                    "ApresentarPerfilPortfolio: autoplay aguardando interação do usuário."
                 );
 
+                return;
             }
 
-        );
-
+            console.warn(
+                "ApresentarPerfilPortfolio: não foi possível reproduzir o vídeo.",
+                erro
+            );
+        });
     }
-
-} catch (erro) {
-
-    console.warn(
-        "ApresentarPerfilPortfolio: não foi possível iniciar vídeo.",
-        erro
-    );
-
-}
-
-
 }
 
 function atualizarVideoAtivo() {
