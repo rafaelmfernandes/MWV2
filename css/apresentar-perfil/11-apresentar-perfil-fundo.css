@@ -135,12 +135,15 @@ body {
 .app > .topbar {
     z-index: 100;
 }
-.app > .profile-page,
-.app > .profile-action-bar {
+.app > .profile-page {
     position: relative;
     z-index: 1;
 }
 
+.app > .profile-action-bar {
+    position: fixed;
+    z-index: 100;
+}
 
 /* =========================================================
    5. TOPBAR

@@ -294,7 +294,7 @@
 
     padding: 0;
 
-    border-radius: 14px;
+    border-radius: 17px;
 
     border: 1px solid transparent;
 
@@ -412,9 +412,9 @@
 
     height: 52px;
 
-    background: #1677d2;
+    background: #11181f;
 
-    border-color: #1677d2;
+    border-color: #11181f;
 
     color: #ffffff;
 
@@ -441,9 +441,9 @@
 
 .profile-action-hire:hover {
 
-    background: #1268bc;
+    background: #11181f;
 
-    border-color: #1268bc;
+    border-color: #11181f;
 }
 
 

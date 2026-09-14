@@ -84,7 +84,6 @@
         -webkit-backdrop-filter 0.35s ease;
 }
 
-
 /* =========================================================
    LADOS DA TOPBAR
    ========================================================= */
@@ -257,15 +256,36 @@
    CABEÇALHO DO TÍTULO
    ========================================================= */
 
+/* =========================================================
+   CABEÇALHO DO TÍTULO
+
+   O título fica centralizado no centro real da viewport,
+   independentemente da largura dos elementos laterais.
+   ========================================================= */
+
 .topbar-heading {
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    transform: translate(
+        -50%,
+        -50%
+    );
+
     min-width: 0;
+    max-width: calc(100% - 160px);
 
     display: flex;
     flex-direction: column;
 
-    gap: 2px;
-}
+    align-items: center;
 
+    gap: 2px;
+
+    text-align: center;
+}
 
 /* =========================================================
    BOTÃO — ESTADO ATIVO
