@@ -1,727 +1,810 @@
-/* =========================================================
-MUSICALWORLD — INDEX
-Arquivo: responsividade.css
-
-Responsabilidade:
-
-* Controlar a adaptação visual do index em telas menores.
-* Ajustar cabeçalho, cards, pesquisa e elementos do feed.
-* Garantir boa utilização do espaço em celulares.
-* Respeitar usuários que preferem redução de movimento.
-  ========================================================= */
 
 /* =========================================================
-CELULAR
-========================================================= */
+   MUSICALWORLD — INDEX
+   Arquivo: responsividade.css
+
+   Responsabilidade:
+   Adaptar visualmente o index para telas menores,
+   preservando a estrutura e o posicionamento original
+   do aplicativo.
+
+   Este arquivo não altera o alinhamento global do body.
+   O posicionamento do .app-container continua sendo
+   controlado pelo app.css e pelo base.css.
+   ========================================================= */
+
+
+/* =========================================================
+   CELULAR — ATÉ 600px
+   ========================================================= */
 
 @media (max-width: 600px) {
 
+    /* =====================================================
+       ESTRUTURA DA PÁGINA
+       ===================================================== */
 
-html,
-body {
-    width: 100%;
-    min-height: 100%;
-}
-
-
-body {
-    align-items: flex-start;
-}
-
-
-.app-container {
-    width: 100%;
-
-    height: 100dvh;
-    min-height: 100dvh;
-
-    max-height: none;
-}
-
-
-/* =====================================================
-   CABEÇALHO
-   ===================================================== */
-
-@media (max-width: 600px) {
-
-    .navbar {
-        height: 60px;
-
-        padding: 0 14px;
-
-        gap: 10px;
-
-        background: rgba(255, 255, 255, 0.45) !important;
-
-        backdrop-filter: blur(30px) saturate(180%) !important;
-
-        -webkit-backdrop-filter: blur(30px) saturate(180%) !important;
-
-        border-bottom: 1px solid rgba(255, 255, 255, 0.85) !important;
+    html,
+    body {
+        width: 100%;
+        min-height: 100%;
     }
 
-}
+    /*
+     * O body não recebe align-items aqui.
+     *
+     * O base.css já controla o posicionamento global
+     * através do display:flex e do justify-content:center.
+     */
 
-.navbar-brand-area {
-    min-width: 0;
+    .app-container {
+        width: 100%;
 
-    display: flex;
-    align-items: center;
-}
+        height: 100dvh;
+        min-height: 100dvh;
 
-
-.logo {
-    font-size: 19px;
-
-    letter-spacing: -0.6px;
-}
-
-
-/* =====================================================
-   AÇÕES DO CABEÇALHO
-   ===================================================== */
-
-.navbar-actions {
-    gap: 3px;
-
-    height: 100%;
-
-    flex-shrink: 0;
-}
+        max-height: none;
+    }
 
 
-/* =====================================================
-   BOTÕES DE ÍCONE
-   -----------------------------------------------------
-   Mantemos os botões um pouco maiores no celular para
-   facilitar o toque e preservar a proporção visual
-   dos novos ícones.
-   ===================================================== */
+    /* =====================================================
+       CABEÇALHO
+       ===================================================== */
 
-.nav-icon-btn {
-    width: 42px;
-    height: 42px;
-
-    border-radius: 13px;
-}
-
-
-.top-icon-svg {
-    width: 26px;
-    height: 26px;
-}
-
-
-/* =====================================================
-   BADGES
-   ===================================================== */
-
-.notification-badge {
-    top: 1px;
-    right: -1px;
-
-    min-width: 17px;
-    height: 17px;
-
-    padding: 0 3px;
-
-    font-size: 8px;
-}
-
-
-/* =====================================================
-   USUÁRIO LOGADO
-   ===================================================== */
-
-.cabecalho-logado {
-    position: relative;
-
-    display: flex;
-    align-items: center;
-}
-
-
-.cabecalho-usuario-btn {
-    width: 42px;
-    height: 42px;
-
-    padding: 0;
-
-    gap: 0;
-}
-
-
-.cabecalho-avatar {
-    width: 33px;
-    height: 33px;
-
-    min-width: 33px;
-    min-height: 33px;
-}
-
-
-/*
- * O nome e o tipo de perfil continuam presentes
- * no DOM para o Cabecalho.js, porém ficam
- * visualmente ocultos pelo CSS principal.
- */
-
-.cabecalho-info-usuario {
-    position: absolute;
-}
-
-
-.cabecalho-chevron {
-    display: none;
-}
-
-
-/* =====================================================
-   MENU DA CONTA
-   ===================================================== */
-
-.cabecalho-menu-usuario {
-    position: fixed;
-
-    top: 58px;
-    right: 12px;
-    left: auto;
-
-    width: min(210px, calc(100vw - 24px));
-
-    max-width: calc(100vw - 24px);
-
-    padding: 7px;
-
-    border-radius: 13px;
-}
-
-
-.cabecalho-menu-usuario button {
-    min-height: 42px;
-
-    padding: 0 11px;
-}
-
-
-/* =====================================================
-   ESTADO DESLOGADO
-   ===================================================== */
-
-.cabecalho-btn-entrar {
-    height: 36px;
+ .navbar {
+    height: 60px;
 
     padding: 0 14px;
 
-    border-radius: 9px;
-
-    font-size: 12px;
-}
-
-
-/* =====================================================
-   CARDS
-   ===================================================== */
-
-.ad-card-novo {
-    height: 430px;
-
-    min-height: 430px;
-    max-height: 430px;
-
-    padding: 14px;
-
-    border-radius: 15px;
-}
-
-
-.ad-media-box {
-    height: 220px;
-
-    min-height: 220px;
-    max-height: 220px;
-}
-
-
-.ad-descricao {
-    min-height: 52px;
-    max-height: 52px;
-}
-
-
-.ad-footer {
-    min-height: 37px;
-}
-
-
-/* =====================================================
-   CABEÇALHO DA SEÇÃO PROFISSIONAIS
-   ===================================================== */
-
-.feed-header {
     gap: 10px;
 
-    margin-bottom: 16px;
+    background:
+        linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.68) 0%,
+            rgba(255, 255, 255, 0.48) 100%
+        ) !important;
+
+    -webkit-backdrop-filter:
+        blur(24px)
+        saturate(180%) !important;
+
+    backdrop-filter:
+        blur(24px)
+        saturate(180%) !important;
+
+    border-top:
+        1px solid
+        rgba(255, 255, 255, 0.72) !important;
+
+    border-bottom:
+        1px solid
+        rgba(255, 255, 255, 0.78) !important;
+
+    box-shadow:
+        0 4px 18px rgba(15, 23, 42, 0.07),
+        inset 0 1px 0 rgba(255, 255, 255, 0.72),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.25);
 }
 
+    /* =====================================================
+       ÁREA DA MARCA
+       ===================================================== */
 
-.feed-header-content {
-    min-width: 0;
+    .navbar-brand-area {
+        min-width: 0;
+
+        display: flex;
+
+        align-items: center;
+    }
+
+
+    /* =====================================================
+       LOGO
+       ===================================================== */
+
+    .logo {
+        font-size: 19px;
+
+        letter-spacing: -0.6px;
+    }
+
+
+    /* =====================================================
+       AÇÕES DO CABEÇALHO
+       ===================================================== */
+
+    .navbar-actions {
+        gap: 3px;
+
+        height: 100%;
+
+        flex-shrink: 0;
+    }
+
+
+    /* =====================================================
+       BOTÕES DE ÍCONE
+       ===================================================== */
+
+    .nav-icon-btn {
+        width: 42px;
+
+        height: 42px;
+
+        border-radius: 13px;
+    }
+
+
+    .top-icon-svg {
+        width: 26px;
+
+        height: 26px;
+    }
+
+
+    /* =====================================================
+       BADGES
+       ===================================================== */
+
+    .notification-badge {
+        top: 1px;
+
+        right: -1px;
+
+        min-width: 17px;
+
+        height: 17px;
+
+        padding: 0 3px;
+
+        font-size: 8px;
+    }
+
+
+    /* =====================================================
+       USUÁRIO LOGADO
+       ===================================================== */
+
+    .cabecalho-logado {
+        position: relative;
+
+        display: flex;
+
+        align-items: center;
+    }
+
+
+    .cabecalho-usuario-btn {
+        width: 42px;
+
+        height: 42px;
+
+        padding: 0;
+
+        gap: 0;
+    }
+
+
+    .cabecalho-avatar {
+        width: 33px;
+
+        height: 33px;
+
+        min-width: 33px;
+
+        min-height: 33px;
+    }
+
+
+    /*
+     * O nome e o tipo de perfil continuam presentes
+     * no DOM para compatibilidade com Cabecalho.js.
+     *
+     * A regra principal do cabeçalho já mantém essas
+     * informações visualmente ocultas.
+     */
+
+    .cabecalho-info-usuario {
+        position: absolute;
+    }
+
+
+    .cabecalho-chevron {
+        display: none;
+    }
+
+
+    /* =====================================================
+       MENU DA CONTA
+       ===================================================== */
+
+    .cabecalho-menu-usuario {
+        position: fixed;
+
+        top: 58px;
+
+        right: 12px;
+
+        left: auto;
+
+        width: min(
+            210px,
+            calc(100vw - 24px)
+        );
+
+        max-width: calc(100vw - 24px);
+
+        padding: 7px;
+
+        border-radius: 13px;
+    }
+
+
+    .cabecalho-menu-usuario button {
+        min-height: 42px;
+
+        padding: 0 11px;
+    }
+
+
+    /* =====================================================
+       ESTADO DESLOGADO
+       ===================================================== */
+
+    .cabecalho-btn-entrar {
+        height: 36px;
+
+        padding: 0 14px;
+
+        border-radius: 9px;
+
+        font-size: 12px;
+    }
+
+
+    /* =====================================================
+       CARDS
+       ===================================================== */
+
+    .ad-card-novo {
+        height: 430px;
+
+        min-height: 430px;
+
+        max-height: 430px;
+
+        padding: 14px;
+
+        border-radius: 15px;
+    }
+
+
+    .ad-media-box {
+        height: 220px;
+
+        min-height: 220px;
+
+        max-height: 220px;
+    }
+
+
+    .ad-descricao {
+        min-height: 52px;
+
+        max-height: 52px;
+    }
+
+
+    .ad-footer {
+        min-height: 37px;
+    }
+
+
+    /* =====================================================
+       CABEÇALHO DA SEÇÃO PROFISSIONAIS
+       ===================================================== */
+
+    .feed-header {
+        gap: 10px;
+
+        margin-bottom: 16px;
+    }
+
+
+    .feed-header-content {
+        min-width: 0;
+    }
+
+
+    .feed-header h2 {
+        font-size: 20px;
+    }
+
+
+    .feed-header p {
+        font-size: 12px;
+    }
+
+
+    /* =====================================================
+       BOTÃO DE FILTRO
+       ===================================================== */
+
+    .feed-filtro-btn {
+        width: 38px;
+
+        height: 38px;
+
+        padding: 0;
+
+        gap: 0;
+
+        border-radius: 10px;
+    }
+
+
+    .feed-filtro-btn span {
+        display: none;
+    }
+
+
+    .feed-filtro-btn svg {
+        width: 18px;
+
+        height: 18px;
+    }
+
+
+    /* =====================================================
+       PESQUISA — CELULAR
+       ===================================================== */
+
+    .search-overlay-header {
+        min-height: 54px;
+
+        padding: 7px 11px;
+
+        gap: 8px;
+    }
+
+
+    .search-overlay-input {
+        height: 36px;
+
+        padding-left: 34px;
+
+        font-size: 12px;
+
+        border-radius: 8px;
+    }
+
+
+    .search-overlay-icon {
+        left: 11px;
+
+        width: 15px;
+
+        height: 15px;
+    }
+
+
+    .search-overlay-cancelar {
+        height: 36px;
+
+        font-size: 11px;
+    }
+
+
+    .search-result-item {
+        min-height: 64px;
+
+        padding: 8px 13px;
+
+        gap: 10px;
+    }
+
+
+    .search-result-avatar-wrapper {
+        width: 44px;
+
+        height: 44px;
+
+        min-width: 44px;
+
+        min-height: 44px;
+
+        flex-basis: 44px;
+    }
+
+
+    .search-result-avatar-fallback {
+        font-size: 12px;
+    }
+
+
+    .search-result-name {
+        font-size: 12px;
+
+        margin-bottom: 3px;
+    }
+
+
+    .search-result-location,
+    .search-result-genre {
+        font-size: 9px;
+
+        gap: 4px;
+    }
+
+
+    .search-result-location svg,
+    .search-result-genre svg {
+        width: 11px;
+
+        height: 11px;
+
+        min-width: 11px;
+
+        flex-basis: 11px;
+    }
+
+
+    .search-result-arrow {
+        width: 15px;
+
+        height: 15px;
+
+        min-width: 15px;
+
+        flex-basis: 15px;
+    }
 }
 
-
-.feed-header h2 {
-    font-size: 20px;
-}
-
-
-.feed-header p {
-    font-size: 12px;
-}
-
-
-/* =====================================================
-   BOTÃO DE FILTRO
-   -----------------------------------------------------
-   No celular mostramos somente o ícone para economizar
-   espaço horizontal.
-   ===================================================== */
-
-.feed-filtro-btn {
-    width: 38px;
-    height: 38px;
-
-    padding: 0;
-
-    gap: 0;
-
-    border-radius: 10px;
-}
-
-
-.feed-filtro-btn span {
-    display: none;
-}
-
-
-.feed-filtro-btn svg {
-    width: 18px;
-    height: 18px;
-}
-
-
-/* =====================================================
-   PESQUISA — CELULAR
-   ===================================================== */
-
-.search-overlay-header {
-    min-height: 54px;
-
-    padding: 7px 11px;
-
-    gap: 8px;
-}
-
-
-.search-overlay-input {
-    height: 36px;
-
-    padding-left: 34px;
-
-    font-size: 12px;
-
-    border-radius: 8px;
-}
-
-
-.search-overlay-icon {
-    left: 11px;
-
-    width: 15px;
-    height: 15px;
-}
-
-
-.search-overlay-cancelar {
-    height: 36px;
-
-    font-size: 11px;
-}
-
-
-.search-result-item {
-    min-height: 64px;
-
-    padding: 8px 13px;
-
-    gap: 10px;
-}
-
-
-.search-result-avatar-wrapper {
-    width: 44px;
-    height: 44px;
-
-    min-width: 44px;
-    min-height: 44px;
-
-    flex-basis: 44px;
-}
-
-
-.search-result-avatar-fallback {
-    font-size: 12px;
-}
-
-
-.search-result-name {
-    font-size: 12px;
-
-    margin-bottom: 3px;
-}
-
-
-.search-result-location,
-.search-result-genre {
-    font-size: 9px;
-
-    gap: 4px;
-}
-
-
-.search-result-location svg,
-.search-result-genre svg {
-    width: 11px;
-    height: 11px;
-
-    min-width: 11px;
-
-    flex-basis: 11px;
-}
-
-
-.search-result-arrow {
-    width: 15px;
-    height: 15px;
-
-    min-width: 15px;
-
-    flex-basis: 15px;
-}
-
-
-}
 
 /* =========================================================
-TELAS MUITO PEQUENAS
-========================================================= */
+   TELAS MUITO PEQUENAS — ATÉ 380px
+   ========================================================= */
 
 @media (max-width: 380px) {
 
-
+    /* =====================================================
+       CABEÇALHO
+       ===================================================== */
 
     .navbar {
         height: 58px;
 
         padding-left: 10px;
+
         padding-right: 10px;
 
         gap: 6px;
 
         background: rgba(255, 255, 255, 0.45) !important;
 
-        backdrop-filter: blur(30px) saturate(180%) !important;
+        backdrop-filter:
+            blur(30px)
+            saturate(180%) !important;
 
-        -webkit-backdrop-filter: blur(30px) saturate(180%) !important;
+        -webkit-backdrop-filter:
+            blur(30px)
+            saturate(180%) !important;
 
-        border-bottom: 1px solid rgba(255, 255, 255, 0.85) !important;
-    
-
+        border-bottom:
+            1px solid
+            rgba(255, 255, 255, 0.85) !important;
     }
 
-.logo {
-    font-size: 18px;
 
-    letter-spacing: -0.5px;
+    /* =====================================================
+       LOGO
+       ===================================================== */
+
+    .logo {
+        font-size: 18px;
+
+        letter-spacing: -0.5px;
+    }
+
+
+    /* =====================================================
+       AÇÕES DO CABEÇALHO
+       ===================================================== */
+
+    .navbar-actions {
+        gap: 2px;
+    }
+
+
+    /* =====================================================
+       BOTÕES DO CABEÇALHO
+       ===================================================== */
+
+    .nav-icon-btn {
+        width: 39px;
+
+        height: 39px;
+
+        border-radius: 12px;
+    }
+
+
+    .top-icon-svg {
+        width: 26px;
+
+        height: 26px;
+    }
+
+
+    .cabecalho-usuario-btn {
+        width: 39px;
+
+        height: 39px;
+    }
+
+
+    .cabecalho-avatar {
+        width: 30px;
+
+        height: 30px;
+
+        min-width: 30px;
+
+        min-height: 30px;
+    }
+
+
+    /* =====================================================
+       BADGES
+       ===================================================== */
+
+    .notification-badge {
+        top: 1px;
+
+        right: -1px;
+
+        min-width: 16px;
+
+        height: 16px;
+
+        font-size: 7px;
+
+        border-width: 1.5px;
+    }
+
+
+    /* =====================================================
+       ESTADO DESLOGADO
+       ===================================================== */
+
+    .cabecalho-btn-entrar {
+        height: 34px;
+
+        padding: 0 11px;
+
+        font-size: 11px;
+    }
+
+
+    /* =====================================================
+       MENU DA CONTA
+       ===================================================== */
+
+    .cabecalho-menu-usuario {
+        top: 56px;
+
+        right: 10px;
+
+        width: 180px;
+
+        max-width: calc(100vw - 20px);
+    }
+
+
+    /* =====================================================
+       CARDS
+       ===================================================== */
+
+    .ad-card-novo {
+        height: 420px;
+
+        min-height: 420px;
+
+        max-height: 420px;
+
+        padding: 13px;
+    }
+
+
+    .ad-media-box {
+        height: 200px;
+
+        min-height: 200px;
+
+        max-height: 200px;
+    }
+
+
+    .ad-descricao {
+        min-height: 52px;
+
+        max-height: 52px;
+    }
+
+
+    .btn-detalhes {
+        padding: 8px 12px;
+    }
+
+
+    /* =====================================================
+       AVISO DO FEED
+       ===================================================== */
+
+    .feed-aviso {
+        min-height: 48px;
+
+        gap: 8px;
+
+        padding: 8px;
+
+        margin-bottom: 12px;
+    }
+
+
+    .feed-aviso-icone {
+        width: 27px;
+
+        height: 27px;
+
+        min-width: 27px;
+    }
+
+
+    .feed-aviso-icone svg {
+        width: 16px;
+
+        height: 16px;
+    }
+
+
+    .feed-aviso-conteudo strong {
+        font-size: 11.5px;
+    }
+
+
+    .feed-aviso-conteudo span {
+        font-size: 10px;
+    }
+
+
+    .feed-aviso-fechar {
+        width: 26px;
+
+        height: 26px;
+
+        min-width: 26px;
+    }
+
+
+    /* =====================================================
+       CABEÇALHO DA SEÇÃO
+       ===================================================== */
+
+    .feed-header {
+        gap: 8px;
+
+        margin-bottom: 14px;
+    }
+
+
+    .feed-header h2 {
+        font-size: 18px;
+    }
+
+
+    .feed-header p {
+        font-size: 11px;
+    }
+
+
+    /* =====================================================
+       FILTRO
+       ===================================================== */
+
+    .feed-filtro-btn {
+        width: 36px;
+
+        height: 36px;
+
+        min-width: 36px;
+
+        border-radius: 9px;
+    }
+
+
+    .feed-filtro-btn svg {
+        width: 17px;
+
+        height: 17px;
+    }
+
+
+    /* =====================================================
+       PESQUISA — TELA MUITO PEQUENA
+       ===================================================== */
+
+    .search-overlay-header {
+        padding-left: 9px;
+
+        padding-right: 9px;
+    }
+
+
+    .search-result-item {
+        padding-left: 10px;
+
+        padding-right: 10px;
+    }
+
+
+    .search-result-avatar-wrapper {
+        width: 42px;
+
+        height: 42px;
+
+        min-width: 42px;
+
+        min-height: 42px;
+
+        flex-basis: 42px;
+    }
+
+
+    .search-result-name {
+        font-size: 11px;
+    }
+
+
+    .search-result-location,
+    .search-result-genre {
+        font-size: 8px;
+    }
+
+
+    .search-overlay-cancelar {
+        font-size: 10px;
+    }
 }
 
-
-.navbar-actions {
-    gap: 2px;
-}
-
-
-/* =====================================================
-   BOTÕES DO CABEÇALHO
-   ===================================================== */
-
-.nav-icon-btn {
-    width: 39px;
-    height: 39px;
-
-    border-radius: 12px;
-}
-
-
-.top-icon-svg {
-    width: 26px;
-    height: 26px;
-}
-
-
-.cabecalho-usuario-btn {
-    width: 39px;
-    height: 39px;
-}
-
-
-.cabecalho-avatar {
-    width: 30px;
-    height: 30px;
-
-    min-width: 30px;
-    min-height: 30px;
-}
-
-
-/* =====================================================
-   BADGES
-   ===================================================== */
-
-.notification-badge {
-    top: 1px;
-    right: -1px;
-
-    min-width: 16px;
-    height: 16px;
-
-    font-size: 7px;
-
-    border-width: 1.5px;
-}
-
-
-/* =====================================================
-   ESTADO DESLOGADO
-   ===================================================== */
-
-.cabecalho-btn-entrar {
-    height: 34px;
-
-    padding: 0 11px;
-
-    font-size: 11px;
-}
-
-
-/* =====================================================
-   MENU DA CONTA
-   ===================================================== */
-
-.cabecalho-menu-usuario {
-    top: 56px;
-    right: 10px;
-
-    width: 180px;
-
-    max-width: calc(100vw - 20px);
-}
-
-
-/* =====================================================
-   CARDS
-   ===================================================== */
-
-.ad-card-novo {
-    height: 420px;
-
-    min-height: 420px;
-    max-height: 420px;
-
-    padding: 13px;
-}
-
-
-.ad-media-box {
-    height: 200px;
-
-    min-height: 200px;
-    max-height: 200px;
-}
-
-
-.ad-descricao {
-    min-height: 52px;
-    max-height: 52px;
-}
-
-
-.btn-detalhes {
-    padding: 8px 12px;
-}
-
-
-/* =====================================================
-   AVISO DO FEED
-   ===================================================== */
-
-.feed-aviso {
-    min-height: 48px;
-
-    gap: 8px;
-
-    padding: 8px;
-
-    margin-bottom: 12px;
-}
-
-
-.feed-aviso-icone {
-    width: 27px;
-    height: 27px;
-
-    min-width: 27px;
-}
-
-
-.feed-aviso-icone svg {
-    width: 16px;
-    height: 16px;
-}
-
-
-.feed-aviso-conteudo strong {
-    font-size: 11.5px;
-}
-
-
-.feed-aviso-conteudo span {
-    font-size: 10px;
-}
-
-
-.feed-aviso-fechar {
-    width: 26px;
-    height: 26px;
-
-    min-width: 26px;
-}
-
-
-/* =====================================================
-   CABEÇALHO DA SEÇÃO
-   ===================================================== */
-
-.feed-header {
-    gap: 8px;
-
-    margin-bottom: 14px;
-}
-
-
-.feed-header h2 {
-    font-size: 18px;
-}
-
-
-.feed-header p {
-    font-size: 11px;
-}
-
-
-/* =====================================================
-   FILTRO
-   ===================================================== */
-
-.feed-filtro-btn {
-    width: 36px;
-    height: 36px;
-
-    min-width: 36px;
-
-    border-radius: 9px;
-}
-
-
-.feed-filtro-btn svg {
-    width: 17px;
-    height: 17px;
-}
-
-
-/* =====================================================
-   PESQUISA — TELA MUITO PEQUENA
-   ===================================================== */
-
-.search-overlay-header {
-    padding-left: 9px;
-    padding-right: 9px;
-}
-
-
-.search-result-item {
-    padding-left: 10px;
-    padding-right: 10px;
-}
-
-
-.search-result-avatar-wrapper {
-    width: 42px;
-    height: 42px;
-
-    min-width: 42px;
-    min-height: 42px;
-
-    flex-basis: 42px;
-}
-
-
-.search-result-name {
-    font-size: 11px;
-}
-
-
-.search-result-location,
-.search-result-genre {
-    font-size: 8px;
-}
-
-
-.search-overlay-cancelar {
-    font-size: 10px;
-}
-
-
-}
 
 /* =========================================================
-REDUÇÃO DE MOVIMENTO
-========================================================= */
+   REDUÇÃO DE MOVIMENTO
+   ========================================================= */
 
 @media (prefers-reduced-motion: reduce) {
 
+    .navbar,
+    .nav-icon-btn,
+    .cabecalho-usuario-btn,
+    .cabecalho-btn-entrar,
+    .cabecalho-menu-usuario,
+    .cabecalho-menu-usuario button,
+    .feed-filtro-btn,
+    .search-overlay,
+    .search-overlay-input,
+    .search-result-item,
+    .search-result-arrow,
+    .search-overlay-cancelar {
+        transition: none;
+    }
 
-.navbar,
-.nav-icon-btn,
-.cabecalho-usuario-btn,
-.cabecalho-btn-entrar,
-.cabecalho-menu-usuario,
-.cabecalho-menu-usuario button,
-.feed-filtro-btn,
-.search-overlay,
-.search-overlay-input,
-.search-result-item,
-.search-result-arrow,
-.search-overlay-cancelar {
-    transition: none;
+
+    .search-loading-spinner,
+    .cabecalho-usuario-loading span {
+        animation: none;
+    }
 }
 
-
-.search-loading-spinner,
-.cabecalho-usuario-loading span {
-    animation: none;
-}
-
-
-}

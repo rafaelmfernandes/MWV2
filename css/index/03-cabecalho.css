@@ -1,124 +1,148 @@
 /* =========================================================
-MUSICALWORLD — CABEÇALHO
-Arquivo: 02-cabecalho.css
+MUSICALWORLD — CABEÇALHO PRINCIPAL
+Arquivo: 03-cabecalho.css
 
 Responsabilidade:
 
-* Estilizar o cabeçalho principal.
-* Organizar marca, notificações, mensagens e usuário.
-* Controlar o menu da conta.
+* Estilizar o cabeçalho principal do MusicalWorld.
+* Exibir a identidade visual da aplicação.
+* Organizar notificações, mensagens e usuário.
+* Controlar visualmente o menu da conta.
+* Manter compatibilidade com Cabecalho.js.
+* Aplicar o efeito de vidro/transparência ao cabeçalho.
 * Manter o cabeçalho compacto e responsivo.
-* Garantir ícones maiores, suaves e visualmente equilibrados.
-* Aplicar efeito de vidro/transparência ao cabeçalho.
-  ========================================================= */
 
+Compatibilidade com o HTML:
+
+* .navbar
+* .navbar-brand-area
+* .logo
+* .navbar-actions
+* .cabecalho-usuario-estado
+* .cabecalho-btn-entrar
+* .nav-icon-btn
+* .top-icon-svg
+* .notification-badge
+* .cabecalho-logado
+* .cabecalho-usuario-btn
+* .cabecalho-avatar
+* .cabecalho-avatar-letras
+* .cabecalho-info-usuario
+* .cabecalho-chevron
+* .cabecalho-menu-usuario
+* .cabecalho-usuario-loading
+
+IMPORTANTE:
+Este arquivo não altera o posicionamento global do body
+nem do .app-container.
+========================================================= */
 
 /* =========================================================
-   CABEÇALHO PRINCIPAL — EFEITO DE VIDRO
-   ========================================================= */
+CABEÇALHO PRINCIPAL
+========================================================= */
 
 .navbar {
-    position: sticky;
-    top: 0;
-    z-index: 1000;
 
-    width: 100%;
-    height: 64px;
 
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+position: sticky;
+top: 0;
+z-index: 1000;
 
-    padding: 0 24px;
+width: 100%;
+height: 64px;
 
-    /*
-     * Fundo translúcido.
-     *
-     * A transparência permite que o conteúdo e as
-     * variações do fundo apareçam suavemente através
-     * do cabeçalho.
-     */
-    background: rgba(255, 255, 255, 0.58);
+display: flex;
+align-items: center;
+justify-content: space-between;
 
-    /*
-     * Desfoque do conteúdo que está atrás do cabeçalho.
-     */
-    -webkit-backdrop-filter: blur(24px) saturate(160%);
-    backdrop-filter: blur(24px) saturate(160%);
+padding: 0 20px;
 
-    /*
-     * Borda extremamente suave para definir
-     * o limite do vidro.
-     */
-    border-bottom: 1px solid rgba(255, 255, 255, 0.72);
+/*
+ * O fundo principal fica transparente.
+ * O efeito visual do vidro é criado pela camada ::before.
+ */
+background: transparent;
 
-    /*
-     * Sombra muito discreta.
-     */
-    box-shadow:
-        0 4px 18px rgba(15, 23, 42, 0.06),
-        inset 0 -1px 0 rgba(255, 255, 255, 0.35);
+/*
+ * A camada interna do vidro precisa poder ocupar
+ * toda a área do cabeçalho sem interferir nos botões.
+ */
+isolation: isolate;
 
-    box-sizing: border-box;
+box-sizing: border-box;
 
-    /*
-     * Permite que o backdrop-filter seja renderizado
-     * dentro do próprio contexto do cabeçalho.
-     */
-    isolation: isolate;
+/*
+ * Pequena sombra externa para separar o cabeçalho
+ * do conteúdo abaixo.
+ */
+box-shadow:
+    0 5px 18px rgba(15, 23, 42, 0.07);
 
-    /*
-     * Mantém a transição suave caso a interface
-     * altere alguma propriedade visual.
-     */
-    transition:
-        background 0.25s ease,
-        box-shadow 0.25s ease,
-        border-color 0.25s ease;
+transition:
+    box-shadow 0.25s ease;
+
+
 }
 
-
 /* =========================================================
-   CAMADA DE VIDRO DO CABEÇALHO
-   ========================================================= */
+CAMADA DE VIDRO
+========================================================= */
 
 .navbar::before {
-    content: "";
 
-    position: absolute;
 
-    inset: 0;
+content: "";
 
-    z-index: -1;
+position: absolute;
 
-    /*
-     * Branco translúcido.
-     */
-    background:
-        linear-gradient(
-            180deg,
-            rgba(255, 255, 255, 0.78) 0%,
-            rgba(255, 255, 255, 0.58) 100%
-        );
+inset: 0;
 
-    /*
-     * Aqui acontece o efeito de vidro embaçado.
-     */
-    backdrop-filter:
-        blur(24px)
-        saturate(150%);
+z-index: -1;
 
-    -webkit-backdrop-filter:
-        blur(24px)
-        saturate(150%);
+/*
+ * Transparência suficiente para permitir que o
+ * conteúdo existente atrás do cabeçalho participe
+ * visualmente do efeito.
+ */
+background:
+    linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.76) 0%,
+        rgba(255, 255, 255, 0.58) 100%
+    );
 
-    /*
-     * Brilho interno semelhante ao vidro.
-     */
-    box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.80);
+/*
+ * Desfoque do conteúdo localizado atrás do cabeçalho.
+ */
+backdrop-filter:
+    blur(24px)
+    saturate(175%);
 
-    pointer-events: none;
+-webkit-backdrop-filter:
+    blur(24px)
+    saturate(175%);
+
+/*
+ * Borda suave característica do vidro.
+ */
+border-top:
+    1px solid rgba(255, 255, 255, 0.90);
+
+border-bottom:
+    1px solid rgba(255, 255, 255, 0.82);
+
+/*
+ * Reflexo interno na parte superior e inferior.
+ */
+box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.92),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.38);
+
+pointer-events: none;
+
+box-sizing: border-box;
+
+
 }
 
 /* =========================================================
@@ -126,12 +150,15 @@ Responsabilidade:
 ========================================================= */
 
 .navbar-brand-area {
-display: flex;
 
-
-align-items: center;
 
 min-width: 0;
+
+display: flex;
+align-items: center;
+
+position: relative;
+z-index: 1;
 
 
 }
@@ -141,20 +168,32 @@ LOGO
 ========================================================= */
 
 .logo {
+
+
 display: inline-flex;
-
-
 align-items: center;
 
-font-size: 21px;
+margin: 0;
+padding: 0;
 
+color: #172033;
+
+font-family:
+    Manrope,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif;
+
+font-size: 21px;
 font-weight: 800;
 
 line-height: 1;
 
 letter-spacing: -0.7px;
-
-color: #172033;
 
 white-space: nowrap;
 
@@ -163,8 +202,14 @@ user-select: none;
 
 }
 
+/* Parte "World" do logo */
+
 .logo span {
+
+
 color: #1677d2;
+
+
 }
 
 /* =========================================================
@@ -172,140 +217,19 @@ color: #1677d2;
 ========================================================= */
 
 .navbar-actions {
-display: flex;
 
-
-align-items: center;
-
-gap: 7px;
 
 height: 100%;
 
-
-}
-
-/* =========================================================
-BOTÕES DE ÍCONE
-========================================================= */
-
-.nav-icon-btn {
-position: relative;
-
-
-width: 44px;
-
-height: 44px;
-
-display: inline-flex;
-
+display: flex;
 align-items: center;
 
-justify-content: center;
-
-padding: 0;
-
-border: 0;
-
-border-radius: 14px;
-
-background: transparent;
-
-color: #526078;
-
-cursor: pointer;
-
-transition:
-    background-color 0.2s ease,
-    color 0.2s ease,
-    transform 0.15s ease;
-
-box-sizing: border-box;
-
-
-}
-
-.nav-icon-btn:hover {
- background: rgba(243, 246, 250, 0.72);
-
-
-color: #172033;
-
-
-}
-
-.nav-icon-btn:active {
-transform: scale(0.94);
-}
-
-.nav-icon-btn:focus-visible {
-outline: 3px solid rgba(22, 119, 210, 0.18);
-
-
-outline-offset: 2px;
-
-
-}
-
-/* =========================================================
-ÍCONES SVG
-========================================================= */
-
-.top-icon-svg {
-width: 26px;
-
-
-height: 26px;
-
-display: block;
+gap: 5px;
 
 flex-shrink: 0;
 
-stroke-linecap: round;
-
-stroke-linejoin: round;
-
-
-}
-
-/* =========================================================
-BADGE DE NOTIFICAÇÃO
-========================================================= */
-
-.notification-badge {
-position: absolute;
-
-
-top: 2px;
-
-right: 0;
-
-min-width: 18px;
-
-height: 18px;
-
-padding: 0 4px;
-
-display: flex;
-
-align-items: center;
-
-justify-content: center;
-
-border-radius: 999px;
-
-background: #e53935;
-
-color: #ffffff;
-
-font-size: 9px;
-
-font-weight: 800;
-
-line-height: 1;
-
-border: 2px solid #ffffff;
-
-box-sizing: border-box;
+position: relative;
+z-index: 1;
 
 
 }
@@ -315,60 +239,228 @@ ESTADO DESLOGADO
 ========================================================= */
 
 .cabecalho-usuario-estado {
+
+
 display: flex;
-
-
 align-items: center;
 
 
 }
 
+/* =========================================================
+BOTÃO "ENTRAR"
+========================================================= */
+
 .cabecalho-btn-entrar {
+
+
 height: 38px;
 
+display: inline-flex;
+align-items: center;
+justify-content: center;
 
-padding: 0 17px;
+padding: 0 16px;
 
-border: 1px solid #dce3ec;
+border:
+    1px solid rgba(203, 213, 225, 0.82);
 
-border-radius: 10px;
+border-radius: 11px;
 
-background: rgba(255, 255, 255, 0.78);
+background:
+    rgba(255, 255, 255, 0.62);
 
 color: #172033;
 
 font-family: inherit;
 
 font-size: 13px;
-
 font-weight: 700;
+
+line-height: 1;
 
 cursor: pointer;
 
-transition:
-    background-color 0.2s ease,
-    border-color 0.2s ease,
-    color 0.2s ease;
-
 box-sizing: border-box;
+
+backdrop-filter: blur(10px);
+-webkit-backdrop-filter: blur(10px);
+
+transition:
+    background-color 0.20s ease,
+    border-color 0.20s ease,
+    color 0.20s ease,
+    transform 0.15s ease;
 
 
 }
 
 .cabecalho-btn-entrar:hover {
-background: rgba(245, 248, 252, 0.90);
 
 
-border-color: #cbd5e1;
+background:
+    rgba(255, 255, 255, 0.84);
+
+border-color:
+    rgba(148, 163, 184, 0.72);
+
+color: #0f172a;
+
+
+}
+
+.cabecalho-btn-entrar:active {
+
+
+transform: scale(0.96);
 
 
 }
 
 .cabecalho-btn-entrar:focus-visible {
-outline: 3px solid rgba(22, 119, 210, 0.18);
 
+
+outline:
+    3px solid rgba(22, 119, 210, 0.18);
 
 outline-offset: 2px;
+
+
+}
+
+/* =========================================================
+BOTÕES DE NOTIFICAÇÕES E MENSAGENS
+========================================================= */
+
+.nav-icon-btn {
+
+
+position: relative;
+
+width: 44px;
+height: 44px;
+
+display: inline-flex;
+align-items: center;
+justify-content: center;
+
+padding: 0;
+
+border: 0;
+
+border-radius: 14px;
+
+background:
+    rgba(255, 255, 255, 0.20);
+
+color: #526078;
+
+cursor: pointer;
+
+appearance: none;
+-webkit-appearance: none;
+
+box-sizing: border-box;
+
+transition:
+    background-color 0.20s ease,
+    color 0.20s ease,
+    transform 0.15s ease;
+
+
+}
+
+.nav-icon-btn:hover {
+
+
+background:
+    rgba(255, 255, 255, 0.68);
+
+color: #172033;
+
+
+}
+
+.nav-icon-btn:active {
+
+
+transform: scale(0.93);
+
+
+}
+
+.nav-icon-btn:focus-visible {
+
+
+outline:
+    3px solid rgba(22, 119, 210, 0.18);
+
+outline-offset: 2px;
+
+
+}
+
+/* =========================================================
+ÍCONES SUPERIORES
+========================================================= */
+
+.top-icon-svg {
+
+
+width: 26px;
+height: 26px;
+
+display: block;
+
+flex-shrink: 0;
+
+stroke-linecap: round;
+stroke-linejoin: round;
+
+
+}
+
+/* =========================================================
+BADGES DE NOTIFICAÇÕES E MENSAGENS
+========================================================= */
+
+.notification-badge {
+
+
+position: absolute;
+
+top: 2px;
+right: 0;
+
+min-width: 18px;
+height: 18px;
+
+display: flex;
+align-items: center;
+justify-content: center;
+
+padding: 0 4px;
+
+border:
+    2px solid rgba(255, 255, 255, 0.90);
+
+border-radius: 999px;
+
+background: #e53935;
+
+color: #ffffff;
+
+font-family: inherit;
+
+font-size: 9px;
+font-weight: 800;
+
+line-height: 1;
+
+box-sizing: border-box;
+
+box-shadow:
+    0 2px 5px rgba(15, 23, 42, 0.12);
 
 
 }
@@ -378,11 +470,11 @@ USUÁRIO LOGADO
 ========================================================= */
 
 .cabecalho-logado {
+
+
 position: relative;
 
-
 display: flex;
-
 align-items: center;
 
 
@@ -393,17 +485,15 @@ BOTÃO DO USUÁRIO
 ========================================================= */
 
 .cabecalho-usuario-btn {
+
+
 position: relative;
 
-
 width: 44px;
-
 height: 44px;
 
 display: flex;
-
 align-items: center;
-
 justify-content: center;
 
 padding: 0;
@@ -412,30 +502,45 @@ border: 0;
 
 border-radius: 14px;
 
-background: transparent;
+background:
+    rgba(255, 255, 255, 0.20);
 
 cursor: pointer;
 
-transition:
-    background-color 0.2s ease,
-    transform 0.15s ease;
+appearance: none;
+-webkit-appearance: none;
 
 box-sizing: border-box;
+
+transition:
+    background-color 0.20s ease,
+    transform 0.15s ease;
 
 
 }
 
 .cabecalho-usuario-btn:hover {
-background: rgba(243, 246, 250, 0.72);
+
+
+background:
+    rgba(255, 255, 255, 0.68);
+
+
 }
 
 .cabecalho-usuario-btn:active {
-transform: scale(0.94);
+
+
+transform: scale(0.93);
+
+
 }
 
 .cabecalho-usuario-btn:focus-visible {
-outline: 3px solid rgba(22, 119, 210, 0.18);
 
+
+outline:
+    3px solid rgba(22, 119, 210, 0.18);
 
 outline-offset: 2px;
 
@@ -447,38 +552,49 @@ AVATAR
 ========================================================= */
 
 .cabecalho-avatar {
+
+
 width: 35px;
-
-
 height: 35px;
 
+min-width: 35px;
+min-height: 35px;
+
 display: flex;
-
 align-items: center;
-
 justify-content: center;
 
 overflow: hidden;
 
+border:
+    2px solid rgba(255, 255, 255, 0.90);
+
 border-radius: 50%;
 
-background: #edf3ff;
+background:
+    linear-gradient(
+        135deg,
+        #edf3ff,
+        #e1ebff
+    );
 
 color: #1677d2;
 
 font-size: 12px;
-
 font-weight: 800;
 
 flex-shrink: 0;
+
+box-shadow:
+    0 2px 8px rgba(15, 23, 42, 0.10);
 
 
 }
 
 .cabecalho-avatar img {
+
+
 width: 100%;
-
-
 height: 100%;
 
 display: block;
@@ -488,44 +604,50 @@ object-fit: cover;
 
 }
 
+/*
+
+* O Cabecalho.js utiliza este elemento para exibir
+* as iniciais do usuário quando não existe foto.
+  */
+
 #cabecalho-avatar-letras {
-display: flex;
 
-
-align-items: center;
-
-justify-content: center;
 
 width: 100%;
-
 height: 100%;
+
+display: flex;
+align-items: center;
+justify-content: center;
 
 
 }
 
 /* =========================================================
 INFORMAÇÕES DO USUÁRIO
+======================
 
-Mantidas no DOM para compatibilidade com Cabecalho.js,
-mas não ocupam espaço visual no novo cabeçalho.
+O nome e o tipo continuam no DOM porque o Cabecalho.js
+utiliza esses elementos.
+
+Visualmente eles ficam ocultos porque o novo cabeçalho
+utiliza apenas o avatar.
 ========================================================= */
 
 .cabecalho-info-usuario {
+
+
 position: absolute;
 
-
 width: 1px;
-
 height: 1px;
 
 padding: 0;
-
 margin: -1px;
 
 overflow: hidden;
 
 clip: rect(0, 0, 0, 0);
-
 clip-path: inset(50%);
 
 white-space: nowrap;
@@ -540,7 +662,11 @@ CHEVRON
 ========================================================= */
 
 .cabecalho-chevron {
+
+
 display: none;
+
+
 }
 
 /* =========================================================
@@ -548,34 +674,36 @@ MENU DA CONTA
 ========================================================= */
 
 .cabecalho-menu-usuario {
+
+
 position: absolute;
 
-
 top: calc(100% + 10px);
-
 right: 0;
 
 width: 210px;
 
 padding: 7px;
 
-/*
- * O menu da conta permanece mais sólido
- * para garantir boa leitura das opções.
- */
-background: rgba(255, 255, 255, 0.94);
-
-border: 1px solid rgba(229, 234, 240, 0.90);
+border:
+    1px solid rgba(226, 232, 240, 0.82);
 
 border-radius: 14px;
 
+background:
+    rgba(255, 255, 255, 0.78);
+
 box-shadow:
-    0 14px 35px rgba(15, 23, 42, 0.12),
-    0 3px 8px rgba(15, 23, 42, 0.05);
+    0 18px 40px rgba(15, 23, 42, 0.13),
+    0 4px 10px rgba(15, 23, 42, 0.05);
 
-backdrop-filter: blur(18px);
+backdrop-filter:
+    blur(24px)
+    saturate(160%);
 
--webkit-backdrop-filter: blur(18px);
+-webkit-backdrop-filter:
+    blur(24px)
+    saturate(160%);
 
 overflow: hidden;
 
@@ -584,14 +712,17 @@ box-sizing: border-box;
 
 }
 
+/* =========================================================
+BOTÕES DO MENU DA CONTA
+========================================================= */
+
 .cabecalho-menu-usuario button {
+
+
 width: 100%;
-
-
 min-height: 42px;
 
 display: flex;
-
 align-items: center;
 
 gap: 11px;
@@ -609,25 +740,31 @@ color: #344054;
 font-family: inherit;
 
 font-size: 13px;
-
 font-weight: 600;
+
+line-height: 1;
 
 text-align: left;
 
 cursor: pointer;
 
-transition:
-    background-color 0.2s ease,
-    color 0.2s ease;
+appearance: none;
+-webkit-appearance: none;
 
 box-sizing: border-box;
+
+transition:
+    background-color 0.20s ease,
+    color 0.20s ease;
 
 
 }
 
 .cabecalho-menu-usuario button:hover {
-background: rgba(244, 247, 251, 0.82);
 
+
+background:
+    rgba(244, 247, 251, 0.82);
 
 color: #172033;
 
@@ -635,18 +772,22 @@ color: #172033;
 }
 
 .cabecalho-menu-usuario button:focus-visible {
-outline: 2px solid rgba(22, 119, 210, 0.25);
 
+
+outline:
+    2px solid rgba(22, 119, 210, 0.25);
 
 outline-offset: -2px;
 
 
 }
 
+/* Ícones do menu */
+
 .cabecalho-menu-usuario button svg {
+
+
 width: 18px;
-
-
 height: 18px;
 
 flex-shrink: 0;
@@ -656,13 +797,23 @@ color: #667085;
 
 }
 
+/* =========================================================
+BOTÃO SAIR
+========================================================= */
+
 .cabecalho-menu-usuario button:last-child {
+
+
 color: #b42318;
+
+
 }
 
 .cabecalho-menu-usuario button:last-child:hover {
-background: rgba(255, 244, 242, 0.90);
 
+
+background:
+    rgba(255, 244, 242, 0.90);
 
 color: #b42318;
 
@@ -670,43 +821,54 @@ color: #b42318;
 }
 
 .cabecalho-menu-usuario button:last-child svg {
+
+
 color: currentColor;
+
+
 }
 
 /* =========================================================
-CARREGAMENTO
+CARREGAMENTO DO USUÁRIO
 ========================================================= */
 
 .cabecalho-usuario-loading {
+
+
 width: 44px;
-
-
 height: 44px;
 
 display: flex;
-
 align-items: center;
-
 justify-content: center;
+
+flex-shrink: 0;
 
 
 }
 
+/* =========================================================
+SPINNER
+========================================================= */
+
 .cabecalho-usuario-loading span {
-width: 30px;
 
 
-height: 30px;
+width: 28px;
+height: 28px;
 
 display: block;
 
-border: 3px solid #e8edf3;
+border:
+    3px solid rgba(226, 232, 240, 0.80);
 
-border-top-color: #1677d2;
+border-top-color:
+    #1677d2;
 
 border-radius: 50%;
 
-animation: cabecalho-spinner 0.8s linear infinite;
+animation:
+    cabecalho-spinner 0.8s linear infinite;
 
 
 }
@@ -726,15 +888,253 @@ to {
 }
 
 /* =========================================================
-ACESSIBILIDADE
+RESPONSIVIDADE — TELAS PEQUENAS
+========================================================= */
+
+@media (max-width: 600px) {
+
+
+.navbar {
+
+    height: 60px;
+
+    padding:
+        0 14px;
+}
+
+
+.logo {
+
+    font-size: 19px;
+
+    letter-spacing: -0.6px;
+}
+
+
+.navbar-actions {
+
+    gap: 2px;
+}
+
+
+.nav-icon-btn {
+
+    width: 42px;
+    height: 42px;
+
+    border-radius: 13px;
+}
+
+
+.top-icon-svg {
+
+    width: 26px;
+    height: 26px;
+}
+
+
+.notification-badge {
+
+    top: 1px;
+    right: -1px;
+
+    min-width: 17px;
+    height: 17px;
+
+    padding: 0 3px;
+
+    font-size: 8px;
+}
+
+
+.cabecalho-usuario-btn {
+
+    width: 42px;
+    height: 42px;
+
+    border-radius: 13px;
+}
+
+
+.cabecalho-avatar {
+
+    width: 33px;
+    height: 33px;
+
+    min-width: 33px;
+    min-height: 33px;
+}
+
+
+.cabecalho-menu-usuario {
+
+    position: fixed;
+
+    top: 58px;
+    right: 12px;
+    left: auto;
+
+    width: min(
+        210px,
+        calc(100vw - 24px)
+    );
+
+    max-width:
+        calc(100vw - 24px);
+
+    border-radius: 13px;
+}
+
+
+.cabecalho-btn-entrar {
+
+    height: 36px;
+
+    padding:
+        0 14px;
+
+    border-radius: 9px;
+
+    font-size: 12px;
+}
+
+
+/*
+ * Reforça o vidro no mobile.
+ *
+ * O !important é intencional porque o arquivo
+ * 10-responsividade.css também possui regras para
+ * .navbar e pode sobrescrever este comportamento.
+ */
+
+.navbar::before {
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.70) 0%,
+            rgba(255, 255, 255, 0.48) 100%
+        );
+
+    backdrop-filter:
+        blur(30px)
+        saturate(180%);
+
+    -webkit-backdrop-filter:
+        blur(30px)
+        saturate(180%);
+}
+
+
+}
+
+/* =========================================================
+RESPONSIVIDADE — TELAS MUITO PEQUENAS
+========================================================= */
+
+@media (max-width: 380px) {
+
+
+.navbar {
+
+    height: 58px;
+
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+
+.logo {
+
+    font-size: 18px;
+
+    letter-spacing: -0.5px;
+}
+
+
+.navbar-actions {
+
+    gap: 1px;
+}
+
+
+.nav-icon-btn {
+
+    width: 39px;
+    height: 39px;
+
+    border-radius: 12px;
+}
+
+
+.cabecalho-usuario-btn {
+
+    width: 39px;
+    height: 39px;
+}
+
+
+.cabecalho-avatar {
+
+    width: 30px;
+    height: 30px;
+
+    min-width: 30px;
+    min-height: 30px;
+}
+
+
+.notification-badge {
+
+    top: 1px;
+    right: -1px;
+
+    min-width: 16px;
+    height: 16px;
+
+    font-size: 7px;
+
+    border-width: 1.5px;
+}
+
+
+.cabecalho-btn-entrar {
+
+    height: 34px;
+
+    padding:
+        0 11px;
+
+    font-size: 11px;
+}
+
+
+.cabecalho-menu-usuario {
+
+    top: 56px;
+    right: 10px;
+
+    width: 180px;
+
+    max-width:
+        calc(100vw - 20px);
+}
+
+
+}
+
+/* =========================================================
+ACESSIBILIDADE — REDUÇÃO DE MOVIMENTO
 ========================================================= */
 
 @media (prefers-reduced-motion: reduce) {
 
 
+.navbar,
 .nav-icon-btn,
 .cabecalho-btn-entrar,
 .cabecalho-usuario-btn,
+.cabecalho-menu-usuario,
 .cabecalho-menu-usuario button {
 
     transition: none;
