@@ -44,13 +44,13 @@
      * Transparência real.
      * Não usamos branco sólido aqui.
      */
-    background: rgba(255, 255, 255, 0.52);
+    background: rgba(255, 255, 255, 0.72);
 
     /*
      * Este é o efeito de vidro.
      */
-    -webkit-backdrop-filter: blur(28px) saturate(180%);
-    backdrop-filter: blur(28px) saturate(180%);
+    backdrop-filter: blur(20px) saturate(140%);
+    -webkit-backdrop-filter: blur(20px) saturate(140%);
 
     /*
      * Borda extremamente suave para dar acabamento
