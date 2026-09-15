@@ -1,94 +1,73 @@
 /* =========================================================
 MUSICALWORLD — CSS PRINCIPAL
-
 Arquivo: main.css
 
 Responsabilidade:
-Este é o arquivo CSS principal da página.
-
-Ele não contém os estilos específicos da interface.
-Sua função é apenas carregar, na ordem correta, todos
-os módulos CSS existentes dentro da pasta "index".
-
-Estrutura:
-
-css/
-├── main.css
-└── index/
-├── 01-global.css
-├── 02-cabecalho.css
-├── 03-conteudo.css
-├── 04-aviso-feed.css
-├── 05-profissionais.css
-├── 06-modal.css
-├── 07-filtro.css
-├── 08-pesquisa.css
-├── 09-video.css
-├── 10-responsividade.css
-└── 11-acessibilidade.css
+Este arquivo centraliza o carregamento dos módulos CSS
+utilizados pela página principal.
 
 IMPORTANTE:
-A ordem dos imports deve ser mantida porque alguns
-módulos dependem dos estilos carregados anteriormente.
+Os arquivos são carregados diretamente pelo HTML.
+Não utilizamos @import para evitar problemas de
+carregamento, cache e ordem de aplicação dos estilos.
 ========================================================= */
 
 /* =========================================================
-01 — CONFIGURAÇÃO GLOBAL
+CONFIGURAÇÃO GLOBAL
 ========================================================= */
 
 @import url("./index/01-base.css");
 
 /* =========================================================
-02 — CABEÇALHO / NAVBAR
+ESTRUTURA DO APLICATIVO
 ========================================================= */
 
 @import url("./index/02-app.css");
 
 /* =========================================================
-03 — CONTEÚDO PRINCIPAL
+CABEÇALHO
 ========================================================= */
 
 @import url("./index/03-cabecalho.css");
 
 /* =========================================================
-04 — AVISO DO FEED
+CONTEÚDO PRINCIPAL
 ========================================================= */
 
 @import url("./index/04-conteudo.css");
 
 /* =========================================================
-05 — PROFISSIONAIS / CARDS
+FEED
 ========================================================= */
 
 @import url("./index/05-feed.css");
 
 /* =========================================================
-06 — MODAIS
+MODAIS
 ========================================================= */
 
 @import url("./index/06-modal.css");
 
 /* =========================================================
-07 — FILTROS
+FILTROS
 ========================================================= */
 
 @import url("./index/07-filtros.css");
 
 /* =========================================================
-08 — PESQUISA
+PESQUISA
 ========================================================= */
 
 @import url("./index/08-pesquisa.css");
 
 /* =========================================================
-09 — VÍDEOS
+VÍDEOS
 ========================================================= */
 
 @import url("./index/09-video.css");
 
 /* =========================================================
-10 — RESPONSIVIDADE
+RESPONSIVIDADE
 ========================================================= */
 
 @import url("./index/10-responsividade.css");
-

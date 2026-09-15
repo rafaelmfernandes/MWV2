@@ -1,13 +1,33 @@
-
 /* =========================================================
    MUSICALWORLD — INDEX
-   Arquivo: responsividade.css
+   Arquivo: 10-responsividade.css
 
    Responsabilidade:
    Adaptar visualmente o index para telas menores,
    preservando a estrutura e o posicionamento original
    do aplicativo.
 
+   Este arquivo NÃO controla a aparência principal do
+   cabeçalho.
+
+   A aparência do .navbar, incluindo:
+   - transparência
+   - efeito de vidro
+   - backdrop-filter
+   - bordas
+   - sombras
+   - cores
+
+   fica exclusivamente no:
+   css/index/03-cabecalho.css
+
+   Este arquivo controla apenas:
+   - dimensões
+   - espaçamentos
+   - tamanhos
+   - posicionamentos específicos para telas menores
+
+   IMPORTANTE:
    Este arquivo não altera o alinhamento global do body.
    O posicionamento do .app-container continua sendo
    controlado pelo app.css e pelo base.css.
@@ -27,6 +47,7 @@
     html,
     body {
         width: 100%;
+
         min-height: 100%;
     }
 
@@ -41,6 +62,7 @@
         width: 100%;
 
         height: 100dvh;
+
         min-height: 100dvh;
 
         max-height: none;
@@ -49,43 +71,22 @@
 
     /* =====================================================
        CABEÇALHO
+       =====================================================
+
+       Apenas dimensões e espaçamento.
+
+       A aparência visual do cabeçalho pertence ao
+       03-cabecalho.css.
        ===================================================== */
 
- .navbar {
-    height: 60px;
+    .navbar {
+        height: 60px;
 
-    padding: 0 14px;
+        padding: 0 14px;
 
-    gap: 10px;
+        gap: 10px;
+    }
 
-    background:
-        linear-gradient(
-            180deg,
-            rgba(255, 255, 255, 0.68) 0%,
-            rgba(255, 255, 255, 0.48) 100%
-        ) !important;
-
-    -webkit-backdrop-filter:
-        blur(24px)
-        saturate(180%) !important;
-
-    backdrop-filter:
-        blur(24px)
-        saturate(180%) !important;
-
-    border-top:
-        1px solid
-        rgba(255, 255, 255, 0.72) !important;
-
-    border-bottom:
-        1px solid
-        rgba(255, 255, 255, 0.78) !important;
-
-    box-shadow:
-        0 4px 18px rgba(15, 23, 42, 0.07),
-        inset 0 1px 0 rgba(255, 255, 255, 0.72),
-        inset 0 -1px 0 rgba(255, 255, 255, 0.25);
-}
 
     /* =====================================================
        ÁREA DA MARCA
@@ -471,6 +472,11 @@
 
     /* =====================================================
        CABEÇALHO
+       =====================================================
+
+       Novamente, somente dimensões.
+       O visual permanece controlado pelo
+       03-cabecalho.css.
        ===================================================== */
 
     .navbar {
@@ -481,20 +487,6 @@
         padding-right: 10px;
 
         gap: 6px;
-
-        background: rgba(255, 255, 255, 0.45) !important;
-
-        backdrop-filter:
-            blur(30px)
-            saturate(180%) !important;
-
-        -webkit-backdrop-filter:
-            blur(30px)
-            saturate(180%) !important;
-
-        border-bottom:
-            1px solid
-            rgba(255, 255, 255, 0.85) !important;
     }
 
 
@@ -807,4 +799,3 @@
         animation: none;
     }
 }
-

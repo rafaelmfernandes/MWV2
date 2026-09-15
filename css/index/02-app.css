@@ -1,41 +1,144 @@
 /* =========================================================
-   MUSICALWORLD — INDEX
-   Arquivo: app.css
+MUSICALWORLD — ESTRUTURA DO APLICATIVO
+Arquivo: 02-app.css
 
-   Responsabilidade:
-   Estrutura física do aplicativo, incluindo o container
-   principal e seu comportamento em telas maiores.
-   ========================================================= */
+Responsabilidade:
+
+* Controlar o tamanho do aplicativo.
+* Centralizar o aplicativo em telas maiores.
+* Manter a estrutura vertical da aplicação.
+* Criar a camada visual de fundo necessária para
+  os elementos com efeito de vidro.
+
+IMPORTANTE:
+Este arquivo não altera o alinhamento do body.
+O body continua sendo controlado pelo 01-base.css.
+========================================================= */
+
+/* =========================================================
+CONTAINER PRINCIPAL
+========================================================= */
 
 .app-container {
-    width: 100%;
-    max-width: 480px;
 
-    height: 100vh;
-    max-height: 900px;
 
-    background-color: #ffffff;
+width: 100%;
+max-width: 480px;
 
-    display: flex;
-    flex-direction: column;
+height: 100vh;
+max-height: 900px;
 
-    position: relative;
+/*
+ * Fundo base.
+ *
+ * O fundo deixa de ser apenas branco.
+ * Gradientes extremamente suaves criam profundidade
+ * atrás dos elementos com backdrop-filter.
+ */
+background:
+    radial-gradient(
+        circle at 15% 8%,
+        rgba(56, 189, 248, 0.10),
+        transparent 32%
+    ),
+    radial-gradient(
+        circle at 88% 24%,
+        rgba(109, 74, 255, 0.08),
+        transparent 30%
+    ),
+    radial-gradient(
+        circle at 45% 100%,
+        rgba(22, 119, 210, 0.07),
+        transparent 34%
+    ),
+    #f8fafc;
 
-    overflow: hidden;
+display: flex;
+flex-direction: column;
 
-    box-shadow:
-        0 0 25px rgba(15, 23, 42, 0.08);
+position: relative;
+
+overflow: hidden;
+
+box-shadow:
+    0 0 25px rgba(15, 23, 42, 0.08);
+
+
 }
 
 /* =========================================================
-   CONTAINER — DESKTOP
-   ========================================================= */
+CAMADA VISUAL DE PROFUNDIDADE
+=============================
+
+Esta camada existe principalmente para fornecer
+conteúdo visual ao backdrop-filter dos elementos
+transparentes, como o cabeçalho e o menu inferior.
+
+Ela não interfere nos cliques.
+========================================================= */
+
+.app-container::before {
+
+
+content: "";
+
+position: absolute;
+
+inset: 0;
+
+z-index: 0;
+
+pointer-events: none;
+
+background:
+    radial-gradient(
+        circle at 10% 12%,
+        rgba(56, 189, 248, 0.12),
+        transparent 28%
+    ),
+    radial-gradient(
+        circle at 92% 18%,
+        rgba(109, 74, 255, 0.10),
+        transparent 27%
+    ),
+    radial-gradient(
+        circle at 55% 78%,
+        rgba(59, 130, 246, 0.06),
+        transparent 32%
+    );
+
+
+}
+
+/* =========================================================
+GARANTE QUE O CONTEÚDO FIQUE ACIMA DA CAMADA DE FUNDO
+========================================================= */
+
+.app-container > * {
+
+
+position: relative;
+
+z-index: 1;
+
+
+}
+
+/* =========================================================
+DESKTOP
+========================================================= */
 
 @media (min-width: 481px) {
 
-    .app-container {
-        border: 1px solid #e2e8f0;
-        border-radius: 24px;
-    }
+
+.app-container {
+
+    border:
+        1px solid #e2e8f0;
+
+    border-radius:
+        24px;
+}
+
 
 }
