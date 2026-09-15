@@ -1,0 +1,1071 @@
+/*
+=========================================================
+MUSICALWORLD — CONTRATAÇÃO
+
+Arquivo:
+contratacao-data-horario.css
+
+Responsabilidade:
+
+- Controlar o visual da Etapa 2.
+- Organizar data e horários.
+- Manter a identidade visual da contratação.
+- Priorizar a visualização em celular.
+- Manter todo o conteúdo centralizado.
+- Impedir qualquer ultrapassagem horizontal.
+- Manter distância segura das bordas da tela.
+- Adaptar o layout para telas maiores.
+- Não conter lógica de negócio.
+=========================================================
+*/
+
+
+/* =========================================================
+CONFIGURAÇÃO GLOBAL
+========================================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    width: 100%;
+    max-width: 100%;
+
+    overflow-x: hidden;
+
+    scroll-behavior: smooth;
+}
+
+body {
+    width: 100%;
+    max-width: 100%;
+
+    min-height: 100vh;
+
+    margin: 0;
+    padding: 0;
+
+    background: #f5f7fb;
+    color: #172033;
+
+    font-family:
+        Manrope,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+
+    overflow-x: hidden;
+}
+
+
+/* =========================================================
+ELEMENTOS FORMULÁRIO
+========================================================= */
+
+button,
+input,
+textarea,
+select {
+    font: inherit;
+}
+
+button {
+    border: 0;
+    cursor: pointer;
+}
+
+input,
+textarea,
+select {
+    max-width: 100%;
+}
+
+
+/* =========================================================
+PÁGINA PRINCIPAL
+
+A página inteira trabalha dentro da largura disponível
+do dispositivo.
+========================================================= */
+
+.contratacao-page {
+    width: 100%;
+    max-width: 100%;
+
+    min-height: 100vh;
+
+    display: flex;
+    flex-direction: column;
+
+    overflow-x: hidden;
+}
+
+
+/* =========================================================
+CABEÇALHO
+========================================================= */
+
+.contratacao-header {
+    width: 100%;
+    max-width: 100%;
+
+    flex-shrink: 0;
+
+    background: rgba(255, 255, 255, 0.96);
+
+    border-bottom: 1px solid #e7ebf2;
+
+    position: sticky;
+    top: 0;
+
+    z-index: 100;
+
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+}
+
+.contratacao-header-inner {
+    width: 100%;
+    max-width: 760px;
+
+    min-height: 58px;
+
+    margin: 0 auto;
+
+    padding-left: 16px;
+    padding-right: 16px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 12px;
+}
+
+
+/* =========================================================
+MARCA
+========================================================= */
+
+.brand {
+    display: block;
+
+    flex: 0 1 auto;
+
+    min-width: 0;
+
+    color: #172033;
+
+    font-size: 17px;
+    font-weight: 800;
+
+    letter-spacing: -0.5px;
+
+    text-decoration: none;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+BOTÃO CANCELAR
+========================================================= */
+
+.cancelar-link {
+    flex: 0 0 auto;
+
+    padding: 8px 0;
+
+    background: transparent;
+
+    color: #64748b;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    white-space: nowrap;
+
+    transition:
+        color 0.2s ease;
+}
+
+.cancelar-link:hover {
+    color: #172033;
+}
+
+
+/* =========================================================
+CONTEÚDO PRINCIPAL
+
+O conteúdo fica centralizado dentro de um limite seguro.
+
+No celular:
+
+16px de margem lateral.
+
+Isso evita que cards e campos encostem nas bordas.
+========================================================= */
+
+.contratacao-main {
+    width: calc(100% - 32px);
+    max-width: 728px;
+
+    min-width: 0;
+
+    flex: 1;
+
+    margin-left: auto;
+    margin-right: auto;
+
+    padding-top: 26px;
+    padding-bottom: 40px;
+
+    overflow-x: hidden;
+}
+
+
+/* =========================================================
+INDICADOR DE ETAPA
+========================================================= */
+
+.etapa-indicador {
+    width: 100%;
+    max-width: 100%;
+
+    margin-bottom: 28px;
+}
+
+.etapa-texto {
+    width: 100%;
+    max-width: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 12px;
+
+    margin-bottom: 10px;
+}
+
+.etapa-label {
+    min-width: 0;
+
+    color: #64748b;
+
+    font-size: 12px;
+    font-weight: 700;
+
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+}
+
+.etapa-numero {
+    flex-shrink: 0;
+
+    color: #94a3b8;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    white-space: nowrap;
+}
+
+.etapa-barra {
+    width: 100%;
+    height: 4px;
+
+    background: #e8edf4;
+
+    border-radius: 999px;
+
+    overflow: hidden;
+}
+
+.etapa-progresso {
+    width: 33.33%;
+    height: 100%;
+
+    background: #6d4aff;
+
+    border-radius: 999px;
+}
+
+
+/* =========================================================
+TÍTULO
+========================================================= */
+
+.titulo-area {
+    width: 100%;
+    max-width: 100%;
+
+    margin-bottom: 22px;
+}
+
+.titulo-area h1 {
+    width: 100%;
+    max-width: 100%;
+
+    color: #172033;
+
+    font-size: 26px;
+    font-weight: 800;
+
+    line-height: 1.18;
+
+    letter-spacing: -0.8px;
+
+    margin-bottom: 10px;
+
+    overflow-wrap: break-word;
+}
+
+.titulo-area p {
+    width: 100%;
+    max-width: 560px;
+
+    color: #64748b;
+
+    font-size: 14px;
+    font-weight: 500;
+
+    line-height: 1.6;
+
+    overflow-wrap: break-word;
+}
+
+
+/* =========================================================
+SEÇÃO DE FORMULÁRIO
+========================================================= */
+
+.form-section {
+    width: 100%;
+    max-width: 100%;
+
+    min-width: 0;
+
+    margin-bottom: 16px;
+}
+
+.campo-group {
+    width: 100%;
+    max-width: 100%;
+
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 8px;
+}
+
+.campo-label {
+    color: #334155;
+
+    font-size: 13px;
+    font-weight: 700;
+}
+
+
+/* =========================================================
+WRAPPER DOS INPUTS
+========================================================= */
+
+.campo-input-wrapper {
+    width: 100%;
+    max-width: 100%;
+
+    min-width: 0;
+}
+
+
+/* =========================================================
+INPUTS
+
+O min-width: 0 é importante para impedir que os inputs
+forcem a largura do container no celular.
+========================================================= */
+
+.campo-input {
+    display: block;
+
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+
+    height: 50px;
+
+    padding-left: 14px;
+    padding-right: 14px;
+
+    background: #ffffff;
+
+    border: 1px solid #dfe5ee;
+
+    border-radius: 14px;
+
+    color: #172033;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    outline: none;
+
+    appearance: none;
+    -webkit-appearance: none;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background-color 0.2s ease;
+}
+
+.campo-input:hover {
+    border-color: #cbd5e1;
+}
+
+.campo-input:focus {
+    border-color: #6d4aff;
+
+    box-shadow:
+        0 0 0 3px rgba(109, 74, 255, 0.10);
+}
+
+
+/* =========================================================
+CARD DE HORÁRIOS
+========================================================= */
+
+.horarios-card {
+    width: 100%;
+    max-width: 100%;
+
+    min-width: 0;
+
+    margin-top: 16px;
+
+    padding: 18px;
+
+    background: #ffffff;
+
+    border: 1px solid #e5eaf1;
+
+    border-radius: 17px;
+
+    box-shadow:
+        0 8px 24px rgba(15, 23, 42, 0.05);
+
+    overflow: hidden;
+}
+
+
+/* =========================================================
+CABEÇALHO DO CARD
+========================================================= */
+
+.horarios-header {
+    width: 100%;
+    max-width: 100%;
+
+    min-width: 0;
+
+    margin-bottom: 20px;
+}
+
+.section-label {
+    display: block;
+
+    color: #94a3b8;
+
+    font-size: 11px;
+    font-weight: 800;
+
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+
+    margin-bottom: 7px;
+}
+
+.horarios-header h2,
+.montagem-conteudo h2 {
+    width: 100%;
+    max-width: 100%;
+
+    color: #172033;
+
+    font-size: 17px;
+    font-weight: 750;
+
+    line-height: 1.35;
+
+    letter-spacing: -0.3px;
+
+    overflow-wrap: break-word;
+}
+
+
+/* =========================================================
+GRADE DOS HORÁRIOS
+
+No celular:
+
+Início
+Término
+
+Um abaixo do outro.
+
+Isso evita que os campos fiquem apertados.
+========================================================= */
+
+.horarios-grid {
+    width: 100%;
+    max-width: 100%;
+
+    min-width: 0;
+
+    display: grid;
+
+    grid-template-columns: minmax(0, 1fr);
+
+    gap: 14px;
+}
+
+
+/* =========================================================
+DURAÇÃO DO SERVIÇO
+========================================================= */
+
+.duracao-info {
+    width: 100%;
+    max-width: 100%;
+
+    min-width: 0;
+
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    margin-top: 18px;
+
+    padding:
+        12px
+        14px;
+
+    background: #f8fafc;
+
+    border-radius: 12px;
+
+    overflow: hidden;
+}
+
+.duracao-indicador {
+    width: 7px;
+    height: 7px;
+
+    flex: 0 0 7px;
+
+    background: #6d4aff;
+
+    border-radius: 50%;
+}
+
+.duracao-texto {
+    min-width: 0;
+
+    display: flex;
+    align-items: center;
+
+    gap: 6px;
+
+    flex-wrap: wrap;
+}
+
+.duracao-label {
+    color: #64748b;
+
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.duracao-texto strong {
+    color: #334155;
+
+    font-size: 12px;
+    font-weight: 800;
+}
+
+
+/* =========================================================
+CARD DE MONTAGEM
+========================================================= */
+
+.montagem-card {
+    width: 100%;
+    max-width: 100%;
+
+    min-width: 0;
+
+    margin-top: 16px;
+
+    padding: 18px;
+
+    background: #ffffff;
+
+    border: 1px solid #e5eaf1;
+
+    border-radius: 17px;
+
+    box-shadow:
+        0 8px 24px rgba(15, 23, 42, 0.05);
+
+    overflow: hidden;
+}
+
+.montagem-conteudo {
+    width: 100%;
+    max-width: 100%;
+
+    min-width: 0;
+
+    margin-bottom: 18px;
+}
+
+.montagem-conteudo p {
+    width: 100%;
+    max-width: 560px;
+
+    margin-top: 7px;
+
+    color: #64748b;
+
+    font-size: 13px;
+    font-weight: 500;
+
+    line-height: 1.6;
+
+    overflow-wrap: break-word;
+}
+
+
+/* =========================================================
+OPÇÕES SIM / NÃO
+========================================================= */
+
+.opcoes-montagem {
+    width: 100%;
+    max-width: 100%;
+
+    min-width: 0;
+
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1fr)
+        minmax(0, 1fr);
+
+    gap: 10px;
+}
+
+.opcao-montagem {
+    width: 100%;
+    min-width: 0;
+
+    height: 48px;
+
+    background: #f8fafc;
+
+    border: 1px solid #dfe5ee;
+
+    border-radius: 13px;
+
+    color: #475569;
+
+    font-size: 13px;
+    font-weight: 700;
+
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.opcao-montagem:hover {
+    border-color: #cbd5e1;
+
+    background: #f1f5f9;
+}
+
+.opcao-montagem.active,
+.opcao-montagem[aria-pressed="true"] {
+    background: #f3f0ff;
+
+    border-color: #6d4aff;
+
+    color: #6d4aff;
+
+    box-shadow:
+        0 0 0 2px rgba(109, 74, 255, 0.06);
+}
+
+
+/* =========================================================
+HORÁRIO DE CHEGADA
+========================================================= */
+
+.campo-chegada {
+    width: 100%;
+    max-width: 100%;
+
+    min-width: 0;
+
+    margin-top: 18px;
+
+    padding-top: 18px;
+
+    border-top: 1px solid #edf0f5;
+}
+
+.campo-chegada[hidden] {
+    display: none;
+}
+
+
+/* =========================================================
+NAVEGAÇÃO
+
+Os dois botões ocupam exatamente o espaço disponível.
+========================================================= */
+
+.continuacao {
+    width: 100%;
+    max-width: 100%;
+
+    min-width: 0;
+
+    margin-top: 22px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+}
+
+.btn-voltar,
+.btn-avancar {
+    width: 0;
+    min-width: 0;
+
+    flex: 1 1 0;
+
+    height: 50px;
+
+    padding-left: 12px;
+    padding-right: 12px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    border-radius: 15px;
+
+    font-size: 13px;
+    font-weight: 700;
+
+    white-space: nowrap;
+
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.15s ease,
+        box-shadow 0.2s ease;
+}
+
+
+/* =========================================================
+BOTÃO VOLTAR
+========================================================= */
+
+.btn-voltar {
+    background: #ffffff;
+
+    border: 1px solid #dfe5ee;
+
+    color: #475569;
+}
+
+.btn-voltar:hover {
+    background: #f8fafc;
+
+    border-color: #cbd5e1;
+
+    color: #172033;
+}
+
+
+/* =========================================================
+BOTÃO AVANÇAR
+========================================================= */
+
+.btn-avancar {
+    background: #172033;
+
+    color: #ffffff;
+
+    box-shadow:
+        0 8px 18px rgba(15, 23, 42, 0.12);
+}
+
+.btn-avancar:hover {
+    background: #0f172a;
+
+    box-shadow:
+        0 10px 22px rgba(15, 23, 42, 0.16);
+}
+
+.btn-voltar:active,
+.btn-avancar:active {
+    transform: translateY(1px);
+}
+
+.btn-voltar svg,
+.btn-avancar svg {
+    width: 17px;
+    height: 17px;
+
+    flex: 0 0 17px;
+}
+
+
+/* =========================================================
+RODAPÉ
+========================================================= */
+
+.contratacao-footer {
+    width: 100%;
+    max-width: 100%;
+
+    padding:
+        0
+        16px
+        24px;
+
+    text-align: center;
+}
+
+.contratacao-footer p {
+    width: 100%;
+    max-width: 100%;
+
+    color: #94a3b8;
+
+    font-size: 11px;
+    font-weight: 500;
+
+    line-height: 1.5;
+
+    overflow-wrap: break-word;
+}
+
+
+/* =========================================================
+TELAS MAIORES
+
+Somente aqui aumentamos o espaço disponível.
+========================================================= */
+
+@media (min-width: 601px) {
+
+    .contratacao-header-inner {
+        min-height: 64px;
+
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+
+    .brand {
+        font-size: 18px;
+    }
+
+    .contratacao-main {
+        width: calc(100% - 40px);
+        max-width: 720px;
+
+        padding-top: 32px;
+        padding-bottom: 60px;
+    }
+
+    .titulo-area h1 {
+        font-size: 30px;
+
+        letter-spacing: -1px;
+    }
+
+    .titulo-area p {
+        font-size: 15px;
+    }
+
+    .horarios-card,
+    .montagem-card {
+        padding: 22px;
+
+        border-radius: 20px;
+    }
+
+    .horarios-header h2,
+    .montagem-conteudo h2 {
+        font-size: 18px;
+    }
+
+    .horarios-grid {
+        grid-template-columns:
+            minmax(0, 1fr)
+            minmax(0, 1fr);
+
+        gap: 12px;
+    }
+
+    .campo-input {
+        height: 52px;
+    }
+
+    .btn-voltar,
+    .btn-avancar {
+        width: auto;
+
+        flex: 0 0 auto;
+
+        padding-left: 20px;
+        padding-right: 20px;
+
+        font-size: 14px;
+    }
+
+    .btn-voltar {
+        min-width: 120px;
+    }
+
+    .btn-avancar {
+        min-width: 150px;
+    }
+
+    .continuacao {
+        justify-content: space-between;
+    }
+}
+
+
+/* =========================================================
+CELULARES MUITO PEQUENOS
+
+Ajuste específico para telas estreitas.
+========================================================= */
+
+@media (max-width: 360px) {
+
+    .contratacao-header-inner {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .brand {
+        font-size: 16px;
+    }
+
+    .cancelar-link {
+        font-size: 12px;
+    }
+
+    .contratacao-main {
+        width: calc(100% - 24px);
+
+        padding-top: 22px;
+    }
+
+    .titulo-area h1 {
+        font-size: 24px;
+    }
+
+    .titulo-area p {
+        font-size: 13px;
+    }
+
+    .horarios-card,
+    .montagem-card {
+        padding: 15px;
+    }
+
+    .opcoes-montagem {
+        gap: 8px;
+    }
+
+    .opcao-montagem {
+        font-size: 12px;
+    }
+
+    .btn-voltar,
+    .btn-avancar {
+        padding-left: 9px;
+        padding-right: 9px;
+
+        font-size: 12px;
+
+        gap: 5px;
+    }
+
+    .btn-voltar svg,
+    .btn-avancar svg {
+        width: 15px;
+        height: 15px;
+
+        flex-basis: 15px;
+    }
+}
+
+
+/* =========================================================
+ACESSIBILIDADE
+========================================================= */
+
+.btn-voltar:focus-visible,
+.btn-avancar:focus-visible,
+.cancelar-link:focus-visible,
+.brand:focus-visible,
+.opcao-montagem:focus-visible,
+.campo-input:focus-visible {
+    outline: 3px solid rgba(109, 74, 255, 0.25);
+
+    outline-offset: 3px;
+}
+
+
+/* =========================================================
+REDUÇÃO DE MOVIMENTO
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    html {
+        scroll-behavior: auto;
+    }
+
+    .btn-voltar,
+    .btn-avancar,
+    .opcao-montagem,
+    .campo-input {
+        transition: none;
+    }
+}

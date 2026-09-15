@@ -1,0 +1,573 @@
+/* =========================================================
+MUSICALWORLD — CABEÇALHO
+Arquivo: 02-cabecalho.css
+
+Responsabilidade:
+
+* Estilizar o cabeçalho principal.
+* Organizar marca, notificações, mensagens e usuário.
+* Controlar o menu da conta.
+* Manter o cabeçalho compacto e responsivo.
+* Garantir ícones maiores, suaves e visualmente equilibrados.
+  ========================================================= */
+
+/* =========================================================
+CABEÇALHO PRINCIPAL
+========================================================= */
+
+.navbar {
+position: sticky;
+top: 0;
+z-index: 1000;
+
+
+width: 100%;
+height: 64px;
+
+display: flex;
+align-items: center;
+justify-content: space-between;
+
+padding: 0 24px;
+
+background: #ffffff;
+
+border-bottom: 1px solid #e9edf3;
+
+box-shadow: 0 1px 4px rgba(15, 23, 42, 0.03);
+
+
+}
+
+/* =========================================================
+ÁREA DA MARCA
+========================================================= */
+
+.navbar-brand-area {
+display: flex;
+align-items: center;
+
+
+min-width: 0;
+
+
+}
+
+/* =========================================================
+LOGO
+========================================================= */
+
+.logo {
+display: inline-flex;
+align-items: center;
+
+
+font-size: 21px;
+font-weight: 800;
+line-height: 1;
+
+letter-spacing: -0.7px;
+
+color: #172033;
+
+white-space: nowrap;
+
+user-select: none;
+
+
+}
+
+.logo span {
+color: #1677d2;
+}
+
+/* =========================================================
+ÁREA DE AÇÕES
+========================================================= */
+
+.navbar-actions {
+display: flex;
+align-items: center;
+
+
+gap: 7px;
+
+height: 100%;
+
+
+}
+
+/* =========================================================
+BOTÕES DE ÍCONE
+========================================================= */
+
+.nav-icon-btn {
+position: relative;
+
+
+width: 44px;
+height: 44px;
+
+display: inline-flex;
+align-items: center;
+justify-content: center;
+
+padding: 0;
+
+border: 0;
+border-radius: 14px;
+
+background: transparent;
+
+color: #526078;
+
+cursor: pointer;
+
+transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.15s ease;
+
+
+}
+
+.nav-icon-btn:hover {
+background: #f3f6fa;
+
+
+color: #172033;
+
+
+}
+
+.nav-icon-btn:active {
+transform: scale(0.94);
+}
+
+.nav-icon-btn:focus-visible {
+outline: 3px solid rgba(22, 119, 210, 0.18);
+outline-offset: 2px;
+}
+
+/* =========================================================
+ÍCONES SVG
+========================================================= */
+
+.top-icon-svg {
+width: 24px;
+height: 24px;
+
+
+display: block;
+
+flex-shrink: 0;
+
+stroke-linecap: round;
+stroke-linejoin: round;
+
+
+}
+
+/* =========================================================
+BADGE DE NOTIFICAÇÃO
+========================================================= */
+
+.notification-badge {
+position: absolute;
+
+
+top: 2px;
+right: 0;
+
+min-width: 18px;
+height: 18px;
+
+padding: 0 4px;
+
+display: flex;
+align-items: center;
+justify-content: center;
+
+border-radius: 999px;
+
+background: #e53935;
+color: #ffffff;
+
+font-size: 9px;
+font-weight: 800;
+line-height: 1;
+
+border: 2px solid #ffffff;
+
+
+}
+
+/* =========================================================
+ESTADO DESLOGADO
+========================================================= */
+
+.cabecalho-usuario-estado {
+display: flex;
+align-items: center;
+}
+
+.cabecalho-btn-entrar {
+height: 38px;
+
+
+padding: 0 17px;
+
+border: 1px solid #dce3ec;
+border-radius: 10px;
+
+background: #ffffff;
+
+color: #172033;
+
+font-family: inherit;
+font-size: 13px;
+font-weight: 700;
+
+cursor: pointer;
+
+transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+
+
+}
+
+.cabecalho-btn-entrar:hover {
+background: #f5f8fc;
+border-color: #cbd5e1;
+}
+
+.cabecalho-btn-entrar:focus-visible {
+outline: 3px solid rgba(22, 119, 210, 0.18);
+outline-offset: 2px;
+}
+
+/* =========================================================
+USUÁRIO LOGADO
+========================================================= */
+
+.cabecalho-logado {
+position: relative;
+
+
+display: flex;
+align-items: center;
+
+
+}
+
+/* =========================================================
+BOTÃO DO USUÁRIO
+========================================================= */
+
+.cabecalho-usuario-btn {
+position: relative;
+
+
+width: 44px;
+height: 44px;
+
+display: flex;
+align-items: center;
+justify-content: center;
+
+padding: 0;
+
+border: 0;
+border-radius: 14px;
+
+background: transparent;
+
+cursor: pointer;
+
+transition:
+    background-color 0.2s ease,
+    transform 0.15s ease;
+
+
+}
+
+.cabecalho-usuario-btn:hover {
+background: #f3f6fa;
+}
+
+.cabecalho-usuario-btn:active {
+transform: scale(0.94);
+}
+
+.cabecalho-usuario-btn:focus-visible {
+outline: 3px solid rgba(22, 119, 210, 0.18);
+outline-offset: 2px;
+}
+
+/* =========================================================
+AVATAR
+========================================================= */
+
+.cabecalho-avatar {
+width: 35px;
+height: 35px;
+
+
+display: flex;
+align-items: center;
+justify-content: center;
+
+overflow: hidden;
+
+border-radius: 50%;
+
+background: #edf3ff;
+
+color: #1677d2;
+
+font-size: 12px;
+font-weight: 800;
+
+flex-shrink: 0;
+
+
+}
+
+.cabecalho-avatar img {
+width: 100%;
+height: 100%;
+
+
+display: block;
+
+object-fit: cover;
+
+
+}
+
+#cabecalho-avatar-letras {
+display: flex;
+align-items: center;
+justify-content: center;
+
+
+width: 100%;
+height: 100%;
+
+
+}
+
+/* =========================================================
+INFORMAÇÕES DO USUÁRIO
+----------------------
+
+Mantidas no DOM para compatibilidade com Cabecalho.js,
+mas não ocupam espaço visual no novo cabeçalho.
+========================================================= */
+
+.cabecalho-info-usuario {
+position: absolute;
+
+
+width: 1px;
+height: 1px;
+
+padding: 0;
+margin: -1px;
+
+overflow: hidden;
+
+clip: rect(0, 0, 0, 0);
+clip-path: inset(50%);
+
+white-space: nowrap;
+
+border: 0;
+
+
+}
+
+/* =========================================================
+CHEVRON
+========================================================= */
+
+.cabecalho-chevron {
+display: none;
+}
+
+/* =========================================================
+MENU DA CONTA
+========================================================= */
+
+.cabecalho-menu-usuario {
+position: absolute;
+
+
+top: calc(100% + 10px);
+right: 0;
+
+width: 210px;
+
+padding: 7px;
+
+background: #ffffff;
+
+border: 1px solid #e5eaf0;
+border-radius: 14px;
+
+box-shadow:
+    0 14px 35px rgba(15, 23, 42, 0.12),
+    0 3px 8px rgba(15, 23, 42, 0.05);
+
+overflow: hidden;
+
+
+}
+
+.cabecalho-menu-usuario button {
+width: 100%;
+min-height: 42px;
+
+
+display: flex;
+align-items: center;
+
+gap: 11px;
+
+padding: 0 11px;
+
+border: 0;
+border-radius: 9px;
+
+background: transparent;
+
+color: #344054;
+
+font-family: inherit;
+font-size: 13px;
+font-weight: 600;
+
+text-align: left;
+
+cursor: pointer;
+
+transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+
+
+}
+
+.cabecalho-menu-usuario button:hover {
+background: #f4f7fb;
+
+
+color: #172033;
+
+
+}
+
+.cabecalho-menu-usuario button:focus-visible {
+outline: 2px solid rgba(22, 119, 210, 0.25);
+outline-offset: -2px;
+}
+
+.cabecalho-menu-usuario button svg {
+width: 18px;
+height: 18px;
+
+
+flex-shrink: 0;
+
+color: #667085;
+
+
+}
+
+.cabecalho-menu-usuario button:last-child {
+color: #b42318;
+}
+
+.cabecalho-menu-usuario button:last-child:hover {
+background: #fff4f2;
+
+
+color: #b42318;
+
+
+}
+
+.cabecalho-menu-usuario button:last-child svg {
+color: currentColor;
+}
+
+/* =========================================================
+CARREGAMENTO
+========================================================= */
+
+.cabecalho-usuario-loading {
+width: 44px;
+height: 44px;
+
+
+display: flex;
+align-items: center;
+justify-content: center;
+
+
+}
+
+.cabecalho-usuario-loading span {
+width: 30px;
+height: 30px;
+
+
+display: block;
+
+border: 3px solid #e8edf3;
+border-top-color: #1677d2;
+
+border-radius: 50%;
+
+animation: cabecalho-spinner 0.8s linear infinite;
+
+
+}
+
+@keyframes cabecalho-spinner {
+
+
+from {
+    transform: rotate(0deg);
+}
+
+to {
+    transform: rotate(360deg);
+}
+
+
+}
+
+/* =========================================================
+ACESSIBILIDADE
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+
+.nav-icon-btn,
+.cabecalho-btn-entrar,
+.cabecalho-usuario-btn,
+.cabecalho-menu-usuario button {
+    transition: none;
+}
+
+
+.cabecalho-usuario-loading span {
+    animation: none;
+}
+
+
+}

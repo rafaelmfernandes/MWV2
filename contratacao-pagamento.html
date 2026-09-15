@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Pagamento | MusicalWorld</title>
+
+    <!-- =========================================================
+         MUSICALWORLD — FONTE PRINCIPAL
+         ========================================================= -->
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <!-- =========================================================
+         ESTILOS DA ETAPA 6
+         ========================================================= -->
+
+    <link
+        rel="stylesheet"
+        href="css/contratacao/contratacao-pagamento.css"
+    >
+
+    <!-- =========================================================
+         ÍCONES
+         ========================================================= -->
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body>
+
+    <!-- =========================================================
+         PÁGINA DE PAGAMENTO
+         Responsabilidade:
+         Apresentar o resumo da contratação e permitir que o
+         contratante escolha entre Pix e cartão.
+         ========================================================= -->
+
+    <div class="contratacao-page">
+
+        <!-- =====================================================
+             CABEÇALHO
+             ===================================================== -->
+
+        <header class="contratacao-header">
+
+            <div class="contratacao-header-inner">
+
+                <a
+                    href="contratacao.html"
+                    class="contratacao-brand"
+                    aria-label="Voltar para contratação"
+                >
+                    MusicalWorld
+                </a>
+
+                <button
+                    type="button"
+                    class="btn-cancelar"
+                    id="btnCancelarContratacao"
+                >
+                    Cancelar
+                </button>
+
+            </div>
+
+        </header>
+
+
+        <!-- =====================================================
+             CONTEÚDO PRINCIPAL
+             ===================================================== -->
+
+        <main class="contratacao-main">
+
+            <!-- =================================================
+                 INDICADOR DE ETAPA
+                 ================================================= -->
+
+            <section class="etapa-indicador">
+
+                <div class="etapa-indicador-topo">
+
+                    <span>
+                        Etapa 6 de 6
+                    </span>
+
+                    <strong id="etapaNumero">
+                        Pagamento
+                    </strong>
+
+                </div>
+
+                <div class="etapa-progresso">
+
+                    <span
+                        id="etapaProgresso"
+                        style="width: 100%;"
+                    ></span>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 TÍTULO
+                 ================================================= -->
+
+            <section class="etapa-cabecalho">
+
+                <span class="etapa-kicker">
+                    Última etapa
+                </span>
+
+                <h1>
+                    Finalize sua solicitação
+                </h1>
+
+                <p>
+                    Escolha como deseja realizar o pagamento
+                    para enviar sua solicitação ao artista.
+                </p>
+
+            </section>
+
+
+            <!-- =================================================
+                 RESUMO DA CONTRATAÇÃO
+                 ================================================= -->
+
+            <section class="resumo-card">
+
+                <div class="resumo-artista">
+
+                    <div
+                        class="artista-avatar"
+                        id="artistaAvatar"
+                    >
+                        RM
+                    </div>
+
+                    <div class="artista-info">
+
+                        <strong id="artistaNome">
+                            Rafael Melo
+                        </strong>
+
+                        <span id="artistaTipo">
+                            Cantor(a)
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <div class="resumo-servico">
+
+                    <div class="resumo-servico-info">
+
+                        <span>
+                            Serviço
+                        </span>
+
+                        <strong id="servicoNome">
+                            Show acústico
+                        </strong>
+
+                    </div>
+
+                    <div class="resumo-valor">
+
+                        <span>
+                            Total
+                        </span>
+
+                        <strong id="valorTotal">
+                            R$ 800,00
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 MÉTODOS DE PAGAMENTO
+                 ================================================= -->
+
+            <section class="pagamento-section">
+
+                <div class="section-heading">
+
+                    <h2>
+                        Como deseja pagar?
+                    </h2>
+
+                    <p>
+                        Escolha uma das opções abaixo.
+                    </p>
+
+                </div>
+
+
+                <div class="metodos-pagamento">
+
+                    <!-- =========================================
+                         PIX
+                         ========================================= -->
+
+                    <button
+                        type="button"
+                        class="metodo-pagamento"
+                        data-metodo="pix"
+                        aria-pressed="true"
+                    >
+
+                        <span class="metodo-icone">
+                            <i data-lucide="qr-code"></i>
+                        </span>
+
+                        <span class="metodo-conteudo">
+
+                            <strong>
+                                Pix
+                            </strong>
+
+                            <span>
+                                Pagamento rápido e seguro
+                            </span>
+
+                        </span>
+
+                        <span class="metodo-seta">
+                            <i data-lucide="chevron-right"></i>
+                        </span>
+
+                    </button>
+
+
+                    <!-- =========================================
+                         CARTÃO
+                         ========================================= -->
+
+                    <button
+                        type="button"
+                        class="metodo-pagamento"
+                        data-metodo="cartao"
+                        aria-pressed="false"
+                    >
+
+                        <span class="metodo-icone">
+                            <i data-lucide="credit-card"></i>
+                        </span>
+
+                        <span class="metodo-conteudo">
+
+                            <strong>
+                                Cartão
+                            </strong>
+
+                            <span>
+                                Crédito ou débito
+                            </span>
+
+                        </span>
+
+                        <span class="metodo-seta">
+                            <i data-lucide="chevron-right"></i>
+                        </span>
+
+                    </button>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 AVISO
+                 ================================================= -->
+
+            <section class="pagamento-aviso">
+
+                <div class="aviso-icone">
+                    <i data-lucide="info"></i>
+                </div>
+
+                <div>
+
+                    <strong>
+                        Importante
+                    </strong>
+
+                    <p>
+                        O pagamento inicia sua solicitação.
+                        A contratação só será confirmada depois
+                        que o artista analisar e aceitar.
+                    </p>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 NAVEGAÇÃO
+                 ================================================= -->
+
+            <nav class="contratacao-navegacao">
+
+                <button
+                    type="button"
+                    class="btn-secundario"
+                    id="btnVoltar"
+                >
+                    <i data-lucide="arrow-left"></i>
+
+                    <span>
+                        Voltar
+                    </span>
+                </button>
+
+                <button
+                    type="button"
+                    class="btn-principal"
+                    id="btnAbrirPagamento"
+                >
+                    <span>
+                        Continuar
+                    </span>
+
+                    <i data-lucide="arrow-right"></i>
+                </button>
+
+            </nav>
+
+
+            <!-- =================================================
+                 RODAPÉ
+                 ================================================= -->
+
+            <p class="contratacao-seguranca">
+
+                <i data-lucide="shield-check"></i>
+
+                <span>
+                    Seus dados de pagamento serão tratados
+                    de forma segura.
+                </span>
+
+            </p>
+
+        </main>
+
+    </div>
+
+
+    <!-- =========================================================
+         MODAL PIX
+         Responsabilidade:
+         Apresentar a interface de pagamento Pix.
+         O QR Code e o código real serão fornecidos pelo
+         Mercado Pago quando a integração for conectada.
+         ========================================================= -->
+
+    <div
+        class="modal-overlay"
+        id="modalPix"
+        aria-hidden="true"
+    >
+
+        <div
+            class="modal-pagamento"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="tituloModalPix"
+        >
+
+            <button
+                type="button"
+                class="modal-fechar"
+                data-fechar-modal="pix"
+                aria-label="Fechar pagamento Pix"
+            >
+                <i data-lucide="x"></i>
+            </button>
+
+
+            <div class="modal-cabecalho">
+
+                <span class="modal-icone modal-icone-pix">
+                    <i data-lucide="qr-code"></i>
+                </span>
+
+                <div>
+
+                    <span class="modal-kicker">
+                        Pagamento via Pix
+                    </span>
+
+                    <h2 id="tituloModalPix">
+                        Pague para enviar sua solicitação
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="pix-valor">
+
+                <span>
+                    Valor da contratação
+                </span>
+
+                <strong id="pixValor">
+                    R$ 800,00
+                </strong>
+
+            </div>
+
+
+            <!-- ===============================================
+                 ÁREA DO QR CODE
+                 =============================================== -->
+
+            <div class="pix-qr-area">
+
+                <div class="qr-placeholder">
+
+                    <div class="qr-grid">
+
+                        <span class="qr-canto qr-canto-1"></span>
+                        <span class="qr-canto qr-canto-2"></span>
+                        <span class="qr-canto qr-canto-3"></span>
+
+                        <span class="qr-centro"></span>
+
+                    </div>
+
+                </div>
+
+                <p>
+                    O QR Code real será gerado pelo
+                    Mercado Pago.
+                </p>
+
+            </div>
+
+
+            <!-- ===============================================
+                 COPIA E COLA
+                 =============================================== -->
+
+            <div class="pix-copia-cola">
+
+                <label for="pixCodigo">
+                    Pix copia e cola
+                </label>
+
+                <div class="pix-codigo-container">
+
+                    <input
+                        type="text"
+                        id="pixCodigo"
+                        value="Aguardando geração do pagamento"
+                        readonly
+                    >
+
+                    <button
+                        type="button"
+                        id="btnCopiarPix"
+                        aria-label="Copiar código Pix"
+                    >
+                        <i data-lucide="copy"></i>
+                    </button>
+
+                </div>
+
+                <small id="pixMensagemCopiado">
+                    O código real será disponibilizado
+                    quando o Mercado Pago estiver conectado.
+                </small>
+
+            </div>
+
+
+            <div class="modal-aviso">
+
+                <i data-lucide="clock-3"></i>
+
+                <p>
+                    Após a confirmação do pagamento,
+                    sua solicitação será enviada ao artista.
+                </p>
+
+            </div>
+
+
+            <div class="modal-acoes">
+
+                <button
+                    type="button"
+                    class="btn-modal-secundario"
+                    data-fechar-modal="pix"
+                >
+                    Voltar
+                </button>
+
+                <button
+                    type="button"
+                    class="btn-modal-principal"
+                    id="btnSimularPix"
+                >
+                    <span>
+                        Simular pagamento
+                    </span>
+
+                    <i data-lucide="arrow-right"></i>
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         MODAL CARTÃO
+         ========================================================= -->
+
+    <div
+        class="modal-overlay"
+        id="modalCartao"
+        aria-hidden="true"
+    >
+
+        <div
+            class="modal-pagamento"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="tituloModalCartao"
+        >
+
+            <button
+                type="button"
+                class="modal-fechar"
+                data-fechar-modal="cartao"
+                aria-label="Fechar pagamento com cartão"
+            >
+                <i data-lucide="x"></i>
+            </button>
+
+
+            <div class="modal-cabecalho">
+
+                <span class="modal-icone modal-icone-cartao">
+                    <i data-lucide="credit-card"></i>
+                </span>
+
+                <div>
+
+                    <span class="modal-kicker">
+                        Pagamento com cartão
+                    </span>
+
+                    <h2 id="tituloModalCartao">
+                        Informe os dados do cartão
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <!-- ===============================================
+                 FORMULÁRIO
+                 =============================================== -->
+
+            <form
+                id="formPagamentoCartao"
+                novalidate
+            >
+
+                <div class="campo">
+
+                    <label for="numeroCartao">
+                        Número do cartão
+                    </label>
+
+                    <div class="campo-com-icone">
+
+                        <i data-lucide="credit-card"></i>
+
+                        <input
+                            type="text"
+                            id="numeroCartao"
+                            inputmode="numeric"
+                            autocomplete="cc-number"
+                            placeholder="0000 0000 0000 0000"
+                            maxlength="19"
+                        >
+
+                    </div>
+
+                    <small
+                        class="campo-erro"
+                        id="erroNumeroCartao"
+                    ></small>
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label for="nomeCartao">
+                        Nome no cartão
+                    </label>
+
+                    <input
+                        type="text"
+                        id="nomeCartao"
+                        autocomplete="cc-name"
+                        placeholder="Nome completo"
+                    >
+
+                    <small
+                        class="campo-erro"
+                        id="erroNomeCartao"
+                    ></small>
+
+                </div>
+
+
+                <div class="campos-duplos">
+
+                    <div class="campo">
+
+                        <label for="validadeCartao">
+                            Validade
+                        </label>
+
+                        <input
+                            type="text"
+                            id="validadeCartao"
+                            inputmode="numeric"
+                            autocomplete="cc-exp"
+                            placeholder="MM/AA"
+                            maxlength="5"
+                        >
+
+                        <small
+                            class="campo-erro"
+                            id="erroValidadeCartao"
+                        ></small>
+
+                    </div>
+
+
+                    <div class="campo">
+
+                        <label for="codigoCartao">
+                            CVV
+                        </label>
+
+                        <input
+                            type="password"
+                            id="codigoCartao"
+                            inputmode="numeric"
+                            autocomplete="cc-csc"
+                            placeholder="123"
+                            maxlength="4"
+                        >
+
+                        <small
+                            class="campo-erro"
+                            id="erroCodigoCartao"
+                        ></small>
+
+                    </div>
+
+                </div>
+
+
+                <div class="cartao-seguranca">
+
+                    <i data-lucide="lock-keyhole"></i>
+
+                    <span>
+                        Os dados serão processados de forma segura
+                        pelo provedor de pagamento.
+                    </span>
+
+                </div>
+
+
+                <div class="modal-acoes">
+
+                    <button
+                        type="button"
+                        class="btn-modal-secundario"
+                        data-fechar-modal="cartao"
+                    >
+                        Voltar
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="btn-modal-principal"
+                        id="btnPagarCartao"
+                    >
+                        <span>
+                            Simular pagamento
+                        </span>
+
+                        <i data-lucide="lock-keyhole"></i>
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         MODAL PROCESSANDO
+         ========================================================= -->
+
+    <div
+        class="modal-overlay modal-processando"
+        id="modalProcessando"
+        aria-hidden="true"
+    >
+
+        <div class="processando-card">
+
+            <div class="spinner"></div>
+
+            <h2>
+                Processando pagamento
+            </h2>
+
+            <p>
+                Aguarde enquanto confirmamos
+                sua solicitação.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         JAVASCRIPT
+         ========================================================= -->
+
+    <script src="js/contratacao/contratacao-pagamento.js"></script>
+
+</body>
+</html>

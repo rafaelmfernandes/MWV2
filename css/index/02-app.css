@@ -1,0 +1,41 @@
+/* =========================================================
+   MUSICALWORLD — INDEX
+   Arquivo: app.css
+
+   Responsabilidade:
+   Estrutura física do aplicativo, incluindo o container
+   principal e seu comportamento em telas maiores.
+   ========================================================= */
+
+.app-container {
+    width: 100%;
+    max-width: 480px;
+
+    height: 100vh;
+    max-height: 900px;
+
+    background-color: #ffffff;
+
+    display: flex;
+    flex-direction: column;
+
+    position: relative;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 0 25px rgba(15, 23, 42, 0.08);
+}
+
+/* =========================================================
+   CONTAINER — DESKTOP
+   ========================================================= */
+
+@media (min-width: 481px) {
+
+    .app-container {
+        border: 1px solid #e2e8f0;
+        border-radius: 24px;
+    }
+
+}

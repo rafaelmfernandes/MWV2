@@ -1,0 +1,932 @@
+/* =========================================================
+   MUSICALWORLD — ACOMPANHAMENTO DA CONTRATAÇÃO
+   Arquivo: contratacao-acompanhamento.css
+
+   Responsabilidade:
+   - Estilizar a página de acompanhamento.
+   - Apresentar o status atual.
+   - Organizar dados do artista, serviço e evento.
+   - Exibir a timeline da contratação.
+   - Manter o padrão visual das demais páginas.
+   ========================================================= */
+
+
+/* =========================================================
+   RESET
+   ========================================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   BASE
+   ========================================================= */
+
+html {
+    scroll-behavior: smooth;
+}
+
+
+body {
+    min-height: 100vh;
+
+    background: #f5f7fb;
+    color: #172033;
+
+    font-family:
+        Manrope,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        sans-serif;
+
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+
+    overflow-x: hidden;
+}
+
+
+button,
+input,
+textarea,
+select {
+    font: inherit;
+}
+
+
+button {
+    border: 0;
+    cursor: pointer;
+}
+
+
+/* =========================================================
+   PÁGINA
+   ========================================================= */
+
+.contratacao-page {
+    width: 100%;
+    min-height: 100vh;
+}
+
+
+/* =========================================================
+   CABEÇALHO
+   ========================================================= */
+
+.contratacao-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+
+    width: 100%;
+    min-height: 68px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 24px;
+
+    background: rgba(245, 247, 251, 0.88);
+
+    border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+}
+
+
+.contratacao-brand {
+    color: #172033;
+
+    font-size: 19px;
+    font-weight: 800;
+
+    letter-spacing: -0.03em;
+
+    text-decoration: none;
+}
+
+
+.btn-voltar {
+    min-height: 40px;
+
+    padding: 0 14px;
+
+    border-radius: 10px;
+
+    background: transparent;
+
+    color: #64748b;
+
+    font-size: 13px;
+    font-weight: 700;
+
+    transition:
+        background 160ms ease,
+        color 160ms ease;
+}
+
+
+.btn-voltar:hover {
+    background: #e9edf4;
+    color: #172033;
+}
+
+
+/* =========================================================
+   CONTEÚDO
+   ========================================================= */
+
+.contratacao-main {
+    width: calc(100% - 32px);
+    max-width: 720px;
+
+    margin: 0 auto;
+
+    padding: 42px 0 56px;
+}
+
+
+/* =========================================================
+   CABEÇALHO DA PÁGINA
+   ========================================================= */
+
+.pagina-heading {
+    margin-bottom: 28px;
+}
+
+
+.pagina-eyebrow,
+.card-eyebrow {
+    display: block;
+
+    margin-bottom: 6px;
+
+    color: #6d4aff;
+
+    font-size: 11px;
+    font-weight: 800;
+
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+}
+
+
+.pagina-heading h1 {
+    margin-bottom: 9px;
+
+    color: #172033;
+
+    font-size: 31px;
+    line-height: 1.15;
+
+    font-weight: 800;
+
+    letter-spacing: -0.04em;
+}
+
+
+.pagina-heading p {
+    color: #64748b;
+
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   STATUS PRINCIPAL
+   ========================================================= */
+
+.status-principal {
+    display: flex;
+    align-items: flex-start;
+
+    gap: 14px;
+
+    margin-bottom: 20px;
+
+    padding: 19px;
+
+    border: 1px solid #dcd5ff;
+    border-radius: 19px;
+
+    background: #f7f5ff;
+}
+
+
+.status-principal-icon {
+    width: 44px;
+    height: 44px;
+
+    flex: 0 0 auto;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 12px;
+
+    background: #e9e4ff;
+
+    color: #6d4aff;
+}
+
+
+.status-principal-icon svg {
+    width: 21px;
+    height: 21px;
+}
+
+
+.status-principal-conteudo {
+    min-width: 0;
+}
+
+
+.status-principal-conteudo > span {
+    display: block;
+
+    margin-bottom: 4px;
+
+    color: #6d4aff;
+
+    font-size: 11px;
+    font-weight: 800;
+
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+
+.status-principal-conteudo strong {
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: #172033;
+
+    font-size: 16px;
+    line-height: 1.4;
+
+    font-weight: 800;
+}
+
+
+.status-principal-conteudo p {
+    color: #64748b;
+
+    font-size: 12px;
+    line-height: 1.55;
+}
+
+
+/* =========================================================
+   CARDS
+   ========================================================= */
+
+.card {
+    margin-bottom: 20px;
+
+    padding: 23px;
+
+    border: 1px solid #e4e8ef;
+    border-radius: 20px;
+
+    background: #ffffff;
+
+    box-shadow:
+        0 8px 30px rgba(15, 23, 42, 0.04);
+}
+
+
+.card-heading {
+    margin-bottom: 21px;
+}
+
+
+.card-heading h2 {
+    color: #172033;
+
+    font-size: 18px;
+    line-height: 1.3;
+
+    font-weight: 800;
+
+    letter-spacing: -0.025em;
+}
+
+
+/* =========================================================
+   ARTISTA
+   ========================================================= */
+
+.artista {
+    display: flex;
+    align-items: center;
+
+    gap: 13px;
+}
+
+
+.artista-avatar {
+    width: 52px;
+    height: 52px;
+
+    flex: 0 0 auto;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    overflow: hidden;
+
+    border-radius: 50%;
+
+    background: #6d4aff;
+
+    color: #ffffff;
+
+    font-size: 14px;
+    font-weight: 800;
+}
+
+
+.artista-avatar img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+}
+
+
+.artista-info {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 3px;
+}
+
+
+.artista-info strong {
+    color: #172033;
+
+    font-size: 15px;
+    font-weight: 800;
+}
+
+
+.artista-info span {
+    color: #536174;
+
+    font-size: 13px;
+    font-weight: 600;
+}
+
+
+.artista-info small {
+    color: #8490a3;
+
+    font-size: 12px;
+    font-weight: 500;
+}
+
+
+/* =========================================================
+   SERVIÇO
+   ========================================================= */
+
+.servico-detalhes {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+    gap: 12px;
+}
+
+
+.servico-item {
+    min-width: 0;
+
+    padding: 14px;
+
+    border-radius: 13px;
+
+    background: #f7f8fa;
+}
+
+
+.servico-item span {
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: #8490a3;
+
+    font-size: 10px;
+    font-weight: 800;
+
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+
+.servico-item strong {
+    display: block;
+
+    color: #172033;
+
+    font-size: 13px;
+    line-height: 1.45;
+
+    font-weight: 800;
+
+    overflow-wrap: anywhere;
+}
+
+
+/* =========================================================
+   DETALHES DO EVENTO
+   ========================================================= */
+
+.detalhes-lista {
+    display: flex;
+    flex-direction: column;
+}
+
+
+.detalhe-item {
+    display: flex;
+    align-items: center;
+
+    gap: 13px;
+
+    padding: 13px 0;
+
+    border-bottom: 1px solid #edf0f4;
+}
+
+
+.detalhe-item:first-child {
+    padding-top: 0;
+}
+
+
+.detalhe-item:last-child {
+    padding-bottom: 0;
+
+    border-bottom: 0;
+}
+
+
+.detalhe-icon {
+    width: 38px;
+    height: 38px;
+
+    flex: 0 0 auto;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+
+    background: #f2f4f8;
+
+    color: #536174;
+}
+
+
+.detalhe-icon svg {
+    width: 17px;
+    height: 17px;
+}
+
+
+.detalhe-conteudo {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 2px;
+}
+
+
+.detalhe-conteudo span {
+    color: #8490a3;
+
+    font-size: 10px;
+    font-weight: 800;
+
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+
+.detalhe-conteudo strong {
+    color: #172033;
+
+    font-size: 13px;
+    line-height: 1.45;
+
+    font-weight: 700;
+
+    overflow-wrap: anywhere;
+}
+
+
+/* =========================================================
+   TIMELINE
+   ========================================================= */
+
+.timeline {
+    position: relative;
+}
+
+
+.timeline-item {
+    position: relative;
+
+    display: flex;
+    align-items: flex-start;
+
+    gap: 13px;
+
+    min-height: 72px;
+}
+
+
+.timeline-item:not(:last-child)::after {
+    content: "";
+
+    position: absolute;
+
+    left: 16px;
+    top: 34px;
+    bottom: 0;
+
+    width: 1px;
+
+    background: #e1e6ee;
+}
+
+
+.timeline-marker {
+    position: relative;
+    z-index: 2;
+
+    width: 34px;
+    height: 34px;
+
+    flex: 0 0 auto;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid #dfe4eb;
+    border-radius: 50%;
+
+    background: #ffffff;
+
+    color: #a1aaba;
+}
+
+
+.timeline-marker svg {
+    width: 15px;
+    height: 15px;
+}
+
+
+.timeline-item.concluido .timeline-marker {
+    border-color: #bde8cf;
+
+    background: #e9f8ef;
+
+    color: #16804a;
+}
+
+
+.timeline-item.ativo .timeline-marker {
+    border-color: #cfc5ff;
+
+    background: #eeeaff;
+
+    color: #6d4aff;
+}
+
+
+.timeline-content {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 3px;
+
+    padding-top: 1px;
+}
+
+
+.timeline-content strong {
+    color: #172033;
+
+    font-size: 13px;
+    line-height: 1.4;
+
+    font-weight: 800;
+}
+
+
+.timeline-content span {
+    color: #8490a3;
+
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+
+.timeline-item.ativo .timeline-content strong {
+    color: #6d4aff;
+}
+
+
+/* =========================================================
+   PAGAMENTO
+   ========================================================= */
+
+.pagamento-card {
+    display: flex;
+    align-items: flex-start;
+
+    gap: 13px;
+
+    margin-bottom: 20px;
+
+    padding: 18px;
+
+    border: 1px solid #e4e8ef;
+    border-radius: 17px;
+
+    background: #ffffff;
+}
+
+
+.pagamento-icon {
+    width: 39px;
+    height: 39px;
+
+    flex: 0 0 auto;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 11px;
+
+    background: #e9f8ef;
+
+    color: #16804a;
+}
+
+
+.pagamento-icon svg {
+    width: 19px;
+    height: 19px;
+}
+
+
+.pagamento-conteudo {
+    min-width: 0;
+}
+
+
+.pagamento-conteudo > span {
+    display: block;
+
+    margin-bottom: 3px;
+
+    color: #8490a3;
+
+    font-size: 10px;
+    font-weight: 800;
+
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+
+.pagamento-conteudo strong {
+    display: block;
+
+    margin-bottom: 4px;
+
+    color: #172033;
+
+    font-size: 14px;
+    font-weight: 800;
+}
+
+
+.pagamento-conteudo p {
+    color: #64748b;
+
+    font-size: 12px;
+    line-height: 1.55;
+}
+
+
+/* =========================================================
+   OBSERVAÇÕES
+   ========================================================= */
+
+.observacoes-card p {
+    color: #64748b;
+
+    font-size: 13px;
+    line-height: 1.7;
+
+    white-space: pre-wrap;
+}
+
+
+/* =========================================================
+   AÇÕES
+   ========================================================= */
+
+.acoes {
+    margin-top: 26px;
+}
+
+
+.btn-principal {
+    width: 100%;
+
+    min-height: 52px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 10px;
+
+    border-radius: 14px;
+
+    background: #172033;
+
+    color: #ffffff;
+
+    font-size: 14px;
+    font-weight: 800;
+
+    box-shadow:
+        0 8px 20px rgba(23, 32, 51, 0.12);
+
+    transition:
+        background 160ms ease,
+        transform 160ms ease;
+}
+
+
+.btn-principal:hover {
+    background: #222d43;
+
+    transform: translateY(-1px);
+}
+
+
+.btn-principal svg {
+    width: 17px;
+    height: 17px;
+}
+
+
+/* =========================================================
+   RODAPÉ
+   ========================================================= */
+
+.pagina-footer {
+    max-width: 500px;
+
+    margin: 20px auto 0;
+
+    text-align: center;
+
+    color: #94a0b2;
+
+    font-size: 11px;
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   RESPONSIVIDADE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    .contratacao-header {
+        min-height: 62px;
+
+        padding: 0 16px;
+    }
+
+
+    .contratacao-brand {
+        font-size: 17px;
+    }
+
+
+    .btn-voltar {
+        padding: 0 8px;
+
+        font-size: 12px;
+    }
+
+
+    .contratacao-main {
+        width: calc(100% - 32px);
+
+        padding-top: 34px;
+    }
+
+
+    .pagina-heading h1 {
+        font-size: 27px;
+    }
+
+
+    .status-principal {
+        padding: 16px;
+    }
+
+
+    .card {
+        padding: 20px;
+    }
+
+
+    .servico-detalhes {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+/* =========================================================
+   TELAS MUITO PEQUENAS
+   ========================================================= */
+
+@media (max-width: 360px) {
+
+    .contratacao-main {
+        width: calc(100% - 24px);
+    }
+
+
+    .pagina-heading h1 {
+        font-size: 25px;
+    }
+
+
+    .card {
+        padding: 17px;
+    }
+
+
+    .status-principal {
+        padding: 14px;
+    }
+}
+
+
+/* =========================================================
+   ACESSIBILIDADE
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    html {
+        scroll-behavior: auto;
+    }
+
+
+    .btn-principal,
+    .btn-voltar {
+        transition: none;
+    }
+}

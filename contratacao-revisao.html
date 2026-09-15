@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+>
+
+<meta
+    name="theme-color"
+    content="#f5f7fb"
+>
+
+<title>Revisar contratação | MusicalWorld</title>
+
+<!-- =========================================================
+     MUSICALWORLD — FONTE PRINCIPAL
+     ========================================================= -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link
+    href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+>
+
+<!-- =========================================================
+     CSS DA PÁGINA
+     ========================================================= -->
+<link
+    rel="stylesheet"
+    href="css/contratacao/contratacao-revisao.css"
+>
+
+
+</head>
+
+<body>
+
+
+<!-- =========================================================
+     CABEÇALHO
+     ========================================================= -->
+<header class="contratacao-header">
+
+    <div class="contratacao-header-inner">
+
+        <a
+            href="contratacao.html"
+            class="contratacao-brand"
+            aria-label="Voltar para contratação"
+        >
+            MusicalWorld
+        </a>
+
+        <button
+            type="button"
+            class="btn-cancelar"
+            id="btnCancelarContratacao"
+        >
+            Cancelar
+        </button>
+
+    </div>
+
+</header>
+
+
+<!-- =========================================================
+     CONTEÚDO PRINCIPAL
+     ========================================================= -->
+<main class="contratacao-main">
+
+    <!-- =====================================================
+         PROGRESSO
+         ===================================================== -->
+    <section class="etapa-progresso-container">
+
+        <div class="etapa-progresso-topo">
+
+            <span
+                class="etapa-label"
+                id="etapaLabel"
+            >
+                Revisão
+            </span>
+
+            <span
+                class="etapa-numero"
+                id="etapaNumero"
+            >
+                Etapa 5 de 6
+            </span>
+
+        </div>
+
+        <div
+            class="etapa-progresso"
+            aria-hidden="true"
+        >
+            <div
+                class="etapa-progresso-preenchimento"
+                id="etapaProgresso"
+            ></div>
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         TÍTULO
+         ===================================================== -->
+    <section class="cabecalho-etapa">
+
+        <span class="eyebrow">
+            Última conferência
+        </span>
+
+        <h1>
+            Revise sua contratação
+        </h1>
+
+        <p>
+            Confira todos os detalhes antes de seguir para o pagamento.
+        </p>
+
+    </section>
+
+
+    <!-- =====================================================
+         ARTISTA
+         ===================================================== -->
+    <section class="revisao-card">
+
+        <div class="revisao-card-header">
+
+            <div>
+                <span class="revisao-card-kicker">
+                    Artista
+                </span>
+
+                <h2>
+                    Quem realizará o serviço
+                </h2>
+            </div>
+
+            <button
+                type="button"
+                class="btn-editar"
+                data-editar="artista"
+            >
+                Editar
+            </button>
+
+        </div>
+
+
+        <div class="artista-resumo">
+
+            <div
+                class="artista-avatar"
+                id="artistaAvatar"
+                aria-hidden="true"
+            >
+                RM
+            </div>
+
+            <div class="artista-info">
+
+                <strong id="artistaNome">
+                    Rafael Melo
+                </strong>
+
+                <span id="artistaTipo">
+                    Cantor(a)
+                </span>
+
+                <small id="artistaLocalizacao">
+                    Goiânia, GO
+                </small>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         SERVIÇO
+         ===================================================== -->
+    <section class="revisao-card">
+
+        <div class="revisao-card-header">
+
+            <div>
+                <span class="revisao-card-kicker">
+                    Serviço
+                </span>
+
+                <h2>
+                    O que será contratado
+                </h2>
+            </div>
+
+            <button
+                type="button"
+                class="btn-editar"
+                data-editar="servico"
+            >
+                Editar
+            </button>
+
+        </div>
+
+
+        <div class="servico-resumo">
+
+            <div class="servico-principal">
+
+                <h3 id="servicoNome">
+                    Show acústico
+                </h3>
+
+                <p id="servicoDescricao">
+                    Apresentação acústica com voz e violão para eventos,
+                    festas e confraternizações.
+                </p>
+
+            </div>
+
+
+            <div class="servico-detalhes">
+
+                <div class="detalhe-item">
+
+                    <span>
+                        Valor
+                    </span>
+
+                    <strong id="servicoValor">
+                        R$ 800,00
+                    </strong>
+
+                </div>
+
+                <div class="detalhe-item">
+
+                    <span>
+                        Duração
+                    </span>
+
+                    <strong id="servicoDuracao">
+                        2 horas
+                    </strong>
+
+                </div>
+
+                <div class="detalhe-item">
+
+                    <span>
+                        Região
+                    </span>
+
+                    <strong id="servicoLocalizacao">
+                        Goiânia e região
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         DATA E HORÁRIO
+         ===================================================== -->
+    <section class="revisao-card">
+
+        <div class="revisao-card-header">
+
+            <div>
+                <span class="revisao-card-kicker">
+                    Data e horário
+                </span>
+
+                <h2>
+                    Quando será
+                </h2>
+            </div>
+
+            <button
+                type="button"
+                class="btn-editar"
+                data-editar="data"
+            >
+                Editar
+            </button>
+
+        </div>
+
+
+        <div class="lista-resumo">
+
+            <div class="resumo-linha">
+
+                <span class="resumo-icone">
+                    Data
+                </span>
+
+                <div>
+                    <strong id="dataEvento">
+                        Não informado
+                    </strong>
+
+                    <small>
+                        Data do evento
+                    </small>
+                </div>
+
+            </div>
+
+
+            <div class="resumo-linha">
+
+                <span class="resumo-icone">
+                    Horário
+                </span>
+
+                <div>
+                    <strong id="horarioEvento">
+                        Não informado
+                    </strong>
+
+                    <small>
+                        Início e término
+                    </small>
+                </div>
+
+            </div>
+
+
+            <div class="resumo-linha">
+
+                <span class="resumo-icone">
+                    Chegada
+                </span>
+
+                <div>
+                    <strong id="horarioChegada">
+                        Não informado
+                    </strong>
+
+                    <small>
+                        Horário de preparação
+                    </small>
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         LOCAL
+         ===================================================== -->
+    <section class="revisao-card">
+
+        <div class="revisao-card-header">
+
+            <div>
+                <span class="revisao-card-kicker">
+                    Local
+                </span>
+
+                <h2>
+                    Onde será
+                </h2>
+            </div>
+
+            <button
+                type="button"
+                class="btn-editar"
+                data-editar="local"
+            >
+                Editar
+            </button>
+
+        </div>
+
+
+        <div class="local-resumo">
+
+            <strong id="tipoLocal">
+                Não informado
+            </strong>
+
+            <p id="enderecoEvento">
+                O endereço ainda não foi informado.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         DETALHES DO EVENTO
+         ===================================================== -->
+    <section class="revisao-card">
+
+        <div class="revisao-card-header">
+
+            <div>
+                <span class="revisao-card-kicker">
+                    Evento
+                </span>
+
+                <h2>
+                    Detalhes do evento
+                </h2>
+            </div>
+
+            <button
+                type="button"
+                class="btn-editar"
+                data-editar="evento"
+            >
+                Editar
+            </button>
+
+        </div>
+
+
+        <div class="evento-grid">
+
+            <div class="evento-detalhe">
+
+                <span>
+                    Tipo
+                </span>
+
+                <strong id="tipoEvento">
+                    Não informado
+                </strong>
+
+            </div>
+
+
+            <div class="evento-detalhe">
+
+                <span>
+                    Pessoas
+                </span>
+
+                <strong id="quantidadePessoas">
+                    Não informado
+                </strong>
+
+            </div>
+
+
+            <div
+                class="evento-detalhe evento-detalhe-full"
+                id="nomeEventoContainer"
+            >
+
+                <span>
+                    Nome do evento
+                </span>
+
+                <strong id="nomeEvento">
+                    Não informado
+                </strong>
+
+            </div>
+
+
+            <div
+                class="evento-detalhe evento-detalhe-full"
+                id="estruturaContainer"
+            >
+
+                <span>
+                    Estrutura disponível
+                </span>
+
+                <strong id="estruturaEvento">
+                    Não informado
+                </strong>
+
+            </div>
+
+
+            <div
+                class="evento-detalhe evento-detalhe-full"
+                id="observacoesContainer"
+            >
+
+                <span>
+                    Observações
+                </span>
+
+                <p id="observacoesEvento">
+                    Nenhuma observação adicionada.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         AVISO SOBRE PAGAMENTO
+         ===================================================== -->
+    <section class="aviso-pagamento">
+
+        <div class="aviso-pagamento-conteudo">
+
+            <strong>
+                Antes de pagar
+            </strong>
+
+            <p>
+                O pagamento inicia a solicitação de contratação.
+                A contratação só será confirmada depois que o artista
+                analisar e aceitar sua solicitação.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         NAVEGAÇÃO
+         ===================================================== -->
+    <nav
+        class="contratacao-navegacao"
+        aria-label="Navegação da contratação"
+    >
+
+        <button
+            type="button"
+            class="btn-secundario"
+            id="btnVoltar"
+        >
+            Voltar
+        </button>
+
+        <button
+            type="button"
+            class="btn-principal"
+            id="btnAvancar"
+        >
+            Continuar para pagamento
+        </button>
+
+    </nav>
+
+
+    <!-- =====================================================
+         RODAPÉ
+         ===================================================== -->
+    <footer class="contratacao-footer">
+
+        <p>
+            Você poderá revisar os dados novamente antes de finalizar.
+        </p>
+
+    </footer>
+
+</main>
+
+
+<!-- =========================================================
+     JAVASCRIPT
+     ========================================================= -->
+<script src="js/contratacao/contratacao-revisao.js"></script>
+
+
+</body>
+</html>

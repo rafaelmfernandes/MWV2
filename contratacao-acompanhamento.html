@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Acompanhamento da contratação | MusicalWorld</title>
+
+    <!-- =====================================================
+         FONTE PRINCIPAL
+         ===================================================== -->
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+
+    <!-- =====================================================
+         CSS DA PÁGINA
+         ===================================================== -->
+
+    <link
+        rel="stylesheet"
+        href="css/contratacao/contratacao-acompanhamento.css"
+    >
+
+
+    <!-- =====================================================
+         ÍCONES
+         ===================================================== -->
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+</head>
+
+
+<body>
+
+    <div class="contratacao-page">
+
+
+        <!-- =================================================
+             CABEÇALHO
+             ================================================= -->
+
+        <header class="contratacao-header">
+
+            <a
+                href="index.html"
+                class="contratacao-brand"
+                aria-label="Voltar para o MusicalWorld"
+            >
+                MusicalWorld
+            </a>
+
+
+            <button
+                type="button"
+                class="btn-voltar"
+                id="btnVoltar"
+            >
+                Voltar
+            </button>
+
+        </header>
+
+
+
+        <!-- =================================================
+             CONTEÚDO PRINCIPAL
+             ================================================= -->
+
+        <main class="contratacao-main">
+
+
+            <!-- =================================================
+                 CABEÇALHO DA CONTRATAÇÃO
+                 ================================================= -->
+
+            <section class="pagina-heading">
+
+                <span class="pagina-eyebrow">
+                    Acompanhamento
+                </span>
+
+
+                <h1>
+                    Sua contratação
+                </h1>
+
+
+                <p>
+                    Acompanhe cada etapa até a realização do evento.
+                </p>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 STATUS ATUAL
+                 ================================================= -->
+
+            <section class="status-principal">
+
+                <div class="status-principal-icon">
+
+                    <i data-lucide="clock-3"></i>
+
+                </div>
+
+
+                <div class="status-principal-conteudo">
+
+                    <span>
+                        Status atual
+                    </span>
+
+
+                    <strong id="statusAtual">
+                        Aguardando confirmação do artista
+                    </strong>
+
+
+                    <p id="statusDescricao">
+                        O artista precisa analisar sua solicitação
+                        antes de confirmar a contratação.
+                    </p>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 ARTISTA
+                 ================================================= -->
+
+            <section class="card">
+
+                <div class="card-heading">
+
+                    <div>
+
+                        <span class="card-eyebrow">
+                            Artista
+                        </span>
+
+
+                        <h2>
+                            Profissional contratado
+                        </h2>
+
+                    </div>
+
+                </div>
+
+
+                <div class="artista">
+
+                    <div
+                        class="artista-avatar"
+                        id="artistaAvatar"
+                    >
+                        RM
+                    </div>
+
+
+                    <div class="artista-info">
+
+                        <strong id="artistaNome">
+                            Rafael Melo
+                        </strong>
+
+
+                        <span id="artistaTipo">
+                            Cantor(a)
+                        </span>
+
+
+                        <small id="artistaLocalizacao">
+                            Goiânia, GO
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 SERVIÇO
+                 ================================================= -->
+
+            <section class="card">
+
+                <div class="card-heading">
+
+                    <div>
+
+                        <span class="card-eyebrow">
+                            Serviço
+                        </span>
+
+
+                        <h2 id="servicoNome">
+                            Show acústico
+                        </h2>
+
+                    </div>
+
+                </div>
+
+
+                <div class="servico-detalhes">
+
+                    <div class="servico-item">
+
+                        <span>
+                            Valor
+                        </span>
+
+
+                        <strong id="servicoValor">
+                            R$ 800,00
+                        </strong>
+
+                    </div>
+
+
+                    <div class="servico-item">
+
+                        <span>
+                            Duração
+                        </span>
+
+
+                        <strong id="servicoDuracao">
+                            2 horas
+                        </strong>
+
+                    </div>
+
+
+                    <div class="servico-item">
+
+                        <span>
+                            Atendimento
+                        </span>
+
+
+                        <strong id="servicoLocalizacao">
+                            Goiânia e região
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 EVENTO
+                 ================================================= -->
+
+            <section class="card">
+
+                <div class="card-heading">
+
+                    <div>
+
+                        <span class="card-eyebrow">
+                            Evento
+                        </span>
+
+
+                        <h2>
+                            Detalhes agendados
+                        </h2>
+
+                    </div>
+
+                </div>
+
+
+                <div class="detalhes-lista">
+
+
+                    <!-- DATA -->
+
+                    <div class="detalhe-item">
+
+                        <div class="detalhe-icon">
+
+                            <i data-lucide="calendar-days"></i>
+
+                        </div>
+
+
+                        <div class="detalhe-conteudo">
+
+                            <span>
+                                Data
+                            </span>
+
+
+                            <strong id="dataEvento">
+                                A definir
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- HORÁRIO -->
+
+                    <div class="detalhe-item">
+
+                        <div class="detalhe-icon">
+
+                            <i data-lucide="clock-3"></i>
+
+                        </div>
+
+
+                        <div class="detalhe-conteudo">
+
+                            <span>
+                                Horário
+                            </span>
+
+
+                            <strong id="horarioEvento">
+                                A definir
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- LOCAL -->
+
+                    <div class="detalhe-item">
+
+                        <div class="detalhe-icon">
+
+                            <i data-lucide="map-pin"></i>
+
+                        </div>
+
+
+                        <div class="detalhe-conteudo">
+
+                            <span>
+                                Local
+                            </span>
+
+
+                            <strong id="localEvento">
+                                A definir
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- TIPO -->
+
+                    <div class="detalhe-item">
+
+                        <div class="detalhe-icon">
+
+                            <i data-lucide="party-popper"></i>
+
+                        </div>
+
+
+                        <div class="detalhe-conteudo">
+
+                            <span>
+                                Tipo de evento
+                            </span>
+
+
+                            <strong id="tipoEvento">
+                                Não informado
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- PESSOAS -->
+
+                    <div
+                        class="detalhe-item"
+                        id="quantidadePessoasContainer"
+                    >
+
+                        <div class="detalhe-icon">
+
+                            <i data-lucide="users"></i>
+
+                        </div>
+
+
+                        <div class="detalhe-conteudo">
+
+                            <span>
+                                Público estimado
+                            </span>
+
+
+                            <strong id="quantidadePessoas">
+                                Não informado
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 STATUS DA CONTRATAÇÃO
+                 ================================================= -->
+
+            <section class="card">
+
+                <div class="card-heading">
+
+                    <div>
+
+                        <span class="card-eyebrow">
+                            Andamento
+                        </span>
+
+
+                        <h2>
+                            Etapas da contratação
+                        </h2>
+
+                    </div>
+
+                </div>
+
+
+                <div class="timeline">
+
+
+                    <!-- SOLICITAÇÃO -->
+
+                    <div
+                        class="timeline-item concluido"
+                        data-status="solicitacao"
+                    >
+
+                        <div class="timeline-marker">
+
+                            <i data-lucide="check"></i>
+
+                        </div>
+
+
+                        <div class="timeline-content">
+
+                            <strong>
+                                Solicitação enviada
+                            </strong>
+
+
+                            <span>
+                                Seus dados foram enviados ao artista.
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- ARTISTA -->
+
+                    <div
+                        class="timeline-item ativo"
+                        data-status="artista"
+                    >
+
+                        <div class="timeline-marker">
+
+                            <i data-lucide="clock-3"></i>
+
+                        </div>
+
+
+                        <div class="timeline-content">
+
+                            <strong>
+                                Aguardando o artista
+                            </strong>
+
+
+                            <span>
+                                O artista está analisando a solicitação.
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- CONFIRMAÇÃO -->
+
+                    <div
+                        class="timeline-item"
+                        data-status="confirmada"
+                    >
+
+                        <div class="timeline-marker">
+
+                            <i data-lucide="circle"></i>
+
+                        </div>
+
+
+                        <div class="timeline-content">
+
+                            <strong>
+                                Contratação confirmada
+                            </strong>
+
+
+                            <span>
+                                A contratação será confirmada após o aceite.
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- EVENTO -->
+
+                    <div
+                        class="timeline-item"
+                        data-status="evento"
+                    >
+
+                        <div class="timeline-marker">
+
+                            <i data-lucide="circle"></i>
+
+                        </div>
+
+
+                        <div class="timeline-content">
+
+                            <strong>
+                                Evento
+                            </strong>
+
+
+                            <span>
+                                Realização da apresentação.
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- CONCLUSÃO -->
+
+                    <div
+                        class="timeline-item"
+                        data-status="concluida"
+                    >
+
+                        <div class="timeline-marker">
+
+                            <i data-lucide="circle"></i>
+
+                        </div>
+
+
+                        <div class="timeline-content">
+
+                            <strong>
+                                Contratação concluída
+                            </strong>
+
+
+                            <span>
+                                Evento realizado com sucesso.
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- PAGAMENTO -->
+
+                    <div
+                        class="timeline-item"
+                        data-status="pagamento"
+                    >
+
+                        <div class="timeline-marker">
+
+                            <i data-lucide="circle"></i>
+
+                        </div>
+
+
+                        <div class="timeline-content">
+
+                            <strong>
+                                Pagamento liberado
+                            </strong>
+
+
+                            <span>
+                                Liberação do pagamento ao artista.
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 PAGAMENTO
+                 ================================================= -->
+
+            <section class="pagamento-card">
+
+                <div class="pagamento-icon">
+
+                    <i data-lucide="shield-check"></i>
+
+                </div>
+
+
+                <div class="pagamento-conteudo">
+
+                    <span>
+                        Pagamento
+                    </span>
+
+
+                    <strong id="pagamentoStatus">
+                        Pagamento processado
+                    </strong>
+
+
+                    <p id="pagamentoDescricao">
+                        O valor permanece associado à contratação
+                        até que o fluxo seja concluído.
+                    </p>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 OBSERVAÇÕES
+                 ================================================= -->
+
+            <section
+                class="card observacoes-card"
+                id="observacoesCard"
+            >
+
+                <div class="card-heading">
+
+                    <div>
+
+                        <span class="card-eyebrow">
+                            Observações
+                        </span>
+
+
+                        <h2>
+                            Informações do evento
+                        </h2>
+
+                    </div>
+
+                </div>
+
+
+                <p id="observacoesEvento">
+                    Nenhuma observação adicionada.
+                </p>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 AÇÕES
+                 ================================================= -->
+
+            <section class="acoes">
+
+                <button
+                    type="button"
+                    class="btn-principal"
+                    id="btnVoltarInicio"
+                >
+
+                    <span>
+                        Voltar para o início
+                    </span>
+
+                    <i data-lucide="arrow-right"></i>
+
+                </button>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 AVISO
+                 ================================================= -->
+
+            <p class="pagina-footer">
+
+                Você receberá atualizações conforme o status
+                da contratação mudar.
+
+            </p>
+
+        </main>
+
+    </div>
+
+
+    <!-- =====================================================
+         JAVASCRIPT
+         ===================================================== -->
+
+    <script src="js/contratacao/contratacao-acompanhamento.js"></script>
+
+</body>
+
+</html>

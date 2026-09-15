@@ -1,0 +1,718 @@
+/*
+=========================================================
+MUSICALWORLD — CONTRATAÇÃO
+
+Arquivo:
+contratacao.css
+
+Responsabilidade:
+- Controlar todo o visual do fluxo de contratação.
+- Manter o layout limpo e objetivo.
+- Adaptar a experiência para desktop e mobile.
+- Não conter lógica de negócio.
+=========================================================
+*/
+
+
+/* =========================================================
+   CONFIGURAÇÃO GLOBAL
+   ========================================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+html {
+    scroll-behavior: smooth;
+}
+
+
+body {
+    min-height: 100vh;
+
+    background: #f5f7fb;
+    color: #172033;
+
+    font-family:
+        Manrope,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+}
+
+
+button,
+input,
+textarea,
+select {
+    font: inherit;
+}
+
+
+button {
+    border: 0;
+    cursor: pointer;
+}
+
+
+/* =========================================================
+   PÁGINA
+   ========================================================= */
+
+.contratacao-page {
+    width: 100%;
+    min-height: 100vh;
+
+    display: flex;
+    flex-direction: column;
+}
+
+
+/* =========================================================
+   CABEÇALHO
+   ========================================================= */
+
+.contratacao-header {
+    width: 100%;
+
+    background: rgba(255, 255, 255, 0.94);
+
+    border-bottom: 1px solid #e7ebf2;
+
+    position: sticky;
+    top: 0;
+
+    z-index: 100;
+
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+}
+
+
+.contratacao-header-inner {
+    width: 100%;
+    max-width: 760px;
+
+    min-height: 64px;
+
+    margin: 0 auto;
+    padding: 0 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+
+/* =========================================================
+   MARCA
+   ========================================================= */
+
+.brand {
+    color: #172033;
+
+    font-size: 18px;
+    font-weight: 800;
+
+    letter-spacing: -0.5px;
+
+    text-decoration: none;
+}
+
+
+/* =========================================================
+   CANCELAR
+   ========================================================= */
+
+.cancelar-link {
+    padding: 8px 0;
+
+    background: transparent;
+
+    color: #64748b;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    transition:
+        color 0.2s ease;
+}
+
+
+.cancelar-link:hover {
+    color: #172033;
+}
+
+
+/* =========================================================
+   CONTEÚDO PRINCIPAL
+   ========================================================= */
+
+.contratacao-main {
+    width: 100%;
+    max-width: 760px;
+
+    flex: 1;
+
+    margin: 0 auto;
+
+    padding:
+        32px
+        20px
+        120px;
+}
+
+
+/* =========================================================
+   INDICADOR DE ETAPA
+   ========================================================= */
+
+.etapa-indicador {
+    width: 100%;
+
+    margin-bottom: 32px;
+}
+
+
+.etapa-texto {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin-bottom: 10px;
+}
+
+
+.etapa-label {
+    color: #64748b;
+
+    font-size: 12px;
+    font-weight: 700;
+
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+}
+
+
+.etapa-numero {
+    color: #94a3b8;
+
+    font-size: 12px;
+    font-weight: 600;
+}
+
+
+.etapa-barra {
+    width: 100%;
+    height: 4px;
+
+    background: #e8edf4;
+
+    border-radius: 999px;
+
+    overflow: hidden;
+}
+
+
+.etapa-progresso {
+    width: 16.66%;
+    height: 100%;
+
+    background: #6d4aff;
+
+    border-radius: inherit;
+
+    transition:
+        width 0.3s ease;
+}
+
+
+/* =========================================================
+   TÍTULO
+   ========================================================= */
+
+.titulo-area {
+    margin-bottom: 28px;
+}
+
+
+.titulo-area h1 {
+    color: #172033;
+
+    font-size: 30px;
+    font-weight: 800;
+
+    line-height: 1.15;
+
+    letter-spacing: -1px;
+
+    margin-bottom: 10px;
+}
+
+
+.titulo-area p {
+    max-width: 560px;
+
+    color: #64748b;
+
+    font-size: 15px;
+    font-weight: 500;
+
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   CARD DO ARTISTA
+   ========================================================= */
+
+.artista-card {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+
+    gap: 14px;
+
+    padding: 16px;
+
+    background: #ffffff;
+
+    border: 1px solid #e5eaf1;
+
+    border-radius: 20px;
+
+    box-shadow:
+        0 8px 24px rgba(15, 23, 42, 0.05);
+
+    margin-bottom: 16px;
+}
+
+
+.artista-avatar {
+    width: 56px;
+    height: 56px;
+
+    flex: 0 0 56px;
+
+    border-radius: 50%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ede9fe,
+            #ddd6fe
+        );
+
+    color: #6d4aff;
+
+    font-size: 18px;
+    font-weight: 800;
+
+    overflow: hidden;
+}
+
+
+.artista-avatar img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    display: block;
+}
+
+
+.artista-info {
+    min-width: 0;
+}
+
+
+.artista-info h2 {
+    color: #172033;
+
+    font-size: 16px;
+    font-weight: 700;
+
+    margin-bottom: 3px;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+.artista-info p {
+    color: #64748b;
+
+    font-size: 13px;
+    font-weight: 500;
+}
+
+
+/* =========================================================
+   CARD DO SERVIÇO
+   ========================================================= */
+
+.servico-card {
+    width: 100%;
+
+    padding: 22px;
+
+    background: #ffffff;
+
+    border: 1px solid #e5eaf1;
+
+    border-radius: 20px;
+
+    box-shadow:
+        0 8px 24px rgba(15, 23, 42, 0.05);
+}
+
+
+.servico-label {
+    color: #94a3b8;
+
+    font-size: 11px;
+    font-weight: 800;
+
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+
+    margin-bottom: 8px;
+}
+
+
+.servico-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+
+    gap: 20px;
+
+    margin-bottom: 12px;
+}
+
+
+.servico-header h2 {
+    color: #172033;
+
+    font-size: 21px;
+    font-weight: 750;
+
+    line-height: 1.3;
+
+    letter-spacing: -0.4px;
+}
+
+
+.servico-valor {
+    flex-shrink: 0;
+
+    color: #6d4aff;
+
+    font-size: 20px;
+    font-weight: 800;
+
+    white-space: nowrap;
+}
+
+
+.servico-descricao {
+    color: #64748b;
+
+    font-size: 14px;
+    font-weight: 500;
+
+    line-height: 1.65;
+
+    margin-bottom: 20px;
+}
+
+
+/* =========================================================
+   DETALHES DO SERVIÇO
+   ========================================================= */
+
+.servico-detalhes {
+    display: grid;
+
+    grid-template-columns: repeat(2, 1fr);
+
+    gap: 10px;
+}
+
+
+.servico-detalhe {
+    padding: 12px 14px;
+
+    background: #f8fafc;
+
+    border-radius: 12px;
+}
+
+
+.servico-detalhe-label {
+    display: block;
+
+    color: #94a3b8;
+
+    font-size: 11px;
+    font-weight: 700;
+
+    margin-bottom: 4px;
+}
+
+
+.servico-detalhe-valor {
+    color: #334155;
+
+    font-size: 13px;
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   NAVEGAÇÃO
+   ========================================================= */
+
+.continuacao {
+    width: 100%;
+
+    margin-top: 28px;
+
+    display: flex;
+    justify-content: flex-end;
+}
+
+
+.btn-avancar {
+    min-width: 150px;
+    height: 50px;
+
+    padding: 0 22px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 9px;
+
+    background: #172033;
+
+    color: #ffffff;
+
+    border-radius: 15px;
+
+    font-size: 14px;
+    font-weight: 700;
+
+    box-shadow:
+        0 8px 18px rgba(15, 23, 42, 0.12);
+
+    transition:
+        background-color 0.2s ease,
+        transform 0.15s ease,
+        box-shadow 0.2s ease;
+}
+
+
+.btn-avancar:hover {
+    background: #0f172a;
+
+    box-shadow:
+        0 10px 22px rgba(15, 23, 42, 0.16);
+}
+
+
+.btn-avancar:active {
+    transform: translateY(1px);
+}
+
+
+.btn-avancar svg {
+    width: 17px;
+    height: 17px;
+}
+
+
+/* =========================================================
+   RODAPÉ
+   ========================================================= */
+
+.contratacao-footer {
+    width: 100%;
+
+    padding:
+        0
+        20px
+        24px;
+
+    text-align: center;
+}
+
+
+.contratacao-footer p {
+    color: #94a3b8;
+
+    font-size: 11px;
+    font-weight: 500;
+
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   RESPONSIVIDADE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    .contratacao-header-inner {
+        min-height: 58px;
+
+        padding:
+            0
+            16px;
+    }
+
+
+    .brand {
+        font-size: 17px;
+    }
+
+
+    .contratacao-main {
+        padding:
+            26px
+            16px
+            110px;
+    }
+
+
+    .etapa-indicador {
+        margin-bottom: 28px;
+    }
+
+
+    .titulo-area {
+        margin-bottom: 22px;
+    }
+
+
+    .titulo-area h1 {
+        font-size: 26px;
+    }
+
+
+    .titulo-area p {
+        font-size: 14px;
+    }
+
+
+    .artista-card {
+        padding: 14px;
+
+        border-radius: 17px;
+    }
+
+
+    .artista-avatar {
+        width: 50px;
+        height: 50px;
+
+        flex-basis: 50px;
+    }
+
+
+    .servico-card {
+        padding: 18px;
+
+        border-radius: 17px;
+    }
+
+
+    .servico-header {
+        flex-direction: column;
+
+        gap: 6px;
+    }
+
+
+    .servico-header h2 {
+        font-size: 19px;
+    }
+
+
+    .servico-valor {
+        font-size: 19px;
+    }
+
+
+    .continuacao {
+        margin-top: 22px;
+    }
+
+
+    .btn-avancar {
+        width: 100%;
+    }
+
+}
+
+
+@media (max-width: 380px) {
+
+    .titulo-area h1 {
+        font-size: 24px;
+    }
+
+
+    .servico-detalhes {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+
+/* =========================================================
+   ACESSIBILIDADE
+   ========================================================= */
+
+.btn-avancar:focus-visible,
+.cancelar-link:focus-visible,
+.brand:focus-visible {
+    outline: 3px solid rgba(109, 74, 255, 0.25);
+
+    outline-offset: 3px;
+}
+
+
+/* =========================================================
+   REDUÇÃO DE MOVIMENTO
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    html {
+        scroll-behavior: auto;
+    }
+
+
+    .btn-avancar,
+    .etapa-progresso {
+        transition: none;
+    }
+
+}

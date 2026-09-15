@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    >
+
+
+<title>Contratações | MusicalWorld</title>
+
+<!-- =========================================================
+     MUSICALWORLD — CENTRAL DE CONTRATAÇÕES
+
+     Responsabilidade:
+     Estrutura principal da página onde o contratante
+     visualiza e gerencia todas as suas contratações.
+
+     Esta primeira versão utiliza dados demonstrativos.
+     Posteriormente, o JS será conectado ao Supabase.
+========================================================== -->
+
+<!-- Fonte principal do projeto -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link
+    href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+>
+
+<!-- Ícones -->
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<!-- CSS da página -->
+<link
+    rel="stylesheet"
+    href="css/contratacoes.css"
+>
+
+
+</head>
+
+<body>
+
+
+<div class="app">
+
+    <!-- =====================================================
+         CABEÇALHO
+    ====================================================== -->
+
+    <header class="topbar">
+
+        <div class="topbar-inner">
+
+            <div class="brand">
+                <span class="brand-name">
+                    MusicalWorld
+                </span>
+            </div>
+
+            <button
+                type="button"
+                class="btn-voltar"
+                id="btnVoltar"
+                aria-label="Voltar"
+            >
+                <i data-lucide="arrow-left"></i>
+                <span>Voltar</span>
+            </button>
+
+        </div>
+
+    </header>
+
+
+    <!-- =====================================================
+         CONTEÚDO PRINCIPAL
+    ====================================================== -->
+
+    <main class="contratacoes-page">
+
+        <!-- Cabeçalho da página -->
+
+        <section class="page-header">
+
+            <div class="page-header-content">
+
+                <span class="page-eyebrow">
+                    Gestão
+                </span>
+
+                <h1>
+                    Contratações
+                </h1>
+
+                <p>
+                    Gerencie seus artistas, eventos e solicitações
+                    em um só lugar.
+                </p>
+
+            </div>
+
+            <button
+                type="button"
+                class="btn-nova-contratacao"
+                id="btnNovaContratacao"
+            >
+                <i data-lucide="plus"></i>
+                <span>Nova contratação</span>
+            </button>
+
+        </section>
+
+
+        <!-- =================================================
+             INDICADORES
+        ================================================== -->
+
+        <section
+            class="resumo-grid"
+            aria-label="Resumo das contratações"
+        >
+
+            <article
+                class="resumo-card resumo-card-pendente"
+                data-filtro="aguardando"
+            >
+
+                <div class="resumo-card-top">
+
+                    <div class="resumo-icon">
+                        <i data-lucide="clock-3"></i>
+                    </div>
+
+                    <span class="resumo-label">
+                        Aguardando
+                    </span>
+
+                </div>
+
+                <strong
+                    class="resumo-valor"
+                    id="resumoAguardando"
+                >
+                    0
+                </strong>
+
+                <span class="resumo-descricao">
+                    Aguardando resposta do artista
+                </span>
+
+            </article>
+
+
+            <article
+                class="resumo-card resumo-card-proxima"
+                data-filtro="proximas"
+            >
+
+                <div class="resumo-card-top">
+
+                    <div class="resumo-icon">
+                        <i data-lucide="calendar-days"></i>
+                    </div>
+
+                    <span class="resumo-label">
+                        Próximas
+                    </span>
+
+                </div>
+
+                <strong
+                    class="resumo-valor"
+                    id="resumoProximas"
+                >
+                    0
+                </strong>
+
+                <span class="resumo-descricao">
+                    Eventos já confirmados
+                </span>
+
+            </article>
+
+
+            <article
+                class="resumo-card resumo-card-andamento"
+                data-filtro="andamento"
+            >
+
+                <div class="resumo-card-top">
+
+                    <div class="resumo-icon">
+                        <i data-lucide="activity"></i>
+                    </div>
+
+                    <span class="resumo-label">
+                        Em andamento
+                    </span>
+
+                </div>
+
+                <strong
+                    class="resumo-valor"
+                    id="resumoAndamento"
+                >
+                    0
+                </strong>
+
+                <span class="resumo-descricao">
+                    Contratações em execução
+                </span>
+
+            </article>
+
+
+            <article
+                class="resumo-card resumo-card-historico"
+                data-filtro="historico"
+            >
+
+                <div class="resumo-card-top">
+
+                    <div class="resumo-icon">
+                        <i data-lucide="archive"></i>
+                    </div>
+
+                    <span class="resumo-label">
+                        Histórico
+                    </span>
+
+                </div>
+
+                <strong
+                    class="resumo-valor"
+                    id="resumoHistorico"
+                >
+                    0
+                </strong>
+
+                <span class="resumo-descricao">
+                    Contratações finalizadas
+                </span>
+
+            </article>
+
+        </section>
+
+
+        <!-- =================================================
+             FILTROS
+        ================================================== -->
+
+        <section class="controle-contratacoes">
+
+            <div class="filtros">
+
+                <button
+                    type="button"
+                    class="filtro-btn ativo"
+                    data-filtro="todas"
+                >
+                    Todas
+                </button>
+
+                <button
+                    type="button"
+                    class="filtro-btn"
+                    data-filtro="aguardando"
+                >
+                    Aguardando
+                </button>
+
+                <button
+                    type="button"
+                    class="filtro-btn"
+                    data-filtro="confirmadas"
+                >
+                    Confirmadas
+                </button>
+
+                <button
+                    type="button"
+                    class="filtro-btn"
+                    data-filtro="concluidas"
+                >
+                    Concluídas
+                </button>
+
+                <button
+                    type="button"
+                    class="filtro-btn"
+                    data-filtro="canceladas"
+                >
+                    Canceladas
+                </button>
+
+            </div>
+
+
+            <div class="campo-busca">
+
+                <i data-lucide="search"></i>
+
+                <input
+                    type="search"
+                    id="campoBusca"
+                    placeholder="Buscar artista, evento ou serviço..."
+                    autocomplete="off"
+                >
+
+                <button
+                    type="button"
+                    class="btn-limpar-busca"
+                    id="btnLimparBusca"
+                    aria-label="Limpar busca"
+                    hidden
+                >
+                    <i data-lucide="x"></i>
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             CABEÇALHO DA LISTA
+        ================================================== -->
+
+        <section class="lista-header">
+
+            <div>
+
+                <h2>
+                    Suas contratações
+                </h2>
+
+                <span id="contadorContratacoes">
+                    0 contratações
+                </span>
+
+            </div>
+
+            <button
+                type="button"
+                class="btn-ordenacao"
+                id="btnOrdenacao"
+            >
+                <i data-lucide="arrow-down-up"></i>
+                <span>Mais recentes</span>
+            </button>
+
+        </section>
+
+
+        <!-- =================================================
+             LISTA DE CONTRATAÇÕES
+        ================================================== -->
+
+        <section
+            class="contratacoes-lista"
+            id="contratacoesLista"
+            aria-live="polite"
+        >
+            <!-- Os cards serão inseridos pelo JavaScript. -->
+        </section>
+
+
+        <!-- =================================================
+             ESTADO VAZIO
+        ================================================== -->
+
+        <section
+            class="estado-vazio"
+            id="estadoVazio"
+            hidden
+        >
+
+            <div class="estado-vazio-icon">
+                <i data-lucide="calendar-search"></i>
+            </div>
+
+            <h3>
+                Nenhuma contratação encontrada
+            </h3>
+
+            <p id="estadoVazioMensagem">
+                Não encontramos contratações para os filtros
+                selecionados.
+            </p>
+
+            <button
+                type="button"
+                class="btn-estado-vazio"
+                id="btnLimparFiltros"
+            >
+                Limpar filtros
+            </button>
+
+        </section>
+
+    </main>
+
+
+    <!-- =====================================================
+         BARRA INFERIOR
+    ====================================================== -->
+
+    <nav class="bottom-navigation">
+
+        <button
+            type="button"
+            class="bottom-navigation-item"
+            id="btnInicio"
+        >
+            <i data-lucide="house"></i>
+            <span>Início</span>
+        </button>
+
+        <button
+            type="button"
+            class="bottom-navigation-item ativo"
+        >
+            <i data-lucide="briefcase-business"></i>
+            <span>Contratações</span>
+        </button>
+
+        <button
+            type="button"
+            class="bottom-navigation-item"
+            id="btnPerfil"
+        >
+            <i data-lucide="user-round"></i>
+            <span>Perfil</span>
+        </button>
+
+    </nav>
+
+</div>
+
+
+<!-- =====================================================
+     SUPABASE E MÓDULOS CENTRAIS
+====================================================== -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+
+<script src="js/core/SupabaseClient.js"></script>
+
+<script src="js/core/Sessao.js"></script>
+
+<script src="js/core/UsuarioAtual.js"></script>
+
+<script src="js/core/ControleSessao.js"></script>
+
+<script src="js/core/RoteamentoPerfil.js"></script>
+
+
+<!-- =====================================================
+     MÓDULO DA PÁGINA
+====================================================== -->
+
+<script src="js/contratacoes.js"></script>
+
+
+
+</body>
+
+</html>

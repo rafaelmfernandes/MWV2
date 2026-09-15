@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Local do evento | MusicalWorld</title>
+
+    <!-- =====================================================
+         MUSICALWORLD — FONTE PRINCIPAL
+         ===================================================== -->
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <!-- =====================================================
+         CSS DA ETAPA
+         ===================================================== -->
+
+    <link
+        rel="stylesheet"
+        href="css/contratacao/contratacao-local.css"
+    >
+</head>
+
+<body>
+
+    <div class="contratacao-page">
+
+        <!-- =================================================
+             CABEÇALHO
+             ================================================= -->
+
+        <header class="contratacao-header">
+
+            <div class="contratacao-header-inner">
+
+                <a
+                    href="contratacao.html"
+                    class="brand"
+                    aria-label="Voltar para a contratação"
+                >
+                    MusicalWorld
+                </a>
+
+                <button
+                    type="button"
+                    class="cancelar-link"
+                    id="btnCancelarContratacao"
+                >
+                    Cancelar
+                </button>
+
+            </div>
+
+        </header>
+
+
+        <!-- =================================================
+             CONTEÚDO PRINCIPAL
+             ================================================= -->
+
+        <main class="contratacao-main">
+
+            <!-- =================================================
+                 INDICADOR DE PROGRESSO
+                 ================================================= -->
+
+            <section
+                class="etapa-indicador"
+                aria-label="Progresso da contratação"
+            >
+
+                <div class="etapa-texto">
+
+                    <span class="etapa-label">
+                        Contratação
+                    </span>
+
+                    <span class="etapa-numero">
+                        Etapa 3 de 6
+                    </span>
+
+                </div>
+
+                <div class="etapa-barra">
+
+                    <div class="etapa-progresso"></div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 TÍTULO
+                 ================================================= -->
+
+            <section class="titulo-area">
+
+                <h1>
+                    Onde será o evento?
+                </h1>
+
+                <p>
+                    Informe o local onde o artista deverá realizar a apresentação.
+                </p>
+
+            </section>
+
+
+            <!-- =================================================
+                 TIPO DE LOCAL
+                 ================================================= -->
+
+            <section class="local-card">
+
+                <div class="section-header">
+
+                    <span class="section-label">
+                        Local
+                    </span>
+
+                    <h2>
+                        Qual é o tipo do local?
+                    </h2>
+
+                    <p>
+                        Isso ajuda o artista a entender melhor a estrutura da apresentação.
+                    </p>
+
+                </div>
+
+
+                <div
+                    class="opcoes-local"
+                    role="group"
+                    aria-label="Tipo do local do evento"
+                >
+
+                    <button
+                        type="button"
+                        class="opcao-local"
+                        data-valor="residencia"
+                        aria-pressed="false"
+                    >
+                        <span class="opcao-titulo">
+                            Residência
+                        </span>
+
+                        <span class="opcao-descricao">
+                            Casa, apartamento ou chácara
+                        </span>
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="opcao-local"
+                        data-valor="salao"
+                        aria-pressed="false"
+                    >
+                        <span class="opcao-titulo">
+                            Salão de eventos
+                        </span>
+
+                        <span class="opcao-descricao">
+                            Espaço para festas e comemorações
+                        </span>
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="opcao-local"
+                        data-valor="restaurante"
+                        aria-pressed="false"
+                    >
+                        <span class="opcao-titulo">
+                            Restaurante ou bar
+                        </span>
+
+                        <span class="opcao-descricao">
+                            Estabelecimento comercial
+                        </span>
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="opcao-local"
+                        data-valor="espaco-eventos"
+                        aria-pressed="false"
+                    >
+                        <span class="opcao-titulo">
+                            Espaço para eventos
+                        </span>
+
+                        <span class="opcao-descricao">
+                            Casa de shows ou espaço profissional
+                        </span>
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="opcao-local"
+                        data-valor="outro"
+                        aria-pressed="false"
+                    >
+                        <span class="opcao-titulo">
+                            Outro
+                        </span>
+
+                        <span class="opcao-descricao">
+                            Outro tipo de localização
+                        </span>
+                    </button>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 ENDEREÇO
+                 ================================================= -->
+
+            <section class="endereco-card">
+
+                <div class="section-header">
+
+                    <span class="section-label">
+                        Endereço
+                    </span>
+
+                    <h2>
+                        Onde exatamente será o evento?
+                    </h2>
+
+                    <p>
+                        Informe o endereço para que o artista saiba onde deverá comparecer.
+                    </p>
+
+                </div>
+
+
+                <div class="form-grid">
+
+                    <!-- CEP -->
+
+                    <div class="campo-group">
+
+                        <label
+                            for="cep"
+                            class="campo-label"
+                        >
+                            CEP
+                        </label>
+
+                        <div class="campo-input-wrapper">
+
+                            <input
+                                type="text"
+                                id="cep"
+                                name="cep"
+                                class="campo-input"
+                                inputmode="numeric"
+                                autocomplete="postal-code"
+                                maxlength="9"
+                                placeholder="00000-000"
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Rua -->
+
+                    <div class="campo-group campo-largo">
+
+                        <label
+                            for="rua"
+                            class="campo-label"
+                        >
+                            Rua ou avenida
+                        </label>
+
+                        <div class="campo-input-wrapper">
+
+                            <input
+                                type="text"
+                                id="rua"
+                                name="rua"
+                                class="campo-input"
+                                autocomplete="street-address"
+                                placeholder="Nome da rua ou avenida"
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Número -->
+
+                    <div class="campo-group">
+
+                        <label
+                            for="numero"
+                            class="campo-label"
+                        >
+                            Número
+                        </label>
+
+                        <div class="campo-input-wrapper">
+
+                            <input
+                                type="text"
+                                id="numero"
+                                name="numero"
+                                class="campo-input"
+                                inputmode="numeric"
+                                autocomplete="address-line2"
+                                placeholder="Ex.: 120"
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Complemento -->
+
+                    <div class="campo-group">
+
+                        <label
+                            for="complemento"
+                            class="campo-label"
+                        >
+                            Complemento
+                        </label>
+
+                        <div class="campo-input-wrapper">
+
+                            <input
+                                type="text"
+                                id="complemento"
+                                name="complemento"
+                                class="campo-input"
+                                placeholder="Opcional"
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Bairro -->
+
+                    <div class="campo-group">
+
+                        <label
+                            for="bairro"
+                            class="campo-label"
+                        >
+                            Bairro
+                        </label>
+
+                        <div class="campo-input-wrapper">
+
+                            <input
+                                type="text"
+                                id="bairro"
+                                name="bairro"
+                                class="campo-input"
+                                autocomplete="address-level3"
+                                placeholder="Nome do bairro"
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Cidade -->
+
+                    <div class="campo-group">
+
+                        <label
+                            for="cidade"
+                            class="campo-label"
+                        >
+                            Cidade
+                        </label>
+
+                        <div class="campo-input-wrapper">
+
+                            <input
+                                type="text"
+                                id="cidade"
+                                name="cidade"
+                                class="campo-input"
+                                autocomplete="address-level2"
+                                placeholder="Nome da cidade"
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Estado -->
+
+                    <div class="campo-group">
+
+                        <label
+                            for="estado"
+                            class="campo-label"
+                        >
+                            Estado
+                        </label>
+
+                        <div class="campo-input-wrapper">
+
+                            <select
+                                id="estado"
+                                name="estado"
+                                class="campo-input"
+                            >
+
+                                <option value="">
+                                    Selecione
+                                </option>
+
+                                <option value="AC">Acre</option>
+                                <option value="AL">Alagoas</option>
+                                <option value="AP">Amapá</option>
+                                <option value="AM">Amazonas</option>
+                                <option value="BA">Bahia</option>
+                                <option value="CE">Ceará</option>
+                                <option value="DF">Distrito Federal</option>
+                                <option value="ES">Espírito Santo</option>
+                                <option value="GO">Goiás</option>
+                                <option value="MA">Maranhão</option>
+                                <option value="MT">Mato Grosso</option>
+                                <option value="MS">Mato Grosso do Sul</option>
+                                <option value="MG">Minas Gerais</option>
+                                <option value="PA">Pará</option>
+                                <option value="PB">Paraíba</option>
+                                <option value="PR">Paraná</option>
+                                <option value="PE">Pernambuco</option>
+                                <option value="PI">Piauí</option>
+                                <option value="RJ">Rio de Janeiro</option>
+                                <option value="RN">Rio Grande do Norte</option>
+                                <option value="RS">Rio Grande do Sul</option>
+                                <option value="RO">Rondônia</option>
+                                <option value="RR">Roraima</option>
+                                <option value="SC">Santa Catarina</option>
+                                <option value="SP">São Paulo</option>
+                                <option value="SE">Sergipe</option>
+                                <option value="TO">Tocantins</option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     ENDEREÇO AINDA NÃO DEFINIDO
+                     ================================================= -->
+
+                <div class="local-nao-definido">
+
+                    <label class="checkbox-option">
+
+                        <input
+                            type="checkbox"
+                            id="localAindaNaoDefinido"
+                        >
+
+                        <span class="checkbox-custom"></span>
+
+                        <span class="checkbox-texto">
+                            Ainda não defini o local do evento.
+                        </span>
+
+                    </label>
+
+                    <p>
+                        Você poderá informar o endereço posteriormente, antes da confirmação da contratação.
+                    </p>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 NAVEGAÇÃO
+                 ================================================= -->
+
+            <div class="continuacao">
+
+                <button
+                    type="button"
+                    class="btn-voltar"
+                    id="btnVoltar"
+                >
+
+                    <svg
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        aria-hidden="true"
+                    >
+                        <path d="M19 12H5"></path>
+                        <path d="m11 18-6-6 6-6"></path>
+                    </svg>
+
+                    <span>
+                        Voltar
+                    </span>
+
+                </button>
+
+
+                <button
+                    type="button"
+                    class="btn-avancar"
+                    id="btnAvancar"
+                >
+
+                    <span>
+                        Continuar
+                    </span>
+
+                    <svg
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        aria-hidden="true"
+                    >
+                        <path d="M5 12h14"></path>
+                        <path d="m13 6 6 6-6 6"></path>
+                    </svg>
+
+                </button>
+
+            </div>
+
+        </main>
+
+
+        <!-- =================================================
+             RODAPÉ
+             ================================================= -->
+
+        <footer class="contratacao-footer">
+
+            <p>
+                Você poderá revisar todas as informações antes de confirmar a contratação.
+            </p>
+
+        </footer>
+
+    </div>
+
+
+    <!-- =====================================================
+         JAVASCRIPT DA ETAPA
+         ===================================================== -->
+
+    <script src="js/contratacao/contratacao-local.js"></script>
+
+</body>
+
+</html>

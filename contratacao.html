@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <!-- =========================================================
+         MUSICALWORLD — FLUXO DE CONTRATAÇÃO
+
+         Arquivo:
+         contratacao.html
+
+         Responsabilidade:
+         - Estruturar a experiência de contratação.
+         - Apresentar as etapas do processo.
+         - Exibir as informações recebidas do JavaScript.
+         - Manter a estrutura independente da lógica e do CSS.
+         ========================================================= -->
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Contratar | MusicalWorld</title>
+
+
+    <!-- =========================================================
+         FONTE
+         ========================================================= -->
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+
+    <!-- =========================================================
+         CSS DA PÁGINA
+         ========================================================= -->
+
+    <link
+        rel="stylesheet"
+        href="css/contratacao/contratacao.css"
+    >
+
+</head>
+
+
+<body>
+
+    <!-- =========================================================
+         PÁGINA DE CONTRATAÇÃO
+         ========================================================= -->
+
+    <div class="contratacao-page">
+
+
+        <!-- =====================================================
+             CABEÇALHO
+             ===================================================== -->
+
+        <header class="contratacao-header">
+
+            <div class="contratacao-header-inner">
+
+                <a
+                    href="javascript:history.back()"
+                    class="brand"
+                    aria-label="Voltar"
+                >
+                    MusicalWorld
+                </a>
+
+                <button
+                    type="button"
+                    class="cancelar-link"
+                    id="btnCancelarContratacao"
+                >
+                    Cancelar
+                </button>
+
+            </div>
+
+        </header>
+
+
+        <!-- =====================================================
+             CONTEÚDO PRINCIPAL
+             ===================================================== -->
+
+        <main class="contratacao-main">
+
+
+            <!-- =================================================
+                 INDICADOR DE ETAPA
+                 ================================================= -->
+
+            <section
+                class="etapa-indicador"
+                aria-label="Progresso da contratação"
+            >
+
+                <div class="etapa-texto">
+
+                    <span
+                        class="etapa-label"
+                        id="etapaLabel"
+                    >
+                        Contratação
+                    </span>
+
+                    <span
+                        class="etapa-numero"
+                        id="etapaNumero"
+                    >
+                        Etapa 1 de 6
+                    </span>
+
+                </div>
+
+
+                <div class="etapa-barra">
+
+                    <div
+                        class="etapa-progresso"
+                        id="etapaProgresso"
+                    ></div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 TÍTULO DA ETAPA
+                 ================================================= -->
+
+            <section class="titulo-area">
+
+                <h1 id="tituloEtapa">
+                    Confira o serviço
+                </h1>
+
+                <p id="descricaoEtapa">
+                    Antes de continuar, confirme se este é o serviço
+                    que você deseja contratar.
+                </p>
+
+            </section>
+
+
+            <!-- =================================================
+                 ARTISTA
+                 ================================================= -->
+
+            <section
+                class="artista-card"
+                id="artistaCard"
+            >
+
+                <div
+                    class="artista-avatar"
+                    id="artistaAvatar"
+                >
+                    MW
+                </div>
+
+
+                <div class="artista-info">
+
+                    <h2 id="artistaNome">
+                        Carregando...
+                    </h2>
+
+                    <p id="artistaTipo">
+                        Artista
+                    </p>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 SERVIÇO
+                 ================================================= -->
+
+            <section
+                class="servico-card"
+                id="servicoCard"
+            >
+
+                <div class="servico-label">
+                    Serviço selecionado
+                </div>
+
+
+                <div class="servico-header">
+
+                    <h2 id="servicoNome">
+                        Carregando...
+                    </h2>
+
+                    <div
+                        class="servico-valor"
+                        id="servicoValor"
+                    >
+                        —
+                    </div>
+
+                </div>
+
+
+                <p
+                    class="servico-descricao"
+                    id="servicoDescricao"
+                >
+                    Carregando informações do serviço...
+                </p>
+
+
+                <div class="servico-detalhes">
+
+
+                    <div class="servico-detalhe">
+
+                        <span class="servico-detalhe-label">
+                            Duração
+                        </span>
+
+                        <span
+                            class="servico-detalhe-valor"
+                            id="servicoDuracao"
+                        >
+                            —
+                        </span>
+
+                    </div>
+
+
+                    <div class="servico-detalhe">
+
+                        <span class="servico-detalhe-label">
+                            Localização
+                        </span>
+
+                        <span
+                            class="servico-detalhe-valor"
+                            id="servicoLocalizacao"
+                        >
+                            —
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 ÁREA DE NAVEGAÇÃO
+                 ================================================= -->
+
+            <div class="continuacao">
+
+                <button
+                    type="button"
+                    class="btn-avancar"
+                    id="btnAvancar"
+                >
+
+                    <span>
+                        Continuar
+                    </span>
+
+
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        aria-hidden="true"
+                    >
+
+                        <path d="M5 12h14"></path>
+
+                        <path d="m13 6 6 6-6 6"></path>
+
+                    </svg>
+
+                </button>
+
+            </div>
+
+        </main>
+
+
+        <!-- =====================================================
+             RODAPÉ
+             ===================================================== -->
+
+        <footer class="contratacao-footer">
+
+            <p>
+                Você poderá revisar todas as informações antes de
+                confirmar a contratação.
+            </p>
+
+        </footer>
+
+    </div>
+
+
+    <!-- =========================================================
+         JAVASCRIPT
+         ========================================================= -->
+
+    <script
+        src="js/contratacao/contratacao.js"
+    ></script>
+
+</body>
+
+</html>

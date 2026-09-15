@@ -1,0 +1,994 @@
+/* =========================================================
+MUSICALWORLD — ETAPA 5
+Arquivo: contratacao-revisao.css
+
+Responsabilidade:
+
+* Estilizar a tela de revisão da contratação.
+* Manter o mesmo padrão visual das etapas anteriores.
+* Garantir boa leitura em celular e desktop.
+* Evitar overflow horizontal.
+  ========================================================= */
+
+/* =========================================================
+RESET
+========================================================= */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  }
+
+html {
+width: 100%;
+min-height: 100%;
+}
+
+body {
+width: 100%;
+min-height: 100vh;
+
+
+overflow-x: hidden;
+
+background: #f5f7fb;
+color: #172033;
+
+font-family:
+    Manrope,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif;
+
+-webkit-font-smoothing: antialiased;
+text-rendering: optimizeLegibility;
+
+
+}
+
+button,
+input,
+textarea,
+select {
+font: inherit;
+}
+
+button {
+border: 0;
+cursor: pointer;
+}
+
+/* =========================================================
+CABEÇALHO
+========================================================= */
+
+.contratacao-header {
+position: sticky;
+top: 0;
+
+
+z-index: 100;
+
+width: 100%;
+
+background: rgba(245, 247, 251, 0.92);
+
+border-bottom: 1px solid #e5e9f0;
+
+backdrop-filter: blur(14px);
+-webkit-backdrop-filter: blur(14px);
+
+
+}
+
+.contratacao-header-inner {
+width: 100%;
+max-width: 760px;
+
+
+min-height: 64px;
+
+margin: 0 auto;
+padding: 0 20px;
+
+display: flex;
+align-items: center;
+justify-content: space-between;
+
+gap: 16px;
+
+
+}
+
+.contratacao-brand {
+color: #172033;
+
+
+text-decoration: none;
+
+font-size: 20px;
+font-weight: 800;
+
+letter-spacing: -0.5px;
+
+
+}
+
+.btn-cancelar {
+padding: 8px 0;
+
+
+background: transparent;
+color: #64748b;
+
+font-size: 14px;
+font-weight: 700;
+
+
+}
+
+.btn-cancelar:hover {
+color: #172033;
+}
+
+/* =========================================================
+ÁREA PRINCIPAL
+========================================================= */
+
+.contratacao-main {
+width: calc(100% - 32px);
+max-width: 728px;
+
+
+margin: 0 auto;
+padding: 28px 0 40px;
+
+
+}
+
+/* =========================================================
+PROGRESSO
+========================================================= */
+
+.etapa-progresso-container {
+width: 100%;
+
+
+margin-bottom: 30px;
+
+
+}
+
+.etapa-progresso-topo {
+display: flex;
+align-items: center;
+justify-content: space-between;
+
+
+gap: 12px;
+
+margin-bottom: 9px;
+
+
+}
+
+.etapa-label {
+color: #172033;
+
+
+font-size: 13px;
+font-weight: 800;
+
+
+}
+
+.etapa-numero {
+color: #7b8495;
+
+
+font-size: 12px;
+font-weight: 700;
+
+
+}
+
+.etapa-progresso {
+width: 100%;
+height: 5px;
+
+
+overflow: hidden;
+
+background: #e3e7ee;
+
+border-radius: 999px;
+
+
+}
+
+.etapa-progresso-preenchimento {
+width: 83.3333%;
+height: 100%;
+
+
+background: #6d4aff;
+
+border-radius: inherit;
+
+
+}
+
+/* =========================================================
+CABEÇALHO DA ETAPA
+========================================================= */
+
+.cabecalho-etapa {
+margin-bottom: 24px;
+}
+
+.eyebrow {
+display: inline-block;
+
+
+margin-bottom: 7px;
+
+color: #6d4aff;
+
+font-size: 12px;
+font-weight: 800;
+
+letter-spacing: 0.04em;
+text-transform: uppercase;
+
+
+}
+
+.cabecalho-etapa h1 {
+max-width: 680px;
+
+
+color: #172033;
+
+font-size: 30px;
+line-height: 1.12;
+
+font-weight: 800;
+
+letter-spacing: -0.9px;
+
+
+}
+
+.cabecalho-etapa p {
+max-width: 620px;
+
+
+margin-top: 10px;
+
+color: #687386;
+
+font-size: 15px;
+line-height: 1.6;
+
+
+}
+
+/* =========================================================
+CARDS
+========================================================= */
+
+.revisao-card {
+width: 100%;
+
+
+margin-bottom: 16px;
+padding: 20px;
+
+background: #ffffff;
+
+border: 1px solid #e6eaf0;
+border-radius: 20px;
+
+box-shadow:
+    0 8px 24px rgba(15, 23, 42, 0.045);
+
+
+}
+
+.revisao-card-header {
+display: flex;
+align-items: flex-start;
+justify-content: space-between;
+
+
+gap: 16px;
+
+margin-bottom: 20px;
+
+
+}
+
+.revisao-card-kicker {
+display: block;
+
+
+margin-bottom: 5px;
+
+color: #8a94a6;
+
+font-size: 11px;
+font-weight: 800;
+
+letter-spacing: 0.04em;
+text-transform: uppercase;
+
+
+}
+
+.revisao-card-header h2 {
+color: #172033;
+
+
+font-size: 17px;
+line-height: 1.3;
+
+font-weight: 800;
+
+
+}
+
+.btn-editar {
+flex-shrink: 0;
+
+
+padding: 7px 0;
+
+background: transparent;
+color: #6d4aff;
+
+font-size: 13px;
+font-weight: 800;
+
+
+}
+
+.btn-editar:hover {
+color: #5434dc;
+}
+
+/* =========================================================
+ARTISTA
+========================================================= */
+
+.artista-resumo {
+display: flex;
+align-items: center;
+
+
+gap: 14px;
+
+
+}
+
+.artista-avatar {
+width: 58px;
+height: 58px;
+
+
+flex: 0 0 58px;
+
+display: flex;
+align-items: center;
+justify-content: center;
+
+overflow: hidden;
+
+background: linear-gradient(
+    135deg,
+    #6d4aff,
+    #8c6cff
+);
+
+color: #ffffff;
+
+border-radius: 50%;
+
+font-size: 16px;
+font-weight: 800;
+
+
+}
+
+.artista-avatar img {
+width: 100%;
+height: 100%;
+
+
+object-fit: cover;
+
+
+}
+
+.artista-info {
+min-width: 0;
+
+
+display: flex;
+flex-direction: column;
+
+gap: 3px;
+
+
+}
+
+.artista-info strong {
+color: #172033;
+
+
+font-size: 16px;
+font-weight: 800;
+
+
+}
+
+.artista-info span {
+color: #596579;
+
+
+font-size: 13px;
+font-weight: 600;
+
+
+}
+
+.artista-info small {
+color: #8a94a6;
+
+
+font-size: 12px;
+
+
+}
+
+/* =========================================================
+SERVIÇO
+========================================================= */
+
+.servico-principal h3 {
+color: #172033;
+
+
+font-size: 18px;
+font-weight: 800;
+
+
+}
+
+.servico-principal p {
+margin-top: 7px;
+
+
+color: #687386;
+
+font-size: 14px;
+line-height: 1.55;
+
+
+}
+
+.servico-detalhes {
+display: grid;
+grid-template-columns: repeat(3, minmax(0, 1fr));
+
+
+gap: 10px;
+
+margin-top: 18px;
+padding-top: 18px;
+
+border-top: 1px solid #edf0f4;
+
+
+}
+
+.detalhe-item {
+min-width: 0;
+}
+
+.detalhe-item span {
+display: block;
+
+
+margin-bottom: 5px;
+
+color: #8a94a6;
+
+font-size: 11px;
+font-weight: 700;
+
+
+}
+
+.detalhe-item strong {
+display: block;
+
+
+color: #172033;
+
+font-size: 14px;
+font-weight: 800;
+
+overflow-wrap: anywhere;
+
+
+}
+
+#servicoValor {
+color: #6d4aff;
+}
+
+/* =========================================================
+RESUMOS
+========================================================= */
+
+.lista-resumo {
+display: flex;
+flex-direction: column;
+
+
+gap: 15px;
+
+
+}
+
+.resumo-linha {
+display: flex;
+align-items: center;
+
+
+gap: 13px;
+
+min-width: 0;
+
+
+}
+
+.resumo-icone {
+width: 46px;
+height: 42px;
+
+
+flex: 0 0 46px;
+
+display: flex;
+align-items: center;
+justify-content: center;
+
+background: #f1efff;
+color: #6d4aff;
+
+border-radius: 12px;
+
+font-size: 10px;
+font-weight: 800;
+
+
+}
+
+.resumo-linha > div {
+min-width: 0;
+
+
+display: flex;
+flex-direction: column;
+
+gap: 2px;
+
+
+}
+
+.resumo-linha strong {
+color: #172033;
+
+
+font-size: 14px;
+font-weight: 800;
+
+overflow-wrap: anywhere;
+
+
+}
+
+.resumo-linha small {
+color: #8a94a6;
+
+
+font-size: 12px;
+
+
+}
+
+/* =========================================================
+LOCAL
+========================================================= */
+
+.local-resumo strong {
+display: block;
+
+
+color: #172033;
+
+font-size: 15px;
+font-weight: 800;
+
+
+}
+
+.local-resumo p {
+margin-top: 7px;
+
+
+color: #687386;
+
+font-size: 14px;
+line-height: 1.6;
+
+
+}
+
+/* =========================================================
+EVENTO
+========================================================= */
+
+.evento-grid {
+display: grid;
+
+
+grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+gap: 12px;
+
+
+}
+
+.evento-detalhe {
+min-width: 0;
+
+
+padding: 13px 14px;
+
+background: #f8f9fb;
+
+border-radius: 13px;
+
+
+}
+
+.evento-detalhe span {
+display: block;
+
+
+margin-bottom: 5px;
+
+color: #8a94a6;
+
+font-size: 11px;
+font-weight: 700;
+
+
+}
+
+.evento-detalhe strong {
+display: block;
+
+
+color: #172033;
+
+font-size: 13px;
+line-height: 1.45;
+
+font-weight: 800;
+
+overflow-wrap: anywhere;
+
+
+}
+
+.evento-detalhe-full {
+grid-column: 1 / -1;
+}
+
+.evento-detalhe p {
+color: #687386;
+
+
+font-size: 13px;
+line-height: 1.6;
+
+overflow-wrap: anywhere;
+
+
+}
+
+/* =========================================================
+AVISO DE PAGAMENTO
+========================================================= */
+
+.aviso-pagamento {
+width: 100%;
+
+
+margin: 20px 0 18px;
+padding: 17px 18px;
+
+background: #f1efff;
+
+border: 1px solid #e1dcff;
+border-radius: 16px;
+
+
+}
+
+.aviso-pagamento-conteudo strong {
+display: block;
+
+
+margin-bottom: 5px;
+
+color: #4f35bd;
+
+font-size: 13px;
+font-weight: 800;
+
+
+}
+
+.aviso-pagamento-conteudo p {
+color: #625b82;
+
+
+font-size: 12px;
+line-height: 1.6;
+
+
+}
+
+/* =========================================================
+NAVEGAÇÃO
+========================================================= */
+
+.contratacao-navegacao {
+display: flex;
+align-items: center;
+
+
+gap: 12px;
+
+width: 100%;
+
+margin-top: 22px;
+
+
+}
+
+.btn-secundario,
+.btn-principal {
+min-width: 0;
+min-height: 52px;
+
+
+border-radius: 15px;
+
+font-size: 14px;
+font-weight: 800;
+
+transition:
+    transform 160ms ease,
+    background-color 160ms ease,
+    opacity 160ms ease;
+
+
+}
+
+.btn-secundario {
+flex: 0 0 110px;
+
+
+background: #ffffff;
+color: #172033;
+
+border: 1px solid #dfe4eb;
+
+
+}
+
+.btn-principal {
+flex: 1 1 auto;
+
+
+background: #172033;
+color: #ffffff;
+
+padding: 0 18px;
+
+
+}
+
+.btn-secundario:hover,
+.btn-principal:hover {
+transform: translateY(-1px);
+}
+
+.btn-secundario:active,
+.btn-principal:active {
+transform: translateY(0);
+}
+
+.btn-principal:hover {
+background: #232e43;
+}
+
+/* =========================================================
+RODAPÉ
+========================================================= */
+
+.contratacao-footer {
+padding: 22px 0 4px;
+
+
+text-align: center;
+
+
+}
+
+.contratacao-footer p {
+color: #929baa;
+
+
+font-size: 11px;
+line-height: 1.5;
+
+
+}
+
+/* =========================================================
+RESPONSIVO — TABLET / DESKTOP
+========================================================= */
+
+@media (min-width: 601px) {
+
+
+.contratacao-main {
+    width: calc(100% - 40px);
+
+    padding-top: 34px;
+}
+
+
+.contratacao-header-inner {
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+
+.revisao-card {
+    padding: 23px;
+}
+
+
+.cabecalho-etapa h1 {
+    font-size: 34px;
+}
+
+
+}
+
+/* =========================================================
+RESPONSIVO — CELULAR PEQUENO
+========================================================= */
+
+@media (max-width: 420px) {
+
+
+.contratacao-header-inner {
+    min-height: 60px;
+
+    padding-left: 16px;
+    padding-right: 16px;
+}
+
+
+.contratacao-brand {
+    font-size: 18px;
+}
+
+
+.contratacao-main {
+    width: calc(100% - 24px);
+
+    padding-top: 24px;
+}
+
+
+.cabecalho-etapa h1 {
+    font-size: 27px;
+}
+
+
+.cabecalho-etapa p {
+    font-size: 14px;
+}
+
+
+.revisao-card {
+    padding: 17px;
+
+    border-radius: 17px;
+}
+
+
+.revisao-card-header {
+    gap: 10px;
+}
+
+
+.revisao-card-header h2 {
+    font-size: 16px;
+}
+
+
+.servico-detalhes {
+    grid-template-columns: 1fr;
+}
+
+
+.evento-grid {
+    grid-template-columns: 1fr;
+}
+
+
+.evento-detalhe-full {
+    grid-column: auto;
+}
+
+
+.contratacao-navegacao {
+    gap: 8px;
+}
+
+
+.btn-secundario {
+    flex: 0 0 88px;
+}
+
+
+.btn-principal {
+    padding-left: 12px;
+    padding-right: 12px;
+
+    font-size: 13px;
+}
+
+
+}
+
+/* =========================================================
+ACESSIBILIDADE
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+
+.btn-secundario,
+.btn-principal {
+    transition: none;
+}
+
+
+}

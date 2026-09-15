@@ -1,13 +1,40 @@
 /* =========================================================
-MENU INFERIOR — MUSICALWORLD
-Componente reutilizável
+MUSICALWORLD — MENU INFERIOR
+
+Arquivo: menu-inferior.js
+
+Responsabilidade:
+Controlar a navegação principal inferior do aplicativo.
+
+Funções:
+
+* Inicializar o menu inferior.
+* Carregar o painel de pesquisa.
+* Carregar o modal de criação de anúncio.
+* Controlar o item ativo.
+* Abrir Home.
+* Abrir Pesquisa.
+* Abrir o modal de Anunciar.
+* Abrir Contratações.
+* Abrir Meu Perfil.
+
+IMPORTANTE:
+O menu utiliza apenas ícones visualmente.
+Os textos foram removidos da interface, mas os atributos
+aria-label e title permanecem para acessibilidade.
 ========================================================= */
 
 const MenuInferior = {
 
 
+/* =====================================================
+   CONTROLE DE ESTADO
+   ===================================================== */
+
 inicializado: false,
+
 pesquisaCarregada: false,
+
 modalAnunciarCarregado: false,
 
 
@@ -456,12 +483,17 @@ criarMenu(container) {
             aria-label="Navegação principal"
         >
 
+            <!-- =========================================
+                 INÍCIO
+                 ========================================= -->
+
             <button
                 type="button"
-                class="bottom-nav-item"
+                class="bottom-nav-item ativo"
                 id="nav-item-home"
                 data-aba="home"
                 aria-label="Início"
+                title="Início"
             >
 
                 <span class="nav-icon-wrapper">
@@ -493,12 +525,12 @@ criarMenu(container) {
 
                 </span>
 
-                <span class="nav-label">
-                    Início
-                </span>
-
             </button>
 
+
+            <!-- =========================================
+                 PESQUISA
+                 ========================================= -->
 
             <button
                 type="button"
@@ -506,6 +538,7 @@ criarMenu(container) {
                 id="nav-item-pesquisar"
                 data-aba="pesquisar"
                 aria-label="Pesquisar"
+                title="Pesquisar"
             >
 
                 <span class="nav-icon-wrapper">
@@ -527,23 +560,20 @@ criarMenu(container) {
                             r="7"
                         ></circle>
 
-                        <line
-                            x1="16.65"
-                            y1="16.65"
-                            x2="21"
-                            y2="21"
-                        ></line>
+                        <path
+                            d="m20 20-4-4"
+                        ></path>
 
                     </svg>
 
                 </span>
 
-                <span class="nav-label">
-                    Pesquisar
-                </span>
-
             </button>
 
+
+            <!-- =========================================
+                 ANUNCIAR
+                 ========================================= -->
 
             <button
                 type="button"
@@ -551,6 +581,7 @@ criarMenu(container) {
                 id="nav-item-anunciar"
                 data-aba="anunciar"
                 aria-label="Anunciar"
+                title="Anunciar"
             >
 
                 <span class="nav-icon-wrapper">
@@ -590,12 +621,69 @@ criarMenu(container) {
 
                 </span>
 
-                <span class="nav-label">
-                    Anunciar
+            </button>
+
+
+            <!-- =========================================
+                 CONTRATAÇÕES
+                 ========================================= -->
+
+            <button
+                type="button"
+                class="bottom-nav-item"
+                id="nav-item-contratacoes"
+                data-aba="contratacoes"
+                aria-label="Contratações"
+                title="Contratações"
+            >
+
+                <span class="nav-icon-wrapper">
+
+                    <svg
+                        class="nav-icon-svg"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        aria-hidden="true"
+                    >
+
+                        <rect
+                            x="3"
+                            y="7"
+                            width="18"
+                            height="13"
+                            rx="2"
+                        ></rect>
+
+                        <path
+                            d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
+                        ></path>
+
+                        <path
+                            d="M3 12h18"
+                        ></path>
+
+                        <path
+                            d="M10 12v2"
+                        ></path>
+
+                        <path
+                            d="M14 12v2"
+                        ></path>
+
+                    </svg>
+
                 </span>
 
             </button>
 
+
+            <!-- =========================================
+                 PERFIL
+                 ========================================= -->
 
             <button
                 type="button"
@@ -603,6 +691,7 @@ criarMenu(container) {
                 id="nav-item-perfil"
                 data-aba="perfil"
                 aria-label="Perfil"
+                title="Perfil"
             >
 
                 <span
@@ -637,10 +726,6 @@ criarMenu(container) {
                         aria-hidden="true"
                     ></span>
 
-                </span>
-
-                <span class="nav-label">
-                    Perfil
                 </span>
 
             </button>
@@ -696,6 +781,10 @@ configurarEventos() {
 
 mudarAba(aba, elemento) {
 
+    /* ================================================
+       HOME
+       ================================================ */
+
     if (aba === 'home') {
 
         this.definirAtivo(elemento);
@@ -710,6 +799,10 @@ mudarAba(aba, elemento) {
         return;
     }
 
+
+    /* ================================================
+       PESQUISA
+       ================================================ */
 
     if (aba === 'pesquisar') {
 
@@ -744,6 +837,10 @@ mudarAba(aba, elemento) {
     }
 
 
+    /* ================================================
+       ANUNCIAR
+       ================================================ */
+
     if (aba === 'anunciar') {
 
         this.definirAtivo(elemento);
@@ -776,6 +873,29 @@ mudarAba(aba, elemento) {
         return;
     }
 
+
+    /* ================================================
+       CONTRATAÇÕES
+       ================================================ */
+
+    if (aba === 'contratacoes') {
+
+        this.definirAtivo(elemento);
+
+        this.fecharPesquisa();
+
+
+        window.location.href =
+            'contratacoes.html';
+
+
+        return;
+    }
+
+
+    /* ================================================
+       PERFIL
+       ================================================ */
 
     if (aba === 'perfil') {
 
@@ -821,7 +941,7 @@ definirAtivo(elemento) {
 
 
 /* =====================================================
-   FECHAR PESQUISAfil
+   FECHAR PESQUISA
    ===================================================== */
 
 fecharPesquisa() {
@@ -853,23 +973,16 @@ fecharPesquisa() {
    ABRIR MEU PERFIL
    ===================================================== */
 
-/* =====================================================
-   ABRIR MEU PERFIL
-   ===================================================== */
-
-/* =====================================================
-   ABRIR MEU PERFIL
-   ===================================================== */
-
 async abrirMeuPerfil() {
 
     console.log(
         '👤 Abrindo meu perfil...'
     );
 
-    /* =====================================================
-       VERIFICAR SE O MÓDULO DE SESSÃO EXISTE
-       ===================================================== */
+
+    /* ================================================
+       VERIFICAR MÓDULO DE SESSÃO
+       ================================================ */
 
     if (
         typeof window.Sessao === 'undefined'
@@ -879,18 +992,22 @@ async abrirMeuPerfil() {
             '❌ Sessao.js não está disponível.'
         );
 
+
         window.location.href =
             'login.html';
+
 
         return;
     }
 
-    /* =====================================================
+
+    /* ================================================
        VERIFICAR SESSÃO ATIVA
-       ===================================================== */
+       ================================================ */
 
     const sessao =
         await Sessao.obter();
+
 
     if (!sessao) {
 
@@ -898,34 +1015,38 @@ async abrirMeuPerfil() {
             '🚪 Nenhuma sessão ativa. Redirecionando para login.'
         );
 
+
         sessionStorage.setItem(
             'musicalworld_destino_login',
             'meu-perfil.html'
         );
 
+
         window.location.href =
             'login.html';
+
 
         return;
     }
 
-    /* =====================================================
+
+    /* ================================================
        SESSÃO ENCONTRADA
-       ===================================================== */
+       ================================================ */
 
     console.log(
         '✅ Sessão encontrada:',
         sessao.user?.id
     );
 
-    /* =====================================================
+
+    /* ================================================
        PERFIL UNIVERSAL
-       ===================================================== */
+       ================================================ */
 
     window.location.href =
         'meu-perfil.html';
 }
-
 
 
 };
@@ -938,7 +1059,7 @@ window.MenuInferior =
 MenuInferior;
 
 /* =========================================================
-INICIALIZAÇÃO
+INICIALIZAÇÃO AUTOMÁTICA
 ========================================================= */
 
 document.addEventListener(
