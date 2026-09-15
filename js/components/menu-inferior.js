@@ -13,6 +13,7 @@ Funções:
 * Carregar o modal de criação de anúncio.
 * Identificar automaticamente a página atual.
 * Controlar o item ativo.
+* Animar o indicador de seleção.
 * Abrir Home.
 * Abrir Pesquisa.
 * Abrir o modal de Anunciar.
@@ -34,7 +35,7 @@ const MenuInferior = {
 
 /* =====================================================
    CONTROLE DE ESTADO
-   ===================================================== */
+===================================================== */
 
 inicializado: false,
 
@@ -42,16 +43,19 @@ pesquisaCarregada: false,
 
 modalAnunciarCarregado: false,
 
+indicadorAnimando: false,
+
 
 /* =====================================================
    INICIALIZAÇÃO
-   ===================================================== */
+===================================================== */
 
 async iniciar() {
 
     if (this.inicializado) {
         return;
     }
+
 
     /*
      * Primeiro verificamos se o container do menu
@@ -64,6 +68,7 @@ async iniciar() {
     const container = document.getElementById(
         'menu-inferior-container'
     );
+
 
     if (!container) {
 
@@ -123,7 +128,7 @@ async iniciar() {
 
 /* =====================================================
    CARREGAR RECURSOS DA PESQUISA
-   ===================================================== */
+===================================================== */
 
 async carregarRecursosPesquisa() {
 
@@ -170,6 +175,7 @@ async carregarRecursosPesquisa() {
             'JavaScript do painel de pesquisa carregado automaticamente.'
         );
 
+
         this.pesquisaCarregada = true;
 
 
@@ -203,7 +209,7 @@ async carregarRecursosPesquisa() {
 
 /* =====================================================
    AGUARDAR PAINEL DE PESQUISA
-   ===================================================== */
+===================================================== */
 
 aguardarPainelPesquisa() {
 
@@ -263,7 +269,7 @@ aguardarPainelPesquisa() {
 
 /* =====================================================
    CARREGAR CSS DA PESQUISA
-   ===================================================== */
+===================================================== */
 
 carregarCssPesquisa() {
 
@@ -295,7 +301,7 @@ carregarCssPesquisa() {
 
 /* =====================================================
    CARREGAR RECURSOS DO MODAL ANUNCIAR
-   ===================================================== */
+===================================================== */
 
 async carregarRecursosAnunciar() {
 
@@ -377,7 +383,7 @@ async carregarRecursosAnunciar() {
 
 /* =====================================================
    AGUARDAR MODAL ANUNCIAR
-   ===================================================== */
+===================================================== */
 
 aguardarModalAnunciar() {
 
@@ -437,7 +443,7 @@ aguardarModalAnunciar() {
 
 /* =====================================================
    CARREGAR CSS DO MODAL ANUNCIAR
-   ===================================================== */
+===================================================== */
 
 carregarCssAnunciar() {
 
@@ -469,20 +475,17 @@ carregarCssAnunciar() {
 
 /* =====================================================
    CRIAR MENU
-   ===================================================== */
+===================================================== */
 
 criarMenu(container) {
 
     /*
-     * IMPORTANTE:
+     * Nenhum item recebe "ativo" diretamente.
      *
-     * Nenhum item recebe "ativo" diretamente aqui.
+     * O item ativo será definido por definirPaginaAtual().
      *
-     * O item ativo será definido posteriormente por
-     * definirPaginaAtual().
-     *
-     * Isso impede que o Home apareça selecionado
-     * automaticamente em todas as páginas.
+     * O indicador também é criado aqui e permanece
+     * como um único elemento dentro do menu.
      */
 
     container.innerHTML = `
@@ -492,6 +495,14 @@ criarMenu(container) {
             class="bottom-nav"
             aria-label="Navegação principal"
         >
+
+            <!-- Indicador deslizante da seleção -->
+
+            <span
+                class="nav-active-indicator"
+                aria-hidden="true"
+            ></span>
+
 
             <!-- =====================================
                  INÍCIO
@@ -704,7 +715,9 @@ criarMenu(container) {
                 title="Perfil"
             >
 
-                <span class="nav-icon-wrapper profile-icon-wrapper">
+                <span
+                    class="nav-icon-wrapper profile-icon-wrapper"
+                >
 
                     <svg
                         class="nav-icon-svg"
@@ -729,6 +742,7 @@ criarMenu(container) {
 
                     </svg>
 
+
                     <span
                         class="profile-dot"
                         aria-hidden="true"
@@ -746,22 +760,17 @@ criarMenu(container) {
 
 /* =====================================================
    IDENTIFICAR PÁGINA ATUAL
-   ===================================================== */
+===================================================== */
 
 definirPaginaAtual() {
 
     /*
      * Obtém somente o nome do arquivo atual.
-     *
-     * Exemplos:
-     *
-     * index.html
-     * contratacoes.html
-     * meu-perfil.html
      */
 
     const caminhoAtual =
         window.location.pathname;
+
 
     const arquivoAtual =
         caminhoAtual
@@ -771,12 +780,7 @@ definirPaginaAtual() {
 
 
     /*
-     * Algumas páginas podem ser abertas sem
-     * "index.html", por exemplo:
-     *
-     * /app/
-     *
-     * Nesse caso consideramos Home.
+     * Por padrão consideramos Home.
      */
 
     let abaAtual = 'home';
@@ -824,13 +828,6 @@ definirPaginaAtual() {
 
     /*
      * PESQUISA
-     *
-     * Atualmente a pesquisa funciona como painel
-     * dentro da página, então não existe uma página
-     * separada.
-     *
-     * Esta condição fica preparada para uma futura
-     * pagina pesquisa.html.
      */
 
     else if (
@@ -841,12 +838,6 @@ definirPaginaAtual() {
         abaAtual = 'pesquisar';
 
     }
-
-
-    /*
-     * O botão Anunciar normalmente abre um modal,
-     * portanto não recebe ativo por URL.
-     */
 
 
     /*
@@ -861,9 +852,15 @@ definirPaginaAtual() {
 
     /*
      * Aplica o estado ativo.
+     *
+     * A função também posiciona o indicador
+     * sem executar a animação inicial.
      */
 
-    this.definirAtivo(elemento);
+    this.definirAtivo(
+        elemento,
+        false
+    );
 
 
     console.log(
@@ -874,7 +871,7 @@ definirPaginaAtual() {
 
 /* =====================================================
    CONFIGURAR EVENTOS
-   ===================================================== */
+===================================================== */
 
 configurarEventos() {
 
@@ -913,7 +910,7 @@ configurarEventos() {
 
 /* =====================================================
    MUDAR ABA
-   ===================================================== */
+===================================================== */
 
 mudarAba(aba, elemento) {
 
@@ -923,7 +920,10 @@ mudarAba(aba, elemento) {
 
     if (aba === 'home') {
 
-        this.definirAtivo(elemento);
+        this.definirAtivo(
+            elemento,
+            true
+        );
 
         this.fecharPesquisa();
 
@@ -942,7 +942,10 @@ mudarAba(aba, elemento) {
 
     if (aba === 'pesquisar') {
 
-        this.definirAtivo(elemento);
+        this.definirAtivo(
+            elemento,
+            true
+        );
 
 
         if (
@@ -982,10 +985,10 @@ mudarAba(aba, elemento) {
     if (aba === 'anunciar') {
 
         /*
-         * Anunciar não representa uma página.
+         * Anunciar é uma ação e não uma página.
          *
-         * Por isso não mantemos o item permanentemente
-         * ativo. Ele apenas abre o modal.
+         * O indicador permanece na página atualmente
+         * selecionada enquanto o modal é aberto.
          */
 
         if (
@@ -1024,7 +1027,10 @@ mudarAba(aba, elemento) {
 
     if (aba === 'contratacoes') {
 
-        this.definirAtivo(elemento);
+        this.definirAtivo(
+            elemento,
+            true
+        );
 
         this.fecharPesquisa();
 
@@ -1043,7 +1049,10 @@ mudarAba(aba, elemento) {
 
     if (aba === 'perfil') {
 
-        this.definirAtivo(elemento);
+        this.definirAtivo(
+            elemento,
+            true
+        );
 
         this.abrirMeuPerfil();
 
@@ -1055,15 +1064,30 @@ mudarAba(aba, elemento) {
 
 /* =====================================================
    DEFINIR ITEM ATIVO
-   ===================================================== */
+===================================================== */
 
-definirAtivo(elemento) {
+definirAtivo(elemento, animar = true) {
 
-    const itens =
-        document.querySelectorAll(
-            '#menu-inferior .bottom-nav-item'
+    const menu =
+        document.getElementById(
+            'menu-inferior'
         );
 
+
+    if (!menu) {
+        return;
+    }
+
+
+    const itens =
+        menu.querySelectorAll(
+            '.bottom-nav-item'
+        );
+
+
+    /*
+     * Remove o estado ativo dos demais itens.
+     */
 
     itens.forEach(item => {
 
@@ -1074,11 +1098,101 @@ definirAtivo(elemento) {
     });
 
 
-    if (elemento) {
+    if (!elemento) {
+        return;
+    }
 
-        elemento.classList.add(
-            'ativo'
+
+    /*
+     * Define o novo item ativo.
+     */
+
+    elemento.classList.add(
+        'ativo'
+    );
+
+
+    /*
+     * Localiza o indicador único.
+     */
+
+    const indicador =
+        menu.querySelector(
+            '.nav-active-indicator'
         );
+
+
+    if (!indicador) {
+        return;
+    }
+
+
+    /*
+     * Calcula a posição do botão dentro da barra.
+     */
+
+    const menuRect =
+        menu.getBoundingClientRect();
+
+
+    const elementoRect =
+        elemento.getBoundingClientRect();
+
+
+    const centro =
+        elementoRect.left +
+        (elementoRect.width / 2) -
+        menuRect.left;
+
+
+    /*
+     * Calcula a posição do indicador.
+     *
+     * O indicador tem largura controlada pelo CSS.
+     * Usamos transform para permitir uma animação
+     * suave e independente do layout.
+     */
+
+    const largura =
+        indicador.offsetWidth;
+
+
+    const posicao =
+        centro -
+        (largura / 2);
+
+
+    /*
+     * Na primeira definição da página, o indicador
+     * é posicionado imediatamente.
+     *
+     * Nos cliques seguintes, o CSS faz a transição.
+     */
+
+    if (!animar) {
+
+        indicador.style.transition =
+            'none';
+
+    }
+
+
+    indicador.style.transform =
+        `translate3d(${posicao}px, -50%, 0)`;
+
+
+    if (!animar) {
+
+        /*
+         * Força o navegador a aplicar a posição
+         * imediatamente antes de restaurar a animação.
+         */
+
+        indicador.offsetHeight;
+
+
+        indicador.style.transition =
+            '';
 
     }
 
@@ -1087,7 +1201,7 @@ definirAtivo(elemento) {
 
 /* =====================================================
    FECHAR PESQUISA
-   ===================================================== */
+===================================================== */
 
 fecharPesquisa() {
 
@@ -1115,7 +1229,7 @@ fecharPesquisa() {
 
 /* =====================================================
    ABRIR MEU PERFIL
-   ===================================================== */
+===================================================== */
 
 async abrirMeuPerfil() {
 

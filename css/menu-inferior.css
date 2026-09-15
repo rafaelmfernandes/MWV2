@@ -2,9 +2,20 @@
 MENU INFERIOR — MUSICALWORLD
 
 Responsabilidade:
-Controla a estrutura, aparência, estados e responsividade
+Controlar a estrutura, aparência, estados e responsividade
 do menu de navegação inferior do aplicativo.
-========================================================= */
+
+Características:
+
+* Menu flutuante
+* Bordas arredondadas
+* Sombra suave
+* Efeito de vidro
+* Indicador de seleção deslizante
+* Botão central de Anunciar destacado
+* Compatibilidade com iPhone e Android
+* Suporte à safe-area do iOS
+  ========================================================= */
 
 /* =========================================================
 CONTAINER PRINCIPAL
@@ -15,35 +26,81 @@ position: fixed;
 
 
 left: 50%;
-bottom: 0;
+bottom: 12px;
 
 transform: translateX(-50%);
 
-width: 100%;
+width: calc(100% - 40px);
 max-width: 480px;
 
-height: 70px;
+height: 64px;
 
 display: flex;
 align-items: center;
 justify-content: space-around;
 
-background: #ffffff;
+background: rgba(255, 255, 255, 0.94);
 
-border-top: 1px solid #e5e7eb;
+border: 1px solid rgba(226, 232, 240, 0.95);
+
+border-radius: 24px;
 
 box-shadow:
-    0 -2px 10px rgba(15, 23, 42, 0.06);
+    0 8px 30px rgba(15, 23, 42, 0.10),
+    0 2px 8px rgba(15, 23, 42, 0.05);
+
+backdrop-filter: blur(18px);
+-webkit-backdrop-filter: blur(18px);
 
 z-index: 9999;
 
 padding:
     0
-    0
+    6px
     env(safe-area-inset-bottom)
-    0;
+    6px;
 
 box-sizing: border-box;
+
+overflow: visible;
+
+
+}
+
+/* =========================================================
+INDICADOR DE SELEÇÃO
+
+Existe somente um indicador.
+O JavaScript movimenta este elemento entre os botões.
+========================================================= */
+
+.nav-active-indicator {
+position: absolute;
+
+
+top: 50%;
+
+left: 0;
+
+width: 46px;
+height: 46px;
+
+border-radius: 16px;
+
+background: rgba(37, 99, 235, 0.09);
+
+pointer-events: none;
+
+z-index: 0;
+
+transform:
+    translate3d(0, -50%, 0);
+
+transition:
+    transform 0.38s
+    cubic-bezier(0.22, 1, 0.36, 1);
+
+will-change: transform;
 
 
 }
@@ -57,12 +114,16 @@ appearance: none;
 -webkit-appearance: none;
 
 
+position: relative;
+
+z-index: 1;
+
 border: 0;
 outline: none;
 
 background: transparent;
 
-width: 25%;
+width: 20%;
 height: 100%;
 
 padding: 6px 4px;
@@ -84,8 +145,10 @@ font-family: inherit;
 
 box-sizing: border-box;
 
+border-radius: 16px;
+
 transition:
-    color 0.2s ease,
+    color 0.22s ease,
     transform 0.2s ease;
 
 
@@ -107,8 +170,8 @@ color: #2563eb;
 position: relative;
 
 
-width: 28px;
-height: 28px;
+width: 30px;
+height: 30px;
 
 display: flex;
 align-items: center;
@@ -132,11 +195,20 @@ height: 26px;
 
 flex-shrink: 0;
 
+stroke-width: 2;
+
+transition:
+    transform 0.22s ease;
+
 
 }
 
 /* =========================================================
 TEXTO
+
+O menu utiliza somente os ícones visualmente.
+O elemento permanece disponível para acessibilidade
+ou futuras necessidades da interface.
 ========================================================= */
 
 .nav-label {
@@ -187,6 +259,55 @@ box-sizing: border-box;
 }
 
 /* =========================================================
+BOTÃO CENTRAL — ANUNCIAR
+========================================================= */
+
+.bottom-nav-item[data-aba="anunciar"] {
+color: #2563eb;
+}
+
+/* =========================================================
+CÍRCULO DO BOTÃO ANUNCIAR
+========================================================= */
+
+.bottom-nav-item[data-aba="anunciar"] .nav-icon-wrapper {
+width: 42px;
+height: 42px;
+
+
+background: #2563eb;
+
+border-radius: 50%;
+
+color: #ffffff;
+
+box-shadow:
+    0 5px 14px rgba(37, 99, 235, 0.24);
+
+transform: translateY(-5px);
+
+transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+
+
+}
+
+/* =========================================================
+ÍCONE DO BOTÃO ANUNCIAR
+========================================================= */
+
+.bottom-nav-item[data-aba="anunciar"] .nav-icon-svg {
+width: 24px;
+height: 24px;
+
+
+color: #ffffff;
+
+
+}
+
+/* =========================================================
 EFEITO AO TOCAR
 ========================================================= */
 
@@ -195,12 +316,27 @@ transform: scale(0.96);
 }
 
 /* =========================================================
+EFEITO AO TOCAR — ANUNCIAR
+========================================================= */
+
+.bottom-nav-item[data-aba="anunciar"]:active
+.nav-icon-wrapper {
+transform:
+translateY(-5px)
+scale(0.94);
+}
+
+/* =========================================================
 ACESSIBILIDADE
 ========================================================= */
 
 .bottom-nav-item:focus-visible {
 outline: 2px solid #2563eb;
+
+
 outline-offset: -3px;
+
+
 }
 
 /* =========================================================
@@ -211,28 +347,75 @@ TELAS PEQUENAS
 
 
 .bottom-nav {
-    height: 66px;
+    width: calc(100% - 18px);
+
+    bottom: 9px;
+
+    height: 62px;
+
+    border-radius: 20px;
+
+    padding-left: 4px;
+    padding-right: 4px;
 }
+
+
+.nav-active-indicator {
+    width: 42px;
+    height: 42px;
+
+    border-radius: 14px;
+}
+
 
 .bottom-nav-item {
     padding-left: 2px;
     padding-right: 2px;
 
     gap: 2px;
+
+    border-radius: 14px;
 }
+
 
 .nav-icon-wrapper {
     width: 27px;
     height: 27px;
 }
 
+
 .nav-icon-svg {
     width: 25px;
     height: 25px;
 }
 
+
 .nav-label {
     font-size: 10px;
+}
+
+
+.bottom-nav-item[data-aba="anunciar"]
+.nav-icon-wrapper {
+    width: 38px;
+    height: 38px;
+
+    transform: translateY(-4px);
+}
+
+
+.bottom-nav-item[data-aba="anunciar"]
+.nav-icon-svg {
+    width: 23px;
+    height: 23px;
+}
+
+
+.bottom-nav-item[data-aba="anunciar"]:active
+.nav-icon-wrapper {
+    transform:
+        translateY(-4px)
+        scale(0.94);
 }
 
 
@@ -246,14 +429,65 @@ TELAS MAIORES
 
 
 .bottom-nav {
-    width: 430px;
+    width: 460px;
 
-    max-width: calc(100% - 20px);
+    max-width: calc(100% - 32px);
 
-    border-left: 1px solid #e5e7eb;
-    border-right: 1px solid #e5e7eb;
+    bottom: 16px;
 
-    border-radius: 14px 14px 0 0;
+    height: 66px;
+
+    border-radius: 22px;
+}
+
+
+.nav-active-indicator {
+    width: 48px;
+    height: 48px;
+
+    border-radius: 17px;
+}
+
+
+}
+
+/* =========================================================
+IPHONE / SAFE AREA
+
+Garante espaço adicional quando o dispositivo possui
+uma área inferior reservada pelo sistema.
+========================================================= */
+
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+
+
+.bottom-nav {
+    bottom:
+        calc(
+            12px +
+            env(safe-area-inset-bottom)
+        );
+}
+
+
+}
+
+/* =========================================================
+REDUÇÃO DE MOVIMENTO
+
+Respeita usuários que solicitaram menos animações
+no sistema operacional.
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+
+.nav-active-indicator,
+.bottom-nav-item,
+.nav-icon-svg,
+.bottom-nav-item[data-aba="anunciar"]
+.nav-icon-wrapper {
+    transition: none;
 }
 
 
