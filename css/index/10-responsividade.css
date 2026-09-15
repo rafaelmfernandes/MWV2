@@ -43,14 +43,25 @@ body {
    CABEÇALHO
    ===================================================== */
 
-.navbar {
-    height: 60px;
+@media (max-width: 600px) {
 
-    padding: 0 14px;
+    .navbar {
+        height: 60px;
 
-    gap: 10px;
+        padding: 0 14px;
+
+        gap: 10px;
+
+        background: rgba(255, 255, 255, 0.45) !important;
+
+        backdrop-filter: blur(30px) saturate(180%) !important;
+
+        -webkit-backdrop-filter: blur(30px) saturate(180%) !important;
+
+        border-bottom: 1px solid rgba(255, 255, 255, 0.85) !important;
+    }
+
 }
-
 
 .navbar-brand-area {
     min-width: 0;
@@ -409,19 +420,25 @@ TELAS MUITO PEQUENAS
 @media (max-width: 380px) {
 
 
-/* =====================================================
-   CABEÇALHO
-   ===================================================== */
 
-.navbar {
-    height: 58px;
+    .navbar {
+        height: 58px;
 
-    padding-left: 10px;
-    padding-right: 10px;
+        padding-left: 10px;
+        padding-right: 10px;
 
-    gap: 6px;
-}
+        gap: 6px;
 
+        background: rgba(255, 255, 255, 0.45) !important;
+
+        backdrop-filter: blur(30px) saturate(180%) !important;
+
+        -webkit-backdrop-filter: blur(30px) saturate(180%) !important;
+
+        border-bottom: 1px solid rgba(255, 255, 255, 0.85) !important;
+    
+
+    }
 
 .logo {
     font-size: 18px;
