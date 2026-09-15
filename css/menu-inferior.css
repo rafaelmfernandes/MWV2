@@ -39,7 +39,7 @@ display: flex;
 align-items: center;
 justify-content: space-around;
 
-background: rgba(255, 255, 255, 0.94);
+background: rgba(255, 255, 255, 0.72);
 
 border: 1px solid rgba(226, 232, 240, 0.95);
 
@@ -49,8 +49,8 @@ box-shadow:
     0 8px 30px rgba(15, 23, 42, 0.10),
     0 2px 8px rgba(15, 23, 42, 0.05);
 
-backdrop-filter: blur(18px);
--webkit-backdrop-filter: blur(18px);
+backdrop-filter: blur(20px) saturate(140%);
+    -webkit-backdrop-filter: blur(20px) saturate(140%);
 
 z-index: 9999;
 
@@ -137,7 +137,7 @@ justify-content: center;
 
 gap: 3px;
 
-color: #94a3b8;
+color: #64748b;
 
 cursor: pointer;
 
@@ -159,8 +159,7 @@ ITEM ATIVO
 ========================================================= */
 
 .bottom-nav-item.ativo {
-color: #2563eb;
-}
+color: #2563eb; }
 
 /* =========================================================
 ÁREA DO ÍCONE
