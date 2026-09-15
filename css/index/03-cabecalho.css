@@ -9,34 +9,53 @@ Responsabilidade:
 * Controlar o menu da conta.
 * Manter o cabeçalho compacto e responsivo.
 * Garantir ícones maiores, suaves e visualmente equilibrados.
+* Aplicar efeito de vidro/transparência ao cabeçalho.
   ========================================================= */
 
+
 /* =========================================================
-CABEÇALHO PRINCIPAL
-========================================================= */
+   CABEÇALHO PRINCIPAL
+   ========================================================= */
 
 .navbar {
-position: sticky;
-top: 0;
-z-index: 1000;
+    position: sticky;
 
+    top: 0;
 
-width: 100%;
-height: 64px;
+    z-index: 1000;
 
-display: flex;
-align-items: center;
-justify-content: space-between;
+    width: 100%;
 
-padding: 0 24px;
+    height: 64px;
 
-background: #ffffff;
+    display: flex;
 
-border-bottom: 1px solid #e9edf3;
+    align-items: center;
 
-box-shadow: 0 1px 4px rgba(15, 23, 42, 0.03);
+    justify-content: space-between;
 
+    padding: 0 24px;
 
+   background:
+        linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.72),
+            rgba(255, 255, 255, 0.52)
+        );
+
+    border-bottom: 1px solid rgba(255, 255, 255, 0.80);
+
+    box-shadow:
+        0 4px 18px rgba(15, 23, 42, 0.07),
+        inset 0 1px 0 rgba(255, 255, 255, 0.75);
+
+    backdrop-filter:
+        blur(28px)
+        saturate(160%);
+
+    -webkit-backdrop-filter:
+        blur(28px)
+        saturate(160%);
 }
 
 /* =========================================================
@@ -45,8 +64,9 @@ box-shadow: 0 1px 4px rgba(15, 23, 42, 0.03);
 
 .navbar-brand-area {
 display: flex;
-align-items: center;
 
+
+align-items: center;
 
 min-width: 0;
 
@@ -59,11 +79,14 @@ LOGO
 
 .logo {
 display: inline-flex;
+
+
 align-items: center;
 
-
 font-size: 21px;
+
 font-weight: 800;
+
 line-height: 1;
 
 letter-spacing: -0.7px;
@@ -87,8 +110,9 @@ color: #1677d2;
 
 .navbar-actions {
 display: flex;
-align-items: center;
 
+
+align-items: center;
 
 gap: 7px;
 
@@ -106,15 +130,19 @@ position: relative;
 
 
 width: 44px;
+
 height: 44px;
 
 display: inline-flex;
+
 align-items: center;
+
 justify-content: center;
 
 padding: 0;
 
 border: 0;
+
 border-radius: 14px;
 
 background: transparent;
@@ -128,11 +156,13 @@ transition:
     color 0.2s ease,
     transform 0.15s ease;
 
+box-sizing: border-box;
+
 
 }
 
 .nav-icon-btn:hover {
-background: #f3f6fa;
+background: rgba(243, 246, 250, 0.72);
 
 
 color: #172033;
@@ -146,7 +176,11 @@ transform: scale(0.94);
 
 .nav-icon-btn:focus-visible {
 outline: 3px solid rgba(22, 119, 210, 0.18);
+
+
 outline-offset: 2px;
+
+
 }
 
 /* =========================================================
@@ -155,14 +189,16 @@ outline-offset: 2px;
 
 .top-icon-svg {
 width: 26px;
-height: 26px;
 
+
+height: 26px;
 
 display: block;
 
-flex-shrink: 2;
+flex-shrink: 0;
 
 stroke-linecap: round;
+
 stroke-linejoin: round;
 
 
@@ -177,27 +213,36 @@ position: absolute;
 
 
 top: 2px;
+
 right: 0;
 
 min-width: 18px;
+
 height: 18px;
 
 padding: 0 4px;
 
 display: flex;
+
 align-items: center;
+
 justify-content: center;
 
 border-radius: 999px;
 
 background: #e53935;
+
 color: #ffffff;
 
 font-size: 9px;
+
 font-weight: 800;
+
 line-height: 1;
 
 border: 2px solid #ffffff;
+
+box-sizing: border-box;
 
 
 }
@@ -208,7 +253,11 @@ ESTADO DESLOGADO
 
 .cabecalho-usuario-estado {
 display: flex;
+
+
 align-items: center;
+
+
 }
 
 .cabecalho-btn-entrar {
@@ -218,14 +267,17 @@ height: 38px;
 padding: 0 17px;
 
 border: 1px solid #dce3ec;
+
 border-radius: 10px;
 
-background: #ffffff;
+background: rgba(255, 255, 255, 0.78);
 
 color: #172033;
 
 font-family: inherit;
+
 font-size: 13px;
+
 font-weight: 700;
 
 cursor: pointer;
@@ -235,17 +287,27 @@ transition:
     border-color 0.2s ease,
     color 0.2s ease;
 
+box-sizing: border-box;
+
 
 }
 
 .cabecalho-btn-entrar:hover {
-background: #f5f8fc;
+background: rgba(245, 248, 252, 0.90);
+
+
 border-color: #cbd5e1;
+
+
 }
 
 .cabecalho-btn-entrar:focus-visible {
 outline: 3px solid rgba(22, 119, 210, 0.18);
+
+
 outline-offset: 2px;
+
+
 }
 
 /* =========================================================
@@ -257,6 +319,7 @@ position: relative;
 
 
 display: flex;
+
 align-items: center;
 
 
@@ -271,15 +334,19 @@ position: relative;
 
 
 width: 44px;
+
 height: 44px;
 
 display: flex;
+
 align-items: center;
+
 justify-content: center;
 
 padding: 0;
 
 border: 0;
+
 border-radius: 14px;
 
 background: transparent;
@@ -290,11 +357,13 @@ transition:
     background-color 0.2s ease,
     transform 0.15s ease;
 
+box-sizing: border-box;
+
 
 }
 
 .cabecalho-usuario-btn:hover {
-background: #f3f6fa;
+background: rgba(243, 246, 250, 0.72);
 }
 
 .cabecalho-usuario-btn:active {
@@ -303,7 +372,11 @@ transform: scale(0.94);
 
 .cabecalho-usuario-btn:focus-visible {
 outline: 3px solid rgba(22, 119, 210, 0.18);
+
+
 outline-offset: 2px;
+
+
 }
 
 /* =========================================================
@@ -312,11 +385,14 @@ AVATAR
 
 .cabecalho-avatar {
 width: 35px;
+
+
 height: 35px;
 
-
 display: flex;
+
 align-items: center;
+
 justify-content: center;
 
 overflow: hidden;
@@ -328,6 +404,7 @@ background: #edf3ff;
 color: #1677d2;
 
 font-size: 12px;
+
 font-weight: 800;
 
 flex-shrink: 0;
@@ -337,8 +414,9 @@ flex-shrink: 0;
 
 .cabecalho-avatar img {
 width: 100%;
-height: 100%;
 
+
+height: 100%;
 
 display: block;
 
@@ -349,11 +427,14 @@ object-fit: cover;
 
 #cabecalho-avatar-letras {
 display: flex;
+
+
 align-items: center;
+
 justify-content: center;
 
-
 width: 100%;
+
 height: 100%;
 
 
@@ -361,7 +442,6 @@ height: 100%;
 
 /* =========================================================
 INFORMAÇÕES DO USUÁRIO
-----------------------
 
 Mantidas no DOM para compatibilidade com Cabecalho.js,
 mas não ocupam espaço visual no novo cabeçalho.
@@ -372,14 +452,17 @@ position: absolute;
 
 
 width: 1px;
+
 height: 1px;
 
 padding: 0;
+
 margin: -1px;
 
 overflow: hidden;
 
 clip: rect(0, 0, 0, 0);
+
 clip-path: inset(50%);
 
 white-space: nowrap;
@@ -406,32 +489,46 @@ position: absolute;
 
 
 top: calc(100% + 10px);
+
 right: 0;
 
 width: 210px;
 
 padding: 7px;
 
-background: #ffffff;
+/*
+ * O menu da conta permanece mais sólido
+ * para garantir boa leitura das opções.
+ */
+background: rgba(255, 255, 255, 0.94);
 
-border: 1px solid #e5eaf0;
+border: 1px solid rgba(229, 234, 240, 0.90);
+
 border-radius: 14px;
 
 box-shadow:
     0 14px 35px rgba(15, 23, 42, 0.12),
     0 3px 8px rgba(15, 23, 42, 0.05);
 
+backdrop-filter: blur(18px);
+
+-webkit-backdrop-filter: blur(18px);
+
 overflow: hidden;
+
+box-sizing: border-box;
 
 
 }
 
 .cabecalho-menu-usuario button {
 width: 100%;
+
+
 min-height: 42px;
 
-
 display: flex;
+
 align-items: center;
 
 gap: 11px;
@@ -439,6 +536,7 @@ gap: 11px;
 padding: 0 11px;
 
 border: 0;
+
 border-radius: 9px;
 
 background: transparent;
@@ -446,7 +544,9 @@ background: transparent;
 color: #344054;
 
 font-family: inherit;
+
 font-size: 13px;
+
 font-weight: 600;
 
 text-align: left;
@@ -457,11 +557,13 @@ transition:
     background-color 0.2s ease,
     color 0.2s ease;
 
+box-sizing: border-box;
+
 
 }
 
 .cabecalho-menu-usuario button:hover {
-background: #f4f7fb;
+background: rgba(244, 247, 251, 0.82);
 
 
 color: #172033;
@@ -471,13 +573,18 @@ color: #172033;
 
 .cabecalho-menu-usuario button:focus-visible {
 outline: 2px solid rgba(22, 119, 210, 0.25);
+
+
 outline-offset: -2px;
+
+
 }
 
 .cabecalho-menu-usuario button svg {
 width: 18px;
-height: 18px;
 
+
+height: 18px;
 
 flex-shrink: 0;
 
@@ -491,7 +598,7 @@ color: #b42318;
 }
 
 .cabecalho-menu-usuario button:last-child:hover {
-background: #fff4f2;
+background: rgba(255, 244, 242, 0.90);
 
 
 color: #b42318;
@@ -509,11 +616,14 @@ CARREGAMENTO
 
 .cabecalho-usuario-loading {
 width: 44px;
+
+
 height: 44px;
 
-
 display: flex;
+
 align-items: center;
+
 justify-content: center;
 
 
@@ -521,12 +631,14 @@ justify-content: center;
 
 .cabecalho-usuario-loading span {
 width: 30px;
-height: 30px;
 
+
+height: 30px;
 
 display: block;
 
 border: 3px solid #e8edf3;
+
 border-top-color: #1677d2;
 
 border-radius: 50%;
@@ -561,11 +673,13 @@ ACESSIBILIDADE
 .cabecalho-btn-entrar,
 .cabecalho-usuario-btn,
 .cabecalho-menu-usuario button {
+
     transition: none;
 }
 
 
 .cabecalho-usuario-loading span {
+
     animation: none;
 }
 
