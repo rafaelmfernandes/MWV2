@@ -11,6 +11,7 @@ Funções:
 * Inicializar o menu inferior.
 * Carregar o painel de pesquisa.
 * Carregar o modal de criação de anúncio.
+* Identificar automaticamente a página atual.
 * Controlar o item ativo.
 * Abrir Home.
 * Abrir Pesquisa.
@@ -20,8 +21,12 @@ Funções:
 
 IMPORTANTE:
 O menu utiliza apenas ícones visualmente.
-Os textos foram removidos da interface, mas os atributos
-aria-label e title permanecem para acessibilidade.
+Os atributos aria-label e title permanecem para
+acessibilidade.
+
+A página atual nunca deve ser definida manualmente.
+O menu identifica automaticamente o arquivo aberto
+através de window.location.pathname.
 ========================================================= */
 
 const MenuInferior = {
@@ -48,39 +53,70 @@ async iniciar() {
         return;
     }
 
+    /*
+     * Primeiro verificamos se o container do menu
+     * existe na página atual.
+     *
+     * Isso evita carregar recursos desnecessários
+     * em páginas que não utilizam o menu.
+     */
 
-    await this.carregarRecursosPesquisa();
-
-    await this.carregarRecursosAnunciar();
-
-
-    const container =
-        document.getElementById(
-            'menu-inferior-container'
-        );
-
+    const container = document.getElementById(
+        'menu-inferior-container'
+    );
 
     if (!container) {
 
         console.warn(
-            '⚠️ Container do menu inferior não encontrado.'
+            'Container do menu inferior não encontrado.'
         );
 
         return;
     }
 
 
+    /*
+     * Carrega os recursos utilizados pelos botões
+     * de pesquisa e anúncio.
+     */
+
+    await this.carregarRecursosPesquisa();
+
+    await this.carregarRecursosAnunciar();
+
+
+    /*
+     * Marca o módulo como inicializado antes de
+     * criar os eventos.
+     */
+
     this.inicializado = true;
 
 
+    /*
+     * Cria o HTML do menu.
+     */
+
     this.criarMenu(container);
 
+
+    /*
+     * Identifica qual página está aberta e marca
+     * automaticamente o item correspondente.
+     */
+
+    this.definirPaginaAtual();
+
+
+    /*
+     * Configura os eventos dos cinco itens.
+     */
 
     this.configurarEventos();
 
 
     console.log(
-        '✅ Menu inferior inicializado corretamente.'
+        'Menu inferior inicializado corretamente.'
     );
 },
 
@@ -96,8 +132,7 @@ async carregarRecursosPesquisa() {
 
     if (
         window.PainelPesquisa &&
-        typeof window.PainelPesquisa.iniciar ===
-        'function'
+        typeof window.PainelPesquisa.iniciar === 'function'
     ) {
 
         this.pesquisaCarregada = true;
@@ -108,10 +143,9 @@ async carregarRecursosPesquisa() {
     }
 
 
-    const scriptExistente =
-        document.querySelector(
-            'script[data-painel-pesquisa-js="true"]'
-        );
+    const scriptExistente = document.querySelector(
+        'script[data-painel-pesquisa-js="true"]'
+    );
 
 
     if (scriptExistente) {
@@ -122,32 +156,26 @@ async carregarRecursosPesquisa() {
     }
 
 
-    const script =
-        document.createElement('script');
-
+    const script = document.createElement('script');
 
     script.src =
         'js/components/painel-pesquisa.js';
 
-
-    script.dataset.painelPesquisaJs =
-        'true';
+    script.dataset.painelPesquisaJs = 'true';
 
 
     script.onload = () => {
 
         console.log(
-            '🔎 JavaScript do painel de pesquisa carregado automaticamente.'
+            'JavaScript do painel de pesquisa carregado automaticamente.'
         );
-
 
         this.pesquisaCarregada = true;
 
 
         if (
             window.PainelPesquisa &&
-            typeof window.PainelPesquisa.iniciar ===
-            'function'
+            typeof window.PainelPesquisa.iniciar === 'function'
         ) {
 
             window.PainelPesquisa.iniciar();
@@ -160,7 +188,7 @@ async carregarRecursosPesquisa() {
     script.onerror = () => {
 
         console.error(
-            '❌ Não foi possível carregar js/components/painel-pesquisa.js'
+            'Não foi possível carregar js/components/painel-pesquisa.js'
         );
 
     };
@@ -188,8 +216,7 @@ aguardarPainelPesquisa() {
 
             if (
                 window.PainelPesquisa &&
-                typeof window.PainelPesquisa.iniciar ===
-                'function'
+                typeof window.PainelPesquisa.iniciar === 'function'
             ) {
 
                 this.pesquisaCarregada = true;
@@ -210,7 +237,7 @@ aguardarPainelPesquisa() {
             if (tentativas >= 50) {
 
                 console.warn(
-                    '⚠️ Painel de pesquisa não ficou disponível a tempo.'
+                    'Painel de pesquisa não ficou disponível a tempo.'
                 );
 
 
@@ -240,10 +267,9 @@ aguardarPainelPesquisa() {
 
 carregarCssPesquisa() {
 
-    const cssExistente =
-        document.querySelector(
-            'link[data-painel-pesquisa-css="true"]'
-        );
+    const cssExistente = document.querySelector(
+        'link[data-painel-pesquisa-css="true"]'
+    );
 
 
     if (cssExistente) {
@@ -251,17 +277,12 @@ carregarCssPesquisa() {
     }
 
 
-    const link =
-        document.createElement('link');
+    const link = document.createElement('link');
 
-
-    link.rel =
-        'stylesheet';
-
+    link.rel = 'stylesheet';
 
     link.href =
         'css/painel-pesquisa.css';
-
 
     link.dataset.painelPesquisaCss =
         'true';
@@ -269,10 +290,6 @@ carregarCssPesquisa() {
 
     document.head.appendChild(link);
 
-
-    console.log(
-        '🎨 CSS do painel de pesquisa carregado automaticamente.'
-    );
 },
 
 
@@ -287,24 +304,20 @@ async carregarRecursosAnunciar() {
 
     if (
         window.ModalAnunciar &&
-        typeof window.ModalAnunciar.iniciar ===
-        'function'
+        typeof window.ModalAnunciar.iniciar === 'function'
     ) {
 
         this.modalAnunciarCarregado = true;
 
-
         window.ModalAnunciar.iniciar();
-
 
         return;
     }
 
 
-    const scriptExistente =
-        document.querySelector(
-            'script[data-modal-anunciar-js="true"]'
-        );
+    const scriptExistente = document.querySelector(
+        'script[data-modal-anunciar-js="true"]'
+    );
 
 
     if (scriptExistente) {
@@ -315,13 +328,10 @@ async carregarRecursosAnunciar() {
     }
 
 
-    const script =
-        document.createElement('script');
-
+    const script = document.createElement('script');
 
     script.src =
         'js/components/modal-anunciar.js';
-
 
     script.dataset.modalAnunciarJs =
         'true';
@@ -330,7 +340,7 @@ async carregarRecursosAnunciar() {
     script.onload = () => {
 
         console.log(
-            '📢 JavaScript do Modal Anunciar carregado automaticamente.'
+            'JavaScript do Modal Anunciar carregado automaticamente.'
         );
 
 
@@ -339,8 +349,7 @@ async carregarRecursosAnunciar() {
 
         if (
             window.ModalAnunciar &&
-            typeof window.ModalAnunciar.iniciar ===
-            'function'
+            typeof window.ModalAnunciar.iniciar === 'function'
         ) {
 
             window.ModalAnunciar.iniciar();
@@ -353,7 +362,7 @@ async carregarRecursosAnunciar() {
     script.onerror = () => {
 
         console.error(
-            '❌ Não foi possível carregar js/components/modal-anunciar.js'
+            'Não foi possível carregar js/components/modal-anunciar.js'
         );
 
     };
@@ -381,8 +390,7 @@ aguardarModalAnunciar() {
 
             if (
                 window.ModalAnunciar &&
-                typeof window.ModalAnunciar.iniciar ===
-                'function'
+                typeof window.ModalAnunciar.iniciar === 'function'
             ) {
 
                 this.modalAnunciarCarregado = true;
@@ -403,7 +411,7 @@ aguardarModalAnunciar() {
             if (tentativas >= 50) {
 
                 console.warn(
-                    '⚠️ Modal Anunciar não ficou disponível a tempo.'
+                    'Modal Anunciar não ficou disponível a tempo.'
                 );
 
 
@@ -433,10 +441,9 @@ aguardarModalAnunciar() {
 
 carregarCssAnunciar() {
 
-    const cssExistente =
-        document.querySelector(
-            'link[data-modal-anunciar-css="true"]'
-        );
+    const cssExistente = document.querySelector(
+        'link[data-modal-anunciar-css="true"]'
+    );
 
 
     if (cssExistente) {
@@ -444,17 +451,12 @@ carregarCssAnunciar() {
     }
 
 
-    const link =
-        document.createElement('link');
+    const link = document.createElement('link');
 
-
-    link.rel =
-        'stylesheet';
-
+    link.rel = 'stylesheet';
 
     link.href =
         'css/modal-anunciar.css';
-
 
     link.dataset.modalAnunciarCss =
         'true';
@@ -462,10 +464,6 @@ carregarCssAnunciar() {
 
     document.head.appendChild(link);
 
-
-    console.log(
-        '🎨 CSS do Modal Anunciar carregado automaticamente.'
-    );
 },
 
 
@@ -475,6 +473,18 @@ carregarCssAnunciar() {
 
 criarMenu(container) {
 
+    /*
+     * IMPORTANTE:
+     *
+     * Nenhum item recebe "ativo" diretamente aqui.
+     *
+     * O item ativo será definido posteriormente por
+     * definirPaginaAtual().
+     *
+     * Isso impede que o Home apareça selecionado
+     * automaticamente em todas as páginas.
+     */
+
     container.innerHTML = `
 
         <nav
@@ -483,13 +493,13 @@ criarMenu(container) {
             aria-label="Navegação principal"
         >
 
-            <!-- =========================================
+            <!-- =====================================
                  INÍCIO
-                 ========================================= -->
+                 ===================================== -->
 
             <button
                 type="button"
-                class="bottom-nav-item ativo"
+                class="bottom-nav-item"
                 id="nav-item-home"
                 data-aba="home"
                 aria-label="Início"
@@ -528,9 +538,9 @@ criarMenu(container) {
             </button>
 
 
-            <!-- =========================================
+            <!-- =====================================
                  PESQUISA
-                 ========================================= -->
+                 ===================================== -->
 
             <button
                 type="button"
@@ -571,9 +581,9 @@ criarMenu(container) {
             </button>
 
 
-            <!-- =========================================
+            <!-- =====================================
                  ANUNCIAR
-                 ========================================= -->
+                 ===================================== -->
 
             <button
                 type="button"
@@ -624,9 +634,9 @@ criarMenu(container) {
             </button>
 
 
-            <!-- =========================================
+            <!-- =====================================
                  CONTRATAÇÕES
-                 ========================================= -->
+                 ===================================== -->
 
             <button
                 type="button"
@@ -681,9 +691,9 @@ criarMenu(container) {
             </button>
 
 
-            <!-- =========================================
+            <!-- =====================================
                  PERFIL
-                 ========================================= -->
+                 ===================================== -->
 
             <button
                 type="button"
@@ -694,9 +704,7 @@ criarMenu(container) {
                 title="Perfil"
             >
 
-                <span
-                    class="nav-icon-wrapper profile-icon-wrapper"
-                >
+                <span class="nav-icon-wrapper profile-icon-wrapper">
 
                     <svg
                         class="nav-icon-svg"
@@ -737,6 +745,134 @@ criarMenu(container) {
 
 
 /* =====================================================
+   IDENTIFICAR PÁGINA ATUAL
+   ===================================================== */
+
+definirPaginaAtual() {
+
+    /*
+     * Obtém somente o nome do arquivo atual.
+     *
+     * Exemplos:
+     *
+     * index.html
+     * contratacoes.html
+     * meu-perfil.html
+     */
+
+    const caminhoAtual =
+        window.location.pathname;
+
+    const arquivoAtual =
+        caminhoAtual
+            .split('/')
+            .pop()
+            .toLowerCase();
+
+
+    /*
+     * Algumas páginas podem ser abertas sem
+     * "index.html", por exemplo:
+     *
+     * /app/
+     *
+     * Nesse caso consideramos Home.
+     */
+
+    let abaAtual = 'home';
+
+
+    /*
+     * HOME
+     */
+
+    if (
+        arquivoAtual === '' ||
+        arquivoAtual === 'index.html'
+    ) {
+
+        abaAtual = 'home';
+
+    }
+
+
+    /*
+     * CONTRATAÇÕES
+     */
+
+    else if (
+        arquivoAtual === 'contratacoes.html'
+    ) {
+
+        abaAtual = 'contratacoes';
+
+    }
+
+
+    /*
+     * MEU PERFIL
+     */
+
+    else if (
+        arquivoAtual === 'meu-perfil.html'
+    ) {
+
+        abaAtual = 'perfil';
+
+    }
+
+
+    /*
+     * PESQUISA
+     *
+     * Atualmente a pesquisa funciona como painel
+     * dentro da página, então não existe uma página
+     * separada.
+     *
+     * Esta condição fica preparada para uma futura
+     * pagina pesquisa.html.
+     */
+
+    else if (
+        arquivoAtual === 'pesquisa.html' ||
+        arquivoAtual === 'pesquisar.html'
+    ) {
+
+        abaAtual = 'pesquisar';
+
+    }
+
+
+    /*
+     * O botão Anunciar normalmente abre um modal,
+     * portanto não recebe ativo por URL.
+     */
+
+
+    /*
+     * Localiza o botão correspondente.
+     */
+
+    const elemento =
+        document.querySelector(
+            `#menu-inferior .bottom-nav-item[data-aba="${abaAtual}"]`
+        );
+
+
+    /*
+     * Aplica o estado ativo.
+     */
+
+    this.definirAtivo(elemento);
+
+
+    console.log(
+        `Menu inferior: página atual identificada como "${abaAtual}".`
+    );
+},
+
+
+/* =====================================================
    CONFIGURAR EVENTOS
    ===================================================== */
 
@@ -770,7 +906,7 @@ configurarEventos() {
 
 
     console.log(
-        `✅ ${itens.length} itens do menu configurados.`
+        `${itens.length} itens do menu configurados.`
     );
 },
 
@@ -811,23 +947,25 @@ mudarAba(aba, elemento) {
 
         if (
             window.PainelPesquisa &&
-            typeof window.PainelPesquisa.abrir ===
-            'function'
+            typeof window.PainelPesquisa.abrir === 'function'
         ) {
 
             window.PainelPesquisa.abrir();
 
-        } else if (
-            typeof window.abrirPesquisa ===
-            'function'
+        }
+
+        else if (
+            typeof window.abrirPesquisa === 'function'
         ) {
 
             window.abrirPesquisa();
 
-        } else {
+        }
+
+        else {
 
             console.warn(
-                '⚠️ Painel de pesquisa não está disponível.'
+                'Painel de pesquisa não está disponível.'
             );
 
         }
@@ -843,28 +981,34 @@ mudarAba(aba, elemento) {
 
     if (aba === 'anunciar') {
 
-        this.definirAtivo(elemento);
-
+        /*
+         * Anunciar não representa uma página.
+         *
+         * Por isso não mantemos o item permanentemente
+         * ativo. Ele apenas abre o modal.
+         */
 
         if (
             window.ModalAnunciar &&
-            typeof window.ModalAnunciar.abrir ===
-            'function'
+            typeof window.ModalAnunciar.abrir === 'function'
         ) {
 
             window.ModalAnunciar.abrir();
 
-        } else if (
-            typeof window.abrirModalAnuncio ===
-            'function'
+        }
+
+        else if (
+            typeof window.abrirModalAnuncio === 'function'
         ) {
 
             window.abrirModalAnuncio();
 
-        } else {
+        }
+
+        else {
 
             console.warn(
-                '⚠️ A função abrirModalAnuncio() não está disponível.'
+                'A função abrirModalAnuncio() não está disponível.'
             );
 
         }
@@ -937,6 +1081,7 @@ definirAtivo(elemento) {
         );
 
     }
+
 },
 
 
@@ -948,8 +1093,7 @@ fecharPesquisa() {
 
     if (
         window.PainelPesquisa &&
-        typeof window.PainelPesquisa.fechar ===
-        'function'
+        typeof window.PainelPesquisa.fechar === 'function'
     ) {
 
         window.PainelPesquisa.fechar();
@@ -959,13 +1103,13 @@ fecharPesquisa() {
 
 
     if (
-        typeof window.fecharPesquisa ===
-        'function'
+        typeof window.fecharPesquisa === 'function'
     ) {
 
         window.fecharPesquisa();
 
     }
+
 },
 
 
@@ -976,7 +1120,7 @@ fecharPesquisa() {
 async abrirMeuPerfil() {
 
     console.log(
-        '👤 Abrindo meu perfil...'
+        'Abrindo meu perfil...'
     );
 
 
@@ -989,7 +1133,7 @@ async abrirMeuPerfil() {
     ) {
 
         console.error(
-            '❌ Sessao.js não está disponível.'
+            'Sessao.js não está disponível.'
         );
 
 
@@ -1012,7 +1156,7 @@ async abrirMeuPerfil() {
     if (!sessao) {
 
         console.warn(
-            '🚪 Nenhuma sessão ativa. Redirecionando para login.'
+            'Nenhuma sessão ativa. Redirecionando para login.'
         );
 
 
@@ -1035,7 +1179,7 @@ async abrirMeuPerfil() {
        ================================================ */
 
     console.log(
-        '✅ Sessão encontrada:',
+        'Sessão encontrada:',
         sessao.user?.id
     );
 
