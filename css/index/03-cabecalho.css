@@ -154,13 +154,13 @@ outline-offset: 2px;
 ========================================================= */
 
 .top-icon-svg {
-width: 24px;
-height: 24px;
+width: 26px;
+height: 26px;
 
 
 display: block;
 
-flex-shrink: 0;
+flex-shrink: 2;
 
 stroke-linecap: round;
 stroke-linejoin: round;
