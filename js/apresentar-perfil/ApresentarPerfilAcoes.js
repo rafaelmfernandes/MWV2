@@ -3,6 +3,7 @@
 
 "use strict";
 
+
 /* =========================================================
    MUSICALWORLD — AÇÕES DO PERFIL PÚBLICO
 
@@ -17,18 +18,29 @@
    - Abrir contato via WhatsApp
    - Iniciar contratação do perfil
    - Exibir mensagens/toasts
-   - Controlar ações dos botões do perfil público
+   - Controlar as ações dos botões do perfil público
 
    Este módulo NÃO:
 
-   - consulta o Supabase
+   - consulta diretamente o Supabase
    - carrega dados do perfil
-   - renderiza conteúdo do perfil
+   - renderiza o conteúdo do perfil
    - controla abas/seções
-   - identifica os dados principais do perfil
 
-   Ele trabalha somente com o estado já carregado
-   pelo módulo principal ApresentarPerfil.js.
+   O módulo utiliza o estado fornecido pelo
+   ApresentarPerfil.js.
+
+   Fluxo de contratação:
+
+   apresentar perfil
+          ↓
+   clicar em "Contratar"
+          ↓
+   contratacao.html?perfil_id=UUID
+          ↓
+   contratacao.js
+          ↓
+   escolha do serviço
    ========================================================= */
 
 
@@ -39,25 +51,35 @@
 const CONFIG = {
 
     elementos: {
+
         voltar: "btnVoltar",
+
         compartilhar: "btnCompartilhar",
-        contato: "btnContato",
+
+        /*
+         * O HTML atual utiliza btnMandarMensagem.
+         *
+         * Mantemos btnContato como fallback para
+         * compatibilidade com versões anteriores.
+         */
+        contato: "btnMandarMensagem",
+
+        contatoFallback: "btnContato",
+
         contratar: "btnContratar",
+
         toast: "toast"
+
     },
 
-    paginasContratacao: {
-        cantor: "contratar-musico.html",
-        musico: "contratar-musico.html",
-        banda: "contratar-musico.html",
-        dupla_musical: "contratar-musico.html",
-        dj: "contratar-musico.html",
-        dancarino: "contratar-musico.html",
-        grupo_de_danca: "contratar-musico.html",
-        mc: "contratar-musico.html",
-        compositor: "contratar-musico.html",
-        produtor_musical: "contratar-musico.html"
-    }
+
+    /*
+     * O MusicalWorld utiliza um único fluxo
+     * de contratação para todos os tipos
+     * de perfil artístico.
+     */
+    paginaContratacao: "contratacao.html"
+
 };
 
 
@@ -67,6 +89,10 @@ const CONFIG = {
 
 let estadoAtual = null;
 
+let eventosConfigurados = false;
+
+let eventoDelegadoConfigurado = false;
+
 
 /* =========================================================
    OBTENÇÃO DE ELEMENTOS
@@ -75,10 +101,14 @@ let estadoAtual = null;
 function obterElemento(id) {
 
     if (!id) {
+
         return null;
+
     }
 
+
     return document.getElementById(id);
+
 }
 
 
@@ -88,11 +118,18 @@ function obterElemento(id) {
 
 function normalizarTexto(valor) {
 
-    if (valor === null || valor === undefined) {
+    if (
+        valor === null ||
+        valor === undefined
+    ) {
+
         return "";
+
     }
 
+
     return String(valor).trim();
+
 }
 
 
@@ -103,11 +140,26 @@ function normalizarTexto(valor) {
 function normalizarTipo(tipo) {
 
     return normalizarTexto(tipo)
+
         .toLowerCase()
+
         .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .replace(/[^a-z0-9]+/g, "_")
-        .replace(/^_+|_+$/g, "");
+
+        .replace(
+            /[\u0300-\u036f]/g,
+            ""
+        )
+
+        .replace(
+            /[^a-z0-9]+/g,
+            "_"
+        )
+
+        .replace(
+            /^_+|_+$/g,
+            ""
+        );
+
 }
 
 
@@ -117,54 +169,180 @@ function normalizarTipo(tipo) {
 
 function obterUsuario() {
 
-    return estadoAtual &&
-           estadoAtual.dados &&
-           estadoAtual.dados.usuario
+    return (
+
+        estadoAtual &&
+        estadoAtual.dados &&
+        estadoAtual.dados.usuario
+
+    )
+
         ? estadoAtual.dados.usuario
+
         : {};
+
 }
 
 
 function obterPerfil() {
 
-    return estadoAtual &&
-           estadoAtual.dados &&
-           estadoAtual.dados.perfil
+    return (
+
+        estadoAtual &&
+        estadoAtual.dados &&
+        estadoAtual.dados.perfil
+
+    )
+
         ? estadoAtual.dados.perfil
+
         : {};
+
 }
 
 
 function obterPerfilArtista() {
 
-    return estadoAtual &&
-           estadoAtual.dados &&
-           estadoAtual.dados.perfilArtista
+    return (
+
+        estadoAtual &&
+        estadoAtual.dados &&
+        estadoAtual.dados.perfilArtista
+
+    )
+
         ? estadoAtual.dados.perfilArtista
+
         : {};
+
 }
 
 
+/* =========================================================
+   OBTENÇÃO DO ID DO PERFIL
+
+   Ordem de prioridade:
+
+   1. estadoAtual.perfilId
+   2. estadoAtual.dados.perfilId
+   3. perfil.id
+   4. perfilArtista.perfil_id
+   5. parâmetro perfil_id da URL
+   6. parâmetro perfilId da URL
+   7. parâmetro id da URL
+
+   O ID pode ser UUID do Supabase.
+
+   Portanto NÃO convertemos o valor para Number.
+   ========================================================= */
+
 function obterPerfilId() {
+
+    /* -----------------------------------------------------
+       1. ID diretamente no estado principal
+       ----------------------------------------------------- */
 
     if (
         estadoAtual &&
         estadoAtual.perfilId
     ) {
-        return estadoAtual.perfilId;
+
+        return normalizarTexto(
+            estadoAtual.perfilId
+        );
+
     }
 
+
+    /* -----------------------------------------------------
+       2. ID dentro de estadoAtual.dados
+       ----------------------------------------------------- */
 
     if (
         estadoAtual &&
         estadoAtual.dados &&
         estadoAtual.dados.perfilId
     ) {
-        return estadoAtual.dados.perfilId;
+
+        return normalizarTexto(
+            estadoAtual.dados.perfilId
+        );
+
+    }
+
+
+    const perfil =
+        obterPerfil();
+
+
+    const perfilArtista =
+        obterPerfilArtista();
+
+
+    /* -----------------------------------------------------
+       3. ID da tabela perfis
+       ----------------------------------------------------- */
+
+    if (perfil.id) {
+
+        return normalizarTexto(
+            perfil.id
+        );
+
+    }
+
+
+    /* -----------------------------------------------------
+       4. ID do perfil artístico
+       ----------------------------------------------------- */
+
+    if (perfilArtista.perfil_id) {
+
+        return normalizarTexto(
+            perfilArtista.perfil_id
+        );
+
+    }
+
+
+    /* -----------------------------------------------------
+       5, 6 e 7. Fallback pela URL
+       ----------------------------------------------------- */
+
+    try {
+
+        const parametros =
+            new URLSearchParams(
+                window.location.search
+            );
+
+
+        const perfilIdUrl =
+            parametros.get("perfil_id") ||
+            parametros.get("perfilId") ||
+            parametros.get("id");
+
+
+        if (perfilIdUrl) {
+
+            return normalizarTexto(
+                perfilIdUrl
+            );
+
+        }
+
+    } catch (erro) {
+
+        console.warn(
+            "ApresentarPerfilAcoes: não foi possível ler os parâmetros da URL.",
+            erro
+        );
+
     }
 
 
     return "";
+
 }
 
 
@@ -178,13 +356,77 @@ function obterTipoPerfil() {
         estadoAtual &&
         estadoAtual.tipoPerfil
     ) {
+
         return normalizarTipo(
             estadoAtual.tipoPerfil
         );
+
     }
 
 
-    const perfil = obterPerfil();
+    /*
+     * O ApresentarPerfil.js também trabalha
+     * com propriedades como tipo, tipoChave
+     * e tipoNome.
+     *
+     * Por isso verificamos essas propriedades
+     * antes de consultar os dados.
+     */
+
+    if (
+        estadoAtual &&
+        estadoAtual.tipo
+    ) {
+
+        if (
+            typeof estadoAtual.tipo === "object"
+        ) {
+
+            return normalizarTipo(
+
+                estadoAtual.tipo.nome ||
+                estadoAtual.tipo.tipo ||
+                estadoAtual.tipo.slug ||
+                ""
+
+            );
+
+        }
+
+
+        return normalizarTipo(
+            estadoAtual.tipo
+        );
+
+    }
+
+
+    if (
+        estadoAtual &&
+        estadoAtual.tipoChave
+    ) {
+
+        return normalizarTipo(
+            estadoAtual.tipoChave
+        );
+
+    }
+
+
+    if (
+        estadoAtual &&
+        estadoAtual.tipoNome
+    ) {
+
+        return normalizarTipo(
+            estadoAtual.tipoNome
+        );
+
+    }
+
+
+    const perfil =
+        obterPerfil();
 
 
     if (perfil.tipo_perfil) {
@@ -194,17 +436,21 @@ function obterTipoPerfil() {
         ) {
 
             return normalizarTipo(
+
                 perfil.tipo_perfil.nome ||
                 perfil.tipo_perfil.tipo ||
                 perfil.tipo_perfil.slug ||
                 ""
+
             );
+
         }
 
 
         return normalizarTipo(
             perfil.tipo_perfil
         );
+
     }
 
 
@@ -215,21 +461,60 @@ function obterTipoPerfil() {
         ) {
 
             return normalizarTipo(
+
                 perfil.tipo.nome ||
                 perfil.tipo.tipo ||
                 perfil.tipo.slug ||
                 ""
+
             );
+
         }
 
 
         return normalizarTipo(
             perfil.tipo
         );
+
+    }
+
+
+    /*
+     * Fallback adicional pela URL.
+     */
+
+    try {
+
+        const parametros =
+            new URLSearchParams(
+                window.location.search
+            );
+
+
+        const tipoUrl =
+            parametros.get("tipo");
+
+
+        if (tipoUrl) {
+
+            return normalizarTipo(
+                tipoUrl
+            );
+
+        }
+
+    } catch (erro) {
+
+        console.warn(
+            "ApresentarPerfilAcoes: não foi possível obter o tipo da URL.",
+            erro
+        );
+
     }
 
 
     return "";
+
 }
 
 
@@ -239,9 +524,16 @@ function obterTipoPerfil() {
 
 function obterNomePerfil() {
 
-    const usuario = obterUsuario();
-    const perfil = obterPerfil();
-    const perfilArtista = obterPerfilArtista();
+    const usuario =
+        obterUsuario();
+
+
+    const perfil =
+        obterPerfil();
+
+
+    const perfilArtista =
+        obterPerfilArtista();
 
 
     return normalizarTexto(
@@ -255,6 +547,7 @@ function obterNomePerfil() {
         "Perfil"
 
     );
+
 }
 
 
@@ -264,9 +557,16 @@ function obterNomePerfil() {
 
 function obterTelefone() {
 
-    const usuario = obterUsuario();
-    const perfil = obterPerfil();
-    const perfilArtista = obterPerfilArtista();
+    const usuario =
+        obterUsuario();
+
+
+    const perfil =
+        obterPerfil();
+
+
+    const perfilArtista =
+        obterPerfilArtista();
 
 
     return normalizarTexto(
@@ -283,6 +583,7 @@ function obterTelefone() {
         ""
 
     );
+
 }
 
 
@@ -290,6 +591,7 @@ function normalizarTelefone(telefone) {
 
     return normalizarTexto(telefone)
         .replace(/\D/g, "");
+
 }
 
 
@@ -299,22 +601,30 @@ function normalizarTelefone(telefone) {
 
 function mostrarToast(mensagem) {
 
-    const toast = obterElemento(
-        CONFIG.elementos.toast
-    );
+    const toast =
+        obterElemento(
+            CONFIG.elementos.toast
+        );
 
 
     if (!toast) {
 
-        console.log(mensagem);
+        console.log(
+            mensagem
+        );
 
         return;
+
     }
 
 
-    toast.textContent = mensagem;
+    toast.textContent =
+        mensagem;
 
-    toast.classList.add("show");
+
+    toast.classList.add(
+        "show"
+    );
 
 
     clearTimeout(
@@ -322,23 +632,52 @@ function mostrarToast(mensagem) {
     );
 
 
-    toast._timeout = setTimeout(
-        function () {
+    toast._timeout =
+        setTimeout(
 
-            toast.classList.remove("show");
+            function () {
 
-        },
-        3000
-    );
+                toast.classList.remove(
+                    "show"
+                );
+
+            },
+
+            3000
+
+        );
+
 }
 
 
 /* =========================================================
    VOLTAR
-   ========================================================= */
 
-/* =========================================================
-   VOLTAR
+   O botão Voltar do perfil público sempre retorna
+   para a página inicial do MusicalWorld.
+
+   IMPORTANTE:
+   ---------------------------------------------------------
+   Não utilizamos window.history.back() aqui.
+
+   Isso evita que, após cancelar uma contratação,
+   o usuário seja levado novamente para uma das etapas
+   antigas da contratação.
+
+   Exemplo:
+
+   contratação
+        ↓
+   cancelar
+        ↓
+   apresentar-perfil.html?id=...
+        ↓
+   botão Voltar
+        ↓
+   index.html
+
+   Assim o histórico da contratação não interfere
+   no comportamento do botão do perfil.
    ========================================================= */
 
 function voltar() {
@@ -347,82 +686,16 @@ function voltar() {
         "ApresentarPerfilAcoes: botão voltar acionado."
     );
 
-    /*
-     * Guarda informações para diagnóstico.
-     */
-
-    console.log(
-        "ApresentarPerfilAcoes: history.length =",
-        window.history.length
-    );
-
-    console.log(
-        "ApresentarPerfilAcoes: document.referrer =",
-        document.referrer
-    );
-
 
     /*
-     * Primeiro tenta utilizar o histórico do navegador/WebView.
+     * O botão Voltar do perfil público sempre
+     * retorna para a página inicial.
      */
-
-    if (
-        window.history &&
-        window.history.length > 1
-    ) {
-
-        console.log(
-            "ApresentarPerfilAcoes: tentando retornar pelo histórico."
-        );
-
-
-        window.history.back();
-
-
-        /*
-         * Em alguns ambientes WebView/Capacitor,
-         * o history.back() pode não produzir navegação.
-         *
-         * Por isso temos um fallback.
-         */
-
-        setTimeout(function () {
-
-            /*
-             * Se ainda estivermos na mesma página,
-             * significa que o histórico não conseguiu
-             * realizar a navegação.
-             */
-
-            console.warn(
-                "ApresentarPerfilAcoes: histórico não realizou a navegação. Usando fallback."
-            );
-
-
-            window.location.href =
-                "index.html";
-
-        }, 500);
-
-
-        return;
-    }
-
-
-    /*
-     * Se não existe histórico suficiente,
-     * retorna diretamente para a página inicial.
-     */
-
-    console.log(
-        "ApresentarPerfilAcoes: nenhum histórico disponível. Indo para index.html."
-    );
-
 
     window.location.href =
         "index.html";
-}
 
+}
 
 /* =========================================================
    LINK DO PERFIL
@@ -431,6 +704,7 @@ function voltar() {
 function obterLinkPerfil() {
 
     return window.location.href;
+
 }
 
 
@@ -440,13 +714,9 @@ function obterLinkPerfil() {
 
 async function copiarLink() {
 
-    const link = obterLinkPerfil();
+    const link =
+        obterLinkPerfil();
 
-
-    /*
-     * Primeiro tenta utilizar a API moderna
-     * da área de transferência.
-     */
 
     try {
 
@@ -455,13 +725,18 @@ async function copiarLink() {
             typeof navigator.clipboard.writeText === "function"
         ) {
 
-            await navigator.clipboard.writeText(link);
+            await navigator.clipboard.writeText(
+                link
+            );
+
 
             mostrarToast(
                 "Link do perfil copiado."
             );
 
+
             return true;
+
         }
 
     } catch (erro) {
@@ -470,25 +745,32 @@ async function copiarLink() {
             "Não foi possível usar a área de transferência:",
             erro
         );
+
     }
 
-
-    /*
-     * Fallback para ambientes onde
-     * navigator.clipboard não está disponível.
-     */
 
     try {
 
         const textarea =
-            document.createElement("textarea");
+            document.createElement(
+                "textarea"
+            );
 
 
-        textarea.value = link;
+        textarea.value =
+            link;
 
-        textarea.style.position = "fixed";
-        textarea.style.left = "-9999px";
-        textarea.style.top = "-9999px";
+
+        textarea.style.position =
+            "fixed";
+
+
+        textarea.style.left =
+            "-9999px";
+
+
+        textarea.style.top =
+            "-9999px";
 
 
         document.body.appendChild(
@@ -497,11 +779,14 @@ async function copiarLink() {
 
 
         textarea.focus();
+
         textarea.select();
 
 
         const sucesso =
-            document.execCommand("copy");
+            document.execCommand(
+                "copy"
+            );
 
 
         textarea.remove();
@@ -513,7 +798,9 @@ async function copiarLink() {
                 "Link do perfil copiado."
             );
 
+
             return true;
+
         }
 
     } catch (erro) {
@@ -522,6 +809,7 @@ async function copiarLink() {
             "Erro ao copiar link:",
             erro
         );
+
     }
 
 
@@ -531,6 +819,7 @@ async function copiarLink() {
 
 
     return false;
+
 }
 
 
@@ -543,14 +832,10 @@ async function compartilharPerfil() {
     const nome =
         obterNomePerfil();
 
+
     const link =
         obterLinkPerfil();
 
-
-    /*
-     * Em dispositivos que possuem
-     * Web Share API, abre o compartilhamento nativo.
-     */
 
     if (navigator.share) {
 
@@ -574,16 +859,13 @@ async function compartilharPerfil() {
 
         } catch (erro) {
 
-            /*
-             * O usuário pode simplesmente ter
-             * fechado/cancelado o compartilhamento.
-             */
-
             if (
                 erro &&
                 erro.name === "AbortError"
             ) {
+
                 return false;
+
             }
 
 
@@ -591,16 +873,14 @@ async function compartilharPerfil() {
                 "Compartilhamento cancelado ou indisponível:",
                 erro
             );
+
         }
+
     }
 
 
-    /*
-     * Se o compartilhamento nativo não estiver
-     * disponível, copia o link automaticamente.
-     */
-
     return copiarLink();
+
 }
 
 
@@ -620,7 +900,9 @@ function abrirContato() {
             "Este perfil ainda não possui um contato disponível."
         );
 
+
         return false;
+
     }
 
 
@@ -636,18 +918,15 @@ function abrirContato() {
             "O número de contato deste perfil não é válido."
         );
 
+
         return false;
+
     }
 
 
     let numeroWhatsApp =
         numero;
 
-
-    /*
-     * Caso o telefone não possua
-     * código internacional, assume Brasil.
-     */
 
     if (
         !numeroWhatsApp.startsWith("55")
@@ -656,6 +935,7 @@ function abrirContato() {
         numeroWhatsApp =
             "55" +
             numeroWhatsApp;
+
     }
 
 
@@ -679,58 +959,84 @@ function abrirContato() {
 
 
     return true;
+
 }
 
 
 /* =========================================================
    CONTRATAÇÃO
+
+   Responsabilidade:
+
+   - Validar o perfil atual
+   - Obter o perfil_id
+   - Obter o tipo do perfil
+   - Montar a URL da contratação
+   - Redirecionar para contratacao.html
+
+   Nenhum registro de contratação é criado aqui.
    ========================================================= */
 
 function contratarPerfil() {
 
-    const tipo =
-        obterTipoPerfil();
-
-
-    const pagina =
-        CONFIG.paginasContratacao[tipo];
-
-
-    if (!pagina) {
-
-        mostrarToast(
-            "A contratação deste tipo de perfil ainda não está disponível."
-        );
-
-        return false;
-    }
+    console.log(
+        "ApresentarPerfilAcoes: botão Contratar acionado."
+    );
 
 
     const perfilId =
         obterPerfilId();
 
 
-    const parametros =
-        new URLSearchParams();
+    const tipo =
+        obterTipoPerfil();
+
+
+    console.log(
+        "ApresentarPerfilAcoes: dados para contratação:",
+        {
+            perfilId,
+            tipo,
+            estadoAtual
+        }
+    );
 
 
     /*
-     * Envia o ID do perfil para a página
-     * de contratação.
+     * Sem perfil_id não é possível iniciar
+     * corretamente a contratação.
      */
 
-    if (perfilId) {
+    if (!perfilId) {
 
-        parametros.set(
-            "perfil_id",
-            perfilId
+        console.error(
+            "ApresentarPerfilAcoes: perfil_id não encontrado."
         );
+
+
+        mostrarToast(
+            "Não foi possível identificar este perfil."
+        );
+
+
+        return false;
+
     }
 
 
     /*
-     * Envia também o tipo do perfil.
+     * Cria os parâmetros da próxima página.
      */
+
+    const parametros =
+        new URLSearchParams();
+
+
+    parametros.set(
+        "perfil_id",
+        perfilId
+    );
+
 
     if (tipo) {
 
@@ -738,24 +1044,58 @@ function contratarPerfil() {
             "tipo",
             tipo
         );
+
     }
 
 
-    const query =
+    const destino =
+        CONFIG.paginaContratacao +
+        "?" +
         parametros.toString();
 
 
-    const destino =
-        query
-            ? pagina + "?" + query
-            : pagina;
+    console.log(
+        "ApresentarPerfilAcoes: redirecionando para:",
+        destino
+    );
 
 
-    window.location.href =
-        destino;
+    /*
+     * Bloqueia visualmente o botão para
+     * impedir múltiplos cliques.
+     */
+
+    const btnContratar =
+        obterElemento(
+            CONFIG.elementos.contratar
+        );
+
+
+    if (btnContratar) {
+
+        btnContratar.disabled =
+            true;
+
+
+        btnContratar.setAttribute(
+            "aria-busy",
+            "true"
+        );
+
+    }
+
+
+    /*
+     * Redirecionamento principal.
+     */
+
+    window.location.assign(
+        destino
+    );
 
 
     return true;
+
 }
 
 
@@ -780,6 +1120,9 @@ function configurarBotoes() {
     const btnContato =
         obterElemento(
             CONFIG.elementos.contato
+        ) ||
+        obterElemento(
+            CONFIG.elementos.contatoFallback
         );
 
 
@@ -787,6 +1130,17 @@ function configurarBotoes() {
         obterElemento(
             CONFIG.elementos.contratar
         );
+
+
+    console.log(
+        "ApresentarPerfilAcoes: procurando botões...",
+        {
+            btnVoltar: !!btnVoltar,
+            btnCompartilhar: !!btnCompartilhar,
+            btnContato: !!btnContato,
+            btnContratar: !!btnContratar
+        }
+    );
 
 
     /* -----------------------------------------------------
@@ -797,6 +1151,7 @@ function configurarBotoes() {
 
         btnVoltar.onclick =
             voltar;
+
     }
 
 
@@ -810,16 +1165,21 @@ function configurarBotoes() {
             function (evento) {
 
                 if (evento) {
+
                     evento.preventDefault();
+
                 }
 
+
                 compartilharPerfil();
+
             };
+
     }
 
 
     /* -----------------------------------------------------
-       BOTÃO CONTATO
+       BOTÃO CONTATO / MENSAGEM
        ----------------------------------------------------- */
 
     if (btnContato) {
@@ -828,16 +1188,29 @@ function configurarBotoes() {
             function (evento) {
 
                 if (evento) {
+
                     evento.preventDefault();
+
                 }
 
+
                 abrirContato();
+
             };
+
     }
 
 
     /* -----------------------------------------------------
        BOTÃO CONTRATAR
+
+       Mantemos o onclick tradicional como primeira
+       camada de segurança.
+
+       A delegação global abaixo também será
+       configurada para garantir que o clique
+       continue funcionando caso outro módulo
+       substitua o elemento no DOM.
        ----------------------------------------------------- */
 
     if (btnContratar) {
@@ -846,12 +1219,154 @@ function configurarBotoes() {
             function (evento) {
 
                 if (evento) {
+
                     evento.preventDefault();
+
                 }
 
+
+                console.log(
+                    "ApresentarPerfilAcoes: clique recebido diretamente em btnContratar."
+                );
+
+
                 contratarPerfil();
+
             };
+
     }
+
+
+    if (
+        btnVoltar ||
+        btnCompartilhar ||
+        btnContato ||
+        btnContratar
+    ) {
+
+        eventosConfigurados =
+            true;
+
+    }
+
+
+    console.log(
+        "ApresentarPerfilAcoes: configuração dos botões concluída."
+    );
+
+}
+
+
+/* =========================================================
+   DELEGAÇÃO GLOBAL DO BOTÃO CONTRATAR
+
+   Esta é a principal proteção desta versão.
+
+   Em vez de depender exclusivamente do onclick
+   instalado diretamente no botão, observamos os
+   cliques no document.
+
+   Assim, mesmo que algum módulo posteriormente
+   substitua ou recrie #btnContratar, o clique
+   continuará sendo capturado.
+
+   O listener é registrado apenas uma vez.
+   ========================================================= */
+
+function configurarDelegacaoContratacao() {
+
+    if (eventoDelegadoConfigurado) {
+
+        return;
+
+    }
+
+
+    document.addEventListener(
+
+        "click",
+
+        function (evento) {
+
+            const alvo =
+                evento.target;
+
+
+            if (!alvo) {
+
+                return;
+
+            }
+
+
+            /*
+             * closest() permite que o clique
+             * seja feito no ícone, no span ou
+             * diretamente no botão.
+             */
+
+            const botaoContratar =
+                alvo.closest &&
+                alvo.closest(
+                    "#btnContratar"
+                );
+
+
+            if (!botaoContratar) {
+
+                return;
+
+            }
+
+
+            /*
+             * Se o botão já estiver desabilitado,
+             * não executamos novamente.
+             */
+
+            if (
+                botaoContratar.disabled
+            ) {
+
+                return;
+
+            }
+
+
+            console.log(
+                "ApresentarPerfilAcoes: clique global detectado em #btnContratar."
+            );
+
+
+            if (evento) {
+
+                evento.preventDefault();
+
+            }
+
+
+            /*
+             * Executa a mesma função usada
+             * pelo onclick tradicional.
+             */
+
+            contratarPerfil();
+
+        },
+
+        true
+
+    );
+
+
+    eventoDelegadoConfigurado =
+        true;
+
+
+    console.log(
+        "ApresentarPerfilAcoes: delegação global de #btnContratar configurada."
+    );
+
 }
 
 
@@ -865,7 +1380,41 @@ function configurar(estado) {
         estado || null;
 
 
+    console.log(
+        "ApresentarPerfilAcoes: estado recebido.",
+        estadoAtual
+    );
+
+
+    /*
+     * A delegação pode ser configurada
+     * independentemente do momento em que
+     * o botão aparece no DOM.
+     */
+
+    configurarDelegacaoContratacao();
+
+
+    /*
+     * Se o DOM ainda estiver carregando,
+     * aguardamos o DOMContentLoaded.
+     */
+
+    if (
+        document.readyState === "loading"
+    ) {
+
+        eventosConfigurados =
+            false;
+
+
+        return;
+
+    }
+
+
     configurarBotoes();
+
 }
 
 
@@ -877,6 +1426,19 @@ function atualizarEstado(estado) {
 
     estadoAtual =
         estado || null;
+
+
+    console.log(
+        "ApresentarPerfilAcoes: estado atualizado.",
+        estadoAtual
+    );
+
+
+    configurarDelegacaoContratacao();
+
+
+    configurarBotoes();
+
 }
 
 
@@ -886,20 +1448,42 @@ function atualizarEstado(estado) {
 
 function limpar() {
 
-    estadoAtual = null;
+    estadoAtual =
+        null;
 
+
+    eventosConfigurados =
+        false;
+
+
+    /*
+     * Não removemos a delegação global.
+
+     * Ela pertence ao ciclo de vida da página
+     * e não depende de um elemento específico.
+     *
+     * Isso evita que o sistema perca a capacidade
+     * de detectar #btnContratar caso o botão
+     * seja recriado posteriormente.
+     */
 
     const elementos = [
 
         CONFIG.elementos.voltar,
+
         CONFIG.elementos.compartilhar,
+
         CONFIG.elementos.contato,
+
+        CONFIG.elementos.contatoFallback,
+
         CONFIG.elementos.contratar
 
     ];
 
 
     elementos.forEach(
+
         function (id) {
 
             const elemento =
@@ -907,15 +1491,84 @@ function limpar() {
 
 
             if (!elemento) {
+
                 return;
+
             }
 
 
             elemento.onclick =
                 null;
+
         }
+
     );
+
 }
+
+
+/* =========================================================
+   DOM READY
+
+   O módulo pode ser carregado antes de todos
+   os elementos do HTML estarem disponíveis.
+
+   Por isso fazemos uma nova tentativa quando
+   o DOM estiver completamente pronto.
+   ========================================================= */
+
+function inicializarQuandoDOMPronto() {
+
+    /*
+     * A delegação é configurada imediatamente,
+     * pois ela funciona mesmo antes do botão
+     * existir no DOM.
+     */
+
+    configurarDelegacaoContratacao();
+
+
+    if (
+        document.readyState === "loading"
+    ) {
+
+        document.addEventListener(
+
+            "DOMContentLoaded",
+
+            function () {
+
+                console.log(
+                    "ApresentarPerfilAcoes: DOM pronto. Configurando botões."
+                );
+
+
+                configurarBotoes();
+
+            },
+
+            {
+                once: true
+            }
+
+        );
+
+
+        return;
+
+    }
+
+
+    configurarBotoes();
+
+}
+
+
+/* =========================================================
+   INICIALIZAÇÃO DO MÓDULO
+   ========================================================= */
+
+inicializarQuandoDOMPronto();
 
 
 /* =========================================================
@@ -925,22 +1578,33 @@ function limpar() {
 window.ApresentarPerfilAcoes = {
 
     configurar,
+
     atualizarEstado,
+
     limpar,
 
     voltar,
+
     compartilharPerfil,
+
     copiarLink,
+
     abrirContato,
+
     contratarPerfil,
 
     mostrarToast,
 
     obterLinkPerfil,
+
     obterTelefone,
+
     obterNomePerfil,
+
     obterTipoPerfil,
+
     obterPerfilId
+
 };
 
 

@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 
@@ -12,7 +13,9 @@
          Responsabilidade:
          - Estruturar a experiência de contratação.
          - Apresentar as etapas do processo.
-         - Exibir as informações recebidas do JavaScript.
+         - Exibir o artista selecionado.
+         - Exibir os serviços disponíveis para contratação.
+         - Permitir que o contratante escolha um serviço.
          - Manter a estrutura independente da lógica e do CSS.
          ========================================================= -->
 
@@ -84,6 +87,7 @@
                     MusicalWorld
                 </a>
 
+
                 <button
                     type="button"
                     class="cancelar-link"
@@ -122,6 +126,7 @@
                         Contratação
                     </span>
 
+
                     <span
                         class="etapa-numero"
                         id="etapaNumero"
@@ -151,12 +156,13 @@
             <section class="titulo-area">
 
                 <h1 id="tituloEtapa">
-                    Confira o serviço
+                    Escolha o serviço
                 </h1>
 
+
                 <p id="descricaoEtapa">
-                    Antes de continuar, confirme se este é o serviço
-                    que você deseja contratar.
+                    Selecione o serviço que você deseja contratar
+                    para este artista.
                 </p>
 
             </section>
@@ -185,6 +191,7 @@
                         Carregando...
                     </h2>
 
+
                     <p id="artistaTipo">
                         Artista
                     </p>
@@ -195,76 +202,79 @@
 
 
             <!-- =================================================
-                 SERVIÇO
+                 SERVIÇOS
                  ================================================= -->
 
             <section
-                class="servico-card"
-                id="servicoCard"
+                class="servicos-selecao"
+                id="servicosSelecao"
+                aria-label="Serviços disponíveis"
             >
 
-                <div class="servico-label">
-                    Serviço selecionado
+                <div class="servicos-selecao-header">
+
+                    <div>
+
+                        <span class="servicos-label">
+                            Serviços disponíveis
+                        </span>
+
+
+                        <p class="servicos-instrucao">
+                            Escolha uma opção para continuar.
+                        </p>
+
+                    </div>
+
                 </div>
 
 
-                <div class="servico-header">
+                <!--
+                    O JavaScript irá inserir aqui os cards
+                    dos serviços encontrados no Supabase.
+                -->
 
-                    <h2 id="servicoNome">
-                        Carregando...
-                    </h2>
+                <div
+                    class="servicos-lista"
+                    id="servicosLista"
+                >
 
                     <div
-                        class="servico-valor"
-                        id="servicoValor"
+                        class="servicos-loading"
+                        id="servicosLoading"
                     >
-                        —
+
+                        Carregando serviços...
+
                     </div>
 
                 </div>
 
 
-                <p
-                    class="servico-descricao"
-                    id="servicoDescricao"
+                <!--
+                    Área usada pelo JavaScript para manter
+                    os dados do serviço atualmente selecionado.
+
+                    Esses elementos ficam ocultos visualmente,
+                    mas continuam disponíveis para compatibilidade
+                    com outras partes do fluxo.
+                -->
+
+                <div
+                    class="servico-selecionado-dados"
+                    id="servicoCard"
+                    hidden
                 >
-                    Carregando informações do serviço...
-                </p>
 
+                    <span id="servicoNome"></span>
 
-                <div class="servico-detalhes">
+                    <span id="servicoValor"></span>
 
+                    <span id="servicoDescricao"></span>
 
-                    <div class="servico-detalhe">
+                    <span id="servicoDuracao"></span>
 
-                        <span class="servico-detalhe-label">
-                            Duração
-                        </span>
-
-                        <span
-                            class="servico-detalhe-valor"
-                            id="servicoDuracao"
-                        >
-                            —
-                        </span>
-
-                    </div>
-
-
-                    <div class="servico-detalhe">
-
-                        <span class="servico-detalhe-label">
-                            Localização
-                        </span>
-
-                        <span
-                            class="servico-detalhe-valor"
-                            id="servicoLocalizacao"
-                        >
-                            —
-                        </span>
-
-                    </div>
+                    <span id="servicoLocalizacao"></span>
 
                 </div>
 
@@ -281,6 +291,7 @@
                     type="button"
                     class="btn-avancar"
                     id="btnAvancar"
+                    disabled
                 >
 
                     <span>
@@ -328,14 +339,32 @@
     </div>
 
 
-    <!-- =========================================================
-         JAVASCRIPT
-         ========================================================= -->
+    <!-- =====================================================
+     SUPABASE
+     ===================================================== -->
 
-    <script
-        src="js/contratacao/contratacao.js"
-    ></script>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 
-</body>
+
+    <!-- =====================================================
+        CORE
+        ===================================================== -->
+
+    <script src="js/core/SupabaseClient.js"></script>
+
+    <script src="js/core/Sessao.js"></script>
+
+    <script src="js/core/UsuarioAtual.js"></script>
+
+    <script src="js/core/ControleSessao.js"></script>
+
+
+    <!-- =====================================================
+        CONTRATAÇÃO
+        ===================================================== -->
+    <script src="js/contratacao/ContratacaoEstado.js"></script>
+    <script src="js/contratacao/contratacao.js"></script>
+    </body>
 
 </html>
+

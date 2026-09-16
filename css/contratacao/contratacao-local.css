@@ -1,3 +1,4 @@
+
 /*
 =========================================================
 MUSICALWORLD — CONTRATAÇÃO
@@ -14,6 +15,8 @@ Responsabilidade:
 - Impedir overflow horizontal.
 - Manter distância segura das bordas.
 - Adaptar o conteúdo para telas maiores.
+- Manter o cabeçalho fixo durante a rolagem.
+- Fornecer estados visuais para campos.
 - Manter a identidade visual da contratação.
 - Não conter lógica de negócio.
 =========================================================
@@ -88,19 +91,30 @@ body {
 
 /* =====================================================
    CABEÇALHO
+
+   O header permanece fixo no topo durante toda a
+   rolagem da página.
+
+   A altura é compensada posteriormente no conteúdo
+   principal para impedir que o primeiro conteúdo fique
+   escondido atrás do cabeçalho.
    ===================================================== */
 
 .contratacao-header {
+    position: fixed;
+
+    top: 0;
+    left: 0;
+    right: 0;
+
     width: 100%;
+    height: 58px;
 
     background: rgba(255, 255, 255, 0.94);
 
     border-bottom: 1px solid #e7eaf0;
 
-    position: sticky;
-    top: 0;
-
-    z-index: 100;
+    z-index: 1000;
 
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
@@ -111,11 +125,14 @@ body {
     width: 100%;
     max-width: 760px;
 
+    height: 100%;
+
     min-width: 0;
 
     margin: 0 auto;
 
-    padding: 15px 16px;
+    padding:
+        0 16px;
 
     display: flex;
     align-items: center;
@@ -154,6 +171,9 @@ body {
     padding: 6px 0;
 
     white-space: nowrap;
+
+    transition:
+        color 160ms ease;
 }
 
 
@@ -164,6 +184,9 @@ body {
 
 /* =====================================================
    CONTEÚDO PRINCIPAL
+
+   Como o cabeçalho é fixed, adicionamos espaço superior
+   equivalente à altura do header + margem visual.
    ===================================================== */
 
 .contratacao-main {
@@ -175,7 +198,7 @@ body {
     margin-left: auto;
     margin-right: auto;
 
-    padding-top: 26px;
+    padding-top: 84px;
     padding-bottom: 40px;
 
     overflow-x: hidden;
@@ -242,13 +265,15 @@ body {
 
 .etapa-progresso {
     width: 50%;
+
     height: 100%;
 
     background: #6d4aff;
 
     border-radius: inherit;
 
-    transition: width 220ms ease;
+    transition:
+        width 220ms ease;
 }
 
 
@@ -420,7 +445,8 @@ body {
         border-color 180ms ease,
         background-color 180ms ease,
         box-shadow 180ms ease,
-        transform 180ms ease;
+        transform 180ms ease,
+        opacity 180ms ease;
 }
 
 
@@ -436,13 +462,28 @@ body {
 }
 
 
-.opcao-local[aria-pressed="true"] {
+.opcao-local[aria-pressed="true"],
+.opcao-local.selecionado,
+.opcao-local.active {
     border-color: #6d4aff;
 
     background: #f7f5ff;
 
     box-shadow:
         0 0 0 2px rgba(109, 74, 255, 0.10);
+}
+
+
+.opcao-local:disabled {
+    cursor: not-allowed;
+
+    opacity: 0.55;
+
+    background: #f8f9fb;
+
+    border-color: #e5e7eb;
+
+    box-shadow: none;
 }
 
 
@@ -512,6 +553,8 @@ body {
     width: 100%;
     max-width: 100%;
     min-width: 0;
+
+    position: relative;
 }
 
 
@@ -545,7 +588,9 @@ body {
 
     transition:
         border-color 160ms ease,
-        box-shadow 160ms ease;
+        box-shadow 160ms ease,
+        background-color 160ms ease,
+        opacity 160ms ease;
 }
 
 
@@ -561,6 +606,47 @@ body {
 
     box-shadow:
         0 0 0 3px rgba(109, 74, 255, 0.10);
+}
+
+
+/* =====================================================
+   CAMPO EM PROCESSO DE CONSULTA
+
+   Usado pelo JavaScript durante a busca automática
+   do endereço pelo CEP.
+   ===================================================== */
+
+.campo-input.campo-carregando {
+    border-color: #bdb2ff;
+
+    background: #faf9ff;
+
+    cursor: wait;
+}
+
+
+/* =====================================================
+   CAMPOS DESABILITADOS
+
+   Quando "Ainda não defini o local" estiver marcado,
+   os campos de endereço ficam visualmente desativados.
+   ===================================================== */
+
+.campo-input:disabled {
+    background: #f2f4f7;
+
+    border-color: #e4e7ec;
+
+    color: #98a2b3;
+
+    cursor: not-allowed;
+
+    opacity: 0.75;
+}
+
+
+.campo-input:disabled::placeholder {
+    color: #b2b8c2;
 }
 
 
@@ -590,6 +676,23 @@ select.campo-input {
     background-repeat: no-repeat;
 
     padding-right: 36px;
+}
+
+
+select.campo-input:disabled {
+    cursor: not-allowed;
+
+    background-image:
+        linear-gradient(
+            45deg,
+            transparent 50%,
+            #98a2b3 50%
+        ),
+        linear-gradient(
+            135deg,
+            #98a2b3 50%,
+            transparent 50%
+        );
 }
 
 
@@ -670,7 +773,9 @@ select.campo-input {
     border-left: 2px solid #ffffff;
     border-bottom: 2px solid #ffffff;
 
-    transform: rotate(-45deg) translateY(-1px);
+    transform:
+        rotate(-45deg)
+        translateY(-1px);
 }
 
 
@@ -694,6 +799,15 @@ select.campo-input {
     line-height: 1.5;
 
     font-weight: 500;
+}
+
+
+/* =====================================================
+   ESTADO DO CARD QUANDO LOCAL NÃO FOI DEFINIDO
+   ===================================================== */
+
+.endereco-card.local-indefinido .form-grid {
+    opacity: 0.72;
 }
 
 
@@ -739,12 +853,14 @@ select.campo-input {
         background-color 180ms ease,
         border-color 180ms ease,
         transform 180ms ease,
-        box-shadow 180ms ease;
+        box-shadow 180ms ease,
+        opacity 180ms ease;
 }
 
 
 .btn-voltar {
     width: 0;
+
     flex: 1 1 0;
 
     background: #ffffff;
@@ -764,6 +880,7 @@ select.campo-input {
 
 .btn-avancar {
     width: 0;
+
     flex: 1 1 0;
 
     background: #172033;
@@ -791,6 +908,34 @@ select.campo-input {
 .btn-voltar svg,
 .btn-avancar svg {
     flex: 0 0 auto;
+}
+
+
+/* =====================================================
+   ESTADO DESABILITADO DO BOTÃO AVANÇAR
+   ===================================================== */
+
+.btn-avancar:disabled {
+    background: #cbd5e1;
+
+    border-color: #cbd5e1;
+
+    color: #ffffff;
+
+    cursor: not-allowed;
+
+    box-shadow: none;
+
+    opacity: 0.75;
+}
+
+
+.btn-avancar:disabled:hover {
+    background: #cbd5e1;
+
+    border-color: #cbd5e1;
+
+    box-shadow: none;
 }
 
 
@@ -829,6 +974,11 @@ select.campo-input {
 
 @media (min-width: 601px) {
 
+    .contratacao-header {
+        height: 64px;
+    }
+
+
     .contratacao-header-inner {
         padding-left: 20px;
         padding-right: 20px;
@@ -840,7 +990,8 @@ select.campo-input {
 
         max-width: 720px;
 
-        padding-top: 32px;
+        padding-top: 96px;
+
         padding-bottom: 60px;
     }
 
@@ -895,10 +1046,15 @@ select.campo-input {
 
 @media (max-width: 360px) {
 
+    .contratacao-header {
+        height: 56px;
+    }
+
+
     .contratacao-main {
         width: calc(100% - 24px);
 
-        padding-top: 22px;
+        padding-top: 78px;
     }
 
 
@@ -945,6 +1101,7 @@ select.campo-input {
     *,
     *::before,
     *::after {
+
         scroll-behavior: auto !important;
 
         transition-duration: 0.01ms !important;

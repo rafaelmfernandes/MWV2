@@ -1,12 +1,23 @@
 /* =========================================================
    MUSICALWORLD — ETAPA 6: PAGAMENTO
 
-   Responsabilidade:
-   Estilizar a etapa de pagamento, os métodos disponíveis
-   e os modais de Pix e cartão.
+   Arquivo:
+   css/contratacao/contratacao-pagamento.css
 
-   A estrutura foi criada para posteriormente receber a
-   integração real com o Mercado Pago.
+   Responsabilidade:
+   ---------------------------------------------------------
+   - Estilizar a Etapa 6 da contratação.
+   - Estilizar o resumo do artista e serviço.
+   - Estilizar os métodos de pagamento.
+   - Estilizar os modais de Pix e cartão.
+   - Estilizar o estado de processamento.
+   - Manter o visual consistente com o restante do fluxo
+     de contratação do MusicalWorld.
+
+   Observação:
+   ---------------------------------------------------------
+   O CSS não controla dados da contratação.
+   Os dados são fornecidos pelo ContratacaoEstado.js.
    ========================================================= */
 
 
@@ -58,6 +69,11 @@ input {
 button {
     border: 0;
     cursor: pointer;
+}
+
+
+button:disabled {
+    cursor: not-allowed;
 }
 
 
@@ -214,6 +230,7 @@ input:focus-visible {
 .etapa-progresso span {
     display: block;
 
+    width: 100%;
     height: 100%;
 
     background: #6d4aff;
@@ -276,7 +293,7 @@ input:focus-visible {
 
 
 /* =========================================================
-   RESUMO
+   RESUMO DA CONTRATAÇÃO
    ========================================================= */
 
 .resumo-card {
@@ -296,6 +313,10 @@ input:focus-visible {
         0 8px 28px rgba(15, 23, 42, 0.05);
 }
 
+
+/* =========================================================
+   ARTISTA
+   ========================================================= */
 
 .resumo-artista {
     display: flex;
@@ -327,6 +348,8 @@ input:focus-visible {
 
     font-size: 14px;
     font-weight: 800;
+
+    text-transform: uppercase;
 }
 
 
@@ -334,7 +357,19 @@ input:focus-visible {
     width: 100%;
     height: 100%;
 
+    display: block;
+
     object-fit: cover;
+}
+
+
+#artistaIniciais {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    height: 100%;
 }
 
 
@@ -353,6 +388,11 @@ input:focus-visible {
 
     font-size: 15px;
     font-weight: 800;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 
@@ -363,6 +403,18 @@ input:focus-visible {
     font-weight: 600;
 }
 
+
+.artista-localizacao {
+    color: #98a1b1 !important;
+
+    font-size: 11px !important;
+    font-weight: 600 !important;
+}
+
+
+/* =========================================================
+   SERVIÇO
+   ========================================================= */
 
 .resumo-servico {
     display: flex;
@@ -466,7 +518,7 @@ input:focus-visible {
 
 
 /* =========================================================
-   MÉTODOS
+   MÉTODOS DE PAGAMENTO
    ========================================================= */
 
 .metodos-pagamento {
@@ -500,7 +552,8 @@ input:focus-visible {
     transition:
         border-color 160ms ease,
         box-shadow 160ms ease,
-        transform 160ms ease;
+        transform 160ms ease,
+        background 160ms ease;
 }
 
 
@@ -514,11 +567,24 @@ input:focus-visible {
 }
 
 
-.metodo-pagamento[aria-pressed="true"] {
+.metodo-pagamento[aria-pressed="true"],
+.metodo-pagamento.active,
+.metodo-pagamento.selected {
     border-color: #6d4aff;
+
+    background: #fcfbff;
 
     box-shadow:
         0 0 0 3px rgba(109, 74, 255, 0.08);
+}
+
+
+.metodo-pagamento[aria-pressed="true"] .metodo-icone,
+.metodo-pagamento.active .metodo-icone,
+.metodo-pagamento.selected .metodo-icone {
+    background: #6d4aff;
+
+    color: #ffffff;
 }
 
 
@@ -537,6 +603,10 @@ input:focus-visible {
     color: #6d4aff;
 
     border-radius: 13px;
+
+    transition:
+        background 160ms ease,
+        color 160ms ease;
 }
 
 
@@ -676,7 +746,8 @@ input:focus-visible {
     transition:
         background 160ms ease,
         transform 160ms ease,
-        box-shadow 160ms ease;
+        box-shadow 160ms ease,
+        opacity 160ms ease;
 }
 
 
@@ -700,13 +771,24 @@ input:focus-visible {
 }
 
 
-.btn-secundario:hover,
-.btn-principal:hover {
+.btn-principal:disabled {
+    background: #d9dde5;
+
+    color: #8b94a4;
+
+    box-shadow: none;
+
+    opacity: 1;
+}
+
+
+.btn-secundario:not(:disabled):hover,
+.btn-principal:not(:disabled):hover {
     transform: translateY(-1px);
 }
 
 
-.btn-principal:hover {
+.btn-principal:not(:disabled):hover {
     box-shadow:
         0 8px 20px rgba(23, 32, 51, 0.16);
 }
@@ -748,7 +830,7 @@ input:focus-visible {
 
 
 /* =========================================================
-   MODAIS
+   MODAIS — BASE
    ========================================================= */
 
 .modal-overlay {
@@ -768,15 +850,25 @@ input:focus-visible {
     opacity: 0;
     visibility: hidden;
 
+    pointer-events: none;
+
     transition:
         opacity 180ms ease,
         visibility 180ms ease;
 }
 
 
-.modal-overlay.aberto {
+/*
+ * O JS utiliza .aberto para abrir os modais.
+ */
+
+.modal-overlay.aberto,
+.modal-overlay.active {
     opacity: 1;
+
     visibility: visible;
+
+    pointer-events: auto;
 }
 
 
@@ -799,11 +891,13 @@ input:focus-visible {
 
     transform: translateY(25px);
 
-    transition: transform 220ms ease;
+    transition:
+        transform 220ms ease;
 }
 
 
-.modal-overlay.aberto .modal-pagamento {
+.modal-overlay.aberto .modal-pagamento,
+.modal-overlay.active .modal-pagamento {
     transform: translateY(0);
 }
 
@@ -826,6 +920,17 @@ input:focus-visible {
     color: #667085;
 
     border-radius: 11px;
+
+    transition:
+        background 160ms ease,
+        color 160ms ease;
+}
+
+
+.modal-fechar:hover {
+    background: #e9ebf0;
+
+    color: #172033;
 }
 
 
@@ -834,6 +939,10 @@ input:focus-visible {
     height: 18px;
 }
 
+
+/* =========================================================
+   CABEÇALHO DOS MODAIS
+   ========================================================= */
 
 .modal-cabecalho {
     display: flex;
@@ -865,6 +974,7 @@ input:focus-visible {
 .modal-icone-pix,
 .modal-icone-cartao {
     background: #f0edff;
+
     color: #6d4aff;
 }
 
@@ -904,7 +1014,7 @@ input:focus-visible {
 
 
 /* =========================================================
-   PIX
+   PIX — VALOR
    ========================================================= */
 
 .pix-valor {
@@ -938,6 +1048,10 @@ input:focus-visible {
     font-weight: 800;
 }
 
+
+/* =========================================================
+   PIX — QR CODE
+   ========================================================= */
 
 .pix-qr-area {
     display: flex;
@@ -1065,7 +1179,7 @@ input:focus-visible {
 
 
 /* =========================================================
-   PIX COPIA E COLA
+   PIX — COPIA E COLA
    ========================================================= */
 
 .pix-copia-cola {
@@ -1112,6 +1226,13 @@ input:focus-visible {
 }
 
 
+.pix-codigo-container input::placeholder {
+    color: #98a1b1;
+
+    opacity: 1;
+}
+
+
 .pix-codigo-container button {
     width: 46px;
     height: 46px;
@@ -1127,6 +1248,17 @@ input:focus-visible {
     color: #ffffff;
 
     border-radius: 11px;
+
+    transition:
+        background 160ms ease,
+        transform 160ms ease;
+}
+
+
+.pix-codigo-container button:hover {
+    background: #2a3449;
+
+    transform: translateY(-1px);
 }
 
 
@@ -1149,6 +1281,10 @@ input:focus-visible {
     line-height: 1.5;
 }
 
+
+/* =========================================================
+   AVISO DO MODAL
+   ========================================================= */
 
 .modal-aviso {
     display: flex;
@@ -1228,6 +1364,11 @@ input:focus-visible {
 }
 
 
+.campo input::placeholder {
+    color: #a0a8b5;
+}
+
+
 .campo input:focus {
     border-color: #6d4aff;
 
@@ -1255,6 +1396,8 @@ input:focus-visible {
     color: #98a1b1;
 
     transform: translateY(-50%);
+
+    pointer-events: none;
 }
 
 
@@ -1286,10 +1429,18 @@ input:focus-visible {
 }
 
 
-.campo input.erro {
+.campo input.erro,
+.campo input.error {
     border-color: #d92d20;
+
+    box-shadow:
+        0 0 0 3px rgba(217, 45, 32, 0.06);
 }
 
+
+/* =========================================================
+   SEGURANÇA DO CARTÃO
+   ========================================================= */
 
 .cartao-seguranca {
     display: flex;
@@ -1351,6 +1502,11 @@ input:focus-visible {
 
     font-size: 12px;
     font-weight: 800;
+
+    transition:
+        background 160ms ease,
+        transform 160ms ease,
+        opacity 160ms ease;
 }
 
 
@@ -1363,12 +1519,35 @@ input:focus-visible {
 }
 
 
+.btn-modal-secundario:hover {
+    background: #e8ebef;
+}
+
+
 .btn-modal-principal {
     flex: 1;
 
     background: #172033;
 
     color: #ffffff;
+}
+
+
+.btn-modal-principal:hover {
+    background: #2a3449;
+
+    transform: translateY(-1px);
+}
+
+
+.btn-modal-principal:disabled {
+    background: #d9dde5;
+
+    color: #8b94a4;
+
+    transform: none;
+
+    cursor: not-allowed;
 }
 
 
@@ -1440,9 +1619,11 @@ input:focus-visible {
 
 
 @keyframes girarSpinner {
+
     to {
         transform: rotate(360deg);
     }
+
 }
 
 
@@ -1458,9 +1639,11 @@ input:focus-visible {
         padding-top: 34px;
     }
 
+
     .modal-overlay {
         align-items: center;
     }
+
 
     .modal-pagamento {
         border-radius: 24px;
@@ -1468,7 +1651,9 @@ input:focus-visible {
         transform: translateY(15px) scale(0.98);
     }
 
-    .modal-overlay.aberto .modal-pagamento {
+
+    .modal-overlay.aberto .modal-pagamento,
+    .modal-overlay.active .modal-pagamento {
         transform: translateY(0) scale(1);
     }
 
@@ -1487,30 +1672,74 @@ input:focus-visible {
         padding-top: 22px;
     }
 
+
     .contratacao-header-inner {
         width: calc(100% - 24px);
     }
+
 
     .resumo-card {
         padding: 15px;
     }
 
+
     .modal-overlay {
         padding: 10px;
     }
 
+
     .modal-pagamento {
         padding: 18px;
     }
+
 
     .qr-placeholder {
         width: 170px;
         height: 170px;
     }
 
+
     .qr-grid {
         width: 135px;
         height: 135px;
+    }
+
+
+    .artista-avatar {
+        width: 44px;
+        height: 44px;
+
+        flex-basis: 44px;
+    }
+
+
+    .resumo-servico {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+
+    .resumo-valor {
+        width: 100%;
+
+        align-items: flex-start;
+    }
+
+
+    .contratacao-navegacao {
+        flex-direction: column-reverse;
+    }
+
+
+    .btn-secundario {
+        width: 100%;
+    }
+
+
+    .btn-principal {
+        width: 100%;
+
+        min-height: 52px;
     }
 
 }
@@ -1526,9 +1755,15 @@ input:focus-visible {
     *::before,
     *::after {
         scroll-behavior: auto !important;
-        transition-duration: 0.01ms !important;
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
+
+        transition-duration:
+            0.01ms !important;
+
+        animation-duration:
+            0.01ms !important;
+
+        animation-iteration-count:
+            1 !important;
     }
 
 }

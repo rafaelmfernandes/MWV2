@@ -604,11 +604,37 @@
     </div>
 
 
-    <!-- =====================================================
-         JAVASCRIPT DA ETAPA
-         ===================================================== -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 
-    <script src="js/contratacao/contratacao-detalhes-evento.js"></script>
+<!-- =========================================================
+     CORE — BANCO / SESSÃO / USUÁRIO
+     ========================================================= -->
+
+<script src="js/core/SupabaseClient.js"></script>
+
+<script src="js/core/Sessao.js"></script>
+
+<script src="js/core/UsuarioAtual.js"></script>
+
+<script src="js/core/ControleSessao.js"></script>
+
+
+<!-- =========================================================
+     CONTRATAÇÃO — ESTADO CENTRAL
+     
+     IMPORTANTE:
+     Este arquivo deve ser carregado antes do JavaScript
+     específico de cada etapa.
+     ========================================================= -->
+
+<script src="js/contratacao/ContratacaoEstado.js"></script>
+
+
+<!-- =========================================================
+     CONTRATAÇÃO — ETAPA 2
+     ========================================================= -->
+
+<script src="js/contratacao/contratacao-detalhes-evento.js"></script>
 
 </body>
 

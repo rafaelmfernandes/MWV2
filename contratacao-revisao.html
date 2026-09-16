@@ -1,43 +1,70 @@
 <!DOCTYPE html>
 
 <html lang="pt-BR">
+
 <head>
+
+    <!-- =========================================================
+         MUSICALWORLD — REVISÃO DA CONTRATAÇÃO
+
+         Arquivo:
+         contratacao-revisao.html
+
+         Responsabilidade:
+         - Apresentar a quinta etapa da contratação.
+         - Ler os dados acumulados no estado central.
+         - Exibir um resumo completo da contratação.
+         - Permitir retornar às etapas anteriores para edição.
+         - Preparar o fluxo para a etapa de pagamento.
+         ========================================================= -->
+
     <meta charset="UTF-8">
 
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    >
 
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
->
+    <meta
+        name="theme-color"
+        content="#f5f7fb"
+    >
 
-<meta
-    name="theme-color"
-    content="#f5f7fb"
->
+    <title>Revisar contratação | MusicalWorld</title>
 
-<title>Revisar contratação | MusicalWorld</title>
 
-<!-- =========================================================
-     MUSICALWORLD — FONTE PRINCIPAL
-     ========================================================= -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- =========================================================
+         MUSICALWORLD — FONTE PRINCIPAL
+         ========================================================= -->
 
-<link
-    href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
-    rel="stylesheet"
->
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
 
-<!-- =========================================================
-     CSS DA PÁGINA
-     ========================================================= -->
-<link
-    rel="stylesheet"
-    href="css/contratacao/contratacao-revisao.css"
->
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
 
+    <link
+        href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+
+    <!-- =========================================================
+         CSS DA PÁGINA
+         ========================================================= -->
+
+    <link
+        rel="stylesheet"
+        href="css/contratacao/contratacao-revisao.css"
+    >
 
 </head>
+
 
 <body>
 
@@ -45,6 +72,7 @@
 <!-- =========================================================
      CABEÇALHO
      ========================================================= -->
+
 <header class="contratacao-header">
 
     <div class="contratacao-header-inner">
@@ -56,6 +84,7 @@
         >
             MusicalWorld
         </a>
+
 
         <button
             type="button"
@@ -73,11 +102,14 @@
 <!-- =========================================================
      CONTEÚDO PRINCIPAL
      ========================================================= -->
+
 <main class="contratacao-main">
+
 
     <!-- =====================================================
          PROGRESSO
          ===================================================== -->
+
     <section class="etapa-progresso-container">
 
         <div class="etapa-progresso-topo">
@@ -89,6 +121,7 @@
                 Revisão
             </span>
 
+
             <span
                 class="etapa-numero"
                 id="etapaNumero"
@@ -98,14 +131,17 @@
 
         </div>
 
+
         <div
             class="etapa-progresso"
             aria-hidden="true"
         >
+
             <div
                 class="etapa-progresso-preenchimento"
                 id="etapaProgresso"
             ></div>
+
         </div>
 
     </section>
@@ -114,15 +150,18 @@
     <!-- =====================================================
          TÍTULO
          ===================================================== -->
+
     <section class="cabecalho-etapa">
 
         <span class="eyebrow">
             Última conferência
         </span>
 
+
         <h1>
             Revise sua contratação
         </h1>
+
 
         <p>
             Confira todos os detalhes antes de seguir para o pagamento.
@@ -134,19 +173,24 @@
     <!-- =====================================================
          ARTISTA
          ===================================================== -->
+
     <section class="revisao-card">
 
         <div class="revisao-card-header">
 
             <div>
+
                 <span class="revisao-card-kicker">
                     Artista
                 </span>
 
+
                 <h2>
                     Quem realizará o serviço
                 </h2>
+
             </div>
+
 
             <button
                 type="button"
@@ -169,15 +213,18 @@
                 RM
             </div>
 
+
             <div class="artista-info">
 
                 <strong id="artistaNome">
                     Rafael Melo
                 </strong>
 
+
                 <span id="artistaTipo">
                     Cantor(a)
                 </span>
+
 
                 <small id="artistaLocalizacao">
                     Goiânia, GO
@@ -193,19 +240,24 @@
     <!-- =====================================================
          SERVIÇO
          ===================================================== -->
+
     <section class="revisao-card">
 
         <div class="revisao-card-header">
 
             <div>
+
                 <span class="revisao-card-kicker">
                     Serviço
                 </span>
 
+
                 <h2>
                     O que será contratado
                 </h2>
+
             </div>
+
 
             <button
                 type="button"
@@ -226,6 +278,7 @@
                     Show acústico
                 </h3>
 
+
                 <p id="servicoDescricao">
                     Apresentação acústica com voz e violão para eventos,
                     festas e confraternizações.
@@ -242,11 +295,13 @@
                         Valor
                     </span>
 
+
                     <strong id="servicoValor">
                         R$ 800,00
                     </strong>
 
                 </div>
+
 
                 <div class="detalhe-item">
 
@@ -254,17 +309,20 @@
                         Duração
                     </span>
 
+
                     <strong id="servicoDuracao">
                         2 horas
                     </strong>
 
                 </div>
 
+
                 <div class="detalhe-item">
 
                     <span>
                         Região
                     </span>
+
 
                     <strong id="servicoLocalizacao">
                         Goiânia e região
@@ -282,19 +340,24 @@
     <!-- =====================================================
          DATA E HORÁRIO
          ===================================================== -->
+
     <section class="revisao-card">
 
         <div class="revisao-card-header">
 
             <div>
+
                 <span class="revisao-card-kicker">
                     Data e horário
                 </span>
 
+
                 <h2>
                     Quando será
                 </h2>
+
             </div>
+
 
             <button
                 type="button"
@@ -315,14 +378,18 @@
                     Data
                 </span>
 
+
                 <div>
+
                     <strong id="dataEvento">
                         Não informado
                     </strong>
 
+
                     <small>
                         Data do evento
                     </small>
+
                 </div>
 
             </div>
@@ -334,14 +401,18 @@
                     Horário
                 </span>
 
+
                 <div>
+
                     <strong id="horarioEvento">
                         Não informado
                     </strong>
 
+
                     <small>
                         Início e término
                     </small>
+
                 </div>
 
             </div>
@@ -353,14 +424,18 @@
                     Chegada
                 </span>
 
+
                 <div>
+
                     <strong id="horarioChegada">
                         Não informado
                     </strong>
 
+
                     <small>
                         Horário de preparação
                     </small>
+
                 </div>
 
             </div>
@@ -373,19 +448,24 @@
     <!-- =====================================================
          LOCAL
          ===================================================== -->
+
     <section class="revisao-card">
 
         <div class="revisao-card-header">
 
             <div>
+
                 <span class="revisao-card-kicker">
                     Local
                 </span>
 
+
                 <h2>
                     Onde será
                 </h2>
+
             </div>
+
 
             <button
                 type="button"
@@ -404,6 +484,7 @@
                 Não informado
             </strong>
 
+
             <p id="enderecoEvento">
                 O endereço ainda não foi informado.
             </p>
@@ -416,19 +497,24 @@
     <!-- =====================================================
          DETALHES DO EVENTO
          ===================================================== -->
+
     <section class="revisao-card">
 
         <div class="revisao-card-header">
 
             <div>
+
                 <span class="revisao-card-kicker">
                     Evento
                 </span>
 
+
                 <h2>
                     Detalhes do evento
                 </h2>
+
             </div>
+
 
             <button
                 type="button"
@@ -449,6 +535,7 @@
                     Tipo
                 </span>
 
+
                 <strong id="tipoEvento">
                     Não informado
                 </strong>
@@ -461,6 +548,7 @@
                 <span>
                     Pessoas
                 </span>
+
 
                 <strong id="quantidadePessoas">
                     Não informado
@@ -478,6 +566,7 @@
                     Nome do evento
                 </span>
 
+
                 <strong id="nomeEvento">
                     Não informado
                 </strong>
@@ -493,6 +582,7 @@
                 <span>
                     Estrutura disponível
                 </span>
+
 
                 <strong id="estruturaEvento">
                     Não informado
@@ -510,6 +600,7 @@
                     Observações
                 </span>
 
+
                 <p id="observacoesEvento">
                     Nenhuma observação adicionada.
                 </p>
@@ -524,6 +615,7 @@
     <!-- =====================================================
          AVISO SOBRE PAGAMENTO
          ===================================================== -->
+
     <section class="aviso-pagamento">
 
         <div class="aviso-pagamento-conteudo">
@@ -531,6 +623,7 @@
             <strong>
                 Antes de pagar
             </strong>
+
 
             <p>
                 O pagamento inicia a solicitação de contratação.
@@ -546,6 +639,7 @@
     <!-- =====================================================
          NAVEGAÇÃO
          ===================================================== -->
+
     <nav
         class="contratacao-navegacao"
         aria-label="Navegação da contratação"
@@ -558,6 +652,7 @@
         >
             Voltar
         </button>
+
 
         <button
             type="button"
@@ -573,6 +668,7 @@
     <!-- =====================================================
          RODAPÉ
          ===================================================== -->
+
     <footer class="contratacao-footer">
 
         <p>
@@ -587,8 +683,49 @@
 <!-- =========================================================
      JAVASCRIPT
      ========================================================= -->
+
+
+<!-- =========================================================
+     SUPABASE
+     ========================================================= -->
+
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+
+
+<!-- =========================================================
+     CORE DO MUSICALWORLD
+     ========================================================= -->
+
+<script src="js/core/SupabaseClient.js"></script>
+
+<script src="js/core/Sessao.js"></script>
+
+<script src="js/core/UsuarioAtual.js"></script>
+
+<script src="js/core/ControleSessao.js"></script>
+
+
+<!-- =========================================================
+     CONTRATAÇÃO — ESTADO CENTRAL
+
+     IMPORTANTE:
+     Este arquivo deve ser carregado ANTES de qualquer
+     JavaScript específico da etapa.
+
+     Ele mantém os dados acumulados entre as etapas
+     da contratação.
+     ========================================================= -->
+
+<script src="js/contratacao/ContratacaoEstado.js"></script>
+
+
+<!-- =========================================================
+     CONTRATAÇÃO — ETAPA 5
+     ========================================================= -->
+
 <script src="js/contratacao/contratacao-revisao.js"></script>
 
 
 </body>
+
 </html>

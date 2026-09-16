@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 
 <html lang="pt-BR">
@@ -11,12 +12,12 @@
 <meta charset="UTF-8">
 
 <meta
-name="viewport"
-content="width=device-width, initial-scale=1.0"
-
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
 >
 
 <title>MusicalWorld - Conectando a Cena</title>
+
 
 <!-- =====================================================
      CSS PRINCIPAL
@@ -26,7 +27,22 @@ content="width=device-width, initial-scale=1.0"
     rel="stylesheet"
     href="css/main.css"
 >
-<link rel="stylesheet" href="css/index/03-cabecalho.css">
+
+
+
+<!--
+    CSS específico do feed.
+
+    Responsável pelo:
+    - layout dos cards;
+    - mídia dos cards;
+    - efeito hover;
+    - informações expandidas;
+    - botão "Ver perfil";
+    - estados de carregamento;
+    - estados vazio/fim.
+-->
+
 
 <link
     rel="stylesheet"
@@ -37,6 +53,7 @@ content="width=device-width, initial-scale=1.0"
     rel="stylesheet"
     href="css/modal-filtro.css"
 >
+
 
 <!-- =====================================================
      FONTES
@@ -59,6 +76,7 @@ content="width=device-width, initial-scale=1.0"
 >
 
 </head>
+
 
 <body>
 
@@ -139,14 +157,6 @@ content="width=device-width, initial-scale=1.0"
             aria-label="Notificações"
         >
 
-            <!--
-                Ícone de notificações.
-
-                O desenho foi atualizado para um sino
-                mais arredondado, simples e consistente
-                com a nova identidade visual do aplicativo.
-            -->
-
             <svg
                 class="top-icon-svg"
                 viewBox="0 0 24 24"
@@ -173,14 +183,6 @@ content="width=device-width, initial-scale=1.0"
             </svg>
 
 
-            <!--
-                Badge inicialmente oculto.
-
-                O valor será preenchido dinamicamente
-                pelo JavaScript quando existirem novas
-                notificações.
-            -->
-
             <span
                 id="badge-notificacoes"
                 class="notification-badge"
@@ -205,15 +207,6 @@ content="width=device-width, initial-scale=1.0"
             aria-label="Mensagens"
         >
 
-            <!--
-                Ícone de mensagens.
-
-                O balão foi redesenhado com formato mais
-                circular e arredondado, mantendo uma
-                pequena cauda inferior para identificar
-                claramente a função de mensagens.
-            -->
-
             <svg
                 class="top-icon-svg"
                 viewBox="0 0 24 24"
@@ -232,14 +225,6 @@ content="width=device-width, initial-scale=1.0"
 
             </svg>
 
-
-            <!--
-                Badge inicialmente oculto.
-
-                O valor será preenchido dinamicamente
-                pelo JavaScript quando existirem novas
-                mensagens.
-            -->
 
             <span
                 id="badge-mensagens"
@@ -263,11 +248,6 @@ content="width=device-width, initial-scale=1.0"
             style="display: none;"
         >
 
-
-            <!-- =====================================
-                 BOTÃO DO PERFIL
-                 ===================================== -->
-
             <button
                 type="button"
                 class="cabecalho-usuario-btn"
@@ -277,9 +257,6 @@ content="width=device-width, initial-scale=1.0"
                 aria-haspopup="true"
                 aria-expanded="false"
             >
-
-
-                <!-- Avatar -->
 
                 <div
                     id="cabecalho-avatar"
@@ -293,15 +270,6 @@ content="width=device-width, initial-scale=1.0"
                 </div>
 
 
-                <!--
-                    Nome e tipo continuam presentes
-                    no DOM para compatibilidade com
-                    Cabecalho.js.
-
-                    O CSS os mantém visualmente ocultos
-                    no novo cabeçalho.
-                -->
-
                 <div class="cabecalho-info-usuario">
 
                     <strong id="cabecalho-nome">
@@ -314,8 +282,6 @@ content="width=device-width, initial-scale=1.0"
 
                 </div>
 
-
-                <!-- Chevron -->
 
                 <svg
                     class="cabecalho-chevron"
@@ -347,9 +313,6 @@ content="width=device-width, initial-scale=1.0"
                 class="cabecalho-menu-usuario"
                 style="display: none;"
             >
-
-
-                <!-- Trocar de conta -->
 
                 <button
                     type="button"
@@ -393,8 +356,6 @@ content="width=device-width, initial-scale=1.0"
 
                 </button>
 
-
-                <!-- Sair -->
 
                 <button
                     type="button"
@@ -525,9 +486,14 @@ content="width=device-width, initial-scale=1.0"
         </div>
 
 
+        <!--
+            ID corrigido para corresponder ao main.js:
+            iniciarAvisoFeed()
+        -->
+
         <button
             type="button"
-            id="feedAvisoFechar"
+            id="btnFecharFeedAviso"
             class="feed-aviso-fechar"
             aria-label="Fechar aviso"
             title="Fechar aviso"
@@ -573,7 +539,6 @@ content="width=device-width, initial-scale=1.0"
              ========================================= -->
 
         <div class="feed-header">
-
 
             <div class="feed-header-content">
 
@@ -658,14 +623,18 @@ content="width=device-width, initial-scale=1.0"
             class="feed-profissionais"
         >
 
-            <!-- Estado inicial de carregamento -->
+            <!--
+                Estado inicial.
+
+                O main.js substitui este conteúdo pelo
+                carregamento oficial assim que inicializa.
+            -->
 
             <div
-                class="feed-loading"
-                id="feed-loading"
+                class="carregando-profissionais"
             >
 
-                <div class="feed-loading-spinner"></div>
+                <div class="feed-spinner"></div>
 
                 <span>
                     Carregando profissionais...
@@ -686,7 +655,7 @@ content="width=device-width, initial-scale=1.0"
             style="display: none;"
         >
 
-            <div class="feed-loading-spinner"></div>
+            <div class="feed-spinner"></div>
 
             <span>
                 Carregando mais profissionais...
@@ -766,6 +735,7 @@ content="width=device-width, initial-scale=1.0"
 
 </div>
 
+
 <!-- =====================================================
      SUPABASE
      ===================================================== -->
@@ -773,6 +743,7 @@ content="width=device-width, initial-scale=1.0"
 <script
     src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"
 ></script>
+
 
 <!-- =====================================================
      CORE
@@ -788,6 +759,7 @@ content="width=device-width, initial-scale=1.0"
 
 <script src="js/core/RoteamentoPerfil.js"></script>
 
+
 <!-- =====================================================
      COMPONENTES
      ===================================================== -->
@@ -798,17 +770,20 @@ content="width=device-width, initial-scale=1.0"
 
 <script src="js/components/modal-filtro.js"></script>
 
+
 <!-- =====================================================
      LÓGICA PRINCIPAL DO INDEX
      ===================================================== -->
 
 <script src="js/main.js"></script>
 
+
 <!-- =====================================================
      MENU INFERIOR
      ===================================================== -->
 
 <script src="js/components/menu-inferior.js"></script>
+
 
 <!-- =====================================================
      INICIALIZAÇÃO DO CABEÇALHO
@@ -823,7 +798,6 @@ content="width=device-width, initial-scale=1.0"
             console.log(
                 'Iniciando cabeçalho do MusicalWorld...'
             );
-
 
             if (
                 window.Cabecalho &&
@@ -842,3 +816,4 @@ content="width=device-width, initial-scale=1.0"
 </body>
 
 </html>
+

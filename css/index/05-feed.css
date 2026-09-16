@@ -1,635 +1,1529 @@
+
 /* =========================================================
    MUSICALWORLD — INDEX
    Arquivo: feed.css
 
    Responsabilidade:
-   Feed de profissionais, cards, mídia, informações,
-   localização, ações e estados do feed.
-   ========================================================= */
+   Controlar exclusivamente a aparência visual das
+   publicações exibidas no feed principal.
+
+   CONCEITO:
+
+   O MusicalWorld utiliza um feed social vertical.
+
+   Cada publicação segue a seguinte hierarquia:
+
+       IDENTIDADE
+           ↓
+       TEXTO
+           ↓
+       MÍDIA
+           ↓
+       AÇÕES SOCIAIS
+           ↓
+       INFORMAÇÕES COMPLEMENTARES
+
+   A publicação NÃO deve parecer um card de catálogo.
+
+   NÃO controla:
+
+   - cabeçalho;
+   - menu inferior;
+   - filtros;
+   - busca;
+   - lógica JavaScript;
+   - Supabase;
+   - paginação.
+========================================================= */
+
 
 /* =========================================================
-   FEED DE PROFISSIONAIS
-   ========================================================= */
-
-.profissionais-section {
-    width: 100%;
-}
-
-.feed-header {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-
-    gap: 12px;
-
-    margin-bottom: 16px;
-}
-
-.feed-title {
-    font-size: 18px;
-    font-weight: 700;
-
-    color: #0f172a;
-
-    margin: 0 0 3px 0;
-}
-
-.feed-subtitle {
-    font-size: 12px;
-
-    color: #64748b;
-
-    margin: 0;
-}
-
-.feed-contador {
-    flex-shrink: 0;
-
-    font-size: 11px;
-    font-weight: 600;
-
-    color: #64748b;
-}
-
-/* =========================================================
-   CONTAINER DO FEED
-   ========================================================= */
+   ÁREA PRINCIPAL DO FEED
+========================================================= */
 
 .feed-profissionais {
-    width: 100%;
-
-    display: grid;
-
-    grid-template-columns: 1fr;
-
-    gap: 16px;
-}
-
-/* =========================================================
-   LINK DO PROFISSIONAL
-   ========================================================= */
-
-.profissional-card-link {
-    display: block;
 
     width: 100%;
-
-    text-decoration: none;
-
-    color: inherit;
-}
-
-/* =========================================================
-   CARD DO PROFISSIONAL
-   ========================================================= */
-
-.ad-card-novo {
-    width: 100%;
-
-    height: 430px;
-    min-height: 430px;
-    max-height: 430px;
-
-    background-color: #ffffff;
-
-    border: 1px solid #e2e8f0;
-
-    border-radius: 16px;
-
-    padding: 16px;
 
     display: flex;
+
     flex-direction: column;
 
-    gap: 12px;
+    align-items: stretch;
 
-    box-shadow:
-        0 1px 3px rgba(15, 23, 42, 0.04);
+    gap: 0;
 
-    overflow: hidden;
-
-    transition:
-        box-shadow 0.2s ease,
-        transform 0.2s ease;
 }
 
-.ad-card-novo:hover {
-    box-shadow:
-        0 5px 16px rgba(15, 23, 42, 0.09);
-
-    transform: translateY(-1px);
-}
 
 /* =========================================================
-   CABEÇALHO DO CARD
-   ========================================================= */
+   PUBLICAÇÃO
+=========================================================
 
-.ad-header {
+   O JavaScript atual cria:
+
+       <article class="ad-card-novo">
+
+   Portanto, não utilizamos mais o antigo
+   .profissional-card-link como estrutura principal.
+========================================================= */
+
+.ad-card-novo { width: 100%; padding: 16px 0 18px; /* O feed fica visível através da publicação */ background: #ffffff; /* Apenas separação discreta entre publicações */ border: none; border-bottom: 1px solid rgba(23, 32, 51, 0.08); /* A publicação não possui aparência de card */ border-radius: 0; box-shadow: none; overflow: visible; }
+
+/*
+ * Pequeno feedback visual no desktop.
+ *
+ * A publicação continua parecendo uma publicação,
+ * e não um card elevado.
+ */
+
+@media (hover: hover) and (pointer: fine) {
+
+    .ad-card-novo:hover {
+
+        background:
+            rgba(248, 249, 252, 0.72);
+
+    }
+
+}
+
+
+/* =========================================================
+   CONTEÚDO SUPERIOR
+========================================================= */
+
+.ad-card-conteudo {
+
     width: 100%;
 
-    display: flex;
-    align-items: center;
+    padding: 0;
 
-    gap: 12px;
+    margin: 0;
 
-    flex-shrink: 0;
+    background: transparent;
+
 }
 
-.ad-avatar-user {
-    width: 44px;
-    height: 44px;
-
-    min-width: 44px;
-    min-height: 44px;
-
-    background-color: #0284c7;
-
-    color: #ffffff;
-
-    font-weight: 700;
-
-    border-radius: 12px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    font-size: 15px;
-
-    flex-shrink: 0;
-
-    overflow: hidden;
-}
-
-.ad-avatar-img {
-    width: 44px;
-    height: 44px;
-
-    min-width: 44px;
-    min-height: 44px;
-
-    max-width: 44px;
-    max-height: 44px;
-
-    display: block;
-
-    object-fit: cover;
-    object-position: center;
-
-    border-radius: 12px;
-
-    flex-shrink: 0;
-}
 
 /* =========================================================
-   INFORMAÇÕES DO PROFISSIONAL
-   ========================================================= */
+   IDENTIDADE DA PUBLICAÇÃO
+========================================================= */
 
-.ad-user-info {
+.ad-card-identidade {
+
+    display: flex;
+
+    align-items: center;
+
+    width: 100%;
+
+    min-width: 0;
+
+}
+
+
+/* =========================================================
+   LINK DA IDENTIDADE
+========================================================= */
+
+.ad-card-identidade-link {
+
+    display: flex;
+
+    align-items: center;
+
     flex: 1;
 
     min-width: 0;
-
-    overflow: hidden;
-}
-
-.ad-user-info h4 {
-    font-size: 15px;
-
-    color: #0f172a;
-
-    font-weight: 600;
-
-    margin-bottom: 4px;
-
-    white-space: nowrap;
-
-    overflow: hidden;
-
-    text-overflow: ellipsis;
-}
-
-.ad-meta-row {
-    display: flex;
-
-    align-items: center;
-
-    min-width: 0;
-
-    width: 100%;
-
-    overflow: hidden;
-}
-
-.ad-estilo {
-    display: block;
-
-    width: 100%;
-
-    font-size: 12px;
-
-    color: #2563eb;
-
-    font-weight: 500;
-
-    white-space: nowrap;
-
-    overflow: hidden;
-
-    text-overflow: ellipsis;
-}
-
-/* =========================================================
-   ÁREA DA FOTO / MÍDIA
-   ========================================================= */
-
-.ad-media-box {
-    width: 100%;
-
-    height: 220px;
-
-    min-height: 220px;
-    max-height: 220px;
-
-    flex-shrink: 0;
-
-    overflow: hidden;
-
-    position: relative;
-
-    background-color: #f1f5f9;
-
-    border: 1px solid #e2e8f0;
-
-    border-radius: 12px;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    color: #64748b;
-
-    font-size: 13px;
-
-    font-weight: 500;
-}
-
-.ad-media-box.photo-bg {
-    background:
-        linear-gradient(
-            135deg,
-            #e2e8f0,
-            #f1f5f9
-        );
-}
-
-.ad-media-img {
-    width: 100%;
-    height: 100%;
-
-    max-width: 100%;
-    max-height: 100%;
-
-    display: block;
-
-    object-fit: cover;
-
-    object-position: center;
-}
-
-/* =========================================================
-   FALLBACK SEM FOTO
-   ========================================================= */
-
-.ad-media-sem-foto {
-    width: 100%;
-    height: 100%;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    background:
-        linear-gradient(
-            135deg,
-            #f1f5f9,
-            #e2e8f0
-        );
-}
-
-.ad-media-sem-foto span,
-.ad-media-fallback {
-    width: 64px;
-    height: 64px;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 18px;
-
-    background-color: #0284c7;
-
-    color: #ffffff;
-
-    font-size: 20px;
-
-    font-weight: 700;
-}
-
-/* =========================================================
-   DESCRIÇÃO
-   ========================================================= */
-
-.ad-descricao {
-    font-size: 12px;
-
-    color: #475569;
-
-    display: flex;
-
-    flex-direction: column;
-
-    gap: 4px;
-
-    flex-shrink: 0;
-
-    min-height: 52px;
-    max-height: 52px;
-
-    overflow: hidden;
-}
-
-.ad-descricao strong {
-    color: #0f172a;
-
-    font-size: 13px;
-
-    font-weight: 700;
-
-    line-height: 1.2;
-
-    white-space: nowrap;
-
-    overflow: hidden;
-
-    text-overflow: ellipsis;
-}
-
-.ad-descricao p {
-    font-size: 12px;
-
-    line-height: 1.45;
-
-    color: #475569;
-
-    display: -webkit-box;
-
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-
-    overflow: hidden;
-
-    text-overflow: ellipsis;
-
-    max-height: 34.8px;
-
-    margin: 0;
-}
-
-/* =========================================================
-   RODAPÉ
-   ========================================================= */
-
-.ad-footer {
-    display: flex;
-
-    justify-content: space-between;
-    align-items: center;
 
     gap: 10px;
 
-    padding-top: 8px;
+    color: inherit;
 
-    border-top: 1px solid #f1f5f9;
+    text-decoration: none;
 
-    margin-top: auto;
+    border-radius: 8px;
 
-    min-height: 37px;
+    outline: none;
+
+}
+
+
+/*
+ * O menu fica separado da identidade.
+ */
+
+.ad-card-menu {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
 
     flex-shrink: 0;
-}
 
-.icone-localizacao {
-    width: 15px;
-    height: 15px;
+    width: 34px;
 
-    flex: 0 0 15px;
+    height: 34px;
 
-    display: inline-block;
+    margin-left: 8px;
 
-    fill: none;
-
-    stroke: #6366f1;
-
-    stroke-width: 1.8;
-
-    stroke-linecap: round;
-    stroke-linejoin: round;
-}
-
-.ad-footer span,
-.ad-localizacao {
-    min-width: 0;
-
-    flex: 1;
-
-    font-size: 11px;
-
-    color: #94a3b8;
-
-    white-space: nowrap;
-
-    overflow: hidden;
-
-    text-overflow: ellipsis;
-}
-
-.btn-detalhes {
-    flex-shrink: 0;
-
-    background-color: #2563eb;
-
-    color: #ffffff;
+    padding: 0;
 
     border: none;
 
-    padding: 8px 16px;
+    border-radius: 50%;
 
-    border-radius: 10px;
+    background: transparent;
 
-    font-size: 12px;
-
-    font-weight: 700;
+    color: #667085;
 
     cursor: pointer;
 
     transition:
-        opacity 0.2s ease,
-        transform 0.15s ease;
+        background 0.18s ease,
+        color 0.18s ease;
+
 }
 
-.btn-detalhes:hover {
-    opacity: 0.9;
+
+.ad-card-menu:hover {
+
+    background:
+        rgba(23, 32, 51, 0.07);
+
+    color: #172033;
+
 }
 
-.btn-detalhes:active {
-    transform: scale(0.97);
+
+.ad-card-menu svg {
+
+    width: 18px;
+
+    height: 18px;
+
+    fill: none;
+
+    stroke: currentColor;
+
+    stroke-width: 2;
+
+    stroke-linecap: round;
+
+    stroke-linejoin: round;
+
 }
+
 
 /* =========================================================
-   CARREGAMENTO
-   ========================================================= */
+   MINI AVATAR
+========================================================= */
 
-.carregando-profissionais {
+.ad-mini-avatar,
+.ad-mini-avatar-fallback {
+
+    flex-shrink: 0;
+
+    width: 42px;
+
+    height: 42px;
+
+    min-width: 42px;
+
+    min-height: 42px;
+
+    border-radius: 50%;
+
+    overflow: hidden;
+
+    border: none;
+
+    box-shadow: none;
+
+}
+
+
+.ad-mini-avatar {
+
+    display: block;
+
+    object-fit: cover;
+
+    background: #eef1f7;
+
+}
+
+
+.ad-mini-avatar-fallback {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background:
+        linear-gradient(
+            135deg,
+            #6d4aff,
+            #8b6cff
+        );
+
+    color: #ffffff;
+
+    font-size: 12px;
+
+    font-weight: 800;
+
+    text-transform: uppercase;
+
+}
+
+
+/* =========================================================
+   ÁREA DO NOME
+========================================================= */
+
+.ad-card-nome-area {
+
+    min-width: 0;
+
+    flex: 1;
+
+    overflow: hidden;
+
+}
+
+
+/* =========================================================
+   NOME
+========================================================= */
+
+.ad-card-nome {
+
+    display: block;
+
     width: 100%;
 
-    min-height: 180px;
+    min-width: 0;
 
-    padding: 28px 18px;
+    margin: 0;
+
+    color: #172033;
+
+    font-size: 15px;
+
+    font-weight: 800;
+
+    line-height: 1.25;
+
+    letter-spacing: -0.15px;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+}
+
+
+/* =========================================================
+   TIPO DO ARTISTA
+========================================================= */
+
+.ad-card-tipo {
+
+    display: block;
+
+    width: 100%;
+
+    margin-top: 2px;
+
+    color: #667085;
+
+    font-size: 12px;
+
+    font-weight: 500;
+
+    line-height: 1.3;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+}
+
+
+/* =========================================================
+   TEXTO DA PUBLICAÇÃO
+========================================================= */
+
+.ad-card-publicacao-texto {
+
+    width: 100%;
+
+    margin-top: 11px;
+
+}
+
+
+.ad-card-descricao {
+
+    display: block;
+
+    width: 100%;
+
+    margin: 0;
+
+    color: #172033;
+
+    font-size: 15px;
+
+    font-weight: 400;
+
+    line-height: 1.48;
+
+    letter-spacing: -0.05px;
+
+    overflow-wrap: anywhere;
+
+}
+
+
+/* =========================================================
+   ÁREA DE MÍDIA
+========================================================= */
+
+.ad-media-box {
+
+    position: relative;
+
+    width: 100%;
+
+    margin-top: 12px;
+
+    overflow: hidden;
+
+    background: #eef1f7;
+
+    border-radius: 14px;
+
+}
+
+
+/*
+ * O link da mídia precisa ocupar toda a área.
+ */
+
+.ad-media-link {
+
+    display: block;
+
+    width: 100%;
+
+    color: inherit;
+
+    text-decoration: none;
+
+    line-height: 0;
+
+}
+
+
+/* =========================================================
+   IMAGEM
+========================================================= */
+
+.ad-media-img {
+
+    display: block;
+
+    width: 100%;
+
+    height: auto;
+
+    min-width: 100%;
+
+    min-height: 0;
+
+    max-width: none;
+
+    object-fit: cover;
+
+    object-position: center;
+
+    background: #eef1f7;
+
+    transform: none;
+
+    transition:
+        transform 0.30s ease;
+
+}
+
+
+@media (hover: hover) and (pointer: fine) {
+
+    .ad-card-novo:hover .ad-media-img {
+
+        transform: scale(1.008);
+
+    }
+
+}
+
+
+/* =========================================================
+   VÍDEO
+========================================================= */
+
+.ad-video-container {
+
+    position: relative;
+
+    width: 100%;
+
+    overflow: hidden;
+
+    background: #000000;
+
+    border-radius: 14px;
+
+}
+
+
+.ad-video-link {
+
+    position: relative;
+
+    display: block;
+
+    width: 100%;
+
+    background: #000000;
+
+}
+
+
+/*
+ * ALTURA DO VÍDEO
+ *
+ * Desktop:
+ * 360px
+ *
+ * Mobile:
+ * 280px
+ *
+ * O object-fit: cover mantém o vídeo preenchendo
+ * toda a área sem deformar a imagem.
+ */
+
+.ad-video-container .ad-media-video {
+
+    display: block;
+
+    width: 100%;
+
+    height: 360px;
+
+    min-width: 100%;
+
+    min-height: 0;
+
+    object-fit: cover;
+
+    object-position: center;
+
+    background: #000000;
+    
+
+}
+
+
+/* =========================================================
+   FALLBACK SEM FOTO
+========================================================= */
+
+.ad-media-sem-foto {
+
+    position: relative;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 100%;
+
+    min-height: 300px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #f1f3f8,
+            #dfe4ee
+        );
+
+    color: #6d4aff;
+
+}
+
+
+.ad-media-sem-foto span {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 70px;
+
+    height: 70px;
+
+    border-radius: 50%;
+
+    background:
+        linear-gradient(
+            135deg,
+            #6d4aff,
+            #8b6cff
+        );
+
+    color: #ffffff;
+
+    font-size: 26px;
+
+    font-weight: 800;
+
+}
+
+
+/* =========================================================
+   FALLBACK DE ERRO
+========================================================= */
+
+.ad-media-fallback {
+
+    position: relative;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 100%;
+
+    min-height: 300px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #f1f3f8,
+            #dfe4ee
+        );
+
+    color: #6d4aff;
+
+    font-size: 30px;
+
+    font-weight: 800;
+
+}
+
+
+/* =========================================================
+   OVERLAY
+========================================================= */
+
+.ad-media-overlay {
+
+    position: absolute;
+
+    inset: 0;
+
+    z-index: 2;
+
+    pointer-events: none;
+
+    background:
+        linear-gradient(
+            to bottom,
+            rgba(0, 0, 0, 0),
+            rgba(0, 0, 0, 0.08)
+        );
+
+    opacity: 0;
+
+    transition:
+        opacity 0.20s ease;
+
+}
+
+
+/* =========================================================
+   AÇÕES SOCIAIS
+=========================================================
+
+   Ações visuais da publicação.
+
+   A integração real com Supabase será feita
+   posteriormente.
+
+   O CSS não presume contadores ou estados persistidos.
+========================================================= */
+
+.ad-card-acoes {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    width: 100%;
+
+    min-height: 40px;
+
+    margin-top: 5px;
+
+    padding: 0;
+
+}
+
+
+.ad-social-btn {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 6px;
+
+    min-width: 40px;
+
+    min-height: 36px;
+
+    margin: 0;
+
+    padding: 6px 8px;
+
+    border: none;
+
+    border-radius: 999px;
+
+    background: transparent;
+
+    color: #667085;
+
+    font-family: inherit;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    line-height: 1;
+
+    cursor: pointer;
+
+    transition:
+        background 0.18s ease,
+        color 0.18s ease;
+
+}
+
+
+.ad-social-btn:hover {
+
+    background:
+        rgba(109, 74, 255, 0.08);
+
+    color: #6d4aff;
+
+}
+
+
+.ad-social-btn:active {
+
+    background:
+        rgba(109, 74, 255, 0.13);
+
+}
+
+
+.ad-social-btn svg {
+
+    flex-shrink: 0;
+
+    width: 17px;
+
+    height: 17px;
+
+    fill: none;
+
+    stroke: currentColor;
+
+    stroke-width: 1.9;
+
+    stroke-linecap: round;
+
+    stroke-linejoin: round;
+
+}
+
+
+.ad-social-label {
+
+    display: inline-block;
+
+}
+
+
+/*
+ * Estados visuais locais dos botões de curtir e salvar.
+ *
+ * O JavaScript atualmente apenas alterna a classe.
+ */
+
+.ad-social-btn.ativo {
+
+    color: #6d4aff;
+
+    background:
+        rgba(109, 74, 255, 0.08);
+
+}
+
+
+/* =========================================================
+   INFORMAÇÕES COMPLEMENTARES
+========================================================= */
+
+.ad-card-informacoes {
 
     display: flex;
 
     flex-direction: column;
 
-    align-items: center;
-    justify-content: center;
+    gap: 6px;
 
-    gap: 10px;
-
-    text-align: center;
-
-    background-color: #ffffff;
-
-    border: 1px solid #e2e8f0;
-
-    border-radius: 16px;
-
-    color: #64748b;
-
-    font-size: 13px;
-}
-
-.feed-spinner {
-    width: 22px;
-    height: 22px;
-
-    border: 2px solid #e2e8f0;
-
-    border-top-color: #2563eb;
-
-    border-radius: 50%;
-
-    animation:
-        feed-spinner-rotacao 0.8s linear infinite;
-}
-
-@keyframes feed-spinner-rotacao {
-    from {
-        transform: rotate(0deg);
-    }
-
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-/* =========================================================
-   CARREGANDO MAIS
-   ========================================================= */
-
-.feed-carregando-mais {
     width: 100%;
 
-    padding: 18px 0;
+    margin-top: 2px;
+
+    padding: 0;
+
+    opacity: 1;
+
+    visibility: visible;
+
+    transform: none;
+
+    pointer-events: auto;
+
+}
+
+
+/* =========================================================
+   LOCALIZAÇÃO
+========================================================= */
+
+.ad-card-meta {
 
     display: flex;
 
     align-items: center;
-    justify-content: center;
 
-    gap: 9px;
-
-    color: #64748b;
-
-    font-size: 12px;
-}
-
-/* =========================================================
-   FIM DO FEED
-   ========================================================= */
-
-.feed-fim {
     width: 100%;
 
-    padding: 20px 10px;
+    min-width: 0;
 
-    text-align: center;
+}
 
-    color: #94a3b8;
+
+.ad-card-localizacao {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 5px;
+
+    width: 100%;
+
+    min-width: 0;
+
+    color: #667085;
 
     font-size: 11px;
+
+    font-weight: 500;
+
+    line-height: 1.3;
+
 }
+
+
+.ad-card-localizacao-texto {
+
+    min-width: 0;
+
+    overflow: hidden;
+
+    white-space: nowrap;
+
+    text-overflow: ellipsis;
+
+}
+
 
 /* =========================================================
-   SENTINELA
-   ========================================================= */
+   ESTILOS
+========================================================= */
 
-.feed-sentinela {
-    width: 100%;
+.ad-card-estilos {
 
-    height: 1px;
-}
-
-/* =========================================================
-   ESTADO VAZIO
-   ========================================================= */
-
-.estado-vazio {
-    width: 100%;
-
-    padding: 28px 18px;
-
-    text-align: center;
-
-    background-color: #ffffff;
-
-    border: 1px solid #e2e8f0;
-
-    border-radius: 16px;
-
-    color: #64748b;
-
-    font-size: 13px;
-}
-
-.estado-vazio strong {
     display: block;
 
-    color: #334155;
+    width: 100%;
 
-    font-size: 14px;
+    color: #667085;
 
-    margin-bottom: 6px;
+    font-size: 11px;
+
+    font-weight: 500;
+
+    line-height: 1.4;
+
 }
 
-.estado-vazio p {
-    font-size: 12px;
 
-    line-height: 1.5;
+.ad-card-estilos-label {
 
-    color: #94a3b8;
+    display: block;
+
+    overflow: hidden;
+
+    white-space: nowrap;
+
+    text-overflow: ellipsis;
+
 }
+
+
+/* =========================================================
+   ÍCONES DAS INFORMAÇÕES
+========================================================= */
+
+.ad-card-meta svg,
+.ad-card-localizacao svg,
+.ad-card-estilos svg {
+
+    flex-shrink: 0;
+
+    width: 14px;
+
+    height: 14px;
+
+    fill: none;
+
+    stroke: currentColor;
+
+    stroke-width: 2;
+
+    stroke-linecap: round;
+
+    stroke-linejoin: round;
+
+}
+
+
+/* =========================================================
+   AÇÃO "VER PERFIL"
+=========================================================
+
+   Mantida como ação secundária.
+
+   A navegação principal já pode acontecer clicando
+   diretamente na publicação.
+========================================================= */
+
+.ad-card-acao {
+
+    display: flex;
+
+    align-items: center;
+
+    width: 100%;
+
+    margin-top: 8px;
+
+}
+
+
+.ad-card-ver-perfil {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    min-height: 30px;
+
+    padding: 0 12px;
+
+    border:
+        1px solid rgba(109, 74, 255, 0.18);
+
+    border-radius: 999px;
+
+    background: #f7f5ff;
+
+    color: #5b3de0;
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    line-height: 1;
+
+    text-decoration: none;
+
+    transition:
+        background 0.18s ease,
+        color 0.18s ease;
+
+}
+
+
+.ad-card-ver-perfil:hover {
+
+    background: #eeeaff;
+
+    color: #4e32ce;
+
+}
+
+
+/* =========================================================
+   BOTÃO DE TELA CHEIA
+========================================================= */
+
+.btn-video-tela-cheia {
+
+    position: absolute;
+
+    right: 10px;
+
+    bottom: 10px;
+
+    z-index: 10;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 34px;
+
+    height: 34px;
+
+    padding: 0;
+
+    border:
+        1px solid rgba(255, 255, 255, 0.20);
+
+    border-radius: 50%;
+
+    background:
+        rgba(10, 13, 20, 0.58);
+
+    backdrop-filter: blur(7px);
+
+    -webkit-backdrop-filter: blur(7px);
+
+    color: #ffffff;
+
+    cursor: pointer;
+
+    opacity: 0;
+
+    visibility: hidden;
+
+    transition:
+        opacity 0.20s ease,
+        background 0.20s ease;
+
+}
+
+
+@media (hover: hover) and (pointer: fine) {
+
+    .ad-card-novo:hover .btn-video-tela-cheia {
+
+        opacity: 1;
+
+        visibility: visible;
+
+    }
+
+}
+
+
+.btn-video-tela-cheia:hover {
+
+    background:
+        rgba(10, 13, 20, 0.78);
+
+}
+
+
+.btn-video-tela-cheia svg {
+
+    width: 16px;
+
+    height: 16px;
+
+    fill: none;
+
+    stroke: currentColor;
+
+    stroke-width: 2;
+
+    stroke-linecap: round;
+
+    stroke-linejoin: round;
+
+}
+
+
+/* =========================================================
+   FOCO
+========================================================= */
+
+.ad-card-identidade-link:focus-visible,
+.ad-card-menu:focus-visible,
+.ad-social-btn:focus-visible,
+.ad-card-ver-perfil:focus-visible,
+.btn-video-tela-cheia:focus-visible {
+
+    outline:
+        2px solid #6d4aff;
+
+    outline-offset: 2px;
+
+}
+
+
+/* =========================================================
+   DESKTOP
+========================================================= */
+
+@media (min-width: 701px) {
+
+    .feed-profissionais {
+
+        width: 100%;
+
+        max-width: 680px;
+
+        margin: 0 auto;
+
+    }
+
+
+    .ad-card-novo {
+
+        padding:
+            16px 4px 18px;
+
+    }
+
+
+    .ad-card-publicacao-texto {
+
+        margin-top: 11px;
+
+    }
+
+
+    .ad-media-box {
+
+        border-radius: 14px;
+
+    }
+
+
+    .ad-video-container {
+
+        border-radius: 14px;
+
+    }
+
+
+    .ad-card-acoes {
+
+        padding:
+            0 2px;
+
+    }
+
+}
+
+
+/* =========================================================
+   TELAS MUITO LARGAS
+========================================================= */
+
+@media (min-width: 1200px) {
+
+    .feed-profissionais {
+
+        max-width: 700px;
+
+    }
+
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 700px) {
+
+    /*
+     * O feed ocupa toda a largura.
+     */
+
+    .feed-profissionais {
+
+        width: 100%;
+
+        max-width: none;
+
+        margin: 0;
+
+    }
+
+
+    /*
+     * A publicação não possui aparência de card.
+     */
+
+    .ad-card-novo {
+
+        width: 100%;
+
+        padding:
+            12px 12px 14px;
+
+        border-radius: 0;
+
+        border-left: none;
+
+        border-right: none;
+
+        box-shadow: none;
+
+    }
+
+
+    /*
+     * Identidade permanece com espaçamento interno.
+     */
+
+    .ad-card-identidade {
+
+        width: 100%;
+
+    }
+
+
+    /*
+     * Texto permanece dentro da área interna.
+     */
+
+    .ad-card-publicacao-texto {
+
+        width: 100%;
+
+        margin-top: 10px;
+
+    }
+
+
+    .ad-card-descricao {
+
+        font-size: 14px;
+
+        line-height: 1.48;
+
+    }
+
+
+    /*
+     * A mídia sai da área interna do post.
+     *
+     * Isso faz imagem e vídeo encostarem diretamente
+     * nas laterais da tela no celular.
+     */
+
+    .ad-media-box {
+
+        width: calc(100% + 24px);
+
+        margin-top: 11px;
+
+        margin-left: -12px;
+
+        margin-right: -12px;
+
+        border-radius: 0;
+
+    }
+
+
+    .ad-video-container {
+
+        border-radius: 0;
+
+    }
+
+
+    .ad-media-link {
+
+        border-radius: 0;
+
+    }
+
+
+    .ad-media-img {
+
+        width: 100%;
+
+        border-radius: 0;
+
+    }
+
+
+    /*
+     * Vídeo reduzido no celular.
+     */
+
+    .ad-video-container .ad-media-video {
+
+        width: 100%;
+
+        height: 280px;
+
+        object-fit: cover;
+
+        object-position: center;
+
+    }
+
+
+    /*
+     * Ações voltam para a área interna do post.
+     */
+
+    .ad-card-acoes {
+
+        min-height: 40px;
+
+        margin-top: 4px;
+
+    }
+
+
+    .ad-social-btn {
+
+        min-width: 36px;
+
+        min-height: 36px;
+
+        padding:
+            6px 7px;
+
+    }
+
+
+    .ad-social-label {
+
+        display: none;
+
+    }
+
+
+    .ad-social-btn svg {
+
+        width: 18px;
+
+        height: 18px;
+
+    }
+
+
+    /*
+     * Informações complementares.
+     */
+
+    .ad-card-informacoes {
+
+        margin-top: 2px;
+
+    }
+
+
+    /*
+     * O botão de tela cheia fica sempre disponível
+     * no celular porque não existe hover.
+     */
+
+    .btn-video-tela-cheia {
+
+        opacity: 1;
+
+        visibility: visible;
+
+    }
+
+
+    /*
+     * O menu também permanece discreto no celular.
+     */
+
+    .ad-card-menu {
+
+        width: 32px;
+
+        height: 32px;
+
+    }
+
+}
+
+
+/* =========================================================
+   TELAS MUITO PEQUENAS
+========================================================= */
+
+@media (max-width: 380px) {
+
+    .ad-card-novo {
+
+        padding:
+            11px 10px 13px;
+
+    }
+
+
+    /*
+     * A mídia continua encostando nas laterais.
+     */
+
+    .ad-media-box {
+
+        width: calc(100% + 20px);
+
+        margin-left: -10px;
+
+        margin-right: -10px;
+
+    }
+
+
+    .ad-mini-avatar,
+    .ad-mini-avatar-fallback {
+
+        width: 38px;
+
+        height: 38px;
+
+        min-width: 38px;
+
+        min-height: 38px;
+
+    }
+
+
+    .ad-card-nome {
+
+        font-size: 14px;
+
+    }
+
+
+    .ad-card-tipo {
+
+        font-size: 11px;
+
+    }
+
+
+    .ad-card-descricao {
+
+        font-size: 13px;
+
+    }
+
+
+    .ad-card-localizacao,
+    .ad-card-estilos {
+
+        font-size: 10px;
+
+    }
+
+
+    .ad-social-btn {
+
+        min-width: 34px;
+
+        min-height: 34px;
+
+    }
+
+}
+
+
+/* =========================================================
+   REDUÇÃO DE MOVIMENTO
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .ad-card-novo,
+    .ad-media-img,
+    .ad-media-overlay,
+    .ad-card-ver-perfil,
+    .ad-social-btn,
+    .ad-card-menu,
+    .btn-video-tela-cheia {
+
+        transition: none;
+
+    }
+
+
+    .ad-card-novo:hover .ad-media-img {
+
+        transform: none;
+
+    }
+
+}
+

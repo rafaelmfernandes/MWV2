@@ -15,6 +15,7 @@ Responsabilidade:
 - Impedir qualquer ultrapassagem horizontal.
 - Manter distância segura das bordas da tela.
 - Adaptar o layout para telas maiores.
+- Manter o cabeçalho fixo durante a rolagem.
 - Não conter lógica de negócio.
 =========================================================
 */
@@ -30,6 +31,7 @@ CONFIGURAÇÃO GLOBAL
     box-sizing: border-box;
 }
 
+
 html {
     width: 100%;
     max-width: 100%;
@@ -38,6 +40,7 @@ html {
 
     scroll-behavior: smooth;
 }
+
 
 body {
     width: 100%;
@@ -66,7 +69,7 @@ body {
 
 
 /* =========================================================
-ELEMENTOS FORMULÁRIO
+ELEMENTOS DE FORMULÁRIO
 ========================================================= */
 
 button,
@@ -76,10 +79,17 @@ select {
     font: inherit;
 }
 
+
 button {
     border: 0;
     cursor: pointer;
 }
+
+
+button:disabled {
+    cursor: not-allowed;
+}
+
 
 input,
 textarea,
@@ -110,32 +120,42 @@ do dispositivo.
 
 /* =========================================================
 CABEÇALHO
+
+O cabeçalho permanece fixo no topo da tela.
+
+A posição fixed evita que o comportamento dependa dos
+elementos ancestrais e mantém o topo sempre acessível
+durante a rolagem.
 ========================================================= */
 
 .contratacao-header {
+    position: fixed;
+
+    top: 0;
+    left: 0;
+    right: 0;
+
     width: 100%;
     max-width: 100%;
 
-    flex-shrink: 0;
+    height: 58px;
 
     background: rgba(255, 255, 255, 0.96);
 
     border-bottom: 1px solid #e7ebf2;
 
-    position: sticky;
-    top: 0;
-
-    z-index: 100;
+    z-index: 1000;
 
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
 }
 
+
 .contratacao-header-inner {
     width: 100%;
     max-width: 760px;
 
-    min-height: 58px;
+    height: 100%;
 
     margin: 0 auto;
 
@@ -171,6 +191,14 @@ MARCA
     text-decoration: none;
 
     white-space: nowrap;
+
+    transition:
+        color 0.2s ease;
+}
+
+
+.brand:hover {
+    color: #6d4aff;
 }
 
 
@@ -196,6 +224,7 @@ BOTÃO CANCELAR
         color 0.2s ease;
 }
 
+
 .cancelar-link:hover {
     color: #172033;
 }
@@ -204,7 +233,8 @@ BOTÃO CANCELAR
 /* =========================================================
 CONTEÚDO PRINCIPAL
 
-O conteúdo fica centralizado dentro de um limite seguro.
+Como o cabeçalho é fixed, o conteúdo recebe espaço
+superior suficiente para não ficar escondido atrás dele.
 
 No celular:
 
@@ -224,7 +254,7 @@ Isso evita que cards e campos encostem nas bordas.
     margin-left: auto;
     margin-right: auto;
 
-    padding-top: 26px;
+    padding-top: 84px;
     padding-bottom: 40px;
 
     overflow-x: hidden;
@@ -242,6 +272,7 @@ INDICADOR DE ETAPA
     margin-bottom: 28px;
 }
 
+
 .etapa-texto {
     width: 100%;
     max-width: 100%;
@@ -255,6 +286,7 @@ INDICADOR DE ETAPA
     margin-bottom: 10px;
 }
 
+
 .etapa-label {
     min-width: 0;
 
@@ -267,6 +299,7 @@ INDICADOR DE ETAPA
     letter-spacing: 0.7px;
 }
 
+
 .etapa-numero {
     flex-shrink: 0;
 
@@ -278,6 +311,7 @@ INDICADOR DE ETAPA
     white-space: nowrap;
 }
 
+
 .etapa-barra {
     width: 100%;
     height: 4px;
@@ -288,6 +322,7 @@ INDICADOR DE ETAPA
 
     overflow: hidden;
 }
+
 
 .etapa-progresso {
     width: 33.33%;
@@ -310,6 +345,7 @@ TÍTULO
     margin-bottom: 22px;
 }
 
+
 .titulo-area h1 {
     width: 100%;
     max-width: 100%;
@@ -327,6 +363,7 @@ TÍTULO
 
     overflow-wrap: break-word;
 }
+
 
 .titulo-area p {
     width: 100%;
@@ -356,6 +393,7 @@ SEÇÃO DE FORMULÁRIO
     margin-bottom: 16px;
 }
 
+
 .campo-group {
     width: 100%;
     max-width: 100%;
@@ -367,6 +405,7 @@ SEÇÃO DE FORMULÁRIO
 
     gap: 8px;
 }
+
 
 .campo-label {
     color: #334155;
@@ -390,9 +429,6 @@ WRAPPER DOS INPUTS
 
 /* =========================================================
 INPUTS
-
-O min-width: 0 é importante para impedir que os inputs
-forcem a largura do container no celular.
 ========================================================= */
 
 .campo-input {
@@ -429,15 +465,26 @@ forcem a largura do container no celular.
         background-color 0.2s ease;
 }
 
+
 .campo-input:hover {
     border-color: #cbd5e1;
 }
+
 
 .campo-input:focus {
     border-color: #6d4aff;
 
     box-shadow:
         0 0 0 3px rgba(109, 74, 255, 0.10);
+}
+
+
+/* =========================================================
+INPUT INVÁLIDO
+========================================================= */
+
+.campo-input:invalid:not(:placeholder-shown) {
+    border-color: #e2e8f0;
 }
 
 
@@ -481,6 +528,7 @@ CABEÇALHO DO CARD
     margin-bottom: 20px;
 }
 
+
 .section-label {
     display: block;
 
@@ -494,6 +542,7 @@ CABEÇALHO DO CARD
 
     margin-bottom: 7px;
 }
+
 
 .horarios-header h2,
 .montagem-conteudo h2 {
@@ -515,15 +564,6 @@ CABEÇALHO DO CARD
 
 /* =========================================================
 GRADE DOS HORÁRIOS
-
-No celular:
-
-Início
-Término
-
-Um abaixo do outro.
-
-Isso evita que os campos fiquem apertados.
 ========================================================= */
 
 .horarios-grid {
@@ -534,7 +574,8 @@ Isso evita que os campos fiquem apertados.
 
     display: grid;
 
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-columns:
+        minmax(0, 1fr);
 
     gap: 14px;
 }
@@ -568,6 +609,7 @@ DURAÇÃO DO SERVIÇO
     overflow: hidden;
 }
 
+
 .duracao-indicador {
     width: 7px;
     height: 7px;
@@ -578,6 +620,7 @@ DURAÇÃO DO SERVIÇO
 
     border-radius: 50%;
 }
+
 
 .duracao-texto {
     min-width: 0;
@@ -590,12 +633,14 @@ DURAÇÃO DO SERVIÇO
     flex-wrap: wrap;
 }
 
+
 .duracao-label {
     color: #64748b;
 
     font-size: 12px;
     font-weight: 500;
 }
+
 
 .duracao-texto strong {
     color: #334155;
@@ -631,6 +676,7 @@ CARD DE MONTAGEM
     overflow: hidden;
 }
 
+
 .montagem-conteudo {
     width: 100%;
     max-width: 100%;
@@ -639,6 +685,7 @@ CARD DE MONTAGEM
 
     margin-bottom: 18px;
 }
+
 
 .montagem-conteudo p {
     width: 100%;
@@ -676,6 +723,7 @@ OPÇÕES SIM / NÃO
     gap: 10px;
 }
 
+
 .opcao-montagem {
     width: 100%;
     min-width: 0;
@@ -700,13 +748,16 @@ OPÇÕES SIM / NÃO
         box-shadow 0.2s ease;
 }
 
+
 .opcao-montagem:hover {
     border-color: #cbd5e1;
 
     background: #f1f5f9;
 }
 
+
 .opcao-montagem.active,
+.opcao-montagem.selecionado,
 .opcao-montagem[aria-pressed="true"] {
     background: #f3f0ff;
 
@@ -736,6 +787,7 @@ HORÁRIO DE CHEGADA
     border-top: 1px solid #edf0f5;
 }
 
+
 .campo-chegada[hidden] {
     display: none;
 }
@@ -743,8 +795,6 @@ HORÁRIO DE CHEGADA
 
 /* =========================================================
 NAVEGAÇÃO
-
-Os dois botões ocupam exatamente o espaço disponível.
 ========================================================= */
 
 .continuacao {
@@ -760,6 +810,7 @@ Os dois botões ocupam exatamente o espaço disponível.
 
     gap: 8px;
 }
+
 
 .btn-voltar,
 .btn-avancar {
@@ -807,6 +858,7 @@ BOTÃO VOLTAR
     color: #475569;
 }
 
+
 .btn-voltar:hover {
     background: #f8fafc;
 
@@ -829,17 +881,31 @@ BOTÃO AVANÇAR
         0 8px 18px rgba(15, 23, 42, 0.12);
 }
 
-.btn-avancar:hover {
+
+.btn-avancar:hover:not(:disabled) {
     background: #0f172a;
 
     box-shadow:
         0 10px 22px rgba(15, 23, 42, 0.16);
 }
 
+
+.btn-avancar:disabled {
+    background: #cbd5e1;
+
+    color: #ffffff;
+
+    box-shadow: none;
+
+    opacity: 0.75;
+}
+
+
 .btn-voltar:active,
-.btn-avancar:active {
+.btn-avancar:active:not(:disabled) {
     transform: translateY(1px);
 }
+
 
 .btn-voltar svg,
 .btn-avancar svg {
@@ -866,6 +932,7 @@ RODAPÉ
     text-align: center;
 }
 
+
 .contratacao-footer p {
     width: 100%;
     max-width: 100%;
@@ -883,11 +950,14 @@ RODAPÉ
 
 /* =========================================================
 TELAS MAIORES
-
-Somente aqui aumentamos o espaço disponível.
 ========================================================= */
 
 @media (min-width: 601px) {
+
+    .contratacao-header {
+        height: 64px;
+    }
+
 
     .contratacao-header-inner {
         min-height: 64px;
@@ -896,17 +966,20 @@ Somente aqui aumentamos o espaço disponível.
         padding-right: 20px;
     }
 
+
     .brand {
         font-size: 18px;
     }
+
 
     .contratacao-main {
         width: calc(100% - 40px);
         max-width: 720px;
 
-        padding-top: 32px;
+        padding-top: 96px;
         padding-bottom: 60px;
     }
+
 
     .titulo-area h1 {
         font-size: 30px;
@@ -914,9 +987,11 @@ Somente aqui aumentamos o espaço disponível.
         letter-spacing: -1px;
     }
 
+
     .titulo-area p {
         font-size: 15px;
     }
+
 
     .horarios-card,
     .montagem-card {
@@ -925,10 +1000,12 @@ Somente aqui aumentamos o espaço disponível.
         border-radius: 20px;
     }
 
+
     .horarios-header h2,
     .montagem-conteudo h2 {
         font-size: 18px;
     }
+
 
     .horarios-grid {
         grid-template-columns:
@@ -938,9 +1015,11 @@ Somente aqui aumentamos o espaço disponível.
         gap: 12px;
     }
 
+
     .campo-input {
         height: 52px;
     }
+
 
     .btn-voltar,
     .btn-avancar {
@@ -954,67 +1033,83 @@ Somente aqui aumentamos o espaço disponível.
         font-size: 14px;
     }
 
+
     .btn-voltar {
         min-width: 120px;
     }
+
 
     .btn-avancar {
         min-width: 150px;
     }
 
+
     .continuacao {
         justify-content: space-between;
     }
+
 }
 
 
 /* =========================================================
 CELULARES MUITO PEQUENOS
-
-Ajuste específico para telas estreitas.
 ========================================================= */
 
 @media (max-width: 360px) {
+
+    .contratacao-header {
+        height: 54px;
+    }
+
 
     .contratacao-header-inner {
         padding-left: 12px;
         padding-right: 12px;
     }
 
+
     .brand {
         font-size: 16px;
     }
+
 
     .cancelar-link {
         font-size: 12px;
     }
 
+
     .contratacao-main {
         width: calc(100% - 24px);
 
-        padding-top: 22px;
+        padding-top: 76px;
     }
+
 
     .titulo-area h1 {
         font-size: 24px;
     }
 
+
     .titulo-area p {
         font-size: 13px;
     }
+
 
     .horarios-card,
     .montagem-card {
         padding: 15px;
     }
 
+
     .opcoes-montagem {
         gap: 8px;
     }
 
+
     .opcao-montagem {
         font-size: 12px;
     }
+
 
     .btn-voltar,
     .btn-avancar {
@@ -1026,6 +1121,7 @@ Ajuste específico para telas estreitas.
         gap: 5px;
     }
 
+
     .btn-voltar svg,
     .btn-avancar svg {
         width: 15px;
@@ -1033,6 +1129,7 @@ Ajuste específico para telas estreitas.
 
         flex-basis: 15px;
     }
+
 }
 
 
@@ -1062,10 +1159,14 @@ REDUÇÃO DE MOVIMENTO
         scroll-behavior: auto;
     }
 
+
     .btn-voltar,
     .btn-avancar,
     .opcao-montagem,
-    .campo-input {
+    .campo-input,
+    .brand,
+    .cancelar-link {
         transition: none;
     }
+
 }

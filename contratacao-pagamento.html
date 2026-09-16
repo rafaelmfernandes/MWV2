@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
+
     <meta charset="UTF-8">
 
     <meta
@@ -9,6 +11,7 @@
     >
 
     <title>Pagamento | MusicalWorld</title>
+
 
     <!-- =========================================================
          MUSICALWORLD — FONTE PRINCIPAL
@@ -30,6 +33,7 @@
         rel="stylesheet"
     >
 
+
     <!-- =========================================================
          ESTILOS DA ETAPA 6
          ========================================================= -->
@@ -39,23 +43,36 @@
         href="css/contratacao/contratacao-pagamento.css"
     >
 
+
     <!-- =========================================================
          ÍCONES
          ========================================================= -->
 
     <script src="https://unpkg.com/lucide@latest"></script>
+
 </head>
+
 
 <body>
 
+
     <!-- =========================================================
          PÁGINA DE PAGAMENTO
+
          Responsabilidade:
+         ---------------------------------------------------------
          Apresentar o resumo da contratação e permitir que o
          contratante escolha entre Pix e cartão.
+
+         Os dados da contratação NÃO ficam armazenados nesta
+         página.
+
+         A fonte de verdade é:
+         MusicalWorldContratacaoEstado
          ========================================================= -->
 
     <div class="contratacao-page">
+
 
         <!-- =====================================================
              CABEÇALHO
@@ -72,6 +89,7 @@
                 >
                     MusicalWorld
                 </a>
+
 
                 <button
                     type="button"
@@ -92,6 +110,7 @@
 
         <main class="contratacao-main">
 
+
             <!-- =================================================
                  INDICADOR DE ETAPA
                  ================================================= -->
@@ -109,6 +128,7 @@
                     </strong>
 
                 </div>
+
 
                 <div class="etapa-progresso">
 
@@ -132,9 +152,11 @@
                     Última etapa
                 </span>
 
+
                 <h1>
                     Finalize sua solicitação
                 </h1>
+
 
                 <p>
                     Escolha como deseja realizar o pagamento
@@ -150,28 +172,48 @@
 
             <section class="resumo-card">
 
+
+                <!-- =============================================
+                     ARTISTA
+                     ============================================= -->
+
                 <div class="resumo-artista">
 
                     <div
                         class="artista-avatar"
                         id="artistaAvatar"
                     >
-                        RM
+                        <span id="artistaIniciais"></span>
                     </div>
+
 
                     <div class="artista-info">
 
                         <strong id="artistaNome">
-                            Rafael Melo
+                            Carregando...
                         </strong>
 
+
                         <span id="artistaTipo">
-                            Cantor(a)
+                            —
+                        </span>
+
+
+                        <span
+                            id="artistaLocalizacao"
+                            class="artista-localizacao"
+                        >
+                            Não informado
                         </span>
 
                     </div>
 
                 </div>
+
+
+                <!-- =============================================
+                     SERVIÇO
+                     ============================================= -->
 
                 <div class="resumo-servico">
 
@@ -181,11 +223,13 @@
                             Serviço
                         </span>
 
+
                         <strong id="servicoNome">
-                            Show acústico
+                            Carregando...
                         </strong>
 
                     </div>
+
 
                     <div class="resumo-valor">
 
@@ -193,8 +237,9 @@
                             Total
                         </span>
 
+
                         <strong id="valorTotal">
-                            R$ 800,00
+                            R$ 0,00
                         </strong>
 
                     </div>
@@ -210,11 +255,13 @@
 
             <section class="pagamento-section">
 
+
                 <div class="section-heading">
 
                     <h2>
                         Como deseja pagar?
                     </h2>
+
 
                     <p>
                         Escolha uma das opções abaixo.
@@ -225,6 +272,7 @@
 
                 <div class="metodos-pagamento">
 
+
                     <!-- =========================================
                          PIX
                          ========================================= -->
@@ -232,13 +280,16 @@
                     <button
                         type="button"
                         class="metodo-pagamento"
-                        data-metodo="pix"
-                        aria-pressed="true"
+                        data-metodo-pagamento="pix"
+                        aria-pressed="false"
                     >
 
                         <span class="metodo-icone">
+
                             <i data-lucide="qr-code"></i>
+
                         </span>
+
 
                         <span class="metodo-conteudo">
 
@@ -246,14 +297,18 @@
                                 Pix
                             </strong>
 
+
                             <span>
                                 Pagamento rápido e seguro
                             </span>
 
                         </span>
 
+
                         <span class="metodo-seta">
+
                             <i data-lucide="chevron-right"></i>
+
                         </span>
 
                     </button>
@@ -266,13 +321,16 @@
                     <button
                         type="button"
                         class="metodo-pagamento"
-                        data-metodo="cartao"
+                        data-metodo-pagamento="cartao"
                         aria-pressed="false"
                     >
 
                         <span class="metodo-icone">
+
                             <i data-lucide="credit-card"></i>
+
                         </span>
+
 
                         <span class="metodo-conteudo">
 
@@ -280,14 +338,18 @@
                                 Cartão
                             </strong>
 
+
                             <span>
                                 Crédito ou débito
                             </span>
 
                         </span>
 
+
                         <span class="metodo-seta">
+
                             <i data-lucide="chevron-right"></i>
+
                         </span>
 
                     </button>
@@ -304,14 +366,18 @@
             <section class="pagamento-aviso">
 
                 <div class="aviso-icone">
+
                     <i data-lucide="info"></i>
+
                 </div>
+
 
                 <div>
 
                     <strong>
                         Importante
                     </strong>
+
 
                     <p>
                         O pagamento inicia sua solicitação.
@@ -330,40 +396,50 @@
 
             <nav class="contratacao-navegacao">
 
+
                 <button
                     type="button"
                     class="btn-secundario"
                     id="btnVoltar"
                 >
+
                     <i data-lucide="arrow-left"></i>
+
 
                     <span>
                         Voltar
                     </span>
+
                 </button>
+
 
                 <button
                     type="button"
                     class="btn-principal"
-                    id="btnAbrirPagamento"
+                    id="btnContinuar"
+                    disabled
                 >
+
                     <span>
                         Continuar
                     </span>
 
+
                     <i data-lucide="arrow-right"></i>
+
                 </button>
 
             </nav>
 
 
             <!-- =================================================
-                 RODAPÉ
+                 SEGURANÇA
                  ================================================= -->
 
             <p class="contratacao-seguranca">
 
                 <i data-lucide="shield-check"></i>
+
 
                 <span>
                     Seus dados de pagamento serão tratados
@@ -379,9 +455,12 @@
 
     <!-- =========================================================
          MODAL PIX
+
          Responsabilidade:
+         ---------------------------------------------------------
          Apresentar a interface de pagamento Pix.
-         O QR Code e o código real serão fornecidos pelo
+
+         O QR Code e o código Pix reais serão fornecidos pelo
          Mercado Pago quando a integração for conectada.
          ========================================================= -->
 
@@ -398,27 +477,35 @@
             aria-labelledby="tituloModalPix"
         >
 
+
             <button
                 type="button"
                 class="modal-fechar"
                 data-fechar-modal="pix"
                 aria-label="Fechar pagamento Pix"
             >
+
                 <i data-lucide="x"></i>
+
             </button>
 
 
             <div class="modal-cabecalho">
 
+
                 <span class="modal-icone modal-icone-pix">
+
                     <i data-lucide="qr-code"></i>
+
                 </span>
+
 
                 <div>
 
                     <span class="modal-kicker">
                         Pagamento via Pix
                     </span>
+
 
                     <h2 id="tituloModalPix">
                         Pague para enviar sua solicitação
@@ -429,21 +516,26 @@
             </div>
 
 
+            <!-- ===============================================
+                 VALOR
+                 =============================================== -->
+
             <div class="pix-valor">
 
                 <span>
                     Valor da contratação
                 </span>
 
+
                 <strong id="pixValor">
-                    R$ 800,00
+                    R$ 0,00
                 </strong>
 
             </div>
 
 
             <!-- ===============================================
-                 ÁREA DO QR CODE
+                 QR CODE
                  =============================================== -->
 
             <div class="pix-qr-area">
@@ -452,15 +544,26 @@
 
                     <div class="qr-grid">
 
-                        <span class="qr-canto qr-canto-1"></span>
-                        <span class="qr-canto qr-canto-2"></span>
-                        <span class="qr-canto qr-canto-3"></span>
+                        <span
+                            class="qr-canto qr-canto-1"
+                        ></span>
 
-                        <span class="qr-centro"></span>
+                        <span
+                            class="qr-canto qr-canto-2"
+                        ></span>
+
+                        <span
+                            class="qr-canto qr-canto-3"
+                        ></span>
+
+                        <span
+                            class="qr-centro"
+                        ></span>
 
                     </div>
 
                 </div>
+
 
                 <p>
                     O QR Code real será gerado pelo
@@ -471,7 +574,7 @@
 
 
             <!-- ===============================================
-                 COPIA E COLA
+                 PIX COPIA E COLA
                  =============================================== -->
 
             <div class="pix-copia-cola">
@@ -480,36 +583,49 @@
                     Pix copia e cola
                 </label>
 
+
                 <div class="pix-codigo-container">
 
                     <input
                         type="text"
                         id="pixCodigo"
-                        value="Aguardando geração do pagamento"
+                        value=""
+                        placeholder="Aguardando geração do pagamento"
                         readonly
                     >
+
 
                     <button
                         type="button"
                         id="btnCopiarPix"
                         aria-label="Copiar código Pix"
                     >
+
                         <i data-lucide="copy"></i>
+
                     </button>
 
                 </div>
 
+
                 <small id="pixMensagemCopiado">
+
                     O código real será disponibilizado
                     quando o Mercado Pago estiver conectado.
+
                 </small>
 
             </div>
 
 
+            <!-- ===============================================
+                 AVISO PIX
+                 =============================================== -->
+
             <div class="modal-aviso">
 
                 <i data-lucide="clock-3"></i>
+
 
                 <p>
                     Após a confirmação do pagamento,
@@ -519,7 +635,12 @@
             </div>
 
 
+            <!-- ===============================================
+                 AÇÕES PIX
+                 =============================================== -->
+
             <div class="modal-acoes">
+
 
                 <button
                     type="button"
@@ -529,16 +650,20 @@
                     Voltar
                 </button>
 
+
                 <button
                     type="button"
                     class="btn-modal-principal"
                     id="btnSimularPix"
                 >
+
                     <span>
                         Simular pagamento
                     </span>
 
+
                     <i data-lucide="arrow-right"></i>
+
                 </button>
 
             </div>
@@ -565,27 +690,35 @@
             aria-labelledby="tituloModalCartao"
         >
 
+
             <button
                 type="button"
                 class="modal-fechar"
                 data-fechar-modal="cartao"
                 aria-label="Fechar pagamento com cartão"
             >
+
                 <i data-lucide="x"></i>
+
             </button>
 
 
             <div class="modal-cabecalho">
 
+
                 <span class="modal-icone modal-icone-cartao">
+
                     <i data-lucide="credit-card"></i>
+
                 </span>
+
 
                 <div>
 
                     <span class="modal-kicker">
                         Pagamento com cartão
                     </span>
+
 
                     <h2 id="tituloModalCartao">
                         Informe os dados do cartão
@@ -605,15 +738,22 @@
                 novalidate
             >
 
+
+                <!-- ===========================================
+                     NÚMERO
+                     =========================================== -->
+
                 <div class="campo">
 
                     <label for="numeroCartao">
                         Número do cartão
                     </label>
 
+
                     <div class="campo-com-icone">
 
                         <i data-lucide="credit-card"></i>
+
 
                         <input
                             type="text"
@@ -626,6 +766,7 @@
 
                     </div>
 
+
                     <small
                         class="campo-erro"
                         id="erroNumeroCartao"
@@ -634,11 +775,16 @@
                 </div>
 
 
+                <!-- ===========================================
+                     NOME
+                     =========================================== -->
+
                 <div class="campo">
 
                     <label for="nomeCartao">
                         Nome no cartão
                     </label>
+
 
                     <input
                         type="text"
@@ -646,6 +792,7 @@
                         autocomplete="cc-name"
                         placeholder="Nome completo"
                     >
+
 
                     <small
                         class="campo-erro"
@@ -655,13 +802,19 @@
                 </div>
 
 
+                <!-- ===========================================
+                     VALIDADE + CVV
+                     =========================================== -->
+
                 <div class="campos-duplos">
+
 
                     <div class="campo">
 
                         <label for="validadeCartao">
                             Validade
                         </label>
+
 
                         <input
                             type="text"
@@ -671,6 +824,7 @@
                             placeholder="MM/AA"
                             maxlength="5"
                         >
+
 
                         <small
                             class="campo-erro"
@@ -686,6 +840,7 @@
                             CVV
                         </label>
 
+
                         <input
                             type="password"
                             id="codigoCartao"
@@ -694,6 +849,7 @@
                             placeholder="123"
                             maxlength="4"
                         >
+
 
                         <small
                             class="campo-erro"
@@ -705,9 +861,14 @@
                 </div>
 
 
+                <!-- ===========================================
+                     SEGURANÇA
+                     =========================================== -->
+
                 <div class="cartao-seguranca">
 
                     <i data-lucide="lock-keyhole"></i>
+
 
                     <span>
                         Os dados serão processados de forma segura
@@ -717,7 +878,12 @@
                 </div>
 
 
+                <!-- ===========================================
+                     AÇÕES
+                     =========================================== -->
+
                 <div class="modal-acoes">
+
 
                     <button
                         type="button"
@@ -727,16 +893,20 @@
                         Voltar
                     </button>
 
+
                     <button
                         type="submit"
                         class="btn-modal-principal"
                         id="btnPagarCartao"
                     >
+
                         <span>
                             Simular pagamento
                         </span>
 
+
                         <i data-lucide="lock-keyhole"></i>
+
                     </button>
 
                 </div>
@@ -762,9 +932,11 @@
 
             <div class="spinner"></div>
 
+
             <h2>
                 Processando pagamento
             </h2>
+
 
             <p>
                 Aguarde enquanto confirmamos
@@ -777,10 +949,29 @@
 
 
     <!-- =========================================================
-         JAVASCRIPT
+         JAVASCRIPT DO NÚCLEO
+         ========================================================= -->
+
+    <script src="js/contratacao/ContratacaoEstado.js"></script>
+
+
+    <!-- =========================================================
+         JAVASCRIPT DA ETAPA 6
          ========================================================= -->
 
     <script src="js/contratacao/contratacao-pagamento.js"></script>
 
+
+    <!-- =========================================================
+         LUCIDE
+         ========================================================= -->
+
+    <script>
+        if (window.lucide) {
+            lucide.createIcons();
+        }
+    </script>
+
 </body>
+
 </html>

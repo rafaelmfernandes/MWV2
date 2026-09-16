@@ -1,801 +1,1491 @@
+
 /* =========================================================
    MUSICALWORLD — INDEX
    Arquivo: 10-responsividade.css
 
    Responsabilidade:
-   Adaptar visualmente o index para telas menores,
-   preservando a estrutura e o posicionamento original
-   do aplicativo.
+   Adaptar o index para telas menores, preservando a
+   estrutura vertical de publicações do feed.
 
    Este arquivo NÃO controla a aparência principal do
    cabeçalho.
 
-   A aparência do .navbar, incluindo:
-   - transparência
-   - efeito de vidro
-   - backdrop-filter
-   - bordas
-   - sombras
-   - cores
+   A aparência do .navbar permanece exclusivamente no:
 
-   fica exclusivamente no:
    css/index/03-cabecalho.css
 
+   A aparência principal do feed permanece no:
+
+   css/index/feed.css
+
    Este arquivo controla apenas:
-   - dimensões
-   - espaçamentos
-   - tamanhos
-   - posicionamentos específicos para telas menores
+
+   * dimensões;
+   * espaçamentos;
+   * tamanhos;
+   * posicionamentos específicos para telas menores.
+
+   ESTRUTURA ATUAL DO FEED:
+
+   * uma publicação abaixo da outra;
+   * uma publicação por linha;
+   * identidade primeiro;
+   * texto da publicação;
+   * mídia;
+   * ações sociais;
+   * informações complementares;
+   * ação para visualizar o perfil;
+   * sem altura fixa na publicação;
+   * mídia em fluxo normal.
+
+   NO CELULAR:
+
+   * o feed ocupa toda a largura disponível;
+   * o card não possui borda externa;
+   * o card não possui border-radius;
+   * o card não possui sombra;
+   * a mídia pode tocar diretamente as laterais da tela;
+   * a mídia permanece em fluxo normal;
+   * a identidade permanece acima da publicação;
+   * o texto permanece antes da mídia;
+   * as ações permanecem abaixo da mídia;
+   * informações complementares continuam disponíveis;
+   * o botão "Ver perfil" permanece disponível;
+   * o botão de tela cheia permanece disponível.
 
    IMPORTANTE:
-   Este arquivo não altera o alinhamento global do body.
-   O posicionamento do .app-container continua sendo
-   controlado pelo app.css e pelo base.css.
-   ========================================================= */
+
+   A altura específica dos vídeos é definida aqui para
+   evitar que regras responsivas com height: 100% sobrescrevam
+   o tamanho definido no feed.css.
+========================================================= */
 
 
 /* =========================================================
    CELULAR — ATÉ 600px
-   ========================================================= */
+========================================================= */
 
 @media (max-width: 600px) {
 
-    /* =====================================================
-       ESTRUTURA DA PÁGINA
-       ===================================================== */
 
-    html,
-    body {
-        width: 100%;
+/* =====================================================
+   ESTRUTURA DA PÁGINA
+   ===================================================== */
 
-        min-height: 100%;
-    }
+html,
+body {
+    width: 100%;
 
-    /*
-     * O body não recebe align-items aqui.
-     *
-     * O base.css já controla o posicionamento global
-     * através do display:flex e do justify-content:center.
-     */
+    min-height: 100%;
+}
 
-    .app-container {
-        width: 100%;
 
-        height: 100dvh;
+.app-container {
+    width: 100%;
 
-        min-height: 100dvh;
+    height: 100dvh;
 
-        max-height: none;
-    }
+    min-height: 100dvh;
 
+    max-height: none;
+}
 
-    /* =====================================================
-       CABEÇALHO
-       =====================================================
 
-       Apenas dimensões e espaçamento.
+/* =====================================================
+   CABEÇALHO
+   =====================================================
 
-       A aparência visual do cabeçalho pertence ao
-       03-cabecalho.css.
-       ===================================================== */
+   Apenas dimensões e espaçamento.
 
-    .navbar {
-        height: 60px;
+   A aparência visual pertence ao:
+   03-cabecalho.css
+   ===================================================== */
 
-        padding: 0 14px;
+.navbar {
+    height: 60px;
 
-        gap: 10px;
-    }
+    padding: 0 14px;
 
+    gap: 10px;
+}
 
-    /* =====================================================
-       ÁREA DA MARCA
-       ===================================================== */
 
-    .navbar-brand-area {
-        min-width: 0;
+/* =====================================================
+   ÁREA DA MARCA
+   ===================================================== */
 
-        display: flex;
+.navbar-brand-area {
+    min-width: 0;
 
-        align-items: center;
-    }
+    display: flex;
 
+    align-items: center;
+}
 
-    /* =====================================================
-       LOGO
-       ===================================================== */
 
-    .logo {
-        font-size: 19px;
+/* =====================================================
+   LOGO
+   ===================================================== */
 
-        letter-spacing: -0.6px;
-    }
+.logo {
+    font-size: 19px;
 
+    letter-spacing: -0.6px;
+}
 
-    /* =====================================================
-       AÇÕES DO CABEÇALHO
-       ===================================================== */
 
-    .navbar-actions {
-        gap: 3px;
+/* =====================================================
+   AÇÕES DO CABEÇALHO
+   ===================================================== */
 
-        height: 100%;
+.navbar-actions {
+    gap: 3px;
 
-        flex-shrink: 0;
-    }
+    height: 100%;
 
+    flex-shrink: 0;
+}
 
-    /* =====================================================
-       BOTÕES DE ÍCONE
-       ===================================================== */
 
-    .nav-icon-btn {
-        width: 42px;
+/* =====================================================
+   BOTÕES DE ÍCONE
+   ===================================================== */
 
-        height: 42px;
+.nav-icon-btn {
+    width: 42px;
 
-        border-radius: 13px;
-    }
+    height: 42px;
 
+    border-radius: 13px;
+}
 
-    .top-icon-svg {
-        width: 26px;
 
-        height: 26px;
-    }
+.top-icon-svg {
+    width: 26px;
 
+    height: 26px;
+}
 
-    /* =====================================================
-       BADGES
-       ===================================================== */
 
-    .notification-badge {
-        top: 1px;
+/* =====================================================
+   BADGES
+   ===================================================== */
 
-        right: -1px;
+.notification-badge {
+    top: 1px;
 
-        min-width: 17px;
+    right: -1px;
 
-        height: 17px;
+    min-width: 17px;
 
-        padding: 0 3px;
+    height: 17px;
 
-        font-size: 8px;
-    }
+    padding: 0 3px;
 
+    font-size: 8px;
+}
 
-    /* =====================================================
-       USUÁRIO LOGADO
-       ===================================================== */
 
-    .cabecalho-logado {
-        position: relative;
+/* =====================================================
+   USUÁRIO LOGADO
+   ===================================================== */
 
-        display: flex;
+.cabecalho-logado {
+    position: relative;
 
-        align-items: center;
-    }
+    display: flex;
 
+    align-items: center;
+}
 
-    .cabecalho-usuario-btn {
-        width: 42px;
 
-        height: 42px;
+.cabecalho-usuario-btn {
+    width: 42px;
 
-        padding: 0;
+    height: 42px;
 
-        gap: 0;
-    }
+    padding: 0;
 
+    gap: 0;
+}
 
-    .cabecalho-avatar {
-        width: 33px;
 
-        height: 33px;
+.cabecalho-avatar {
+    width: 33px;
 
-        min-width: 33px;
+    height: 33px;
 
-        min-height: 33px;
-    }
+    min-width: 33px;
 
+    min-height: 33px;
+}
 
-    /*
-     * O nome e o tipo de perfil continuam presentes
-     * no DOM para compatibilidade com Cabecalho.js.
-     *
-     * A regra principal do cabeçalho já mantém essas
-     * informações visualmente ocultas.
-     */
 
-    .cabecalho-info-usuario {
-        position: absolute;
-    }
+/*
+ * O nome e o tipo do perfil permanecem presentes
+ * no DOM para compatibilidade com Cabecalho.js.
+ */
 
+.cabecalho-info-usuario {
+    position: absolute;
+}
 
-    .cabecalho-chevron {
-        display: none;
-    }
 
+.cabecalho-chevron {
+    display: none;
+}
 
-    /* =====================================================
-       MENU DA CONTA
-       ===================================================== */
 
-    .cabecalho-menu-usuario {
-        position: fixed;
+/* =====================================================
+   MENU DA CONTA
+   ===================================================== */
 
-        top: 58px;
+.cabecalho-menu-usuario {
+    position: fixed;
 
-        right: 12px;
+    top: 58px;
 
-        left: auto;
+    right: 12px;
 
-        width: min(
-            210px,
-            calc(100vw - 24px)
-        );
+    left: auto;
 
-        max-width: calc(100vw - 24px);
+    width: min(
+        210px,
+        calc(100vw - 24px)
+    );
 
-        padding: 7px;
+    max-width: calc(100vw - 24px);
 
-        border-radius: 13px;
-    }
+    padding: 7px;
 
+    border-radius: 13px;
+}
 
-    .cabecalho-menu-usuario button {
-        min-height: 42px;
 
-        padding: 0 11px;
-    }
+.cabecalho-menu-usuario button {
+    min-height: 42px;
 
+    padding: 0 11px;
+}
 
-    /* =====================================================
-       ESTADO DESLOGADO
-       ===================================================== */
 
-    .cabecalho-btn-entrar {
-        height: 36px;
+/* =====================================================
+   ESTADO DESLOGADO
+   ===================================================== */
 
-        padding: 0 14px;
+.cabecalho-btn-entrar {
+    height: 36px;
 
-        border-radius: 9px;
+    padding: 0 14px;
 
-        font-size: 12px;
-    }
+    border-radius: 9px;
 
+    font-size: 12px;
+}
 
-    /* =====================================================
-       CARDS
-       ===================================================== */
 
-    .ad-card-novo {
-        height: 430px;
+/* =====================================================
+   FEED — ESTRUTURA VERTICAL
+   ===================================================== */
 
-        min-height: 430px;
+.feed-profissionais {
+    width: 100%;
 
-        max-height: 430px;
+    display: flex;
 
-        padding: 14px;
+    flex-direction: column;
 
-        border-radius: 15px;
-    }
+    gap: 0;
+}
 
 
-    .ad-media-box {
-        height: 220px;
+.profissional-card-link {
+    display: block;
 
-        min-height: 220px;
+    width: 100%;
 
-        max-height: 220px;
-    }
+    min-width: 0;
+}
 
 
-    .ad-descricao {
-        min-height: 52px;
+/* =====================================================
+   CARD — CELULAR
+   =====================================================
 
-        max-height: 52px;
-    }
+   O card não possui altura fixa.
 
+   A altura é determinada pelo conteúdo da publicação.
 
-    .ad-footer {
-        min-height: 37px;
-    }
+   A estrutura agora é:
 
+   identidade
+   texto
+   mídia
+   ações
+   informações
+   perfil
+   ===================================================== */
+.ad-card-novo {
+        padding: 12px 14px 14px;
 
-    /* =====================================================
-       CABEÇALHO DA SEÇÃO PROFISSIONAIS
-       ===================================================== */
+        background: #ffffff;
 
-    .feed-header {
-        gap: 10px;
-
-        margin-bottom: 16px;
-    }
-
-
-    .feed-header-content {
-        min-width: 0;
-    }
-
-
-    .feed-header h2 {
-        font-size: 20px;
-    }
-
-
-    .feed-header p {
-        font-size: 12px;
-    }
-
-
-    /* =====================================================
-       BOTÃO DE FILTRO
-       ===================================================== */
-
-    .feed-filtro-btn {
-        width: 38px;
-
-        height: 38px;
-
-        padding: 0;
-
-        gap: 0;
+        border: 1px solid #f1f1f1;
+        border-bottom: 1px solid rgba(15, 9, 9, 0.08);
 
         border-radius: 10px;
+        box-shadow: none;
+
+        margin-bottom: 10px;
     }
 
-
-    .feed-filtro-btn span {
-        display: none;
+    .ad-card-publicacao-texto {
+        margin-top: 7px;
     }
 
-
-    .feed-filtro-btn svg {
-        width: 18px;
-
-        height: 18px;
+    .ad-media-box {
+        width: calc(100% + 20px);
+        margin-left: -10px;
+        margin-top: 9px;
     }
 
+/* =====================================================
+   IDENTIDADE DA PUBLICAÇÃO
+   =====================================================
 
-    /* =====================================================
-       PESQUISA — CELULAR
-       ===================================================== */
+   A identidade vem antes do texto e da mídia,
+   seguindo a organização de uma publicação social.
+   ===================================================== */
 
-    .search-overlay-header {
-        min-height: 54px;
+.ad-card-identidade {
+    width: 100%;
 
-        padding: 7px 11px;
+    min-width: 0;
 
-        gap: 8px;
-    }
+    margin: 0;
 
+    display: flex;
 
-    .search-overlay-input {
-        height: 36px;
+    align-items: center;
 
-        padding-left: 34px;
-
-        font-size: 12px;
-
-        border-radius: 8px;
-    }
+    gap: 9px;
+}
 
 
-    .search-overlay-icon {
-        left: 11px;
+.ad-mini-avatar,
+.ad-mini-avatar-fallback {
+    width: 34px;
 
-        width: 15px;
+    height: 34px;
 
-        height: 15px;
-    }
+    min-width: 34px;
 
+    min-height: 34px;
 
-    .search-overlay-cancelar {
-        height: 36px;
-
-        font-size: 11px;
-    }
+    flex-shrink: 0;
+}
 
 
-    .search-result-item {
-        min-height: 64px;
+.ad-card-nome-area {
+    min-width: 0;
 
-        padding: 8px 13px;
-
-        gap: 10px;
-    }
+    flex: 1;
+}
 
 
-    .search-result-avatar-wrapper {
-        width: 44px;
+.ad-card-nome {
+    min-width: 0;
 
-        height: 44px;
+    max-width: 100%;
 
-        min-width: 44px;
+    overflow: hidden;
 
-        min-height: 44px;
+    text-overflow: ellipsis;
 
-        flex-basis: 44px;
-    }
+    white-space: nowrap;
 
+    font-size: 15px;
 
-    .search-result-avatar-fallback {
-        font-size: 12px;
-    }
-
-
-    .search-result-name {
-        font-size: 12px;
-
-        margin-bottom: 3px;
-    }
+    line-height: 1.2;
+}
 
 
-    .search-result-location,
-    .search-result-genre {
-        font-size: 9px;
+.ad-card-tipo {
+    margin-top: 2px;
 
-        gap: 4px;
-    }
+    font-size: 9px;
 
-
-    .search-result-location svg,
-    .search-result-genre svg {
-        width: 11px;
-
-        height: 11px;
-
-        min-width: 11px;
-
-        flex-basis: 11px;
-    }
+    line-height: 1.2;
+}
 
 
-    .search-result-arrow {
-        width: 15px;
+/* =====================================================
+   CONTEÚDO DA PUBLICAÇÃO
+   =====================================================
 
-        height: 15px;
+   O conteúdo textual vem antes da mídia.
 
-        min-width: 15px;
+   Não utilizar posicionamento absoluto.
+   ===================================================== */
 
-        flex-basis: 15px;
-    }
+.ad-card-conteudo {
+    position: relative;
+
+    width: 100%;
+
+    padding: 9px 0 0;
+}
+
+
+/*
+ * A identidade já foi posicionada diretamente no card.
+ *
+ * Caso alguma regra anterior do feed.css ainda aplique
+ * estilos específicos à identidade dentro do conteúdo,
+ * mantemos compatibilidade sem alterar a estrutura.
+ */
+
+.ad-card-conteudo .ad-card-identidade {
+    margin-bottom: 8px;
+}
+
+
+/* =====================================================
+   DESCRIÇÃO
+   ===================================================== */
+
+.ad-card-descricao {
+    display: block;
+
+    width: 100%;
+
+    margin: 0;
+
+    line-height: 1.45;
+
+    overflow-wrap: anywhere;
+}
+
+
+/* =====================================================
+   INFORMAÇÕES COMPLEMENTARES
+   =====================================================
+
+   As informações permanecem visíveis no celular.
+
+   Não utilizar hover para revelar conteúdo.
+   ===================================================== */
+
+.ad-card-informacoes {
+    width: 100%;
+
+    opacity: 1;
+
+    visibility: visible;
+
+    max-height: none;
+
+    transform: translateY(0);
+
+    pointer-events: auto;
+}
+
+
+.ad-card-localizacao {
+    display: flex;
+
+    width: 100%;
+
+    min-width: 0;
+
+    margin-top: 6px;
+
+    overflow: hidden;
+
+    white-space: nowrap;
+
+    text-overflow: ellipsis;
+}
+
+
+.ad-card-estilos {
+    display: flex;
+
+    width: 100%;
+
+    min-width: 0;
+}
+
+
+/* =====================================================
+   MÍDIA — CELULAR
+   =====================================================
+
+   A mídia permanece no fluxo normal.
+
+   NÃO utilizar position:absolute.
+
+   A margem negativa permite que a mídia ultrapasse
+   o padding lateral do card e toque diretamente
+   as laterais da tela.
+
+   A altura do vídeo é definida explicitamente abaixo
+   para impedir que height: 100% cause comportamento
+   incorreto em um container com altura automática.
+   ===================================================== */
+
+.ad-media-box {
+    position: relative;
+
+    inset: auto;
+
+    width: calc(100% + 26px);
+
+    height: auto;
+
+    min-height: 0;
+
+    max-height: none;
+
+    margin-left: -13px;
+
+    margin-top: 11px;
+
+    padding: 0;
+
+    overflow: hidden;
+}
+
+
+.ad-media-img {
+    display: block;
+
+    width: 100%;
+
+    height: auto;
+
+    min-height: 0;
+
+    object-fit: cover;
+}
+
+
+/* =====================================================
+   CONTAINER DE VÍDEO
+   ===================================================== */
+
+.ad-video-container {
+    position: relative;
+
+    width: 100%;
+
+    height: auto;
+
+    min-height: 0;
+
+    overflow: hidden;
+
+    border-radius: 10px;
+
+}
+
+
+/*
+ * IMPORTANTE:
+ *
+ * Não usar height: 100% aqui.
+ *
+ * O container possui altura automática e o vídeo precisa
+ * receber uma altura real para controlar sua dimensão
+ * vertical.
+ */
+
+.ad-video-container .ad-media-video {
+    display: block;
+
+    width: 100%;
+
+    height: 260px;
+
+    min-height: 0;
+
+    object-fit: cover;
+
+    object-position: center;
+}
+
+
+/* =====================================================
+   FALLBACK SEM FOTO
+===================================================== */
+
+.ad-media-sem-foto {
+    width: 100%;
+
+    min-height: 300px;
+}
+
+
+/* =====================================================
+   FALLBACK DE ERRO
+===================================================== */
+
+.ad-media-fallback {
+    width: 100%;
+
+    min-height: 300px;
+}
+
+
+/* =====================================================
+   AÇÕES SOCIAIS
+   =====================================================
+
+   Espaço reservado para:
+
+   * comentários;
+   * curtidas;
+   * compartilhamento;
+   * salvar.
+
+   Os botões são controlados principalmente pelo feed.css.
+   Aqui ajustamos apenas o espaço e o comportamento
+   responsivo.
+   ===================================================== */
+
+.ad-card-acoes {
+    width: 100%;
+
+    min-height: 40px;
+
+    margin-top: 4px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 4px;
+}
+
+
+.ad-card-acao-btn {
+    min-width: 38px;
+
+    min-height: 36px;
+
+    flex: 1;
+
+    padding: 0;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+}
+
+
+/* =====================================================
+   AÇÃO — VER PERFIL
+   ===================================================== */
+
+.ad-card-acao {
+    width: 100%;
+
+    opacity: 1;
+
+    visibility: visible;
+
+    transform: translateY(0);
+
+    pointer-events: auto;
+}
+
+
+/* =====================================================
+   TOPO DA MÍDIA
+   ===================================================== */
+
+.ad-media-top {
+    top: 10px;
+
+    left: 10px;
+
+    right: 10px;
+}
+
+
+/* =====================================================
+   BOTÃO DE TELA CHEIA
+   =====================================================
+
+   No celular não existe hover confiável.
+
+   Portanto, o botão permanece disponível.
+   ===================================================== */
+
+.btn-video-tela-cheia {
+    right: 9px;
+
+    bottom: 9px;
+}
+
+
+/* =====================================================
+   CABEÇALHO DA SEÇÃO PROFISSIONAIS
+   ===================================================== */
+
+.feed-header {
+    gap: 10px;
+
+    margin-bottom: 16px;
+}
+
+
+.feed-header-content {
+    min-width: 0;
+}
+
+
+.feed-header h2 {
+    font-size: 20px;
+}
+
+
+.feed-header p {
+    font-size: 12px;
+}
+
+
+/* =====================================================
+   BOTÃO DE FILTRO
+   ===================================================== */
+
+.feed-filtro-btn {
+    width: 38px;
+
+    height: 38px;
+
+    padding: 0;
+
+    gap: 0;
+
+    border-radius: 10px;
+}
+
+
+.feed-filtro-btn span {
+    display: none;
+}
+
+
+.feed-filtro-btn svg {
+    width: 18px;
+
+    height: 18px;
+}
+
+
+/* =====================================================
+   PESQUISA — CELULAR
+   ===================================================== */
+
+.search-overlay-header {
+    min-height: 54px;
+
+    padding: 7px 11px;
+
+    gap: 8px;
+}
+
+
+.search-overlay-input {
+    height: 36px;
+
+    padding-left: 34px;
+
+    font-size: 12px;
+
+    border-radius: 8px;
+}
+
+
+.search-overlay-icon {
+    left: 11px;
+
+    width: 15px;
+
+    height: 15px;
+}
+
+
+.search-overlay-cancelar {
+    height: 36px;
+
+    font-size: 11px;
+}
+
+
+.search-result-item {
+    min-height: 64px;
+
+    padding: 8px 13px;
+
+    gap: 10px;
+}
+
+
+.search-result-avatar-wrapper {
+    width: 44px;
+
+    height: 44px;
+
+    min-width: 44px;
+
+    min-height: 44px;
+
+    flex-basis: 44px;
+}
+
+
+.search-result-avatar-fallback {
+    font-size: 12px;
+}
+
+
+.search-result-name {
+    font-size: 12px;
+
+    margin-bottom: 3px;
+}
+
+
+.search-result-location,
+.search-result-genre {
+    font-size: 9px;
+
+    gap: 4px;
+}
+
+
+.search-result-location svg,
+.search-result-genre svg {
+    width: 11px;
+
+    height: 11px;
+
+    min-width: 11px;
+
+    flex-basis: 11px;
+}
+
+
+.search-result-arrow {
+    width: 15px;
+
+    height: 15px;
+
+    min-width: 15px;
+
+    flex-basis: 15px;
+}
+
+
 }
 
 
 /* =========================================================
    TELAS MUITO PEQUENAS — ATÉ 380px
-   ========================================================= */
+========================================================= */
 
 @media (max-width: 380px) {
 
-    /* =====================================================
-       CABEÇALHO
-       =====================================================
 
-       Novamente, somente dimensões.
-       O visual permanece controlado pelo
-       03-cabecalho.css.
-       ===================================================== */
+/* =====================================================
+   CABEÇALHO
+   ===================================================== */
 
-    .navbar {
-        height: 58px;
+.navbar {
+    height: 58px;
 
-        padding-left: 10px;
+    padding-left: 10px;
 
-        padding-right: 10px;
+    padding-right: 10px;
 
-        gap: 6px;
-    }
+    gap: 6px;
+}
 
 
-    /* =====================================================
-       LOGO
-       ===================================================== */
+/* =====================================================
+   LOGO
+   ===================================================== */
 
-    .logo {
-        font-size: 18px;
+.logo {
+    font-size: 18px;
 
-        letter-spacing: -0.5px;
-    }
+    letter-spacing: -0.5px;
+}
 
 
-    /* =====================================================
-       AÇÕES DO CABEÇALHO
-       ===================================================== */
+/* =====================================================
+   AÇÕES DO CABEÇALHO
+   ===================================================== */
 
-    .navbar-actions {
-        gap: 2px;
-    }
+.navbar-actions {
+    gap: 2px;
+}
 
 
-    /* =====================================================
-       BOTÕES DO CABEÇALHO
-       ===================================================== */
+/* =====================================================
+   BOTÕES DO CABEÇALHO
+   ===================================================== */
 
-    .nav-icon-btn {
-        width: 39px;
+.nav-icon-btn {
+    width: 39px;
 
-        height: 39px;
+    height: 39px;
 
-        border-radius: 12px;
-    }
+    border-radius: 12px;
+}
 
 
-    .top-icon-svg {
-        width: 26px;
+.top-icon-svg {
+    width: 26px;
 
-        height: 26px;
-    }
+    height: 26px;
+}
 
 
-    .cabecalho-usuario-btn {
-        width: 39px;
+.cabecalho-usuario-btn {
+    width: 39px;
 
-        height: 39px;
-    }
+    height: 39px;
+}
 
 
-    .cabecalho-avatar {
-        width: 30px;
+.cabecalho-avatar {
+    width: 30px;
 
-        height: 30px;
+    height: 30px;
 
-        min-width: 30px;
+    min-width: 30px;
 
-        min-height: 30px;
-    }
+    min-height: 30px;
+}
 
 
-    /* =====================================================
-       BADGES
-       ===================================================== */
+/* =====================================================
+   BADGES
+   ===================================================== */
 
-    .notification-badge {
-        top: 1px;
+.notification-badge {
+    top: 1px;
 
-        right: -1px;
+    right: -1px;
 
-        min-width: 16px;
+    min-width: 16px;
 
-        height: 16px;
+    height: 16px;
 
-        font-size: 7px;
+    font-size: 7px;
 
-        border-width: 1.5px;
-    }
+    border-width: 1.5px;
+}
 
 
-    /* =====================================================
-       ESTADO DESLOGADO
-       ===================================================== */
+/* =====================================================
+   ESTADO DESLOGADO
+   ===================================================== */
 
-    .cabecalho-btn-entrar {
-        height: 34px;
+.cabecalho-btn-entrar {
+    height: 34px;
 
-        padding: 0 11px;
+    padding: 0 11px;
 
-        font-size: 11px;
-    }
+    font-size: 11px;
+}
 
 
-    /* =====================================================
-       MENU DA CONTA
-       ===================================================== */
+/* =====================================================
+   MENU DA CONTA
+   ===================================================== */
 
-    .cabecalho-menu-usuario {
-        top: 56px;
+.cabecalho-menu-usuario {
+    top: 56px;
 
-        right: 10px;
+    right: 10px;
 
-        width: 180px;
+    width: 180px;
 
-        max-width: calc(100vw - 20px);
-    }
+    max-width: calc(100vw - 20px);
+}
 
 
-    /* =====================================================
-       CARDS
-       ===================================================== */
+/* =====================================================
+   FEED — TELA MUITO PEQUENA
+   ===================================================== */
 
-    .ad-card-novo {
-        height: 420px;
+.feed-profissionais {
+    width: 100%;
 
-        min-height: 420px;
+    gap: 0;
+}
 
-        max-height: 420px;
 
-        padding: 13px;
-    }
+.profissional-card-link {
+    width: 100%;
+}
 
 
-    .ad-media-box {
-        height: 200px;
+/* =====================================================
+   CARD
+   ===================================================== */
 
-        min-height: 200px;
+.ad-card-novo {
+    width: 100%;
 
-        max-height: 200px;
-    }
+    height: auto;
 
+    min-height: 0;
 
-    .ad-descricao {
-        min-height: 52px;
+    max-height: none;
 
-        max-height: 52px;
-    }
+    padding: 11px 11px 13px;
 
+    border: none;
 
-    .btn-detalhes {
-        padding: 8px 12px;
-    }
+    border-radius: 0;
 
+    box-shadow: none;
+}
 
-    /* =====================================================
-       AVISO DO FEED
-       ===================================================== */
 
-    .feed-aviso {
-        min-height: 48px;
+/* =====================================================
+   IDENTIDADE
+   ===================================================== */
 
-        gap: 8px;
+.ad-card-identidade {
+    gap: 8px;
+}
 
-        padding: 8px;
 
-        margin-bottom: 12px;
-    }
+.ad-mini-avatar,
+.ad-mini-avatar-fallback {
+    width: 31px;
 
+    height: 31px;
 
-    .feed-aviso-icone {
-        width: 27px;
+    min-width: 31px;
 
-        height: 27px;
+    min-height: 31px;
+}
 
-        min-width: 27px;
-    }
 
+.ad-card-nome {
+    font-size: 14px;
 
-    .feed-aviso-icone svg {
-        width: 16px;
+    line-height: 1.2;
+}
 
-        height: 16px;
-    }
 
+.ad-card-tipo {
+    font-size: 8.5px;
 
-    .feed-aviso-conteudo strong {
-        font-size: 11.5px;
-    }
+    margin-top: 2px;
 
+    line-height: 1.2;
+}
 
-    .feed-aviso-conteudo span {
-        font-size: 10px;
-    }
 
+/* =====================================================
+   CONTEÚDO DA PUBLICAÇÃO
+   ===================================================== */
 
-    .feed-aviso-fechar {
-        width: 26px;
+.ad-card-conteudo {
+    padding-top: 8px;
+}
 
-        height: 26px;
 
-        min-width: 26px;
-    }
+.ad-card-descricao {
+    font-size: 12px;
 
+    line-height: 1.4;
+}
 
-    /* =====================================================
-       CABEÇALHO DA SEÇÃO
-       ===================================================== */
 
-    .feed-header {
-        gap: 8px;
+/* =====================================================
+   MÍDIA
+   =====================================================
 
-        margin-bottom: 14px;
-    }
+   11px de margem negativa correspondem ao padding
+   lateral do card nesta resolução.
+   ===================================================== */
 
+.ad-media-box {
+    position: relative;
 
-    .feed-header h2 {
-        font-size: 18px;
-    }
+    inset: auto;
 
+    width: calc(100% + 22px);
 
-    .feed-header p {
-        font-size: 11px;
-    }
+    height: auto;
 
+    min-height: 0;
 
-    /* =====================================================
-       FILTRO
-       ===================================================== */
+    max-height: none;
 
-    .feed-filtro-btn {
-        width: 36px;
+    margin-left: -11px;
 
-        height: 36px;
+    margin-top: 10px;
 
-        min-width: 36px;
+    padding: 0;
+}
 
-        border-radius: 9px;
-    }
 
+/* =====================================================
+   IMAGEM
+   ===================================================== */
 
-    .feed-filtro-btn svg {
-        width: 17px;
+.ad-media-img {
+    width: 100%;
 
-        height: 17px;
-    }
+    height: auto;
 
+    min-height: 0;
 
-    /* =====================================================
-       PESQUISA — TELA MUITO PEQUENA
-       ===================================================== */
+    object-fit: cover;
+}
 
-    .search-overlay-header {
-        padding-left: 9px;
 
-        padding-right: 9px;
-    }
+/* =====================================================
+   VÍDEO
+   ===================================================== */
 
+.ad-video-container {
+    width: 100%;
 
-    .search-result-item {
-        padding-left: 10px;
+    height: auto;
 
-        padding-right: 10px;
-    }
+    min-height: 0;
+}
 
 
-    .search-result-avatar-wrapper {
-        width: 42px;
+/*
+ * Vídeo um pouco menor em telas muito pequenas.
+ */
 
-        height: 42px;
+.ad-video-container .ad-media-video {
+    width: 100%;
 
-        min-width: 42px;
+    height: 260px;
 
-        min-height: 42px;
+    min-height: 0;
 
-        flex-basis: 42px;
-    }
+    object-fit: cover;
 
+    object-position: center;
+}
 
-    .search-result-name {
-        font-size: 11px;
-    }
 
+/* =====================================================
+   AÇÕES SOCIAIS
+   ===================================================== */
 
-    .search-result-location,
-    .search-result-genre {
-        font-size: 8px;
-    }
+.ad-card-acoes {
+    min-height: 38px;
 
+    margin-top: 3px;
 
-    .search-overlay-cancelar {
-        font-size: 10px;
-    }
+    gap: 2px;
+}
+
+
+.ad-card-acao-btn {
+    min-width: 34px;
+
+    min-height: 34px;
+}
+
+
+/* =====================================================
+   INFORMAÇÕES COMPLEMENTARES
+   ===================================================== */
+
+.ad-card-informacoes {
+    opacity: 1;
+
+    visibility: visible;
+
+    max-height: none;
+
+    transform: translateY(0);
+
+    pointer-events: auto;
+}
+
+
+.ad-card-localizacao {
+    display: flex;
+
+    width: 100%;
+
+    min-width: 0;
+
+    margin-top: 5px;
+
+    overflow: hidden;
+
+    white-space: nowrap;
+
+    text-overflow: ellipsis;
+
+    font-size: 8.5px;
+}
+
+
+.ad-card-estilos {
+    display: flex;
+
+    width: 100%;
+
+    min-width: 0;
+}
+
+
+.ad-card-descricao {
+    display: block;
+}
+
+
+/* =====================================================
+   AÇÃO
+   ===================================================== */
+
+.ad-card-acao {
+    opacity: 1;
+
+    visibility: visible;
+
+    transform: translateY(0);
+
+    pointer-events: auto;
+}
+
+
+/* =====================================================
+   TOPO DA MÍDIA
+   ===================================================== */
+
+.ad-media-top {
+    top: 9px;
+
+    left: 9px;
+
+    right: 9px;
+}
+
+
+/* =====================================================
+   BOTÃO DE TELA CHEIA
+   ===================================================== */
+
+.btn-video-tela-cheia {
+    right: 8px;
+
+    bottom: 8px;
+}
+
+
+/* =====================================================
+   AVISO DO FEED
+   ===================================================== */
+
+.feed-aviso {
+    min-height: 48px;
+
+    gap: 8px;
+
+    padding: 8px;
+
+    margin-bottom: 12px;
+}
+
+
+.feed-aviso-icone {
+    width: 27px;
+
+    height: 27px;
+
+    min-width: 27px;
+}
+
+
+.feed-aviso-icone svg {
+    width: 16px;
+
+    height: 16px;
+}
+
+
+.feed-aviso-conteudo strong {
+    font-size: 11.5px;
+}
+
+
+.feed-aviso-conteudo span {
+    font-size: 10px;
+}
+
+
+.feed-aviso-fechar {
+    width: 26px;
+
+    height: 26px;
+
+    min-width: 26px;
+}
+
+
+/* =====================================================
+   CABEÇALHO DA SEÇÃO
+   ===================================================== */
+
+.feed-header {
+    gap: 8px;
+
+    margin-bottom: 14px;
+}
+
+
+.feed-header h2 {
+    font-size: 18px;
+}
+
+
+.feed-header p {
+    font-size: 11px;
+}
+
+
+/* =====================================================
+   FILTRO
+   ===================================================== */
+
+.feed-filtro-btn {
+    width: 36px;
+
+    height: 36px;
+
+    min-width: 36px;
+
+    border-radius: 9px;
+}
+
+
+.feed-filtro-btn svg {
+    width: 17px;
+
+    height: 17px;
+}
+
+
+/* =====================================================
+   PESQUISA — TELA MUITO PEQUENA
+   ===================================================== */
+
+.search-overlay-header {
+    padding-left: 9px;
+
+    padding-right: 9px;
+}
+
+
+.search-result-item {
+    padding-left: 10px;
+
+    padding-right: 10px;
+}
+
+
+.search-result-avatar-wrapper {
+    width: 42px;
+
+    height: 42px;
+
+    min-width: 42px;
+
+    min-height: 42px;
+
+    flex-basis: 42px;
+}
+
+
+.search-result-name {
+    font-size: 11px;
+}
+
+
+.search-result-location,
+.search-result-genre {
+    font-size: 8px;
+}
+
+
+.search-overlay-cancelar {
+    font-size: 10px;
+}
+
+
 }
 
 
 /* =========================================================
    REDUÇÃO DE MOVIMENTO
-   ========================================================= */
+========================================================= */
 
 @media (prefers-reduced-motion: reduce) {
 
-    .navbar,
-    .nav-icon-btn,
-    .cabecalho-usuario-btn,
-    .cabecalho-btn-entrar,
-    .cabecalho-menu-usuario,
-    .cabecalho-menu-usuario button,
-    .feed-filtro-btn,
-    .search-overlay,
-    .search-overlay-input,
-    .search-result-item,
-    .search-result-arrow,
-    .search-overlay-cancelar {
-        transition: none;
-    }
 
-
-    .search-loading-spinner,
-    .cabecalho-usuario-loading span {
-        animation: none;
-    }
+.navbar,
+.nav-icon-btn,
+.cabecalho-usuario-btn,
+.cabecalho-btn-entrar,
+.cabecalho-menu-usuario,
+.cabecalho-menu-usuario button,
+.feed-filtro-btn,
+.search-overlay,
+.search-overlay-input,
+.search-result-item,
+.search-result-arrow,
+.search-overlay-cancelar,
+.ad-card-novo,
+.ad-media-img,
+.ad-media-overlay,
+.ad-card-informacoes,
+.ad-card-acao,
+.ad-card-acoes,
+.ad-card-acao-btn {
+    transition: none;
 }
+
+
+.search-loading-spinner,
+.cabecalho-usuario-loading span {
+    animation: none;
+}
+
+
+.profissional-card-link:hover .ad-card-novo {
+    transform: none;
+}
+
+
+.profissional-card-link:hover .ad-media-img {
+    transform: none;
+}
+
+
+}
+
