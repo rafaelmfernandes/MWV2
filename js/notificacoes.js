@@ -1,1290 +1,2609 @@
-(function () {
+/* =========================================================
+MUSICALWORLD — PÁGINA DE NOTIFICAÇÕES
+
+Arquivo:
+js/notificacoes.js
+
+Responsabilidade:
+
+* Carregar o histórico de notificações do usuário.
+* Exibir as notificações da mais recente para a mais antiga.
+* Destacar notificações não lidas.
+* Identificar visualmente quem originou a notificação.
+* Exibir a foto do remetente quando existir.
+* Exibir a identidade do MusicalWorld para notificações do sistema.
+* Exibir o ícone do tipo de notificação no lado direito.
+* Marcar uma notificação individual como lida.
+* Marcar todas as notificações como lidas.
+* Atualizar a lista em tempo real através do Supabase Realtime.
+* Encaminhar o usuário para a página correspondente.
+
+Este arquivo NÃO controla a notificação flutuante.
+
+A notificação flutuante utiliza:
+
+js/components/modal-notificacao.js
+========================================================= */
+
+(function (window) {
+
 
 "use strict";
 
-/*
 
-=========================================================
-MUSICALWORLD
-CENTRAL DE SOLICITAÇÕES
-Esta página trabalha com:
-Solicitações recebidas de outros usuários
-Contratações criadas pelo fluxo do aplicativo
-Dados salvos no localStorage
-Posteriormente, quando o Supabase estiver conectado,
-esta mesma estrutura poderá ser alimentada pelo banco.
-=========================================================
-*/
+/* =========================================================
+   CONFIGURAÇÃO
+   ========================================================= */
 
-let solicitacoes = [];
+const CONFIG = {
 
-let filtroAtual = "todas";
+    tabela: "notificacoes",
 
-/*
+    tabelaUsuarios: "usuarios",
 
-=========================================================
-INICIALIZAÇÃO
-=========================================================
-*/
+    limiteInicial: 100,
 
-document.addEventListener("DOMContentLoaded", function () {
-
-carregarSolicitacoes();
-
-renderizarSolicitacoes();
-
-});
-
-/*
-
-=========================================================
-CARREGAR SOLICITAÇÕES
-=========================================================
-*/
-
-function carregarSolicitacoes() {
-
-solicitacoes = [];
-
-
-/*
- * ---------------------------------------------------------
- * 1. RECUPERA SOLICITAÇÕES SALVAS
- * ---------------------------------------------------------
- */
-
-try {
-
-  const salvas =
-    JSON.parse(
-      localStorage.getItem("solicitacoes_musicalworld") || "[]"
-    );
-
-
-  if (Array.isArray(salvas)) {
-
-    solicitacoes.push(...salvas);
-
-  }
-
-} catch (erro) {
-
-  console.error(
-    "Erro ao carregar solicitações:",
-    erro
-  );
-
-}
-
-
-/*
- * ---------------------------------------------------------
- * 2. RECUPERA A CONTRATAÇÃO MAIS RECENTE
- *
- * A página sucesso-servico.js mantém os dados em:
- *
- * evento_artista_atual
- * ---------------------------------------------------------
- */
-
-try {
-
-  const evento =
-    JSON.parse(
-      localStorage.getItem("evento_artista_atual") || "null"
-    );
-
-
-  if (
-    evento &&
-    evento.servico
-  ) {
-
-    const idEvento =
-      evento.id ||
-      evento.idContratacao ||
-      gerarIdLocal();
-
+    paginaAnterior: "index.html",
 
     /*
-     * Evita duplicar a mesma contratação.
+     * Caminho da imagem padrão do sistema.
+     *
+     * Caso o projeto utilize outro arquivo para a identidade
+     * visual do MusicalWorld, basta alterar este caminho.
+     */
+    imagemSistema: "img/logo-musicalworld.svg"
+
+};
+
+
+/* =========================================================
+   ESTADO INTERNO DO MÓDULO
+   ========================================================= */
+
+const estado = {
+
+    inicializado: false,
+
+    usuarioId: null,
+
+    notificacoes: [],
+
+    remetentes: new Map(),
+
+    canalRealtime: null,
+
+    carregando: false
+
+};
+
+
+/* =========================================================
+   REFERÊNCIAS DOS ELEMENTOS
+   ========================================================= */
+
+const elementos = {
+
+    btnVoltar: null,
+
+    btnMarcarTodas: null,
+
+    btnTentarNovamente: null,
+
+    contador: null,
+
+    lista: null,
+
+    estadoCarregando: null,
+
+    estadoVazio: null,
+
+    estadoErro: null,
+
+    mensagemErro: null
+
+};
+
+
+/* =========================================================
+   OBTÉM O CLIENTE SUPABASE
+   ========================================================= */
+
+function obterSupabase() {
+
+    if (
+        window.supabaseClient
+    ) {
+
+        return window.supabaseClient;
+
+    }
+
+
+    if (
+        window.SupabaseClient &&
+        typeof window.SupabaseClient.getClient === "function"
+    ) {
+
+        return window.SupabaseClient.getClient();
+
+    }
+
+
+    if (
+        window.SupabaseClient &&
+        window.SupabaseClient.client
+    ) {
+
+        return window.SupabaseClient.client;
+
+    }
+
+
+    return null;
+
+}
+
+
+/* =========================================================
+   CAPTURA DOS ELEMENTOS DO DOM
+   ========================================================= */
+
+function capturarElementos() {
+
+    elementos.btnVoltar =
+        document.getElementById("btnVoltar");
+
+
+    elementos.btnMarcarTodas =
+        document.getElementById("btnMarcarTodas");
+
+
+    elementos.btnTentarNovamente =
+        document.getElementById("btnTentarNovamente");
+
+
+    elementos.contador =
+        document.getElementById("contadorNotificacoes");
+
+
+    elementos.lista =
+        document.getElementById("listaNotificacoes");
+
+
+    elementos.estadoCarregando =
+        document.getElementById("estadoCarregando");
+
+
+    elementos.estadoVazio =
+        document.getElementById("estadoVazio");
+
+
+    elementos.estadoErro =
+        document.getElementById("estadoErro");
+
+
+    elementos.mensagemErro =
+        document.getElementById("mensagemErro");
+
+}
+
+
+/* =========================================================
+   CONFIGURAÇÃO DOS EVENTOS
+   ========================================================= */
+
+function configurarEventos() {
+
+    if (
+        elementos.btnVoltar
+    ) {
+
+        elementos.btnVoltar.addEventListener(
+            "click",
+            voltar
+        );
+
+    }
+
+
+    if (
+        elementos.btnMarcarTodas
+    ) {
+
+        elementos.btnMarcarTodas.addEventListener(
+            "click",
+            marcarTodasComoLidas
+        );
+
+    }
+
+
+    if (
+        elementos.btnTentarNovamente
+    ) {
+
+        elementos.btnTentarNovamente.addEventListener(
+            "click",
+            tentarNovamente
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   OBTÉM USUÁRIO AUTENTICADO
+   ========================================================= */
+
+async function obterUsuarioAtual() {
+
+    if (
+        window.Sessao &&
+        typeof window.Sessao.usuarioAtual === "function"
+    ) {
+
+        const usuario =
+            await window.Sessao.usuarioAtual();
+
+
+        if (
+            usuario &&
+            usuario.id
+        ) {
+
+            estado.usuarioId =
+                usuario.id;
+
+
+            console.log(
+                "Notificacoes: usuário autenticado.",
+                estado.usuarioId
+            );
+
+
+            return usuario;
+
+        }
+
+    }
+
+
+    const supabase =
+        obterSupabase();
+
+
+    if (!supabase) {
+
+        throw new Error(
+            "Cliente Supabase não encontrado."
+        );
+
+    }
+
+
+    const resultado =
+        await supabase.auth.getUser();
+
+
+    if (
+        resultado.error
+    ) {
+
+        throw resultado.error;
+
+    }
+
+
+    if (
+        !resultado.data ||
+        !resultado.data.user
+    ) {
+
+        throw new Error(
+            "Usuário não autenticado."
+        );
+
+    }
+
+
+    estado.usuarioId =
+        resultado.data.user.id;
+
+
+    console.log(
+        "Notificacoes: usuário autenticado.",
+        estado.usuarioId
+    );
+
+
+    return resultado.data.user;
+
+}
+
+
+/* =========================================================
+   CARREGA NOTIFICAÇÕES
+   ========================================================= */
+
+async function carregarNotificacoes() {
+
+    const supabase =
+        obterSupabase();
+
+
+    if (!supabase) {
+
+        mostrarErro(
+            "O serviço de notificações não está disponível."
+        );
+
+        return;
+
+    }
+
+
+    if (!estado.usuarioId) {
+
+        mostrarErro(
+            "Não foi possível identificar o usuário."
+        );
+
+        return;
+
+    }
+
+
+    estado.carregando = true;
+
+
+    mostrarCarregando();
+
+
+    try {
+
+        const resultado =
+            await supabase
+                .from(CONFIG.tabela)
+                .select(
+                    [
+                        "id",
+                        "usuario_id",
+                        "remetente_id",
+                        "tipo",
+                        "titulo",
+                        "mensagem",
+                        "referencia_id",
+                        "referencia_tipo",
+                        "lida",
+                        "created_at"
+                    ].join(",")
+                )
+                .eq(
+                    "usuario_id",
+                    estado.usuarioId
+                )
+                .order(
+                    "created_at",
+                    {
+                        ascending: false
+                    }
+                )
+                .limit(
+                    CONFIG.limiteInicial
+                );
+
+
+        if (
+            resultado.error
+        ) {
+
+            throw resultado.error;
+
+        }
+
+
+        estado.notificacoes =
+            Array.isArray(resultado.data)
+                ? resultado.data
+                : [];
+
+
+        await carregarRemetentes();
+
+
+        console.log(
+            "Notificacoes: notificações carregadas:",
+            estado.notificacoes.length
+        );
+
+
+        renderizar();
+
+    } catch (erro) {
+
+        console.error(
+            "Notificacoes: erro ao carregar:",
+            erro
+        );
+
+
+        estado.notificacoes = [];
+
+
+        mostrarErro(
+            obterMensagemErro(erro)
+        );
+
+    } finally {
+
+        estado.carregando = false;
+
+    }
+
+}
+
+
+/* =========================================================
+   CARREGA DADOS DOS REMETENTES
+
+   As notificações guardam somente o remetente_id.
+
+   Os dados visuais do remetente são carregados aqui:
+
+   - id
+   - nome
+   - foto_url
+
+   Notificações sem remetente_id são tratadas como
+   notificações do sistema.
+   ========================================================= */
+
+async function carregarRemetentes() {
+
+    estado.remetentes.clear();
+
+
+    const ids =
+        estado.notificacoes
+            .map(
+                function (notificacao) {
+
+                    return notificacao.remetente_id;
+
+                }
+            )
+            .filter(
+                function (id) {
+
+                    return Boolean(id);
+
+                }
+            );
+
+
+    const idsUnicos =
+        Array.from(
+            new Set(ids)
+        );
+
+
+    if (
+        !idsUnicos.length
+    ) {
+
+        return;
+
+    }
+
+
+    const supabase =
+        obterSupabase();
+
+
+    if (!supabase) {
+
+        return;
+
+    }
+
+
+    try {
+
+        const resultado =
+            await supabase
+                .from(CONFIG.tabelaUsuarios)
+                .select(
+                    "id,nome,foto_url"
+                )
+                .in(
+                    "id",
+                    idsUnicos
+                );
+
+
+        if (
+            resultado.error
+        ) {
+
+            console.error(
+                "Notificacoes: erro ao carregar remetentes:",
+                resultado.error
+            );
+
+            return;
+
+        }
+
+
+        if (
+            !Array.isArray(resultado.data)
+        ) {
+
+            return;
+
+        }
+
+
+        resultado.data.forEach(
+            function (usuario) {
+
+                if (
+                    usuario &&
+                    usuario.id
+                ) {
+
+                    estado.remetentes.set(
+                        usuario.id,
+                        usuario
+                    );
+
+                }
+
+            }
+        );
+
+    } catch (erro) {
+
+        console.error(
+            "Notificacoes: erro inesperado ao carregar remetentes:",
+            erro
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   RENDERIZA A LISTA
+   ========================================================= */
+
+function renderizar() {
+
+    ocultarCarregando();
+
+    ocultarErro();
+
+    ocultarVazio();
+
+
+    if (!elementos.lista) {
+
+        return;
+
+    }
+
+
+    elementos.lista.innerHTML = "";
+
+
+    atualizarContador();
+
+    atualizarBotaoMarcarTodas();
+
+
+    if (
+        !estado.notificacoes.length
+    ) {
+
+        mostrarVazio();
+
+        return;
+
+    }
+
+
+    estado.notificacoes.forEach(
+        function (notificacao) {
+
+            const elemento =
+                criarNotificacao(
+                    notificacao
+                );
+
+
+            elementos.lista.appendChild(
+                elemento
+            );
+
+        }
+    );
+
+
+    atualizarIcones();
+
+}
+
+
+/* =========================================================
+   CRIA ITEM DE NOTIFICAÇÃO
+   ========================================================= */
+
+function criarNotificacao(
+    notificacao
+) {
+
+    const elemento =
+        document.createElement(
+            "article"
+        );
+
+
+    elemento.className =
+        "notificacao-item";
+
+
+    if (
+        notificacao.lida !== true
+    ) {
+
+        elemento.classList.add(
+            "nao-lida"
+        );
+
+    }
+
+
+    elemento.tabIndex = 0;
+
+
+    elemento.setAttribute(
+        "role",
+        "button"
+    );
+
+
+    elemento.setAttribute(
+        "aria-label",
+        obterAriaLabel(notificacao)
+    );
+
+
+    const titulo =
+        escaparHtml(
+            notificacao.titulo ||
+            obterTituloPadrao(
+                notificacao.tipo
+            )
+        );
+
+
+    const mensagem =
+        escaparHtml(
+            notificacao.mensagem ||
+            ""
+        );
+
+
+    const data =
+        formatarData(
+            notificacao.created_at
+        );
+
+
+    const remetente =
+        obterDadosRemetente(
+            notificacao
+        );
+
+
+    const nomeRemetente =
+        escaparHtml(
+            remetente.nome
+        );
+
+
+    const avatar =
+        criarAvatarRemetente(
+            remetente
+        );
+
+
+    const icone =
+        obterIcone(
+            notificacao.tipo
+        );
+
+
+    elemento.innerHTML = `
+
+        <div
+            class="notificacao-avatar"
+            aria-hidden="true"
+        >
+            ${avatar}
+        </div>
+
+
+        <div class="notificacao-conteudo">
+
+            <div class="notificacao-linha-superior">
+
+                <div class="notificacao-identidade">
+
+                    <strong class="notificacao-remetente-nome">
+                        ${nomeRemetente}
+                    </strong>
+
+                    <span class="notificacao-tipo-texto">
+                        ${titulo}
+                    </span>
+
+                </div>
+
+
+                <time
+                    class="notificacao-data"
+                    datetime="${escaparHtml(
+                        notificacao.created_at || ""
+                    )}"
+                >
+                    ${data}
+                </time>
+
+            </div>
+
+
+            ${
+                mensagem
+                    ? `
+                        <p class="notificacao-mensagem">
+                            ${mensagem}
+                        </p>
+                      `
+                    : ""
+            }
+
+        </div>
+
+
+        <div
+            class="notificacao-icone"
+            aria-hidden="true"
+        >
+            ${icone}
+        </div>
+
+
+        <span
+            class="notificacao-indicador"
+            aria-hidden="true"
+        ></span>
+
+    `;
+
+
+    elemento.addEventListener(
+        "click",
+        function () {
+
+            abrirNotificacao(
+                notificacao
+            );
+
+        }
+    );
+
+
+    elemento.addEventListener(
+        "keydown",
+        function (evento) {
+
+            if (
+                evento.key === "Enter" ||
+                evento.key === " "
+            ) {
+
+                evento.preventDefault();
+
+
+                abrirNotificacao(
+                    notificacao
+                );
+
+            }
+
+        }
+    );
+
+
+    return elemento;
+
+}
+
+
+/* =========================================================
+   OBTÉM DADOS DO REMETENTE
+   ========================================================= */
+
+function obterDadosRemetente(
+    notificacao
+) {
+
+    /*
+     * Sem remetente_id significa que a origem é o
+     * próprio MusicalWorld.
      */
 
-    const jaExiste =
-      solicitacoes.some(function (item) {
+    if (
+        !notificacao ||
+        !notificacao.remetente_id
+    ) {
 
-        return (
-          item.id === idEvento ||
-          item.idContratacao === idEvento
+        return {
+
+            nome: "MusicalWorld",
+
+            fotoUrl:
+                CONFIG.imagemSistema,
+
+            sistema: true
+
+        };
+
+    }
+
+
+    const usuario =
+        estado.remetentes.get(
+            notificacao.remetente_id
         );
 
-      });
 
+    if (
+        usuario
+    ) {
 
-    if (!jaExiste) {
+        return {
 
-      const novaSolicitacao = {
+            nome:
+                usuario.nome ||
+                "Usuário",
 
-        id: idEvento,
+            fotoUrl:
+                usuario.foto_url ||
+                "",
 
-        tipo: "contratacao",
+            sistema: false
 
-        contratante:
-          evento.contratante ||
-          "Nova contratação",
-
-        artista:
-          evento.artista ||
-          "",
-
-        servico:
-          evento.servico ||
-          "Serviço personalizado",
-
-        preco:
-          evento.preco ||
-          "",
-
-        data:
-          evento.dataDoEvento ||
-          "",
-
-        horario:
-          evento.horarioDoEvento ||
-          "",
-
-        local:
-          evento.nomeLocal ||
-          "Local não informado",
-
-        endereco:
-          evento.localDoEvento ||
-          "",
-
-        cep:
-          evento.cep ||
-          "",
-
-        pagamento:
-          evento.pagamento ||
-          "",
-
-        observacao:
-          evento.observacao ||
-          "",
-
-        status:
-          normalizarStatus(
-            evento.status
-          ) || "pendente",
-
-        criadaEm:
-          evento.criadaEm ||
-          new Date().toISOString()
-
-      };
-
-
-      solicitacoes.unshift(
-        novaSolicitacao
-      );
-
-
-      salvarSolicitacoes();
+        };
 
     }
 
-  }
 
-} catch (erro) {
+    return {
 
-  console.error(
-    "Erro ao carregar contratação atual:",
-    erro
-  );
+        nome: "Usuário",
 
-}
+        fotoUrl: "",
 
+        sistema: false
 
-/*
- * ---------------------------------------------------------
- * 3. SE NÃO EXISTIR NENHUMA SOLICITAÇÃO
- *
- * Mantemos exemplos somente para desenvolvimento.
- *
- * Eles serão removidos automaticamente quando houver
- * dados reais.
- * ---------------------------------------------------------
- */
-
-if (solicitacoes.length === 0) {
-
-  solicitacoes = obterDadosDemonstracao();
-
-}
-
-}
-
-/*
-
-=========================================================
-DADOS DE DEMONSTRAÇÃO
-=========================================================
-*/
-
-function obterDadosDemonstracao() {
-
-return [
-
-  {
-
-    id: "demo-carlos",
-
-    tipo: "proposta",
-
-    contratante: "Carlos Silva",
-
-    servico:
-      "Show Acústico (Voz e Violão)",
-
-    preco: "1200",
-
-    data: "2026-09-18",
-
-    horario: "20:00",
-
-    local:
-      "Setor Bueno, Goiânia - GO",
-
-    endereco:
-      "Setor Bueno, Goiânia - GO",
-
-    pagamento:
-      "PIX",
-
-    observacao:
-      "Aniversário de 40 anos para cerca de 80 pessoas. Precisamos de um repertório bem animado de sertanejo universitário.",
-
-    status: "pendente"
-
-  },
-
-
-  {
-
-    id: "demo-amanda",
-
-    tipo: "proposta",
-
-    contratante:
-      "Amanda Lima (Produção Eventos)",
-
-    servico:
-      "Banda Completa (Diária)",
-
-    preco: "2800",
-
-    data: "2026-09-25",
-
-    horario: "22:00",
-
-    local:
-      "Anápolis - GO",
-
-    endereco:
-      "Anápolis - GO",
-
-    pagamento:
-      "PIX",
-
-    observacao:
-      "",
-
-    status: "aceito"
-
-  }
-
-];
-
-}
-
-/*
-
-=========================================================
-RENDERIZAR
-=========================================================
-*/
-
-function renderizarSolicitacoes() {
-
-const container =
-  document.getElementById(
-    "notifications-list"
-  );
-
-const emptyState =
-  document.getElementById(
-    "empty-state"
-  );
-
-
-if (!container) {
-  return;
-}
-
-
-container.innerHTML = "";
-
-
-const filtradas =
-  solicitacoes.filter(function (item) {
-
-    if (filtroAtual === "todas") {
-      return true;
-    }
-
-    return normalizarStatus(item.status) === filtroAtual;
-
-  });
-
-
-if (filtradas.length === 0) {
-
-  container.style.display = "none";
-
-  if (emptyState) {
-    emptyState.style.display = "block";
-  }
-
-  return;
+    };
 
 }
 
 
-container.style.display = "flex";
+/* =========================================================
+   CRIA AVATAR DO REMETENTE
+   ========================================================= */
 
-if (emptyState) {
-  emptyState.style.display = "none";
-}
-
-
-filtradas.forEach(function (solicitacao) {
-
-  container.appendChild(
-    criarCardSolicitacao(
-      solicitacao
-    )
-  );
-
-});
-
-}
-
-/*
-
-=========================================================
-CRIAR CARD
-=========================================================
-*/
-
-function criarCardSolicitacao(
-solicitacao
+function criarAvatarRemetente(
+    remetente
 ) {
 
-const card =
-  document.createElement("div");
+    const nome =
+        remetente &&
+        remetente.nome
+            ? remetente.nome
+            : "Usuário";
 
 
-const status =
-  normalizarStatus(
-    solicitacao.status
-  );
+    const fotoUrl =
+        remetente &&
+        remetente.fotoUrl
+            ? remetente.fotoUrl
+            : "";
 
 
-card.className =
-  "notification-card " +
-  obterClasseStatus(status);
+    if (
+        fotoUrl
+    ) {
+
+        return `
+
+            <img
+                class="notificacao-avatar-imagem"
+                src="${escaparHtml(fotoUrl)}"
+                alt=""
+                loading="lazy"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+            >
+
+            <span
+                class="notificacao-avatar-iniciais"
+                style="display:none;"
+            >
+                ${escaparHtml(
+                    obterIniciais(nome)
+                )}
+            </span>
+
+        `;
+
+    }
 
 
-const nome =
-  solicitacao.contratante ||
-  solicitacao.cliente ||
-  "Contratante";
+    return `
 
-
-const iniciais =
-  gerarIniciais(nome);
-
-
-const cor =
-  gerarCorAvatar(nome);
-
-
-const badge =
-  obterTextoStatus(status);
-
-
-const data =
-  formatarData(
-    solicitacao.data
-  );
-
-
-const horario =
-  solicitacao.horario ||
-  "--:--";
-
-
-const preco =
-  formatarPreco(
-    solicitacao.preco
-  );
-
-
-const local =
-  solicitacao.local ||
-  "Local não informado";
-
-
-const endereco =
-  solicitacao.endereco ||
-  "";
-
-
-const observacao =
-  solicitacao.observacao ||
-  "";
-
-
-card.innerHTML = `
-
-  <div class="notif-card-top">
-
-    <div
-      class="notif-avatar"
-      style="background-color: ${cor};"
-    >
-      ${iniciais}
-    </div>
-
-
-    <div class="notif-user-details">
-
-      <div class="notif-name-row">
-
-        <h4>
-          ${escaparHTML(nome)}
-        </h4>
-
-        <span class="badge-status ${status}">
-          ${badge}
+        <span
+            class="notificacao-avatar-iniciais"
+        >
+            ${escaparHtml(
+                remetente && remetente.sistema
+                    ? "M"
+                    : obterIniciais(nome)
+            )}
         </span>
 
-      </div>
-
-
-      <span class="notif-location">
-        ${escaparHTML(local)}
-      </span>
-
-    </div>
-
-  </div>
-
-
-  <div class="notif-details-box">
-
-    <div class="notif-info-row">
-
-      <span class="label">
-        Serviço
-      </span>
-
-      <span class="value">
-        ${escaparHTML(
-          solicitacao.servico ||
-          "Serviço não informado"
-        )}
-      </span>
-
-    </div>
-
-
-    <div class="notif-info-row">
-
-      <span class="label">
-        Data
-      </span>
-
-      <span class="value">
-        ${data}
-        ${horario !== "--:--" ? " às " + escaparHTML(horario) : ""}
-      </span>
-
-    </div>
-
-
-    <div class="notif-info-row">
-
-      <span class="label">
-        ${status === "aceito"
-          ? "Valor acordado"
-          : "Valor oferecido"}
-      </span>
-
-      <span class="value cash">
-        ${preco}
-      </span>
-
-    </div>
-
-
-    ${
-      endereco
-        ? `
-          <div class="notif-info-row">
-
-            <span class="label">
-              Endereço
-            </span>
-
-            <span class="value">
-              ${escaparHTML(endereco)}
-            </span>
-
-          </div>
-        `
-        : ""
-    }
-
-
-    ${
-      solicitacao.pagamento
-        ? `
-          <div class="notif-info-row">
-
-            <span class="label">
-              Pagamento
-            </span>
-
-            <span class="value">
-              ${escaparHTML(
-                formatarPagamento(
-                  solicitacao.pagamento
-                )
-              )}
-            </span>
-
-          </div>
-        `
-        : ""
-    }
-
-
-    ${
-      observacao
-        ? `
-          <p class="notif-obs">
-            "${escaparHTML(observacao)}"
-          </p>
-        `
-        : ""
-    }
-
-  </div>
-
-
-  <div class="notif-actions">
-
-    ${criarBotoesAcao(
-      solicitacao,
-      status
-    )}
-
-  </div>
-
-`;
-
-
-return card;
+    `;
 
 }
 
-/*
 
-=========================================================
-BOTÕES
-=========================================================
-*/
+/* =========================================================
+   OBTÉM INICIAIS
+   ========================================================= */
 
-function criarBotoesAcao(
-solicitacao,
-status
+function obterIniciais(
+    nome
 ) {
 
-if (status === "pendente") {
-
-  return `
-
-    <button
-      class="btn-recusar"
-      onclick="responderProposta('${solicitacao.id}', 'recusada')"
-    >
-      Recusar
-    </button>
+    const texto =
+        String(
+            nome || ""
+        )
+            .trim();
 
 
-    <button
-      class="btn-aceitar"
-      onclick="responderProposta('${solicitacao.id}', 'aceita')"
-    >
-      Aceitar proposta
-    </button>
+    if (!texto) {
 
-  `;
+        return "U";
 
-}
+    }
 
 
-if (status === "aceito") {
-
-  return `
-
-    <button
-      class="btn-chat"
-      onclick="abrirMensagens('${solicitacao.id}')"
-    >
-      Conversar com contratante
-    </button>
-
-  `;
-
-}
+    const partes =
+        texto
+            .split(/\s+/)
+            .filter(Boolean);
 
 
-return `
+    if (
+        partes.length === 1
+    ) {
 
-  <button
-    class="btn-chat"
-    onclick="verDetalhes('${solicitacao.id}')"
-  >
-    Ver detalhes
-  </button>
+        return partes[0]
+            .substring(0, 2)
+            .toUpperCase();
 
-`;
+    }
+
+
+    return (
+        partes[0].charAt(0) +
+        partes[partes.length - 1].charAt(0)
+    ).toUpperCase();
 
 }
 
-/*
 
-=========================================================
-ACEITAR / RECUSAR
-=========================================================
-*/
+/* =========================================================
+   ABRE UMA NOTIFICAÇÃO
+   ========================================================= */
 
-window.responderProposta =
-function (id, resposta) {
-
-  const solicitacao =
-    solicitacoes.find(function (item) {
-
-      return (
-        item.id === id ||
-        item.idContratacao === id
-      );
-
-    });
-
-
-  if (!solicitacao) {
-
-    console.warn(
-      "Solicitação não encontrada:",
-      id
-    );
-
-    return;
-
-  }
-
-
-  if (resposta === "aceita") {
-
-    solicitacao.status =
-      "aceito";
-
-  } else {
-
-    solicitacao.status =
-      "recusado";
-
-  }
-
-
-  solicitacao.atualizadaEm =
-    new Date().toISOString();
-
-
-  salvarSolicitacoes();
-
-
-  /*
-   * Mantém o evento atual sincronizado.
-   */
-
-  sincronizarEventoAtual(
-    solicitacao
-  );
-
-
-  renderizarSolicitacoes();
-
-};
-
-/*
-
-=========================================================
-SINCRONIZAR EVENTO ATUAL
-=========================================================
-*/
-
-function sincronizarEventoAtual(
-solicitacao
+async function abrirNotificacao(
+    notificacao
 ) {
 
-try {
+    if (!notificacao) {
 
-  const evento =
-    JSON.parse(
-      localStorage.getItem(
-        "evento_artista_atual"
-      ) || "null"
-    );
+        return;
+
+    }
 
 
-  if (!evento) {
-    return;
-  }
+    if (
+        notificacao.lida !== true
+    ) {
 
-
-  const idEvento =
-    evento.id ||
-    evento.idContratacao;
-
-
-  if (
-    idEvento === solicitacao.id
-  ) {
-
-    evento.status =
-      solicitacao.status;
-
-    evento.atualizadaEm =
-      solicitacao.atualizadaEm;
-
-
-    localStorage.setItem(
-      "evento_artista_atual",
-      JSON.stringify(evento)
-    );
-
-  }
-
-} catch (erro) {
-
-  console.error(
-    "Erro ao sincronizar evento:",
-    erro
-  );
-
-}
-
-}
-
-/*
-
-=========================================================
-FILTROS
-=========================================================
-*/
-
-window.filtrarSolicitacoes =
-function (filtro) {
-
-  filtroAtual = filtro;
-
-
-  document
-    .querySelectorAll(".filter-tab")
-    .forEach(function (botao) {
-
-      botao.classList.toggle(
-        "ativo",
-        botao.dataset.filtro === filtro
-      );
-
-    });
-
-
-  renderizarSolicitacoes();
-
-};
-
-/*
-
-=========================================================
-ABRIR MENSAGENS
-=========================================================
-*/
-
-window.abrirMensagens =
-function (id) {
-
-  const solicitacao =
-    solicitacoes.find(function (item) {
-
-      return item.id === id;
-
-    });
-
-
-  const params =
-    new URLSearchParams();
-
-
-  if (solicitacao) {
-
-    params.set(
-      "id",
-      solicitacao.id
-    );
-
-    params.set(
-      "contratante",
-      solicitacao.contratante || ""
-    );
-
-    params.set(
-      "artista",
-      solicitacao.artista || ""
-    );
-
-  }
-
-
-  window.location.href =
-    "mensagens.html?" +
-    params.toString();
-
-};
-
-/*
-
-=========================================================
-DETALHES
-=========================================================
-*/
-
-window.verDetalhes =
-function (id) {
-
-  const solicitacao =
-    solicitacoes.find(function (item) {
-
-      return item.id === id;
-
-    });
-
-
-  if (!solicitacao) {
-    return;
-  }
-
-
-  const params =
-    new URLSearchParams();
-
-
-  Object.keys(solicitacao)
-    .forEach(function (chave) {
-
-      if (
-        solicitacao[chave] !== undefined &&
-        solicitacao[chave] !== null
-      ) {
-
-        params.set(
-          chave,
-          solicitacao[chave]
+        await marcarComoLida(
+            notificacao.id
         );
 
-      }
-
-    });
+    }
 
 
-  window.location.href =
-    "resumo-servico.html?" +
-    params.toString();
+    const url =
+        obterUrlNotificacao(
+            notificacao
+        );
 
-};
 
-/*
+    if (url) {
 
-=========================================================
-SALVAR
-=========================================================
-*/
+        window.location.href =
+            url;
 
-function salvarSolicitacoes() {
-
-try {
-
-  localStorage.setItem(
-    "solicitacoes_musicalworld",
-    JSON.stringify(
-      solicitacoes
-    )
-  );
-
-} catch (erro) {
-
-  console.error(
-    "Erro ao salvar solicitações:",
-    erro
-  );
+    }
 
 }
 
+
+/* =========================================================
+   MARCA UMA NOTIFICAÇÃO COMO LIDA
+   ========================================================= */
+
+async function marcarComoLida(
+    notificacaoId
+) {
+
+    if (
+        !notificacaoId ||
+        !estado.usuarioId
+    ) {
+
+        return false;
+
+    }
+
+
+    const supabase =
+        obterSupabase();
+
+
+    if (!supabase) {
+
+        return false;
+
+    }
+
+
+    try {
+
+        const resultado =
+            await supabase
+                .from(CONFIG.tabela)
+                .update({
+                    lida: true
+                })
+                .eq(
+                    "id",
+                    notificacaoId
+                )
+                .eq(
+                    "usuario_id",
+                    estado.usuarioId
+                );
+
+
+        if (
+            resultado.error
+        ) {
+
+            throw resultado.error;
+
+        }
+
+
+        const notificacao =
+            estado.notificacoes.find(
+                function (item) {
+
+                    return (
+                        item.id ===
+                        notificacaoId
+                    );
+
+                }
+            );
+
+
+        if (notificacao) {
+
+            notificacao.lida = true;
+
+        }
+
+
+        renderizar();
+
+
+        return true;
+
+    } catch (erro) {
+
+        console.error(
+            "Notificacoes: erro ao marcar como lida:",
+            erro
+        );
+
+
+        return false;
+
+    }
+
 }
 
-/*
 
-=========================================================
-FORMATADORES
-=========================================================
-*/
+/* =========================================================
+   MARCA TODAS COMO LIDAS
+   ========================================================= */
+
+async function marcarTodasComoLidas() {
+
+    if (
+        !estado.usuarioId
+    ) {
+
+        return;
+
+    }
+
+
+    const existemNaoLidas =
+        estado.notificacoes.some(
+            function (notificacao) {
+
+                return (
+                    notificacao.lida !== true
+                );
+
+            }
+        );
+
+
+    if (!existemNaoLidas) {
+
+        return;
+
+    }
+
+
+    const supabase =
+        obterSupabase();
+
+
+    if (!supabase) {
+
+        return;
+
+    }
+
+
+    if (
+        elementos.btnMarcarTodas
+    ) {
+
+        elementos.btnMarcarTodas.disabled =
+            true;
+
+    }
+
+
+    try {
+
+        const resultado =
+            await supabase
+                .from(CONFIG.tabela)
+                .update({
+                    lida: true
+                })
+                .eq(
+                    "usuario_id",
+                    estado.usuarioId
+                )
+                .eq(
+                    "lida",
+                    false
+                );
+
+
+        if (
+            resultado.error
+        ) {
+
+            throw resultado.error;
+
+        }
+
+
+        estado.notificacoes.forEach(
+            function (notificacao) {
+
+                notificacao.lida = true;
+
+            }
+        );
+
+
+        renderizar();
+
+    } catch (erro) {
+
+        console.error(
+            "Notificacoes: erro ao marcar todas como lidas:",
+            erro
+        );
+
+
+        mostrarErro(
+            "Não foi possível marcar todas as notificações como lidas."
+        );
+
+    } finally {
+
+        if (
+            elementos.btnMarcarTodas
+        ) {
+
+            elementos.btnMarcarTodas.disabled =
+                false;
+
+        }
+
+    }
+
+}
+
+
+/* =========================================================
+   INICIA REALTIME
+   ========================================================= */
+
+function iniciarRealtime() {
+
+    const supabase =
+        obterSupabase();
+
+
+    if (
+        !supabase ||
+        !estado.usuarioId
+    ) {
+
+        return;
+
+    }
+
+
+    destruirRealtime();
+
+
+    console.log(
+        "Notificacoes: iniciando Realtime."
+    );
+
+
+    estado.canalRealtime =
+        supabase
+            .channel(
+                "notificacoes-pagina"
+            )
+            .on(
+                "postgres_changes",
+                {
+                    event: "INSERT",
+                    schema: "public",
+                    table: CONFIG.tabela,
+                    filter:
+                        `usuario_id=eq.${estado.usuarioId}`
+                },
+                async function (payload) {
+
+                    await prepararNotificacaoRealtime(
+                        payload.new
+                    );
+
+                }
+            )
+            .on(
+                "postgres_changes",
+                {
+                    event: "UPDATE",
+                    schema: "public",
+                    table: CONFIG.tabela,
+                    filter:
+                        `usuario_id=eq.${estado.usuarioId}`
+                },
+                async function (payload) {
+
+                    await prepararNotificacaoRealtime(
+                        payload.new
+                    );
+
+                }
+            )
+            .subscribe(
+                function (status) {
+
+                    console.log(
+                        "Notificacoes: status Realtime:",
+                        status
+                    );
+
+                }
+            );
+
+}
+
+
+/* =========================================================
+   PREPARA NOTIFICAÇÃO RECEBIDA PELO REALTIME
+   ========================================================= */
+
+async function prepararNotificacaoRealtime(
+    notificacao
+) {
+
+    if (
+        !notificacao ||
+        notificacao.usuario_id !==
+            estado.usuarioId
+    ) {
+
+        return;
+
+    }
+
+
+    await carregarRemetenteRealtime(
+        notificacao
+    );
+
+
+    if (
+        estado.notificacoes.some(
+            function (item) {
+
+                return (
+                    item.id ===
+                    notificacao.id
+                );
+
+            }
+        )
+    ) {
+
+        atualizarNotificacaoRealtime(
+            notificacao
+        );
+
+        return;
+
+    }
+
+
+    adicionarNotificacaoRealtime(
+        notificacao
+    );
+
+}
+
+
+/* =========================================================
+   CARREGA REMETENTE DE UMA NOTIFICAÇÃO REALTIME
+   ========================================================= */
+
+async function carregarRemetenteRealtime(
+    notificacao
+) {
+
+    if (
+        !notificacao ||
+        !notificacao.remetente_id
+    ) {
+
+        return;
+
+    }
+
+
+    if (
+        estado.remetentes.has(
+            notificacao.remetente_id
+        )
+    ) {
+
+        return;
+
+    }
+
+
+    const supabase =
+        obterSupabase();
+
+
+    if (!supabase) {
+
+        return;
+
+    }
+
+
+    try {
+
+        const resultado =
+            await supabase
+                .from(CONFIG.tabelaUsuarios)
+                .select(
+                    "id,nome,foto_url"
+                )
+                .eq(
+                    "id",
+                    notificacao.remetente_id
+                )
+                .maybeSingle();
+
+
+        if (
+            resultado.error
+        ) {
+
+            console.error(
+                "Notificacoes: erro ao carregar remetente realtime:",
+                resultado.error
+            );
+
+            return;
+
+        }
+
+
+        if (
+            resultado.data
+        ) {
+
+            estado.remetentes.set(
+                resultado.data.id,
+                resultado.data
+            );
+
+        }
+
+    } catch (erro) {
+
+        console.error(
+            "Notificacoes: erro ao obter remetente realtime:",
+            erro
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   ADICIONA NOTIFICAÇÃO RECEBIDA PELO REALTIME
+   ========================================================= */
+
+function adicionarNotificacaoRealtime(
+    notificacao
+) {
+
+    if (
+        !notificacao ||
+        notificacao.usuario_id !==
+            estado.usuarioId
+    ) {
+
+        return;
+
+    }
+
+
+    const existente =
+        estado.notificacoes.find(
+            function (item) {
+
+                return (
+                    item.id ===
+                    notificacao.id
+                );
+
+            }
+        );
+
+
+    if (existente) {
+
+        return;
+
+    }
+
+
+    estado.notificacoes.unshift(
+        notificacao
+    );
+
+
+    if (
+        estado.notificacoes.length >
+        CONFIG.limiteInicial
+    ) {
+
+        estado.notificacoes =
+            estado.notificacoes.slice(
+                0,
+                CONFIG.limiteInicial
+            );
+
+    }
+
+
+    renderizar();
+
+}
+
+
+/* =========================================================
+   ATUALIZA NOTIFICAÇÃO RECEBIDA PELO REALTIME
+   ========================================================= */
+
+function atualizarNotificacaoRealtime(
+    notificacao
+) {
+
+    if (
+        !notificacao ||
+        notificacao.usuario_id !==
+            estado.usuarioId
+    ) {
+
+        return;
+
+    }
+
+
+    const indice =
+        estado.notificacoes.findIndex(
+            function (item) {
+
+                return (
+                    item.id ===
+                    notificacao.id
+                );
+
+            }
+        );
+
+
+    if (
+        indice === -1
+    ) {
+
+        adicionarNotificacaoRealtime(
+            notificacao
+        );
+
+        return;
+
+    }
+
+
+    estado.notificacoes[indice] =
+        Object.assign(
+            {},
+            estado.notificacoes[indice],
+            notificacao
+        );
+
+
+    estado.notificacoes.sort(
+        function (a, b) {
+
+            return (
+                new Date(
+                    b.created_at
+                ) -
+                new Date(
+                    a.created_at
+                )
+            );
+
+        }
+    );
+
+
+    renderizar();
+
+}
+
+
+/* =========================================================
+   DESTRÓI O CANAL REALTIME
+   ========================================================= */
+
+function destruirRealtime() {
+
+    if (
+        !estado.canalRealtime
+    ) {
+
+        return;
+
+    }
+
+
+    const supabase =
+        obterSupabase();
+
+
+    if (supabase) {
+
+        supabase.removeChannel(
+            estado.canalRealtime
+        );
+
+    }
+
+
+    estado.canalRealtime =
+        null;
+
+}
+
+
+/* =========================================================
+   OBTÉM URL DA NOTIFICAÇÃO
+   ========================================================= */
+
+function obterUrlNotificacao(
+    notificacao
+) {
+
+    const tipo =
+        String(
+            notificacao.tipo || ""
+        ).toLowerCase();
+
+
+    const referenciaId =
+        notificacao.referencia_id;
+
+
+    if (
+        !referenciaId
+    ) {
+
+        return null;
+
+    }
+
+
+    if (
+        tipo === "mensagem" ||
+        tipo === "nova_mensagem"
+    ) {
+
+        return (
+            "chat.html?id=" +
+            encodeURIComponent(
+                referenciaId
+            )
+        );
+
+    }
+
+
+    if (
+        tipo === "contratacao" ||
+        tipo === "nova_contratacao" ||
+        tipo === "solicitacao_contratacao"
+    ) {
+
+        return (
+            "contratacao.html?id=" +
+            encodeURIComponent(
+                referenciaId
+            )
+        );
+
+    }
+
+
+    return null;
+
+}
+
+
+/* =========================================================
+   OBTÉM ÍCONE DA NOTIFICAÇÃO
+
+   O ícone é exibido no lado direito do item.
+   ========================================================= */
+
+function obterIcone(
+    tipo
+) {
+
+    const tipoNormalizado =
+        String(
+            tipo || ""
+        ).toLowerCase();
+
+
+    if (
+        tipoNormalizado === "mensagem" ||
+        tipoNormalizado === "nova_mensagem"
+    ) {
+
+        return `
+            <svg
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+            >
+                <path
+                    d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"
+                ></path>
+            </svg>
+        `;
+
+    }
+
+
+    if (
+        tipoNormalizado === "contratacao" ||
+        tipoNormalizado === "nova_contratacao" ||
+        tipoNormalizado === "solicitacao_contratacao"
+    ) {
+
+        return `
+            <svg
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+            >
+                <rect
+                    x="3"
+                    y="4"
+                    width="18"
+                    height="18"
+                    rx="2"
+                ></rect>
+
+                <path
+                    d="M16 2v4"
+                ></path>
+
+                <path
+                    d="M8 2v4"
+                ></path>
+
+                <path
+                    d="M3 10h18"
+                ></path>
+
+                <path
+                    d="M8 14h3"
+                ></path>
+
+                <path
+                    d="M8 18h6"
+                ></path>
+            </svg>
+        `;
+
+    }
+
+
+    if (
+        tipoNormalizado === "avaliacao"
+    ) {
+
+        return `
+            <svg
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+            >
+                <path
+                    d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9z"
+                ></path>
+            </svg>
+        `;
+
+    }
+
+
+    if (
+        tipoNormalizado === "pagamento"
+    ) {
+
+        return `
+            <svg
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+            >
+                <rect
+                    x="2"
+                    y="5"
+                    width="20"
+                    height="14"
+                    rx="2"
+                ></rect>
+
+                <path
+                    d="M2 10h20"
+                ></path>
+
+                <path
+                    d="M6 15h3"
+                ></path>
+            </svg>
+        `;
+
+    }
+
+
+    return `
+        <svg
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+        >
+            <path
+                d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"
+            ></path>
+
+            <path
+                d="M13.73 21a2 2 0 0 1-3.46 0"
+            ></path>
+        </svg>
+    `;
+
+}
+
+
+/* =========================================================
+   TÍTULO PADRÃO
+   ========================================================= */
+
+function obterTituloPadrao(
+    tipo
+) {
+
+    const tipoNormalizado =
+        String(
+            tipo || ""
+        ).toLowerCase();
+
+
+    if (
+        tipoNormalizado === "mensagem" ||
+        tipoNormalizado === "nova_mensagem"
+    ) {
+
+        return "Nova mensagem";
+
+    }
+
+
+    if (
+        tipoNormalizado === "contratacao" ||
+        tipoNormalizado === "nova_contratacao" ||
+        tipoNormalizado === "solicitacao_contratacao"
+    ) {
+
+        return "Nova solicitação";
+
+    }
+
+
+    if (
+        tipoNormalizado === "avaliacao"
+    ) {
+
+        return "Nova avaliação";
+
+    }
+
+
+    if (
+        tipoNormalizado === "pagamento"
+    ) {
+
+        return "Atualização de pagamento";
+
+    }
+
+
+    return "Nova notificação";
+
+}
+
+
+/* =========================================================
+   LABEL DE ACESSIBILIDADE
+   ========================================================= */
+
+function obterAriaLabel(
+    notificacao
+) {
+
+    const remetente =
+        obterDadosRemetente(
+            notificacao
+        );
+
+
+    const titulo =
+        notificacao.titulo ||
+        obterTituloPadrao(
+            notificacao.tipo
+        );
+
+
+    const mensagem =
+        notificacao.mensagem ||
+        "";
+
+
+    return (
+        remetente.nome +
+        ". " +
+        titulo +
+        (
+            mensagem
+                ? ". " + mensagem
+                : ""
+        )
+    );
+
+}
+
+
+/* =========================================================
+   FORMATA DATA E HORA
+   ========================================================= */
 
 function formatarData(
-data
+    valor
 ) {
 
-if (!data) {
-  return "Data não informada";
+    if (!valor) {
+
+        return "";
+
+    }
+
+
+    const data =
+        new Date(
+            valor
+        );
+
+
+    if (
+        Number.isNaN(
+            data.getTime()
+        )
+    ) {
+
+        return "";
+
+    }
+
+
+    const agora =
+        new Date();
+
+
+    const hoje =
+        new Date(
+            agora.getFullYear(),
+            agora.getMonth(),
+            agora.getDate()
+        );
+
+
+    const diaNotificacao =
+        new Date(
+            data.getFullYear(),
+            data.getMonth(),
+            data.getDate()
+        );
+
+
+    const diferencaDias =
+        Math.round(
+            (
+                hoje.getTime() -
+                diaNotificacao.getTime()
+            ) /
+            86400000
+        );
+
+
+    const hora =
+        data.toLocaleTimeString(
+            "pt-BR",
+            {
+                hour: "2-digit",
+                minute: "2-digit"
+            }
+        );
+
+
+    if (
+        diferencaDias === 0
+    ) {
+
+        return (
+            "Hoje, " +
+            hora
+        );
+
+    }
+
+
+    if (
+        diferencaDias === 1
+    ) {
+
+        return (
+            "Ontem, " +
+            hora
+        );
+
+    }
+
+
+    return (
+        data.toLocaleDateString(
+            "pt-BR"
+        ) +
+        ", " +
+        hora
+    );
+
 }
 
 
-const partes =
-  data.split("-");
+/* =========================================================
+   ATUALIZA CONTADOR
+   ========================================================= */
+
+function atualizarContador() {
+
+    if (
+        !elementos.contador
+    ) {
+
+        return;
+
+    }
 
 
-if (
-  partes.length === 3 &&
-  partes[0].length === 4
+    const quantidade =
+        estado.notificacoes.filter(
+            function (notificacao) {
+
+                return (
+                    notificacao.lida !== true
+                );
+
+            }
+        ).length;
+
+
+    elementos.contador.textContent =
+        String(
+            quantidade
+        );
+
+
+    elementos.contador.setAttribute(
+        "aria-label",
+        quantidade === 1
+            ? "1 notificação não lida"
+            : `${quantidade} notificações não lidas`
+    );
+
+}
+
+
+/* =========================================================
+   ATUALIZA BOTÃO "MARCAR TODAS"
+   ========================================================= */
+
+function atualizarBotaoMarcarTodas() {
+
+    if (
+        !elementos.btnMarcarTodas
+    ) {
+
+        return;
+
+    }
+
+
+    const existemNaoLidas =
+        estado.notificacoes.some(
+            function (notificacao) {
+
+                return (
+                    notificacao.lida !== true
+                );
+
+            }
+        );
+
+
+    elementos.btnMarcarTodas.disabled =
+        !existemNaoLidas;
+
+}
+
+
+/* =========================================================
+   ESTADO DE CARREGAMENTO
+   ========================================================= */
+
+function mostrarCarregando() {
+
+    if (
+        elementos.estadoCarregando
+    ) {
+
+        elementos.estadoCarregando.hidden =
+            false;
+
+    }
+
+
+    if (
+        elementos.estadoVazio
+    ) {
+
+        elementos.estadoVazio.hidden =
+            true;
+
+    }
+
+
+    if (
+        elementos.estadoErro
+    ) {
+
+        elementos.estadoErro.hidden =
+            true;
+
+    }
+
+
+    if (
+        elementos.lista
+    ) {
+
+        elementos.lista.innerHTML =
+            "";
+
+    }
+
+}
+
+
+function ocultarCarregando() {
+
+    if (
+        elementos.estadoCarregando
+    ) {
+
+        elementos.estadoCarregando.hidden =
+            true;
+
+    }
+
+}
+
+
+/* =========================================================
+   ESTADO VAZIO
+   ========================================================= */
+
+function mostrarVazio() {
+
+    ocultarCarregando();
+
+    ocultarErro();
+
+
+    if (
+        elementos.estadoVazio
+    ) {
+
+        elementos.estadoVazio.hidden =
+            false;
+
+    }
+
+}
+
+
+function ocultarVazio() {
+
+    if (
+        elementos.estadoVazio
+    ) {
+
+        elementos.estadoVazio.hidden =
+            true;
+
+    }
+
+}
+
+
+/* =========================================================
+   ESTADO DE ERRO
+   ========================================================= */
+
+function mostrarErro(
+    mensagem
 ) {
 
-  return (
-    partes[2] +
-    "/" +
-    partes[1] +
-    "/" +
-    partes[0]
-  );
+    ocultarCarregando();
+
+    ocultarVazio();
+
+
+    if (
+        elementos.mensagemErro
+    ) {
+
+        elementos.mensagemErro.textContent =
+            mensagem ||
+            "Ocorreu um problema ao carregar suas notificações.";
+
+    }
+
+
+    if (
+        elementos.estadoErro
+    ) {
+
+        elementos.estadoErro.hidden =
+            false;
+
+    }
 
 }
 
 
-return data;
+function ocultarErro() {
+
+    if (
+        elementos.estadoErro
+    ) {
+
+        elementos.estadoErro.hidden =
+            true;
+
+    }
 
 }
 
-function formatarPreco(
-preco
+
+/* =========================================================
+   TENTA CARREGAR NOVAMENTE
+   ========================================================= */
+
+async function tentarNovamente() {
+
+    ocultarErro();
+
+    await carregarNotificacoes();
+
+}
+
+
+/* =========================================================
+   VOLTAR
+   ========================================================= */
+
+function voltar() {
+
+    if (
+        document.referrer &&
+        document.referrer.includes(
+            window.location.origin
+        )
+    ) {
+
+        window.history.back();
+
+        return;
+
+    }
+
+
+    window.location.href =
+        CONFIG.paginaAnterior;
+
+}
+
+
+/* =========================================================
+   ATUALIZA ÍCONES LUCIDE
+   ========================================================= */
+
+function atualizarIcones() {
+
+    if (
+        window.lucide &&
+        typeof window.lucide.createIcons === "function"
+    ) {
+
+        window.lucide.createIcons();
+
+    }
+
+}
+
+
+/* =========================================================
+   ESCAPA HTML
+   ========================================================= */
+
+function escaparHtml(
+    valor
 ) {
 
-if (
-  preco === null ||
-  preco === undefined ||
-  preco === ""
+    const texto =
+        String(
+            valor ?? ""
+        );
+
+
+    return texto
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+}
+
+
+/* =========================================================
+   OBTÉM MENSAGEM DE ERRO AMIGÁVEL
+   ========================================================= */
+
+function obterMensagemErro(
+    erro
 ) {
 
-  return "Sob consulta";
+    if (!erro) {
+
+        return (
+            "Ocorreu um problema ao carregar suas notificações."
+        );
+
+    }
+
+
+    const codigo =
+        erro.code ||
+        "";
+
+
+    if (
+        codigo === "PGRST205"
+    ) {
+
+        return (
+            "A tabela de notificações não foi encontrada no banco de dados."
+        );
+
+    }
+
+
+    if (
+        codigo === "42501"
+    ) {
+
+        return (
+            "Você não possui permissão para acessar estas notificações."
+        );
+
+    }
+
+
+    if (
+        erro.message
+    ) {
+
+        return (
+            "Não foi possível carregar suas notificações."
+        );
+
+    }
+
+
+    return (
+        "Ocorreu um problema ao carregar suas notificações."
+    );
 
 }
 
 
-const numero =
-  Number(
-    preco
-      .toString()
-      .replace("R$", "")
-      .replace(/\./g, "")
-      .replace(",", ".")
-      .trim()
-  );
+/* =========================================================
+   DESTRUIÇÃO DO MÓDULO
+   ========================================================= */
+
+function destruir() {
+
+    destruirRealtime();
 
 
-if (isNaN(numero)) {
-  return preco;
-}
+    estado.inicializado =
+        false;
 
 
-return numero.toLocaleString(
-  "pt-BR",
-  {
-    style: "currency",
-    currency: "BRL"
-  }
-);
-
-}
-
-function formatarPagamento(
-pagamento
-) {
-
-const valor =
-  String(
-    pagamento || ""
-  )
-  .toLowerCase()
-  .trim();
+    estado.usuarioId =
+        null;
 
 
-if (valor === "pix") {
-  return "PIX";
-}
+    estado.notificacoes =
+        [];
 
 
-if (
-  valor === "cartao" ||
-  valor === "cartão" ||
-  valor === "credito" ||
-  valor === "crédito"
-) {
-
-  return "Cartão";
+    estado.remetentes.clear();
 
 }
 
 
-return pagamento;
+/* =========================================================
+   INICIALIZAÇÃO PRINCIPAL
+   ========================================================= */
 
-}
+async function iniciar() {
 
-/*
+    if (
+        estado.inicializado
+    ) {
 
-=========================================================
-STATUS
-=========================================================
-*/
+        return;
 
-function normalizarStatus(
-status
-) {
-
-const valor =
-  String(
-    status || ""
-  )
-  .toLowerCase()
-  .trim();
+    }
 
 
-if (
-  valor === "aceita" ||
-  valor === "aceito" ||
-  valor === "confirmado"
-) {
-
-  return "aceito";
-
-}
+    console.log(
+        "Notificacoes: inicializando página."
+    );
 
 
-if (
-  valor === "recusada" ||
-  valor === "recusado"
-) {
+    capturarElementos();
 
-  return "recusado";
-
-}
+    configurarEventos();
 
 
-return "pendente";
-
-}
-
-function obterClasseStatus(
-status
-) {
-
-if (status === "aceito") {
-  return "accepted";
-}
+    estado.inicializado =
+        true;
 
 
-if (status === "recusado") {
-  return "rejected";
-}
+    try {
+
+        await obterUsuarioAtual();
+
+        await carregarNotificacoes();
+
+        iniciarRealtime();
+
+    } catch (erro) {
+
+        console.error(
+            "Notificacoes: erro na inicialização:",
+            erro
+        );
 
 
-return "pending";
+        mostrarErro(
+            obterMensagemErro(
+                erro
+            )
+        );
 
-}
-
-function obterTextoStatus(
-status
-) {
-
-if (status === "aceito") {
-  return "Aceito";
-}
-
-
-if (status === "recusado") {
-  return "Recusado";
-}
-
-
-return "Pendente";
-
-}
-
-/*
-
-=========================================================
-INICIAIS
-=========================================================
-*/
-
-function gerarIniciais(
-nome
-) {
-
-const palavras =
-  String(nome || "MW")
-    .trim()
-    .split(/\s+/)
-    .filter(Boolean);
-
-
-if (palavras.length === 1) {
-
-  return palavras[0]
-    .substring(0, 2)
-    .toUpperCase();
+    }
 
 }
 
 
-return (
-  palavras[0][0] +
-  palavras[
-    palavras.length - 1
-  ][0]
-).toUpperCase();
+/* =========================================================
+   EXPOSIÇÃO GLOBAL
+   ========================================================= */
 
-}
+window.Notificacoes = {
 
-/*
+    iniciar,
 
-=========================================================
-COR DO AVATAR
-=========================================================
-*/
+    carregar: carregarNotificacoes,
 
-function gerarCorAvatar(
-nome
-) {
+    marcarComoLida,
 
-const cores = [
-  "#1677d2",
-  "#7c5ce0",
-  "#0891b2",
-  "#159a67",
-  "#d97706",
-  "#db4b6b"
-];
+    marcarTodasComoLidas,
 
+    destruir,
 
-let total = 0;
-
-
-for (
-  let i = 0;
-  i < nome.length;
-  i++
-) {
-
-  total +=
-    nome.charCodeAt(i);
-
-}
-
-
-return cores[
-  total % cores.length
-];
-
-}
-
-/*
-
-=========================================================
-SEGURANÇA HTML
-=========================================================
-*/
-
-function escaparHTML(
-texto
-) {
-
-return String(
-  texto ?? ""
-)
-.replace(/&/g, "&amp;")
-.replace(/</g, "&lt;")
-.replace(/>/g, "&gt;")
-.replace(/"/g, "&quot;")
-.replace(/'/g, "&#039;");
-
-}
-
-/*
-
-=========================================================
-ID LOCAL
-=========================================================
-*/
-
-function gerarIdLocal() {
-
-return (
-  "contratacao-" +
-  Date.now() +
-  "-" +
-  Math.random()
-    .toString(36)
-    .substring(2, 8)
-);
-
-}
-
-/*
-
-=========================================================
-VOLTAR AO INÍCIO
-=========================================================
-*/
-
-window.voltarInicio =
-function () {
-
-  window.location.href =
-    "index.html";
+    renderizar
 
 };
 
-})();
+
+/* =========================================================
+   INICIALIZAÇÃO AUTOMÁTICA
+   ========================================================= */
+
+if (
+    document.readyState === "loading"
+) {
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+
+            iniciar();
+
+        },
+        {
+            once: true
+        }
+    );
+
+} else {
+
+    iniciar();
+
+}
+
+
+console.log(
+    "Notificacoes: módulo carregado."
+);
+
+
+})(window);

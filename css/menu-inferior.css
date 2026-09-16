@@ -1,342 +1,393 @@
 /* =========================================================
 MENU INFERIOR — MUSICALWORLD
 
+Arquivo: menu-inferior.css
+
 Responsabilidade:
 Controlar a estrutura, aparência, estados e responsividade
 do menu de navegação inferior do aplicativo.
 
-Características:
+Estrutura atual:
 
-* Menu flutuante
-* Bordas arredondadas
-* Sombra suave
-* Efeito de vidro
-* Indicador de seleção deslizante
-* Botão central de Anunciar destacado
-* Compatibilidade com iPhone e Android
-* Suporte à safe-area do iOS
-  ========================================================= */
+* Home
+* Pesquisa
+* Financeiro
+* Contratações
+* Perfil
+
+O botão central anteriormente utilizado para "Anunciar"
+agora representa a área Financeira.
+
+O acesso para criação de anúncios será disponibilizado
+posteriormente no cabeçalho superior.
+========================================================= */
+
 
 /* =========================================================
 CONTAINER PRINCIPAL
 ========================================================= */
 
 .bottom-nav {
-position: fixed;
+    position: fixed;
 
+    left: 50%;
+    bottom: 12px;
 
-left: 50%;
-bottom: 12px;
+    transform: translateX(-50%);
 
-transform: translateX(-50%);
+    width: calc(100% - 40px);
+    max-width: 480px;
 
-width: calc(100% - 40px);
-max-width: 480px;
+    height: 64px;
 
-height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
 
-display: flex;
-align-items: center;
-justify-content: space-around;
+    background: rgba(255, 255, 255, 0.72);
 
-background: rgba(255, 255, 255, 0.72);
+    border: 1px solid rgba(226, 232, 240, 0.95);
 
-border: 1px solid rgba(226, 232, 240, 0.95);
+    border-radius: 24px;
 
-border-radius: 24px;
+    box-shadow:
+        0 8px 30px rgba(15, 23, 42, 0.10),
+        0 2px 8px rgba(15, 23, 42, 0.05);
 
-box-shadow:
-    0 8px 30px rgba(15, 23, 42, 0.10),
-    0 2px 8px rgba(15, 23, 42, 0.05);
-
-backdrop-filter: blur(20px) saturate(140%);
+    backdrop-filter: blur(20px) saturate(140%);
     -webkit-backdrop-filter: blur(20px) saturate(140%);
 
-z-index: 9999;
+    z-index: 9999;
 
-padding:
-    0
-    6px
-    env(safe-area-inset-bottom)
-    6px;
+    padding:
+        0
+        6px
+        env(safe-area-inset-bottom)
+        6px;
 
-box-sizing: border-box;
+    box-sizing: border-box;
 
-overflow: visible;
-
-
+    overflow: visible;
 }
+
 
 /* =========================================================
 INDICADOR DE SELEÇÃO
-
-Existe somente um indicador.
-O JavaScript movimenta este elemento entre os botões.
 ========================================================= */
 
 .nav-active-indicator {
-position: absolute;
+    position: absolute;
 
+    top: 50%;
+    left: 0;
 
-top: 50%;
+    width: 46px;
+    height: 46px;
 
-left: 0;
+    border-radius: 16px;
 
-width: 46px;
-height: 46px;
+    background: rgba(37, 99, 235, 0.09);
 
-border-radius: 16px;
+    pointer-events: none;
 
-background: rgba(37, 99, 235, 0.09);
+    z-index: 0;
 
-pointer-events: none;
+    transform:
+        translate3d(0, -50%, 0);
 
-z-index: 0;
+    transition:
+        transform 0.38s
+        cubic-bezier(0.22, 1, 0.36, 1);
 
-transform:
-    translate3d(0, -50%, 0);
-
-transition:
-    transform 0.38s
-    cubic-bezier(0.22, 1, 0.36, 1);
-
-will-change: transform;
-
-
+    will-change: transform;
 }
+
 
 /* =========================================================
 ITEM DO MENU
 ========================================================= */
 
 .bottom-nav-item {
-appearance: none;
--webkit-appearance: none;
+    appearance: none;
+    -webkit-appearance: none;
 
+    position: relative;
 
-position: relative;
+    z-index: 1;
 
-z-index: 1;
+    border: 0;
+    outline: none;
 
-border: 0;
-outline: none;
+    background: transparent;
 
-background: transparent;
+    width: 20%;
+    height: 100%;
 
-width: 20%;
-height: 100%;
+    padding: 6px 4px;
 
-padding: 6px 4px;
+    margin: 0;
 
-margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 
-display: flex;
-flex-direction: column;
-align-items: center;
-justify-content: center;
+    gap: 3px;
 
-gap: 3px;
+    color: #64748b;
 
-color: #64748b;
+    cursor: pointer;
 
-cursor: pointer;
+    font-family: inherit;
 
-font-family: inherit;
+    box-sizing: border-box;
 
-box-sizing: border-box;
+    border-radius: 16px;
 
-border-radius: 16px;
-
-transition:
-    color 0.22s ease,
-    transform 0.2s ease;
-
-
+    transition:
+        color 0.22s ease,
+        transform 0.2s ease;
 }
+
 
 /* =========================================================
 ITEM ATIVO
 ========================================================= */
 
 .bottom-nav-item.ativo {
-color: #2563eb; }
+    color: #2563eb;
+}
+
 
 /* =========================================================
 ÁREA DO ÍCONE
 ========================================================= */
 
 .nav-icon-wrapper {
-position: relative;
+    position: relative;
 
+    width: 30px;
+    height: 30px;
 
-width: 30px;
-height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-display: flex;
-align-items: center;
-justify-content: center;
-
-flex-shrink: 0;
-
-
+    flex-shrink: 0;
 }
+
 
 /* =========================================================
 ÍCONE
 ========================================================= */
 
 .nav-icon-svg {
-display: block;
+    display: block;
 
+    width: 26px;
+    height: 26px;
 
-width: 26px;
-height: 26px;
+    flex-shrink: 0;
 
-flex-shrink: 0;
+    stroke-width: 2;
 
-stroke-width: 2;
-
-transition:
-    transform 0.22s ease;
-
-
+    transition:
+        transform 0.22s ease;
 }
+
+
+/* =========================================================
+FOTO DO PERFIL
+========================================================= */
+
+.nav-profile-image {
+    display: block;
+
+    width: 30px;
+    height: 30px;
+
+    flex: 0 0 30px;
+
+    object-fit: cover;
+    object-position: center;
+
+    border-radius: 50%;
+
+    background: #e2e8f0;
+
+    border: 2px solid #ffffff;
+
+    box-sizing: border-box;
+
+    box-shadow:
+        0 2px 8px rgba(15, 23, 42, 0.12);
+
+    opacity: 1;
+
+    transform: scale(1);
+
+    transition:
+        transform 0.22s ease,
+        box-shadow 0.22s ease;
+}
+
+
+/* =========================================================
+QUANDO A FOTO ESTÁ DISPONÍVEL
+========================================================= */
+
+.profile-icon-wrapper.has-profile-image
+.profile-default-icon {
+    display: none;
+}
+
+
+.profile-icon-wrapper.has-profile-image
+.profile-dot {
+    display: none;
+}
+
+
+/* =========================================================
+FOTO ATIVA
+========================================================= */
+
+.bottom-nav-item.ativo
+.nav-profile-image {
+    box-shadow:
+        0 2px 9px rgba(37, 99, 235, 0.20);
+}
+
 
 /* =========================================================
 TEXTO
 
 O menu utiliza somente os ícones visualmente.
-O elemento permanece disponível para acessibilidade
-ou futuras necessidades da interface.
 ========================================================= */
 
 .nav-label {
-display: block;
+    display: block;
 
+    font-size: 11px;
+    line-height: 14px;
+    font-weight: 500;
 
-font-size: 11px;
-line-height: 14px;
-font-weight: 500;
-
-white-space: nowrap;
-text-align: center;
-
-
+    white-space: nowrap;
+    text-align: center;
 }
+
 
 /* =========================================================
 ÍCONE DE PERFIL
 ========================================================= */
 
 .profile-icon-wrapper {
-position: relative;
+    position: relative;
 }
+
 
 /* =========================================================
 INDICADOR DO PERFIL
 ========================================================= */
 
 .profile-dot {
-position: absolute;
+    position: absolute;
 
+    top: 0;
+    right: -2px;
 
-top: 0;
-right: -2px;
+    width: 6px;
+    height: 6px;
 
-width: 6px;
-height: 6px;
+    background: #2563eb;
 
-background: #2563eb;
+    border-radius: 50%;
 
-border-radius: 50%;
+    border: 1.5px solid #ffffff;
 
-border: 1.5px solid #ffffff;
-
-box-sizing: border-box;
-
-
+    box-sizing: border-box;
 }
+
 
 /* =========================================================
-BOTÃO CENTRAL — ANUNCIAR
+BOTÃO CENTRAL — FINANCEIRO
 ========================================================= */
 
-.bottom-nav-item[data-aba="anunciar"] {
-color: #2563eb;
+.bottom-nav-item[data-aba="financeiro"] {
+    color: #2563eb;
 }
+
 
 /* =========================================================
-CÍRCULO DO BOTÃO ANUNCIAR
+CÍRCULO DO BOTÃO FINANCEIRO
 ========================================================= */
 
-.bottom-nav-item[data-aba="anunciar"] .nav-icon-wrapper {
-width: 42px;
-height: 42px;
+.bottom-nav-item[data-aba="financeiro"]
+.nav-icon-wrapper {
+    width: 42px;
+    height: 42px;
 
+    background: #2563eb;
 
-background: #2563eb;
+    border-radius: 50%;
 
-border-radius: 50%;
+    color: #ffffff;
 
-color: #ffffff;
+    box-shadow:
+        0 5px 14px rgba(37, 99, 235, 0.24);
 
-box-shadow:
-    0 5px 14px rgba(37, 99, 235, 0.24);
+    transform: translateY(-5px);
 
-transform: translateY(-5px);
-
-transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
-
-
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
 }
+
 
 /* =========================================================
-ÍCONE DO BOTÃO ANUNCIAR
+ÍCONE DO BOTÃO FINANCEIRO
 ========================================================= */
 
-.bottom-nav-item[data-aba="anunciar"] .nav-icon-svg {
-width: 24px;
-height: 24px;
+.bottom-nav-item[data-aba="financeiro"]
+.nav-icon-svg {
+    width: 24px;
+    height: 24px;
 
-
-color: #ffffff;
-
-
+    color: #ffffff;
 }
+
 
 /* =========================================================
 EFEITO AO TOCAR
 ========================================================= */
 
 .bottom-nav-item:active {
-transform: scale(0.96);
+    transform: scale(0.96);
 }
+
 
 /* =========================================================
-EFEITO AO TOCAR — ANUNCIAR
+EFEITO AO TOCAR — FINANCEIRO
 ========================================================= */
 
-.bottom-nav-item[data-aba="anunciar"]:active
+.bottom-nav-item[data-aba="financeiro"]:active
 .nav-icon-wrapper {
-transform:
-translateY(-5px)
-scale(0.94);
+    transform:
+        translateY(-5px)
+        scale(0.94);
 }
+
 
 /* =========================================================
 ACESSIBILIDADE
 ========================================================= */
 
 .bottom-nav-item:focus-visible {
-outline: 2px solid #2563eb;
+    outline: 2px solid #2563eb;
 
-
-outline-offset: -3px;
-
-
+    outline-offset: -3px;
 }
+
 
 /* =========================================================
 TELAS PEQUENAS
@@ -344,81 +395,91 @@ TELAS PEQUENAS
 
 @media (max-width: 360px) {
 
+    .bottom-nav {
+        width: calc(100% - 18px);
 
-.bottom-nav {
-    width: calc(100% - 18px);
+        bottom: 9px;
 
-    bottom: 9px;
+        height: 62px;
 
-    height: 62px;
+        border-radius: 20px;
 
-    border-radius: 20px;
+        padding-left: 4px;
+        padding-right: 4px;
+    }
 
-    padding-left: 4px;
-    padding-right: 4px;
+
+    .nav-active-indicator {
+        width: 42px;
+        height: 42px;
+
+        border-radius: 14px;
+    }
+
+
+    .bottom-nav-item {
+        padding-left: 2px;
+        padding-right: 2px;
+
+        gap: 2px;
+
+        border-radius: 14px;
+    }
+
+
+    .nav-icon-wrapper {
+        width: 27px;
+        height: 27px;
+    }
+
+
+    .nav-icon-svg {
+        width: 25px;
+        height: 25px;
+    }
+
+
+    .nav-profile-image {
+        width: 27px;
+        height: 27px;
+
+        flex-basis: 27px;
+    }
+
+
+    .nav-label {
+        font-size: 10px;
+    }
+
+
+    /* ---------------------------------------------
+       BOTÃO FINANCEIRO EM TELAS PEQUENAS
+    --------------------------------------------- */
+
+    .bottom-nav-item[data-aba="financeiro"]
+    .nav-icon-wrapper {
+        width: 38px;
+        height: 38px;
+
+        transform: translateY(-4px);
+    }
+
+
+    .bottom-nav-item[data-aba="financeiro"]
+    .nav-icon-svg {
+        width: 23px;
+        height: 23px;
+    }
+
+
+    .bottom-nav-item[data-aba="financeiro"]:active
+    .nav-icon-wrapper {
+        transform:
+            translateY(-4px)
+            scale(0.94);
+    }
 }
 
-
-.nav-active-indicator {
-    width: 42px;
-    height: 42px;
-
-    border-radius: 14px;
-}
-
-
-.bottom-nav-item {
-    padding-left: 2px;
-    padding-right: 2px;
-
-    gap: 2px;
-
-    border-radius: 14px;
-}
-
-
-.nav-icon-wrapper {
-    width: 27px;
-    height: 27px;
-}
-
-
-.nav-icon-svg {
-    width: 25px;
-    height: 25px;
-}
-
-
-.nav-label {
-    font-size: 10px;
-}
-
-
-.bottom-nav-item[data-aba="anunciar"]
-.nav-icon-wrapper {
-    width: 38px;
-    height: 38px;
-
-    transform: translateY(-4px);
-}
-
-
-.bottom-nav-item[data-aba="anunciar"]
-.nav-icon-svg {
-    width: 23px;
-    height: 23px;
-}
-
-
-.bottom-nav-item[data-aba="anunciar"]:active
-.nav-icon-wrapper {
-    transform:
-        translateY(-4px)
-        scale(0.94);
-}
-
-
-}
 
 /* =========================================================
 TELAS MAIORES
@@ -426,68 +487,56 @@ TELAS MAIORES
 
 @media (min-width: 768px) {
 
+    .bottom-nav {
+        width: 460px;
 
-.bottom-nav {
-    width: 460px;
+        max-width: calc(100% - 32px);
 
-    max-width: calc(100% - 32px);
+        bottom: 16px;
 
-    bottom: 16px;
+        height: 66px;
 
-    height: 66px;
+        border-radius: 22px;
+    }
 
-    border-radius: 22px;
+
+    .nav-active-indicator {
+        width: 48px;
+        height: 48px;
+
+        border-radius: 17px;
+    }
 }
 
-
-.nav-active-indicator {
-    width: 48px;
-    height: 48px;
-
-    border-radius: 17px;
-}
-
-
-}
 
 /* =========================================================
 IPHONE / SAFE AREA
-
-Garante espaço adicional quando o dispositivo possui
-uma área inferior reservada pelo sistema.
 ========================================================= */
 
 @supports (padding-bottom: env(safe-area-inset-bottom)) {
 
-
-.bottom-nav {
-    bottom:
-        calc(
-            12px +
-            env(safe-area-inset-bottom)
-        );
+    .bottom-nav {
+        bottom:
+            calc(
+                12px +
+                env(safe-area-inset-bottom)
+            );
+    }
 }
 
-
-}
 
 /* =========================================================
 REDUÇÃO DE MOVIMENTO
-
-Respeita usuários que solicitaram menos animações
-no sistema operacional.
 ========================================================= */
 
 @media (prefers-reduced-motion: reduce) {
 
-
-.nav-active-indicator,
-.bottom-nav-item,
-.nav-icon-svg,
-.bottom-nav-item[data-aba="anunciar"]
-.nav-icon-wrapper {
-    transition: none;
-}
-
-
+    .nav-active-indicator,
+    .bottom-nav-item,
+    .nav-icon-svg,
+    .nav-profile-image,
+    .bottom-nav-item[data-aba="financeiro"]
+    .nav-icon-wrapper {
+        transition: none;
+    }
 }

@@ -1,56 +1,63 @@
 <!DOCTYPE html>
-
 <html lang="pt-BR">
 
 <head>
     <meta charset="UTF-8">
 
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    >
 
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
->
+    <title>MusicalWorld - Chat</title>
 
-<title>MusicalWorld - Chat</title>
+    <!-- =========================================================
+         MUSICALWORLD — CHAT
+         Arquivo: chat.html
 
-<!-- =========================================================
-     MUSICALWORLD — CHAT
-     Arquivo: chat.html
+         Responsabilidade:
 
-     Responsabilidade:
-     Estrutura da página de uma conversa individual.
+         - Estrutura da página de uma conversa individual
+         - Cabeçalho do participante
+         - Área das mensagens
+         - Campo de texto
+         - Seleção de arquivos
+         - Composição de anexos
 
-     Esta página recebe o ID da conversa pela URL:
+         A lista de conversas continua em mensagens.html.
+         ========================================================= -->
 
-     chat.html?id=UUID_DA_CONVERSA
+    <!-- =========================================================
+         CSS
+         ========================================================= -->
 
-     A lista de conversas continua em mensagens.html.
-     ========================================================= -->
+    <link
+        rel="stylesheet"
+        href="css/Chat/chat.css"
+    >
 
-<!-- CSS principal do Chat -->
-<link rel="stylesheet" href="css/Chat/chat.css">
+    <!-- =========================================================
+         SUPABASE
+         ========================================================= -->
 
-<!-- =========================================================
-     SUPABASE
-     ========================================================= -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<!-- =========================================================
-     ÍCONES
-     ========================================================= -->
-<script src="https://unpkg.com/lucide@latest"></script>
+    <!-- =========================================================
+         ÍCONES
+         ========================================================= -->
 
+    <script src="https://unpkg.com/lucide@latest"></script>
 
 </head>
 
 <body>
 
-
 <div class="chat-page">
 
     <!-- =====================================================
-         CABEÇALHO DO CHAT
+         CABEÇALHO
          ===================================================== -->
+
     <header class="chat-header">
 
         <button
@@ -58,6 +65,7 @@
             class="chat-back-button"
             onclick="voltarMensagens()"
             aria-label="Voltar para mensagens"
+            title="Voltar para mensagens"
         >
             <i data-lucide="arrow-left"></i>
         </button>
@@ -112,6 +120,7 @@
             class="chat-options-button"
             onclick="abrirOpcoesChat()"
             aria-label="Opções da conversa"
+            title="Opções da conversa"
         >
             <i data-lucide="more-vertical"></i>
         </button>
@@ -122,6 +131,7 @@
     <!-- =====================================================
          ÁREA PRINCIPAL DAS MENSAGENS
          ===================================================== -->
+
     <main
         id="chatMessages"
         class="chat-messages"
@@ -129,22 +139,110 @@
         aria-label="Mensagens da conversa"
     >
 
-        <!-- Estado inicial -->
         <div
             id="chatLoading"
             class="chat-state"
         >
+
             <div class="chat-loading-spinner"></div>
 
-            <p>Carregando conversa...</p>
+            <p>
+                Carregando conversa...
+            </p>
+
         </div>
 
     </main>
 
 
     <!-- =====================================================
-         ÁREA DE COMPOSIÇÃO DA MENSAGEM
+         PRÉ-VISUALIZAÇÃO DO ANEXO
          ===================================================== -->
+
+    <div
+        id="chatAttachmentPreview"
+        class="chat-attachment-preview"
+        hidden
+    >
+
+        <div class="chat-attachment-preview-content">
+
+            <div
+                id="chatAttachmentPreviewIcon"
+                class="chat-attachment-preview-icon"
+            >
+                <i data-lucide="file"></i>
+            </div>
+
+            <div class="chat-attachment-preview-info">
+
+                <strong
+                    id="chatAttachmentPreviewName"
+                    class="chat-attachment-preview-name"
+                >
+                    Arquivo
+                </strong>
+
+                <span
+                    id="chatAttachmentPreviewSize"
+                    class="chat-attachment-preview-size"
+                >
+                    0 KB
+                </span>
+
+                <span
+                    id="chatAttachmentPreviewStatus"
+                    class="chat-attachment-preview-status"
+                >
+                    Pronto para enviar
+                </span>
+
+            </div>
+
+            <button
+                type="button"
+                id="chatAttachmentRemove"
+                class="chat-attachment-remove"
+                onclick="removerAnexoSelecionado()"
+                aria-label="Remover arquivo"
+                title="Remover arquivo"
+            >
+                <i data-lucide="x"></i>
+            </button>
+
+        </div>
+
+        <div
+            id="chatAttachmentImagePreview"
+            class="chat-attachment-image-preview"
+            hidden
+        >
+            <img
+                id="chatAttachmentImage"
+                src=""
+                alt="Pré-visualização do arquivo"
+            >
+        </div>
+
+        <div
+            id="chatAttachmentVideoPreview"
+            class="chat-attachment-video-preview"
+            hidden
+        >
+            <video
+                id="chatAttachmentVideo"
+                controls
+                preload="metadata"
+            ></video>
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         COMPOSITOR
+         ===================================================== -->
+
     <footer class="chat-composer">
 
         <button
@@ -152,6 +250,7 @@
             class="chat-attachment-button"
             onclick="anexarArquivo()"
             aria-label="Adicionar arquivo"
+            title="Adicionar arquivo"
         >
             <i data-lucide="plus"></i>
         </button>
@@ -176,6 +275,7 @@
             class="chat-send-button"
             onclick="enviarMensagem()"
             aria-label="Enviar mensagem"
+            title="Enviar mensagem"
         >
             <i data-lucide="send"></i>
         </button>
@@ -186,28 +286,41 @@
 
 
 <!-- =========================================================
-     INPUT OCULTO PARA FUTUROS ANEXOS
+     INPUT DE ARQUIVO
      ========================================================= -->
+
 <input
     type="file"
     id="chatFileInput"
     hidden
+    accept="
+        image/jpeg,
+        image/png,
+        image/webp,
+        video/mp4,
+        video/webm,
+        video/quicktime,
+        application/pdf,
+        application/msword,
+        application/vnd.openxmlformats-officedocument.wordprocessingml.document,
+        application/vnd.ms-excel,
+        application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,
+        application/vnd.ms-powerpoint,
+        application/vnd.openxmlformats-officedocument.presentationml.presentation,
+        text/plain
+    "
 >
 
 
 <!-- =========================================================
-     SCRIPTS DO MUSICALWORLD
+     SCRIPTS
      ========================================================= -->
 
-<!-- Cliente Supabase compartilhado -->
 <script src="js/core/SupabaseClient.js"></script>
 
-<!-- Controle de sessão compartilhado -->
 <script src="js/core/Sessao.js"></script>
 
-<!-- Lógica específica do Chat -->
 <script src="js/chat/chat.js"></script>
-
 
 </body>
 

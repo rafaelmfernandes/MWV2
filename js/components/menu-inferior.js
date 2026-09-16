@@ -10,24 +10,36 @@ Funções:
 
 * Inicializar o menu inferior.
 * Carregar o painel de pesquisa.
-* Carregar o modal de criação de anúncio.
 * Identificar automaticamente a página atual.
 * Controlar o item ativo.
 * Animar o indicador de seleção.
 * Abrir Home.
 * Abrir Pesquisa.
-* Abrir o modal de Anunciar.
+* Abrir Financeiro.
 * Abrir Contratações.
 * Abrir Meu Perfil.
+* Identificar o usuário autenticado.
+* Exibir a foto do usuário logado no item Perfil.
 
 IMPORTANTE:
-O menu utiliza apenas ícones visualmente.
-Os atributos aria-label e title permanecem para
-acessibilidade.
+O menu inferior possui cinco áreas principais:
 
-A página atual nunca deve ser definida manualmente.
-O menu identifica automaticamente o arquivo aberto
-através de window.location.pathname.
+1. Home
+2. Pesquisa
+3. Financeiro
+4. Contratações
+5. Perfil
+
+O acesso para criação de anúncios não faz mais parte
+do menu inferior. Ele será disponibilizado posteriormente
+na nova organização do cabeçalho superior.
+
+Quando existe uma sessão autenticada, o item Perfil
+pode substituir o ícone padrão pela foto cadastrada
+em public.usuarios.foto_url.
+
+Caso não exista sessão ou não exista foto cadastrada,
+o ícone padrão de perfil permanece como fallback.
 ========================================================= */
 
 const MenuInferior = {
@@ -41,9 +53,9 @@ inicializado: false,
 
 pesquisaCarregada: false,
 
-modalAnunciarCarregado: false,
-
 indicadorAnimando: false,
+
+fotoPerfilCarregada: false,
 
 
 /* =====================================================
@@ -58,11 +70,7 @@ async iniciar() {
 
 
     /*
-     * Primeiro verificamos se o container do menu
-     * existe na página atual.
-     *
-     * Isso evita carregar recursos desnecessários
-     * em páginas que não utilizam o menu.
+     * Verifica se o container do menu existe na página.
      */
 
     const container = document.getElementById(
@@ -81,18 +89,15 @@ async iniciar() {
 
 
     /*
-     * Carrega os recursos utilizados pelos botões
-     * de pesquisa e anúncio.
+     * Carrega os recursos utilizados pela pesquisa.
      */
 
     await this.carregarRecursosPesquisa();
 
-    await this.carregarRecursosAnunciar();
-
 
     /*
-     * Marca o módulo como inicializado antes de
-     * criar os eventos.
+     * Marca o módulo como inicializado antes
+     * de criar os eventos.
      */
 
     this.inicializado = true;
@@ -106,8 +111,15 @@ async iniciar() {
 
 
     /*
-     * Identifica qual página está aberta e marca
-     * automaticamente o item correspondente.
+     * Verifica se existe usuário autenticado
+     * e carrega sua foto no item Perfil.
+     */
+
+    await this.carregarFotoPerfilUsuario();
+
+
+    /*
+     * Identifica automaticamente a página atual.
      */
 
     this.definirPaginaAtual();
@@ -123,6 +135,256 @@ async iniciar() {
     console.log(
         'Menu inferior inicializado corretamente.'
     );
+},
+
+
+/* =====================================================
+   CARREGAR FOTO DO PERFIL DO USUÁRIO LOGADO
+===================================================== */
+
+async carregarFotoPerfilUsuario() {
+
+    /*
+     * Se o módulo de sessão não estiver disponível,
+     * o menu continua funcionando com o ícone padrão.
+     */
+
+    if (
+        typeof window.Sessao === 'undefined' ||
+        typeof window.Sessao.obter !== 'function'
+    ) {
+
+        console.warn(
+            'Sessao.js não está disponível para carregar a foto do perfil.'
+        );
+
+        return;
+    }
+
+
+    try {
+
+        /*
+         * Obtém a sessão atual.
+         */
+
+        const sessao =
+            await window.Sessao.obter();
+
+
+        /*
+         * Sem sessão:
+         * mantém o ícone padrão.
+         */
+
+        if (
+            !sessao ||
+            !sessao.user ||
+            !sessao.user.id
+        ) {
+
+            return;
+        }
+
+
+        const usuarioId =
+            sessao.user.id;
+
+
+        /*
+         * Obtém o cliente Supabase.
+         */
+
+        const supabase =
+            window.supabaseClient ||
+            (
+                window.SupabaseClient &&
+                typeof window.SupabaseClient.getClient === 'function'
+                    ? window.SupabaseClient.getClient()
+                    : null
+            );
+
+
+        if (!supabase) {
+
+            console.warn(
+                'Cliente Supabase não está disponível para carregar a foto do perfil.'
+            );
+
+            return;
+        }
+
+
+        /*
+         * Busca somente a foto do usuário autenticado.
+         */
+
+        const {
+            data,
+            error
+        } = await supabase
+            .from('usuarios')
+            .select('foto_url')
+            .eq('id', usuarioId)
+            .maybeSingle();
+
+
+        if (error) {
+
+            console.error(
+                'Erro ao carregar foto do usuário no menu inferior:',
+                error
+            );
+
+            return;
+        }
+
+
+        /*
+         * Sem foto cadastrada:
+         * mantém o ícone padrão.
+         */
+
+        const fotoUrl =
+            data &&
+            typeof data.foto_url === 'string'
+                ? data.foto_url.trim()
+                : '';
+
+
+        if (!fotoUrl) {
+
+            return;
+        }
+
+
+        /*
+         * Localiza o botão de perfil.
+         */
+
+        const itemPerfil =
+            document.getElementById(
+                'nav-item-perfil'
+            );
+
+
+        if (!itemPerfil) {
+            return;
+        }
+
+
+        const wrapper =
+            itemPerfil.querySelector(
+                '.profile-icon-wrapper'
+            );
+
+
+        if (!wrapper) {
+            return;
+        }
+
+
+        /*
+         * Cria a imagem do perfil.
+         */
+
+        const imagem =
+            document.createElement('img');
+
+
+        imagem.className =
+            'nav-profile-image';
+
+
+        imagem.src =
+            fotoUrl;
+
+
+        imagem.alt =
+            'Meu perfil';
+
+
+        imagem.loading =
+            'lazy';
+
+
+        imagem.decoding =
+            'async';
+
+
+        /*
+         * Fallback caso a imagem não possa ser carregada.
+         */
+
+        imagem.addEventListener(
+            'error',
+            () => {
+
+                imagem.remove();
+
+                wrapper.classList.remove(
+                    'has-profile-image'
+                );
+
+                this.fotoPerfilCarregada =
+                    false;
+
+            },
+            {
+                once: true
+            }
+        );
+
+
+        /*
+         * Quando a imagem estiver disponível,
+         * ocultamos o ícone padrão e o indicador.
+         */
+
+        imagem.addEventListener(
+            'load',
+            () => {
+
+                wrapper.classList.add(
+                    'has-profile-image'
+                );
+
+                this.fotoPerfilCarregada =
+                    true;
+
+
+                itemPerfil.setAttribute(
+                    'aria-label',
+                    'Meu perfil'
+                );
+
+                itemPerfil.setAttribute(
+                    'title',
+                    'Meu perfil'
+                );
+
+            },
+            {
+                once: true
+            }
+        );
+
+
+        wrapper.appendChild(
+            imagem
+        );
+
+    }
+
+    catch (erro) {
+
+        console.error(
+            'Erro inesperado ao carregar foto do perfil no menu inferior:',
+            erro
+        );
+
+    }
+
 },
 
 
@@ -166,7 +428,8 @@ async carregarRecursosPesquisa() {
     script.src =
         'js/components/painel-pesquisa.js';
 
-    script.dataset.painelPesquisaJs = 'true';
+    script.dataset.painelPesquisaJs =
+        'true';
 
 
     script.onload = () => {
@@ -300,180 +563,6 @@ carregarCssPesquisa() {
 
 
 /* =====================================================
-   CARREGAR RECURSOS DO MODAL ANUNCIAR
-===================================================== */
-
-async carregarRecursosAnunciar() {
-
-    this.carregarCssAnunciar();
-
-
-    if (
-        window.ModalAnunciar &&
-        typeof window.ModalAnunciar.iniciar === 'function'
-    ) {
-
-        this.modalAnunciarCarregado = true;
-
-        window.ModalAnunciar.iniciar();
-
-        return;
-    }
-
-
-    const scriptExistente = document.querySelector(
-        'script[data-modal-anunciar-js="true"]'
-    );
-
-
-    if (scriptExistente) {
-
-        await this.aguardarModalAnunciar();
-
-        return;
-    }
-
-
-    const script = document.createElement('script');
-
-    script.src =
-        'js/components/modal-anunciar.js';
-
-    script.dataset.modalAnunciarJs =
-        'true';
-
-
-    script.onload = () => {
-
-        console.log(
-            'JavaScript do Modal Anunciar carregado automaticamente.'
-        );
-
-
-        this.modalAnunciarCarregado = true;
-
-
-        if (
-            window.ModalAnunciar &&
-            typeof window.ModalAnunciar.iniciar === 'function'
-        ) {
-
-            window.ModalAnunciar.iniciar();
-
-        }
-
-    };
-
-
-    script.onerror = () => {
-
-        console.error(
-            'Não foi possível carregar js/components/modal-anunciar.js'
-        );
-
-    };
-
-
-    document.body.appendChild(script);
-
-
-    await this.aguardarModalAnunciar();
-},
-
-
-/* =====================================================
-   AGUARDAR MODAL ANUNCIAR
-===================================================== */
-
-aguardarModalAnunciar() {
-
-    return new Promise(resolve => {
-
-        let tentativas = 0;
-
-
-        const verificar = () => {
-
-            if (
-                window.ModalAnunciar &&
-                typeof window.ModalAnunciar.iniciar === 'function'
-            ) {
-
-                this.modalAnunciarCarregado = true;
-
-
-                window.ModalAnunciar.iniciar();
-
-
-                resolve();
-
-                return;
-            }
-
-
-            tentativas++;
-
-
-            if (tentativas >= 50) {
-
-                console.warn(
-                    'Modal Anunciar não ficou disponível a tempo.'
-                );
-
-
-                resolve();
-
-                return;
-            }
-
-
-            setTimeout(
-                verificar,
-                50
-            );
-
-        };
-
-
-        verificar();
-
-    });
-},
-
-
-/* =====================================================
-   CARREGAR CSS DO MODAL ANUNCIAR
-===================================================== */
-
-carregarCssAnunciar() {
-
-    const cssExistente = document.querySelector(
-        'link[data-modal-anunciar-css="true"]'
-    );
-
-
-    if (cssExistente) {
-        return;
-    }
-
-
-    const link = document.createElement('link');
-
-    link.rel = 'stylesheet';
-
-    link.href =
-        'css/modal-anunciar.css';
-
-    link.dataset.modalAnunciarCss =
-        'true';
-
-
-    document.head.appendChild(link);
-
-},
-
-
-/* =====================================================
    CRIAR MENU
 ===================================================== */
 
@@ -483,9 +572,6 @@ criarMenu(container) {
      * Nenhum item recebe "ativo" diretamente.
      *
      * O item ativo será definido por definirPaginaAtual().
-     *
-     * O indicador também é criado aqui e permanece
-     * como um único elemento dentro do menu.
      */
 
     container.innerHTML = `
@@ -593,16 +679,16 @@ criarMenu(container) {
 
 
             <!-- =====================================
-                 ANUNCIAR
+                 FINANCEIRO
                  ===================================== -->
 
             <button
                 type="button"
                 class="bottom-nav-item"
-                id="nav-item-anunciar"
-                data-aba="anunciar"
-                aria-label="Anunciar"
-                title="Anunciar"
+                id="nav-item-financeiro"
+                data-aba="financeiro"
+                aria-label="Financeiro"
+                title="Financeiro"
             >
 
                 <span class="nav-icon-wrapper">
@@ -618,25 +704,21 @@ criarMenu(container) {
                         aria-hidden="true"
                     >
 
-                        <circle
-                            cx="12"
-                            cy="12"
-                            r="9"
-                        ></circle>
+                        <rect
+                            x="3"
+                            y="5"
+                            width="18"
+                            height="14"
+                            rx="2"
+                        ></rect>
 
-                        <line
-                            x1="12"
-                            y1="8"
-                            x2="12"
-                            y2="16"
-                        ></line>
+                        <path
+                            d="M3 10h18"
+                        ></path>
 
-                        <line
-                            x1="8"
-                            y1="12"
-                            x2="16"
-                            y2="12"
-                        ></line>
+                        <path
+                            d="M16 15h2"
+                        ></path>
 
                     </svg>
 
@@ -719,8 +801,10 @@ criarMenu(container) {
                     class="nav-icon-wrapper profile-icon-wrapper"
                 >
 
+                    <!-- Ícone padrão -->
+
                     <svg
-                        class="nav-icon-svg"
+                        class="nav-icon-svg profile-default-icon"
                         viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"
@@ -743,6 +827,11 @@ criarMenu(container) {
                     </svg>
 
 
+                    <!--
+                     * A foto do usuário autenticado
+                     * é adicionada dinamicamente.
+                     -->
+
                     <span
                         class="profile-dot"
                         aria-hidden="true"
@@ -763,10 +852,6 @@ criarMenu(container) {
 ===================================================== */
 
 definirPaginaAtual() {
-
-    /*
-     * Obtém somente o nome do arquivo atual.
-     */
 
     const caminhoAtual =
         window.location.pathname;
@@ -796,6 +881,19 @@ definirPaginaAtual() {
     ) {
 
         abaAtual = 'home';
+
+    }
+
+
+    /*
+     * FINANCEIRO
+     */
+
+    else if (
+        arquivoAtual === 'financeiro.html'
+    ) {
+
+        abaAtual = 'financeiro';
 
     }
 
@@ -849,13 +947,6 @@ definirPaginaAtual() {
             `#menu-inferior .bottom-nav-item[data-aba="${abaAtual}"]`
         );
 
-
-    /*
-     * Aplica o estado ativo.
-     *
-     * A função também posiciona o indicador
-     * sem executar a animação inicial.
-     */
 
     this.definirAtivo(
         elemento,
@@ -925,8 +1016,6 @@ mudarAba(aba, elemento) {
             true
         );
 
-        this.fecharPesquisa();
-
 
         window.location.href =
             'index.html';
@@ -979,42 +1068,28 @@ mudarAba(aba, elemento) {
 
 
     /* ================================================
-       ANUNCIAR
+       FINANCEIRO
        ================================================ */
 
-    if (aba === 'anunciar') {
+    if (aba === 'financeiro') {
+
+        this.definirAtivo(
+            elemento,
+            true
+        );
+
 
         /*
-         * Anunciar é uma ação e não uma página.
+         * A área financeira é exclusiva do usuário
+         * autenticado.
          *
-         * O indicador permanece na página atualmente
-         * selecionada enquanto o modal é aberto.
+         * A própria página financeiro.html fará a
+         * validação da sessão e poderá redirecionar
+         * para login caso necessário.
          */
 
-        if (
-            window.ModalAnunciar &&
-            typeof window.ModalAnunciar.abrir === 'function'
-        ) {
-
-            window.ModalAnunciar.abrir();
-
-        }
-
-        else if (
-            typeof window.abrirModalAnuncio === 'function'
-        ) {
-
-            window.abrirModalAnuncio();
-
-        }
-
-        else {
-
-            console.warn(
-                'A função abrirModalAnuncio() não está disponível.'
-            );
-
-        }
+        window.location.href =
+            'financeiro.html';
 
 
         return;
@@ -1031,8 +1106,6 @@ mudarAba(aba, elemento) {
             elemento,
             true
         );
-
-        this.fecharPesquisa();
 
 
         window.location.href =
@@ -1103,10 +1176,6 @@ definirAtivo(elemento, animar = true) {
     }
 
 
-    /*
-     * Define o novo item ativo.
-     */
-
     elemento.classList.add(
         'ativo'
     );
@@ -1127,10 +1196,6 @@ definirAtivo(elemento, animar = true) {
     }
 
 
-    /*
-     * Calcula a posição do botão dentro da barra.
-     */
-
     const menuRect =
         menu.getBoundingClientRect();
 
@@ -1145,14 +1210,6 @@ definirAtivo(elemento, animar = true) {
         menuRect.left;
 
 
-    /*
-     * Calcula a posição do indicador.
-     *
-     * O indicador tem largura controlada pelo CSS.
-     * Usamos transform para permitir uma animação
-     * suave e independente do layout.
-     */
-
     const largura =
         indicador.offsetWidth;
 
@@ -1161,13 +1218,6 @@ definirAtivo(elemento, animar = true) {
         centro -
         (largura / 2);
 
-
-    /*
-     * Na primeira definição da página, o indicador
-     * é posicionado imediatamente.
-     *
-     * Nos cliques seguintes, o CSS faz a transição.
-     */
 
     if (!animar) {
 
@@ -1183,44 +1233,11 @@ definirAtivo(elemento, animar = true) {
 
     if (!animar) {
 
-        /*
-         * Força o navegador a aplicar a posição
-         * imediatamente antes de restaurar a animação.
-         */
-
         indicador.offsetHeight;
 
 
         indicador.style.transition =
             '';
-
-    }
-
-},
-
-
-/* =====================================================
-   FECHAR PESQUISA
-===================================================== */
-
-fecharPesquisa() {
-
-    if (
-        window.PainelPesquisa &&
-        typeof window.PainelPesquisa.fechar === 'function'
-    ) {
-
-        window.PainelPesquisa.fechar();
-
-        return;
-    }
-
-
-    if (
-        typeof window.fecharPesquisa === 'function'
-    ) {
-
-        window.fecharPesquisa();
 
     }
 
@@ -1238,10 +1255,6 @@ async abrirMeuPerfil() {
     );
 
 
-    /* ================================================
-       VERIFICAR MÓDULO DE SESSÃO
-       ================================================ */
-
     if (
         typeof window.Sessao === 'undefined'
     ) {
@@ -1258,10 +1271,6 @@ async abrirMeuPerfil() {
         return;
     }
 
-
-    /* ================================================
-       VERIFICAR SESSÃO ATIVA
-       ================================================ */
 
     const sessao =
         await Sessao.obter();
@@ -1288,19 +1297,11 @@ async abrirMeuPerfil() {
     }
 
 
-    /* ================================================
-       SESSÃO ENCONTRADA
-       ================================================ */
-
     console.log(
         'Sessão encontrada:',
         sessao.user?.id
     );
 
-
-    /* ================================================
-       PERFIL UNIVERSAL
-       ================================================ */
 
     window.location.href =
         'meu-perfil.html';
@@ -1309,25 +1310,24 @@ async abrirMeuPerfil() {
 
 };
 
+
 /* =========================================================
 DISPONIBILIZAR GLOBALMENTE
 ========================================================= */
 
 window.MenuInferior =
-MenuInferior;
+    MenuInferior;
+
 
 /* =========================================================
 INICIALIZAÇÃO AUTOMÁTICA
 ========================================================= */
 
 document.addEventListener(
-'DOMContentLoaded',
-() => {
+    'DOMContentLoaded',
+    () => {
 
+        MenuInferior.iniciar();
 
-    MenuInferior.iniciar();
-
-}
-
-
+    }
 );

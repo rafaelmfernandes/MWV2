@@ -1,229 +1,320 @@
-<!DOCTYPE html> 
-<html lang="pt-BR"> 
-  <head> 
-    <meta charset="UTF-8"> 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
-    <meta name="theme-color" content="#ffffff"> 
-    <title>MusicalWorld - Solicitações</title> 
-    <link rel="stylesheet" href="css/notificacoes.css"> 
-  </head> 
-  
-<body> 
+<!DOCTYPE html>
+<html lang="pt-BR">
 
-<div class="app-container">
-<!-- =====================================================
-     CABEÇALHO
-     ===================================================== -->
+<head>
 
-<header class="navbar">
+    <meta charset="UTF-8">
 
-  <div class="logo">
-    Musical<span>World</span>
-  </div>
-
-  <button
-    class="nav-icon-btn"
-    onclick="voltarInicio()"
-    aria-label="Voltar ao início"
-    title="Voltar ao início"
-  >
-
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
     >
-      <line x1="18" y1="6" x2="6" y2="18"></line>
-      <line x1="6" y1="6" x2="18" y2="18"></line>
-    </svg>
 
-  </button>
+    <title>Notificações | MusicalWorld</title>
 
-</header>
+    <!-- =========================================================
+         FOLHA DE ESTILOS
+         ========================================================= -->
 
-
-<!-- =====================================================
-     CONTEÚDO
-     ===================================================== -->
-
-<main class="main-content">
-
-  <div class="page-header">
-
-    <span class="page-kicker">
-      CENTRAL DE SOLICITAÇÕES
-    </span>
-
-    <h1>
-      Solicitações
-    </h1>
-
-    <p>
-      Acompanhe propostas e contratações recebidas.
-    </p>
-
-  </div>
-
-
-  <!-- FILTROS -->
-
-  <div class="filter-tabs">
-
-    <button
-      class="filter-tab ativo"
-      data-filtro="todas"
-      onclick="filtrarSolicitacoes('todas')"
+    <link
+        rel="stylesheet"
+        href="css/notificacoes.css"
     >
-      Todas
-    </button>
 
-    <button
-      class="filter-tab"
-      data-filtro="pendente"
-      onclick="filtrarSolicitacoes('pendente')"
-    >
-      Pendentes
-    </button>
+    <!-- =========================================================
+         LUCIDE
+         ========================================================= -->
 
-    <button
-      class="filter-tab"
-      data-filtro="aceito"
-      onclick="filtrarSolicitacoes('aceito')"
-    >
-      Aceitas
-    </button>
+    <script
+        src="https://unpkg.com/lucide@latest"
+        defer
+    ></script>
 
-  </div>
+</head>
 
 
-  <!-- LISTA -->
+<body>
 
-  <div
-    id="notifications-list"
-    class="notifications-list"
-  ></div>
+    <!-- =========================================================
+         CABEÇALHO
 
+         Responsabilidade:
+         - Permitir voltar para a página anterior.
+         - Exibir o título da página.
+         - Exibir quantidade de notificações não lidas.
+         - Permitir marcar todas como lidas.
+         ========================================================= -->
 
-  <!-- ESTADO VAZIO -->
+    <header class="notificacoes-header">
 
-  <div
-    id="empty-state"
-    class="empty-state"
-    style="display: none;"
-  >
+        <div class="notificacoes-header-inner">
 
-    <div class="empty-icon">
+            <!-- Botão voltar -->
 
-      <svg
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="1.8"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      >
-        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-        <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-      </svg>
+            <button
+                type="button"
+                class="btn-voltar"
+                id="btnVoltar"
+                aria-label="Voltar"
+                title="Voltar"
+            >
 
-    </div>
+                <svg
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                >
 
-    <h3>
-      Nenhuma solicitação encontrada
-    </h3>
+                    <path d="M19 12H5"></path>
 
-    <p>
-      Quando houver novas propostas, elas aparecerão aqui.
-    </p>
+                    <path d="M12 19l-7-7 7-7"></path>
 
-  </div>
+                </svg>
 
-</main>
+            </button>
 
 
-<!-- =====================================================
-     MENU INFERIOR
-     ===================================================== -->
+            <!-- Título -->
 
-<nav class="bottom-nav">
+            <div class="notificacoes-header-titulo">
 
-  <button
-    class="bottom-nav-item"
-    onclick="window.location.href='index.html'"
-  >
+                <h1>
+                    Notificações
+                </h1>
 
-    <svg
-      class="nav-icon-svg"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-    >
-      <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-      <polyline points="9 22 9 12 15 12 15 22"></polyline>
-    </svg>
+                <span
+                    id="contadorNotificacoes"
+                    class="contador-notificacoes"
+                    aria-label="Quantidade de notificações não lidas"
+                >
+                    0
+                </span>
 
-    <span class="nav-label">
-      Início
-    </span>
-
-  </button>
+            </div>
 
 
-  <button
-    class="bottom-nav-item"
-    onclick="window.location.href='index.html'"
-  >
+            <!-- Ações -->
 
-    <svg
-      class="nav-icon-svg"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-    >
-      <circle cx="12" cy="12" r="10"></circle>
-      <line x1="12" y1="8" x2="12" y2="16"></line>
-      <line x1="8" y1="12" x2="16" y2="12"></line>
-    </svg>
+            <div class="notificacoes-header-acoes">
 
-    <span class="nav-label">
-      Anunciar
-    </span>
+                <button
+                    type="button"
+                    class="btn-marcar-todas"
+                    id="btnMarcarTodas"
+                >
+                    Marcar todas como lidas
+                </button>
 
-  </button>
+            </div>
+
+        </div>
+
+    </header>
 
 
-  <button
-    class="bottom-nav-item ativo"
-    onclick="window.location.href='notificacoes.html'"
-  >
+    <!-- =========================================================
+         CONTEÚDO PRINCIPAL
+         ========================================================= -->
 
-    <svg
-      class="nav-icon-svg"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-    >
-      <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-      <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-    </svg>
+    <main class="notificacoes-main">
 
-    <span class="nav-label">
-      Alertas
-    </span>
+        <section
+            class="notificacoes-container"
+            aria-label="Histórico de notificações"
+        >
 
-  </button>
+            <!-- =================================================
+                 ESTADO DE CARREGAMENTO
+                 ================================================= -->
 
-</nav>
-</div> <script src="js/notificacoes.js"></script> </body> </html>
+            <div
+                id="estadoCarregando"
+                class="estado-notificacoes estado-carregando"
+            >
+
+                <div
+                    class="spinner-notificacoes"
+                    aria-hidden="true"
+                ></div>
+
+                <p>
+                    Carregando notificações...
+                </p>
+
+            </div>
+
+
+            <!-- =================================================
+                 LISTA DE NOTIFICAÇÕES
+                 ================================================= -->
+
+            <div
+                id="listaNotificacoes"
+                class="lista-notificacoes"
+                aria-live="polite"
+            ></div>
+
+
+            <!-- =================================================
+                 ESTADO VAZIO
+                 ================================================= -->
+
+            <div
+                id="estadoVazio"
+                class="estado-notificacoes estado-vazio"
+                hidden
+            >
+
+                <div
+                    class="estado-vazio-icone"
+                    aria-hidden="true"
+                >
+
+                    <svg
+                        viewBox="0 0 24 24"
+                    >
+
+                        <path
+                            d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"
+                        ></path>
+
+                        <path
+                            d="M13.73 21a2 2 0 0 1-3.46 0"
+                        ></path>
+
+                    </svg>
+
+                </div>
+
+                <h2>
+                    Nenhuma notificação
+                </h2>
+
+                <p>
+                    Quando houver alguma novidade, ela aparecerá aqui.
+                </p>
+
+            </div>
+
+
+            <!-- =================================================
+                 ESTADO DE ERRO
+                 ================================================= -->
+
+            <div
+                id="estadoErro"
+                class="estado-notificacoes estado-erro"
+                hidden
+            >
+
+                <div
+                    class="estado-erro-icone"
+                    aria-hidden="true"
+                >
+
+                    <svg
+                        viewBox="0 0 24 24"
+                    >
+
+                        <circle
+                            cx="12"
+                            cy="12"
+                            r="10"
+                        ></circle>
+
+                        <line
+                            x1="12"
+                            y1="8"
+                            x2="12"
+                            y2="12"
+                        ></line>
+
+                        <line
+                            x1="12"
+                            y1="16"
+                            x2="12.01"
+                            y2="16"
+                        ></line>
+
+                    </svg>
+
+                </div>
+
+                <h2>
+                    Não foi possível carregar
+                </h2>
+
+                <p id="mensagemErro">
+                    Ocorreu um problema ao carregar suas notificações.
+                </p>
+
+                <button
+                    type="button"
+                    id="btnTentarNovamente"
+                    class="btn-tentar-novamente"
+                >
+                    Tentar novamente
+                </button>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- =========================================================
+         SUPABASE
+         ========================================================= -->
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"
+    ></script>
+
+
+    <!-- =========================================================
+         NÚCLEO DO MUSICALWORLD
+         ========================================================= -->
+
+    <script src="js/core/SupabaseClient.js"></script>
+
+    <script src="js/core/Sessao.js"></script>
+
+    <script src="js/core/UsuarioAtual.js"></script>
+
+    <script src="js/core/ControleSessao.js"></script>
+
+
+    <!-- =========================================================
+         MÓDULO DA PÁGINA
+         ========================================================= -->
+
+    <script src="js/notificacoes.js"></script>
+
+
+    <!-- =========================================================
+         INICIALIZAÇÃO DOS ÍCONES
+         ========================================================= -->
+
+    <script>
+
+        document.addEventListener(
+            'DOMContentLoaded',
+            function () {
+
+                if (
+                    window.lucide &&
+                    typeof window.lucide.createIcons === 'function'
+                ) {
+
+                    window.lucide.createIcons();
+
+                }
+
+            }
+        );
+
+    </script>
+
+</body>
+
+</html>

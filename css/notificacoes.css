@@ -1,717 +1,1035 @@
-*{
-box-sizing: border-box;
-margin: 0;
-padding: 0;
+
+/* =========================================================
+MUSICALWORLD — PÁGINA DE NOTIFICAÇÕES
+
+Arquivo:
+css/notificacoes.css
+
+Responsabilidade:
+
+* Estilizar a página de notificações.
+* Criar a lista cronológica.
+* Destacar notificações não lidas.
+* Exibir o avatar de quem originou a notificação.
+* Exibir o ícone do tipo de notificação no lado direito.
+* Controlar os estados de carregamento, vazio e erro.
+* Manter visual limpo e consistente com o MusicalWorld.
+* Adaptar a página para desktop e celular.
+
+Este arquivo NÃO controla a notificação flutuante.
+
+A notificação flutuante utiliza:
+
+css/components/modal-notificacao.css
+========================================================= */
+
+
+/* =========================================================
+RESET LOCAL
+========================================================= */
+
+* {
+    box-sizing: border-box;
 }
 
-:root {
---primary: #1677d2;
---primary-dark: #0f63b3;
 
---background: #f5f7fb;
---surface: #ffffff;
---surface-soft: #f8fafc;
+/* =========================================================
+CONTROLE DO ATRIBUTO HIDDEN
+========================================================= */
 
---border: #e5eaf0;
-
---text: #17202a;
---text-secondary: #687386;
---text-light: #929baa;
-
---warning: #d99000;
---warning-soft: #fff8e7;
---warning-border: #fde7a7;
-
---success: #159a67;
---success-soft: #ecfdf5;
---success-border: #bcefd7;
-
---danger: #dc4b4b;
---danger-soft: #fff1f1;
---danger-border: #f4c5c5;
+[hidden] {
+    display: none !important;
 }
 
-html {
-min-height: 100%;
-}
+
+/* =========================================================
+BODY
+========================================================= */
 
 body {
-min-height: 100vh;
-background: var(--background);
-color: var(--text);
+    margin: 0;
+    min-height: 100vh;
 
-font-family:
--apple-system,
-BlinkMacSystemFont,
-"Segoe UI",
-Roboto,
-Helvetica,
-Arial,
-sans-serif;
+    background: #f5f7fb;
+    color: #172033;
 
--webkit-font-smoothing: antialiased;
+    font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        sans-serif;
+
+    -webkit-font-smoothing: antialiased;
 }
+
 
 /* =========================================================
-CONTAINER
+CABEÇALHO
 ========================================================= */
 
-.app-container {
-width: 100%;
-max-width: 480px;
-min-height: 100vh;
-margin: 0 auto;
+.notificacoes-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
 
-background: var(--background);
+    width: 100%;
 
-display: flex;
-flex-direction: column;
+    background: #ffffff;
 
-position: relative;
-overflow: hidden;
+    border-bottom: 1px solid #e5e7eb;
 }
+
+
+.notificacoes-header-inner {
+    width: min(100%, 920px);
+
+    min-height: 68px;
+
+    margin: 0 auto;
+    padding: 0 20px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 16px;
+}
+
 
 /* =========================================================
-NAVBAR
+BOTÃO VOLTAR
 ========================================================= */
 
-.navbar {
-width: 100%;
-height: 64px;
+.btn-voltar {
+    width: 40px;
+    height: 40px;
 
-padding: 0 18px;
+    flex: 0 0 40px;
 
-display: flex;
-align-items: center;
-justify-content: space-between;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-background: rgba(255, 255, 255, 0.97);
+    border: 0;
+    border-radius: 10px;
 
-border-bottom: 1px solid var(--border);
+    background: transparent;
+    color: #475569;
 
-position: sticky;
-top: 0;
+    cursor: pointer;
 
-z-index: 20;
-
-backdrop-filter: blur(12px);
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
 }
 
-.logo {
-font-size: 19px;
-font-weight: 800;
-letter-spacing: -0.5px;
-color: var(--text);
+
+.btn-voltar:hover {
+    background: #f1f5f9;
+    color: #172033;
 }
 
-.logo span {
-color: var(--primary);
+
+.btn-voltar:active {
+    transform: scale(0.96);
 }
 
-.nav-icon-btn {
-width: 38px;
-height: 38px;
 
-border: 1px solid var(--border);
-border-radius: 11px;
+.btn-voltar svg {
+    width: 21px;
+    height: 21px;
 
-background: var(--surface);
-
-color: var(--text-secondary);
-
-display: flex;
-align-items: center;
-justify-content: center;
-
-cursor: pointer;
-
-transition:
-background 0.2s ease,
-border-color 0.2s ease,
-transform 0.2s ease;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
 }
 
-.nav-icon-btn:hover {
-background: var(--surface-soft);
-border-color: #d3dbe5;
-}
-
-.nav-icon-btn:active {
-transform: scale(0.95);
-}
-
-.nav-icon-btn svg {
-width: 19px;
-height: 19px;
-}
 
 /* =========================================================
-CONTEÚDO
+TÍTULO DO CABEÇALHO
 ========================================================= */
 
-.main-content {
-flex: 1;
+.notificacoes-header-titulo {
+    min-width: 0;
 
-overflow-y: auto;
+    display: flex;
+    align-items: center;
 
-padding:
-22px
-16px
-94px;
+    gap: 9px;
 }
+
+
+.notificacoes-header-titulo h1 {
+    margin: 0;
+
+    color: #172033;
+
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+
+.contador-notificacoes {
+    min-width: 23px;
+    height: 23px;
+
+    padding: 0 7px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 999px;
+
+    background: #ede9fe;
+    color: #6d4aff;
+
+    font-size: 12px;
+    font-weight: 700;
+}
+
 
 /* =========================================================
-CABEÇALHO DA PÁGINA
+AÇÕES DO CABEÇALHO
 ========================================================= */
 
-.page-header {
-margin-bottom: 18px;
+.notificacoes-header-acoes {
+    margin-left: auto;
+
+    display: flex;
+    align-items: center;
 }
 
-.page-kicker {
-display: block;
 
-margin-bottom: 5px;
+.btn-marcar-todas {
+    border: 0;
 
-color: var(--primary);
+    background: transparent;
+    color: #6d4aff;
 
-font-size: 10px;
-font-weight: 800;
+    font-size: 13px;
+    font-weight: 600;
 
-letter-spacing: 0.8px;
+    cursor: pointer;
+
+    padding: 8px 4px;
+
+    transition: opacity 0.2s ease;
 }
 
-.page-header h1 {
-color: var(--text);
 
-font-size: 23px;
-line-height: 1.2;
-
-font-weight: 750;
-
-margin-bottom: 5px;
+.btn-marcar-todas:hover {
+    opacity: 0.75;
 }
 
-.page-header p {
-color: var(--text-secondary);
 
-font-size: 12px;
-line-height: 1.5;
+.btn-marcar-todas:disabled {
+    opacity: 0.45;
+    cursor: default;
 }
+
 
 /* =========================================================
-FILTROS
+CONTEÚDO PRINCIPAL
 ========================================================= */
 
-.filter-tabs {
-display: flex;
-gap: 7px;
+.notificacoes-main {
+    width: 100%;
 
-margin-bottom: 16px;
-
-overflow-x: auto;
-scrollbar-width: none;
+    padding: 28px 20px 48px;
 }
 
-.filter-tabs::-webkit-scrollbar {
-display: none;
+
+.notificacoes-container {
+    width: min(100%, 760px);
+
+    margin: 0 auto;
 }
 
-.filter-tab {
-border: 1px solid var(--border);
-
-background: var(--surface);
-
-color: var(--text-secondary);
-
-padding: 8px 14px;
-
-border-radius: 20px;
-
-font-size: 11px;
-font-weight: 650;
-
-cursor: pointer;
-
-white-space: nowrap;
-
-transition:
-background 0.2s ease,
-border-color 0.2s ease,
-color 0.2s ease;
-}
-
-.filter-tab:hover {
-border-color: #cfd8e4;
-}
-
-.filter-tab.ativo {
-background: #eaf4ff;
-border-color: #c9e3ff;
-color: var(--primary);
-}
 
 /* =========================================================
 LISTA
 ========================================================= */
 
-.notifications-list {
-display: flex;
-flex-direction: column;
-gap: 14px;
+.lista-notificacoes {
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 10px;
 }
+
 
 /* =========================================================
-CARD
+ITEM DE NOTIFICAÇÃO
+
+Estrutura:
+
+[ AVATAR ] [ CONTEÚDO                         ] [ ÍCONE ]
+
+O avatar identifica a origem.
+
+O conteúdo apresenta nome, tipo, data e mensagem.
+
+O ícone da direita identifica o tipo da notificação.
 ========================================================= */
 
-.notification-card {
-background: var(--surface);
+.notificacao-item {
+    position: relative;
 
-border: 1px solid var(--border);
+    width: 100%;
 
-border-radius: 17px;
+    display: flex;
+    align-items: flex-start;
 
-padding: 15px;
+    gap: 14px;
 
-display: flex;
-flex-direction: column;
-gap: 13px;
+    padding: 16px 18px;
 
-box-shadow:
-0 3px 12px rgba(24, 39, 75, 0.035);
+    background: #ffffff;
 
-transition:
-transform 0.2s ease,
-box-shadow 0.2s ease;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.2s ease;
 }
 
-.notification-card:hover {
-transform: translateY(-1px);
 
-box-shadow:
-0 7px 20px rgba(24, 39, 75, 0.07);
+.notificacao-item:hover {
+    border-color: #d8d0ff;
+
+    box-shadow:
+        0 5px 18px rgba(
+            23,
+            32,
+            51,
+            0.06
+        );
 }
 
-.notification-card.pending {
-border-left: 4px solid #eab308;
+
+.notificacao-item:active {
+    transform: translateY(1px);
 }
 
-.notification-card.accepted {
-border-left: 4px solid var(--success);
-}
-
-.notification-card.rejected {
-border-left: 4px solid var(--danger);
-}
 
 /* =========================================================
-TOPO DO CARD
+NOTIFICAÇÃO NÃO LIDA
 ========================================================= */
 
-.notif-card-top {
-display: flex;
-align-items: center;
-gap: 11px;
+.notificacao-item.nao-lida {
+    background:
+        linear-gradient(
+            90deg,
+            #faf9ff 0%,
+            #ffffff 100%
+        );
+
+    border-color: #ddd6fe;
 }
 
-.notif-avatar {
-width: 44px;
-height: 44px;
 
-flex: 0 0 44px;
+.notificacao-item.nao-lida::before {
+    content: "";
 
-border-radius: 13px;
+    position: absolute;
 
-display: flex;
-align-items: center;
-justify-content: center;
+    top: 14px;
+    left: 0;
 
-color: #ffffff;
+    width: 3px;
+    height: 38px;
 
-font-size: 13px;
-font-weight: 750;
+    border-radius: 0 4px 4px 0;
+
+    background: #6d4aff;
 }
 
-.notif-user-details {
-min-width: 0;
-flex: 1;
-
-display: flex;
-flex-direction: column;
-gap: 4px;
-}
-
-.notif-name-row {
-display: flex;
-align-items: center;
-justify-content: space-between;
-gap: 8px;
-}
-
-.notif-name-row h4 {
-min-width: 0;
-
-color: var(--text);
-
-font-size: 13px;
-font-weight: 700;
-
-overflow: hidden;
-text-overflow: ellipsis;
-white-space: nowrap;
-}
-
-.notif-location {
-color: var(--text-light);
-
-font-size: 10px;
-
-overflow: hidden;
-text-overflow: ellipsis;
-white-space: nowrap;
-}
 
 /* =========================================================
-STATUS
+AVATAR DO REMETENTE
 ========================================================= */
 
-.badge-status {
-flex-shrink: 0;
+.notificacao-avatar {
+    width: 48px;
+    height: 48px;
 
-padding: 4px 8px;
+    flex: 0 0 48px;
 
-border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-font-size: 9px;
-font-weight: 800;
+    overflow: hidden;
 
-text-transform: uppercase;
+    border-radius: 50%;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ede9fe 0%,
+            #ddd6fe 100%
+        );
+
+    color: #6d4aff;
+
+    border: 1px solid #e4defe;
+
+    position: relative;
 }
 
-.badge-status.pendente {
-color: var(--warning);
-background: var(--warning-soft);
-border: 1px solid var(--warning-border);
+
+.notificacao-avatar-imagem {
+    width: 100%;
+    height: 100%;
+
+    display: block;
+
+    object-fit: cover;
+
+    object-position: center;
+
+    border-radius: 50%;
 }
 
-.badge-status.aceito {
-color: var(--success);
-background: var(--success-soft);
-border: 1px solid var(--success-border);
+
+.notificacao-avatar-iniciais {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: #6d4aff;
+
+    font-size: 13px;
+    font-weight: 700;
+
+    line-height: 1;
 }
 
-.badge-status.recusado {
-color: var(--danger);
-background: var(--danger-soft);
-border: 1px solid var(--danger-border);
-}
 
 /* =========================================================
-DETALHES
+ÁREA PRINCIPAL
 ========================================================= */
 
-.notif-details-box {
-background: var(--surface-soft);
+.notificacao-conteudo {
+    min-width: 0;
 
-border: 1px solid #edf0f4;
+    flex: 1 1 auto;
 
-border-radius: 13px;
-
-padding: 12px;
-
-display: flex;
-flex-direction: column;
-gap: 9px;
+    width: 0;
 }
 
-.notif-info-row {
-display: flex;
-align-items: flex-start;
-justify-content: space-between;
-
-gap: 12px;
-
-font-size: 11px;
-}
-
-.notif-info-row .label {
-color: var(--text-secondary);
-}
-
-.notif-info-row .value {
-color: var(--text);
-
-font-weight: 650;
-
-text-align: right;
-
-max-width: 60%;
-}
-
-.notif-info-row .value.cash {
-color: var(--primary);
-font-weight: 800;
-}
-
-.notif-obs {
-padding-top: 9px;
-
-margin-top: 2px;
-
-border-top: 1px solid var(--border);
-
-color: var(--text-secondary);
-
-font-size: 10px;
-
-line-height: 1.5;
-}
 
 /* =========================================================
-AÇÕES
+LINHA SUPERIOR
 ========================================================= */
 
-.notif-actions {
-display: flex;
-gap: 9px;
+.notificacao-linha-superior {
+    min-width: 0;
+
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+
+    gap: 12px;
 }
 
-.btn-recusar,
-.btn-aceitar,
-.btn-chat {
-border-radius: 11px;
 
-padding: 11px 10px;
+/* =========================================================
+IDENTIDADE DO REMETENTE
 
-font-size: 11px;
-font-weight: 700;
+Exemplo:
 
-cursor: pointer;
+Rafael Fernandes
+Nova mensagem
+========================================================= */
 
-transition:
-background 0.2s ease,
-border-color 0.2s ease,
-transform 0.2s ease;
+.notificacao-identidade {
+    min-width: 0;
+
+    display: flex;
+    align-items: baseline;
+
+    flex-wrap: wrap;
+
+    gap: 5px 8px;
 }
 
-.btn-recusar {
-flex: 1;
 
-color: var(--danger);
+.notificacao-remetente-nome {
+    min-width: 0;
 
-background: #ffffff;
+    color: #172033;
 
-border: 1px solid var(--danger-border);
+    font-size: 14px;
+    font-weight: 700;
+
+    line-height: 1.4;
+
+    overflow-wrap: anywhere;
 }
 
-.btn-recusar:hover {
-background: var(--danger-soft);
+
+.notificacao-tipo-texto {
+    color: #64748b;
+
+    font-size: 12px;
+    font-weight: 500;
+
+    line-height: 1.4;
 }
 
-.btn-aceitar {
-flex: 2;
 
-color: #ffffff;
-
-background: var(--primary);
-
-border: 1px solid var(--primary);
+.notificacao-item.nao-lida
+.notificacao-remetente-nome {
+    font-weight: 750;
 }
 
-.btn-aceitar:hover {
-background: var(--primary-dark);
+
+.notificacao-item.nao-lida
+.notificacao-tipo-texto {
+    color: #6d4aff;
+    font-weight: 600;
 }
 
-.btn-chat {
-width: 100%;
 
-color: var(--primary);
+/* =========================================================
+DATA
+========================================================= */
 
-background: #eef6ff;
+.notificacao-data {
+    flex: 0 0 auto;
 
-border: 1px solid #cfe5fb;
+    color: #94a3b8;
+
+    font-size: 11px;
+    line-height: 1.5;
+
+    white-space: nowrap;
 }
 
-.btn-chat:hover {
-background: #e4f1ff;
+
+/* =========================================================
+MENSAGEM
+========================================================= */
+
+.notificacao-mensagem {
+    margin: 5px 0 0;
+
+    color: #64748b;
+
+    font-size: 13px;
+    line-height: 1.5;
+
+    overflow-wrap: anywhere;
+
+    word-break: break-word;
 }
 
-.btn-recusar:active,
-.btn-aceitar:active,
-.btn-chat:active {
-transform: scale(0.98);
+
+.notificacao-item.nao-lida
+.notificacao-mensagem {
+    color: #475569;
 }
+
+
+/* =========================================================
+ÍCONE DO TIPO DE NOTIFICAÇÃO
+
+Fica sempre no lado DIREITO.
+
+Tipos possíveis:
+
+* mensagem
+* contratação
+* avaliação
+* pagamento
+* outros
+========================================================= */
+
+.notificacao-icone {
+    width: 42px;
+    height: 42px;
+
+    flex: 0 0 42px;
+
+    margin-top: 2px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 11px;
+
+    background: #f1efff;
+    color: #6d4aff;
+
+    border: 1px solid #e9e4ff;
+
+    position: relative;
+}
+
+
+.notificacao-icone svg {
+    width: 20px;
+    height: 20px;
+
+    fill: none;
+
+    stroke: currentColor;
+    stroke-width: 2;
+
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+
+.notificacao-item.nao-lida
+.notificacao-icone {
+    background: #ede9fe;
+
+    border-color: #ddd6fe;
+}
+
+
+/* =========================================================
+INDICADOR DE NÃO LIDA
+
+Fica associado ao ícone do lado direito.
+
+Não fica sobre o avatar.
+========================================================= */
+
+.notificacao-indicador {
+    position: absolute;
+
+    top: 10px;
+    right: 10px;
+
+    width: 7px;
+    height: 7px;
+
+    border-radius: 50%;
+
+    background: #6d4aff;
+
+    box-shadow:
+        0 0 0 3px #ffffff;
+
+    pointer-events: none;
+}
+
+
+.notificacao-item:not(.nao-lida)
+.notificacao-indicador {
+    display: none;
+}
+
+
+/* =========================================================
+ESTADOS
+========================================================= */
+
+.estado-notificacoes {
+    min-height: 280px;
+
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+
+    padding: 40px 20px;
+}
+
+
+.estado-notificacoes h2 {
+    margin: 16px 0 6px;
+
+    color: #172033;
+
+    font-size: 17px;
+    font-weight: 700;
+}
+
+
+.estado-notificacoes p {
+    max-width: 420px;
+
+    margin: 0;
+
+    color: #64748b;
+
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+CARREGAMENTO
+========================================================= */
+
+.spinner-notificacoes {
+    width: 28px;
+    height: 28px;
+
+    border: 3px solid #e5e7eb;
+
+    border-top-color: #6d4aff;
+
+    border-radius: 50%;
+
+    animation:
+        notificacoesSpin
+        0.8s linear infinite;
+}
+
+
+@keyframes notificacoesSpin {
+
+    to {
+        transform: rotate(360deg);
+    }
+
+}
+
 
 /* =========================================================
 ESTADO VAZIO
 ========================================================= */
 
-.empty-state {
-padding: 40px 20px;
+.estado-vazio-icone {
+    width: 58px;
+    height: 58px;
 
-text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-background: var(--surface);
+    border-radius: 16px;
 
-border: 1px dashed var(--border);
-
-border-radius: 17px;
+    background: #f1efff;
+    color: #6d4aff;
 }
 
-.empty-icon {
-width: 52px;
-height: 52px;
 
-margin: 0 auto 13px;
+.estado-vazio-icone svg {
+    width: 27px;
+    height: 27px;
 
-border-radius: 15px;
+    fill: none;
 
-background: #eef6ff;
+    stroke: currentColor;
+    stroke-width: 1.8;
 
-color: var(--primary);
-
-display: flex;
-align-items: center;
-justify-content: center;
+    stroke-linecap: round;
+    stroke-linejoin: round;
 }
 
-.empty-icon svg {
-width: 25px;
-height: 25px;
-}
-
-.empty-state h3 {
-color: var(--text);
-
-font-size: 14px;
-
-margin-bottom: 5px;
-}
-
-.empty-state p {
-color: var(--text-secondary);
-
-font-size: 11px;
-
-line-height: 1.5;
-}
 
 /* =========================================================
-MENU INFERIOR
+ESTADO DE ERRO
 ========================================================= */
 
-.bottom-nav {
-position: absolute;
+.estado-erro-icone {
+    width: 58px;
+    height: 58px;
 
-bottom: 0;
-left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-width: 100%;
-height: 72px;
+    border-radius: 16px;
 
-background: rgba(255, 255, 255, 0.97);
-
-border-top: 1px solid var(--border);
-
-display: flex;
-align-items: center;
-justify-content: space-around;
-
-z-index: 20;
-
-padding-bottom: env(safe-area-inset-bottom);
-
-backdrop-filter: blur(12px);
+    background: #fef2f2;
+    color: #dc2626;
 }
 
-.bottom-nav-item {
-flex: 1;
 
-height: 100%;
+.estado-erro-icone svg {
+    width: 27px;
+    height: 27px;
 
-background: none;
-border: none;
+    fill: none;
 
-color: var(--text-light);
+    stroke: currentColor;
+    stroke-width: 1.8;
 
-display: flex;
-flex-direction: column;
-align-items: center;
-justify-content: center;
-
-gap: 4px;
-
-cursor: pointer;
-
-transition: color 0.2s ease;
+    stroke-linecap: round;
+    stroke-linejoin: round;
 }
 
-.bottom-nav-item:hover {
-color: var(--primary);
+
+.btn-tentar-novamente {
+    margin-top: 18px;
+
+    min-height: 40px;
+
+    padding: 0 18px;
+
+    border: 0;
+    border-radius: 9px;
+
+    background: #6d4aff;
+    color: #ffffff;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease;
 }
 
-.bottom-nav-item.ativo {
-color: var(--primary);
+
+.btn-tentar-novamente:hover {
+    background: #5b3fe0;
 }
 
-.nav-icon-svg {
-width: 21px;
-height: 21px;
+
+.btn-tentar-novamente:active {
+    transform: scale(0.98);
 }
 
-.nav-label {
-font-size: 10px;
-font-weight: 650;
-}
 
 /* =========================================================
-DESKTOP
+MOBILE
 ========================================================= */
 
-@media (min-width: 481px) {
+@media (max-width: 640px) {
 
-body {
-padding: 20px 0;
+    .notificacoes-header-inner {
+        min-height: 62px;
+
+        padding: 0 14px;
+
+        gap: 10px;
+    }
+
+
+    .btn-voltar {
+        width: 38px;
+        height: 38px;
+
+        flex-basis: 38px;
+    }
+
+
+    .notificacoes-header-titulo h1 {
+        font-size: 18px;
+    }
+
+
+    .btn-marcar-todas {
+        font-size: 12px;
+    }
+
+
+    .notificacoes-main {
+        padding: 16px 10px 32px;
+    }
+
+
+    .lista-notificacoes {
+        gap: 7px;
+    }
+
+
+    .notificacao-item {
+        gap: 10px;
+
+        padding: 13px 12px;
+
+        border-radius: 12px;
+    }
+
+
+    .notificacao-avatar {
+        width: 42px;
+        height: 42px;
+
+        flex-basis: 42px;
+    }
+
+
+    .notificacao-avatar-iniciais {
+        font-size: 12px;
+    }
+
+
+    .notificacao-icone {
+        width: 38px;
+        height: 38px;
+
+        flex-basis: 38px;
+
+        border-radius: 10px;
+    }
+
+
+    .notificacao-icone svg {
+        width: 18px;
+        height: 18px;
+    }
+
+
+    .notificacao-remetente-nome {
+        font-size: 13px;
+    }
+
+
+    .notificacao-tipo-texto {
+        font-size: 11px;
+    }
+
+
+    .notificacao-mensagem {
+        font-size: 12px;
+    }
+
+
+    .notificacao-data {
+        font-size: 10px;
+    }
+
+
+    .notificacao-indicador {
+        top: 8px;
+        right: 7px;
+
+        width: 6px;
+        height: 6px;
+    }
+
 }
 
-.app-container {
-min-height: calc(100vh - 40px);
-
-border: 1px solid var(--border);
-
-border-radius: 22px;
-
-overflow: hidden;
-
-box-shadow:
-  0 12px 40px rgba(24, 39, 75, 0.08);
-
-}
-
-}
 
 /* =========================================================
-CELULARES PEQUENOS
+MOBILE PEQUENO
 ========================================================= */
 
-@media (max-width: 360px) {
+@media (max-width: 400px) {
 
-.main-content {
-padding-left: 12px;
-padding-right: 12px;
+    .notificacoes-header-acoes {
+        margin-left: auto;
+    }
+
+
+    .btn-marcar-todas {
+        max-width: 105px;
+
+        padding: 6px 0;
+
+        text-align: right;
+
+        white-space: normal;
+    }
+
+
+    .notificacao-item {
+        gap: 8px;
+
+        padding-left: 10px;
+        padding-right: 9px;
+    }
+
+
+    .notificacao-avatar {
+        width: 40px;
+        height: 40px;
+
+        flex-basis: 40px;
+    }
+
+
+    .notificacao-icone {
+        width: 35px;
+        height: 35px;
+
+        flex-basis: 35px;
+    }
+
+
+    .notificacao-icone svg {
+        width: 17px;
+        height: 17px;
+    }
+
+
+    .notificacao-linha-superior {
+        display: block;
+    }
+
+
+    .notificacao-data {
+        display: block;
+
+        margin-top: 3px;
+    }
+
+
+    .notificacao-identidade {
+        gap: 3px 6px;
+    }
+
 }
 
-.notification-card {
-padding: 13px;
+
+/* =========================================================
+ACESSIBILIDADE
+========================================================= */
+
+button:focus-visible,
+.notificacao-item:focus-visible {
+    outline:
+        3px solid rgba(
+            109,
+            74,
+            255,
+            0.25
+        );
+
+    outline-offset: 2px;
 }
 
-.notif-name-row {
-align-items: flex-start;
+
+/* =========================================================
+REDUÇÃO DE MOVIMENTO
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+
+        scroll-behavior: auto !important;
+
+        transition: none !important;
+
+        animation: none !important;
+    }
+
 }
 
-.badge-status {
-font-size: 8px;
-}
-
-}
