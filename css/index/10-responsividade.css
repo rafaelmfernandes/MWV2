@@ -373,14 +373,15 @@ body {
 
     padding: 12px 12px 14px;
 
-    margin: 0;
+    margin: 0 ;
+    margin-bottom: 15px;
 
     border: none;
 
-    border-bottom:
-        1px solid rgba(23, 32, 51, 0.08);
+    border:
+        1px solid rgba(15, 20, 31, 0.08);
 
-    border-radius: 0;
+    border-radius: 10px;
 
     box-shadow: none;
 
