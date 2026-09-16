@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+>
+
+<title>MusicalWorld - Chat</title>
+
+<!-- =========================================================
+     MUSICALWORLD — CHAT
+     Arquivo: chat.html
+
+     Responsabilidade:
+     Estrutura da página de uma conversa individual.
+
+     Esta página recebe o ID da conversa pela URL:
+
+     chat.html?id=UUID_DA_CONVERSA
+
+     A lista de conversas continua em mensagens.html.
+     ========================================================= -->
+
+<!-- CSS principal do Chat -->
+<link rel="stylesheet" href="css/Chat/chat.css">
+
+<!-- =========================================================
+     SUPABASE
+     ========================================================= -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!-- =========================================================
+     ÍCONES
+     ========================================================= -->
+<script src="https://unpkg.com/lucide@latest"></script>
+
+
+</head>
+
+<body>
+
+
+<div class="chat-page">
+
+    <!-- =====================================================
+         CABEÇALHO DO CHAT
+         ===================================================== -->
+    <header class="chat-header">
+
+        <button
+            type="button"
+            class="chat-back-button"
+            onclick="voltarMensagens()"
+            aria-label="Voltar para mensagens"
+        >
+            <i data-lucide="arrow-left"></i>
+        </button>
+
+        <div class="chat-user-info">
+
+            <div class="chat-user-avatar-wrapper">
+
+                <img
+                    id="chatUserAvatar"
+                    class="chat-user-avatar"
+                    src=""
+                    alt="Foto do usuário"
+                >
+
+                <div
+                    id="chatUserAvatarFallback"
+                    class="chat-user-avatar-fallback"
+                    aria-hidden="true"
+                >
+                    <span id="chatUserInitials">?</span>
+                </div>
+
+            </div>
+
+            <div class="chat-user-details">
+
+                <div class="chat-user-name-row">
+
+                    <h1
+                        id="chatUserName"
+                        class="chat-user-name"
+                    >
+                        Carregando...
+                    </h1>
+
+                </div>
+
+                <div
+                    id="chatUserContext"
+                    class="chat-user-context"
+                >
+                    Conversa
+                </div>
+
+            </div>
+
+        </div>
+
+        <button
+            type="button"
+            class="chat-options-button"
+            onclick="abrirOpcoesChat()"
+            aria-label="Opções da conversa"
+        >
+            <i data-lucide="more-vertical"></i>
+        </button>
+
+    </header>
+
+
+    <!-- =====================================================
+         ÁREA PRINCIPAL DAS MENSAGENS
+         ===================================================== -->
+    <main
+        id="chatMessages"
+        class="chat-messages"
+        aria-live="polite"
+        aria-label="Mensagens da conversa"
+    >
+
+        <!-- Estado inicial -->
+        <div
+            id="chatLoading"
+            class="chat-state"
+        >
+            <div class="chat-loading-spinner"></div>
+
+            <p>Carregando conversa...</p>
+        </div>
+
+    </main>
+
+
+    <!-- =====================================================
+         ÁREA DE COMPOSIÇÃO DA MENSAGEM
+         ===================================================== -->
+    <footer class="chat-composer">
+
+        <button
+            type="button"
+            class="chat-attachment-button"
+            onclick="anexarArquivo()"
+            aria-label="Adicionar arquivo"
+        >
+            <i data-lucide="plus"></i>
+        </button>
+
+        <div class="chat-input-wrapper">
+
+            <textarea
+                id="chatMessageInput"
+                class="chat-message-input"
+                rows="1"
+                maxlength="5000"
+                placeholder="Escreva uma mensagem..."
+                autocomplete="off"
+                aria-label="Mensagem"
+            ></textarea>
+
+        </div>
+
+        <button
+            type="button"
+            id="chatSendButton"
+            class="chat-send-button"
+            onclick="enviarMensagem()"
+            aria-label="Enviar mensagem"
+        >
+            <i data-lucide="send"></i>
+        </button>
+
+    </footer>
+
+</div>
+
+
+<!-- =========================================================
+     INPUT OCULTO PARA FUTUROS ANEXOS
+     ========================================================= -->
+<input
+    type="file"
+    id="chatFileInput"
+    hidden
+>
+
+
+<!-- =========================================================
+     SCRIPTS DO MUSICALWORLD
+     ========================================================= -->
+
+<!-- Cliente Supabase compartilhado -->
+<script src="js/core/SupabaseClient.js"></script>
+
+<!-- Controle de sessão compartilhado -->
+<script src="js/core/Sessao.js"></script>
+
+<!-- Lógica específica do Chat -->
+<script src="js/chat/chat.js"></script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,747 @@
+/* =========================================================
+MUSICALWORLD — CHAT
+Arquivo: css/Chat/chat.css
+
+Responsabilidade:
+
+* Layout da conversa individual
+* Cabeçalho do chat
+* Avatar do usuário
+* Balões de mensagens
+* Campo de digitação
+* Botões de ação
+* Responsividade para celular e desktop
+
+A página de mensagens permanece responsável pela
+lista de conversas.
+
+Este arquivo controla somente a tela do Chat.
+========================================================= */
+
+/* =========================================================
+RESET
+========================================================= */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  }
+
+html,
+body {
+width: 100%;
+min-height: 100%;
+}
+
+body {
+font-family:
+Inter,
+-apple-system,
+BlinkMacSystemFont,
+"Segoe UI",
+Roboto,
+Helvetica,
+Arial,
+sans-serif;
+
+
+background: #f5f7fb;
+color: #172033;
+
+
+}
+
+/* =========================================================
+PÁGINA
+========================================================= */
+
+.chat-page {
+width: 100%;
+min-height: 100vh;
+
+
+display: flex;
+flex-direction: column;
+
+background: #ffffff;
+
+
+}
+
+/* =========================================================
+CABEÇALHO
+========================================================= */
+
+.chat-header {
+position: sticky;
+top: 0;
+z-index: 20;
+
+
+width: 100%;
+height: 68px;
+
+display: flex;
+align-items: center;
+
+padding: 0 18px;
+
+background: rgba(255, 255, 255, 0.96);
+border-bottom: 1px solid #e7eaf0;
+
+backdrop-filter: blur(10px);
+-webkit-backdrop-filter: blur(10px);
+
+
+}
+
+/* =========================================================
+BOTÃO VOLTAR
+========================================================= */
+
+.chat-back-button,
+.chat-options-button {
+width: 42px;
+height: 42px;
+
+
+flex: 0 0 42px;
+
+display: flex;
+align-items: center;
+justify-content: center;
+
+border: none;
+border-radius: 50%;
+
+background: transparent;
+color: #172033;
+
+cursor: pointer;
+
+transition:
+    background 0.2s ease,
+    color 0.2s ease;
+
+
+}
+
+.chat-back-button:hover,
+.chat-options-button:hover {
+background: #f1f3f7;
+color: #6d4aff;
+}
+
+.chat-back-button svg,
+.chat-options-button svg {
+width: 21px;
+height: 21px;
+}
+
+/* =========================================================
+INFORMAÇÕES DO USUÁRIO
+========================================================= */
+
+.chat-user-info {
+min-width: 0;
+
+
+flex: 1;
+
+display: flex;
+align-items: center;
+
+gap: 11px;
+
+margin-left: 5px;
+margin-right: 5px;
+
+
+}
+
+/* =========================================================
+AVATAR
+========================================================= */
+
+.chat-user-avatar-wrapper {
+position: relative;
+
+
+width: 42px;
+height: 42px;
+
+flex: 0 0 42px;
+
+
+}
+
+.chat-user-avatar,
+.chat-user-avatar-fallback {
+width: 42px;
+height: 42px;
+
+
+border-radius: 50%;
+
+
+}
+
+.chat-user-avatar {
+display: none;
+
+
+object-fit: cover;
+
+background: #eef1f6;
+
+
+}
+
+.chat-user-avatar-fallback {
+display: flex;
+align-items: center;
+justify-content: center;
+
+
+background: #6d4aff;
+color: #ffffff;
+
+font-size: 14px;
+font-weight: 700;
+
+
+}
+
+.chat-user-avatar-wrapper.has-image .chat-user-avatar {
+display: block;
+}
+
+.chat-user-avatar-wrapper.has-image .chat-user-avatar-fallback {
+display: none;
+}
+
+/* =========================================================
+DADOS DO USUÁRIO
+========================================================= */
+
+.chat-user-details {
+min-width: 0;
+
+
+display: flex;
+flex-direction: column;
+
+justify-content: center;
+
+
+}
+
+.chat-user-name-row {
+display: flex;
+align-items: center;
+
+
+min-width: 0;
+
+
+}
+
+.chat-user-name {
+max-width: 100%;
+
+
+overflow: hidden;
+text-overflow: ellipsis;
+white-space: nowrap;
+
+font-size: 16px;
+line-height: 20px;
+font-weight: 700;
+
+color: #172033;
+
+
+}
+
+.chat-user-context {
+max-width: 100%;
+
+
+overflow: hidden;
+text-overflow: ellipsis;
+white-space: nowrap;
+
+margin-top: 1px;
+
+font-size: 12px;
+line-height: 16px;
+
+color: #70798b;
+
+
+}
+
+/* =========================================================
+ÁREA DAS MENSAGENS
+========================================================= */
+
+.chat-messages {
+width: 100%;
+
+
+flex: 1;
+
+overflow-y: auto;
+
+display: flex;
+flex-direction: column;
+
+padding: 24px 20px 28px;
+
+background: #ffffff;
+
+scroll-behavior: smooth;
+
+
+}
+
+/* =========================================================
+ESTADOS DO CHAT
+========================================================= */
+
+.chat-state {
+min-height: 240px;
+
+
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+
+gap: 12px;
+
+color: #7a8393;
+
+font-size: 14px;
+
+
+}
+
+.chat-loading-spinner {
+width: 26px;
+height: 26px;
+
+
+border: 3px solid #e4e7ed;
+border-top-color: #6d4aff;
+
+border-radius: 50%;
+
+animation: chatSpinner 0.8s linear infinite;
+
+
+}
+
+@keyframes chatSpinner {
+to {
+transform: rotate(360deg);
+}
+}
+
+/* =========================================================
+MENSAGENS
+========================================================= */
+
+.chat-message {
+width: 100%;
+
+
+display: flex;
+
+margin-bottom: 8px;
+
+
+}
+
+.chat-message:last-child {
+margin-bottom: 0;
+}
+
+.chat-message--received {
+justify-content: flex-start;
+}
+
+.chat-message--sent {
+justify-content: flex-end;
+}
+
+/* =========================================================
+BALÃO
+========================================================= */
+
+.chat-message-bubble {
+max-width: min(72%, 620px);
+
+
+padding: 10px 13px 8px;
+
+border-radius: 18px;
+
+word-break: break-word;
+overflow-wrap: anywhere;
+
+
+}
+
+.chat-message--received .chat-message-bubble {
+background: #f0f2f6;
+
+
+color: #172033;
+
+border-bottom-left-radius: 5px;
+
+
+}
+
+.chat-message--sent .chat-message-bubble {
+background: #6d4aff;
+
+
+color: #ffffff;
+
+border-bottom-right-radius: 5px;
+
+
+}
+
+/* =========================================================
+TEXTO
+========================================================= */
+
+.chat-message-text {
+font-size: 14px;
+line-height: 20px;
+
+
+white-space: pre-wrap;
+
+
+}
+
+/* =========================================================
+METADADOS
+========================================================= */
+
+.chat-message-meta {
+display: flex;
+align-items: center;
+justify-content: flex-end;
+
+
+gap: 4px;
+
+margin-top: 3px;
+
+
+}
+
+.chat-message-time {
+font-size: 10px;
+line-height: 13px;
+
+
+opacity: 0.65;
+
+
+}
+
+.chat-message-status {
+display: flex;
+align-items: center;
+}
+
+.chat-message-status svg {
+width: 13px;
+height: 13px;
+}
+
+/* =========================================================
+DATA ENTRE MENSAGENS
+========================================================= */
+
+.chat-date-divider {
+width: 100%;
+
+
+display: flex;
+align-items: center;
+justify-content: center;
+
+margin: 18px 0 12px;
+
+
+}
+
+.chat-date-divider span {
+padding: 5px 10px;
+
+
+border-radius: 20px;
+
+background: #f3f4f7;
+
+color: #737c8c;
+
+font-size: 11px;
+font-weight: 600;
+
+
+}
+
+/* =========================================================
+COMPOSITOR
+========================================================= */
+
+.chat-composer {
+position: sticky;
+bottom: 0;
+z-index: 20;
+
+
+width: 100%;
+
+display: flex;
+align-items: flex-end;
+
+gap: 8px;
+
+padding:
+    10px
+    14px
+    calc(10px + env(safe-area-inset-bottom));
+
+background: rgba(255, 255, 255, 0.97);
+border-top: 1px solid #e7eaf0;
+
+backdrop-filter: blur(10px);
+-webkit-backdrop-filter: blur(10px);
+
+
+}
+
+/* =========================================================
+BOTÃO DE ANEXO
+========================================================= */
+
+.chat-attachment-button,
+.chat-send-button {
+width: 42px;
+height: 42px;
+
+
+flex: 0 0 42px;
+
+display: flex;
+align-items: center;
+justify-content: center;
+
+border: none;
+border-radius: 50%;
+
+cursor: pointer;
+
+transition:
+    background 0.2s ease,
+    transform 0.15s ease;
+
+
+}
+
+.chat-attachment-button {
+background: #f0f2f6;
+color: #606a7b;
+}
+
+.chat-attachment-button:hover {
+background: #e6e9ef;
+}
+
+.chat-send-button {
+background: #6d4aff;
+color: #ffffff;
+}
+
+.chat-send-button:hover {
+background: #5d3ee6;
+}
+
+.chat-send-button:active {
+transform: scale(0.94);
+}
+
+.chat-attachment-button svg,
+.chat-send-button svg {
+width: 19px;
+height: 19px;
+}
+
+/* =========================================================
+INPUT
+========================================================= */
+
+.chat-input-wrapper {
+min-width: 0;
+flex: 1;
+
+
+display: flex;
+align-items: center;
+
+padding: 0;
+
+border-radius: 21px;
+
+background: #f0f2f6;
+
+
+}
+
+.chat-message-input {
+width: 100%;
+min-height: 42px;
+max-height: 140px;
+
+
+padding: 11px 15px;
+
+resize: none;
+
+border: none;
+outline: none;
+
+background: transparent;
+
+color: #172033;
+
+font-family: inherit;
+font-size: 14px;
+line-height: 20px;
+
+
+}
+
+.chat-message-input::placeholder {
+color: #8b93a2;
+}
+
+/* =========================================================
+ESTADO DE ENVIO
+========================================================= */
+
+.chat-send-button:disabled,
+.chat-attachment-button:disabled {
+opacity: 0.55;
+cursor: default;
+transform: none;
+}
+
+/* =========================================================
+DESKTOP
+========================================================= */
+
+@media (min-width: 768px) {
+
+
+.chat-page {
+    width: 100%;
+    max-width: 920px;
+
+    min-height: 100vh;
+
+    margin: 0 auto;
+
+    border-left: 1px solid #e7eaf0;
+    border-right: 1px solid #e7eaf0;
+}
+
+.chat-header {
+    padding: 0 20px;
+}
+
+.chat-messages {
+    padding-left: 28px;
+    padding-right: 28px;
+}
+
+.chat-composer {
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+
+}
+
+/* =========================================================
+CELULAR
+========================================================= */
+
+@media (max-width: 767px) {
+
+
+body {
+    background: #ffffff;
+}
+
+.chat-header {
+    height: 62px;
+
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+.chat-messages {
+    padding:
+        18px
+        12px
+        20px;
+}
+
+.chat-message-bubble {
+    max-width: 82%;
+}
+
+.chat-composer {
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+.chat-attachment-button,
+.chat-send-button {
+    width: 40px;
+    height: 40px;
+
+    flex-basis: 40px;
+}
+
+
+}
+
+/* =========================================================
+ACESSIBILIDADE
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+
+.chat-messages {
+    scroll-behavior: auto;
+}
+
+.chat-loading-spinner {
+    animation: none;
+}
+
+
+}
