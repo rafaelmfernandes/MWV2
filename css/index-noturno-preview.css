@@ -1,0 +1,1217 @@
+/* =========================================================
+MUSICALWORLD — INDEX / PREVIEW NOTURNO
+
+Responsabilidade:
+
+* Criar uma versão realmente noturna da página inicial.
+* Manter a timeline com aparência de rede social.
+* Remover aparência de cards das publicações.
+* Garantir fundo escuro mesmo que existam estilos globais
+  antigos carregados pelo projeto.
+* Adaptar corretamente para desktop e celular.
+* Permitir mídia de ponta a ponta no celular.
+  ========================================================= */
+
+/* =========================================================
+VARIÁVEIS DO TEMA NOTURNO
+========================================================= */
+
+:root {
+
+
+--bg-page: #050609;
+--bg-surface: #080a0f;
+--bg-topbar: rgba(5, 6, 9, 0.96);
+--bg-tabs: rgba(5, 6, 9, 0.96);
+--bg-bottom: rgba(5, 6, 9, 0.98);
+
+--text-primary: #f5f7fa;
+--text-secondary: #a7adbb;
+--text-muted: #707786;
+
+--border: rgba(255, 255, 255, 0.10);
+--border-soft: rgba(255, 255, 255, 0.07);
+
+--purple: #7c5cff;
+--purple-light: #947cff;
+
+--blue: #38bdf8;
+
+--hover: rgba(255, 255, 255, 0.06);
+
+--content-width: 680px;
+
+--topbar-height: 62px;
+--tabs-height: 52px;
+--bottom-nav-height: 68px;
+
+
+}
+
+/* =========================================================
+RESET
+========================================================= */
+
+* {
+  box-sizing: border-box;
+  }
+
+html {
+width: 100%;
+min-height: 100%;
+
+
+margin: 0;
+padding: 0;
+
+background: #050609 !important;
+
+
+}
+
+body {
+width: 100%;
+min-width: 320px;
+min-height: 100vh;
+
+
+margin: 0;
+padding: 0;
+
+background: #050609 !important;
+
+color: var(--text-primary) !important;
+
+font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif;
+
+-webkit-font-smoothing: antialiased;
+text-rendering: optimizeLegibility;
+
+
+}
+
+button,
+a {
+-webkit-tap-highlight-color: transparent;
+}
+
+button {
+font: inherit;
+}
+
+a {
+color: inherit;
+text-decoration: none;
+}
+
+/* =========================================================
+GARANTIA DO FUNDO DA PÁGINA
+========================================================= */
+
+main,
+.main-content,
+.feed {
+background: #050609 !important;
+}
+
+/* =========================================================
+TOPO
+========================================================= */
+
+.topbar {
+position: sticky;
+
+
+top: 0;
+
+z-index: 1000;
+
+width: 100%;
+height: var(--topbar-height);
+
+background: rgba(5, 6, 9, 0.97) !important;
+
+border-bottom: 1px solid var(--border-soft);
+
+backdrop-filter: blur(18px);
+-webkit-backdrop-filter: blur(18px);
+
+
+}
+
+.topbar-inner {
+width: 100%;
+max-width: 1100px;
+height: 100%;
+
+
+margin: 0 auto;
+padding: 0 20px;
+
+display: flex;
+
+align-items: center;
+justify-content: space-between;
+
+
+}
+
+/* =========================================================
+MARCA
+========================================================= */
+
+.brand {
+display: inline-flex;
+
+
+align-items: center;
+
+gap: 10px;
+
+color: var(--text-primary);
+
+font-size: 17px;
+font-weight: 700;
+
+letter-spacing: -0.3px;
+
+
+}
+
+.brand-mark {
+width: 32px;
+height: 32px;
+
+
+display: flex;
+
+align-items: center;
+justify-content: center;
+
+border-radius: 9px;
+
+background: var(--purple);
+
+color: #ffffff;
+
+font-size: 14px;
+font-weight: 800;
+
+
+}
+
+.brand-name {
+color: var(--text-primary);
+
+
+white-space: nowrap;
+
+
+}
+
+/* =========================================================
+AÇÕES DO TOPO
+========================================================= */
+
+.topbar-actions {
+display: flex;
+
+
+align-items: center;
+
+gap: 10px;
+
+
+}
+
+.icon-button {
+width: 38px;
+height: 38px;
+
+
+padding: 0;
+
+display: flex;
+
+align-items: center;
+justify-content: center;
+
+border: 0;
+border-radius: 50%;
+
+background: transparent;
+
+color: var(--text-secondary);
+
+cursor: pointer;
+
+
+}
+
+.icon-button:hover {
+background: var(--hover);
+
+
+color: var(--text-primary);
+
+
+}
+
+.icon-button svg {
+width: 20px;
+height: 20px;
+
+
+fill: none;
+
+stroke: currentColor;
+
+stroke-width: 1.8;
+
+stroke-linecap: round;
+stroke-linejoin: round;
+
+
+}
+
+.avatar-small {
+width: 34px;
+height: 34px;
+
+
+padding: 0;
+
+display: flex;
+
+align-items: center;
+justify-content: center;
+
+border: 0;
+border-radius: 50%;
+
+background: var(--purple);
+
+color: #ffffff;
+
+font-size: 11px;
+font-weight: 700;
+
+cursor: pointer;
+
+
+}
+
+/* =========================================================
+CONTEÚDO PRINCIPAL
+========================================================= */
+
+.main-content {
+width: 100%;
+max-width: var(--content-width);
+
+
+margin: 0 auto;
+
+padding-bottom: 40px;
+
+background: #050609 !important;
+
+
+}
+
+/* =========================================================
+ABAS
+========================================================= */
+
+.feed-tabs {
+position: sticky;
+
+
+top: var(--topbar-height);
+
+z-index: 900;
+
+width: 100%;
+height: var(--tabs-height);
+
+display: flex;
+
+background: rgba(5, 6, 9, 0.97) !important;
+
+border-bottom: 1px solid var(--border-soft);
+
+backdrop-filter: blur(18px);
+-webkit-backdrop-filter: blur(18px);
+
+
+}
+
+.feed-tab {
+position: relative;
+
+
+flex: 1;
+
+height: 100%;
+
+padding: 0;
+
+border: 0;
+
+background: transparent !important;
+
+color: var(--text-muted);
+
+font-size: 14px;
+font-weight: 600;
+
+cursor: pointer;
+
+
+}
+
+.feed-tab:hover {
+color: var(--text-secondary);
+}
+
+.feed-tab.active {
+color: var(--text-primary);
+}
+
+.feed-tab.active::after {
+content: "";
+
+
+position: absolute;
+
+left: 25%;
+right: 25%;
+bottom: 0;
+
+height: 3px;
+
+border-radius: 3px 3px 0 0;
+
+background: var(--purple);
+
+
+}
+
+/* =========================================================
+FEED
+========================================================= */
+
+.feed {
+width: 100%;
+
+
+background: #050609 !important;
+
+
+}
+
+/* =========================================================
+PUBLICAÇÃO
+========================================================= */
+
+.post {
+width: 100%;
+
+
+padding: 17px 18px 16px;
+
+background: transparent !important;
+
+border-bottom: 1px solid var(--border);
+
+overflow: visible;
+
+
+}
+
+.post:last-child {
+border-bottom: 0;
+}
+
+/* =========================================================
+CABEÇALHO DA PUBLICAÇÃO
+========================================================= */
+
+.post-header {
+width: 100%;
+
+
+display: flex;
+
+align-items: flex-start;
+justify-content: space-between;
+
+gap: 12px;
+
+
+}
+
+.post-author {
+min-width: 0;
+
+
+display: flex;
+
+align-items: center;
+
+gap: 10px;
+
+
+}
+
+.author-avatar {
+width: 42px;
+height: 42px;
+
+
+flex: 0 0 42px;
+
+display: flex;
+
+align-items: center;
+justify-content: center;
+
+border-radius: 50%;
+
+background: #252936;
+
+color: var(--text-primary);
+
+font-size: 12px;
+font-weight: 700;
+
+
+}
+
+.avatar-purple {
+background: #493a8c;
+}
+
+.avatar-blue {
+background: #225d79;
+}
+
+.author-info {
+min-width: 0;
+
+
+display: flex;
+
+flex-direction: column;
+
+gap: 2px;
+
+
+}
+
+.author-name-line {
+min-width: 0;
+
+
+display: flex;
+
+align-items: center;
+
+gap: 5px;
+
+
+}
+
+.author-name-line strong {
+max-width: 100%;
+
+
+overflow: hidden;
+
+text-overflow: ellipsis;
+white-space: nowrap;
+
+color: var(--text-primary);
+
+font-size: 14px;
+font-weight: 700;
+
+
+}
+
+.verified {
+width: 15px;
+height: 15px;
+
+
+flex: 0 0 15px;
+
+display: inline-flex;
+
+align-items: center;
+justify-content: center;
+
+border-radius: 50%;
+
+background: var(--purple);
+
+color: #ffffff;
+
+font-size: 9px;
+font-weight: 800;
+
+
+}
+
+.author-meta {
+max-width: 100%;
+
+
+overflow: hidden;
+
+text-overflow: ellipsis;
+white-space: nowrap;
+
+color: var(--text-muted);
+
+font-size: 12px;
+
+
+}
+
+/* =========================================================
+MENU DA PUBLICAÇÃO
+========================================================= */
+
+.post-more {
+width: 30px;
+height: 30px;
+
+
+flex: 0 0 30px;
+
+padding: 0;
+
+display: flex;
+
+align-items: center;
+justify-content: center;
+
+gap: 3px;
+
+border: 0;
+
+background: transparent !important;
+
+cursor: pointer;
+
+
+}
+
+.post-more span {
+width: 3px;
+height: 3px;
+
+
+border-radius: 50%;
+
+background: var(--text-muted);
+
+
+}
+
+/* =========================================================
+TEXTO DA PUBLICAÇÃO
+========================================================= */
+
+.post-text {
+width: 100%;
+
+
+margin-top: 9px;
+
+color: var(--text-primary) !important;
+
+font-size: 15px;
+line-height: 1.5;
+
+overflow-wrap: anywhere;
+
+
+}
+
+/* =========================================================
+MÍDIA
+========================================================= */
+
+.post-media {
+position: relative;
+
+
+width: 100%;
+
+margin-top: 12px;
+
+overflow: hidden;
+
+background: #000000 !important;
+
+border: 1px solid var(--border);
+
+border-radius: 14px;
+
+
+}
+
+.image-media {
+aspect-ratio: 16 / 10;
+}
+
+.post-media img {
+display: block;
+
+
+width: 100%;
+height: 100%;
+
+object-fit: cover;
+
+
+}
+
+/* =========================================================
+VÍDEO
+========================================================= */
+
+.video-media {
+aspect-ratio: 16 / 10;
+}
+
+.video-media video {
+display: block;
+
+
+width: 100%;
+height: 100%;
+
+object-fit: cover;
+
+background: #000000 !important;
+
+
+}
+
+/* =========================================================
+PLACEHOLDER DO VÍDEO
+========================================================= */
+
+.video-placeholder {
+position: absolute;
+
+
+inset: 0;
+
+display: flex;
+
+flex-direction: column;
+
+align-items: center;
+justify-content: center;
+
+gap: 10px;
+
+background:
+    radial-gradient(
+        circle at center,
+        #1d1733 0%,
+        #0c0d13 48%,
+        #050609 100%
+    );
+
+pointer-events: none;
+
+
+}
+
+.video-placeholder span {
+color: var(--text-secondary);
+
+
+font-size: 12px;
+
+
+}
+
+.play-button {
+width: 54px;
+height: 54px;
+
+
+display: flex;
+
+align-items: center;
+justify-content: center;
+
+border-radius: 50%;
+
+background: var(--purple);
+
+box-shadow:
+    0 8px 28px rgba(0, 0, 0, 0.55);
+
+
+}
+
+.play-button svg {
+width: 23px;
+height: 23px;
+
+
+margin-left: 3px;
+
+fill: #ffffff;
+
+
+}
+
+/* =========================================================
+AÇÕES DA PUBLICAÇÃO
+========================================================= */
+
+.post-actions {
+width: 100%;
+
+
+margin-top: 7px;
+
+display: flex;
+
+align-items: center;
+
+justify-content: space-between;
+
+
+}
+
+.post-action {
+min-width: 48px;
+height: 36px;
+
+
+padding: 0 7px;
+
+display: inline-flex;
+
+align-items: center;
+justify-content: center;
+
+gap: 5px;
+
+border: 0;
+border-radius: 18px;
+
+background: transparent !important;
+
+color: var(--text-muted);
+
+cursor: pointer;
+
+
+}
+
+.post-action:hover {
+background: var(--hover) !important;
+
+
+color: var(--text-secondary);
+
+
+}
+
+.post-action svg {
+width: 18px;
+height: 18px;
+
+
+fill: none;
+
+stroke: currentColor;
+
+stroke-width: 1.8;
+
+stroke-linecap: round;
+stroke-linejoin: round;
+
+
+}
+
+.post-action span {
+color: inherit;
+
+
+font-size: 12px;
+
+
+}
+
+.save-action {
+min-width: 40px;
+}
+
+/* =========================================================
+RODAPÉ DA PUBLICAÇÃO
+========================================================= */
+
+.post-footer {
+margin-top: 1px;
+
+
+color: var(--text-muted);
+
+font-size: 11px;
+
+
+}
+
+/* =========================================================
+MENU INFERIOR
+========================================================= */
+
+.bottom-nav {
+position: fixed;
+
+
+left: 0;
+right: 0;
+bottom: 0;
+
+z-index: 1000;
+
+width: 100%;
+height: var(--bottom-nav-height);
+
+display: flex;
+
+align-items: center;
+justify-content: center;
+
+background: rgba(5, 6, 9, 0.98) !important;
+
+border-top: 1px solid var(--border);
+
+backdrop-filter: blur(18px);
+-webkit-backdrop-filter: blur(18px);
+
+padding-bottom: env(safe-area-inset-bottom);
+
+
+}
+
+.bottom-nav-item {
+width: 100px;
+height: 100%;
+
+
+display: flex;
+
+flex-direction: column;
+
+align-items: center;
+justify-content: center;
+
+gap: 4px;
+
+background: transparent !important;
+
+color: var(--text-muted);
+
+font-size: 10px;
+
+
+}
+
+.bottom-nav-item.active {
+color: var(--text-primary);
+}
+
+.bottom-nav-item svg {
+width: 20px;
+height: 20px;
+
+
+fill: none;
+
+stroke: currentColor;
+
+stroke-width: 1.8;
+
+stroke-linecap: round;
+stroke-linejoin: round;
+
+
+}
+
+.bottom-nav-publish {
+width: 42px;
+height: 42px;
+
+
+flex: 0 0 42px;
+
+display: flex;
+
+align-items: center;
+justify-content: center;
+
+margin: 0 12px;
+
+border-radius: 13px;
+
+background: var(--purple) !important;
+
+color: #ffffff;
+
+
+}
+
+.bottom-nav-publish svg {
+width: 21px;
+height: 21px;
+
+
+fill: none;
+
+stroke: currentColor;
+
+stroke-width: 2;
+
+stroke-linecap: round;
+
+
+}
+
+/* =========================================================
+DESKTOP
+========================================================= */
+
+@media (min-width: 701px) {
+
+
+.main-content {
+    border-left: 1px solid var(--border-soft);
+    border-right: 1px solid var(--border-soft);
+
+    background: #050609 !important;
+}
+
+
+.bottom-nav {
+    display: none;
+}
+
+
+}
+
+/* =========================================================
+TABLET / CELULAR
+========================================================= */
+
+@media (max-width: 700px) {
+
+
+:root {
+    --topbar-height: 58px;
+    --bottom-nav-height: 64px;
+}
+
+
+.topbar-inner {
+    padding: 0 12px;
+}
+
+
+.brand {
+    gap: 8px;
+
+    font-size: 16px;
+}
+
+
+.brand-mark {
+    width: 30px;
+    height: 30px;
+}
+
+
+.main-content {
+    padding-bottom: 70px;
+
+    background: #050609 !important;
+}
+
+
+.feed-tabs {
+    top: var(--topbar-height);
+
+    background: rgba(5, 6, 9, 0.98) !important;
+}
+
+
+.post {
+    padding: 13px 10px 14px;
+
+    background: transparent !important;
+}
+
+
+.post-text {
+    margin-top: 8px;
+
+    font-size: 14px;
+}
+
+
+/*
+ * No celular somente a mídia sai das margens.
+ * O restante da publicação continua alinhado.
+ */
+
+.post-media {
+    width: calc(100% + 20px);
+
+    margin-left: -10px;
+
+    border-right: 0;
+    border-left: 0;
+
+    border-radius: 0;
+}
+
+
+.image-media,
+.video-media {
+    aspect-ratio: 4 / 3;
+}
+
+
+.post-actions {
+    margin-top: 6px;
+}
+
+
+.post-action {
+    min-width: 44px;
+
+    padding: 0 5px;
+}
+
+
+.post-action span {
+    font-size: 11px;
+}
+
+
+.bottom-nav {
+    justify-content: space-around;
+
+    background: rgba(5, 6, 9, 0.99) !important;
+}
+
+
+.bottom-nav-item {
+    width: auto;
+
+    flex: 1;
+}
+
+
+.bottom-nav-publish {
+    margin: 0 4px;
+}
+
+
+}
+
+/* =========================================================
+CELULARES PEQUENOS
+========================================================= */
+
+@media (max-width: 380px) {
+
+
+.brand-name {
+    display: none;
+}
+
+
+.post {
+    padding-left: 9px;
+    padding-right: 9px;
+}
+
+
+.post-media {
+    width: calc(100% + 18px);
+
+    margin-left: -9px;
+}
+
+
+.author-avatar {
+    width: 40px;
+    height: 40px;
+
+    flex-basis: 40px;
+}
+
+
+.author-name-line strong {
+    font-size: 13px;
+}
+
+
+.author-meta {
+    font-size: 11px;
+}
+
+
+.post-text {
+    font-size: 14px;
+}
+
+
+.post-action {
+    min-width: 40px;
+
+    padding: 0 4px;
+}
+
+
+.post-action svg {
+    width: 17px;
+    height: 17px;
+}
+
+
+.post-action span {
+    font-size: 10px;
+}
+
+
+.bottom-nav-publish {
+    width: 40px;
+    height: 40px;
+
+    flex-basis: 40px;
+}
+
+
+}
