@@ -6,47 +6,62 @@
 
    Responsabilidades:
    - Inicializar a página Financeiro.
-   - Controlar os filtros de movimentações.
-   - Controlar as ações básicas da página.
-   - Manter o estado financeiro do usuário.
-   - Preparar a página para integração com o Supabase.
-   - Formatar valores monetários.
+   - Identificar o usuário autenticado.
+   - Consultar as contratações relacionadas ao usuário.
+   - Identificar pagamentos realizados pelo usuário.
+   - Identificar valores a receber pelo usuário.
+   - Identificar valores efetivamente recebidos.
+   - Calcular o resumo financeiro.
    - Renderizar movimentações.
-   - Renderizar estados vazios.
-   - Controlar a navegação da página.
+   - Controlar filtros.
+   - Controlar ações básicas da página.
+   - Manter a estrutura preparada para a futura
+     integração com pagamentos reais.
 
    IMPORTANTE:
 
-   Esta versão ainda NÃO consulta os dados financeiros
-   definitivos do Supabase.
+   Nesta etapa o pagamento da contratação ainda é simulado.
 
-   Isso é proposital.
+   A tabela "contratacoes" é utilizada como fonte dos
+   movimentos financeiros relacionados às contratações.
 
-   O MusicalWorld possui uma página financeira única.
+   O mesmo usuário pode ser:
 
-   O mesmo usuário pode:
+   - contratante;
+   - contratado;
+   - pagador;
+   - prestador;
+   - possuir valores a receber;
+   - possuir valores já recebidos.
 
-   - contratar outro usuário;
-   - pagar por um serviço;
-   - prestar um serviço;
-   - receber um pagamento;
-   - possuir valores pendentes;
-   - possuir saldo disponível;
-   - solicitar um saque.
+   Portanto, o Financeiro NÃO utiliza o tipo de perfil
+   para determinar sua situação financeira.
 
-   Portanto, recebimentos e pagamentos não devem ser
-   determinados pelo tipo de perfil do usuário.
+   A posição financeira é determinada pelos registros
+   existentes na tabela:
 
-   Eles deverão ser determinados pelas movimentações
-   financeiras relacionadas aos contratos.
+   contratacoes
 
-   Quando a estrutura definitiva do banco estiver pronta,
-   as consultas poderão ser separadas em módulos como:
+   Estrutura conceitual:
 
-   js/financeiro/dados.js
-   js/financeiro/resumo.js
-   js/financeiro/movimentacoes.js
-   js/financeiro/saque.js
+   contratacoes
+       |
+       +-- contratante_id
+       |
+       +-- contratado_id
+       |
+       +-- servico_id
+       |
+       +-- valor
+       |
+       +-- status
+       |
+       +-- status_pagamento
+       |
+       +-- data_evento
+       |
+       v
+   Financeiro
 
 ========================================================= */
 
@@ -57,7 +72,57 @@
 
 
     /* =====================================================
-       NAMESPACE PRINCIPAL
+       CONFIGURAÇÃO
+    ===================================================== */
+
+    const CONFIG = {
+
+        tabelaContratacoes:
+            "contratacoes",
+
+        tabelaUsuarios:
+            "usuarios",
+
+        tabelaServicos:
+            "servicos_artistas",
+
+        statusPagamentoPago:
+            "pago",
+
+        statusContratacaoConcluida: [
+            "concluida",
+            "concluído",
+            "concluido",
+            "finalizada",
+            "finalizado",
+            "encerrada",
+            "encerrado"
+        ],
+
+        elementos: {
+
+            lista:
+                "#financeiro-lista",
+
+            saldoDisponivel:
+                "#financeiro-saldo-disponivel",
+
+            aReceber:
+                "#financeiro-a-receber",
+
+            totalRecebido:
+                "#financeiro-total-recebido",
+
+            totalPago:
+                "#financeiro-total-pago"
+
+        }
+
+    };
+
+
+    /* =====================================================
+       CONTROLADOR PRINCIPAL
     ===================================================== */
 
     const MusicalWorldFinanceiro = {
@@ -71,27 +136,36 @@
 
             usuario: null,
 
-            filtroAtual: "todas",
+            filtroAtual:
+                "todas",
 
-            carregando: false,
+            carregando:
+                false,
 
-            erro: null,
+            erro:
+                null,
 
             resumo: {
 
-                saldoDisponivel: 0,
+                saldoDisponivel:
+                    0,
 
-                aReceber: 0,
+                aReceber:
+                    0,
 
-                totalRecebido: 0,
+                totalRecebido:
+                    0,
 
-                totalPago: 0
+                totalPago:
+                    0
 
             },
 
-            movimentacoes: [],
+            movimentacoes:
+                [],
 
-            saques: []
+            saques:
+                []
 
         },
 
@@ -110,38 +184,56 @@
 
 
                 /*
-                 * Configura primeiro os eventos da interface.
+                 * Configura os eventos da interface
+                 * antes de carregar os dados.
                  */
 
                 this.configurarEventos();
 
 
                 /*
-                 * Tenta identificar o usuário autenticado.
-                 *
-                 * Nesta etapa não buscamos ainda os dados
-                 * financeiros definitivos.
+                 * Identifica o usuário autenticado.
                  */
 
-                await this.obterUsuarioAtual();
+                const usuario =
+                    await this.obterUsuarioAtual();
+
+
+                if (!usuario) {
+
+                    console.warn(
+                        "MusicalWorldFinanceiro: nenhum usuário autenticado."
+                    );
+
+
+                    this.renderizarResumo();
+
+                    this.renderizarMovimentacoes();
+
+                    return;
+
+                }
 
 
                 /*
-                 * Renderiza o resumo inicial.
+                 * Carrega as contratações relacionadas
+                 * ao usuário.
+                 */
+
+                await this.carregarDadosFinanceiros();
+
+
+                /*
+                 * Renderiza os dados carregados.
                  */
 
                 this.renderizarResumo();
-
-
-                /*
-                 * Renderiza o estado inicial das movimentações.
-                 */
 
                 this.renderizarMovimentacoes();
 
 
                 console.log(
-                    "MusicalWorldFinanceiro: página inicializada."
+                    "MusicalWorldFinanceiro: página inicializada com sucesso."
                 );
 
 
@@ -156,6 +248,11 @@
                 this.estado.erro =
                     erro;
 
+
+                this.renderizarResumo();
+
+                this.renderizarErro();
+
             }
 
         },
@@ -166,7 +263,6 @@
         ================================================= */
 
         configurarEventos() {
-
 
             /* =============================================
                BOTÃO VOLTAR
@@ -272,6 +368,13 @@
                 }
             );
 
+
+            /*
+             * Estado visual inicial dos filtros.
+             */
+
+            this.atualizarVisualDosFiltros();
+
         },
 
 
@@ -280,13 +383,6 @@
         ================================================= */
 
         async obterUsuarioAtual() {
-
-            /*
-             * O financeiro utiliza o cliente Supabase
-             * compartilhado pelo projeto.
-             *
-             * Nunca criamos um novo cliente nesta página.
-             */
 
             const supabase =
                 this.obterClienteSupabase();
@@ -297,6 +393,7 @@
                 console.warn(
                     "MusicalWorldFinanceiro: cliente Supabase não encontrado."
                 );
+
 
                 return null;
 
@@ -360,14 +457,8 @@
         obterClienteSupabase() {
 
             /*
-             * Tentamos primeiro as referências já utilizadas
-             * pelo projeto.
-             *
-             * Esta função poderá ser simplificada quando
-             * confirmarmos definitivamente a API exposta
-             * pelo js/core/supabase.js.
+             * Cliente compartilhado principal.
              */
-
 
             if (
                 window.supabaseClient &&
@@ -380,6 +471,11 @@
             }
 
 
+            /*
+             * Cliente exposto pelo núcleo
+             * MusicalWorldSupabase.
+             */
+
             if (
                 window.MusicalWorldSupabase &&
                 window.MusicalWorldSupabase.client
@@ -389,6 +485,11 @@
 
             }
 
+
+            /*
+             * Compatibilidade com possíveis versões
+             * anteriores do núcleo.
+             */
 
             if (
                 window.MusicalWorld &&
@@ -401,8 +502,7 @@
 
 
             /*
-             * Alguns módulos do projeto podem disponibilizar
-             * o cliente através de uma função.
+             * Cliente obtido por função.
              */
 
             if (
@@ -435,10 +535,1166 @@
 
 
         /* =================================================
+           CARREGAR DADOS FINANCEIROS
+        ================================================= */
+
+        async carregarDadosFinanceiros() {
+
+            const supabase =
+                this.obterClienteSupabase();
+
+
+            if (!supabase) {
+
+                throw new Error(
+                    "Cliente Supabase não disponível."
+                );
+
+            }
+
+
+            const usuarioId =
+                this.estado.usuario &&
+                this.estado.usuario.id;
+
+
+            if (!usuarioId) {
+
+                throw new Error(
+                    "Usuário autenticado não possui ID."
+                );
+
+            }
+
+
+            this.estado.carregando =
+                true;
+
+            this.estado.erro =
+                null;
+
+
+            try {
+
+                console.log(
+                    "MusicalWorldFinanceiro: carregando contratações do usuário:",
+                    usuarioId
+                );
+
+
+                /*
+                 * Buscamos todas as contratações em que o
+                 * usuário participa de qualquer lado.
+                 *
+                 * Não dependemos do tipo de perfil.
+                 */
+
+                const resultado =
+                    await supabase
+                        .from(
+                            CONFIG.tabelaContratacoes
+                        )
+                        .select("*")
+                        .or(
+                            "contratante_id.eq." +
+                            usuarioId +
+                            ",contratado_id.eq." +
+                            usuarioId
+                        )
+                        .order(
+                            "created_at",
+                            {
+                                ascending: false
+                            }
+                        );
+
+
+                if (resultado.error) {
+
+                    throw resultado.error;
+
+                }
+
+
+                const contratacoes =
+                    Array.isArray(
+                        resultado.data
+                    )
+                        ? resultado.data
+                        : [];
+
+
+                console.log(
+                    "MusicalWorldFinanceiro: contratações encontradas:",
+                    contratacoes.length
+                );
+
+
+                /*
+                 * Enriquece os dados das contratações
+                 * com nomes e serviços.
+                 */
+
+                const movimentacoes =
+                    await this.transformarContratacoesEmMovimentacoes(
+                        contratacoes,
+                        usuarioId
+                    );
+
+
+                this.estado.movimentacoes =
+                    movimentacoes;
+
+
+                /*
+                 * Calcula o resumo a partir das
+                 * movimentações.
+                 */
+
+                this.calcularResumo();
+
+
+                console.log(
+                    "MusicalWorldFinanceiro: resumo financeiro calculado:",
+                    this.estado.resumo
+                );
+
+
+                return movimentacoes;
+
+
+            } catch (erro) {
+
+                console.error(
+                    "MusicalWorldFinanceiro: erro ao carregar dados financeiros.",
+                    erro
+                );
+
+
+                this.estado.erro =
+                    erro;
+
+
+                this.estado.movimentacoes =
+                    [];
+
+
+                this.calcularResumo();
+
+
+                throw erro;
+
+
+            } finally {
+
+                this.estado.carregando =
+                    false;
+
+            }
+
+        },
+
+
+        /* =================================================
+           TRANSFORMAR CONTRATAÇÕES EM MOVIMENTAÇÕES
+        ================================================= */
+
+        async transformarContratacoesEmMovimentacoes(
+            contratacoes,
+            usuarioId
+        ) {
+
+            if (
+                !Array.isArray(
+                    contratacoes
+                )
+            ) {
+
+                return [];
+
+            }
+
+
+            const movimentacoes = [];
+
+
+            /*
+             * Primeiro coletamos os IDs necessários para
+             * buscar os dados complementares.
+             */
+
+            const usuarioIds =
+                new Set();
+
+            const servicoIds =
+                new Set();
+
+
+            contratacoes.forEach(
+                (contratacao) => {
+
+                    if (
+                        contratacao.contratante_id
+                    ) {
+
+                        usuarioIds.add(
+                            contratacao.contratante_id
+                        );
+
+                    }
+
+
+                    if (
+                        contratacao.contratado_id
+                    ) {
+
+                        usuarioIds.add(
+                            contratacao.contratado_id
+                        );
+
+                    }
+
+
+                    if (
+                        contratacao.servico_id
+                    ) {
+
+                        servicoIds.add(
+                            contratacao.servico_id
+                        );
+
+                    }
+
+                }
+            );
+
+
+            /*
+             * Busca os usuários envolvidos.
+             */
+
+            const usuarios =
+                await this.buscarUsuariosPorIds(
+                    Array.from(
+                        usuarioIds
+                    )
+                );
+
+
+            /*
+             * Busca os serviços envolvidos.
+             */
+
+            const servicos =
+                await this.buscarServicosPorIds(
+                    Array.from(
+                        servicoIds
+                    )
+                );
+
+
+            /*
+             * Converte cada contratação em uma
+             * movimentação financeira.
+             */
+
+            contratacoes.forEach(
+                (contratacao) => {
+
+                    const valor =
+                        this.obterValorNumerico(
+                            contratacao.valor
+                        );
+
+
+                    if (
+                        valor <= 0
+                    ) {
+
+                        return;
+
+                    }
+
+
+                    const souContratante =
+                        String(
+                            contratacao.contratante_id || ""
+                        ) ===
+                        String(
+                            usuarioId
+                        );
+
+
+                    const souContratado =
+                        String(
+                            contratacao.contratado_id || ""
+                        ) ===
+                        String(
+                            usuarioId
+                        );
+
+
+                    /*
+                     * Uma contratação deve pertencer a
+                     * pelo menos um dos lados.
+                     */
+
+                    if (
+                        !souContratante &&
+                        !souContratado
+                    ) {
+
+                        return;
+
+                    }
+
+
+                    const outroUsuarioId =
+                        souContratante
+                            ? contratacao.contratado_id
+                            : contratacao.contratante_id;
+
+
+                    const outroUsuario =
+                        usuarios[
+                            String(
+                                outroUsuarioId || ""
+                            )
+                        ] || null;
+
+
+                    const servico =
+                        servicos[
+                            String(
+                                contratacao.servico_id || ""
+                            )
+                        ] || null;
+
+
+                    const nomeOutraPessoa =
+                        this.obterNomeUsuario(
+                            outroUsuario
+                        );
+
+
+                    const nomeServico =
+                        this.obterNomeServico(
+                            servico
+                        );
+
+
+                    const statusPagamento =
+                        this.normalizarStatus(
+                            contratacao.status_pagamento
+                        );
+
+
+                    const statusContratacao =
+                        this.normalizarStatus(
+                            contratacao.status
+                        );
+
+
+                    /*
+                     * =====================================
+                     * PAGAMENTO
+                     * =====================================
+                     *
+                     * Se o usuário é o contratante,
+                     * a movimentação representa dinheiro
+                     * saindo da conta dele.
+                     */
+
+                    if (
+                        souContratante
+                    ) {
+
+                        const pagamentoConfirmado =
+                            statusPagamento ===
+                            CONFIG.statusPagamentoPago;
+
+
+                        /*
+                         * O Financeiro mostra o pagamento
+                         * quando a contratação já foi marcada
+                         * como paga.
+                         *
+                         * Caso o pagamento ainda não esteja
+                         * confirmado, ele continua aparecendo
+                         * como pendente.
+                         */
+
+                        movimentacoes.push({
+
+                            id:
+                                contratacao.id,
+
+                            contratacaoId:
+                                contratacao.id,
+
+                            tipo:
+                                "pagamentos",
+
+                            valor:
+                                valor,
+
+                            nome:
+                                nomeOutraPessoa,
+
+                            descricao:
+                                nomeServico,
+
+                            status:
+                                pagamentoConfirmado
+                                    ? "Pago"
+                                    : "Pagamento pendente",
+
+                            statusPagamento:
+                                statusPagamento,
+
+                            statusContratacao:
+                                statusContratacao,
+
+                            dataEvento:
+                                contratacao.data_evento ||
+                                null,
+
+                            createdAt:
+                                contratacao.created_at ||
+                                null,
+
+                            atualizadoEm:
+                                contratacao.updated_at ||
+                                null,
+
+                            contratadoId:
+                                contratacao.contratado_id,
+
+                            contratanteId:
+                                contratacao.contratante_id,
+
+                            servicoId:
+                                contratacao.servico_id,
+
+                            contratadoNome:
+                                nomeOutraPessoa,
+
+                            contrato:
+                                contratacao
+
+                        });
+
+                    }
+
+
+                    /*
+                     * =====================================
+                     * RECEBIMENTO
+                     * =====================================
+                     *
+                     * Se o usuário é o contratado,
+                     * a movimentação representa dinheiro
+                     * que ele deverá receber.
+                     */
+
+                    if (
+                        souContratado
+                    ) {
+
+                        const pagamentoConfirmado =
+                            statusPagamento ===
+                            CONFIG.statusPagamentoPago;
+
+
+                        const contratacaoConcluida =
+                            this.contratacaoFoiConcluida(
+                                contratacao
+                            );
+
+
+                        let status =
+                            "Aguardando pagamento";
+
+
+                        if (
+                            pagamentoConfirmado &&
+                            !contratacaoConcluida
+                        ) {
+
+                            status =
+                                "A receber";
+
+                        }
+
+
+                        if (
+                            pagamentoConfirmado &&
+                            contratacaoConcluida
+                        ) {
+
+                            status =
+                                "Recebido";
+
+                        }
+
+
+                        movimentacoes.push({
+
+                            id:
+                                contratacao.id,
+
+                            contratacaoId:
+                                contratacao.id,
+
+                            tipo:
+                                "recebimentos",
+
+                            valor:
+                                valor,
+
+                            nome:
+                                nomeOutraPessoa,
+
+                            descricao:
+                                nomeServico,
+
+                            status:
+                                status,
+
+                            statusPagamento:
+                                statusPagamento,
+
+                            statusContratacao:
+                                statusContratacao,
+
+                            dataEvento:
+                                contratacao.data_evento ||
+                                null,
+
+                            createdAt:
+                                contratacao.created_at ||
+                                null,
+
+                            atualizadoEm:
+                                contratacao.updated_at ||
+                                null,
+
+                            contratadoId:
+                                contratacao.contratado_id,
+
+                            contratanteId:
+                                contratacao.contratante_id,
+
+                            servicoId:
+                                contratacao.servico_id,
+
+                            contratanteNome:
+                                nomeOutraPessoa,
+
+                            contrato:
+                                contratacao
+
+                        });
+
+                    }
+
+                }
+            );
+
+
+            /*
+             * Mais recentes primeiro.
+             */
+
+            movimentacoes.sort(
+                (
+                    a,
+                    b
+                ) => {
+
+                    const dataA =
+                        this.obterDataOrdenacao(
+                            a
+                        );
+
+
+                    const dataB =
+                        this.obterDataOrdenacao(
+                            b
+                        );
+
+
+                    return dataB - dataA;
+
+                }
+            );
+
+
+            return movimentacoes;
+
+        },
+
+
+        /* =================================================
+           BUSCAR USUÁRIOS POR IDS
+        ================================================= */
+
+        async buscarUsuariosPorIds(
+            ids
+        ) {
+
+            const resultado =
+                {};
+
+
+            if (
+                !Array.isArray(ids) ||
+                !ids.length
+            ) {
+
+                return resultado;
+
+            }
+
+
+            const supabase =
+                this.obterClienteSupabase();
+
+
+            if (!supabase) {
+
+                return resultado;
+
+            }
+
+
+            try {
+
+                const idsValidos =
+                    ids.filter(
+                        Boolean
+                    );
+
+
+                if (
+                    !idsValidos.length
+                ) {
+
+                    return resultado;
+
+                }
+
+
+                const resposta =
+                    await supabase
+                        .from(
+                            CONFIG.tabelaUsuarios
+                        )
+                        .select(
+                            "id, nome, email"
+                        )
+                        .in(
+                            "id",
+                            idsValidos
+                        );
+
+
+                if (
+                    resposta.error
+                ) {
+
+                    console.warn(
+                        "MusicalWorldFinanceiro: não foi possível carregar nomes dos usuários.",
+                        resposta.error
+                    );
+
+
+                    return resultado;
+
+                }
+
+
+                (
+                    resposta.data || []
+                ).forEach(
+                    (usuario) => {
+
+                        resultado[
+                            String(
+                                usuario.id
+                            )
+                        ] =
+                            usuario;
+
+                    }
+                );
+
+
+            } catch (erro) {
+
+                console.warn(
+                    "MusicalWorldFinanceiro: erro ao buscar usuários.",
+                    erro
+                );
+
+            }
+
+
+            return resultado;
+
+        },
+
+
+        /* =================================================
+           BUSCAR SERVIÇOS POR IDS
+        ================================================= */
+
+        async buscarServicosPorIds(
+            ids
+        ) {
+
+            const resultado =
+                {};
+
+
+            if (
+                !Array.isArray(ids) ||
+                !ids.length
+            ) {
+
+                return resultado;
+
+            }
+
+
+            const supabase =
+                this.obterClienteSupabase();
+
+
+            if (!supabase) {
+
+                return resultado;
+
+            }
+
+
+            try {
+
+                const idsValidos =
+                    ids.filter(
+                        Boolean
+                    );
+
+
+                if (
+                    !idsValidos.length
+                ) {
+
+                    return resultado;
+
+                }
+
+
+                const resposta =
+                    await supabase
+                        .from(
+                            CONFIG.tabelaServicos
+                        )
+                        .select(
+                            "id, nome, descricao"
+                        )
+                        .in(
+                            "id",
+                            idsValidos
+                        );
+
+
+                if (
+                    resposta.error
+                ) {
+
+                    console.warn(
+                        "MusicalWorldFinanceiro: não foi possível carregar os serviços.",
+                        resposta.error
+                    );
+
+
+                    return resultado;
+
+                }
+
+
+                (
+                    resposta.data || []
+                ).forEach(
+                    (servico) => {
+
+                        resultado[
+                            String(
+                                servico.id
+                            )
+                        ] =
+                            servico;
+
+                    }
+                );
+
+
+            } catch (erro) {
+
+                console.warn(
+                    "MusicalWorldFinanceiro: erro ao buscar serviços.",
+                    erro
+                );
+
+            }
+
+
+            return resultado;
+
+        },
+
+
+        /* =================================================
+           OBTER NOME DO USUÁRIO
+        ================================================= */
+
+        obterNomeUsuario(
+            usuario
+        ) {
+
+            if (!usuario) {
+
+                return "Usuário";
+
+            }
+
+
+            return this.normalizarTexto(
+
+                usuario.nome ||
+                usuario.nome_completo ||
+                usuario.email ||
+                "Usuário"
+
+            );
+
+        },
+
+
+        /* =================================================
+           OBTER NOME DO SERVIÇO
+        ================================================= */
+
+        obterNomeServico(
+            servico
+        ) {
+
+            if (!servico) {
+
+                return "Serviço contratado";
+
+            }
+
+
+            return this.normalizarTexto(
+
+                servico.nome ||
+                servico.titulo ||
+                servico.descricao ||
+                "Serviço contratado"
+
+            );
+
+        },
+
+
+        /* =================================================
+           OBTER VALOR NUMÉRICO
+        ================================================= */
+
+        obterValorNumerico(
+            valor
+        ) {
+
+            if (
+                typeof valor ===
+                "number"
+            ) {
+
+                return Number.isFinite(
+                    valor
+                )
+                    ? valor
+                    : 0;
+
+            }
+
+
+            if (
+                valor === null ||
+                valor === undefined ||
+                valor === ""
+            ) {
+
+                return 0;
+
+            }
+
+
+            const texto =
+                String(
+                    valor
+                )
+                    .trim()
+                    .replace(
+                        /R\$/gi,
+                        ""
+                    )
+                    .replace(
+                        /\s/g,
+                        ""
+                    );
+
+
+            /*
+             * Trata formatos como:
+             *
+             * 500
+             * 500.50
+             * 500,50
+             * 1.500,50
+             */
+
+            let normalizado =
+                texto;
+
+
+            if (
+                normalizado.includes(",") &&
+                normalizado.includes(".")
+            ) {
+
+                normalizado =
+                    normalizado
+                        .replace(
+                            /\./g,
+                            ""
+                        )
+                        .replace(
+                            ",",
+                            "."
+                        );
+
+            } else if (
+                normalizado.includes(",")
+            ) {
+
+                normalizado =
+                    normalizado.replace(
+                        ",",
+                        "."
+                    );
+
+            }
+
+
+            const numero =
+                Number(
+                    normalizado
+                );
+
+
+            return Number.isFinite(
+                numero
+            )
+                ? numero
+                : 0;
+
+        },
+
+
+        /* =================================================
+           VERIFICAR CONTRATAÇÃO CONCLUÍDA
+        ================================================= */
+
+        contratacaoFoiConcluida(
+            contratacao
+        ) {
+
+            if (!contratacao) {
+
+                return false;
+
+            }
+
+
+            const status =
+                this.normalizarStatus(
+                    contratacao.status
+                );
+
+
+            if (
+                CONFIG.statusContratacaoConcluida
+                    .includes(
+                        status
+                    )
+            ) {
+
+                return true;
+
+            }
+
+
+            /*
+             * Algumas estruturas podem utilizar campos
+             * booleanos para indicar conclusão.
+             */
+
+            if (
+                contratacao.concluida === true ||
+                contratacao.finalizada === true
+            ) {
+
+                return true;
+
+            }
+
+
+            return false;
+
+        },
+
+
+        /* =================================================
+           CALCULAR RESUMO
+        ================================================= */
+
+        calcularResumo() {
+
+            let totalPago =
+                0;
+
+            let aReceber =
+                0;
+
+            let totalRecebido =
+                0;
+
+            let saldoDisponivel =
+                0;
+
+
+            const movimentacoes =
+                Array.isArray(
+                    this.estado.movimentacoes
+                )
+                    ? this.estado.movimentacoes
+                    : [];
+
+
+            movimentacoes.forEach(
+                (movimentacao) => {
+
+                    const valor =
+                        this.obterValorNumerico(
+                            movimentacao.valor
+                        );
+
+
+                    if (
+                        movimentacao.tipo ===
+                        "pagamentos"
+                    ) {
+
+                        /*
+                         * Total pago representa valores
+                         * efetivamente pagos pelo usuário.
+                         */
+
+                        if (
+                            movimentacao.statusPagamento ===
+                            CONFIG.statusPagamentoPago
+                        ) {
+
+                            totalPago +=
+                                valor;
+
+                        }
+
+                    }
+
+
+                    if (
+                        movimentacao.tipo ===
+                        "recebimentos"
+                    ) {
+
+                        if (
+                            movimentacao.status ===
+                            "Recebido"
+                        ) {
+
+                            totalRecebido +=
+                                valor;
+
+                            /*
+                             * Por enquanto consideramos
+                             * recebimento efetivado como
+                             * saldo disponível.
+                             *
+                             * Quando o sistema de carteira
+                             * estiver conectado, esta regra
+                             * poderá ser substituída pelos
+                             * registros de carteira.
+                             */
+
+                            saldoDisponivel +=
+                                valor;
+
+                        } else if (
+                            movimentacao.status ===
+                            "A receber"
+                        ) {
+
+                            aReceber +=
+                                valor;
+
+                        }
+
+                    }
+
+                }
+            );
+
+
+            this.estado.resumo = {
+
+                saldoDisponivel:
+                    saldoDisponivel,
+
+                aReceber:
+                    aReceber,
+
+                totalRecebido:
+                    totalRecebido,
+
+                totalPago:
+                    totalPago
+
+            };
+
+        },
+
+
+        /* =================================================
            APLICAR FILTRO
         ================================================= */
 
-        aplicarFiltro(tipo) {
+        aplicarFiltro(
+            tipo
+        ) {
 
             const filtrosValidos = [
 
@@ -470,7 +1726,6 @@
 
 
             this.atualizarVisualDosFiltros();
-
 
             this.renderizarMovimentacoes();
 
@@ -527,7 +1782,7 @@
 
 
             this.definirTexto(
-                "#financeiro-saldo-disponivel",
+                CONFIG.elementos.saldoDisponivel,
                 this.formatarMoeda(
                     resumo.saldoDisponivel
                 )
@@ -535,7 +1790,7 @@
 
 
             this.definirTexto(
-                "#financeiro-a-receber",
+                CONFIG.elementos.aReceber,
                 this.formatarMoeda(
                     resumo.aReceber
                 )
@@ -543,7 +1798,7 @@
 
 
             this.definirTexto(
-                "#financeiro-total-recebido",
+                CONFIG.elementos.totalRecebido,
                 this.formatarMoeda(
                     resumo.totalRecebido
                 )
@@ -551,7 +1806,7 @@
 
 
             this.definirTexto(
-                "#financeiro-total-pago",
+                CONFIG.elementos.totalPago,
                 this.formatarMoeda(
                     resumo.totalPago
                 )
@@ -568,7 +1823,7 @@
 
             const lista =
                 document.querySelector(
-                    "#financeiro-lista"
+                    CONFIG.elementos.lista
                 );
 
 
@@ -591,14 +1846,11 @@
                     lista
                 );
 
+
                 return;
 
             }
 
-
-            /*
-             * Limpa somente a lista de movimentações.
-             */
 
             lista.innerHTML =
                 "";
@@ -676,12 +1928,6 @@
                 "recebimentos";
 
 
-            /*
-             * Recebimentos representam entrada.
-             *
-             * Pagamentos e saques representam saída.
-             */
-
             const entrada =
                 tipo ===
                 "recebimentos";
@@ -701,9 +1947,9 @@
 
             const valorNumerico =
                 Math.abs(
-                    Number(
+                    this.obterValorNumerico(
                         movimentacao.valor
-                    ) || 0
+                    )
                 );
 
 
@@ -734,20 +1980,32 @@
                 );
 
 
-            /*
-             * O tipo de movimentação fica no próprio article.
-             *
-             * Isso permite que o CSS identifique corretamente
-             * recebimentos e pagamentos.
-             */
+            const data =
+                this.formatarData(
+                    movimentacao.dataEvento ||
+                    movimentacao.createdAt
+                );
+
 
             elemento.className =
                 `financeiro-movimentacao ${classeDirecao}`;
 
 
-            /* =============================================
-               ÍCONE
-            ============================================== */
+            /*
+             * Guarda informações adicionais no elemento.
+             * Isso será útil futuramente para abrir detalhes
+             * da contratação.
+             */
+
+            if (
+                movimentacao.contratacaoId
+            ) {
+
+                elemento.dataset.contratacaoId =
+                    movimentacao.contratacaoId;
+
+            }
+
 
             const icone =
                 entrada
@@ -814,6 +2072,19 @@
                     <p>
                         ${descricao}
                     </p>
+
+
+                    ${
+                        data
+                            ? `
+                                <span
+                                    class="financeiro-movimentacao-data"
+                                >
+                                    ${this.escaparHtml(data)}
+                                </span>
+                              `
+                            : ""
+                    }
 
 
                     <span
@@ -925,6 +2196,87 @@
 
 
         /* =================================================
+           RENDERIZAR ERRO
+        ================================================= */
+
+        renderizarErro() {
+
+            const lista =
+                document.querySelector(
+                    CONFIG.elementos.lista
+                );
+
+
+            if (!lista) {
+
+                return;
+
+            }
+
+
+            lista.innerHTML = `
+
+                <div
+                    class="financeiro-vazio"
+                    id="financeiro-erro"
+                >
+
+                    <div
+                        class="financeiro-vazio-icone"
+                    >
+
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.8"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            aria-hidden="true"
+                        >
+
+                            <circle
+                                cx="12"
+                                cy="12"
+                                r="9"
+                            ></circle>
+
+                            <line
+                                x1="12"
+                                y1="8"
+                                x2="12"
+                                y2="12"
+                            ></line>
+
+                            <line
+                                x1="12"
+                                y1="16"
+                                x2="12.01"
+                                y2="16"
+                            ></line>
+
+                        </svg>
+
+                    </div>
+
+
+                    <h3>
+                        Não foi possível carregar o financeiro
+                    </h3>
+
+
+                    <p>
+                        Tente atualizar a página novamente.
+                    </p>
+
+                </div>
+
+            `;
+
+        },
+
+
+        /* =================================================
            SOLICITAR SAQUE
         ================================================= */
 
@@ -945,27 +2297,16 @@
                     "Você ainda não possui saldo disponível para saque."
                 );
 
+
                 return;
 
             }
 
 
             /*
-             * O formulário definitivo de saque ainda não
-             * será criado nesta etapa.
-             *
-             * Quando o fluxo financeiro real estiver pronto,
-             * esta função deverá:
-             *
-             * - validar saldo;
-             * - validar valor mínimo;
-             * - verificar dados bancários;
-             * - criar a solicitação;
-             * - atualizar o saldo;
-             * - registrar a movimentação;
-             * - acompanhar o status do saque.
+             * O saque continuará sendo implementado
+             * em uma etapa posterior.
              */
-
 
             this.mostrarMensagem(
                 "O fluxo de saque será disponibilizado nesta área."
@@ -980,19 +2321,10 @@
 
         verSaques() {
 
-            /*
-             * O filtro visual é alterado para saques.
-             */
-
             this.aplicarFiltro(
                 "saques"
             );
 
-
-            /*
-             * Depois levamos o usuário até a seção
-             * de movimentações.
-             */
 
             const movimentacoes =
                 document.querySelector(
@@ -1005,6 +2337,7 @@
             ) {
 
                 movimentacoes.scrollIntoView({
+
                     behavior:
                         "smooth",
 
@@ -1023,11 +2356,6 @@
         ================================================= */
 
         voltar() {
-
-            /*
-             * Mantemos a navegação simples e compatível
-             * com a estrutura atual do aplicativo.
-             */
 
             if (
                 window.history.length > 1
@@ -1063,6 +2391,7 @@
             return numero.toLocaleString(
                 "pt-BR",
                 {
+
                     style:
                         "currency",
 
@@ -1071,6 +2400,193 @@
 
                 }
             );
+
+        },
+
+
+        /* =================================================
+           FORMATAR DATA
+        ================================================= */
+
+        formatarData(
+            valor
+        ) {
+
+            if (!valor) {
+
+                return "";
+
+            }
+
+
+            try {
+
+                /*
+                 * Datas no formato YYYY-MM-DD são tratadas
+                 * manualmente para evitar deslocamento de
+                 * dia causado pelo timezone.
+                 */
+
+                if (
+                    /^\d{4}-\d{2}-\d{2}$/
+                        .test(
+                            String(valor)
+                        )
+                ) {
+
+                    const partes =
+                        String(valor)
+                            .split("-");
+
+
+                    const data =
+                        new Date(
+
+                            Number(
+                                partes[0]
+                            ),
+
+                            Number(
+                                partes[1]
+                            ) - 1,
+
+                            Number(
+                                partes[2]
+                            )
+
+                        );
+
+
+                    return data.toLocaleDateString(
+                        "pt-BR"
+                    );
+
+                }
+
+
+                const data =
+                    new Date(
+                        valor
+                    );
+
+
+                if (
+                    Number.isNaN(
+                        data.getTime()
+                    )
+                ) {
+
+                    return "";
+
+                }
+
+
+                return data.toLocaleDateString(
+                    "pt-BR"
+                );
+
+
+            } catch (erro) {
+
+                console.warn(
+                    "MusicalWorldFinanceiro: erro ao formatar data.",
+                    erro
+                );
+
+
+                return "";
+
+            }
+
+        },
+
+
+        /* =================================================
+           OBTER DATA PARA ORDENAÇÃO
+        ================================================= */
+
+        obterDataOrdenacao(
+            movimentacao
+        ) {
+
+            const valor =
+                movimentacao &&
+                (
+                    movimentacao.createdAt ||
+                    movimentacao.dataEvento
+                );
+
+
+            if (!valor) {
+
+                return 0;
+
+            }
+
+
+            const data =
+                new Date(
+                    valor
+                );
+
+
+            const timestamp =
+                data.getTime();
+
+
+            return Number.isNaN(
+                timestamp
+            )
+                ? 0
+                : timestamp;
+
+        },
+
+
+        /* =================================================
+           NORMALIZAR STATUS
+        ================================================= */
+
+        normalizarStatus(
+            valor
+        ) {
+
+            return this.normalizarTexto(
+                valor
+            )
+                .toLowerCase()
+                .normalize(
+                    "NFD"
+                )
+                .replace(
+                    /[\u0300-\u036f]/g,
+                    ""
+                );
+
+        },
+
+
+        /* =================================================
+           NORMALIZAR TEXTO
+        ================================================= */
+
+        normalizarTexto(
+            valor
+        ) {
+
+            if (
+                valor === null ||
+                valor === undefined
+            ) {
+
+                return "";
+
+            }
+
+
+            return String(
+                valor
+            ).trim();
 
         },
 
@@ -1090,9 +2606,7 @@
                 );
 
 
-            if (
-                !elemento
-            ) {
+            if (!elemento) {
 
                 return;
 
@@ -1148,11 +2662,6 @@
             mensagem
         ) {
 
-            /*
-             * Utiliza o sistema de toast existente,
-             * quando disponível.
-             */
-
             if (
                 typeof window.mostrarToast ===
                 "function"
@@ -1161,6 +2670,7 @@
                 window.mostrarToast(
                     mensagem
                 );
+
 
                 return;
 
@@ -1178,6 +2688,7 @@
                     .mostrarToast(
                         mensagem
                     );
+
 
                 return;
 

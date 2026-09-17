@@ -16,33 +16,35 @@
    - Garantir rolagem vertical correta.
    - Adaptar toda a interface para dispositivos móveis.
 
+   Compatibilidade com financeiro.js:
+   - .financeiro-movimentacao
+   - .financeiro-movimentacao.positivo
+   - .financeiro-movimentacao.negativo
+   - .financeiro-movimentacao-icone
+   - .financeiro-movimentacao-conteudo
+   - .financeiro-movimentacao-status
+   - .financeiro-movimentacao-valor
+   - .financeiro-vazio
+   - .financeiro-filtro
+   - .financeiro-filtro.ativo
+
    Importante:
    Este arquivo é autossuficiente para a página financeiro.html.
-   ========================================================= */
+========================================================= */
 
 
 /* =========================================================
-   1. VARIÁVEIS
-   ========================================================= */
+   1. FONTE
+========================================================= */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+@import url(
+    'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap'
+);
 
-html,
-body,
-button,
-input,
-textarea,
-select {
-    font-family:
-        "Inter",
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        Roboto,
-        Helvetica,
-        Arial,
-        sans-serif;
-}
+
+/* =========================================================
+   2. VARIÁVEIS
+========================================================= */
 
 :root {
 
@@ -64,21 +66,26 @@ select {
 
     --financeiro-primaria-hover: #5c3ee0;
 
-    --financeiro-primaria-clara: rgba(109, 74, 255, 0.08);
+    --financeiro-primaria-clara:
+        rgba(109, 74, 255, 0.08);
 
-    --financeiro-primaria-media: rgba(109, 74, 255, 0.14);
+    --financeiro-primaria-media:
+        rgba(109, 74, 255, 0.14);
 
     --financeiro-sucesso: #15945a;
 
-    --financeiro-sucesso-claro: rgba(21, 148, 90, 0.09);
+    --financeiro-sucesso-claro:
+        rgba(21, 148, 90, 0.09);
 
     --financeiro-erro: #d64545;
 
-    --financeiro-erro-claro: rgba(214, 69, 69, 0.09);
+    --financeiro-erro-claro:
+        rgba(214, 69, 69, 0.09);
 
     --financeiro-aviso: #c47a13;
 
-    --financeiro-aviso-claro: rgba(196, 122, 19, 0.10);
+    --financeiro-aviso-claro:
+        rgba(196, 122, 19, 0.10);
 
     --financeiro-sombra:
         0 8px 30px rgba(23, 32, 51, 0.06);
@@ -97,8 +104,8 @@ select {
 
 
 /* =========================================================
-   2. RESET
-   ========================================================= */
+   3. RESET GLOBAL DA PÁGINA
+========================================================= */
 
 *,
 *::before,
@@ -108,14 +115,16 @@ select {
 
 
 html {
+
     width: 100%;
+
     min-height: 100%;
 
     margin: 0;
     padding: 0;
 
     font-family:
-        Inter,
+        "Inter",
         -apple-system,
         BlinkMacSystemFont,
         "Segoe UI",
@@ -124,36 +133,54 @@ html {
         Arial,
         sans-serif;
 
-    background: var(--financeiro-fundo);
+    background:
+        var(--financeiro-fundo);
 
-    /*
-     * A página precisa poder crescer além da viewport.
-     */
     overflow-x: hidden;
+
     overflow-y: auto;
+
+    scroll-behavior: smooth;
 }
 
 
 body {
+
     width: 100%;
+
     min-width: 0;
+
     min-height: 100vh;
 
     margin: 0;
     padding: 0;
 
-    background: var(--financeiro-fundo);
+    background:
+        var(--financeiro-fundo);
 
-    color: var(--financeiro-texto);
+    color:
+        var(--financeiro-texto);
 
-    /*
-     * Não utilizar overflow: hidden aqui.
-     * A página Financeiro precisa rolar.
-     */
+    font-family:
+        "Inter",
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        sans-serif;
+
+    font-size: 16px;
+
+    line-height: 1.5;
+
     overflow-x: hidden;
+
     overflow-y: auto;
 
     -webkit-font-smoothing: antialiased;
+
     -moz-osx-font-smoothing: grayscale;
 }
 
@@ -163,61 +190,85 @@ a,
 input,
 textarea,
 select {
+
     font: inherit;
+
+    font-family:
+        "Inter",
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        sans-serif;
 }
 
 
 button {
+
     border: 0;
+
+    margin: 0;
 }
 
 
 button,
 a {
+
     -webkit-tap-highlight-color: transparent;
 }
 
 
 a {
+
     color: inherit;
+
     text-decoration: none;
 }
 
 
 svg {
+
     display: block;
+
+    flex-shrink: 0;
 }
 
 
 img,
 video {
+
+    display: block;
+
     max-width: 100%;
 }
 
 
 /* =========================================================
-   3. CONTAINER PRINCIPAL
-   ========================================================= */
+   4. CONTAINER PRINCIPAL
+========================================================= */
 
 .app-container {
+
     width: 100%;
+
     min-height: 100vh;
 
     display: flex;
+
     flex-direction: column;
 
-    /*
-     * Nunca esconder o conteúdo excedente.
-     */
     overflow: visible;
 }
 
 
 /* =========================================================
-   4. NAVBAR
-   ========================================================= */
+   5. NAVBAR
+========================================================= */
 
 .navbar {
+
     position: fixed;
 
     top: 0;
@@ -227,42 +278,60 @@ video {
     z-index: 1000;
 
     width: 100%;
-    height: var(--financeiro-navbar-altura);
+
+    height:
+        var(--financeiro-navbar-altura);
 
     display: flex;
+
     align-items: center;
+
     justify-content: space-between;
 
-    padding: 0 28px;
+    padding:
+        0 28px;
 
-    background: rgba(255, 255, 255, 0.96);
+    background:
+        rgba(255, 255, 255, 0.96);
 
-    border-bottom: 1px solid var(--financeiro-borda);
+    border-bottom:
+        1px solid var(--financeiro-borda);
 
     box-shadow:
         0 2px 12px rgba(23, 32, 51, 0.04);
 
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter:
+        blur(14px);
+
+    -webkit-backdrop-filter:
+        blur(14px);
 }
 
 
 .navbar-brand-area {
+
     min-width: 0;
 
     display: flex;
+
     align-items: center;
 }
 
 
 .logo {
+
     display: inline-flex;
+
     align-items: center;
 
-    color: var(--financeiro-texto);
+    color:
+        var(--financeiro-texto);
 
     font-size: 19px;
+
     font-weight: 800;
+
+    line-height: 1;
 
     letter-spacing: -0.4px;
 
@@ -271,7 +340,9 @@ video {
 
 
 .navbar-actions {
+
     display: flex;
+
     align-items: center;
 
     gap: 8px;
@@ -279,26 +350,32 @@ video {
 
 
 /* =========================================================
-   5. BOTÃO VOLTAR
-   ========================================================= */
+   6. BOTÃO VOLTAR
+========================================================= */
 
 .nav-icon-btn.financeiro-voltar {
+
     width: 38px;
+
     height: 38px;
 
     padding: 0;
 
     display: flex;
+
     align-items: center;
+
     justify-content: center;
 
-    border: 1px solid var(--financeiro-borda-forte);
+    border:
+        1px solid var(--financeiro-borda-forte);
 
     border-radius: 11px;
 
     background: #ffffff;
 
-    color: var(--financeiro-texto-secundario);
+    color:
+        var(--financeiro-texto-secundario);
 
     cursor: pointer;
 
@@ -315,7 +392,9 @@ video {
 
 
 .nav-icon-btn.financeiro-voltar svg {
+
     width: 18px;
+
     height: 18px;
 
     flex: 0 0 18px;
@@ -323,7 +402,9 @@ video {
 
 
 .nav-icon-btn.financeiro-voltar:hover {
-    color: var(--financeiro-primaria);
+
+    color:
+        var(--financeiro-primaria);
 
     border-color:
         rgba(109, 74, 255, 0.22);
@@ -337,25 +418,22 @@ video {
 
 
 .nav-icon-btn.financeiro-voltar:active {
-    transform: scale(0.95);
+
+    transform:
+        scale(0.95);
 }
 
 
 /* =========================================================
-   6. CONTEÚDO PRINCIPAL
-   ========================================================= */
+   7. CONTEÚDO PRINCIPAL
+========================================================= */
 
 .financeiro-main {
+
     width: 100%;
 
-    /*
-     * Importante:
-     * não definir height: 100vh.
-     *
-     * O conteúdo deve crescer conforme a quantidade
-     * de movimentações e demais seções.
-     */
     min-height: 100vh;
+
     height: auto;
 
     padding:
@@ -363,40 +441,45 @@ video {
         32px
         120px;
 
-    background: var(--financeiro-fundo);
+    background:
+        var(--financeiro-fundo);
 
     overflow: visible;
 }
 
 
 /* =========================================================
-   7. CABEÇALHO FINANCEIRO
-   ========================================================= */
+   8. CABEÇALHO FINANCEIRO
+========================================================= */
 
 .financeiro-header {
+
     width: 100%;
+
     max-width: 1180px;
 
     margin:
-        0
-        auto
-        30px;
+        0 auto 30px;
 }
 
 
 .financeiro-header-texto {
+
     max-width: 720px;
 }
 
 
 .financeiro-eyebrow {
+
     display: inline-block;
 
     margin-bottom: 7px;
 
-    color: var(--financeiro-primaria);
+    color:
+        var(--financeiro-primaria);
 
     font-size: 11px;
+
     font-weight: 800;
 
     line-height: 1;
@@ -408,11 +491,14 @@ video {
 
 
 .financeiro-header h1 {
+
     margin: 0;
 
-    color: var(--financeiro-texto);
+    color:
+        var(--financeiro-texto);
 
     font-size: 32px;
+
     font-weight: 800;
 
     line-height: 1.15;
@@ -422,14 +508,14 @@ video {
 
 
 .financeiro-header p {
+
     max-width: 650px;
 
     margin:
-        10px
-        0
-        0;
+        10px 0 0;
 
-    color: var(--financeiro-texto-secundario);
+    color:
+        var(--financeiro-texto-secundario);
 
     font-size: 14px;
 
@@ -438,17 +524,17 @@ video {
 
 
 /* =========================================================
-   8. RESUMO FINANCEIRO
-   ========================================================= */
+   9. RESUMO FINANCEIRO
+========================================================= */
 
 .financeiro-resumo {
+
     width: 100%;
+
     max-width: 1180px;
 
     margin:
-        0
-        auto
-        38px;
+        0 auto 38px;
 
     display: grid;
 
@@ -460,10 +546,11 @@ video {
 
 
 /* =========================================================
-   9. CARDS FINANCEIROS
-   ========================================================= */
+   10. CARDS FINANCEIROS
+========================================================= */
 
 .financeiro-card {
+
     position: relative;
 
     min-width: 0;
@@ -471,24 +558,45 @@ video {
     padding: 20px;
 
     display: flex;
+
     flex-direction: column;
 
-    background: var(--financeiro-superficie);
+    background:
+        var(--financeiro-superficie);
 
-    border: 1px solid var(--financeiro-borda);
+    border:
+        1px solid var(--financeiro-borda);
 
-    border-radius: var(--financeiro-raio-grande);
+    border-radius:
+        var(--financeiro-raio-grande);
 
-    box-shadow: var(--financeiro-sombra);
+    box-shadow:
+        var(--financeiro-sombra);
 
     overflow: hidden;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.2s ease;
 }
 
 
-/*
- * Pequeno detalhe superior dos cards.
- */
+.financeiro-card:hover {
+
+    border-color:
+        rgba(109, 74, 255, 0.13);
+
+    box-shadow:
+        0 12px 34px rgba(23, 32, 51, 0.075);
+
+    transform:
+        translateY(-1px);
+}
+
+
 .financeiro-card::before {
+
     content: "";
 
     position: absolute;
@@ -497,6 +605,7 @@ video {
     left: 0;
 
     width: 100%;
+
     height: 3px;
 
     background:
@@ -505,6 +614,7 @@ video {
 
 
 .financeiro-card-principal {
+
     border-color:
         rgba(109, 74, 255, 0.18);
 
@@ -518,6 +628,7 @@ video {
 
 
 .financeiro-card-principal::before {
+
     background:
         linear-gradient(
             90deg,
@@ -528,13 +639,15 @@ video {
 
 
 /* =========================================================
-   10. TOPO DOS CARDS
-   ========================================================= */
+   11. TOPO DOS CARDS
+========================================================= */
 
 .financeiro-card-topo {
+
     min-width: 0;
 
     display: flex;
+
     align-items: center;
 
     gap: 10px;
@@ -544,13 +657,17 @@ video {
 
 
 .financeiro-card-icone {
+
     width: 38px;
+
     height: 38px;
 
     flex: 0 0 38px;
 
     display: flex;
+
     align-items: center;
+
     justify-content: center;
 
     border-radius: 11px;
@@ -558,22 +675,28 @@ video {
     background:
         var(--financeiro-primaria-clara);
 
-    color: var(--financeiro-primaria);
+    color:
+        var(--financeiro-primaria);
 }
 
 
 .financeiro-card-icone svg {
+
     width: 19px;
+
     height: 19px;
 }
 
 
 .financeiro-card-label {
+
     min-width: 0;
 
-    color: var(--financeiro-texto-secundario);
+    color:
+        var(--financeiro-texto-secundario);
 
     font-size: 12px;
+
     font-weight: 700;
 
     line-height: 1.3;
@@ -581,17 +704,20 @@ video {
 
 
 /* =========================================================
-   11. VALORES
-   ========================================================= */
+   12. VALORES
+========================================================= */
 
 .financeiro-valor {
+
     display: block;
 
     margin: 0;
 
-    color: var(--financeiro-texto);
+    color:
+        var(--financeiro-texto);
 
     font-size: 24px;
+
     font-weight: 800;
 
     line-height: 1.15;
@@ -602,20 +728,23 @@ video {
 }
 
 
-.financeiro-card-principal .financeiro-valor {
-    color: var(--financeiro-primaria);
+.financeiro-card-principal
+.financeiro-valor {
+
+    color:
+        var(--financeiro-primaria);
 }
 
 
 .financeiro-card-descricao {
+
     min-height: 34px;
 
     margin:
-        8px
-        0
-        0;
+        8px 0 0;
 
-    color: var(--financeiro-texto-terciario);
+    color:
+        var(--financeiro-texto-terciario);
 
     font-size: 11px;
 
@@ -624,10 +753,11 @@ video {
 
 
 /* =========================================================
-   12. BOTÃO PRINCIPAL
-   ========================================================= */
+   13. BOTÃO PRINCIPAL
+========================================================= */
 
 .financeiro-btn-principal {
+
     width: 100%;
 
     min-height: 40px;
@@ -635,20 +765,23 @@ video {
     margin-top: 18px;
 
     padding:
-        10px
-        14px;
+        10px 14px;
 
     display: inline-flex;
+
     align-items: center;
+
     justify-content: center;
 
     border-radius: 11px;
 
-    background: var(--financeiro-primaria);
+    background:
+        var(--financeiro-primaria);
 
     color: #ffffff;
 
     font-size: 12px;
+
     font-weight: 700;
 
     cursor: pointer;
@@ -661,6 +794,7 @@ video {
 
 
 .financeiro-btn-principal:hover {
+
     background:
         var(--financeiro-primaria-hover);
 
@@ -670,36 +804,42 @@ video {
 
 
 .financeiro-btn-principal:active {
-    transform: translateY(1px);
+
+    transform:
+        translateY(1px);
 }
 
 
 /* =========================================================
-   13. SEÇÕES
-   ========================================================= */
+   14. SEÇÕES
+========================================================= */
 
 .financeiro-movimentacoes,
 .financeiro-saques {
+
     width: 100%;
+
     max-width: 1180px;
 
     height: auto;
+
     max-height: none;
 
     margin:
-        0
-        auto
-        38px;
+        0 auto 38px;
 
     overflow: visible;
 }
 
 
 .financeiro-secao-header {
+
     width: 100%;
 
     display: flex;
+
     align-items: center;
+
     justify-content: space-between;
 
     margin-bottom: 15px;
@@ -707,13 +847,16 @@ video {
 
 
 .financeiro-secao-eyebrow {
+
     display: block;
 
     margin-bottom: 4px;
 
-    color: var(--financeiro-primaria);
+    color:
+        var(--financeiro-primaria);
 
     font-size: 10px;
+
     font-weight: 800;
 
     line-height: 1;
@@ -725,11 +868,14 @@ video {
 
 
 .financeiro-secao-header h2 {
+
     margin: 0;
 
-    color: var(--financeiro-texto);
+    color:
+        var(--financeiro-texto);
 
     font-size: 21px;
+
     font-weight: 800;
 
     line-height: 1.2;
@@ -739,13 +885,15 @@ video {
 
 
 /* =========================================================
-   14. FILTROS
-   ========================================================= */
+   15. FILTROS
+========================================================= */
 
 .financeiro-filtros {
+
     width: 100%;
 
     display: flex;
+
     align-items: center;
 
     gap: 7px;
@@ -753,6 +901,7 @@ video {
     margin-bottom: 12px;
 
     overflow-x: auto;
+
     overflow-y: hidden;
 
     scrollbar-width: none;
@@ -762,28 +911,32 @@ video {
 
 
 .financeiro-filtros::-webkit-scrollbar {
+
     display: none;
 }
 
 
 .financeiro-filtro {
+
     flex: 0 0 auto;
 
     min-height: 36px;
 
     padding:
-        8px
-        13px;
+        8px 13px;
 
-    border: 1px solid var(--financeiro-borda);
+    border:
+        1px solid var(--financeiro-borda);
 
     border-radius: 999px;
 
     background: #ffffff;
 
-    color: var(--financeiro-texto-secundario);
+    color:
+        var(--financeiro-texto-secundario);
 
     font-size: 11px;
+
     font-weight: 700;
 
     cursor: pointer;
@@ -799,7 +952,9 @@ video {
 
 
 .financeiro-filtro:hover {
-    color: var(--financeiro-primaria);
+
+    color:
+        var(--financeiro-primaria);
 
     border-color:
         rgba(109, 74, 255, 0.20);
@@ -810,78 +965,116 @@ video {
 
 
 .financeiro-filtro.ativo {
+
     color: #ffffff;
 
-    border-color: var(--financeiro-primaria);
+    border-color:
+        var(--financeiro-primaria);
 
-    background: var(--financeiro-primaria);
+    background:
+        var(--financeiro-primaria);
 }
 
 
 .financeiro-filtro:active {
-    transform: scale(0.97);
+
+    transform:
+        scale(0.97);
 }
 
 
 /* =========================================================
-   15. LISTA DE MOVIMENTAÇÕES
-   ========================================================= */
+   16. LISTA DE MOVIMENTAÇÕES
+========================================================= */
 
 .financeiro-lista {
+
     width: 100%;
 
     height: auto;
+
     max-height: none;
 
     background: #ffffff;
 
-    border: 1px solid var(--financeiro-borda);
+    border:
+        1px solid var(--financeiro-borda);
 
-    border-radius: var(--financeiro-raio-grande);
+    border-radius:
+        var(--financeiro-raio-grande);
 
-    box-shadow: var(--financeiro-sombra);
+    box-shadow:
+        var(--financeiro-sombra);
 
     overflow: hidden;
 }
 
 
 /* =========================================================
-   16. MOVIMENTAÇÃO GERADA PELO JAVASCRIPT
-   ========================================================= */
+   17. MOVIMENTAÇÃO GERADA PELO JAVASCRIPT
+
+   Estrutura criada pelo financeiro.js:
+
+   article.financeiro-movimentacao
+       ├── .financeiro-movimentacao-icone
+       ├── .financeiro-movimentacao-conteudo
+       │     ├── strong
+       │     ├── p
+       │     └── .financeiro-movimentacao-status
+       └── .financeiro-movimentacao-valor
+
+   IMPORTANTE:
+
+   O JS coloca "positivo" ou "negativo" no próprio article:
+
+   .financeiro-movimentacao.positivo
+   .financeiro-movimentacao.negativo
+========================================================= */
 
 .financeiro-movimentacao {
+
     width: 100%;
 
     min-width: 0;
 
     display: flex;
+
     align-items: center;
 
     gap: 14px;
 
     padding:
-        16px
-        18px;
-
-    border-bottom: 1px solid var(--financeiro-borda);
+        16px 18px;
 
     background: #ffffff;
+
+    border-bottom:
+        1px solid var(--financeiro-borda);
 }
 
 
 .financeiro-movimentacao:last-child {
+
     border-bottom: 0;
 }
 
 
+/* =========================================================
+   ÍCONE DA MOVIMENTAÇÃO
+========================================================= */
+
 .financeiro-movimentacao-icone {
+
     width: 40px;
+
     height: 40px;
 
     flex: 0 0 40px;
 
     display: flex;
+
     align-items: center;
+
     justify-content: center;
 
     border-radius: 12px;
@@ -889,18 +1082,130 @@ video {
     background:
         var(--financeiro-primaria-clara);
 
-    color: var(--financeiro-primaria);
+    color:
+        var(--financeiro-primaria);
 }
 
 
 .financeiro-movimentacao-icone svg {
+
     width: 18px;
+
     height: 18px;
 }
 
 
+/* =========================================================
+   RECEBIMENTO
+========================================================= */
+
 .financeiro-movimentacao.positivo
 .financeiro-movimentacao-icone {
+
+    background:
+        var(--financeiro-sucesso-claro);
+
+    color:
+        var(--financeiro-sucesso);
+}
+
+
+/* =========================================================
+   PAGAMENTO / SAQUE
+========================================================= */
+
+.financeiro-movimentacao.negativo
+.financeiro-movimentacao-icone {
+
+    background:
+        var(--financeiro-erro-claro);
+
+    color:
+        var(--financeiro-erro);
+}
+
+
+/* =========================================================
+   CONTEÚDO
+========================================================= */
+
+.financeiro-movimentacao-conteudo {
+
+    flex: 1;
+
+    min-width: 0;
+}
+
+
+.financeiro-movimentacao-conteudo strong {
+
+    display: block;
+
+    margin: 0;
+
+    color:
+        var(--financeiro-texto);
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    line-height: 1.35;
+}
+
+
+.financeiro-movimentacao-conteudo p {
+
+    display: block;
+
+    margin:
+        4px 0 0;
+
+    color:
+        var(--financeiro-texto-secundario);
+
+    font-size: 11px;
+
+    line-height: 1.4;
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.financeiro-movimentacao-status {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    width: fit-content;
+
+    margin-top: 6px;
+
+    padding:
+        3px 8px;
+
+    border-radius: 999px;
+
+    background:
+        rgba(23, 32, 51, 0.06);
+
+    color:
+        var(--financeiro-texto-secundario);
+
+    font-size: 9px;
+
+    font-weight: 700;
+
+    line-height: 1.3;
+}
+
+
+.financeiro-movimentacao.positivo
+.financeiro-movimentacao-status {
+
     background:
         var(--financeiro-sucesso-claro);
 
@@ -910,7 +1215,8 @@ video {
 
 
 .financeiro-movimentacao.negativo
-.financeiro-movimentacao-icone {
+.financeiro-movimentacao-status {
+
     background:
         var(--financeiro-erro-claro);
 
@@ -919,61 +1225,15 @@ video {
 }
 
 
-.financeiro-movimentacao-conteudo {
-    flex: 1;
-    min-width: 0;
-}
-
-
-.financeiro-movimentacao-conteudo strong {
-    display: block;
-
-    color: var(--financeiro-texto);
-
-    font-size: 13px;
-    font-weight: 750;
-
-    line-height: 1.35;
-}
-
-
-.financeiro-movimentacao-conteudo p {
-    margin:
-        4px
-        0;
-
-    color: var(--financeiro-texto-secundario);
-
-    font-size: 11px;
-
-    line-height: 1.4;
-}
-
-
-.financeiro-movimentacao-status {
-    display: inline-flex;
-    align-items: center;
-
-    padding:
-        3px
-        8px;
-
-    border-radius: 999px;
-
-    background:
-        rgba(23, 32, 51, 0.06);
-
-    color: var(--financeiro-texto-secundario);
-
-    font-size: 9px;
-    font-weight: 700;
-
-    line-height: 1.3;
-}
-
+/* =========================================================
+   VALOR DA MOVIMENTAÇÃO
+========================================================= */
 
 .financeiro-movimentacao-valor {
+
     flex: 0 0 auto;
+
+    min-width: max-content;
 
     text-align: right;
 
@@ -982,41 +1242,53 @@ video {
 
 
 .financeiro-movimentacao-valor strong {
+
     display: block;
 
-    color: var(--financeiro-texto);
+    color:
+        var(--financeiro-texto);
 
     font-size: 13px;
+
     font-weight: 800;
+
+    line-height: 1.3;
 }
 
 
 .financeiro-movimentacao.positivo
 .financeiro-movimentacao-valor strong {
-    color: var(--financeiro-sucesso);
+
+    color:
+        var(--financeiro-sucesso);
 }
 
 
 .financeiro-movimentacao.negativo
 .financeiro-movimentacao-valor strong {
-    color: var(--financeiro-erro);
+
+    color:
+        var(--financeiro-erro);
 }
 
 
 /* =========================================================
-   17. ESTADO VAZIO
-   ========================================================= */
+   18. ESTADO VAZIO
+========================================================= */
 
 .financeiro-vazio {
+
     min-height: 250px;
 
     padding:
-        38px
-        24px;
+        38px 24px;
 
     display: flex;
+
     flex-direction: column;
+
     align-items: center;
+
     justify-content: center;
 
     text-align: center;
@@ -1024,13 +1296,17 @@ video {
 
 
 .financeiro-vazio-icone {
+
     width: 48px;
+
     height: 48px;
 
     margin-bottom: 14px;
 
     display: flex;
+
     align-items: center;
+
     justify-content: center;
 
     border-radius: 14px;
@@ -1038,35 +1314,43 @@ video {
     background:
         var(--financeiro-primaria-clara);
 
-    color: var(--financeiro-primaria);
+    color:
+        var(--financeiro-primaria);
 }
 
 
 .financeiro-vazio-icone svg {
+
     width: 23px;
+
     height: 23px;
 }
 
 
 .financeiro-vazio h3 {
-    margin:
-        0
-        0
-        6px;
 
-    color: var(--financeiro-texto);
+    margin:
+        0 0 6px;
+
+    color:
+        var(--financeiro-texto);
 
     font-size: 14px;
-    font-weight: 750;
+
+    font-weight: 700;
+
+    line-height: 1.3;
 }
 
 
 .financeiro-vazio p {
+
     max-width: 350px;
 
     margin: 0;
 
-    color: var(--financeiro-texto-secundario);
+    color:
+        var(--financeiro-texto-secundario);
 
     font-size: 11px;
 
@@ -1075,14 +1359,14 @@ video {
 
 
 /* =========================================================
-   18. ÁREA DE TRANSFERÊNCIAS / SAQUES
-   ========================================================= */
+   19. ÁREA DE TRANSFERÊNCIAS / SAQUES
+========================================================= */
 
 .financeiro-saques {
+
     position: relative;
 
-    padding:
-        20px;
+    padding: 20px;
 
     border:
         1px solid rgba(109, 74, 255, 0.15);
@@ -1104,10 +1388,8 @@ video {
 }
 
 
-/*
- * Faixa superior da seção.
- */
 .financeiro-saques::before {
+
     content: "";
 
     position: absolute;
@@ -1116,6 +1398,7 @@ video {
     left: 0;
 
     width: 100%;
+
     height: 3px;
 
     background:
@@ -1129,26 +1412,28 @@ video {
 
 
 .financeiro-saques .financeiro-secao-header {
+
     margin-bottom: 14px;
 }
 
 
 /* =========================================================
-   19. CARD DE SAQUE
-   ========================================================= */
+   20. CARD DE SAQUE
+========================================================= */
 
 .financeiro-saque-card {
+
     width: 100%;
 
     min-width: 0;
 
     display: flex;
+
     align-items: center;
 
     gap: 15px;
 
-    padding:
-        17px;
+    padding: 17px;
 
     background: #ffffff;
 
@@ -1164,13 +1449,17 @@ video {
 
 
 .financeiro-saque-icone {
+
     width: 44px;
+
     height: 44px;
 
     flex: 0 0 44px;
 
     display: flex;
+
     align-items: center;
+
     justify-content: center;
 
     border-radius: 13px;
@@ -1186,38 +1475,45 @@ video {
 
 
 .financeiro-saque-icone svg {
+
     width: 21px;
+
     height: 21px;
 }
 
 
 .financeiro-saque-texto {
+
     flex: 1;
+
     min-width: 0;
 }
 
 
 .financeiro-saque-texto h3 {
-    margin:
-        0
-        0
-        5px;
 
-    color: var(--financeiro-texto);
+    margin:
+        0 0 5px;
+
+    color:
+        var(--financeiro-texto);
 
     font-size: 14px;
-    font-weight: 750;
+
+    font-weight: 700;
 
     line-height: 1.3;
 }
 
 
 .financeiro-saque-texto p {
+
     max-width: 700px;
 
     margin: 0;
 
-    color: var(--financeiro-texto-secundario);
+    color:
+        var(--financeiro-texto-secundario);
 
     font-size: 11px;
 
@@ -1226,20 +1522,22 @@ video {
 
 
 /* =========================================================
-   20. BOTÃO SECUNDÁRIO
-   ========================================================= */
+   21. BOTÃO SECUNDÁRIO
+========================================================= */
 
 .financeiro-btn-secundario {
+
     flex: 0 0 auto;
 
     min-height: 38px;
 
     padding:
-        9px
-        15px;
+        9px 15px;
 
     display: inline-flex;
+
     align-items: center;
+
     justify-content: center;
 
     border:
@@ -1254,7 +1552,8 @@ video {
         var(--financeiro-primaria);
 
     font-size: 11px;
-    font-weight: 750;
+
+    font-weight: 700;
 
     cursor: pointer;
 
@@ -1266,6 +1565,7 @@ video {
 
 
 .financeiro-btn-secundario:hover {
+
     background:
         rgba(109, 74, 255, 0.11);
 
@@ -1275,23 +1575,22 @@ video {
 
 
 .financeiro-btn-secundario:active {
-    transform: scale(0.97);
+
+    transform:
+        scale(0.97);
 }
 
 
 /* =========================================================
-   21. MENU INFERIOR
-   ========================================================= */
+   22. MENU INFERIOR
+========================================================= */
 
 #menu-inferior-container {
+
     width: 100%;
 
     flex: 0 0 auto;
 
-    /*
-     * O componente pode inserir seu próprio conteúdo.
-     * Não limitamos sua altura.
-     */
     min-height: 0;
 
     overflow: visible;
@@ -1299,12 +1598,13 @@ video {
 
 
 /* =========================================================
-   22. TABLET
-   ========================================================= */
+   23. TABLET
+========================================================= */
 
 @media (max-width: 1050px) {
 
     .financeiro-resumo {
+
         grid-template-columns:
             repeat(2, minmax(0, 1fr));
     }
@@ -1312,36 +1612,41 @@ video {
 
 
 /* =========================================================
-   23. CELULAR
-   ========================================================= */
+   24. CELULAR
+========================================================= */
 
 @media (max-width: 600px) {
 
     :root {
+
         --financeiro-navbar-altura: 60px;
     }
 
 
-    /* ---------------------------------------------
+    /* =====================================================
        NAVBAR
-       --------------------------------------------- */
+    ===================================================== */
 
     .navbar {
-        height: var(--financeiro-navbar-altura);
+
+        height:
+            var(--financeiro-navbar-altura);
 
         padding:
-            0
-            14px;
+            0 14px;
     }
 
 
     .logo {
+
         font-size: 17px;
     }
 
 
     .nav-icon-btn.financeiro-voltar {
+
         width: 36px;
+
         height: 36px;
 
         border-radius: 10px;
@@ -1349,22 +1654,19 @@ video {
 
 
     .nav-icon-btn.financeiro-voltar svg {
+
         width: 17px;
+
         height: 17px;
     }
 
 
-    /* ---------------------------------------------
+    /* =====================================================
        CONTEÚDO
-       --------------------------------------------- */
+    ===================================================== */
 
     .financeiro-main {
-        /*
-         * 60px = navbar
-         * + 24px = espaço visual
-         *
-         * O título não ficará atrás da navbar.
-         */
+
         padding:
             calc(var(--financeiro-navbar-altura) + 24px)
             14px
@@ -1378,16 +1680,18 @@ video {
     }
 
 
-    /* ---------------------------------------------
+    /* =====================================================
        CABEÇALHO
-       --------------------------------------------- */
+    ===================================================== */
 
     .financeiro-header {
+
         margin-bottom: 24px;
     }
 
 
     .financeiro-eyebrow {
+
         margin-bottom: 6px;
 
         font-size: 9px;
@@ -1395,6 +1699,7 @@ video {
 
 
     .financeiro-header h1 {
+
         font-size: 27px;
 
         letter-spacing: -0.6px;
@@ -1402,6 +1707,7 @@ video {
 
 
     .financeiro-header p {
+
         margin-top: 8px;
 
         font-size: 12px;
@@ -1410,11 +1716,12 @@ video {
     }
 
 
-    /* ---------------------------------------------
+    /* =====================================================
        RESUMO
-       --------------------------------------------- */
+    ===================================================== */
 
     .financeiro-resumo {
+
         grid-template-columns:
             repeat(2, minmax(0, 1fr));
 
@@ -1425,6 +1732,7 @@ video {
 
 
     .financeiro-card {
+
         padding: 15px;
 
         border-radius: 15px;
@@ -1432,6 +1740,7 @@ video {
 
 
     .financeiro-card-topo {
+
         gap: 8px;
 
         margin-bottom: 14px;
@@ -1439,7 +1748,9 @@ video {
 
 
     .financeiro-card-icone {
+
         width: 32px;
+
         height: 32px;
 
         flex-basis: 32px;
@@ -1449,17 +1760,21 @@ video {
 
 
     .financeiro-card-icone svg {
+
         width: 16px;
+
         height: 16px;
     }
 
 
     .financeiro-card-label {
+
         font-size: 10px;
     }
 
 
     .financeiro-valor {
+
         font-size: 18px;
 
         letter-spacing: -0.3px;
@@ -1467,6 +1782,7 @@ video {
 
 
     .financeiro-card-descricao {
+
         min-height: 30px;
 
         margin-top: 6px;
@@ -1478,13 +1794,13 @@ video {
 
 
     .financeiro-btn-principal {
+
         min-height: 36px;
 
         margin-top: 13px;
 
         padding:
-            8px
-            10px;
+            8px 10px;
 
         border-radius: 9px;
 
@@ -1492,22 +1808,25 @@ video {
     }
 
 
-    /* ---------------------------------------------
+    /* =====================================================
        SEÇÕES
-       --------------------------------------------- */
+    ===================================================== */
 
     .financeiro-movimentacoes,
     .financeiro-saques {
+
         margin-bottom: 30px;
     }
 
 
     .financeiro-secao-header {
+
         margin-bottom: 12px;
     }
 
 
     .financeiro-secao-eyebrow {
+
         margin-bottom: 4px;
 
         font-size: 9px;
@@ -1515,17 +1834,19 @@ video {
 
 
     .financeiro-secao-header h2 {
+
         font-size: 18px;
 
         letter-spacing: -0.2px;
     }
 
 
-    /* ---------------------------------------------
+    /* =====================================================
        FILTROS
-       --------------------------------------------- */
+    ===================================================== */
 
     .financeiro-filtros {
+
         gap: 6px;
 
         margin-bottom: 10px;
@@ -1535,21 +1856,22 @@ video {
 
 
     .financeiro-filtro {
+
         min-height: 34px;
 
         padding:
-            8px
-            11px;
+            8px 11px;
 
         font-size: 10px;
     }
 
 
-    /* ---------------------------------------------
+    /* =====================================================
        LISTA
-       --------------------------------------------- */
+    ===================================================== */
 
     .financeiro-lista {
+
         border-radius: 14px;
 
         box-shadow:
@@ -1558,16 +1880,18 @@ video {
 
 
     .financeiro-vazio {
+
         min-height: 210px;
 
         padding:
-            30px
-            18px;
+            30px 18px;
     }
 
 
     .financeiro-vazio-icone {
+
         width: 42px;
+
         height: 42px;
 
         margin-bottom: 12px;
@@ -1577,38 +1901,46 @@ video {
 
 
     .financeiro-vazio-icone svg {
+
         width: 20px;
+
         height: 20px;
     }
 
 
     .financeiro-vazio h3 {
+
         font-size: 13px;
     }
 
 
     .financeiro-vazio p {
+
         max-width: 270px;
 
         font-size: 10px;
     }
 
 
-    /* ---------------------------------------------
+    /* =====================================================
        MOVIMENTAÇÃO
-       --------------------------------------------- */
+    ===================================================== */
 
     .financeiro-movimentacao {
+
         gap: 10px;
 
         padding:
-            13px
-            12px;
+            13px 12px;
+
+        align-items: flex-start;
     }
 
 
     .financeiro-movimentacao-icone {
+
         width: 36px;
+
         height: 36px;
 
         flex-basis: 36px;
@@ -1618,59 +1950,80 @@ video {
 
 
     .financeiro-movimentacao-icone svg {
+
         width: 16px;
+
         height: 16px;
     }
 
 
+    .financeiro-movimentacao-conteudo {
+
+        min-width: 0;
+    }
+
+
     .financeiro-movimentacao-conteudo strong {
+
         font-size: 11px;
     }
 
 
     .financeiro-movimentacao-conteudo p {
+
         margin:
-            3px
-            0;
+            3px 0 0;
 
         font-size: 9px;
+
+        line-height: 1.4;
     }
 
 
     .financeiro-movimentacao-status {
+
+        margin-top: 5px;
+
         padding:
-            3px
-            6px;
+            3px 6px;
 
         font-size: 8px;
     }
 
 
+    .financeiro-movimentacao-valor {
+
+        flex-shrink: 0;
+    }
+
+
     .financeiro-movimentacao-valor strong {
+
         font-size: 11px;
     }
 
 
-    /* ---------------------------------------------
+    /* =====================================================
        TRANSFERÊNCIAS / SAQUES
-       --------------------------------------------- */
+    ===================================================== */
 
     .financeiro-saques {
-        padding:
-            16px;
+
+        padding: 16px;
 
         border-radius: 16px;
     }
 
 
     .financeiro-saques .financeiro-secao-header {
+
         margin-bottom: 11px;
     }
 
 
     .financeiro-saque-card {
-        padding:
-            14px;
+
+        padding: 14px;
 
         gap: 11px;
 
@@ -1678,16 +2031,14 @@ video {
 
         border-radius: 13px;
 
-        /*
-         * No celular, o conteúdo pode ocupar
-         * mais de uma linha.
-         */
         flex-wrap: wrap;
     }
 
 
     .financeiro-saque-icone {
+
         width: 38px;
+
         height: 38px;
 
         flex-basis: 38px;
@@ -1697,20 +2048,22 @@ video {
 
 
     .financeiro-saque-icone svg {
+
         width: 18px;
+
         height: 18px;
     }
 
 
     .financeiro-saque-texto {
+
         flex:
-            1
-            1
-            calc(100% - 50px);
+            1 1 calc(100% - 50px);
     }
 
 
     .financeiro-saque-texto h3 {
+
         margin-bottom: 4px;
 
         font-size: 12px;
@@ -1718,6 +2071,7 @@ video {
 
 
     .financeiro-saque-texto p {
+
         font-size: 9px;
 
         line-height: 1.45;
@@ -1725,6 +2079,7 @@ video {
 
 
     .financeiro-btn-secundario {
+
         width: 100%;
 
         min-height: 36px;
@@ -1732,8 +2087,7 @@ video {
         margin-top: 2px;
 
         padding:
-            8px
-            12px;
+            8px 12px;
 
         border-radius: 9px;
 
@@ -1743,24 +2097,26 @@ video {
 
 
 /* =========================================================
-   24. CELULARES PEQUENOS
-   ========================================================= */
+   25. CELULARES PEQUENOS
+========================================================= */
 
 @media (max-width: 380px) {
 
     .navbar {
+
         padding:
-            0
-            10px;
+            0 10px;
     }
 
 
     .logo {
+
         font-size: 16px;
     }
 
 
     .financeiro-main {
+
         padding:
             calc(var(--financeiro-navbar-altura) + 20px)
             10px
@@ -1769,21 +2125,25 @@ video {
 
 
     .financeiro-header h1 {
+
         font-size: 25px;
     }
 
 
     .financeiro-header p {
+
         font-size: 11px;
     }
 
 
     .financeiro-resumo {
+
         gap: 8px;
     }
 
 
     .financeiro-card {
+
         padding: 13px;
 
         border-radius: 13px;
@@ -1791,12 +2151,15 @@ video {
 
 
     .financeiro-card-topo {
+
         margin-bottom: 12px;
     }
 
 
     .financeiro-card-icone {
+
         width: 30px;
+
         height: 30px;
 
         flex-basis: 30px;
@@ -1804,105 +2167,143 @@ video {
 
 
     .financeiro-card-icone svg {
+
         width: 15px;
+
         height: 15px;
     }
 
 
     .financeiro-card-label {
+
         font-size: 9px;
     }
 
 
     .financeiro-valor {
+
         font-size: 16px;
     }
 
 
     .financeiro-card-descricao {
+
         font-size: 8px;
     }
 
 
     .financeiro-btn-principal {
+
         font-size: 9px;
     }
 
 
     .financeiro-filtro {
+
         padding:
-            7px
-            10px;
+            7px 10px;
 
         font-size: 9px;
     }
 
 
     .financeiro-vazio {
+
         min-height: 190px;
     }
 
 
     .financeiro-movimentacao {
+
         gap: 8px;
 
         padding:
-            12px
-            10px;
+            12px 10px;
     }
 
 
     .financeiro-movimentacao-icone {
+
         width: 33px;
+
         height: 33px;
 
         flex-basis: 33px;
     }
 
 
+    .financeiro-movimentacao-icone svg {
+
+        width: 15px;
+
+        height: 15px;
+    }
+
+
     .financeiro-movimentacao-conteudo strong {
+
         font-size: 10px;
     }
 
 
     .financeiro-movimentacao-conteudo p {
+
         font-size: 8px;
     }
 
 
+    .financeiro-movimentacao-status {
+
+        font-size: 7px;
+    }
+
+
     .financeiro-movimentacao-valor strong {
+
         font-size: 10px;
     }
 
 
     .financeiro-saques {
-        padding:
-            14px;
+
+        padding: 14px;
 
         border-radius: 14px;
     }
 
 
     .financeiro-saque-card {
-        padding:
-            12px;
+
+        padding: 12px;
     }
 }
 
 
 /* =========================================================
-   25. ACESSIBILIDADE — REDUÇÃO DE MOVIMENTO
-   ========================================================= */
+   26. ACESSIBILIDADE — REDUÇÃO DE MOVIMENTO
+========================================================= */
 
 @media (prefers-reduced-motion: reduce) {
+
+    html {
+
+        scroll-behavior: auto;
+    }
+
 
     *,
     *::before,
     *::after {
+
         scroll-behavior: auto !important;
 
-        transition-duration: 0.01ms !important;
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
+        transition-duration:
+            0.01ms !important;
+
+        animation-duration:
+            0.01ms !important;
+
+        animation-iteration-count:
+            1 !important;
     }
 }
