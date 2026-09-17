@@ -12,6 +12,7 @@
 
     <title>Acompanhamento da contratação | MusicalWorld</title>
 
+
     <!-- =====================================================
          FONTE PRINCIPAL
          ===================================================== -->
@@ -89,38 +90,114 @@
 
 
             <!-- =================================================
+                 ESTADO DA PÁGINA
+                 ================================================= -->
+
+            <div
+                class="estado-pagina"
+                id="estadoPagina"
+                hidden
+                role="status"
+                aria-live="polite"
+            >
+            </div>
+
+
+
+            <!-- =================================================
                  CABEÇALHO DA CONTRATAÇÃO
                  ================================================= -->
 
             <section class="pagina-heading">
 
-                <span class="pagina-eyebrow">
+                <span
+                    class="pagina-eyebrow"
+                    id="paginaEyebrow"
+                >
                     Acompanhamento
                 </span>
 
 
-                <h1>
+                <h1 id="paginaTitulo">
                     Sua contratação
                 </h1>
 
 
-                <p>
+                <p id="paginaDescricao">
                     Acompanhe cada etapa até a realização do evento.
                 </p>
+
+
+                <!-- =================================================
+                     INDICADOR DE DIREÇÃO
+                     ================================================= -->
+
+                <span
+                    class="direcao-badge"
+                    id="direcaoBadge"
+                >
+                    Contratação enviada
+                </span>
 
             </section>
 
 
 
             <!-- =================================================
-                 STATUS ATUAL
+                 RELAÇÃO DA CONTRATAÇÃO
                  ================================================= -->
 
-            <section class="status-principal">
+            <section
+                class="relacao-card"
+                id="relacaoCard"
+            >
+
+                <div class="relacao-icon">
+
+                    <i
+                        data-lucide="arrow-left-right"
+                    ></i>
+
+                </div>
+
+
+                <div class="relacao-conteudo">
+
+                    <span>
+                        Tipo de solicitação
+                    </span>
+
+
+                    <strong id="relacaoTitulo">
+                        Contratação enviada
+                    </strong>
+
+
+                    <p id="relacaoDescricao">
+                        Você enviou esta solicitação para o profissional.
+                    </p>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 STATUS PRINCIPAL
+                 ================================================= -->
+
+            <section
+                class="status-principal"
+                id="statusPrincipal"
+            >
 
                 <div class="status-principal-icon">
 
-                    <i data-lucide="clock-3"></i>
+                    <i
+                        data-lucide="clock-3"
+                        id="statusPrincipalIcon"
+                    ></i>
 
                 </div>
 
@@ -133,13 +210,12 @@
 
 
                     <strong id="statusAtual">
-                        Aguardando confirmação do artista
+                        Aguardando confirmação
                     </strong>
 
 
                     <p id="statusDescricao">
-                        O artista precisa analisar sua solicitação
-                        antes de confirmar a contratação.
+                        A contratação está aguardando uma atualização.
                     </p>
 
                 </div>
@@ -149,7 +225,7 @@
 
 
             <!-- =================================================
-                 ARTISTA
+                 PARTICIPANTE
                  ================================================= -->
 
             <section class="card">
@@ -158,12 +234,15 @@
 
                     <div>
 
-                        <span class="card-eyebrow">
+                        <span
+                            class="card-eyebrow"
+                            id="participanteEyebrow"
+                        >
                             Artista
                         </span>
 
 
-                        <h2>
+                        <h2 id="participanteTitulo">
                             Profissional contratado
                         </h2>
 
@@ -178,24 +257,24 @@
                         class="artista-avatar"
                         id="artistaAvatar"
                     >
-                        RM
+                        MW
                     </div>
 
 
                     <div class="artista-info">
 
                         <strong id="artistaNome">
-                            Rafael Melo
+                            Carregando...
                         </strong>
 
 
                         <span id="artistaTipo">
-                            Cantor(a)
+                            —
                         </span>
 
 
                         <small id="artistaLocalizacao">
-                            Goiânia, GO
+                            Localização não informada
                         </small>
 
                     </div>
@@ -222,7 +301,7 @@
 
 
                         <h2 id="servicoNome">
-                            Show acústico
+                            Carregando serviço...
                         </h2>
 
                     </div>
@@ -240,7 +319,7 @@
 
 
                         <strong id="servicoValor">
-                            R$ 800,00
+                            R$ 0,00
                         </strong>
 
                     </div>
@@ -254,7 +333,7 @@
 
 
                         <strong id="servicoDuracao">
-                            2 horas
+                            Não informado
                         </strong>
 
                     </div>
@@ -268,7 +347,7 @@
 
 
                         <strong id="servicoLocalizacao">
-                            Goiânia e região
+                            Não informado
                         </strong>
 
                     </div>
@@ -306,7 +385,9 @@
                 <div class="detalhes-lista">
 
 
-                    <!-- DATA -->
+                    <!-- =================================================
+                         DATA
+                         ================================================= -->
 
                     <div class="detalhe-item">
 
@@ -334,7 +415,9 @@
 
 
 
-                    <!-- HORÁRIO -->
+                    <!-- =================================================
+                         HORÁRIO
+                         ================================================= -->
 
                     <div class="detalhe-item">
 
@@ -362,7 +445,9 @@
 
 
 
-                    <!-- LOCAL -->
+                    <!-- =================================================
+                         LOCAL
+                         ================================================= -->
 
                     <div class="detalhe-item">
 
@@ -390,7 +475,9 @@
 
 
 
-                    <!-- TIPO -->
+                    <!-- =================================================
+                         TIPO DO EVENTO
+                         ================================================= -->
 
                     <div class="detalhe-item">
 
@@ -418,7 +505,9 @@
 
 
 
-                    <!-- PESSOAS -->
+                    <!-- =================================================
+                         PÚBLICO ESTIMADO
+                         ================================================= -->
 
                     <div
                         class="detalhe-item"
@@ -480,7 +569,9 @@
                 <div class="timeline">
 
 
-                    <!-- SOLICITAÇÃO -->
+                    <!-- =================================================
+                         SOLICITAÇÃO
+                         ================================================= -->
 
                     <div
                         class="timeline-item concluido"
@@ -496,13 +587,13 @@
 
                         <div class="timeline-content">
 
-                            <strong>
+                            <strong id="timelineSolicitacaoTitulo">
                                 Solicitação enviada
                             </strong>
 
 
-                            <span>
-                                Seus dados foram enviados ao artista.
+                            <span id="timelineSolicitacaoDescricao">
+                                A solicitação foi registrada no MusicalWorld.
                             </span>
 
                         </div>
@@ -511,7 +602,9 @@
 
 
 
-                    <!-- ARTISTA -->
+                    <!-- =================================================
+                         RESPOSTA / ANÁLISE
+                         ================================================= -->
 
                     <div
                         class="timeline-item ativo"
@@ -527,13 +620,13 @@
 
                         <div class="timeline-content">
 
-                            <strong>
-                                Aguardando o artista
+                            <strong id="timelineArtistaTitulo">
+                                Aguardando resposta
                             </strong>
 
 
-                            <span>
-                                O artista está analisando a solicitação.
+                            <span id="timelineArtistaDescricao">
+                                A solicitação está aguardando análise.
                             </span>
 
                         </div>
@@ -542,7 +635,9 @@
 
 
 
-                    <!-- CONFIRMAÇÃO -->
+                    <!-- =================================================
+                         CONFIRMAÇÃO
+                         ================================================= -->
 
                     <div
                         class="timeline-item"
@@ -558,12 +653,12 @@
 
                         <div class="timeline-content">
 
-                            <strong>
+                            <strong id="timelineConfirmadaTitulo">
                                 Contratação confirmada
                             </strong>
 
 
-                            <span>
+                            <span id="timelineConfirmadaDescricao">
                                 A contratação será confirmada após o aceite.
                             </span>
 
@@ -573,7 +668,9 @@
 
 
 
-                    <!-- EVENTO -->
+                    <!-- =================================================
+                         EVENTO
+                         ================================================= -->
 
                     <div
                         class="timeline-item"
@@ -604,7 +701,9 @@
 
 
 
-                    <!-- CONCLUSÃO -->
+                    <!-- =================================================
+                         CONCLUSÃO
+                         ================================================= -->
 
                     <div
                         class="timeline-item"
@@ -635,7 +734,9 @@
 
 
 
-                    <!-- PAGAMENTO -->
+                    <!-- =================================================
+                         PAGAMENTO
+                         ================================================= -->
 
                     <div
                         class="timeline-item"
@@ -657,7 +758,7 @@
 
 
                             <span>
-                                Liberação do pagamento ao artista.
+                                Liberação do pagamento ao profissional.
                             </span>
 
                         </div>
@@ -671,10 +772,91 @@
 
 
             <!-- =================================================
+                 AÇÕES DA SOLICITAÇÃO RECEBIDA
+                 ================================================= -->
+
+            <section
+                class="acoes-solicitacao"
+                id="acoesSolicitacao"
+                hidden
+            >
+
+                <div class="acoes-solicitacao-header">
+
+                    <span class="card-eyebrow">
+                        Ação necessária
+                    </span>
+
+
+                    <h2>
+                        Esta solicitação aguarda sua resposta.
+                    </h2>
+
+
+                    <p>
+                        Analise os detalhes do evento antes de confirmar
+                        ou recusar a contratação.
+                    </p>
+
+                </div>
+
+
+                <div class="acoes-solicitacao-botoes">
+
+                    <button
+                        type="button"
+                        class="btn-recusar"
+                        id="btnRecusar"
+                    >
+
+                        <i data-lucide="x"></i>
+
+
+                        <span>
+                            Recusar solicitação
+                        </span>
+
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="btn-aceitar"
+                        id="btnAceitar"
+                    >
+
+                        <i data-lucide="check"></i>
+
+
+                        <span>
+                            Aceitar contratação
+                        </span>
+
+                    </button>
+
+                </div>
+
+
+                <p
+                    class="acoes-status"
+                    id="acoesStatus"
+                    hidden
+                    aria-live="polite"
+                >
+                </p>
+
+            </section>
+
+
+
+            <!-- =================================================
                  PAGAMENTO
                  ================================================= -->
 
-            <section class="pagamento-card">
+            <section
+                class="pagamento-card"
+                id="pagamentoCard"
+            >
 
                 <div class="pagamento-icon">
 
@@ -742,7 +924,7 @@
 
 
             <!-- =================================================
-                 AÇÕES
+                 AÇÕES GERAIS
                  ================================================= -->
 
             <section class="acoes">
@@ -757,6 +939,7 @@
                         Voltar para o início
                     </span>
 
+
                     <i data-lucide="arrow-right"></i>
 
                 </button>
@@ -766,7 +949,7 @@
 
 
             <!-- =================================================
-                 AVISO
+                 RODAPÉ
                  ================================================= -->
 
             <p class="pagina-footer">
@@ -781,11 +964,39 @@
     </div>
 
 
+
     <!-- =====================================================
-         JAVASCRIPT
+         SUPABASE
+         ===================================================== -->
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+
+    <!-- =====================================================
+         CLIENTE SUPABASE CENTRALIZADO
+         ===================================================== -->
+
+    <script src="js/core/SupabaseClient.js"></script>
+
+
+
+    <!-- =====================================================
+         JAVASCRIPT DA PÁGINA
          ===================================================== -->
 
     <script src="js/contratacao/contratacao-acompanhamento.js"></script>
+
+
+
+    <!-- =====================================================
+         INICIALIZAÇÃO DOS ÍCONES
+         ===================================================== -->
+
+    <script>
+        if (window.lucide) {
+            window.lucide.createIcons();
+        }
+    </script>
 
 </body>
 

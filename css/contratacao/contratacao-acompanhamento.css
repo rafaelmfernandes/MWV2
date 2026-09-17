@@ -3,11 +3,15 @@
    Arquivo: contratacao-acompanhamento.css
 
    Responsabilidade:
-   - Estilizar a página de acompanhamento.
-   - Apresentar o status atual.
-   - Organizar dados do artista, serviço e evento.
-   - Exibir a timeline da contratação.
-   - Manter o padrão visual das demais páginas.
+   - Estilizar toda a página de acompanhamento.
+   - Apresentar a relação entre contratante e contratado.
+   - Apresentar o status atual da contratação.
+   - Organizar participante, serviço e evento.
+   - Exibir a timeline completa da contratação.
+   - Exibir informações de pagamento.
+   - Exibir ações para solicitações recebidas.
+   - Manter estados visuais de aceite, recusa, erro e carregamento.
+   - Garantir responsividade em dispositivos móveis.
    ========================================================= */
 
 
@@ -68,6 +72,11 @@ button {
 }
 
 
+button:disabled {
+    cursor: not-allowed;
+}
+
+
 /* =========================================================
    PÁGINA
    ========================================================= */
@@ -114,11 +123,23 @@ button {
     letter-spacing: -0.03em;
 
     text-decoration: none;
+
+    transition:
+        color 160ms ease;
+}
+
+
+.contratacao-brand:hover {
+    color: #6d4aff;
 }
 
 
 .btn-voltar {
     min-height: 40px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 
     padding: 0 14px;
 
@@ -143,8 +164,17 @@ button {
 }
 
 
+.btn-voltar:focus-visible,
+.btn-principal:focus-visible,
+.btn-aceitar:focus-visible,
+.btn-recusar:focus-visible {
+    outline: 3px solid rgba(109, 74, 255, 0.22);
+    outline-offset: 2px;
+}
+
+
 /* =========================================================
-   CONTEÚDO
+   CONTEÚDO PRINCIPAL
    ========================================================= */
 
 .contratacao-main {
@@ -201,6 +231,99 @@ button {
 
     font-size: 14px;
     line-height: 1.6;
+}
+
+
+/* =========================================================
+   RELAÇÃO DA CONTRATAÇÃO
+   ========================================================= */
+
+.relacao-card {
+    display: flex;
+    align-items: flex-start;
+
+    gap: 14px;
+
+    margin-bottom: 20px;
+
+    padding: 17px 18px;
+
+    border: 1px solid #dce5f3;
+    border-radius: 18px;
+
+    background: #f8fbff;
+
+    box-shadow:
+        0 5px 20px rgba(15, 23, 42, 0.025);
+}
+
+
+.relacao-icon {
+    width: 42px;
+    height: 42px;
+
+    flex: 0 0 auto;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 12px;
+
+    background: #e9f1ff;
+
+    color: #1677d2;
+}
+
+
+.relacao-icon svg {
+    width: 19px;
+    height: 19px;
+}
+
+
+.relacao-conteudo {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+}
+
+
+.relacao-conteudo > span {
+    display: block;
+
+    margin-bottom: 4px;
+
+    color: #7a8799;
+
+    font-size: 10px;
+    font-weight: 800;
+
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+
+.relacao-conteudo strong {
+    display: block;
+
+    margin-bottom: 4px;
+
+    color: #172033;
+
+    font-size: 14px;
+    line-height: 1.4;
+
+    font-weight: 800;
+}
+
+
+.relacao-conteudo p {
+    color: #64748b;
+
+    font-size: 12px;
+    line-height: 1.55;
 }
 
 
@@ -292,7 +415,7 @@ button {
 
 
 /* =========================================================
-   CARDS
+   CARDS GERAIS
    ========================================================= */
 
 .card {
@@ -315,6 +438,11 @@ button {
 }
 
 
+.card-heading > div {
+    min-width: 0;
+}
+
+
 .card-heading h2 {
     color: #172033;
 
@@ -328,7 +456,7 @@ button {
 
 
 /* =========================================================
-   ARTISTA
+   PARTICIPANTE
    ========================================================= */
 
 .artista {
@@ -359,12 +487,16 @@ button {
 
     font-size: 14px;
     font-weight: 800;
+
+    text-transform: uppercase;
 }
 
 
 .artista-avatar img {
     width: 100%;
     height: 100%;
+
+    display: block;
 
     object-fit: cover;
 }
@@ -384,7 +516,11 @@ button {
     color: #172033;
 
     font-size: 15px;
+    line-height: 1.35;
+
     font-weight: 800;
+
+    overflow-wrap: anywhere;
 }
 
 
@@ -392,7 +528,11 @@ button {
     color: #536174;
 
     font-size: 13px;
+    line-height: 1.4;
+
     font-weight: 600;
+
+    overflow-wrap: anywhere;
 }
 
 
@@ -400,7 +540,11 @@ button {
     color: #8490a3;
 
     font-size: 12px;
+    line-height: 1.4;
+
     font-weight: 500;
+
+    overflow-wrap: anywhere;
 }
 
 
@@ -423,6 +567,7 @@ button {
 
     padding: 14px;
 
+    border: 1px solid #edf0f4;
     border-radius: 13px;
 
     background: #f7f8fa;
@@ -640,6 +785,7 @@ button {
     gap: 3px;
 
     padding-top: 1px;
+    padding-bottom: 20px;
 }
 
 
@@ -667,6 +813,209 @@ button {
 
 
 /* =========================================================
+   ESTADO DE RECUSA / CANCELAMENTO NA TIMELINE
+   ========================================================= */
+
+.timeline-item.ativo .timeline-marker svg[data-lucide="circle-x"] {
+    color: #c2415d;
+}
+
+
+.timeline-item.ativo:has(.timeline-marker svg[data-lucide="circle-x"])
+    .timeline-content strong {
+    color: #c2415d;
+}
+
+
+/* =========================================================
+   AÇÕES DA SOLICITAÇÃO
+   ========================================================= */
+
+.acoes-solicitacao {
+    margin-bottom: 20px;
+
+    padding: 20px;
+
+    border: 1px solid #d9d2ff;
+    border-radius: 19px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #faf9ff 0%,
+            #f4f1ff 100%
+        );
+
+    box-shadow:
+        0 8px 26px rgba(109, 74, 255, 0.06);
+}
+
+
+.acoes-solicitacao[hidden] {
+    display: none;
+}
+
+
+.acoes-solicitacao-cabecalho {
+    margin-bottom: 17px;
+}
+
+
+.acoes-solicitacao-cabecalho > span {
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: #6d4aff;
+
+    font-size: 10px;
+    font-weight: 800;
+
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+}
+
+
+.acoes-solicitacao-cabecalho strong {
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: #172033;
+
+    font-size: 15px;
+    line-height: 1.4;
+
+    font-weight: 800;
+}
+
+
+.acoes-solicitacao-cabecalho p {
+    color: #64748b;
+
+    font-size: 12px;
+    line-height: 1.55;
+}
+
+
+.acoes-solicitacao-botoes {
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1fr)
+        minmax(0, 1fr);
+
+    gap: 10px;
+}
+
+
+.btn-aceitar,
+.btn-recusar {
+    min-height: 48px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    padding: 0 16px;
+
+    border-radius: 12px;
+
+    font-size: 13px;
+    font-weight: 800;
+
+    transition:
+        background 160ms ease,
+        border-color 160ms ease,
+        color 160ms ease,
+        transform 160ms ease,
+        opacity 160ms ease;
+}
+
+
+.btn-aceitar svg,
+.btn-recusar svg {
+    width: 17px;
+    height: 17px;
+
+    flex: 0 0 auto;
+}
+
+
+/* =========================================================
+   BOTÃO ACEITAR
+   ========================================================= */
+
+.btn-aceitar {
+    border: 1px solid #16804a;
+
+    background: #16804a;
+
+    color: #ffffff;
+
+    box-shadow:
+        0 7px 18px rgba(22, 128, 74, 0.14);
+}
+
+
+.btn-aceitar:hover:not(:disabled) {
+    background: #126c3e;
+
+    transform: translateY(-1px);
+}
+
+
+.btn-aceitar:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+
+/* =========================================================
+   BOTÃO RECUSAR
+   ========================================================= */
+
+.btn-recusar {
+    border: 1px solid #e1c6ce;
+
+    background: #ffffff;
+
+    color: #b33a55;
+}
+
+
+.btn-recusar:hover:not(:disabled) {
+    border-color: #d9aeb9;
+
+    background: #fff6f8;
+
+    color: #9f3049;
+
+    transform: translateY(-1px);
+}
+
+
+.btn-recusar:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+
+/* =========================================================
+   BOTÕES DESABILITADOS
+   ========================================================= */
+
+.btn-aceitar:disabled,
+.btn-recusar:disabled {
+    opacity: 0.55;
+
+    transform: none;
+
+    box-shadow: none;
+}
+
+
+/* =========================================================
    PAGAMENTO
    ========================================================= */
 
@@ -684,6 +1033,9 @@ button {
     border-radius: 17px;
 
     background: #ffffff;
+
+    box-shadow:
+        0 8px 30px rgba(15, 23, 42, 0.035);
 }
 
 
@@ -739,6 +1091,8 @@ button {
     color: #172033;
 
     font-size: 14px;
+    line-height: 1.4;
+
     font-weight: 800;
 }
 
@@ -762,11 +1116,13 @@ button {
     line-height: 1.7;
 
     white-space: pre-wrap;
+
+    overflow-wrap: anywhere;
 }
 
 
 /* =========================================================
-   AÇÕES
+   AÇÕES FINAIS
    ========================================================= */
 
 .acoes {
@@ -799,7 +1155,8 @@ button {
 
     transition:
         background 160ms ease,
-        transform 160ms ease;
+        transform 160ms ease,
+        opacity 160ms ease;
 }
 
 
@@ -807,6 +1164,11 @@ button {
     background: #222d43;
 
     transform: translateY(-1px);
+}
+
+
+.btn-principal:active {
+    transform: translateY(0);
 }
 
 
@@ -825,6 +1187,8 @@ button {
 
     margin: 20px auto 0;
 
+    padding: 0 8px;
+
     text-align: center;
 
     color: #94a0b2;
@@ -835,7 +1199,40 @@ button {
 
 
 /* =========================================================
-   RESPONSIVIDADE
+   ESTADOS DE CARREGAMENTO / ERRO
+   ========================================================= */
+
+.status-principal.is-loading {
+    opacity: 0.7;
+}
+
+
+.status-principal.is-error {
+    border-color: #f0cbd3;
+
+    background: #fff7f8;
+}
+
+
+.status-principal.is-error
+.status-principal-icon {
+    background: #fdecef;
+
+    color: #b33a55;
+}
+
+
+/* =========================================================
+   OCULTAR ELEMENTOS
+   ========================================================= */
+
+[hidden] {
+    display: none !important;
+}
+
+
+/* =========================================================
+   RESPONSIVIDADE — TABLET / CELULAR
    ========================================================= */
 
 @media (max-width: 600px) {
@@ -863,6 +1260,12 @@ button {
         width: calc(100% - 32px);
 
         padding-top: 34px;
+        padding-bottom: 44px;
+    }
+
+
+    .pagina-heading {
+        margin-bottom: 24px;
     }
 
 
@@ -871,8 +1274,35 @@ button {
     }
 
 
+    .pagina-heading p {
+        font-size: 13px;
+    }
+
+
+    .relacao-card {
+        padding: 16px;
+    }
+
+
+    .relacao-icon {
+        width: 40px;
+        height: 40px;
+    }
+
+
     .status-principal {
         padding: 16px;
+    }
+
+
+    .status-principal-icon {
+        width: 42px;
+        height: 42px;
+    }
+
+
+    .status-principal-conteudo strong {
+        font-size: 15px;
     }
 
 
@@ -881,8 +1311,50 @@ button {
     }
 
 
+    .card-heading {
+        margin-bottom: 18px;
+    }
+
+
+    .card-heading h2 {
+        font-size: 17px;
+    }
+
+
+    .artista-avatar {
+        width: 50px;
+        height: 50px;
+    }
+
+
     .servico-detalhes {
         grid-template-columns: 1fr;
+    }
+
+
+    .servico-item {
+        padding: 13px;
+    }
+
+
+    .acoes-solicitacao {
+        padding: 18px;
+    }
+
+
+    .acoes-solicitacao-botoes {
+        grid-template-columns: 1fr;
+    }
+
+
+    .btn-aceitar,
+    .btn-recusar {
+        min-height: 50px;
+    }
+
+
+    .pagamento-card {
+        padding: 17px;
     }
 }
 
@@ -892,6 +1364,11 @@ button {
    ========================================================= */
 
 @media (max-width: 360px) {
+
+    .contratacao-header {
+        padding: 0 12px;
+    }
+
 
     .contratacao-main {
         width: calc(100% - 24px);
@@ -903,13 +1380,203 @@ button {
     }
 
 
+    .pagina-heading p {
+        font-size: 12px;
+    }
+
+
+    .relacao-card {
+        gap: 11px;
+
+        padding: 14px;
+    }
+
+
+    .relacao-icon {
+        width: 37px;
+        height: 37px;
+    }
+
+
+    .relacao-icon svg {
+        width: 17px;
+        height: 17px;
+    }
+
+
+    .relacao-conteudo strong {
+        font-size: 13px;
+    }
+
+
+    .relacao-conteudo p {
+        font-size: 11px;
+    }
+
+
     .card {
         padding: 17px;
     }
 
 
     .status-principal {
+        gap: 11px;
+
         padding: 14px;
+    }
+
+
+    .status-principal-icon {
+        width: 39px;
+        height: 39px;
+    }
+
+
+    .status-principal-icon svg {
+        width: 18px;
+        height: 18px;
+    }
+
+
+    .status-principal-conteudo strong {
+        font-size: 14px;
+    }
+
+
+    .status-principal-conteudo p {
+        font-size: 11px;
+    }
+
+
+    .artista {
+        gap: 11px;
+    }
+
+
+    .artista-avatar {
+        width: 46px;
+        height: 46px;
+
+        font-size: 12px;
+    }
+
+
+    .artista-info strong {
+        font-size: 14px;
+    }
+
+
+    .artista-info span {
+        font-size: 12px;
+    }
+
+
+    .artista-info small {
+        font-size: 11px;
+    }
+
+
+    .detalhe-item {
+        gap: 10px;
+    }
+
+
+    .detalhe-icon {
+        width: 35px;
+        height: 35px;
+    }
+
+
+    .detalhe-icon svg {
+        width: 16px;
+        height: 16px;
+    }
+
+
+    .detalhe-conteudo strong {
+        font-size: 12px;
+    }
+
+
+    .timeline-item {
+        gap: 10px;
+    }
+
+
+    .timeline-marker {
+        width: 32px;
+        height: 32px;
+    }
+
+
+    .timeline-item:not(:last-child)::after {
+        left: 15px;
+    }
+
+
+    .timeline-content strong {
+        font-size: 12px;
+    }
+
+
+    .timeline-content span {
+        font-size: 10px;
+    }
+
+
+    .acoes-solicitacao {
+        padding: 16px;
+    }
+
+
+    .acoes-solicitacao-cabecalho strong {
+        font-size: 14px;
+    }
+
+
+    .acoes-solicitacao-cabecalho p {
+        font-size: 11px;
+    }
+
+
+    .btn-aceitar,
+    .btn-recusar {
+        font-size: 12px;
+    }
+
+
+    .pagamento-card {
+        gap: 10px;
+
+        padding: 15px;
+    }
+
+
+    .pagamento-icon {
+        width: 36px;
+        height: 36px;
+    }
+
+
+    .pagamento-conteudo strong {
+        font-size: 13px;
+    }
+
+
+    .pagamento-conteudo p {
+        font-size: 11px;
+    }
+
+
+    .observacoes-card p {
+        font-size: 12px;
+    }
+
+
+    .btn-principal {
+        min-height: 50px;
+
+        font-size: 13px;
     }
 }
 
@@ -925,8 +1592,27 @@ button {
     }
 
 
+    .contratacao-brand,
+    .btn-voltar,
     .btn-principal,
-    .btn-voltar {
+    .btn-aceitar,
+    .btn-recusar {
         transition: none;
+    }
+}
+
+
+/* =========================================================
+   ACESSIBILIDADE — FOCO POR TECLADO
+   ========================================================= */
+
+@media (prefers-reduced-motion: no-preference) {
+
+    .btn-aceitar:focus-visible,
+    .btn-recusar:focus-visible,
+    .btn-principal:focus-visible,
+    .btn-voltar:focus-visible {
+        transition:
+            outline-offset 120ms ease;
     }
 }

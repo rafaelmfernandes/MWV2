@@ -7,12 +7,16 @@ js/contratacoes.js
 Responsabilidade:
 
 * Carregar as contratações realizadas pelo usuário logado.
+* Carregar as solicitações de contratação recebidas pelo
+  usuário logado.
 * Buscar os dados reais no Supabase.
 * Utilizar a arquitetura central do MusicalWorld.
 * Permitir que qualquer usuário faça contratações,
   inclusive um artista contratando outro artista.
+* Identificar se cada contratação foi feita pelo usuário
+  ou recebida pelo usuário.
 * Filtrar por status.
-* Pesquisar por artista, serviço ou evento.
+* Pesquisar por pessoa, serviço ou evento.
 * Ordenar as contratações.
 * Atualizar os indicadores.
 * Renderizar os cards.
@@ -30,11 +34,13 @@ contratante_id → usuarios.id
 contratado_id  → usuarios.id
 servico_id     → servicos_artistas.id
 
-Esta página mostra as CONTRATAÇÕES REALIZADAS pelo
-usuário logado.
+A página agora trabalha com os dois lados da contratação:
 
-A área de SOLICITAÇÕES RECEBIDAS será criada
-posteriormente utilizando contratado_id.
+1. CONTRATAÇÕES REALIZADAS
+   contratante_id = usuário logado
+
+2. SOLICITAÇÕES RECEBIDAS
+   contratado_id = usuário logado
 
 Arquitetura utilizada:
 
@@ -51,7 +57,6 @@ contratacoes.js
 
 (function (window) {
 
-
 "use strict";
 
 
@@ -62,49 +67,109 @@ contratacoes.js
 const CONFIG = {
 
     armazenamento: {
-        chaveContratacao: "musicalworld_contratacao",
-        chaveLista: "musicalworld_contratacoes"
+
+        chaveContratacao:
+            "musicalworld_contratacao",
+
+        chaveLista:
+            "musicalworld_contratacoes"
+
     },
+
 
     paginas: {
-        inicio: "index.html",
-        novaContratacao: "contratacao.html",
-        acompanhamento: "contratacao-acompanhamento.html",
-        perfil: "meu-perfil.html"
+
+        inicio:
+            "index.html",
+
+        novaContratacao:
+            "contratacao.html",
+
+        acompanhamento:
+            "contratacao-acompanhamento.html",
+
+        perfil:
+            "meu-perfil.html"
+
     },
+
 
     tabelas: {
-        contratacoes: "contratacoes",
-        usuarios: "usuarios",
-        perfis: "perfis",
-        perfisArtistas: "perfis_artistas",
-        servicos: "servicos_artistas"
+
+        contratacoes:
+            "contratacoes",
+
+        usuarios:
+            "usuarios",
+
+        perfis:
+            "perfis",
+
+        perfisArtistas:
+            "perfis_artistas",
+
+        servicos:
+            "servicos_artistas"
+
     },
 
+
     seletores: {
-        lista: "contratacoesLista",
-        estadoVazio: "estadoVazio",
-        estadoVazioMensagem: "estadoVazioMensagem",
 
-        campoBusca: "campoBusca",
-        btnLimparBusca: "btnLimparBusca",
-        btnLimparFiltros: "btnLimparFiltros",
+        lista:
+            "contratacoesLista",
 
-        contador: "contadorContratacoes",
+        estadoVazio:
+            "estadoVazio",
 
-        resumoAguardando: "resumoAguardando",
-        resumoProximas: "resumoProximas",
-        resumoAndamento: "resumoAndamento",
-        resumoHistorico: "resumoHistorico",
+        estadoVazioMensagem:
+            "estadoVazioMensagem",
 
-        btnVoltar: "btnVoltar",
-        btnInicio: "btnInicio",
-        btnPerfil: "btnPerfil",
-        btnNovaContratacao: "btnNovaContratacao",
-        btnOrdenacao: "btnOrdenacao",
+        campoBusca:
+            "campoBusca",
 
-        filtros: ".filtro-btn",
-        cardsResumo: ".resumo-card"
+        btnLimparBusca:
+            "btnLimparBusca",
+
+        btnLimparFiltros:
+            "btnLimparFiltros",
+
+        contador:
+            "contadorContratacoes",
+
+        resumoAguardando:
+            "resumoAguardando",
+
+        resumoProximas:
+            "resumoProximas",
+
+        resumoAndamento:
+            "resumoAndamento",
+
+        resumoHistorico:
+            "resumoHistorico",
+
+        btnVoltar:
+            "btnVoltar",
+
+        btnInicio:
+            "btnInicio",
+
+        btnPerfil:
+            "btnPerfil",
+
+        btnNovaContratacao:
+            "btnNovaContratacao",
+
+        btnOrdenacao:
+            "btnOrdenacao",
+
+        filtros:
+            ".filtro-btn",
+
+        cardsResumo:
+            ".resumo-card"
+
     }
 
 };
@@ -116,23 +181,47 @@ const CONFIG = {
 
 const estado = {
 
+    /*
+     * Todas as contratações relacionadas ao usuário.
+     *
+     * Pode conter:
+     *
+     * - contratações realizadas;
+     * - solicitações recebidas.
+     */
+
     contratacoes: [],
+
 
     contratacoesFiltradas: [],
 
-    filtroAtual: "todas",
 
-    buscaAtual: "",
+    filtroAtual:
+        "todas",
 
-    ordenacao: "recentes",
 
-    usuarioId: null,
+    buscaAtual:
+        "",
 
-    carregando: false,
 
-    erro: null,
+    ordenacao:
+        "recentes",
 
-    inicializado: false
+
+    usuarioId:
+        null,
+
+
+    carregando:
+        false,
+
+
+    erro:
+        null,
+
+
+    inicializado:
+        false
 
 };
 
@@ -159,19 +248,42 @@ function escaparHtml(valor) {
 
     }
 
+
     return String(valor)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+
+        .replace(
+            /</g,
+            "&lt;"
+        )
+
+        .replace(
+            />/g,
+            "&gt;"
+        )
+
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+
+        .replace(
+            /'/g,
+            "&#039;"
+        );
 
 }
 
 
 function formatarMoeda(valor) {
 
-    const numero = Number(valor) || 0;
+    const numero =
+        Number(valor) || 0;
+
 
     return numero.toLocaleString(
         "pt-BR",
@@ -192,9 +304,12 @@ function formatarData(data) {
 
     }
 
-    const dataObj = new Date(
-        `${data}T12:00:00`
-    );
+
+    const dataObj =
+        new Date(
+            `${data}T12:00:00`
+        );
+
 
     if (
         Number.isNaN(
@@ -205,6 +320,7 @@ function formatarData(data) {
         return data;
 
     }
+
 
     return dataObj.toLocaleDateString(
         "pt-BR",
@@ -225,9 +341,12 @@ function formatarDataCompleta(data) {
 
     }
 
-    const dataObj = new Date(
-        `${data}T12:00:00`
-    );
+
+    const dataObj =
+        new Date(
+            `${data}T12:00:00`
+        );
+
 
     if (
         Number.isNaN(
@@ -238,6 +357,7 @@ function formatarDataCompleta(data) {
         return data;
 
     }
+
 
     return dataObj.toLocaleDateString(
         "pt-BR",
@@ -253,13 +373,19 @@ function formatarDataCompleta(data) {
 
 function normalizarTexto(valor) {
 
-    return String(valor || "")
+    return String(
+        valor || ""
+    )
+
         .normalize("NFD")
+
         .replace(
             /[\u0300-\u036f]/g,
             ""
         )
+
         .toLowerCase()
+
         .trim();
 
 }
@@ -271,18 +397,23 @@ function obterIniciais(nome) {
         String(nome || "")
             .trim();
 
+
     if (!texto) {
 
         return "MW";
 
     }
 
+
     const partes =
         texto
             .split(/\s+/)
             .filter(Boolean);
 
-    if (partes.length === 1) {
+
+    if (
+        partes.length === 1
+    ) {
 
         return partes[0]
             .substring(0, 2)
@@ -290,10 +421,73 @@ function obterIniciais(nome) {
 
     }
 
+
     return (
         partes[0].charAt(0) +
-        partes[partes.length - 1].charAt(0)
+        partes[
+            partes.length - 1
+        ].charAt(0)
     ).toUpperCase();
+
+}
+
+
+/* =====================================================
+   CABEÇALHO DINÂMICO
+====================================================== */
+
+/*
+ * A página continua podendo mostrar tanto:
+ *
+ * - contratações realizadas;
+ * - solicitações recebidas.
+ *
+ * Por isso o título e o texto introdutório são mantidos
+ * neutros.
+ */
+
+function atualizarCabecalho() {
+
+    const titulo =
+        document.querySelector(
+            ".page-header h1"
+        );
+
+
+    const descricao =
+        document.querySelector(
+            ".page-header p"
+        );
+
+
+    if (titulo) {
+
+        titulo.textContent =
+            "Contratações";
+
+    }
+
+
+    if (descricao) {
+
+        descricao.textContent =
+            "Acompanhe suas contratações e as solicitações recebidas em um só lugar.";
+
+    }
+
+
+    const campoBusca =
+        obterElemento(
+            CONFIG.seletores.campoBusca
+        );
+
+
+    if (campoBusca) {
+
+        campoBusca.placeholder =
+            "Buscar pessoa, evento ou serviço...";
+
+    }
 
 }
 
@@ -332,6 +526,7 @@ function normalizarStatus(status) {
 
     };
 
+
     return (
         mapa[status] ||
         status ||
@@ -341,46 +536,95 @@ function normalizarStatus(status) {
 }
 
 
-function obterStatusConfig(status) {
+function obterStatusConfig(
+    status,
+    direcao
+) {
 
     const configuracoes = {
 
         aguardando_artista: {
-            texto: "Aguardando resposta",
-            classe: "status-aguardando"
+
+            texto:
+                direcao === "recebida"
+                    ? "Aguardando sua resposta"
+                    : "Aguardando resposta",
+
+            classe:
+                "status-aguardando"
+
         },
+
 
         confirmada: {
-            texto: "Confirmada",
-            classe: "status-confirmada"
+
+            texto:
+                "Confirmada",
+
+            classe:
+                "status-confirmada"
+
         },
+
 
         andamento: {
-            texto: "Em andamento",
-            classe: "status-andamento"
+
+            texto:
+                "Em andamento",
+
+            classe:
+                "status-andamento"
+
         },
+
 
         concluida: {
-            texto: "Concluída",
-            classe: "status-concluida"
+
+            texto:
+                "Concluída",
+
+            classe:
+                "status-concluida"
+
         },
+
 
         cancelada: {
-            texto: "Cancelada",
-            classe: "status-cancelada"
+
+            texto:
+                "Cancelada",
+
+            classe:
+                "status-cancelada"
+
         },
+
 
         recusada: {
-            texto: "Recusada",
-            classe: "status-recusada"
+
+            texto:
+                direcao === "recebida"
+                    ? "Recusada por você"
+                    : "Recusada",
+
+            classe:
+                "status-recusada"
+
         },
 
+
         rascunho: {
-            texto: "Rascunho",
-            classe: "status-aguardando"
+
+            texto:
+                "Rascunho",
+
+            classe:
+                "status-aguardando"
+
         }
 
     };
+
 
     return (
         configuracoes[status] ||
@@ -399,39 +643,52 @@ function extrairDadosLocal(local) {
     if (!local) {
 
         return {
-            nome: "Local não informado",
-            cidade: ""
+
+            nome:
+                "Local não informado",
+
+            cidade:
+                ""
+
         };
 
     }
+
 
     /*
      * A coluna "local" é JSONB.
      *
      * Aceitamos tanto objeto quanto string JSON.
-     * Isso mantém compatibilidade enquanto as etapas
-     * da contratação continuam sendo integradas.
      */
 
-    if (typeof local === "string") {
+    if (
+        typeof local === "string"
+    ) {
 
         try {
 
             const convertido =
                 JSON.parse(local);
 
+
             if (
                 convertido &&
                 typeof convertido === "object"
             ) {
 
-                local = convertido;
+                local =
+                    convertido;
 
             } else {
 
                 return {
-                    nome: local,
-                    cidade: ""
+
+                    nome:
+                        local,
+
+                    cidade:
+                        ""
+
                 };
 
             }
@@ -439,13 +696,19 @@ function extrairDadosLocal(local) {
         } catch (erro) {
 
             return {
-                nome: local,
-                cidade: ""
+
+                nome:
+                    local,
+
+                cidade:
+                    ""
+
             };
 
         }
 
     }
+
 
     const nome =
         local.nome ||
@@ -454,25 +717,42 @@ function extrairDadosLocal(local) {
         local.logradouro ||
         "Local não informado";
 
+
     const cidade =
         local.cidade ||
         local.municipio ||
         local.city ||
         "";
 
+
     return {
+
         nome,
+
         cidade
+
     };
 
 }
 
 
 /* =====================================================
-   BUSCAR DADOS DO ARTISTA
+   BUSCAR DADOS DE UMA PESSOA
 ====================================================== */
 
-async function carregarDadosArtista(
+/*
+ * Esta função substitui a ideia de carregar apenas
+ * "artista".
+ *
+ * Uma contratação possui duas pessoas:
+ *
+ * - contratante;
+ * - contratado.
+ *
+ * Cada lado pode ser artista, contratante ou ambos.
+ */
+
+async function carregarDadosPessoa(
     supabase,
     usuarioId
 ) {
@@ -481,26 +761,39 @@ async function carregarDadosArtista(
 
         return {
 
-            id: null,
+            id:
+                null,
 
-            nome: "Artista",
+            nome:
+                "Usuário",
 
-            tipo: "Artista",
+            tipo:
+                "Usuário",
 
-            iniciais: "MW",
+            iniciais:
+                "MW",
 
-            fotoUrl: null,
+            fotoUrl:
+                null,
 
-            localizacao: ""
+            localizacao:
+                ""
 
         };
 
     }
 
 
-    let usuario = null;
-    let perfil = null;
-    let perfilArtista = null;
+    let usuario =
+        null;
+
+
+    let perfil =
+        null;
+
+
+    let perfilArtista =
+        null;
 
 
     /* -------------------------------------------------
@@ -509,9 +802,11 @@ async function carregarDadosArtista(
 
     const respostaUsuario =
         await supabase
+
             .from(
                 CONFIG.tabelas.usuarios
             )
+
             .select(`
                 id,
                 nome,
@@ -520,10 +815,12 @@ async function carregarDadosArtista(
                 foto_url,
                 ativo
             `)
+
             .eq(
                 "id",
                 usuarioId
             )
+
             .maybeSingle();
 
 
@@ -546,25 +843,15 @@ async function carregarDadosArtista(
 
     /* -------------------------------------------------
        PERFIL
-
-       IMPORTANTE:
-
-       perfis.usuario_id referencia usuarios.id.
-
-       Não devemos procurar o perfil usando:
-
-       .eq("id", usuarioId)
-
-       O correto é:
-
-       .eq("usuario_id", usuarioId)
     ------------------------------------------------- */
 
     const respostaPerfil =
         await supabase
+
             .from(
                 CONFIG.tabelas.perfis
             )
+
             .select(`
                 id,
                 usuario_id,
@@ -578,14 +865,17 @@ async function carregarDadosArtista(
                     descricao
                 )
             `)
+
             .eq(
                 "usuario_id",
                 usuarioId
             )
+
             .eq(
                 "ativo",
                 true
             )
+
             .maybeSingle();
 
 
@@ -608,25 +898,27 @@ async function carregarDadosArtista(
 
     /* -------------------------------------------------
        PERFIL ARTÍSTICO
-
-       perfis_artistas.perfil_id referencia o perfil.
-
-       Portanto, primeiro tentamos utilizar o ID real
-       do perfil encontrado.
     ------------------------------------------------- */
 
-    if (perfil?.id) {
+    if (
+        perfil?.id
+    ) {
 
         const respostaPerfilArtista =
             await supabase
+
                 .from(
-                    CONFIG.tabelas.perfisArtistas
+                    CONFIG.tabelas
+                        .perfisArtistas
                 )
+
                 .select("*")
+
                 .eq(
                     "perfil_id",
                     perfil.id
                 )
+
                 .maybeSingle();
 
 
@@ -649,33 +941,16 @@ async function carregarDadosArtista(
     }
 
 
-    /*
-     * Nome de exibição:
-     *
-     * 1. nome do usuário
-     * 2. nome de exibição do perfil
-     * 3. nome genérico
-     */
-
     const nome =
-        usuario?.nome ||
         perfil?.nome_exibicao ||
-        "Artista";
+        usuario?.nome ||
+        "Usuário";
 
-
-    /*
-     * Tipo artístico:
-     *
-     * Primeiro utiliza o cadastro específico de
-     * perfil artístico.
-     *
-     * Caso não exista, utiliza o tipo geral do perfil.
-     */
 
     const tipo =
         perfilArtista?.tipo_artista ||
         perfil?.tipos_perfil?.nome ||
-        "Artista";
+        "Usuário";
 
 
     const fotoUrl =
@@ -692,7 +967,8 @@ async function carregarDadosArtista(
 
     return {
 
-        id: usuarioId,
+        id:
+            usuarioId,
 
         nome,
 
@@ -711,6 +987,29 @@ async function carregarDadosArtista(
 
 
 /* =====================================================
+   COMPATIBILIDADE — BUSCAR ARTISTA
+====================================================== */
+
+/*
+ * Mantemos esta função para preservar compatibilidade
+ * com qualquer parte do projeto que eventualmente
+ * utilize o nome antigo.
+ */
+
+async function carregarDadosArtista(
+    supabase,
+    usuarioId
+) {
+
+    return carregarDadosPessoa(
+        supabase,
+        usuarioId
+    );
+
+}
+
+
+/* =====================================================
    BUSCAR SERVIÇO
 ====================================================== */
 
@@ -723,13 +1022,17 @@ async function carregarDadosServico(
 
         return {
 
-            id: null,
+            id:
+                null,
 
-            nome: "Serviço",
+            nome:
+                "Serviço",
 
-            valor: 0,
+            valor:
+                0,
 
-            duracao: ""
+            duracao:
+                ""
 
         };
 
@@ -738,14 +1041,18 @@ async function carregarDadosServico(
 
     const resposta =
         await supabase
+
             .from(
                 CONFIG.tabelas.servicos
             )
+
             .select("*")
+
             .eq(
                 "id",
                 servicoId
             )
+
             .maybeSingle();
 
 
@@ -758,15 +1065,20 @@ async function carregarDadosServico(
             resposta.error
         );
 
+
         return {
 
-            id: servicoId,
+            id:
+                servicoId,
 
-            nome: "Serviço",
+            nome:
+                "Serviço",
 
-            valor: 0,
+            valor:
+                0,
 
-            duracao: ""
+            duracao:
+                ""
 
         };
 
@@ -811,11 +1123,59 @@ async function carregarDadosServico(
 
 async function transformarContratacao(
     supabase,
-    registro
+    registro,
+    usuarioId
 ) {
 
-    const artista =
-        await carregarDadosArtista(
+    const direcao =
+        String(
+            registro.contratado_id
+        ) ===
+        String(usuarioId)
+
+            ? "recebida"
+
+            : "realizada";
+
+
+    /*
+     * Pessoa do outro lado da contratação.
+     *
+     * Se foi uma contratação realizada:
+     *
+     * contratante = usuário atual
+     * contratado  = artista
+     *
+     * Se foi uma solicitação recebida:
+     *
+     * contratante = cliente
+     * contratado  = usuário atual
+     */
+
+    const pessoaId =
+        direcao === "recebida"
+
+            ? registro.contratante_id
+
+            : registro.contratado_id;
+
+
+    const pessoa =
+        await carregarDadosPessoa(
+            supabase,
+            pessoaId
+        );
+
+
+    const contratante =
+        await carregarDadosPessoa(
+            supabase,
+            registro.contratante_id
+        );
+
+
+    const contratado =
+        await carregarDadosPessoa(
             supabase,
             registro.contratado_id
         );
@@ -839,28 +1199,59 @@ async function transformarContratacao(
         id:
             registro.id,
 
+
         contratanteId:
             registro.contratante_id,
+
 
         contratadoId:
             registro.contratado_id,
 
+
         servicoId:
             registro.servico_id,
 
-        artista,
+
+        /*
+         * Indica de qual lado esta contratação
+         * está sendo visualizada.
+         *
+         * "realizada" = usuário contratou alguém.
+         * "recebida"  = alguém contratou o usuário.
+         */
+
+        direcao,
+
+
+        pessoa,
+
+
+        contratante,
+
+
+        contratado,
+
+
+        /*
+         * Mantemos "artista" para compatibilidade com
+         * código anterior.
+         *
+         * Nas contratações realizadas, é o contratado.
+         * Nas recebidas, continua sendo o contratado,
+         * mesmo que seja o próprio usuário.
+         */
+
+        artista:
+            contratado,
+
 
         servico: {
 
             ...servico,
 
+
             /*
-             * O valor da contratação pertence ao registro
-             * da contratação.
-             *
-             * Assim, mesmo que o preço do serviço mude
-             * futuramente, o contrato mantém o valor
-             * originalmente acordado.
+             * O valor oficial pertence à contratação.
              */
 
             valor:
@@ -870,30 +1261,38 @@ async function transformarContratacao(
 
         },
 
+
         evento: {
 
             nome:
                 registro.tipo_evento ||
                 "Evento",
 
+
             tipo:
                 registro.tipo_evento ||
                 "Evento",
 
+
             data:
                 registro.data_evento,
+
 
             horarioInicio:
                 registro.horario_inicio,
 
+
             horarioFim:
                 registro.horario_fim,
+
 
             local:
                 dadosLocal.nome,
 
+
             cidade:
                 dadosLocal.cidade,
+
 
             observacoes:
                 registro.observacoes ||
@@ -901,13 +1300,16 @@ async function transformarContratacao(
 
         },
 
+
         status:
             normalizarStatus(
                 registro.status
             ),
 
+
         statusBanco:
             registro.status,
+
 
         pagamento: {
 
@@ -919,12 +1321,15 @@ async function transformarContratacao(
 
         },
 
+
         observacoes:
             registro.observacoes ||
             "",
 
+
         createdAt:
             registro.created_at,
+
 
         updatedAt:
             registro.updated_at
@@ -943,14 +1348,18 @@ function pertenceAoFiltro(
     filtro
 ) {
 
-    if (filtro === "todas") {
+    if (
+        filtro === "todas"
+    ) {
 
         return true;
 
     }
 
 
-    if (filtro === "aguardando") {
+    if (
+        filtro === "aguardando"
+    ) {
 
         return (
             contratacao.status ===
@@ -960,7 +1369,9 @@ function pertenceAoFiltro(
     }
 
 
-    if (filtro === "confirmadas") {
+    if (
+        filtro === "confirmadas"
+    ) {
 
         return (
             contratacao.status ===
@@ -970,7 +1381,9 @@ function pertenceAoFiltro(
     }
 
 
-    if (filtro === "concluidas") {
+    if (
+        filtro === "concluidas"
+    ) {
 
         return (
             contratacao.status ===
@@ -980,11 +1393,14 @@ function pertenceAoFiltro(
     }
 
 
-    if (filtro === "canceladas") {
+    if (
+        filtro === "canceladas"
+    ) {
 
         return (
             contratacao.status ===
                 "cancelada" ||
+
             contratacao.status ===
                 "recusada"
         );
@@ -992,11 +1408,14 @@ function pertenceAoFiltro(
     }
 
 
-    if (filtro === "proximas") {
+    if (
+        filtro === "proximas"
+    ) {
 
         return (
             contratacao.status ===
                 "confirmada" ||
+
             contratacao.status ===
                 "aguardando_artista"
         );
@@ -1004,7 +1423,9 @@ function pertenceAoFiltro(
     }
 
 
-    if (filtro === "andamento") {
+    if (
+        filtro === "andamento"
+    ) {
 
         return (
             contratacao.status ===
@@ -1014,13 +1435,17 @@ function pertenceAoFiltro(
     }
 
 
-    if (filtro === "historico") {
+    if (
+        filtro === "historico"
+    ) {
 
         return (
             contratacao.status ===
                 "concluida" ||
+
             contratacao.status ===
                 "cancelada" ||
+
             contratacao.status ===
                 "recusada"
         );
@@ -1032,6 +1457,10 @@ function pertenceAoFiltro(
 
 }
 
+
+/* =====================================================
+   BUSCA
+====================================================== */
 
 function correspondeBusca(
     contratacao,
@@ -1045,13 +1474,25 @@ function correspondeBusca(
     }
 
 
+    const pessoa =
+        contratacao.pessoa || {};
+
+
     const termos = [
+
+        pessoa.nome,
+
+        pessoa.tipo,
+
+        pessoa.localizacao,
+
+        contratacao.contratante?.nome,
+
+        contratacao.contratado?.nome,
 
         contratacao.artista?.nome,
 
         contratacao.artista?.tipo,
-
-        contratacao.artista?.localizacao,
 
         contratacao.servico?.nome,
 
@@ -1068,7 +1509,11 @@ function correspondeBusca(
 
     const textoCompleto =
         termos
-            .map(normalizarTexto)
+
+            .map(
+                normalizarTexto
+            )
+
             .join(" ");
 
 
@@ -1100,12 +1545,15 @@ function ordenarContratacoes(
             function (a, b) {
 
                 return (
+
                     new Date(
                         a.createdAt
                     ) -
+
                     new Date(
                         b.createdAt
                     )
+
                 );
 
             }
@@ -1123,14 +1571,17 @@ function ordenarContratacoes(
             function (a, b) {
 
                 return (
+
                     Number(
                         b.servico?.valor ||
                         0
                     ) -
+
                     Number(
                         a.servico?.valor ||
                         0
                     )
+
                 );
 
             }
@@ -1148,14 +1599,17 @@ function ordenarContratacoes(
             function (a, b) {
 
                 return (
+
                     Number(
                         a.servico?.valor ||
                         0
                     ) -
+
                     Number(
                         b.servico?.valor ||
                         0
                     )
+
                 );
 
             }
@@ -1168,12 +1622,15 @@ function ordenarContratacoes(
         function (a, b) {
 
             return (
+
                 new Date(
                     b.createdAt
                 ) -
+
                 new Date(
                     a.createdAt
                 )
+
             );
 
         }
@@ -1206,10 +1663,13 @@ function atualizarResumo() {
             function (item) {
 
                 return (
+
                     item.status ===
                         "confirmada" ||
+
                     item.status ===
                         "aguardando_artista"
+
                 );
 
             }
@@ -1234,12 +1694,16 @@ function atualizarResumo() {
             function (item) {
 
                 return (
+
                     item.status ===
                         "concluida" ||
+
                     item.status ===
                         "cancelada" ||
+
                     item.status ===
                         "recusada"
+
                 );
 
             }
@@ -1248,29 +1712,35 @@ function atualizarResumo() {
 
     const elementoAguardando =
         obterElemento(
-            CONFIG.seletores.resumoAguardando
+            CONFIG.seletores
+                .resumoAguardando
         );
 
 
     const elementoProximas =
         obterElemento(
-            CONFIG.seletores.resumoProximas
+            CONFIG.seletores
+                .resumoProximas
         );
 
 
     const elementoAndamento =
         obterElemento(
-            CONFIG.seletores.resumoAndamento
+            CONFIG.seletores
+                .resumoAndamento
         );
 
 
     const elementoHistorico =
         obterElemento(
-            CONFIG.seletores.resumoHistorico
+            CONFIG.seletores
+                .resumoHistorico
         );
 
 
-    if (elementoAguardando) {
+    if (
+        elementoAguardando
+    ) {
 
         elementoAguardando.textContent =
             aguardando;
@@ -1278,7 +1748,9 @@ function atualizarResumo() {
     }
 
 
-    if (elementoProximas) {
+    if (
+        elementoProximas
+    ) {
 
         elementoProximas.textContent =
             proximas;
@@ -1286,7 +1758,9 @@ function atualizarResumo() {
     }
 
 
-    if (elementoAndamento) {
+    if (
+        elementoAndamento
+    ) {
 
         elementoAndamento.textContent =
             andamento;
@@ -1294,7 +1768,9 @@ function atualizarResumo() {
     }
 
 
-    if (elementoHistorico) {
+    if (
+        elementoHistorico
+    ) {
 
         elementoHistorico.textContent =
             historico;
@@ -1314,12 +1790,13 @@ function renderizarCard(
 
     const status =
         obterStatusConfig(
-            contratacao.status
+            contratacao.status,
+            contratacao.direcao
         );
 
 
-    const artista =
-        contratacao.artista || {};
+    const pessoa =
+        contratacao.pessoa || {};
 
 
     const servico =
@@ -1330,38 +1807,68 @@ function renderizarCard(
         contratacao.evento || {};
 
 
+    const recebida =
+        contratacao.direcao ===
+        "recebida";
+
+
     let avatarHtml = `
+
         <span>
             ${escaparHtml(
-                artista.iniciais ||
+                pessoa.iniciais ||
                 "MW"
             )}
         </span>
+
     `;
 
 
-    if (artista.fotoUrl) {
+    if (
+        pessoa.fotoUrl
+    ) {
 
         avatarHtml = `
+
             <img
                 src="${escaparHtml(
-                    artista.fotoUrl
+                    pessoa.fotoUrl
                 )}"
                 alt=""
                 loading="lazy"
             >
+
         `;
 
     }
 
 
+    /*
+     * O texto principal do card muda conforme o lado
+     * da contratação.
+     */
+
+    const rotuloPessoa =
+        recebida
+            ? "Contratante"
+            : "Artista";
+
+
+    const rotuloDirecao =
+        recebida
+            ? "Solicitação recebida"
+            : "Contratação realizada";
+
+
     return `
+
         <article
             class="contratacao-card"
             data-id="${escaparHtml(
                 contratacao.id
             )}"
         >
+
 
             <div class="contratacao-status">
 
@@ -1373,10 +1880,18 @@ function renderizarCard(
                     )}
                 </span>
 
+
+                <span class="contratacao-direcao">
+                    ${escaparHtml(
+                        rotuloDirecao
+                    )}
+                </span>
+
             </div>
 
 
             <div class="contratacao-artista">
+
 
                 <div class="artista-principal">
 
@@ -1384,20 +1899,26 @@ function renderizarCard(
                         ${avatarHtml}
                     </div>
 
+
                     <div class="artista-info">
 
                         <span class="artista-nome">
+
                             ${escaparHtml(
-                                artista.nome ||
-                                "Artista"
+                                pessoa.nome ||
+                                "Usuário"
                             )}
+
                         </span>
 
+
                         <span class="artista-tipo">
+
                             ${escaparHtml(
-                                artista.tipo ||
-                                "Artista"
+                                pessoa.tipo ||
+                                "Usuário"
                             )}
+
                         </span>
 
                     </div>
@@ -1406,10 +1927,12 @@ function renderizarCard(
 
 
                 <span class="contratacao-servico">
+
                     ${escaparHtml(
                         servico.nome ||
                         "Serviço"
                     )}
+
                 </span>
 
             </div>
@@ -1418,16 +1941,23 @@ function renderizarCard(
             <div class="contratacao-info">
 
                 <span class="info-label">
-                    Evento
+
+                    ${escaparHtml(
+                        rotuloPessoa
+                    )}
+
                 </span>
 
+
                 <span class="info-valor">
+
                     ${escaparHtml(
-                        evento.nome ||
-                        evento.tipo ||
-                        "Evento"
+                        pessoa.nome ||
+                        "Usuário"
                     )}
+
                 </span>
+
 
                 <span class="info-secundario">
 
@@ -1440,7 +1970,9 @@ function renderizarCard(
                     •
 
                     ${escaparHtml(
-                        evento.horarioInicio ||
+                        normalizarHorario(
+                            evento.horarioInicio
+                        ) ||
                         "--:--"
                     )}
 
@@ -1451,24 +1983,31 @@ function renderizarCard(
 
             <div class="contratacao-valor">
 
+
                 <div>
 
                     <span class="info-label">
                         Local
                     </span>
 
+
                     <span class="info-valor">
+
                         ${escaparHtml(
                             evento.local ||
                             "Local não informado"
                         )}
+
                     </span>
 
+
                     <span class="info-secundario">
+
                         ${escaparHtml(
                             evento.cidade ||
                             ""
                         )}
+
                     </span>
 
                 </div>
@@ -1480,19 +2019,25 @@ function renderizarCard(
                         Valor
                     </span>
 
+
                     <span class="valor-principal">
+
                         ${escaparHtml(
                             formatarMoeda(
                                 servico.valor
                             )
                         )}
+
                     </span>
 
+
                     <span class="valor-pagamento">
+
                         ${escaparHtml(
                             servico.duracao ||
                             ""
                         )}
+
                     </span>
 
                 </div>
@@ -1514,6 +2059,7 @@ function renderizarCard(
                         Ver contratação
                     </span>
 
+
                     <i
                         data-lucide="arrow-right"
                     ></i>
@@ -1522,8 +2068,60 @@ function renderizarCard(
 
             </div>
 
+
         </article>
+
     `;
+
+}
+
+
+/* =====================================================
+   NORMALIZAR HORÁRIO
+====================================================== */
+
+function normalizarHorario(
+    horario
+) {
+
+    if (!horario) {
+
+        return "";
+
+    }
+
+
+    const texto =
+        String(horario)
+            .trim();
+
+
+    /*
+     * PostgreSQL pode retornar:
+     *
+     * 13:51:00
+     *
+     * A interface utiliza:
+     *
+     * 13:51
+     */
+
+    const match =
+        texto.match(
+            /^(\d{2}:\d{2})(?::\d{2})?$/
+        );
+
+
+    if (
+        match
+    ) {
+
+        return match[1];
+
+    }
+
+
+    return texto;
 
 }
 
@@ -1608,7 +2206,9 @@ function renderizarLista() {
             );
 
 
-        if (mensagem) {
+        if (
+            mensagem
+        ) {
 
             if (
                 estado.buscaAtual
@@ -1620,7 +2220,7 @@ function renderizarLista() {
             } else {
 
                 mensagem.textContent =
-                    "Você ainda não possui contratações.";
+                    "Você ainda não possui contratações ou solicitações recebidas.";
 
             }
 
@@ -1641,9 +2241,11 @@ function renderizarLista() {
 
     lista.innerHTML =
         estado.contratacoesFiltradas
+
             .map(
                 renderizarCard
             )
+
             .join("");
 
 
@@ -1685,8 +2287,11 @@ function atualizarContador(
 
 
     elemento.textContent =
+
         total === 1
+
             ? "1 contratação"
+
             : `${total} contratações`;
 
 }
@@ -1759,7 +2364,9 @@ function atualizarBusca(
         );
 
 
-    if (botaoLimpar) {
+    if (
+        botaoLimpar
+    ) {
 
         botaoLimpar.hidden =
             !estado.buscaAtual;
@@ -1781,7 +2388,9 @@ function limparBusca() {
         );
 
 
-    if (campo) {
+    if (
+        campo
+    ) {
 
         campo.value = "";
 
@@ -1798,8 +2407,10 @@ function limparFiltros() {
     estado.filtroAtual =
         "todas";
 
+
     estado.buscaAtual =
         "";
+
 
     const campo =
         obterElemento(
@@ -1808,7 +2419,9 @@ function limparFiltros() {
         );
 
 
-    if (campo) {
+    if (
+        campo
+    ) {
 
         campo.value = "";
 
@@ -1822,9 +2435,12 @@ function limparFiltros() {
         );
 
 
-    if (botaoLimpar) {
+    if (
+        botaoLimpar
+    ) {
 
-        botaoLimpar.hidden = true;
+        botaoLimpar.hidden =
+            true;
 
     }
 
@@ -1845,23 +2461,35 @@ function alternarOrdenacao() {
     const opcoes = [
 
         {
-            chave: "recentes",
-            texto: "Mais recentes"
+            chave:
+                "recentes",
+
+            texto:
+                "Mais recentes"
         },
 
         {
-            chave: "antigas",
-            texto: "Mais antigas"
+            chave:
+                "antigas",
+
+            texto:
+                "Mais antigas"
         },
 
         {
-            chave: "valor_maior",
-            texto: "Maior valor"
+            chave:
+                "valor_maior",
+
+            texto:
+                "Maior valor"
         },
 
         {
-            chave: "valor_menor",
-            texto: "Menor valor"
+            chave:
+                "valor_menor",
+
+            texto:
+                "Menor valor"
         }
 
     ];
@@ -1883,7 +2511,8 @@ function alternarOrdenacao() {
     const proximoIndice =
         (
             indiceAtual + 1
-        ) % opcoes.length;
+        ) %
+        opcoes.length;
 
 
     const proximaOpcao =
@@ -1903,7 +2532,9 @@ function alternarOrdenacao() {
         );
 
 
-    if (botao) {
+    if (
+        botao
+    ) {
 
         const texto =
             botao.querySelector(
@@ -1911,7 +2542,9 @@ function alternarOrdenacao() {
             );
 
 
-        if (texto) {
+        if (
+            texto
+        ) {
 
             texto.textContent =
                 proximaOpcao.texto;
@@ -1947,7 +2580,9 @@ function abrirContratacao(
         );
 
 
-    if (!contratacao) {
+    if (
+        !contratacao
+    ) {
 
         console.warn(
             "MusicalWorld — contratação não encontrada:",
@@ -1962,20 +2597,21 @@ function abrirContratacao(
     /*
      * O Supabase continua sendo a fonte oficial.
      *
-     * O sessionStorage serve apenas como apoio para
-     * a tela seguinte carregar rapidamente os dados
-     * enquanto busca a versão atualizada no banco.
+     * O sessionStorage serve apenas como apoio
+     * para a tela seguinte.
      */
 
     try {
 
         sessionStorage.setItem(
+
             CONFIG.armazenamento
                 .chaveContratacao,
 
             JSON.stringify(
                 contratacao
             )
+
         );
 
     } catch (erro) {
@@ -2003,29 +2639,32 @@ function abrirContratacao(
 async function carregarContratacoes() {
 
     /*
-     * O projeto já possui um cliente Supabase centralizado
-     * criado em SupabaseClient.js.
-     *
-     * Não criamos outra conexão nesta página.
+     * Utilizamos o cliente central.
      */
 
     if (
         !window.supabaseClient ||
-        typeof window.supabaseClient.from !== "function"
+        typeof window.supabaseClient.from !==
+            "function"
     ) {
 
         estado.erro =
             "Cliente Supabase não encontrado.";
 
-        estado.contratacoes = [];
+
+        estado.contratacoes =
+            [];
+
 
         atualizarResumo();
 
         renderizarLista();
 
+
         console.error(
             "MusicalWorld — window.supabaseClient não encontrado."
         );
+
 
         return;
 
@@ -2035,6 +2674,7 @@ async function carregarContratacoes() {
     estado.carregando =
         true;
 
+
     estado.erro =
         null;
 
@@ -2043,18 +2683,15 @@ async function carregarContratacoes() {
 
         /* ---------------------------------------------
            USUÁRIO ATUAL
-
-           Utilizamos o módulo central UsuarioAtual.js.
-
-           Isso evita duplicar a lógica de autenticação
-           em cada página.
         ---------------------------------------------- */
 
         const dadosUsuario =
             await UsuarioAtual.obter();
 
 
-        if (!dadosUsuario) {
+        if (
+            !dadosUsuario
+        ) {
 
             console.warn(
                 "MusicalWorld — nenhum usuário autenticado."
@@ -2064,12 +2701,15 @@ async function carregarContratacoes() {
             estado.usuarioId =
                 null;
 
+
             estado.contratacoes =
                 [];
+
 
             atualizarResumo();
 
             renderizarLista();
+
 
             return;
 
@@ -2081,44 +2721,150 @@ async function carregarContratacoes() {
 
 
         /* ---------------------------------------------
-           CONTRATAÇÕES REALIZADAS PELO USUÁRIO
+           BUSCAR OS DOIS LADOS
         ---------------------------------------------- */
 
-        const resposta =
-            await supabaseClient
+        /*
+         * 1. Contratações realizadas:
+         *
+         * contratante_id = usuário atual
+         *
+         * 2. Solicitações recebidas:
+         *
+         * contratado_id = usuário atual
+         *
+         * Fazemos duas consultas separadas para manter
+         * a lógica clara e evitar depender de uma expressão
+         * OR específica do Supabase.
+         */
+
+        const [
+
+            respostaRealizadas,
+
+            respostaRecebidas
+
+        ] = await Promise.all([
+
+            supabaseClient
+
                 .from(
                     CONFIG.tabelas
                         .contratacoes
                 )
+
                 .select("*")
+
                 .eq(
                     "contratante_id",
                     estado.usuarioId
                 )
+
                 .order(
                     "created_at",
                     {
-                        ascending: false
+                        ascending:
+                            false
                     }
-                );
+                ),
+
+
+            supabaseClient
+
+                .from(
+                    CONFIG.tabelas
+                        .contratacoes
+                )
+
+                .select("*")
+
+                .eq(
+                    "contratado_id",
+                    estado.usuarioId
+                )
+
+                .order(
+                    "created_at",
+                    {
+                        ascending:
+                            false
+                    }
+                )
+
+        ]);
 
 
         if (
-            resposta.error
+            respostaRealizadas.error
         ) {
 
-            throw resposta.error;
+            throw respostaRealizadas.error;
 
         }
 
 
-        const registros =
-            resposta.data || [];
+        if (
+            respostaRecebidas.error
+        ) {
+
+            throw respostaRecebidas.error;
+
+        }
+
+
+        const registrosRealizados =
+            respostaRealizadas.data ||
+            [];
+
+
+        const registrosRecebidos =
+            respostaRecebidas.data ||
+            [];
 
 
         /*
-         * Transformamos cada registro para o formato
-         * utilizado pela interface.
+         * Como um usuário pode contratar a si mesmo
+         * em algum cenário futuro, ou uma mesma linha
+         * aparecer nas duas consultas, fazemos uma
+         * deduplicação pelo ID da contratação.
+         */
+
+        const registrosMap =
+            new Map();
+
+
+        registrosRealizados.forEach(
+            function (registro) {
+
+                registrosMap.set(
+                    String(registro.id),
+                    registro
+                );
+
+            }
+        );
+
+
+        registrosRecebidos.forEach(
+            function (registro) {
+
+                registrosMap.set(
+                    String(registro.id),
+                    registro
+                );
+
+            }
+        );
+
+
+        const registros =
+            Array.from(
+                registrosMap.values()
+            );
+
+
+        /*
+         * Transformamos cada contratação.
          */
 
         const contratosConvertidos =
@@ -2128,8 +2874,13 @@ async function carregarContratacoes() {
                     function (registro) {
 
                         return transformarContratacao(
+
                             supabaseClient,
-                            registro
+
+                            registro,
+
+                            estado.usuarioId
+
                         );
 
                     }
@@ -2138,25 +2889,48 @@ async function carregarContratacoes() {
             );
 
 
+        /*
+         * Mais recentes primeiro antes da renderização.
+         */
+
+        contratosConvertidos.sort(
+            function (a, b) {
+
+                return (
+
+                    new Date(
+                        b.createdAt
+                    ) -
+
+                    new Date(
+                        a.createdAt
+                    )
+
+                );
+
+            }
+        );
+
+
         estado.contratacoes =
             contratosConvertidos;
 
 
-        /*
-         * Apoio temporário à navegação.
-         *
-         * A fonte oficial continua sendo o Supabase.
-         */
+        /* ---------------------------------------------
+           ARMAZENAMENTO LOCAL DE APOIO
+        ---------------------------------------------- */
 
         try {
 
             sessionStorage.setItem(
+
                 CONFIG.armazenamento
                     .chaveLista,
 
                 JSON.stringify(
                     estado.contratacoes
                 )
+
             );
 
         } catch (erro) {
@@ -2216,9 +2990,11 @@ function configurarEventos() {
     ------------------------------------------------ */
 
     document
+
         .querySelectorAll(
             CONFIG.seletores.filtros
         )
+
         .forEach(
             function (botao) {
 
@@ -2242,9 +3018,11 @@ function configurarEventos() {
     ------------------------------------------------ */
 
     document
+
         .querySelectorAll(
             CONFIG.seletores.cardsResumo
         )
+
         .forEach(
             function (card) {
 
@@ -2274,7 +3052,9 @@ function configurarEventos() {
         );
 
 
-    if (campoBusca) {
+    if (
+        campoBusca
+    ) {
 
         campoBusca.addEventListener(
             "input",
@@ -2301,7 +3081,9 @@ function configurarEventos() {
         );
 
 
-    if (btnLimparBusca) {
+    if (
+        btnLimparBusca
+    ) {
 
         btnLimparBusca.addEventListener(
             "click",
@@ -2322,7 +3104,9 @@ function configurarEventos() {
         );
 
 
-    if (btnLimparFiltros) {
+    if (
+        btnLimparFiltros
+    ) {
 
         btnLimparFiltros.addEventListener(
             "click",
@@ -2343,7 +3127,9 @@ function configurarEventos() {
         );
 
 
-    if (btnOrdenacao) {
+    if (
+        btnOrdenacao
+    ) {
 
         btnOrdenacao.addEventListener(
             "click",
@@ -2363,7 +3149,9 @@ function configurarEventos() {
         );
 
 
-    if (lista) {
+    if (
+        lista
+    ) {
 
         lista.addEventListener(
             "click",
@@ -2375,7 +3163,9 @@ function configurarEventos() {
                     );
 
 
-                if (!botao) {
+                if (
+                    !botao
+                ) {
 
                     return;
 
@@ -2403,7 +3193,9 @@ function configurarEventos() {
         );
 
 
-    if (btnVoltar) {
+    if (
+        btnVoltar
+    ) {
 
         btnVoltar.addEventListener(
             "click",
@@ -2438,7 +3230,9 @@ function configurarEventos() {
         );
 
 
-    if (btnInicio) {
+    if (
+        btnInicio
+    ) {
 
         btnInicio.addEventListener(
             "click",
@@ -2463,7 +3257,9 @@ function configurarEventos() {
         );
 
 
-    if (btnPerfil) {
+    if (
+        btnPerfil
+    ) {
 
         btnPerfil.addEventListener(
             "click",
@@ -2489,7 +3285,9 @@ function configurarEventos() {
         );
 
 
-    if (btnNovaContratacao) {
+    if (
+        btnNovaContratacao
+    ) {
 
         btnNovaContratacao.addEventListener(
             "click",
@@ -2528,7 +3326,10 @@ async function inicializar() {
 
     configurarEventos();
 
+    atualizarCabecalho();
+
     atualizarFiltroVisual();
+
 
     await carregarContratacoes();
 
@@ -2543,7 +3344,7 @@ async function inicializar() {
 
 
     console.log(
-        "MusicalWorld — Central de Contratações inicializada com Supabase."
+        "MusicalWorld — Central de Contratações inicializada com contratações realizadas e solicitações recebidas."
     );
 
 }
@@ -2567,17 +3368,21 @@ window.MusicalWorldContratacoes = {
 
     abrirContratacao,
 
-    obterEstado: function () {
 
-        return estado;
+    obterEstado:
+        function () {
 
-    },
+            return estado;
 
-    obterContratacoes: function () {
+        },
 
-        return estado.contratacoes;
 
-    }
+    obterContratacoes:
+        function () {
+
+            return estado.contratacoes;
+
+        }
 
 };
 

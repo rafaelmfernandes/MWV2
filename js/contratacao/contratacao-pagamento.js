@@ -1,3 +1,4 @@
+
 (function (window) {
 
     "use strict";
@@ -18,6 +19,7 @@
        - Validar os dados do cartão.
        - Simular o processamento do pagamento.
        - Criar a contratação real no Supabase.
+       - Criar a notificação da nova solicitação para o artista.
        - Salvar o ID da contratação no estado central.
        - Encaminhar para a tela de sucesso.
 
@@ -34,9 +36,19 @@
        2. Identifica contratante e contratado.
        3. Monta o registro de public.contratacoes.
        4. Insere o registro no Supabase.
-       5. Salva contratacaoId no estado central.
-       6. Salva o pagamento como pago.
-       7. Redireciona para contratacao-sucesso.html.
+       5. Cria a notificação para o artista.
+       6. Salva contratacaoId no estado central.
+       7. Salva o pagamento como pago.
+       8. Redireciona para a tela de sucesso.
+
+       PROTEÇÃO CONTRA ID ANTIGO:
+       ---------------------------------------------------------
+       O contratacaoId armazenado no estado central é validado
+       contra o banco antes de ser reutilizado.
+
+       Isso evita que um ID antigo, por exemplo de uma contratação
+       que foi apagada manualmente do Supabase, impeça a criação
+       de uma nova contratação.
 
        Não são armazenados número do cartão, CVV ou validade
        dentro do banco.
@@ -65,6 +77,10 @@
 
         tabelaContratacoes: "contratacoes",
 
+        tabelaNotificacoes: "notificacoes",
+
+        tabelaUsuarios: "usuarios",
+
         statusContratacao: "aguardando_confirmacao",
 
         statusPagamento: "pago"
@@ -74,11 +90,6 @@
 
     /* =========================================================
        ESTADO LOCAL DA INTERFACE
-
-       Este objeto controla somente a interface da página.
-
-       Os dados reais da contratação continuam no
-       MusicalWorldContratacaoEstado.
        ========================================================= */
 
     const UI = {
@@ -282,7 +293,8 @@
 
             return salvarEstado({
 
-                etapaAtual: etapa
+                etapaAtual:
+                    etapa
 
             });
 
@@ -682,6 +694,217 @@
 
 
         return resposta.data.user;
+
+    }
+
+
+    /* =========================================================
+       VALIDAR CONTRATAÇÃO EXISTENTE
+
+       O estado central pode conter um contratacaoId antigo,
+       especialmente depois de uma contratação ter sido apagada
+       manualmente do banco durante testes.
+
+       Esta função verifica o ID diretamente no Supabase.
+
+       Retornos:
+
+       - contratação encontrada e pertencente ao usuário:
+         retorna os dados da contratação.
+
+       - ID não existe mais:
+         limpa o ID antigo e retorna null.
+
+       - erro real de banco/autenticação:
+         lança o erro para impedir uma nova criação insegura.
+       ========================================================= */
+
+    async function verificarContratacaoExistente() {
+
+        const estado =
+            estadoCentral ||
+            obterEstado();
+
+
+        if (!estado) {
+
+            return null;
+
+        }
+
+
+        const contratacaoId =
+            estado.contratacaoId ||
+            estado.contratacao_id ||
+            null;
+
+
+        if (!contratacaoId) {
+
+            return null;
+
+        }
+
+
+        const supabase =
+            obterSupabaseClient();
+
+
+        if (!supabase) {
+
+            throw new Error(
+                "Cliente Supabase não está disponível."
+            );
+
+        }
+
+
+        const usuario =
+            await obterUsuarioAutenticado();
+
+
+        console.log(
+            "MusicalWorldContratacaoPagamento: " +
+            "validando contratacaoId existente no Supabase.",
+            contratacaoId
+        );
+
+
+        const resposta =
+            await supabase
+
+                .from(
+                    CONFIG.tabelaContratacoes
+                )
+
+                .select(
+                    "id,contratante_id,contratado_id,status,status_pagamento"
+                )
+
+                .eq(
+                    "id",
+                    contratacaoId
+                )
+
+                .maybeSingle();
+
+
+        if (resposta.error) {
+
+            console.error(
+                "MusicalWorldContratacaoPagamento: " +
+                "erro ao validar contratação existente.",
+                resposta.error
+            );
+
+            throw resposta.error;
+
+        }
+
+
+        /*
+         * -----------------------------------------------------
+         * O ID está no estado, mas não existe mais no banco.
+         *
+         * Isso acontece, por exemplo, quando uma contratação
+         * foi apagada manualmente durante os testes.
+         *
+         * Nesse caso, o estado antigo não pode bloquear uma
+         * nova contratação.
+         * -----------------------------------------------------
+         */
+
+        if (!resposta.data) {
+
+            console.warn(
+                "MusicalWorldContratacaoPagamento: " +
+                "contratacaoId antigo não existe mais no Supabase. " +
+                "O ID será descartado e uma nova contratação poderá ser criada.",
+                contratacaoId
+            );
+
+
+            const limpouEstado =
+                salvarEstado({
+
+                    contratacaoId:
+                        null,
+
+                    contratacao_id:
+                        null
+
+                });
+
+
+            if (!limpouEstado) {
+
+                console.warn(
+                    "MusicalWorldContratacaoPagamento: " +
+                    "não foi possível limpar o contratacaoId antigo do estado central."
+                );
+
+            }
+
+
+            estadoCentral =
+                obterEstado();
+
+
+            return null;
+
+        }
+
+
+        /*
+         * -----------------------------------------------------
+         * O ID existe, mas precisamos confirmar que pertence
+         * ao usuário autenticado.
+         * -----------------------------------------------------
+         */
+
+        const pertenceAoUsuario =
+            String(
+                resposta.data.contratante_id
+            ) === String(
+                usuario.id
+            ) ||
+            String(
+                resposta.data.contratado_id
+            ) === String(
+                usuario.id
+            );
+
+
+        if (!pertenceAoUsuario) {
+
+            console.error(
+                "MusicalWorldContratacaoPagamento: " +
+                "o contratacaoId existente não pertence ao usuário autenticado.",
+                {
+                    contratacaoId:
+                        contratacaoId,
+
+                    usuarioId:
+                        usuario.id
+                }
+            );
+
+
+            throw new Error(
+                "A contratação existente não pertence ao usuário autenticado."
+            );
+
+        }
+
+
+        console.log(
+            "MusicalWorldContratacaoPagamento: " +
+            "contratação existente confirmada no banco.",
+            resposta.data
+        );
+
+
+        return resposta.data;
 
     }
 
@@ -1179,10 +1402,6 @@
 
     /* =========================================================
        SELEÇÃO DO MÉTODO DE PAGAMENTO
-
-       Esta função NÃO abre modal.
-
-       O modal somente é aberto pelo botão Continuar.
        ========================================================= */
 
     function selecionarMetodoPagamento(metodo) {
@@ -2227,9 +2446,6 @@
 
     /* =========================================================
        PREPARAR DADOS DA CONTRATAÇÃO
-
-       Converte o estado central para o formato da tabela
-       public.contratacoes.
        ========================================================= */
 
     function prepararDadosContratacao(
@@ -2414,8 +2630,12 @@
     /* =========================================================
        CRIAR CONTRATAÇÃO NO SUPABASE
 
-       Esta é a parte que efetivamente transforma o fluxo
-       temporário da tela em uma contratação real no banco.
+       Antes de criar:
+
+       1. Verifica se existe contratacaoId no estado.
+       2. Consulta o banco para confirmar se ele ainda existe.
+       3. Se existir, reutiliza a contratação.
+       4. Se não existir, cria uma nova.
        ========================================================= */
 
     async function criarContratacaoNoSupabase(
@@ -2437,34 +2657,32 @@
 
         /*
          * -----------------------------------------------------
-         * PROTEÇÃO CONTRA DUPLICIDADE
+         * PROTEÇÃO CONTRA ID ANTIGO OU DUPLICIDADE
          * -----------------------------------------------------
          *
-         * Se o estado já possui contratacaoId, significa que
-         * a contratação já foi criada anteriormente.
+         * Nunca mais confiamos apenas no valor armazenado no
+         * sessionStorage/estado central.
          *
-         * Não devemos criar outra.
+         * O ID é validado diretamente no banco.
          */
 
         const contratacaoExistente =
-            estado.contratacaoId ||
-            estado.contratacao_id ||
-            null;
+            await verificarContratacaoExistente();
 
 
         if (contratacaoExistente) {
 
             console.log(
                 "MusicalWorldContratacaoPagamento: " +
-                "contratação já existente. Nenhuma nova contratação será criada.",
-                contratacaoExistente
+                "contratação existente confirmada. Nenhuma nova contratação será criada.",
+                contratacaoExistente.id
             );
 
 
             return {
 
                 id:
-                    contratacaoExistente
+                    contratacaoExistente.id
 
             };
 
@@ -2480,9 +2698,23 @@
             await obterUsuarioAutenticado();
 
 
+        /*
+         * O estado pode ter sido atualizado durante a validação
+         * do ID antigo.
+         */
+
+        const estadoAtual =
+            obterEstado() ||
+            estado;
+
+
+        estadoCentral =
+            estadoAtual;
+
+
         const dados =
             prepararDadosContratacao(
-                estado,
+                estadoAtual,
                 usuario.id
             );
 
@@ -2495,7 +2727,7 @@
 
 
         /*
-         * Insere a contratação.
+         * Insere a nova contratação.
          */
 
         const resposta =
@@ -2550,6 +2782,229 @@
 
 
         return resposta.data;
+
+    }
+
+
+    /* =========================================================
+       CRIAR NOTIFICAÇÃO — NOVA SOLICITAÇÃO DE CONTRATAÇÃO
+       ========================================================= */
+
+    async function criarNotificacaoNovaContratacao(
+        contratacao,
+        usuarioContratante
+    ) {
+
+        const supabase =
+            obterSupabaseClient();
+
+
+        if (!supabase) {
+
+            console.error(
+                "MusicalWorldContratacaoPagamento: " +
+                "não foi possível criar a notificação porque o cliente Supabase não está disponível."
+            );
+
+            return false;
+
+        }
+
+
+        if (
+            !contratacao ||
+            !contratacao.id
+        ) {
+
+            console.warn(
+                "MusicalWorldContratacaoPagamento: " +
+                "não foi possível criar notificação porque o ID da contratação não está disponível."
+            );
+
+            return false;
+
+        }
+
+
+        if (
+            !usuarioContratante ||
+            !usuarioContratante.id
+        ) {
+
+            console.warn(
+                "MusicalWorldContratacaoPagamento: " +
+                "usuário contratante não identificado para criação da notificação."
+            );
+
+            return false;
+
+        }
+
+
+        const artista =
+            estadoCentral &&
+            estadoCentral.artista
+                ? estadoCentral.artista
+                : {};
+
+
+        const artistaId =
+            artista.usuarioId ||
+            artista.usuario_id ||
+            artista.idUsuario ||
+            artista.id_usuario ||
+            null;
+
+
+        if (!artistaId) {
+
+            console.warn(
+                "MusicalWorldContratacaoPagamento: " +
+                "artista não identificado para criação da notificação."
+            );
+
+            return false;
+
+        }
+
+
+        let nomeContratante =
+            "Alguém";
+
+
+        try {
+
+            const respostaUsuario =
+                await supabase
+
+                    .from(
+                        CONFIG.tabelaUsuarios
+                    )
+
+                    .select(
+                        "id,nome"
+                    )
+
+                    .eq(
+                        "id",
+                        usuarioContratante.id
+                    )
+
+                    .maybeSingle();
+
+
+            if (
+                !respostaUsuario.error &&
+                respostaUsuario.data &&
+                respostaUsuario.data.nome
+            ) {
+
+                nomeContratante =
+                    String(
+                        respostaUsuario.data.nome
+                    ).trim() ||
+                    "Alguém";
+
+            } else if (
+                respostaUsuario.error
+            ) {
+
+                console.warn(
+                    "MusicalWorldContratacaoPagamento: " +
+                    "não foi possível recuperar o nome do contratante. Será utilizado um nome genérico.",
+                    respostaUsuario.error
+                );
+
+            }
+
+        } catch (erro) {
+
+            console.warn(
+                "MusicalWorldContratacaoPagamento: " +
+                "erro ao buscar nome do contratante para a notificação.",
+                erro
+            );
+
+        }
+
+
+        const titulo =
+            "Nova solicitação de contratação";
+
+
+        const mensagem =
+            `${nomeContratante} enviou uma solicitação de contratação para você.`;
+
+
+        const resposta =
+            await supabase
+
+                .from(
+                    CONFIG.tabelaNotificacoes
+                )
+
+                .insert({
+
+                    usuario_id:
+                        artistaId,
+
+                    remetente_id:
+                        usuarioContratante.id,
+
+                    tipo:
+                        "nova_contratacao",
+
+                    titulo:
+                        titulo,
+
+                    mensagem:
+                        mensagem,
+
+                    referencia_id:
+                        contratacao.id,
+
+                    referencia_tipo:
+                        "contratacao",
+
+                    lida:
+                        false
+
+                });
+
+
+        if (resposta.error) {
+
+            console.error(
+                "MusicalWorldContratacaoPagamento: " +
+                "contratação criada, mas a notificação da nova solicitação não pôde ser criada.",
+                resposta.error
+            );
+
+            return false;
+
+        }
+
+
+        console.log(
+            "MusicalWorldContratacaoPagamento: " +
+            "notificação de nova solicitação criada com sucesso.",
+            {
+                notificacaoTipo:
+                    "nova_contratacao",
+
+                usuarioId:
+                    artistaId,
+
+                remetenteId:
+                    usuarioContratante.id,
+
+                contratacaoId:
+                    contratacao.id
+            }
+        );
+
+
+        return true;
 
     }
 
@@ -2635,6 +3090,8 @@
 
        validação
            ↓
+       verificar ID existente no banco
+           ↓
        pagamento processando
            ↓
        simulação
@@ -2642,6 +3099,8 @@
        pagamento pago
            ↓
        criar contratação
+           ↓
+       criar notificação
            ↓
        salvar ID
            ↓
@@ -2762,39 +3221,6 @@
         }
 
 
-        /*
-         * -----------------------------------------------------
-         * CONFIRMAÇÃO DE CONTRATAÇÃO JÁ CRIADA
-         * -----------------------------------------------------
-         *
-         * Caso o usuário tenha voltado para esta tela depois
-         * da criação, não criamos outro registro.
-         */
-
-        const contratacaoExistente =
-            estadoCentral.contratacaoId ||
-            estadoCentral.contratacao_id ||
-            null;
-
-
-        if (contratacaoExistente) {
-
-            console.log(
-                "MusicalWorldContratacaoPagamento: " +
-                "contratação já possui ID:",
-                contratacaoExistente
-            );
-
-
-            window.location.href =
-                CONFIG.paginaSucesso;
-
-
-            return;
-
-        }
-
-
         UI.processando =
             true;
 
@@ -2808,6 +3234,50 @@
 
         try {
 
+            /*
+             * -------------------------------------------------
+             * PRIMEIRO PASSO:
+             * Verificar se o contratacaoId salvo no estado
+             * ainda existe no banco.
+             *
+             * Se existir:
+             *     não cria duplicidade e vai para sucesso.
+             *
+             * Se não existir:
+             *     o ID antigo é removido e o fluxo continua
+             *     normalmente para criar uma nova contratação.
+             * -------------------------------------------------
+             */
+
+            const contratacaoExistente =
+                await verificarContratacaoExistente();
+
+
+            if (contratacaoExistente) {
+
+                console.log(
+                    "MusicalWorldContratacaoPagamento: " +
+                    "contratação existente confirmada no banco.",
+                    contratacaoExistente.id
+                );
+
+
+                window.location.href =
+                    CONFIG.paginaSucesso;
+
+
+                return;
+
+            }
+
+
+            /*
+             * -------------------------------------------------
+             * ETAPA 1
+             * Marca o pagamento como processando.
+             * -------------------------------------------------
+             */
+
             const valor =
                 obterValorServico(
                     estadoCentral
@@ -2818,13 +3288,6 @@
                 estadoCentral.pagamento ||
                 {};
 
-
-            /*
-             * -------------------------------------------------
-             * ETAPA 1
-             * Marca o pagamento como processando.
-             * -------------------------------------------------
-             */
 
             const salvoProcessando =
                 salvarEstado({
@@ -2900,11 +3363,6 @@
              * -------------------------------------------------
              * ETAPA 3
              * Gera identificação temporária do pagamento.
-             *
-             * IMPORTANTE:
-             * Essa informação não contém dados sensíveis do
-             * cartão e não é enviada para a tabela
-             * public.contratacoes.
              * -------------------------------------------------
              */
 
@@ -2996,6 +3454,35 @@
             /*
              * -------------------------------------------------
              * ETAPA 6
+             * CRIA A NOTIFICAÇÃO PARA O ARTISTA.
+             * -------------------------------------------------
+             */
+
+            try {
+
+                const usuarioContratante =
+                    await obterUsuarioAutenticado();
+
+
+                await criarNotificacaoNovaContratacao(
+                    contratacao,
+                    usuarioContratante
+                );
+
+            } catch (erroNotificacao) {
+
+                console.error(
+                    "MusicalWorldContratacaoPagamento: " +
+                    "a contratação foi criada, mas ocorreu um erro ao criar a notificação da nova solicitação.",
+                    erroNotificacao
+                );
+
+            }
+
+
+            /*
+             * -------------------------------------------------
+             * ETAPA 7
              * Salva o ID retornado pelo Supabase no estado.
              * -------------------------------------------------
              */
@@ -3018,7 +3505,7 @@
 
             /*
              * -------------------------------------------------
-             * ETAPA 7
+             * ETAPA 8
              * Redireciona somente depois que o banco confirmou
              * a criação da contratação.
              * -------------------------------------------------
@@ -3055,12 +3542,6 @@
                 erro
             );
 
-
-            /*
-             * Mostra uma mensagem mais específica quando
-             * possível, sem expor detalhes internos do banco
-             * para o usuário.
-             */
 
             let mensagem =
                 "Não foi possível finalizar a contratação. Tente novamente.";
@@ -3145,11 +3626,6 @@
 
     /* =========================================================
        SIMULAÇÃO TEMPORÁRIA DO PAGAMENTO
-
-       Esta função continua sendo uma simulação.
-
-       Quando o Mercado Pago real for integrado, esta parte
-       deverá ser substituída pela confirmação real do pagamento.
        ========================================================= */
 
     function simularProcessamentoPagamento() {
@@ -3174,10 +3650,6 @@
 
     /* =========================================================
        IDENTIFICADOR TEMPORÁRIO DO PAGAMENTO
-
-       Não representa um ID real do Mercado Pago.
-
-       Serve apenas enquanto o pagamento ainda é simulado.
        ========================================================= */
 
     function gerarIdentificadorTemporario() {
@@ -3311,10 +3783,6 @@
         /*
          * Não permitimos que uma contratação já criada seja
          * simplesmente apagada pelo botão cancelar.
-         *
-         * Se já existe contratacaoId, a contratação já chegou
-         * ao banco e deve ser tratada pelos fluxos próprios de
-         * cancelamento.
          */
 
         const contratacaoId =
@@ -3515,12 +3983,6 @@
 
     function configurarEventosPagamento() {
 
-        /*
-         * -----------------------------------------------------
-         * MÉTODOS DE PAGAMENTO
-         * -----------------------------------------------------
-         */
-
         document
             .querySelectorAll(
                 "[data-metodo-pagamento]"
@@ -3553,12 +4015,6 @@
                 }
             );
 
-
-        /*
-         * -----------------------------------------------------
-         * BOTÃO PIX
-         * -----------------------------------------------------
-         */
 
         const btnPix =
             obterElemento(
@@ -3594,12 +4050,6 @@
 
         }
 
-
-        /*
-         * -----------------------------------------------------
-         * BOTÃO CARTÃO
-         * -----------------------------------------------------
-         */
 
         const btnCartao =
             obterElemento(
@@ -3637,12 +4087,6 @@
         }
 
 
-        /*
-         * -----------------------------------------------------
-         * BOTÃO CONTINUAR
-         * -----------------------------------------------------
-         */
-
         const btnContinuar =
             obterElemento(
                 "btnContinuar",
@@ -3679,12 +4123,6 @@
         }
 
 
-        /*
-         * -----------------------------------------------------
-         * BOTÃO PAGAR CARTÃO
-         * -----------------------------------------------------
-         */
-
         const btnPagarCartao =
             obterElemento(
                 "btnPagarCartao"
@@ -3715,12 +4153,6 @@
 
         }
 
-
-        /*
-         * -----------------------------------------------------
-         * BOTÃO SIMULAR PIX
-         * -----------------------------------------------------
-         */
 
         const btnSimularPix =
             obterElemento(
@@ -3753,12 +4185,6 @@
         }
 
 
-        /*
-         * -----------------------------------------------------
-         * BOTÃO VOLTAR
-         * -----------------------------------------------------
-         */
-
         const btnVoltar =
             obterElemento(
                 "btnVoltar",
@@ -3780,12 +4206,6 @@
 
         }
 
-
-        /*
-         * -----------------------------------------------------
-         * BOTÃO CANCELAR
-         * -----------------------------------------------------
-         */
 
         const btnCancelar =
             obterElemento(
@@ -3810,12 +4230,6 @@
         }
 
 
-        /*
-         * -----------------------------------------------------
-         * FECHAMENTO DE MODAIS
-         * -----------------------------------------------------
-         */
-
         document
             .querySelectorAll(
                 "[data-fechar-modal], " +
@@ -3839,12 +4253,6 @@
             );
 
 
-        /*
-         * -----------------------------------------------------
-         * COPIAR PIX
-         * -----------------------------------------------------
-         */
-
         const btnCopiarPix =
             obterElemento(
                 "btnCopiarPix",
@@ -3866,12 +4274,6 @@
 
         }
 
-
-        /*
-         * -----------------------------------------------------
-         * FECHAR MODAL CLICANDO NO FUNDO
-         * -----------------------------------------------------
-         */
 
         document
             .querySelectorAll(
@@ -3899,12 +4301,6 @@
                 }
             );
 
-
-        /*
-         * -----------------------------------------------------
-         * TECLA ESC
-         * -----------------------------------------------------
-         */
 
         document.addEventListener(
             "keydown",
@@ -3981,10 +4377,6 @@
             estadoCentral =
                 obterEstado();
 
-
-            /*
-             * Validações mínimas.
-             */
 
             if (
                 !estadoCentral.perfilId
@@ -4157,3 +4549,4 @@
 
 
 })(window);
+
