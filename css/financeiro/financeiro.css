@@ -728,8 +728,20 @@ video {
 }
 
 
-.financeiro-card-principal
-.financeiro-valor {
+/*
+   CORREÇÃO:
+
+   O ponto entre os seletores indica que o mesmo elemento
+   possui as duas classes:
+
+   .financeiro-card-principal.financeiro-valor
+
+   Porém, como normalmente .financeiro-valor é um elemento
+   filho do card principal, o seletor correto para esse caso
+   é com espaço.
+*/
+
+.financeiro-card-principal .financeiro-valor {
 
     color:
         var(--financeiro-primaria);
@@ -1023,8 +1035,6 @@ video {
        │     └── .financeiro-movimentacao-status
        └── .financeiro-movimentacao-valor
 
-   IMPORTANTE:
-
    O JS coloca "positivo" ou "negativo" no próprio article:
 
    .financeiro-movimentacao.positivo
@@ -1097,6 +1107,11 @@ video {
 
 /* =========================================================
    RECEBIMENTO
+
+   CORREÇÃO:
+   O seletor agora usa espaço entre o article e o elemento
+   interno, indicando corretamente que o ícone está dentro
+   de uma movimentação positiva.
 ========================================================= */
 
 .financeiro-movimentacao.positivo

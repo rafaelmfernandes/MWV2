@@ -1,8 +1,10 @@
 /* =========================================================
    MUSICALWORLD — ACOMPANHAMENTO DA CONTRATAÇÃO
-   Arquivo: js/contratacao/contratacao-acompanhamento.js
 
-   Responsabilidade:
+   Arquivo:
+   js/contratacao/contratacao-acompanhamento.js
+
+   Responsabilidades:
    - Recuperar a contratação atual.
    - Identificar se o usuário enviou ou recebeu a solicitação.
    - Carregar os participantes relacionados à contratação.
@@ -13,12 +15,37 @@
    - Exibir informações de pagamento.
    - Permitir ao profissional aceitar ou recusar
      uma solicitação recebida.
+   - Simular a realização do evento durante o desenvolvimento.
+   - Permitir ao contratante confirmar que o serviço
+     foi realizado.
+   - Liberar o pagamento automaticamente após a
+     confirmação da conclusão.
    - Atualizar a contratação no Supabase.
-   - Criar notificações para o contratante quando
-     a solicitação for aceita ou recusada.
+   - Criar notificações relacionadas às mudanças
+     importantes da contratação.
    - Manter compatibilidade com sessionStorage.
    - Evitar atualizações indevidas por usuários
      que não participam da contratação.
+   - Evitar conclusão/liberação duplicada.
+
+   FLUXO DE DESENVOLVIMENTO:
+
+   1. Contratação aceita
+      status = confirmada
+
+   2. Contratante simula que o evento aconteceu
+      status = evento
+
+   3. Contratante confirma que o serviço foi realizado
+      status = concluida
+
+   4. O Financeiro interpreta "concluida" como
+      pagamento liberado/recebido.
+
+   IMPORTANTE:
+   A simulação do evento existe apenas para permitir
+   testes do fluxo completo enquanto ainda não existe
+   uma confirmação real de realização do evento.
 
    Dependências:
    - SupabaseClient.js
@@ -73,7 +100,6 @@
             paginaDescricao:
                 "paginaDescricao",
 
-
             relacaoCard:
                 "relacaoCard",
 
@@ -83,13 +109,11 @@
             relacaoDescricao:
                 "relacaoDescricao",
 
-
             participanteEyebrow:
                 "participanteEyebrow",
 
             participanteTitulo:
                 "participanteTitulo",
-
 
             artistaAvatar:
                 "artistaAvatar",
@@ -103,7 +127,6 @@
             artistaLocalizacao:
                 "artistaLocalizacao",
 
-
             servicoNome:
                 "servicoNome",
 
@@ -115,7 +138,6 @@
 
             servicoLocalizacao:
                 "servicoLocalizacao",
-
 
             dataEvento:
                 "dataEvento",
@@ -132,6 +154,8 @@
             quantidadePessoas:
                 "quantidadePessoas",
 
+            quantidadePessoasContainer:
+                "quantidadePessoasContainer",
 
             statusAtual:
                 "statusAtual",
@@ -142,7 +166,6 @@
             statusPrincipalIcon:
                 "statusPrincipalIcon",
 
-
             timelineSolicitacaoDescricao:
                 "timelineSolicitacaoDescricao",
 
@@ -152,6 +175,8 @@
             timelineArtistaDescricao:
                 "timelineArtistaDescricao",
 
+            pagamentoCard:
+                "pagamentoCard",
 
             pagamentoStatus:
                 "pagamentoStatus",
@@ -159,10 +184,17 @@
             pagamentoDescricao:
                 "pagamentoDescricao",
 
+            pagamentoAcao:
+                "pagamentoAcao",
+
+            btnLiberarPagamento:
+                "btnLiberarPagamento",
+
+            pagamentoAcaoStatus:
+                "pagamentoAcaoStatus",
 
             observacoesEvento:
                 "observacoesEvento",
-
 
             acoesSolicitacao:
                 "acoesSolicitacao",
@@ -173,6 +205,14 @@
             btnRecusar:
                 "btnRecusar",
 
+            acoesConclusao:
+                "acoesConclusao",
+
+            btnConcluirContratacao:
+                "btnConcluirContratacao",
+
+            acoesStatus:
+                "acoesStatus",
 
             btnVoltar:
                 "btnVoltar",
@@ -208,6 +248,12 @@
             false,
 
         atualizandoStatus:
+            false,
+
+        simulandoEvento:
+            false,
+
+        concluindoContratacao:
             false,
 
         inicializado:
@@ -460,13 +506,6 @@
         }
 
 
-        /*
-         * O campo local pode chegar como:
-         * - objeto JSON;
-         * - string JSON;
-         * - texto simples.
-         */
-
         if (
             typeof local === "string"
         ) {
@@ -704,11 +743,6 @@
 
     async function carregarUsuarioAtual() {
 
-        /*
-         * Primeiro tentamos o módulo central UsuarioAtual,
-         * caso ele exista no projeto.
-         */
-
         try {
 
             if (
@@ -739,10 +773,6 @@
             );
         }
 
-
-        /*
-         * Fallback direto para o Supabase Auth.
-         */
 
         const supabase =
             obterSupabase();
@@ -797,15 +827,6 @@
         }
 
 
-        /*
-         * Utilizamos somente colunas confirmadas da tabela
-         * usuarios para evitar erros caso foto_url ou telefone
-         * não existam nessa tabela.
-         *
-         * A foto do artista é carregada posteriormente de
-         * perfis_artistas.foto_url.
-         */
-
         const respostaUsuario =
             await supabase
                 .from(
@@ -830,10 +851,6 @@
         const usuario =
             respostaUsuario.data;
 
-
-        /*
-         * Perfil principal do usuário.
-         */
 
         const respostaPerfil =
             await supabase
@@ -879,14 +896,6 @@
         let perfilArtista =
             null;
 
-
-        /*
-         * Nem todo usuário necessariamente possui
-         * perfil de artista.
-         *
-         * Por isso a busca só acontece quando existe
-         * um perfil principal.
-         */
 
         if (perfil?.id) {
 
@@ -934,14 +943,6 @@
             );
 
 
-        /*
-         * A foto principal do artista vem de
-         * perfis_artistas.foto_url.
-         *
-         * Mantemos avatar_url como fallback para
-         * compatibilidade com estruturas antigas.
-         */
-
         const fotoUrl =
             (
                 perfilArtista?.foto_url ||
@@ -987,6 +988,12 @@
 
     /* =====================================================
        CARREGAR SERVIÇO
+
+       O serviço é complementar à contratação.
+
+       Caso a relação com servicos_artistas não esteja
+       compatível com o schema atual, a contratação continua
+       carregando normalmente.
        ===================================================== */
 
     async function carregarServico(
@@ -1017,7 +1024,13 @@
 
         if (resposta.error) {
 
-            throw resposta.error;
+            console.warn(
+                "MusicalWorldContratacaoAcompanhamento: não foi possível carregar o serviço.",
+                resposta.error
+            );
+
+
+            return null;
         }
 
 
@@ -1049,14 +1062,6 @@
             duracao:
                 servico.duracao ||
                 "Não informado",
-
-            /*
-             * O schema atual de servicos_artistas não possui
-             * necessariamente area_atendimento/localizacao.
-             *
-             * Mantemos os dois como fallback para compatibilidade
-             * com dados antigos/futuros.
-             */
 
             localizacao:
                 servico.area_atendimento ||
@@ -1101,13 +1106,6 @@
             id;
 
 
-        /*
-         * Recuperamos somente a contratação pelo ID.
-         *
-         * A autorização de visualização deve ser garantida
-         * também pelas políticas RLS do Supabase.
-         */
-
         const resposta =
             await supabase
                 .from(
@@ -1137,15 +1135,6 @@
         }
 
 
-        /*
-         * Verificação local adicional:
-         * o usuário precisa participar da contratação.
-         *
-         * Ele pode ser:
-         * - contratante;
-         * - contratado.
-         */
-
         const usuarioEhContratante =
             String(
                 registro.contratante_id
@@ -1172,12 +1161,6 @@
                     : "desconhecida";
 
 
-        /*
-         * Se o usuário não participa da contratação,
-         * não devemos carregar os dados das pessoas
-         * relacionadas nem permitir qualquer ação.
-         */
-
         if (
             direcao ===
             "desconhecida"
@@ -1195,11 +1178,6 @@
         estado.direcao =
             direcao;
 
-
-        /*
-         * Carregamos os dois participantes e o serviço
-         * em paralelo.
-         */
 
         const [
             contratante,
@@ -1230,36 +1208,23 @@
             id:
                 registro.id,
 
-
             contratanteId:
                 registro.contratante_id,
-
 
             contratadoId:
                 registro.contratado_id,
 
-
             servicoId:
                 registro.servico_id,
 
-
             direcao,
-
 
             contratante,
 
-
             contratado,
-
-
-            /*
-             * Alias mantido para compatibilidade
-             * com módulos anteriores.
-             */
 
             artista:
                 contratado,
-
 
             servico: {
 
@@ -1271,65 +1236,44 @@
                     0
             },
 
-
             data:
                 registro.data_evento,
-
 
             horarioInicio:
                 registro.horario_inicio,
 
-
             horarioFim:
                 registro.horario_fim,
-
-
-            /*
-             * O schema atual de contratacoes não possui
-             * horario_chegada.
-             *
-             * Mantemos o campo para compatibilidade
-             * com versões futuras.
-             */
 
             horarioChegada:
                 null,
 
-
             local:
                 registro.local,
 
-
             tipoEvento:
                 registro.tipo_evento,
-
-
-            /*
-             * Estes campos não fazem parte do schema confirmado
-             * atualmente, mas permanecem como fallback para
-             * compatibilidade com versões futuras.
-             */
 
             quantidadePessoas:
                 registro.quantidade_pessoas ||
                 registro.publico_estimado ||
                 null,
 
-
             observacoes:
                 registro.observacoes ||
                 null,
-
 
             status:
                 normalizarStatus(
                     registro.status
                 ),
 
-
             statusBanco:
                 registro.status,
 
+            statusFinanceiro:
+                registro.status_financeiro ||
+                null,
 
             pagamento: {
 
@@ -1340,10 +1284,8 @@
                     registro.metodo_pagamento
             },
 
-
             createdAt:
                 registro.created_at,
-
 
             updatedAt:
                 registro.updated_at
@@ -1381,53 +1323,59 @@
             rascunho:
                 "rascunho",
 
-
             solicitacao_enviada:
                 "aguardando_artista",
-
 
             "solicitação_enviada":
                 "aguardando_artista",
 
-
             aguardando_confirmacao:
                 "aguardando_artista",
-
 
             "aguardando_confirmação":
                 "aguardando_artista",
 
-
             aguardando_artista:
                 "aguardando_artista",
-
 
             confirmada:
                 "confirmada",
 
-
             em_andamento:
                 "evento",
 
+            evento:
+                "evento",
 
             concluida:
                 "concluida",
 
-
             "concluída":
                 "concluida",
 
+            finalizada:
+                "concluida",
+
+            finalizado:
+                "concluida",
+
+            pagamento_liberado:
+                "pagamento",
+
+            pagamento:
+                "pagamento",
+
+            liberado:
+                "pagamento",
+
+            liberada:
+                "pagamento",
 
             cancelada:
                 "cancelada",
 
-
             recusada:
-                "recusada",
-
-
-            pagamento_liberado:
-                "pagamento"
+                "recusada"
         };
 
 
@@ -1439,21 +1387,90 @@
 
 
     /* =====================================================
-       CRIAR NOTIFICAÇÃO DO RESULTADO DA CONTRATAÇÃO
+       VERIFICAR SE PAGAMENTO JÁ FOI LIBERADO
+
+       A contratação concluída representa o momento em
+       que o pagamento é considerado liberado pelo
+       Financeiro atual.
+
+       Não alteramos status_pagamento de "pago".
+       ===================================================== */
+
+    function pagamentoJaFoiLiberado() {
+
+        if (!estado.dados) {
+
+            return false;
+        }
+
+
+        const status =
+            String(
+                estado.dados.statusBanco ||
+                ""
+            )
+                .toLowerCase()
+                .trim();
+
+
+        const pagamento =
+            String(
+                estado.dados.pagamento?.status ||
+                ""
+            )
+                .toLowerCase()
+                .trim();
+
+
+        const statusFinanceiro =
+            String(
+                estado.dados.statusFinanceiro ||
+                ""
+            )
+                .toLowerCase()
+                .trim();
+
+
+        return (
+
+            [
+                "concluida",
+                "concluída",
+                "finalizada",
+                "finalizado",
+                "pagamento_liberado",
+                "pagamento",
+                "liberado",
+                "liberada"
+            ].includes(status)
+
+            ||
+
+            [
+                "liberado",
+                "liberada",
+                "recebido"
+            ].includes(pagamento)
+
+            ||
+
+            [
+                "liberado",
+                "liberada",
+                "recebido"
+            ].includes(statusFinanceiro)
+
+        );
+    }
+
+
+    /* =====================================================
+       CRIAR NOTIFICAÇÃO
        ===================================================== */
 
     async function criarNotificacaoResultado(
         novoStatus
     ) {
-
-        /*
-         * Esta função é executada depois que o artista
-         * aceita ou recusa a solicitação.
-         *
-         * A notificação sempre será enviada para o
-         * CONTRATANTE, porque foi ele quem iniciou
-         * a solicitação.
-         */
 
         const supabase =
             obterSupabase();
@@ -1461,21 +1478,11 @@
 
         if (!supabase) {
 
-            console.error(
-                "MusicalWorldContratacaoAcompanhamento: não foi possível criar notificação porque o cliente Supabase não está disponível."
-            );
-
-
             return false;
         }
 
 
         if (!estado.dados) {
-
-            console.warn(
-                "MusicalWorldContratacaoAcompanhamento: dados da contratação não disponíveis para criar notificação."
-            );
-
 
             return false;
         }
@@ -1499,49 +1506,76 @@
             !contratacaoId
         ) {
 
-            console.warn(
-                "MusicalWorldContratacaoAcompanhamento: dados insuficientes para criar notificação.",
-                {
-                    contratanteId,
-                    artistaId,
-                    contratacaoId
-                }
-            );
-
-
             return false;
         }
 
 
         /*
-         * Segurança adicional:
-         *
-         * A função só deve ser chamada pelo artista que
-         * recebeu a solicitação.
+         * Aceite e recusa:
+         * somente o artista pode gerar
+         * estas notificações.
          */
 
         if (
-            String(artistaId) !==
-            String(estado.usuarioId)
+            novoStatus === "confirmada" ||
+            novoStatus === "recusada"
         ) {
 
-            console.error(
-                "MusicalWorldContratacaoAcompanhamento: usuário atual não corresponde ao artista da contratação."
-            );
+            if (
+                String(artistaId) !==
+                String(estado.usuarioId)
+            ) {
 
-
-            return false;
+                return false;
+            }
         }
 
 
-        let tipo =
-            null;
+        /*
+         * Conclusão:
+         * somente o contratante pode confirmar
+         * a realização do serviço.
+         */
 
-        let titulo =
-            null;
+        if (
+            novoStatus ===
+            "contratacao_concluida"
+        ) {
 
-        let mensagem =
-            null;
+            if (
+                String(contratanteId) !==
+                String(estado.usuarioId)
+            ) {
+
+                return false;
+            }
+        }
+
+
+        /*
+         * Compatibilidade com o fluxo antigo.
+         */
+
+        if (
+            novoStatus ===
+            "pagamento_liberado"
+        ) {
+
+            if (
+                String(contratanteId) !==
+                String(estado.usuarioId)
+            ) {
+
+                return false;
+            }
+        }
+
+
+        let tipo;
+        let titulo;
+        let mensagem;
+        let remetenteId;
+        let destinatarioId;
 
 
         if (
@@ -1558,6 +1592,12 @@
             mensagem =
                 "O artista aceitou sua solicitação de contratação.";
 
+            remetenteId =
+                artistaId;
+
+            destinatarioId =
+                contratanteId;
+
         } else if (
             novoStatus ===
             "recusada"
@@ -1572,107 +1612,117 @@
             mensagem =
                 "O artista recusou sua solicitação de contratação.";
 
+            remetenteId =
+                artistaId;
+
+            destinatarioId =
+                contratanteId;
+
+        } else if (
+            novoStatus ===
+            "contratacao_concluida"
+        ) {
+
+            tipo =
+                "pagamento_liberado";
+
+            titulo =
+                "Pagamento liberado";
+
+            mensagem =
+                "O contratante confirmou a realização do serviço. O pagamento foi liberado ao profissional.";
+
+            remetenteId =
+                contratanteId;
+
+            destinatarioId =
+                artistaId;
+
+        } else if (
+            novoStatus ===
+            "pagamento_liberado"
+        ) {
+
+            tipo =
+                "pagamento_liberado";
+
+            titulo =
+                "Pagamento liberado";
+
+            mensagem =
+                "O contratante liberou o pagamento referente à contratação.";
+
+            remetenteId =
+                contratanteId;
+
+            destinatarioId =
+                artistaId;
+
         } else {
 
-            console.warn(
-                "MusicalWorldContratacaoAcompanhamento: status sem notificação configurada.",
-                novoStatus
-            );
-
-
             return false;
         }
 
 
-        /*
-         * Inserimos a notificação diretamente na tabela.
-         *
-         * usuario_id:
-         *   recebe a notificação.
-         *
-         * remetente_id:
-         *   artista que aceitou/recusou.
-         *
-         * referencia_id:
-         *   contratação relacionada.
-         *
-         * referencia_tipo:
-         *   permite que notificacoes.js saiba que a
-         *   referência pertence a uma contratação.
-         */
+        try {
 
-        const resposta =
-            await supabase
-                .from(
-                    CONFIG.tabelas.notificacoes
-                )
-                .insert({
+            const resposta =
+                await supabase
+                    .from(
+                        CONFIG.tabelas.notificacoes
+                    )
+                    .insert({
 
-                    usuario_id:
-                        contratanteId,
+                        usuario_id:
+                            destinatarioId,
 
-                    remetente_id:
-                        artistaId,
+                        remetente_id:
+                            remetenteId,
 
-                    tipo:
-                        tipo,
+                        tipo:
+                            tipo,
 
-                    titulo:
-                        titulo,
+                        titulo:
+                            titulo,
 
-                    mensagem:
-                        mensagem,
+                        mensagem:
+                            mensagem,
 
-                    referencia_id:
-                        contratacaoId,
+                        referencia_id:
+                            contratacaoId,
 
-                    referencia_tipo:
-                        "contratacao",
+                        referencia_tipo:
+                            "contratacao",
 
-                    lida:
-                        false
-
-                });
+                        lida:
+                            false
+                    });
 
 
-        if (resposta.error) {
+            if (resposta.error) {
 
-            /*
-             * IMPORTANTE:
-             *
-             * A contratação já foi atualizada neste ponto.
-             *
-             * Portanto não lançamos o erro novamente para
-             * não informar ao usuário que a aceitação/recusa
-             * falhou quando, na realidade, o status já foi
-             * salvo no banco.
-             *
-             * O erro fica registrado no console para
-             * identificarmos principalmente problemas de RLS.
-             */
+                console.error(
+                    "MusicalWorldContratacaoAcompanhamento: contratação atualizada, mas a notificação não pôde ser criada.",
+                    resposta.error
+                );
+
+
+                return false;
+            }
+
+
+            return true;
+
+        } catch (erro) {
 
             console.error(
-                "MusicalWorldContratacaoAcompanhamento: contratação atualizada, mas a notificação não pôde ser criada.",
-                resposta.error
+                "MusicalWorldContratacaoAcompanhamento: erro ao criar notificação.",
+                erro
             );
 
 
             return false;
         }
-
-
-        console.log(
-            "MusicalWorldContratacaoAcompanhamento: notificação criada com sucesso.",
-            {
-                tipo,
-                contratanteId,
-                artistaId,
-                contratacaoId
-            }
-        );
-
-
-        return true;
     }
 
 
@@ -1731,7 +1781,7 @@
 
 
         /*
-         * FLUXO RECEBIDO
+         * SOLICITAÇÃO RECEBIDA
          */
 
         if (
@@ -1748,8 +1798,29 @@
 
             if (descricao) {
 
-                descricao.textContent =
-                    "Você recebeu uma solicitação de contratação e precisa analisar os detalhes do evento.";
+                if (
+                    dados.status ===
+                        "concluida" ||
+                    dados.status ===
+                        "pagamento"
+                ) {
+
+                    descricao.textContent =
+                        "A contratação foi concluída e o pagamento foi liberado.";
+
+                } else if (
+                    dados.status ===
+                    "evento"
+                ) {
+
+                    descricao.textContent =
+                        "O evento está em andamento conforme o combinado.";
+
+                } else {
+
+                    descricao.textContent =
+                        "Você recebeu uma solicitação de contratação e precisa analisar os detalhes do evento.";
+                }
             }
 
 
@@ -1783,15 +1854,64 @@
 
             if (timelineTitulo) {
 
-                timelineTitulo.textContent =
-                    "Aguardando sua resposta";
-            }
+                if (
+                    dados.status ===
+                        "concluida" ||
+                    dados.status ===
+                        "pagamento"
+                ) {
 
+                    timelineTitulo.textContent =
+                        "Contratação concluída";
 
-            if (timelineDescricao) {
+                    if (timelineDescricao) {
 
-                timelineDescricao.textContent =
-                    "Analise a solicitação e confirme ou recuse a contratação.";
+                        timelineDescricao.textContent =
+                            "O serviço foi realizado e o pagamento foi liberado.";
+
+                    }
+
+                } else if (
+                    dados.status ===
+                    "evento"
+                ) {
+
+                    timelineTitulo.textContent =
+                        "Evento em andamento";
+
+                    if (timelineDescricao) {
+
+                        timelineDescricao.textContent =
+                            "A contratação está sendo realizada conforme o combinado.";
+
+                    }
+
+                } else if (
+                    dados.status ===
+                    "confirmada"
+                ) {
+
+                    timelineTitulo.textContent =
+                        "Contratação confirmada";
+
+                    if (timelineDescricao) {
+
+                        timelineDescricao.textContent =
+                            "Você aceitou a contratação e o evento está agendado.";
+
+                    }
+
+                } else {
+
+                    timelineTitulo.textContent =
+                        "Aguardando sua resposta";
+
+                    if (timelineDescricao) {
+
+                        timelineDescricao.textContent =
+                            "Analise a solicitação e confirme ou recuse a contratação.";
+                    }
+                }
             }
 
 
@@ -1800,20 +1920,70 @@
 
 
         /*
-         * FLUXO ENVIADO
+         * CONTRATAÇÃO ENVIADA
          */
 
         if (titulo) {
 
-            titulo.textContent =
-                "Contratação enviada";
+            if (
+                dados.status ===
+                    "concluida" ||
+                dados.status ===
+                    "pagamento"
+            ) {
+
+                titulo.textContent =
+                    "Contratação concluída";
+
+            } else if (
+                dados.status ===
+                "evento"
+            ) {
+
+                titulo.textContent =
+                    "Evento em andamento";
+
+            } else {
+
+                titulo.textContent =
+                    "Contratação enviada";
+            }
         }
 
 
         if (descricao) {
 
-            descricao.textContent =
-                "Você enviou esta solicitação para o profissional.";
+            if (
+                dados.status ===
+                    "concluida" ||
+                dados.status ===
+                    "pagamento"
+            ) {
+
+                descricao.textContent =
+                    "O serviço foi realizado e o pagamento foi liberado ao profissional.";
+
+            } else if (
+                dados.status ===
+                "evento"
+            ) {
+
+                descricao.textContent =
+                    "O evento está em andamento conforme o combinado.";
+
+            } else if (
+                dados.status ===
+                "confirmada"
+            ) {
+
+                descricao.textContent =
+                    "O artista aceitou sua solicitação e o evento está agendado.";
+
+            } else {
+
+                descricao.textContent =
+                    "Você enviou esta solicitação para o profissional.";
+            }
         }
 
 
@@ -1847,15 +2017,65 @@
 
         if (timelineTitulo) {
 
-            timelineTitulo.textContent =
-                "Aguardando o artista";
-        }
+            if (
+                dados.status ===
+                "evento"
+            ) {
+
+                timelineTitulo.textContent =
+                    "Evento em andamento";
 
 
-        if (timelineDescricao) {
+                if (timelineDescricao) {
 
-            timelineDescricao.textContent =
-                "O artista está analisando a solicitação.";
+                    timelineDescricao.textContent =
+                        "O evento está sendo realizado conforme o combinado.";
+                }
+
+            } else if (
+                dados.status ===
+                    "concluida" ||
+                dados.status ===
+                    "pagamento"
+            ) {
+
+                timelineTitulo.textContent =
+                    "Contratação concluída";
+
+
+                if (timelineDescricao) {
+
+                    timelineDescricao.textContent =
+                        "O serviço foi confirmado como realizado e o pagamento foi liberado.";
+                }
+
+            } else if (
+                dados.status ===
+                "confirmada"
+            ) {
+
+                timelineTitulo.textContent =
+                    "Contratação confirmada";
+
+
+                if (timelineDescricao) {
+
+                    timelineDescricao.textContent =
+                        "O artista aceitou sua solicitação e a contratação está confirmada.";
+                }
+
+            } else {
+
+                timelineTitulo.textContent =
+                    "Aguardando o artista";
+
+
+                if (timelineDescricao) {
+
+                    timelineDescricao.textContent =
+                        "O artista está analisando a solicitação.";
+                }
+            }
         }
     }
 
@@ -2040,7 +2260,7 @@
             if (nome) {
 
                 nome.textContent =
-                    "Serviço não encontrado";
+                    "Serviço contratado";
             }
 
 
@@ -2174,6 +2394,12 @@
             );
 
 
+        const quantidadeContainer =
+            obterElemento(
+                "quantidadePessoasContainer"
+            );
+
+
         if (quantidade) {
 
             if (
@@ -2188,10 +2414,19 @@
                     ) +
                     " pessoas";
 
+                if (quantidadeContainer) {
+
+                    quantidadeContainer.hidden =
+                        false;
+                }
+
             } else {
 
-                quantidade.textContent =
-                    "Não informado";
+                if (quantidadeContainer) {
+
+                    quantidadeContainer.hidden =
+                        true;
+                }
             }
         }
 
@@ -2292,13 +2527,15 @@
             evento: {
 
                 titulo:
-                    "Evento em andamento",
+                    "Evento realizado",
 
                 descricao:
-                    "A contratação está em andamento conforme o combinado.",
+                    recebida
+                        ? "O evento foi registrado como realizado na simulação."
+                        : "O evento foi registrado como realizado. Agora confirme o serviço para liberar o pagamento.",
 
                 icone:
-                    "music"
+                    "calendar-check"
             },
 
 
@@ -2308,7 +2545,7 @@
                     "Contratação concluída",
 
                 descricao:
-                    "O evento foi realizado e a contratação foi concluída.",
+                    "O serviço foi confirmado como realizado e o pagamento foi liberado ao profissional.",
 
                 icone:
                     "check-check"
@@ -2321,7 +2558,9 @@
                     "Pagamento liberado",
 
                 descricao:
-                    "O fluxo foi concluído e o pagamento foi liberado ao profissional.",
+                    recebida
+                        ? "O contratante liberou o pagamento. O valor agora está disponível no seu financeiro."
+                        : "O pagamento foi liberado ao profissional.",
 
                 icone:
                     "badge-check"
@@ -2447,8 +2686,16 @@
 
             case "concluida":
 
+                /*
+                 * A conclusão representa:
+                 *
+                 * - evento realizado;
+                 * - contratação concluída;
+                 * - pagamento liberado.
+                 */
+
                 indiceAtual =
-                    4;
+                    5;
 
                 break;
 
@@ -2504,10 +2751,6 @@
                 }
 
 
-                /*
-                 * Estados finais de cancelamento/recusa.
-                 */
-
                 if (
                     status === "cancelada" ||
                     status === "recusada"
@@ -2548,12 +2791,8 @@
                 }
 
 
-                /*
-                 * Etapas concluídas.
-                 */
-
                 if (
-                    indice <
+                    indice <=
                     indiceAtual
                 ) {
 
@@ -2569,32 +2808,6 @@
                     return;
                 }
 
-
-                /*
-                 * Etapa atual.
-                 */
-
-                if (
-                    indice ===
-                    indiceAtual
-                ) {
-
-                    item.classList.add(
-                        "ativo"
-                    );
-
-
-                    marker.innerHTML =
-                        '<i data-lucide="clock-3"></i>';
-
-
-                    return;
-                }
-
-
-                /*
-                 * Etapas futuras.
-                 */
 
                 marker.innerHTML =
                     '<i data-lucide="circle"></i>';
@@ -2630,18 +2843,64 @@
             String(
                 pagamento?.status ||
                 ""
-            ).toLowerCase();
+            )
+                .toLowerCase()
+                .trim();
 
 
         const metodo =
             String(
                 pagamento?.metodo ||
                 ""
-            ).toLowerCase();
+            )
+                .toLowerCase()
+                .trim();
 
 
         /*
-         * Pagamento processado/pago.
+         * ESTADO FINAL
+         */
+
+        if (
+            estado.statusAtual ===
+                "concluida" ||
+            estado.statusAtual ===
+                "pagamento" ||
+            pagamentoJaFoiLiberado()
+        ) {
+
+            if (elementoStatus) {
+
+                elementoStatus.textContent =
+                    "Pagamento liberado";
+            }
+
+
+            if (elementoDescricao) {
+
+                if (
+                    estado.direcao ===
+                    "recebida"
+                ) {
+
+                    elementoDescricao.textContent =
+                        "O contratante confirmou a realização do serviço. O valor foi liberado e está disponível no seu financeiro.";
+
+                } else {
+
+                    elementoDescricao.textContent =
+                        "O serviço foi confirmado como realizado e o pagamento foi liberado ao profissional.";
+                }
+            }
+
+
+            return;
+        }
+
+
+        /*
+         * PAGAMENTO PROCESSADO/PAGO,
+         * MAS AINDA AGUARDANDO CONCLUSÃO.
          */
 
         if (
@@ -2666,17 +2925,25 @@
             if (elementoDescricao) {
 
                 if (
+                    estado.direcao ===
+                    "recebida"
+                ) {
+
+                    elementoDescricao.textContent =
+                        "O pagamento foi realizado pelo contratante e permanece aguardando a conclusão do serviço.";
+
+                } else if (
                     metodo ===
                     "pix"
                 ) {
 
                     elementoDescricao.textContent =
-                        "O pagamento via Pix foi associado à contratação. A liberação ao profissional seguirá o fluxo da plataforma.";
+                        "O pagamento via Pix foi associado à contratação e será liberado após a confirmação da realização do serviço.";
 
                 } else {
 
                     elementoDescricao.textContent =
-                        "O pagamento está associado à contratação e seguirá o fluxo definido pela plataforma.";
+                        "O pagamento está associado à contratação e será liberado após a confirmação da realização do serviço.";
                 }
             }
 
@@ -2684,10 +2951,6 @@
             return;
         }
 
-
-        /*
-         * Pagamento ainda sem atualização final.
-         */
 
         if (elementoStatus) {
 
@@ -2705,6 +2968,1031 @@
 
 
     /* =====================================================
+       RENDERIZAR AÇÃO PRINCIPAL
+
+       A mesma área é utilizada para as duas etapas:
+
+       CONFIRMADA:
+       "Simular evento realizado"
+
+       EVENTO:
+       "Confirmar serviço realizado"
+
+       Depois de concluída:
+       área desaparece.
+       ===================================================== */
+
+    function renderizarAcoesConclusao(
+        dados
+    ) {
+
+        const container =
+            obterElemento(
+                "acoesConclusao"
+            );
+
+
+        const botao =
+            obterElemento(
+                "btnConcluirContratacao"
+            );
+
+
+        if (!container) {
+
+            return;
+        }
+
+
+        /*
+         * Somente o contratante pode executar
+         * as ações de simulação/conclusão.
+         */
+
+        const ehContratante =
+            dados &&
+            dados.direcao ===
+            "enviada";
+
+
+        /*
+         * ETAPA 1:
+         *
+         * A contratação foi aceita.
+         *
+         * Mostramos a simulação do evento.
+         */
+
+        const podeSimularEvento =
+            ehContratante &&
+            dados.status ===
+            "confirmada" &&
+            !estado.simulandoEvento;
+
+
+        /*
+         * ETAPA 2:
+         *
+         * O evento já foi simulado.
+         *
+         * Agora o contratante pode confirmar
+         * que o serviço foi realizado.
+         */
+
+        const podeConcluir =
+            ehContratante &&
+            dados.status ===
+            "evento" &&
+            !estado.concluindoContratacao;
+
+
+        const deveExibir =
+            podeSimularEvento ||
+            podeConcluir;
+
+
+        container.hidden =
+            !deveExibir;
+
+
+        if (!botao) {
+
+            return;
+        }
+
+
+        botao.disabled =
+            !deveExibir;
+
+
+        if (podeSimularEvento) {
+
+            /*
+             * Título principal do bloco.
+             *
+             * Caso o HTML possua um parágrafo dentro
+             * de #acoesConclusao, também atualizamos
+             * automaticamente.
+             */
+
+            atualizarTextoAcaoConclusao(
+                container,
+                "O evento já aconteceu?",
+                "Como estamos em modo de simulação, registre o evento como realizado para continuar."
+            );
+
+
+            botao.innerHTML =
+                `
+                <i data-lucide="calendar-check"></i>
+                Simular evento realizado
+                `;
+
+
+            botao.dataset.acao =
+                "simular-evento";
+
+
+        } else if (podeConcluir) {
+
+            atualizarTextoAcaoConclusao(
+                container,
+                "O serviço foi realizado?",
+                "Confirme a realização do serviço para concluir a contratação e liberar o pagamento ao profissional."
+            );
+
+
+            botao.innerHTML =
+                `
+                <i data-lucide="circle-check"></i>
+                Confirmar serviço realizado
+                `;
+
+
+            botao.dataset.acao =
+                "concluir-contratacao";
+
+        } else {
+
+            botao.dataset.acao =
+                "";
+        }
+
+
+        atualizarIcones();
+    }
+
+
+    /* =====================================================
+       ATUALIZAR TEXTO DO BLOCO DE AÇÃO
+
+       Não depende de novos IDs no HTML.
+
+       O código procura elementos de texto dentro
+       do próprio container para manter compatibilidade
+       com o HTML já existente.
+       ===================================================== */
+
+    function atualizarTextoAcaoConclusao(
+        container,
+        titulo,
+        descricao
+    ) {
+
+        if (!container) {
+
+            return;
+        }
+
+
+        const elementosTexto =
+            container.querySelectorAll(
+                "h2, h3, h4, strong, p"
+            );
+
+
+        if (!elementosTexto.length) {
+
+            return;
+        }
+
+
+        let tituloEncontrado =
+            false;
+
+
+        elementosTexto.forEach(
+            function (elemento) {
+
+                const tag =
+                    elemento.tagName
+                        .toLowerCase();
+
+
+                if (
+                    (
+                        tag === "h2" ||
+                        tag === "h3" ||
+                        tag === "h4" ||
+                        tag === "strong"
+                    ) &&
+                    !tituloEncontrado
+                ) {
+
+                    elemento.textContent =
+                        titulo;
+
+                    tituloEncontrado =
+                        true;
+
+                    return;
+                }
+
+
+                if (
+                    tag === "p"
+                ) {
+
+                    elemento.textContent =
+                        descricao;
+                }
+            }
+        );
+    }
+
+
+    /* =====================================================
+       RENDERIZAR AÇÃO DE PAGAMENTO LEGADA
+
+       O novo fluxo não possui mais um segundo botão
+       chamado "Liberar pagamento".
+
+       Esta função apenas mantém compatibilidade
+       com HTMLs antigos.
+       ===================================================== */
+
+    function renderizarAcaoLiberacaoPagamento() {
+
+        const container =
+            obterElemento(
+                "pagamentoAcao"
+            );
+
+
+        if (!container) {
+
+            return;
+        }
+
+
+        container.hidden =
+            true;
+    }
+
+
+    /* =====================================================
+       SIMULAR EVENTO REALIZADO
+
+       Esta função existe exclusivamente para o fluxo
+       de desenvolvimento.
+
+       O contratante é quem inicia a simulação.
+
+       CONFIRMADA
+          ↓
+       EVENTO
+
+       Nenhum pagamento é liberado nesta etapa.
+
+       O pagamento somente será considerado liberado
+       quando o contratante confirmar a conclusão.
+       ===================================================== */
+
+    async function simularEventoRealizado() {
+
+        if (
+            estado.simulandoEvento
+        ) {
+
+            return false;
+        }
+
+
+        if (!estado.dados) {
+
+            return false;
+        }
+
+
+        /*
+         * Somente o contratante pode simular
+         * a realização do evento.
+         */
+
+        if (
+            estado.direcao !==
+            "enviada"
+        ) {
+
+            return false;
+        }
+
+
+        /*
+         * A contratação precisa estar confirmada.
+         */
+
+        if (
+            estado.dados.status !==
+            "confirmada"
+        ) {
+
+            if (
+                estado.dados.status ===
+                    "evento" ||
+                estado.dados.status ===
+                    "concluida"
+            ) {
+
+                renderizarAcoesConclusao(
+                    estado.dados
+                );
+
+                return false;
+            }
+
+
+            alert(
+                "A contratação precisa estar confirmada antes de simular o evento."
+            );
+
+
+            return false;
+        }
+
+
+        const confirmar =
+            window.confirm(
+                "Simular que o evento aconteceu? O pagamento ainda não será liberado nesta etapa."
+            );
+
+
+        if (!confirmar) {
+
+            return false;
+        }
+
+
+        const supabase =
+            obterSupabase();
+
+
+        if (!supabase) {
+
+            return false;
+        }
+
+
+        const botao =
+            obterElemento(
+                "btnConcluirContratacao"
+            );
+
+
+        estado.simulandoEvento =
+            true;
+
+
+        if (botao) {
+
+            botao.disabled =
+                true;
+
+
+            botao.innerHTML =
+                `
+                <i data-lucide="loader-circle"></i>
+                Registrando evento...
+                `;
+
+
+            atualizarIcones();
+        }
+
+
+        try {
+
+            /*
+             * Atualização protegida:
+             *
+             * somente confirmada → evento.
+             *
+             * Isso impede que o evento seja
+             * simulado novamente depois.
+             */
+
+            const resposta =
+                await supabase
+                    .from(
+                        CONFIG.tabelas.contratacoes
+                    )
+                    .update({
+
+                        status:
+                            "evento",
+
+                        updated_at:
+                            new Date()
+                                .toISOString()
+
+                    })
+                    .eq(
+                        "id",
+                        estado.contratacaoId
+                    )
+                    .eq(
+                        "contratante_id",
+                        estado.usuarioId
+                    )
+                    .eq(
+                        "status",
+                        "confirmada"
+                    )
+                    .select(
+                        "id,status,status_pagamento,updated_at"
+                    )
+                    .maybeSingle();
+
+
+            if (resposta.error) {
+
+                throw resposta.error;
+            }
+
+
+            if (!resposta.data) {
+
+                throw new Error(
+                    "O evento não pôde ser registrado. A contratação pode ter sido alterada em outra sessão."
+                );
+            }
+
+
+            /*
+             * Atualiza estado local.
+             */
+
+            estado.dados.statusBanco =
+                resposta.data.status;
+
+
+            estado.dados.status =
+                "evento";
+
+
+            estado.dados.updatedAt =
+                resposta.data.updated_at;
+
+
+            estado.statusAtual =
+                "evento";
+
+
+            /*
+             * Atualiza interface.
+             */
+
+            renderizarRelacao(
+                estado.dados
+            );
+
+
+            renderizarStatusPrincipal(
+                estado.statusAtual
+            );
+
+
+            atualizarTimeline(
+                estado.statusAtual
+            );
+
+
+            renderizarPagamento(
+                estado.dados.pagamento
+            );
+
+
+            renderizarAcoes(
+                estado.dados
+            );
+
+
+            renderizarAcoesConclusao(
+                estado.dados
+            );
+
+
+            renderizarAcaoLiberacaoPagamento(
+                estado.dados
+            );
+
+
+            /*
+             * Atualiza cache local.
+             */
+
+            salvarContratacaoLocal();
+
+
+            const acoesStatus =
+                obterElemento(
+                    "acoesStatus"
+                );
+
+
+            if (acoesStatus) {
+
+                acoesStatus.hidden =
+                    false;
+
+                acoesStatus.textContent =
+                    "Evento registrado. Agora confirme a realização do serviço para liberar o pagamento.";
+            }
+
+
+            console.log(
+                "MusicalWorldContratacaoAcompanhamento: evento simulado com sucesso.",
+                resposta.data
+            );
+
+
+            return true;
+
+        } catch (erro) {
+
+            console.error(
+                "MusicalWorldContratacaoAcompanhamento: erro ao simular evento.",
+                erro
+            );
+
+
+            alert(
+                "Não foi possível registrar o evento. Tente novamente."
+            );
+
+
+            if (botao) {
+
+                botao.disabled =
+                    false;
+
+
+                botao.innerHTML =
+                    `
+                    <i data-lucide="calendar-check"></i>
+                    Simular evento realizado
+                    `;
+
+
+                atualizarIcones();
+            }
+
+
+            return false;
+
+        } finally {
+
+            estado.simulandoEvento =
+                false;
+
+
+            if (
+                estado.dados
+            ) {
+
+                renderizarAcoesConclusao(
+                    estado.dados
+                );
+            }
+        }
+    }
+
+
+    /* =====================================================
+       CONCLUIR CONTRATAÇÃO E LIBERAR PAGAMENTO
+
+       Esta é a segunda etapa do fluxo.
+
+       EVENTO
+          ↓
+       CONTRATANTE CONFIRMA
+          ↓
+       CONCLUIDA
+          ↓
+       PAGAMENTO LIBERADO
+
+       O Financeiro atual utiliza "concluida" como
+       sinal de que o valor saiu de "A receber" e
+       passou para "Total recebido / Saldo disponível".
+
+       Não alteramos status_pagamento.
+       ===================================================== */
+
+    async function concluirContratacao() {
+
+        if (
+            estado.concluindoContratacao
+        ) {
+
+            return false;
+        }
+
+
+        if (!estado.dados) {
+
+            return false;
+        }
+
+
+        /*
+         * Somente o contratante pode concluir.
+         */
+
+        if (
+            estado.direcao !==
+            "enviada"
+        ) {
+
+            console.error(
+                "MusicalWorldContratacaoAcompanhamento: somente o contratante pode concluir a contratação."
+            );
+
+
+            return false;
+        }
+
+
+        /*
+         * O evento precisa ter sido realizado.
+         *
+         * No desenvolvimento, isso significa que
+         * o usuário primeiro clicou em:
+         *
+         * "Simular evento realizado"
+         */
+
+        if (
+            estado.dados.status !==
+            "evento"
+        ) {
+
+            if (
+                estado.dados.status ===
+                    "confirmada"
+            ) {
+
+                alert(
+                    "Primeiro simule a realização do evento."
+                );
+
+                return false;
+            }
+
+
+            if (
+                estado.dados.status ===
+                    "concluida" ||
+                estado.dados.status ===
+                    "pagamento"
+            ) {
+
+                renderizarAcoesConclusao(
+                    estado.dados
+                );
+
+
+                return false;
+            }
+
+
+            alert(
+                "O evento precisa estar registrado antes de concluir a contratação."
+            );
+
+
+            return false;
+        }
+
+
+        /*
+         * Proteção adicional contra pagamento duplicado.
+         */
+
+        if (
+            pagamentoJaFoiLiberado()
+        ) {
+
+            alert(
+                "Esta contratação já foi concluída e o pagamento já foi liberado."
+            );
+
+
+            renderizarAcoesConclusao(
+                estado.dados
+            );
+
+
+            return false;
+        }
+
+
+        const confirmar =
+            window.confirm(
+                "Confirmar que o serviço foi realizado? Ao confirmar, a contratação será concluída e o pagamento será liberado ao profissional."
+            );
+
+
+        if (!confirmar) {
+
+            return false;
+        }
+
+
+        const supabase =
+            obterSupabase();
+
+
+        if (!supabase) {
+
+            return false;
+        }
+
+
+        const botao =
+            obterElemento(
+                "btnConcluirContratacao"
+            );
+
+
+        estado.concluindoContratacao =
+            true;
+
+
+        if (botao) {
+
+            botao.disabled =
+                true;
+
+
+            botao.innerHTML =
+                `
+                <i data-lucide="loader-circle"></i>
+                Confirmando serviço...
+                `;
+
+
+            atualizarIcones();
+        }
+
+
+        try {
+
+            /*
+             * Atualização atômica:
+             *
+             * somente evento → concluida.
+             *
+             * Isso evita que duas abas liberem
+             * o mesmo pagamento.
+             */
+
+            const resposta =
+                await supabase
+                    .from(
+                        CONFIG.tabelas.contratacoes
+                    )
+                    .update({
+
+                        status:
+                            "concluida",
+
+                        updated_at:
+                            new Date()
+                                .toISOString()
+
+                    })
+                    .eq(
+                        "id",
+                        estado.contratacaoId
+                    )
+                    .eq(
+                        "contratante_id",
+                        estado.usuarioId
+                    )
+                    .eq(
+                        "status",
+                        "evento"
+                    )
+                    .select(
+                        "id,status,status_pagamento,updated_at"
+                    )
+                    .maybeSingle();
+
+
+            if (resposta.error) {
+
+                throw resposta.error;
+            }
+
+
+            if (!resposta.data) {
+
+                throw new Error(
+                    "A contratação não pôde ser concluída. Ela pode já ter sido concluída ou a alteração não foi permitida."
+                );
+            }
+
+
+            /*
+             * Atualiza estado local.
+             */
+
+            estado.dados.statusBanco =
+                resposta.data.status;
+
+
+            estado.dados.status =
+                "concluida";
+
+
+            estado.dados.updatedAt =
+                resposta.data.updated_at;
+
+
+            /*
+             * Não alteramos status_pagamento.
+             *
+             * O Financeiro utiliza o status "concluida"
+             * para considerar o pagamento liberado.
+             */
+
+            estado.statusAtual =
+                "concluida";
+
+
+            /*
+             * Atualiza toda a interface.
+             */
+
+            renderizarRelacao(
+                estado.dados
+            );
+
+
+            renderizarStatusPrincipal(
+                estado.statusAtual
+            );
+
+
+            atualizarTimeline(
+                estado.statusAtual
+            );
+
+
+            renderizarPagamento(
+                estado.dados.pagamento
+            );
+
+
+            renderizarAcoes(
+                estado.dados
+            );
+
+
+            renderizarAcoesConclusao(
+                estado.dados
+            );
+
+
+            renderizarAcaoLiberacaoPagamento(
+                estado.dados
+            );
+
+
+            /*
+             * Notificação para o artista.
+             *
+             * A falha da notificação não desfaz
+             * a conclusão da contratação.
+             */
+
+            await criarNotificacaoResultado(
+                "contratacao_concluida"
+            );
+
+
+            /*
+             * Atualiza cache local.
+             */
+
+            salvarContratacaoLocal();
+
+
+            const acoesStatus =
+                obterElemento(
+                    "acoesStatus"
+                );
+
+
+            if (acoesStatus) {
+
+                acoesStatus.hidden =
+                    false;
+
+                acoesStatus.textContent =
+                    "Serviço confirmado. Pagamento liberado ao profissional.";
+            }
+
+
+            console.log(
+                "MusicalWorldContratacaoAcompanhamento: contratação concluída e pagamento liberado.",
+                resposta.data
+            );
+
+
+            return true;
+
+        } catch (erro) {
+
+            console.error(
+                "MusicalWorldContratacaoAcompanhamento: erro ao concluir contratação.",
+                erro
+            );
+
+
+            alert(
+                "Não foi possível concluir a contratação. Tente novamente."
+            );
+
+
+            if (botao) {
+
+                botao.disabled =
+                    false;
+
+
+                botao.innerHTML =
+                    `
+                    <i data-lucide="circle-check"></i>
+                    Confirmar serviço realizado
+                    `;
+
+
+                atualizarIcones();
+            }
+
+
+            return false;
+
+        } finally {
+
+            estado.concluindoContratacao =
+                false;
+
+
+            if (
+                estado.dados
+            ) {
+
+                renderizarAcoesConclusao(
+                    estado.dados
+                );
+            }
+        }
+    }
+
+
+    /* =====================================================
+       PROCESSAR AÇÃO PRINCIPAL
+
+       O mesmo botão possui duas funções:
+
+       confirmada → simular evento
+
+       evento → concluir contratação
+       ===================================================== */
+
+    async function processarAcaoPrincipal() {
+
+        if (!estado.dados) {
+
+            return false;
+        }
+
+
+        if (
+            estado.dados.status ===
+            "confirmada"
+        ) {
+
+            return simularEventoRealizado();
+        }
+
+
+        if (
+            estado.dados.status ===
+            "evento"
+        ) {
+
+            return concluirContratacao();
+        }
+
+
+        return false;
+    }
+
+
+    /* =====================================================
        RENDERIZAR AÇÕES DA SOLICITAÇÃO
        ===================================================== */
 
@@ -2716,27 +4004,29 @@
             );
 
 
-        if (!container) {
+        if (container) {
 
-            return;
+            const deveExibir =
+                dados &&
+                dados.direcao ===
+                    "recebida" &&
+                dados.status ===
+                    "aguardando_artista";
+
+
+            container.hidden =
+                !deveExibir;
         }
 
 
         /*
-         * Somente o contratado pode aceitar ou recusar.
-         *
-         * E somente enquanto a contratação estiver
-         * aguardando resposta.
+         * A ação de conclusão/simulação é controlada
+         * separadamente.
          */
 
-        const deveExibir =
-            dados &&
-            dados.direcao === "recebida" &&
-            dados.status === "aguardando_artista";
-
-
-        container.hidden =
-            !deveExibir;
+        renderizarAcoesConclusao(
+            dados
+        );
     }
 
 
@@ -2756,11 +4046,6 @@
         }
 
 
-        /*
-         * Somente o usuário que recebeu a solicitação
-         * pode aceitar ou recusar.
-         */
-
         if (
             estado.direcao !==
             "recebida"
@@ -2774,11 +4059,6 @@
             return false;
         }
 
-
-        /*
-         * Por segurança, aceitamos somente estes dois
-         * estados através dos botões desta página.
-         */
 
         const statusPermitidos = [
 
@@ -2804,11 +4084,6 @@
             return false;
         }
 
-
-        /*
-         * A ação só pode acontecer enquanto a solicitação
-         * estiver aguardando resposta.
-         */
 
         if (
             !estado.dados ||
@@ -2837,21 +4112,11 @@
 
         if (!estado.contratacaoId) {
 
-            console.error(
-                "MusicalWorldContratacaoAcompanhamento: contratação sem ID."
-            );
-
-
             return false;
         }
 
 
         if (!estado.usuarioId) {
-
-            console.error(
-                "MusicalWorldContratacaoAcompanhamento: usuário autenticado não encontrado."
-            );
-
 
             return false;
         }
@@ -2889,16 +4154,6 @@
 
         try {
 
-            /*
-             * O UPDATE é restringido por:
-             *
-             * 1. ID da contratação;
-             * 2. contratado_id do usuário atual.
-             *
-             * Isso impede que o contratante altere diretamente
-             * uma solicitação recebida.
-             */
-
             const resposta =
                 await supabase
                     .from(
@@ -2922,6 +4177,11 @@
                         "contratado_id",
                         estado.usuarioId
                     )
+                    .eq(
+                        "status",
+                        estado.dados.statusBanco ||
+                        "aguardando_confirmacao"
+                    )
                     .select(
                         "id,status,updated_at"
                     )
@@ -2934,12 +4194,6 @@
             }
 
 
-            /*
-             * Se o UPDATE não retornou uma linha,
-             * provavelmente a política RLS impediu a alteração
-             * ou a contratação mudou de estado antes da ação.
-             */
-
             if (!resposta.data) {
 
                 throw new Error(
@@ -2947,10 +4201,6 @@
                 );
             }
 
-
-            /*
-             * Atualiza o estado local.
-             */
 
             if (estado.dados) {
 
@@ -2975,9 +4225,10 @@
                 );
 
 
-            /*
-             * Atualiza a interface imediatamente.
-             */
+            renderizarRelacao(
+                estado.dados
+            );
+
 
             renderizarStatusPrincipal(
                 estado.statusAtual
@@ -2994,31 +4245,20 @@
             );
 
 
-            /*
-             * =================================================
-             * NOVO:
-             * CRIAR NOTIFICAÇÃO PARA O CONTRATANTE
-             * =================================================
-             *
-             * A contratação já foi salva com sucesso.
-             *
-             * Agora criamos uma notificação persistente para
-             * o usuário que enviou a solicitação.
-             *
-             * Se a notificação falhar, não desfazemos a
-             * alteração da contratação.
-             */
+            renderizarPagamento(
+                estado.dados.pagamento
+            );
+
+
+            renderizarAcaoLiberacaoPagamento(
+                estado.dados
+            );
+
 
             await criarNotificacaoResultado(
                 novoStatus
             );
 
-
-            /*
-             * Atualiza o armazenamento local para que
-             * outras telas que dependam dele recebam
-             * o novo estado.
-             */
 
             salvarContratacaoLocal();
 
@@ -3052,14 +4292,9 @@
                 false;
 
 
-            /*
-             * Os botões voltam a ser habilitados somente
-             * se a contratação ainda estiver aguardando
-             * resposta.
-             */
-
             const podeAgir =
-                estado.direcao === "recebida" &&
+                estado.direcao ===
+                    "recebida" &&
                 estado.dados &&
                 estado.dados.status ===
                     "aguardando_artista";
@@ -3182,11 +4417,6 @@
 
     function configurarEventos() {
 
-        /*
-         * Evita registrar os mesmos listeners novamente
-         * quando a API recarregar() for utilizada.
-         */
-
         if (
             estado.eventosConfigurados
         ) {
@@ -3258,6 +4488,53 @@
             btnRecusar.addEventListener(
                 "click",
                 recusarContratacao
+            );
+        }
+
+
+        /*
+         * O botão principal possui duas funções:
+         *
+         * confirmada → simular evento
+         *
+         * evento → concluir contratação
+         */
+
+        const btnAcaoPrincipal =
+            obterElemento(
+                "btnConcluirContratacao"
+            );
+
+
+        if (btnAcaoPrincipal) {
+
+            btnAcaoPrincipal.addEventListener(
+                "click",
+                processarAcaoPrincipal
+            );
+        }
+
+
+        /*
+         * Compatibilidade com HTML antigo.
+         *
+         * Caso ainda exista o botão "Liberar pagamento",
+         * ele não cria um segundo fluxo.
+         *
+         * Ele simplesmente chama a conclusão atual.
+         */
+
+        const btnLiberarPagamento =
+            obterElemento(
+                "btnLiberarPagamento"
+            );
+
+
+        if (btnLiberarPagamento) {
+
+            btnLiberarPagamento.addEventListener(
+                "click",
+                concluirContratacao
             );
         }
 
@@ -3343,6 +4620,32 @@
             acoes.hidden =
                 true;
         }
+
+
+        const acoesConclusao =
+            obterElemento(
+                "acoesConclusao"
+            );
+
+
+        if (acoesConclusao) {
+
+            acoesConclusao.hidden =
+                true;
+        }
+
+
+        const pagamentoAcao =
+            obterElemento(
+                "pagamentoAcao"
+            );
+
+
+        if (pagamentoAcao) {
+
+            pagamentoAcao.hidden =
+                true;
+        }
     }
 
 
@@ -3374,10 +4677,6 @@
 
         try {
 
-            /*
-             * Primeiro identificamos o usuário autenticado.
-             */
-
             estado.usuarioId =
                 await carregarUsuarioAtual();
 
@@ -3398,10 +4697,6 @@
                 return;
             }
 
-
-            /*
-             * Depois carregamos a contratação.
-             */
 
             const dados =
                 await carregarContratacao();
@@ -3424,10 +4719,6 @@
             }
 
 
-            /*
-             * Determina o status final usado pela interface.
-             */
-
             const status =
                 determinarStatus(
                     dados
@@ -3437,10 +4728,6 @@
             estado.statusAtual =
                 status;
 
-
-            /*
-             * Renderização completa da página.
-             */
 
             renderizarRelacao(
                 dados
@@ -3477,7 +4764,17 @@
             );
 
 
+            renderizarAcaoLiberacaoPagamento(
+                dados
+            );
+
+
             renderizarAcoes(
+                dados
+            );
+
+
+            renderizarAcoesConclusao(
                 dados
             );
 
@@ -3566,13 +4863,36 @@
             },
 
 
-        recarregar:
+        simularEvento:
             async function () {
 
-                /*
-                 * O estado de eventos não é resetado.
-                 * Assim, os listeners não são duplicados.
-                 */
+                return simularEventoRealizado();
+            },
+
+
+        concluir:
+            async function () {
+
+                return concluirContratacao();
+            },
+
+
+        /*
+         * Mantido para compatibilidade com código antigo.
+         *
+         * No fluxo atual, a liberação acontece
+         * automaticamente quando a conclusão é confirmada.
+         */
+
+        liberarPagamento:
+            async function () {
+
+                return concluirContratacao();
+            },
+
+
+        recarregar:
+            async function () {
 
                 estado.inicializado =
                     false;
@@ -3588,6 +4908,18 @@
 
                 estado.statusAtual =
                     "aguardando_artista";
+
+
+                estado.simulandoEvento =
+                    false;
+
+
+                estado.concluindoContratacao =
+                    false;
+
+
+                estado.eventosConfigurados =
+                    false;
 
 
                 await inicializar();
