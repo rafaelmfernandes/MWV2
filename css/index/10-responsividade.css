@@ -126,6 +126,31 @@ body {
 
 }
 
+/* =====================================================
+   AVISO DO FEED — ABAIXO DO CABEÇALHO
+=====================================================
+
+   A navbar mobile possui 60px de altura.
+
+   O aviso não deve ficar escondido atrás dela.
+   Mantemos o aviso no fluxo normal da página e
+   adicionamos apenas o espaçamento necessário
+   para começar abaixo do cabeçalho.
+===================================================== */
+
+.feed-aviso {
+
+    position: relative;
+
+    z-index: 2;
+
+    width: calc(100% - 5px);
+
+    margin: 60px auto 10px;
+
+    box-sizing: border-box;
+
+}
 
 /* =====================================================
    ÁREA DA MARCA
@@ -1754,6 +1779,7 @@ TELAS MUITO PEQUENAS — ATÉ 380px
     padding: 8px;
 
     margin-bottom: 12px;
+    
 
 }
 
