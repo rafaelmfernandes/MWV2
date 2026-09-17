@@ -1,1483 +1,278 @@
-/* =========================================================
-MUSICALWORLD — PÁGINA INICIAL
-Arquivo: feed.js
+ /* =========================================================
+   MUSICALWORLD — FEED PRINCIPAL
 
-FEED SOCIAL DE PROFISSIONAIS
+   Arquivo:
+   js/index/main.js
 
-Responsabilidade deste arquivo:
+   Responsabilidades:
+   - Inicializar o feed principal.
+   - Controlar os filtros aplicados ao feed.
+   - Consultar os profissionais no Supabase.
+   - Entregar os dados para o módulo anuncio.js.
+   - Atualizar os elementos gerais da interface do feed.
+   - Coordenar os módulos anuncio.js e paginacao.js.
 
-* Carregar os profissionais do feed.
-* Aplicar filtros recebidos do modal.
-* Controlar paginação e carregamento infinito.
-* Criar as publicações dos profissionais.
-* Organizar cada publicação em formato de timeline social.
-* Controlar a mídia de destaque.
-* Controlar reprodução automática dos vídeos.
-* Controlar vídeo e tela cheia.
-* Manter a navegação para o perfil.
-* Preservar compatibilidade com o restante do index.
+   Este arquivo NÃO é responsável por:
+   - Controlar paginação diretamente.
+   - Controlar IntersectionObserver.
+   - Controlar o aviso do feed.
+   - Criar HTML interno dos anúncios.
+   - Controlar vídeos.
+   - Controlar ações sociais.
+   - Controlar menu dos anúncios.
+   - Controlar identidade visual dos anúncios.
 
-MODELO VISUAL:
+   Módulos utilizados:
+   - anuncio.js
+   - paginacao.js
+   - aviso.js
+   - núcleo compartilhado do Supabase
 
-A publicação segue uma hierarquia semelhante a uma
-timeline social:
-
-
-   Identidade
-        ↓
-   Texto / descrição
-        ↓
-   Imagem / vídeo
-        ↓
-   Ações sociais
-        ↓
-   Informações complementares
-
-
-A publicação NÃO é mais um grande card de marketplace.
-
-No desktop:
-
-* O feed possui largura controlada.
-* As publicações ficam centralizadas.
-* Existe uma linha visual contínua entre publicações.
-* A mídia continua sendo importante, mas não domina
-  toda a estrutura da publicação.
-
-No celular:
-
-* O feed ocupa toda a largura disponível.
-* Não existem duas colunas.
-* Avatar, nome e texto possuem espaçamento interno.
-* A mídia pode encostar diretamente nas laterais da tela.
-* As ações ficam abaixo da mídia.
-* Informações complementares permanecem disponíveis.
-
-REPRODUÇÃO DOS VÍDEOS:
-
-* Apenas um vídeo pode reproduzir por vez.
-* O vídeo precisa permanecer visível por alguns segundos
-  antes de começar.
-* Quando outro vídeo assume a reprodução, o anterior
-  é pausado imediatamente.
-* Vídeos que saem da área visível são pausados.
-* Apenas o vídeo selecionado pelo controlador recebe
-  o atraso de reprodução.
-* Rolagens rápidas cancelam vídeos que ainda estavam
-  aguardando o início.
-* Vídeos fora da área visível permanecem pausados.
-
-IMPORTANTE:
-
-Este arquivo controla estrutura, dados, eventos e
-comportamento.
-
-A aparência visual permanece principalmente em:
-
-
-   css/index/feed.css
-   css/index/10-responsividade.css
-
-
+   IMPORTANTE:
+   Os módulos anuncio.js, paginacao.js e aviso.js
+   devem ser carregados antes deste arquivo.
 ========================================================= */
 
-/* =========================================================
-CONFIGURAÇÃO DO FEED
-========================================================= */
+(function (window) {
+    "use strict";
 
-const FEED_CONFIG = {
 
+    /* =====================================================
+       CONFIGURAÇÃO GERAL DO FEED
+    ===================================================== */
 
-limitePorPagina: 12,
+    const FEED_CONFIG = {
 
-paginaAtual: 0,
+        filtros: {
+            estado: "",
+            cidade: "",
+            categoria: "",
+            instrumento: "",
+            estilo: ""
+        },
 
-carregando: false,
+        inicializado: false
 
-acabou: false,
+    };
 
-totalCarregado: 0,
 
-observer: null,
+    /* =====================================================
+       REFERÊNCIAS DOS ELEMENTOS DA PÁGINA
+    ===================================================== */
 
-filtrosAtuais: {
+    let feedContainer = null;
+    let loadingElement = null;
+    let endElement = null;
+    let emptyElement = null;
+    let sentinelElement = null;
+    let counterElement = null;
 
-    estado: '',
 
-    cidade: '',
+    /* =====================================================
+       OBTER MÓDULO DE ANÚNCIOS
+    ===================================================== */
 
-    categoria: '',
+    function obterModuloAnuncio() {
 
-    instrumento: '',
+        return window.MusicalWorldAnuncio || null;
 
-    estilo: '',
-
-    valorMin: null,
-
-    valorMax: null
-
-}
-
-
-};
-
-/* =========================================================
-CONFIGURAÇÃO DA REPRODUÇÃO DOS VÍDEOS
-========================================================= */
-
-const FEED_VIDEO_CONFIG = {
-
-
-/*
- * Tempo que o vídeo selecionado precisa permanecer
- * visível antes de começar a reprodução.
- */
-atrasoInicial: 2000,
-
-/*
- * Percentual mínimo da ÁREA DA MÍDIA que precisa
- * estar visível para que o vídeo seja considerado
- * pronto para reprodução.
- */
-percentualMinimoVisivel: 0.55,
-
-/*
- * IntersectionObserver dos vídeos.
- */
-observer: null,
-
-/*
- * Timer utilizado pelo vídeo atualmente aguardando
- * reprodução.
- */
-timersReproducao: new Map()
-
-
-};
-
-/* =========================================================
-NORMALIZAÇÃO DE TEXTO
-========================================================= */
-
-function normalizarTexto(valor) {
-
-
-return String(valor || '')
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .trim()
-    .toLowerCase();
-
-
-}
-
-/* =========================================================
-NORMALIZAR LISTAS
-========================================================= */
-
-function normalizarLista(valor) {
-
-
-if (Array.isArray(valor)) {
-
-    return valor
-        .map(item => String(item || '').trim())
-        .filter(Boolean);
-
-}
-
-if (typeof valor === 'string') {
-
-    return valor
-        .split(',')
-        .map(item => item.trim())
-        .filter(Boolean);
-
-}
-
-return [];
-
-
-}
-
-/* =========================================================
-OBTER ARTISTA
-========================================================= */
-
-function obterArtistaPerfil(perfil) {
-
-
-if (!perfil || !perfil.perfis_artistas) {
-    return null;
-}
-
-if (Array.isArray(perfil.perfis_artistas)) {
-
-    return perfil.perfis_artistas[0] || null;
-
-}
-
-return perfil.perfis_artistas;
-
-
-}
-
-/* =========================================================
-OBTER DESTAQUE DO PORTFÓLIO
-
-O destaque continua sendo utilizado internamente para
-definir a mídia principal da publicação.
-
-IMPORTANTE:
-
-O destaque do portfólio NÃO gera nenhuma tag visual
-"Destaque" na publicação.
-========================================================= */
-
-function obterDestaquePortfolio(perfil) {
-
-
-if (!perfil || !perfil.portfolio_musicos) {
-    return null;
-}
-
-const portfolio =
-    Array.isArray(perfil.portfolio_musicos)
-        ? perfil.portfolio_musicos
-        : [perfil.portfolio_musicos];
-
-return portfolio.find(item => {
-
-    if (!item) {
-        return false;
     }
 
-    if (item.ativo !== true) {
-        return false;
+
+    /* =====================================================
+       OBTER MÓDULO DE PAGINAÇÃO
+    ===================================================== */
+
+    function obterModuloPaginacao() {
+
+        return window.MusicalWorldPaginacao || null;
+
     }
 
-    if (item.destaque_catalogo !== true) {
-        return false;
+
+    /* =====================================================
+       NORMALIZAR FILTROS
+    ===================================================== */
+
+    function normalizarFiltros(filtros = {}) {
+
+        return {
+
+            estado: filtros.estado || "",
+
+            cidade: filtros.cidade || "",
+
+            categoria: filtros.categoria || "",
+
+            instrumento: filtros.instrumento || "",
+
+            estilo: filtros.estilo || ""
+
+        };
+
     }
 
-    const tipo =
-        normalizarTexto(item.tipo);
 
-    return (
-        tipo === 'imagem' ||
-        tipo === 'video'
-    );
+    /* =====================================================
+       VERIFICAR SE EXISTEM FILTROS ATIVOS
+    ===================================================== */
 
-}) || null;
+    function existemFiltrosAtivos() {
 
+        return Object.values(
+            FEED_CONFIG.filtros
+        ).some(valor => {
 
-}
+            return String(valor || "").trim() !== "";
 
-/* =========================================================
-GERAR INICIAIS
-========================================================= */
+        });
 
-function gerarIniciais(nome) {
+    }
 
 
-const partes =
-    String(nome || '')
-        .trim()
-        .split(/\s+/)
-        .filter(Boolean);
+    /* =====================================================
+       OBTER CLIENTE SUPABASE
+       
+       O projeto possui um núcleo compartilhado para isso.
+       Não colocamos URL ou credenciais neste arquivo.
+    ===================================================== */
 
-if (partes.length === 0) {
-    return 'U';
-}
+    function obterSupabase() {
 
-if (partes.length === 1) {
+        return (
 
-    return partes[0]
-        .substring(0, 2)
-        .toUpperCase();
+            window.MusicalWorldSupabase?.getClient?.() ||
 
-}
+            window.supabaseClient ||
 
-return (
-    partes[0].charAt(0) +
-    partes[partes.length - 1].charAt(0)
-).toUpperCase();
+            window.supabase ||
 
+            null
 
-}
-
-/* =========================================================
-ESCAPAR HTML
-========================================================= */
-
-function escaparHtml(valor) {
-
-
-return String(valor || '')
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;');
-
-
-}
-
-/* =========================================================
-NOME DO TIPO DE PERFIL
-========================================================= */
-
-function obterNomeTipo(tipo) {
-
-
-const valor =
-    String(tipo || '').trim();
-
-if (!valor) {
-    return 'Profissional';
-}
-
-return valor;
-
-
-}
-
-/* =========================================================
-PÁGINA PÚBLICA DO PROFISSIONAL
-========================================================= */
-
-function obterPaginaPerfil() {
-
-
-return 'apresentar-perfil.html';
-
-
-}
-
-/* =========================================================
-AVISO DISCRETO DO FEED
-========================================================= */
-
-function iniciarAvisoFeed() {
-
-
-const aviso =
-    document.getElementById(
-        'feedAviso'
-    );
-
-const botaoFechar =
-    document.getElementById(
-        'btnFecharFeedAviso'
-    );
-
-if (!aviso || !botaoFechar) {
-
-    console.warn(
-        'Elementos do aviso do feed não encontrados.'
-    );
-
-    return;
-
-}
-
-const chaveAviso =
-    'musicalworld_feed_aviso_fechado';
-
-let avisoFechado = false;
-
-try {
-
-    avisoFechado =
-        localStorage.getItem(
-            chaveAviso
-        ) === 'true';
-
-} catch (erro) {
-
-    console.warn(
-        'Não foi possível acessar o localStorage.',
-        erro
-    );
-
-}
-
-if (avisoFechado) {
-
-    aviso.style.display = 'none';
-
-    return;
-
-}
-
-botaoFechar.addEventListener(
-    'click',
-    function (event) {
-
-        event.preventDefault();
-
-        event.stopPropagation();
-
-        aviso.classList.add(
-            'ocultando'
         );
+
+    }
+
+
+    /* =====================================================
+       CARREGAR UMA PÁGINA DE PROFISSIONAIS
+       
+       Esta função é chamada pelo paginacao.js.
+
+       O paginacao.js envia:
+       {
+           pagina,
+           limite,
+           offset
+       }
+
+       Este arquivo fica responsável apenas pela consulta
+       e pela entrega dos profissionais ao anuncio.js.
+    ===================================================== */
+
+    async function carregarPaginaProfissionais(
+        dadosPaginacao = {}
+    ) {
+
+        if (!feedContainer) {
+
+            return {
+                quantidade: 0,
+                acabou: true
+            };
+
+        }
+
+
+        const anuncio =
+            obterModuloAnuncio();
+
+
+        if (!anuncio) {
+
+            console.error(
+                "MusicalWorld Feed: módulo anuncio.js não encontrado."
+            );
+
+            return {
+                quantidade: 0,
+                acabou: true
+            };
+
+        }
+
+
+        const supabase =
+            obterSupabase();
+
+
+        if (!supabase) {
+
+            console.error(
+                "MusicalWorld Feed: cliente Supabase não encontrado."
+            );
+
+            return {
+                quantidade: 0,
+                acabou: true
+            };
+
+        }
+
+
+        const limite =
+            Number(
+                dadosPaginacao.limite
+            ) || 12;
+
+
+        const offset =
+            Number(
+                dadosPaginacao.offset
+            ) || 0;
+
+
+        mostrarElemento(
+            loadingElement
+        );
+
 
         try {
 
-            localStorage.setItem(
-                chaveAviso,
-                'true'
-            );
-
-        } catch (erro) {
-
-            console.warn(
-                'Não foi possível salvar o fechamento do aviso.',
-                erro
-            );
-
-        }
-
-        setTimeout(
-            function () {
-
-                aviso.style.display =
-                    'none';
-
-            },
-            200
-        );
-
-    }
-);
-
-
-}
-
-/* =========================================================
-NORMALIZAR FILTROS
-========================================================= */
-
-function normalizarFiltros(filtros) {
-
-
-const origem =
-    filtros || {};
-
-let valorMin =
-    origem.valorMin !== undefined &&
-    origem.valorMin !== null &&
-    origem.valorMin !== ''
-        ? Number(origem.valorMin)
-        : null;
-
-let valorMax =
-    origem.valorMax !== undefined &&
-    origem.valorMax !== null &&
-    origem.valorMax !== ''
-        ? Number(origem.valorMax)
-        : null;
-
-if (
-    valorMin !== null &&
-    !Number.isFinite(valorMin)
-) {
-
-    valorMin = null;
-
-}
-
-if (
-    valorMax !== null &&
-    !Number.isFinite(valorMax)
-) {
-
-    valorMax = null;
-
-}
-
-if (
-    valorMin !== null &&
-    valorMin < 0
-) {
-
-    valorMin = 0;
-
-}
-
-if (
-    valorMax !== null &&
-    valorMax < 0
-) {
-
-    valorMax = 0;
-
-}
-
-if (
-    valorMin !== null &&
-    valorMax !== null &&
-    valorMin > valorMax
-) {
-
-    const temporario =
-        valorMin;
-
-    valorMin =
-        valorMax;
-
-    valorMax =
-        temporario;
-
-}
-
-return {
-
-    estado:
-        String(
-            origem.estado || ''
-        ).trim(),
-
-    cidade:
-        String(
-            origem.cidade || ''
-        ).trim(),
-
-    categoria:
-        String(
-            origem.categoria || ''
-        ).trim(),
-
-    instrumento:
-        String(
-            origem.instrumento || ''
-        ).trim(),
-
-    estilo:
-        String(
-            origem.estilo || ''
-        ).trim(),
-
-    valorMin,
-
-    valorMax
-
-};
-
-
-}
-
-/* =========================================================
-VERIFICAR SE EXISTEM FILTROS
-========================================================= */
-
-function existemFiltrosAtivos() {
-
-
-const filtros =
-    FEED_CONFIG.filtrosAtuais;
-
-return Boolean(
-
-    filtros.estado ||
-
-    filtros.cidade ||
-
-    filtros.categoria ||
-
-    filtros.instrumento ||
-
-    filtros.estilo ||
-
-    filtros.valorMin !== null ||
-
-    filtros.valorMax !== null
-
-);
-
-
-}
-
-/* =========================================================
-
-# CONTROLADOR DE VÍDEOS
-
-========================================================= */
-
-/* =========================================================
-CANCELAR TIMER DE UM VÍDEO
-========================================================= */
-
-function cancelarTimerVideo(video) {
-
-
-if (!video) {
-    return;
-}
-
-const timer =
-    FEED_VIDEO_CONFIG.timersReproducao.get(
-        video
-    );
-
-if (timer) {
-
-    clearTimeout(timer);
-
-    FEED_VIDEO_CONFIG.timersReproducao.delete(
-        video
-    );
-
-}
-
-
-}
-
-/* =========================================================
-CANCELAR TODOS OS TIMERS
-========================================================= */
-
-function cancelarTodosTimersVideos() {
-
-
-FEED_VIDEO_CONFIG.timersReproducao
-    .forEach(
-        timer => {
-
-            clearTimeout(timer);
-
-        }
-    );
-
-FEED_VIDEO_CONFIG.timersReproducao.clear();
-
-
-}
-
-/* =========================================================
-PAUSAR TODOS OS VÍDEOS
-========================================================= */
-
-function pausarTodosVideos(
-videoIgnorado = null
-) {
-
-
-const videos =
-    document.querySelectorAll(
-        '.ad-media-video'
-    );
-
-videos.forEach(
-    video => {
-
-        if (video === videoIgnorado) {
-            return;
-        }
-
-        cancelarTimerVideo(
-            video
-        );
-
-        if (!video.paused) {
-
-            video.pause();
-
-        }
-
-    }
-);
-
-
-}
-
-/* =========================================================
-CALCULAR VISIBILIDADE DO VÍDEO
-==============================
-
-A referência agora é a área da mídia.
-
-Isso é mais adequado para um feed social porque uma
-publicação pode possuir bastante texto acima ou abaixo
-da mídia.
-
-O vídeo deve iniciar quando a própria mídia estiver
-suficientemente visível na tela.
-========================================================= */
-
-function calcularVisibilidadeVideo(video) {
-
-
-if (!video) {
-    return 0;
-}
-
-const areaMidia =
-    video.closest(
-        '.ad-media-box'
-    );
-
-if (!areaMidia) {
-    return 0;
-}
-
-const rect =
-    areaMidia.getBoundingClientRect();
-
-const alturaJanela =
-    window.innerHeight ||
-    document.documentElement.clientHeight;
-
-const larguraJanela =
-    window.innerWidth ||
-    document.documentElement.clientWidth;
-
-const larguraVisivel =
-    Math.max(
-        0,
-        Math.min(
-            rect.right,
-            larguraJanela
-        ) -
-        Math.max(
-            rect.left,
-            0
-        )
-    );
-
-const alturaVisivel =
-    Math.max(
-        0,
-        Math.min(
-            rect.bottom,
-            alturaJanela
-        ) -
-        Math.max(
-            rect.top,
-            0
-        )
-    );
-
-const areaVisivel =
-    larguraVisivel *
-    alturaVisivel;
-
-const areaTotal =
-    Math.max(
-        1,
-        rect.width *
-        rect.height
-    );
-
-return (
-    areaVisivel /
-    areaTotal
-);
-
-
-}
-
-/* =========================================================
-VERIFICAR SE VÍDEO ESTÁ VISÍVEL
-========================================================= */
-
-function videoEstaVisivel(video) {
-
-
-return (
-    calcularVisibilidadeVideo(video) >=
-    FEED_VIDEO_CONFIG.percentualMinimoVisivel
-);
-
-
-}
-
-/* =========================================================
-REPRODUZIR VÍDEO
-========================================================= */
-
-function reproduzirVideo(video) {
-
-
-if (!video) {
-    return;
-}
-
-if (!videoEstaVisivel(video)) {
-
-    cancelarTimerVideo(
-        video
-    );
-
-    if (!video.paused) {
-
-        video.pause();
-
-    }
-
-    return;
-
-}
-
-cancelarTimerVideo(
-    video
-);
-
-/*
- * Garante que nenhum outro vídeo permaneça
- * reproduzindo ao mesmo tempo.
- */
-pausarTodosVideos(
-    video
-);
-
-video.muted = true;
-
-video.playsInline = true;
-
-video.loop = true;
-
-video.play()
-    .then(
-        function () {
-
-            /*
-             * Outro vídeo pode ter iniciado durante
-             * a tentativa de reprodução.
-             *
-             * Garantimos novamente a exclusividade.
-             */
-            pausarTodosVideos(
-                video
-            );
-
-            console.log(
-                'Vídeo do feed iniciado.'
-            );
-
-        }
-    )
-    .catch(
-        function (erro) {
-
-            console.debug(
-                'Reprodução automática do vídeo não foi iniciada:',
-                erro
-            );
-
-        }
-    );
-
-
-}
-
-/* =========================================================
-AGENDAR REPRODUÇÃO DE UM VÍDEO
-========================================================= */
-
-function agendarReproducaoVideo(video) {
-
-
-if (!video) {
-    return;
-}
-
-if (
-    FEED_VIDEO_CONFIG.timersReproducao.has(
-        video
-    )
-) {
-
-    return;
-
-}
-
-if (!video.paused) {
-    return;
-}
-
-if (!videoEstaVisivel(video)) {
-    return;
-}
-
-const timer =
-    setTimeout(
-        function () {
-
-            FEED_VIDEO_CONFIG.timersReproducao.delete(
-                video
-            );
-
-            /*
-             * Verificação final depois do atraso.
-             */
-            if (!videoEstaVisivel(video)) {
-
-                if (!video.paused) {
-
-                    video.pause();
-
-                }
-
-                return;
-
-            }
-
-            /*
-             * Antes de iniciar este vídeo,
-             * todos os outros são pausados.
-             */
-            pausarTodosVideos(
-                video
-            );
-
-            reproduzirVideo(
-                video
-            );
-
-        },
-        FEED_VIDEO_CONFIG.atrasoInicial
-    );
-
-FEED_VIDEO_CONFIG.timersReproducao.set(
-    video,
-    timer
-);
-
-
-}
-
-/* =========================================================
-ATUALIZAR TODOS OS VÍDEOS
-========================================================= */
-
-function atualizarVideosVisiveis() {
-
-
-const videos =
-    Array.from(
-        document.querySelectorAll(
-            '.ad-media-video'
-        )
-    );
-
-if (videos.length === 0) {
-    return;
-}
-
-/*
- * Verifica se já existe um vídeo reproduzindo.
- */
-const videoReproduzindo =
-    videos.find(
-        video => !video.paused
-    );
-
-/*
- * Se o vídeo atual ainda estiver suficientemente
- * visível, ele continua sendo o vídeo ativo.
- */
-if (
-    videoReproduzindo &&
-    videoEstaVisivel(
-        videoReproduzindo
-    )
-) {
-
-    videos.forEach(
-        video => {
-
-            if (
-                video !==
-                videoReproduzindo
-            ) {
-
-                cancelarTimerVideo(
-                    video
+            const filtros =
+                normalizarFiltros(
+                    FEED_CONFIG.filtros
                 );
 
-            }
 
-        }
-    );
-
-    return;
-
-}
-
-/*
- * Se o vídeo atual deixou de estar visível,
- * ele precisa ser pausado.
- */
-if (videoReproduzindo) {
-
-    videoReproduzindo.pause();
-
-}
-
-/*
- * Descobre quais vídeos estão suficientemente
- * visíveis neste momento.
- */
-const videosVisiveis =
-    videos.filter(
-        video =>
-            videoEstaVisivel(video)
-    );
-
-/*
- * Vídeos fora da área visível não devem possuir
- * timers pendentes.
- */
-videos.forEach(
-    video => {
-
-        if (
-            !videosVisiveis.includes(
-                video
-            )
-        ) {
-
-            cancelarTimerVideo(
-                video
-            );
-
-            if (!video.paused) {
-
-                video.pause();
-
-            }
-
-        }
-
-    }
-);
-
-if (
-    videosVisiveis.length === 0
-) {
-
-    return;
-
-}
-
-/*
- * O primeiro vídeo visível na ordem do feed
- * é escolhido como próximo vídeo.
- */
-const proximoVideo =
-    videosVisiveis[0];
-
-/*
- * Apenas o vídeo selecionado pode possuir
- * timer de reprodução.
- */
-videosVisiveis.forEach(
-    video => {
-
-        if (
-            video !==
-            proximoVideo
-        ) {
-
-            cancelarTimerVideo(
-                video
-            );
-
-        }
-
-    }
-);
-
-/*
- * Garante que nenhum outro vídeo permaneça
- * reproduzindo.
- */
-pausarTodosVideos(
-    proximoVideo
-);
-
-agendarReproducaoVideo(
-    proximoVideo
-);
-
-
-}
-
-/* =========================================================
-INICIALIZAR OBSERVADOR DOS VÍDEOS
-========================================================= */
-
-function inicializarObservadorVideos() {
-
-
-if (
-    FEED_VIDEO_CONFIG.observer
-) {
-
-    FEED_VIDEO_CONFIG.observer.disconnect();
-
-}
-
-FEED_VIDEO_CONFIG.observer =
-    new IntersectionObserver(
-
-        function () {
-
-            atualizarVideosVisiveis();
-
-        },
-
-        {
-            root: null,
-
-            threshold: [
-                0,
-                0.25,
-                0.5,
-                0.55,
-                0.75,
-                1
-            ]
-
-        }
-
-    );
-
-observarVideosExistentes();
-
-
-}
-
-/* =========================================================
-OBSERVAR VÍDEOS EXISTENTES
-========================================================= */
-
-function observarVideosExistentes() {
-
-
-if (
-    !FEED_VIDEO_CONFIG.observer
-) {
-
-    return;
-
-}
-
-const videos =
-    document.querySelectorAll(
-        '.ad-media-video'
-    );
-
-videos.forEach(
-    video => {
-
-        if (
-            video.dataset.videoObservado ===
-            'true'
-        ) {
-
-            return;
-
-        }
-
-        video.dataset.videoObservado =
-            'true';
-
-        video.muted = true;
-
-        video.playsInline = true;
-
-        video.loop = true;
-
-        FEED_VIDEO_CONFIG.observer.observe(
-            video
-        );
-
-    }
-);
-
-setTimeout(
-    function () {
-
-        atualizarVideosVisiveis();
-
-    },
-    100
-);
-
-
-}
-
-/* =========================================================
-PAUSAR VÍDEOS QUANDO A PÁGINA FICA OCULTA
-========================================================= */
-
-function configurarVisibilidadePaginaVideos() {
-
-
-document.addEventListener(
-    'visibilitychange',
-    function () {
-
-        if (
-            document.hidden
-        ) {
-
-            cancelarTodosTimersVideos();
-
-            pausarTodosVideos();
-
-            return;
-
-        }
-
-        atualizarVideosVisiveis();
-
-    }
-);
-
-
-}
-
-/* =========================================================
-CONTROLE DE SCROLL DOS VÍDEOS
-========================================================= */
-
-let feedVideoScrollTimer = null;
-
-function configurarControleScrollVideos() {
-
-
-window.addEventListener(
-    'scroll',
-    function () {
-
-        if (feedVideoScrollTimer) {
-
-            clearTimeout(
-                feedVideoScrollTimer
-            );
-
-        }
-
-        atualizarVideosVisiveis();
-
-        feedVideoScrollTimer =
-            setTimeout(
-                function () {
-
-                    feedVideoScrollTimer =
-                        null;
-
-                    atualizarVideosVisiveis();
-
-                },
-                120
-            );
-
-    },
-    {
-        passive: true
-    }
-);
-
-
-}
-
-/* =========================================================
-CARREGAR PRIMEIRA PÁGINA
-========================================================= */
-
-async function carregarProfissionaisInicio(
-filtros = null
-) {
-
-
-console.log(
-    'Iniciando feed social vertical de profissionais...'
-);
-
-if (filtros !== null) {
-
-    FEED_CONFIG.filtrosAtuais =
-        normalizarFiltros(
-            filtros
-        );
-
-}
-
-FEED_CONFIG.paginaAtual = 0;
-
-FEED_CONFIG.carregando = false;
-
-FEED_CONFIG.acabou = false;
-
-FEED_CONFIG.totalCarregado = 0;
-
-cancelarTodosTimersVideos();
-
-pausarTodosVideos();
-
-const container =
-    document.getElementById(
-        'feed-profissionais'
-    );
-
-const vazio =
-    document.getElementById(
-        'feed-vazio'
-    );
-
-const fim =
-    document.getElementById(
-        'feed-fim'
-    );
-
-const carregandoMais =
-    document.getElementById(
-        'feed-carregando-mais'
-    );
-
-const contador =
-    document.getElementById(
-        'contador-profissionais'
-    );
-
-if (!container) {
-
-    console.warn(
-        'Container do feed não encontrado.'
-    );
-
-    return;
-
-}
-
-container.innerHTML = `
-
-    <div class="carregando-profissionais">
-
-        <div class="feed-spinner"></div>
-
-        <span>
-            Carregando profissionais...
-        </span>
-
-    </div>
-
-`;
-
-if (vazio) {
-
-    vazio.style.display =
-        'none';
-
-}
-
-if (fim) {
-
-    fim.style.display =
-        'none';
-
-}
-
-if (carregandoMais) {
-
-    carregandoMais.style.display =
-        'none';
-
-}
-
-if (contador) {
-
-    contador.textContent =
-        '';
-
-}
-
-configurarInfiniteScroll();
-
-await carregarProximaPagina();
-
-
-}
-
-/* =========================================================
-CARREGAR PRÓXIMA PÁGINA
-========================================================= */
-
-async function carregarProximaPagina() {
-
-
-if (FEED_CONFIG.carregando) {
-    return;
-}
-
-if (FEED_CONFIG.acabou) {
-    return;
-}
-
-if (!window.supabaseClient) {
-
-    console.error(
-        'SupabaseClient não encontrado.'
-    );
-
-    mostrarErroFeed(
-        'Não foi possível conectar ao banco de dados.'
-    );
-
-    return;
-
-}
-
-FEED_CONFIG.carregando = true;
-
-const primeiraPagina =
-    FEED_CONFIG.paginaAtual === 0;
-
-mostrarCarregamentoMais(
-    !primeiraPagina
-);
-
-try {
-
-    const offset =
-        FEED_CONFIG.paginaAtual *
-        FEED_CONFIG.limitePorPagina;
-
-    const filtros =
-        FEED_CONFIG.filtrosAtuais;
-
-    console.log(
-        'Buscando profissionais com filtros:',
-        filtros
-    );
-
-    const { data, error } =
-        await window.supabaseClient
-            .rpc(
-                'buscar_profissionais_filtrados',
+            /* =============================================
+               CONSULTA AO SUPABASE
+            ============================================= */
+
+            const {
+                data,
+                error
+            } = await supabase.rpc(
+                "buscar_profissionais_filtrados",
                 {
 
                     p_estado:
-                        filtros.estado,
+                        filtros.estado || null,
 
                     p_cidade:
-                        filtros.cidade,
+                        filtros.cidade || null,
 
                     p_categoria:
-                        filtros.categoria,
+                        filtros.categoria || null,
 
                     p_instrumento:
-                        filtros.instrumento,
+                        filtros.instrumento || null,
 
                     p_estilo:
-                        filtros.estilo,
+                        filtros.estilo || null,
 
                     p_limite:
-                        FEED_CONFIG.limitePorPagina,
+                        limite,
 
                     p_offset:
                         offset
@@ -1485,1830 +280,567 @@ try {
                 }
             );
 
-    if (error) {
 
-        console.error(
-            'Erro ao carregar profissionais pela RPC:',
-            error
-        );
+            if (error) {
 
-        mostrarErroFeed(
-            'Não foi possível carregar os profissionais.'
-        );
+                throw error;
 
-        return;
+            }
 
-    }
 
-    const profissionais =
-        Array.isArray(data)
-            ? data.filter(
+            const profissionais =
+                Array.isArray(data)
+                    ? data
+                    : [];
+
+
+            /* =============================================
+               CRIAR ANÚNCIOS
+            ============================================= */
+
+            profissionais.forEach(
                 perfil => {
 
                     const artista =
-                        obterArtistaPerfil(
+                        anuncio.obterArtista(
                             perfil
                         );
 
-                    return !!artista;
+
+                    const destaque =
+                        anuncio.obterDestaque(
+                            perfil
+                        );
+
+
+                    const card =
+                        anuncio.criar(
+                            perfil,
+                            artista,
+                            destaque
+                        );
+
+
+                    if (card) {
+
+                        feedContainer.appendChild(
+                            card
+                        );
+
+                    }
 
                 }
-            )
-            : [];
-
-    console.log(
-        `${profissionais.length} profissional(is) recebido(s).`
-    );
-
-    if (
-        !data ||
-        data.length <
-        FEED_CONFIG.limitePorPagina
-    ) {
-
-        FEED_CONFIG.acabou =
-            true;
-
-    }
-
-    if (profissionais.length === 0) {
-
-        if (
-            FEED_CONFIG.paginaAtual === 0
-        ) {
-
-            mostrarFeedVazio();
-
-        } else {
-
-            mostrarFimFeed();
-
-        }
-
-        return;
-
-    }
-
-    const container =
-        document.getElementById(
-            'feed-profissionais'
-        );
-
-    if (
-        primeiraPagina &&
-        container
-    ) {
-
-        container.innerHTML =
-            '';
-
-    }
-
-    profissionais.forEach(
-        perfil => {
-
-            const artista =
-                obterArtistaPerfil(
-                    perfil
-                );
-
-            if (!artista) {
-                return;
-            }
-
-            const destaque =
-                obterDestaquePortfolio(
-                    perfil
-                );
-
-            const card =
-                criarCardProfissional(
-                    perfil,
-                    artista,
-                    destaque
-                );
-
-            if (container) {
-
-                container.appendChild(
-                    card
-                );
-
-            }
-
-        }
-    );
-
-    FEED_CONFIG.totalCarregado +=
-        profissionais.length;
-
-    FEED_CONFIG.paginaAtual++;
-
-    atualizarContador();
-
-    /*
-     * Os novos posts podem conter vídeos.
-     */
-    observarVideosExistentes();
-
-    if (FEED_CONFIG.acabou) {
-
-        mostrarFimFeed();
-
-    }
-
-} catch (erro) {
-
-    console.error(
-        'Erro inesperado no feed:',
-        erro
-    );
-
-    mostrarErroFeed(
-        'Ocorreu um erro ao carregar os profissionais.'
-    );
-
-} finally {
-
-    FEED_CONFIG.carregando =
-        false;
-
-    mostrarCarregamentoMais(
-        false
-    );
-
-}
-
-
-}
-
-/* =========================================================
-ÍCONES DAS AÇÕES SOCIAIS
-========================================================= */
-
-/*
-
-* Os ícones são SVGs inline para manter o padrão visual
-* do MusicalWorld sem utilizar emojis.
-  */
-
-function obterIconeFeed(
-tipo
-) {
-
-
-const icones = {
-
-    comentar: `
-        <svg
-            viewBox="0 0 24 24"
-            aria-hidden="true"
-        >
-            <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8z"></path>
-        </svg>
-    `,
-
-    curtir: `
-        <svg
-            viewBox="0 0 24 24"
-            aria-hidden="true"
-        >
-            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z"></path>
-        </svg>
-    `,
-
-    compartilhar: `
-        <svg
-            viewBox="0 0 24 24"
-            aria-hidden="true"
-        >
-            <path d="M22 2 11 13"></path>
-            <path d="m22 2-7 20-4-9-9-4Z"></path>
-        </svg>
-    `,
-
-    salvar: `
-        <svg
-            viewBox="0 0 24 24"
-            aria-hidden="true"
-        >
-            <path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1Z"></path>
-        </svg>
-    `,
-
-    menu: `
-        <svg
-            viewBox="0 0 24 24"
-            aria-hidden="true"
-        >
-            <circle cx="5" cy="12" r="1.5"></circle>
-            <circle cx="12" cy="12" r="1.5"></circle>
-            <circle cx="19" cy="12" r="1.5"></circle>
-        </svg>
-    `,
-
-    localizacao: `
-        <svg
-            viewBox="0 0 24 24"
-            aria-hidden="true"
-        >
-            <path d="M12 21s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12Z"></path>
-            <circle
-                cx="12"
-                cy="9"
-                r="2.5"
-            ></circle>
-        </svg>
-    `
-
-};
-
-return (
-    icones[tipo] ||
-    ''
-);
-
-
-}
-
-/* =========================================================
-CRIAR PUBLICAÇÃO DO PROFISSIONAL
-
-ESTRUTURA SOCIAL:
-
-1. Cabeçalho da publicação
-2. Texto da publicação
-3. Mídia
-4. Ações
-5. Informações complementares
-
-A publicação não fica mais dentro de um <a>.
-
-Isso evita links aninhados e permite que os controles
-sociais sejam elementos interativos independentes.
-========================================================= */
-
-function criarCardProfissional(
-perfil,
-artista,
-destaque
-) {
-
-
-const paginaPerfil =
-    obterPaginaPerfil();
-
-const perfilId =
-    perfil?.id;
-
-if (!perfilId) {
-
-    console.warn(
-        'Perfil recebido sem ID. A publicação não poderá abrir o perfil:',
-        perfil
-    );
-
-}
-
-
-/* =====================================================
-   POST PRINCIPAL
-===================================================== */
-
-const card =
-    document.createElement('article');
-
-card.className =
-    'ad-card-novo';
-
-card.setAttribute(
-    'data-perfil-id',
-    perfilId || ''
-);
-
-
-/* =====================================================
-   DADOS DO PROFISSIONAL
-===================================================== */
-
-const nome =
-    String(
-        perfil?.nome_exibicao || ''
-    ).trim() ||
-    'Profissional';
-
-const descricao =
-    String(
-        perfil?.descricao || ''
-    ).trim() ||
-    'Perfil profissional do MusicalWorld.';
-
-const localizacao =
-    String(
-        artista?.localizacao || ''
-    ).trim() ||
-    'Localização não informada';
-
-const tipo =
-    obterNomeTipo(
-        artista?.tipo_artista
-    );
-
-const estilosLista =
-    normalizarLista(
-        artista?.estilos
-    );
-
-const fotoUrl =
-    String(
-        artista?.foto_url || ''
-    ).trim();
-
-const iniciais =
-    gerarIniciais(
-        nome
-    );
-
-
-/* =====================================================
-   DADOS DA MÍDIA
-===================================================== */
-
-const tipoDestaque =
-    normalizarTexto(
-        destaque?.tipo
-    );
-
-const urlDestaque =
-    String(
-        destaque?.arquivo_url || ''
-    ).trim();
-
-const thumbnailDestaque =
-    String(
-        destaque?.thumbnail_url || ''
-    ).trim();
-
-
-/* =====================================================
-   MONTAR URL DO PERFIL
-===================================================== */
-
-const urlPerfil =
-    perfilId
-        ? `${paginaPerfil}?id=${encodeURIComponent(
-            perfilId
-        )}`
-        : 'javascript:void(0);';
-
-
-/* =====================================================
-   MÍDIA PRINCIPAL
-===================================================== */
-
-let mediaHtml =
-    '';
-
-
-/* -----------------------------------------------------
-   PRIORIDADE 1 — IMAGEM DE DESTAQUE
------------------------------------------------------ */
-
-if (
-    destaque &&
-    urlDestaque &&
-    tipoDestaque === 'imagem'
-) {
-
-    mediaHtml = `
-
-        <a
-            href="${escaparHtml(
-                urlPerfil
-            )}"
-            class="ad-media-link"
-            aria-label="Abrir perfil de ${escaparHtml(
-                nome
-            )}"
-        >
-
-            <img
-                src="${escaparHtml(
-                    urlDestaque
-                )}"
-                alt="${escaparHtml(
-                    destaque.titulo ||
-                    `Publicação de ${nome}`
-                )}"
-                class="ad-media-img ad-media-destaque"
-                loading="lazy"
-            >
-
-        </a>
-
-    `;
-
-}
-
-
-/* -----------------------------------------------------
-   PRIORIDADE 2 — VÍDEO DE DESTAQUE
------------------------------------------------------ */
-
-else if (
-    destaque &&
-    urlDestaque &&
-    tipoDestaque === 'video'
-) {
-
-    const posterHtml =
-        thumbnailDestaque
-            ? `poster="${escaparHtml(
-                thumbnailDestaque
-            )}"`
-            : '';
-
-    mediaHtml = `
-
-        <div class="ad-video-container">
-
-            <a
-                href="${escaparHtml(
-                    urlPerfil
-                )}"
-                class="ad-media-link ad-video-link"
-                aria-label="Abrir perfil de ${escaparHtml(
-                    nome
-                )}"
-            >
-
-                <video
-                    src="${escaparHtml(
-                        urlDestaque
-                    )}"
-                    ${posterHtml}
-                    class="ad-media-video"
-                    muted
-                    loop
-                    playsinline
-                    preload="metadata"
-                ></video>
-
-            </a>
-
-
-            <button
-                type="button"
-                class="btn-video-tela-cheia"
-                aria-label="Abrir vídeo em tela cheia"
-                title="Tela cheia"
-            >
-
-                ${obterIconeFeed(
-                    'compartilhar'
-                )}
-
-            </button>
-
-        </div>
-
-    `;
-
-}
-
-
-/* -----------------------------------------------------
-   PRIORIDADE 3 — FOTO DO PERFIL
------------------------------------------------------ */
-
-else if (fotoUrl) {
-
-    mediaHtml = `
-
-        <a
-            href="${escaparHtml(
-                urlPerfil
-            )}"
-            class="ad-media-link"
-            aria-label="Abrir perfil de ${escaparHtml(
-                nome
-            )}"
-        >
-
-            <img
-                src="${escaparHtml(
-                    fotoUrl
-                )}"
-                alt="Foto de ${escaparHtml(
-                    nome
-                )}"
-                class="ad-media-img"
-                loading="lazy"
-            >
-
-        </a>
-
-    `;
-
-}
-
-
-/* -----------------------------------------------------
-   PRIORIDADE 4 — FALLBACK
------------------------------------------------------ */
-
-else {
-
-    mediaHtml = `
-
-        <a
-            href="${escaparHtml(
-                urlPerfil
-            )}"
-            class="ad-media-link"
-            aria-label="Abrir perfil de ${escaparHtml(
-                nome
-            )}"
-        >
-
-            <div class="ad-media-sem-foto">
-
-                <span>
-                    ${escaparHtml(
-                        iniciais
-                    )}
-                </span>
-
-            </div>
-
-        </a>
-
-    `;
-
-}
-
-
-/* =====================================================
-   ESTILOS
-===================================================== */
-
-const estilosHtml =
-    estilosLista.length > 0
-        ? `
-
-            <div class="ad-card-estilos">
-
-                <span class="ad-card-estilos-label">
-
-                    ${escaparHtml(
-                        estilosLista
-                            .slice(0, 3)
-                            .join(' / ')
-                    )}
-
-                </span>
-
-            </div>
-
-          `
-        : '';
-
-
-/* =====================================================
-   IDENTIDADE
-===================================================== */
-
-const identidadeHtml =
-    fotoUrl
-        ? `
-
-            <img
-                src="${escaparHtml(
-                    fotoUrl
-                )}"
-                alt=""
-                class="ad-mini-avatar"
-                aria-hidden="true"
-            >
-
-            <div
-                class="ad-mini-avatar-fallback"
-                aria-hidden="true"
-                style="display:none;"
-            >
-                ${escaparHtml(
-                    iniciais
-                )}
-            </div>
-
-          `
-        : `
-
-            <div
-                class="ad-mini-avatar-fallback"
-                aria-hidden="true"
-            >
-                ${escaparHtml(
-                    iniciais
-                )}
-            </div>
-
-          `;
-
-
-/* =====================================================
-   ESTRUTURA SOCIAL DA PUBLICAÇÃO
-===================================================== */
-
-card.innerHTML = `
-
-    <!-- =================================================
-         CABEÇALHO DA PUBLICAÇÃO
-    ================================================= -->
-
-    <div class="ad-card-conteudo">
-
-
-        <div class="ad-card-identidade">
-
-            <a
-                href="${escaparHtml(
-                    urlPerfil
-                )}"
-                class="ad-card-identidade-link"
-                aria-label="Abrir perfil de ${escaparHtml(
-                    nome
-                )}"
-            >
-
-                ${identidadeHtml}
-
-                <div class="ad-card-nome-area">
-
-                    <strong class="ad-card-nome">
-
-                        ${escaparHtml(
-                            nome
-                        )}
-
-                    </strong>
-
-                    <!--
-                        Tipo de perfil e localização
-                        agora ficam juntos na identidade.
-                    -->
-
-                    <span class="ad-card-tipo">
-
-                        ${escaparHtml(
-                            tipo
-                        )}
-
-                        ${
-                            localizacao
-                                ? `
-                                    <span
-                                        class="ad-card-tipo-separador"
-                                        aria-hidden="true"
-                                    >
-                                        ·
-                                    </span>
-
-                                    <span
-                                        class="ad-card-tipo-localizacao"
-                                    >
-                                        ${escaparHtml(
-                                            localizacao
-                                        )}
-                                    </span>
-                                  `
-                                : ''
-                        }
-
-                    </span>
-
-                </div>
-
-            </a>
-
-
-            <button
-                type="button"
-                class="ad-card-menu"
-                aria-label="Mais opções da publicação"
-                title="Mais opções"
-            >
-
-                ${obterIconeFeed(
-                    'menu'
-                )}
-
-            </button>
-
-        </div>
-
-
-        <!-- =================================================
-             TEXTO DA PUBLICAÇÃO
-        ================================================= -->
-
-        <div class="ad-card-publicacao-texto">
-
-            <p class="ad-card-descricao">
-
-                ${escaparHtml(
-                    descricao
-                )}
-
-            </p>
-
-        </div>
-
-    </div>
-
-
-    <!-- =================================================
-         MÍDIA
-    ================================================= -->
-
-    <div class="ad-media-box">
-
-        ${mediaHtml}
-
-        <div class="ad-media-overlay"></div>
-
-    </div>
-
-
-    <!-- =================================================
-         AÇÕES SOCIAIS
-    ================================================= -->
-
-    <div
-        class="ad-card-acoes"
-        aria-label="Ações da publicação"
-    >
-
-        <button
-            type="button"
-            class="ad-social-btn ad-social-comentar"
-            aria-label="Comentar"
-            title="Comentar"
-        >
-
-            ${obterIconeFeed(
-                'comentar'
-            )}
-
-            <span class="ad-social-label">
-                Comentar
-            </span>
-
-        </button>
-
-
-        <button
-            type="button"
-            class="ad-social-btn ad-social-curtir"
-            aria-label="Curtir"
-            title="Curtir"
-        >
-
-            ${obterIconeFeed(
-                'curtir'
-            )}
-
-            <span class="ad-social-label">
-                Curtir
-            </span>
-
-        </button>
-
-
-        <button
-            type="button"
-            class="ad-social-btn ad-social-compartilhar"
-            aria-label="Compartilhar"
-            title="Compartilhar"
-        >
-
-            ${obterIconeFeed(
-                'compartilhar'
-            )}
-
-            <span class="ad-social-label">
-                Compartilhar
-            </span>
-
-        </button>
-
-
-        <button
-            type="button"
-            class="ad-social-btn ad-social-salvar"
-            aria-label="Salvar publicação"
-            title="Salvar"
-        >
-
-            ${obterIconeFeed(
-                'salvar'
-            )}
-
-            <span class="ad-social-label">
-                Salvar
-            </span>
-
-        </button>
-
-    </div>
-
-
-    <!-- =================================================
-         INFORMAÇÕES COMPLEMENTARES
-    ================================================= -->
-
-    <div class="ad-card-informacoes">
-
-        <!--
-             A localização não é mais exibida aqui.
-             Ela já aparece ao lado do tipo de perfil
-             no cabeçalho da publicação.
-        -->
-
-
-        <!-- ESTILOS -->
-
-        ${estilosHtml}
-
-
-
-    </div>
-
-`;
-
-
-/* =====================================================
-   CLIQUE NA PUBLICAÇÃO
-=====================================================
-
-   A publicação inteira continua sendo navegável.
-
-   Entretanto, elementos interativos possuem seu próprio
-   comportamento e não devem abrir o perfil.
-===================================================== */
-
-card.addEventListener(
-    'click',
-    function (event) {
-
-        const elementoInterativo =
-            event.target.closest(
-                'button, a'
             );
 
-        if (elementoInterativo) {
-            return;
-        }
 
-        if (!perfilId) {
-            return;
-        }
+            /* =============================================
+               ATUALIZAR CONTADOR
+            ============================================= */
 
-        window.location.href =
-            urlPerfil;
-
-    }
-);
+            atualizarContador();
 
 
-/* =====================================================
-   MINI AVATAR
-===================================================== */
-
-const miniAvatar =
-    card.querySelector(
-        '.ad-mini-avatar:not(.ad-mini-avatar-fallback)'
-    );
-
-if (miniAvatar) {
-
-    miniAvatar.addEventListener(
-        'error',
-        function () {
-
-            this.style.display =
-                'none';
-
-            const fallback =
-                this.nextElementSibling;
+            /* =============================================
+               ATUALIZAR VÍDEOS
+            ============================================= */
 
             if (
-                fallback &&
-                fallback.classList.contains(
-                    'ad-mini-avatar-fallback'
-                )
+                typeof anuncio.observarVideos ===
+                "function"
             ) {
 
-                fallback.style.display =
-                    'flex';
+                anuncio.observarVideos();
 
             }
 
-        }
-    );
 
-}
+            /* =============================================
+               VERIFICAR FIM DO FEED
+            ============================================= */
 
+            const acabou =
+                profissionais.length < limite;
 
-/* =====================================================
-   ERRO DA IMAGEM PRINCIPAL
-===================================================== */
-
-const imagemMedia =
-    card.querySelector(
-        '.ad-media-img:not(.ad-media-video)'
-    );
-
-if (imagemMedia) {
-
-    imagemMedia.addEventListener(
-        'error',
-        function () {
-
-            this.style.display =
-                'none';
-
-            const mediaBox =
-                this.closest(
-                    '.ad-media-box'
-                );
-
-            if (!mediaBox) {
-                return;
-            }
-
-            mediaBox.classList.add(
-                'photo-bg'
-            );
 
             if (
-                !mediaBox.querySelector(
-                    '.ad-media-fallback'
-                )
+                !feedContainer.children.length &&
+                acabou
             ) {
 
-                const fallback =
-                    document.createElement(
-                        'div'
-                    );
-
-                fallback.className =
-                    'ad-media-fallback';
-
-                fallback.textContent =
-                    iniciais;
-
-                mediaBox.appendChild(
-                    fallback
+                mostrarElemento(
+                    emptyElement
                 );
 
             }
 
-        }
-    );
 
-}
+            if (acabou) {
 
-
-/* =====================================================
-   TRATAMENTO DO VÍDEO
-===================================================== */
-
-const videoMedia =
-    card.querySelector(
-        '.ad-media-video'
-    );
-
-if (videoMedia) {
-
-    videoMedia.pause();
-
-    videoMedia.muted =
-        true;
-
-    videoMedia.playsInline =
-        true;
-
-    videoMedia.loop =
-        true;
-
-
-    /* -------------------------------------------------
-       BOTÃO DE TELA CHEIA
-    ------------------------------------------------- */
-
-    const botaoTelaCheia =
-        card.querySelector(
-            '.btn-video-tela-cheia'
-        );
-
-    if (botaoTelaCheia) {
-
-        /*
-         * Substituímos visualmente o ícone antigo por
-         * um controle próprio de tela cheia.
-         */
-        botaoTelaCheia.innerHTML = `
-
-            <svg
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-            >
-
-                <path
-                    d="M8 3H5a2 2 0 0 0-2 2v3"
-                ></path>
-
-                <path
-                    d="M16 3h3a2 2 0 0 1 2 2v3"
-                ></path>
-
-                <path
-                    d="M21 16v3a2 2 0 0 1-2 2h-3"
-                ></path>
-
-                <path
-                    d="M3 16v3a2 2 0 0 0 2 2h3"
-                ></path>
-
-            </svg>
-
-        `;
-
-        botaoTelaCheia.addEventListener(
-            'click',
-            async function (event) {
-
-                /*
-                 * Impede que o clique abra o perfil.
-                 */
-
-                event.preventDefault();
-
-                event.stopPropagation();
-
-                try {
-
-                    /*
-                     * iPhone / Safari.
-                     */
-
-                    if (
-                        typeof videoMedia.webkitEnterFullscreen ===
-                        'function'
-                    ) {
-
-                        videoMedia.webkitEnterFullscreen();
-
-                        return;
-
-                    }
-
-
-                    /*
-                     * Navegadores modernos.
-                     */
-
-                    if (
-                        typeof videoMedia.requestFullscreen ===
-                        'function'
-                    ) {
-
-                        await videoMedia.requestFullscreen();
-
-                        return;
-
-                    }
-
-
-                    /*
-                     * Fallback usando o container.
-                     */
-
-                    const containerVideo =
-                        videoMedia.parentElement;
-
-                    if (
-                        containerVideo &&
-                        typeof containerVideo.requestFullscreen ===
-                        'function'
-                    ) {
-
-                        await containerVideo.requestFullscreen();
-
-                        return;
-
-                    }
-
-                    console.warn(
-                        'Tela cheia não é suportada neste navegador.'
-                    );
-
-                } catch (erro) {
-
-                    console.warn(
-                        'Não foi possível abrir o vídeo em tela cheia:',
-                        erro
-                    );
-
-                }
-
-            }
-        );
-
-    }
-
-
-    /* -------------------------------------------------
-       ERRO DO VÍDEO
-    ------------------------------------------------- */
-
-    videoMedia.addEventListener(
-        'error',
-        function () {
-
-            cancelarTimerVideo(
-                this
-            );
-
-            console.warn(
-                'Não foi possível carregar o vídeo do destaque:',
-                urlDestaque
-            );
-
-            const mediaBox =
-                this.closest(
-                    '.ad-media-box'
+                mostrarElemento(
+                    endElement
                 );
-
-            if (!mediaBox) {
-                return;
-            }
-
-
-            /*
-             * Se existir foto do perfil, utilizamos
-             * a foto como fallback.
-             */
-
-            if (fotoUrl) {
-
-                mediaBox.innerHTML = `
-
-                    <a
-                        href="${escaparHtml(
-                            urlPerfil
-                        )}"
-                        class="ad-media-link"
-                        aria-label="Abrir perfil de ${escaparHtml(
-                            nome
-                        )}"
-                    >
-
-                        <img
-                            src="${escaparHtml(
-                                fotoUrl
-                            )}"
-                            alt="Foto de ${escaparHtml(
-                                nome
-                            )}"
-                            class="ad-media-img"
-                            loading="lazy"
-                        >
-
-                    </a>
-
-                    <div
-                        class="ad-media-overlay"
-                    ></div>
-
-                `;
-
-                const imagemFallback =
-                    mediaBox.querySelector(
-                        '.ad-media-img'
-                    );
-
-                if (imagemFallback) {
-
-                    imagemFallback.addEventListener(
-                        'error',
-                        function () {
-
-                            this.style.display =
-                                'none';
-
-                            mediaBox.innerHTML = `
-
-                                <a
-                                    href="${escaparHtml(
-                                        urlPerfil
-                                    )}"
-                                    class="ad-media-link"
-                                    aria-label="Abrir perfil de ${escaparHtml(
-                                        nome
-                                    )}"
-                                >
-
-                                    <div
-                                        class="ad-media-sem-foto"
-                                    >
-
-                                        <span>
-
-                                            ${escaparHtml(
-                                                iniciais
-                                            )}
-
-                                        </span>
-
-                                    </div>
-
-                                </a>
-
-                                <div
-                                    class="ad-media-overlay"
-                                ></div>
-
-                            `;
-
-                        }
-                    );
-
-                }
 
             } else {
 
-                mediaBox.innerHTML = `
-
-                    <a
-                        href="${escaparHtml(
-                            urlPerfil
-                        )}"
-                        class="ad-media-link"
-                        aria-label="Abrir perfil de ${escaparHtml(
-                            nome
-                        )}"
-                    >
-
-                        <div
-                            class="ad-media-sem-foto"
-                        >
-
-                            <span>
-
-                                ${escaparHtml(
-                                    iniciais
-                                )}
-
-                            </span>
-
-                        </div>
-
-                    </a>
-
-                    <div
-                        class="ad-media-overlay"
-                    ></div>
-
-                `;
+                esconderElemento(
+                    endElement
+                );
 
             }
 
-        }
-    );
 
-}
+            return {
 
+                quantidade:
+                    profissionais.length,
 
-/* =====================================================
-   AÇÕES SOCIAIS — COMPORTAMENTO VISUAL
-=====================================================
+                acabou
 
-   As ações ainda não possuem persistência no Supabase.
-
-   Por enquanto:
-
-   - impedem a navegação para o perfil;
-   - permitem estado visual local;
-   - deixam a estrutura pronta para integração futura.
-===================================================== */
-
-const botoesSociais =
-    card.querySelectorAll(
-        '.ad-social-btn'
-    );
-
-botoesSociais.forEach(
-    botao => {
-
-        botao.addEventListener(
-            'click',
-            function (event) {
-
-                event.preventDefault();
-
-                event.stopPropagation();
-
-                /*
-                 * Estado visual local.
-                 *
-                 * A persistência real poderá ser ligada
-                 * posteriormente às tabelas de interação.
-                 */
-
-                if (
-                    this.classList.contains(
-                        'ad-social-curtir'
-                    )
-                ) {
-
-                    this.classList.toggle(
-                        'ativo'
-                    );
-
-                }
-
-                if (
-                    this.classList.contains(
-                        'ad-social-salvar'
-                    )
-                ) {
-
-                    this.classList.toggle(
-                        'ativo'
-                    );
-
-                }
-
-                if (
-                    this.classList.contains(
-                        'ad-social-comentar'
-                    )
-                ) {
-
-                    console.log(
-                        'Comentários ainda não conectados ao banco.'
-                    );
-
-                }
-
-                if (
-                    this.classList.contains(
-                        'ad-social-compartilhar'
-                    )
-                ) {
-
-                    compartilharPublicacao(
-                        urlPerfil,
-                        nome
-                    );
-
-                }
-
-            }
-        );
-
-    }
-);
+            };
 
 
-/* =====================================================
-   MENU DA PUBLICAÇÃO
-===================================================== */
+        } catch (erro) {
 
-const botaoMenu =
-    card.querySelector(
-        '.ad-card-menu'
-    );
+            console.error(
+                "MusicalWorld Feed: erro ao carregar profissionais.",
+                erro
+            );
 
-if (botaoMenu) {
 
-    botaoMenu.addEventListener(
-        'click',
-        function (event) {
+            return {
 
-            event.preventDefault();
+                quantidade: 0,
 
-            event.stopPropagation();
+                acabou: true
 
-            console.log(
-                'Menu da publicação:',
-                {
-                    perfilId,
-                    nome
-                }
+            };
+
+
+        } finally {
+
+            esconderElemento(
+                loadingElement
             );
 
         }
-    );
 
-}
-
-
-return card;
+    }
 
 
-}
+    /* =====================================================
+       RECARREGAR FEED DESDE A PRIMEIRA PÁGINA
+    ===================================================== */
 
-/* =========================================================
-COMPARTILHAR PUBLICAÇÃO
-========================================================= */
+    async function carregarProfissionaisInicio() {
 
-async function compartilharPublicacao(
-urlPerfil,
-nome
-) {
+        const paginacao =
+            obterModuloPaginacao();
 
 
-const url =
-    new URL(
-        urlPerfil,
-        window.location.origin
-    ).href;
+        if (!paginacao) {
 
-const titulo =
-    `Perfil de ${nome} — MusicalWorld`;
+            console.error(
+                "MusicalWorld Feed: módulo paginacao.js não encontrado."
+            );
 
-try {
+            return;
 
-    if (
-        navigator.share
-    ) {
+        }
 
-        await navigator.share({
 
-            title:
-                titulo,
+        if (!feedContainer) {
+            return;
+        }
 
-            text:
-                `Confira o perfil de ${nome} no MusicalWorld.`,
 
-            url
+        /* =============================================
+           LIMPAR FEED ATUAL
+        ============================================= */
+
+        feedContainer.innerHTML = "";
+
+
+        esconderElemento(
+            endElement
+        );
+
+
+        esconderElemento(
+            emptyElement
+        );
+
+
+        /* =============================================
+           REINICIAR PAGINAÇÃO
+        ============================================= */
+
+        paginacao.reiniciar();
+
+
+        /* =============================================
+           CARREGAR PRIMEIRA PÁGINA
+        ============================================= */
+
+        await paginacao.carregarProximaPagina();
+
+    }
+
+
+    /* =====================================================
+       ATUALIZAR CONTADOR
+    ===================================================== */
+
+    function atualizarContador() {
+
+        if (!counterElement) {
+            return;
+        }
+
+
+        const quantidade =
+            feedContainer
+                ? feedContainer.children.length
+                : 0;
+
+
+        if (!quantidade) {
+
+            counterElement.textContent = "";
+
+            return;
+
+        }
+
+
+        counterElement.textContent =
+            `${quantidade} profissional${
+                quantidade === 1
+                    ? ""
+                    : "is"
+            }`;
+
+    }
+
+
+    /* =====================================================
+       MOSTRAR ELEMENTO
+    ===================================================== */
+
+    function mostrarElemento(elemento) {
+
+        if (!elemento) {
+            return;
+        }
+
+
+        elemento.hidden = false;
+
+        elemento.style.display = "";
+
+    }
+
+
+    /* =====================================================
+       ESCONDER ELEMENTO
+    ===================================================== */
+
+    function esconderElemento(elemento) {
+
+        if (!elemento) {
+            return;
+        }
+
+
+        elemento.hidden = true;
+
+        elemento.style.display = "none";
+
+    }
+
+
+    /* =====================================================
+       INICIALIZAR FEED
+    ===================================================== */
+
+    async function inicializarFeed() {
+
+        if (FEED_CONFIG.inicializado) {
+            return;
+        }
+
+
+        FEED_CONFIG.inicializado = true;
+
+
+        /* =============================================
+           BUSCAR ELEMENTOS DO DOM
+        ============================================= */
+
+        feedContainer =
+            document.querySelector(
+                "#feed-profissionais"
+            );
+
+
+        loadingElement =
+            document.querySelector(
+                "#feed-loading"
+            );
+
+
+        endElement =
+            document.querySelector(
+                "#feed-fim"
+            );
+
+
+        emptyElement =
+            document.querySelector(
+                "#feed-vazio"
+            );
+
+
+        sentinelElement =
+            document.querySelector(
+                "#feed-sentinel"
+            );
+
+
+        counterElement =
+            document.querySelector(
+                "#feed-contador"
+            );
+
+
+        if (!feedContainer) {
+
+            console.warn(
+                "MusicalWorld Feed: container #feed-profissionais não encontrado."
+            );
+
+            return;
+
+        }
+
+
+        /* =============================================
+           VERIFICAR MÓDULO DE ANÚNCIO
+        ============================================= */
+
+        const anuncio =
+            obterModuloAnuncio();
+
+
+        if (!anuncio) {
+
+            console.error(
+                "MusicalWorld Feed: anuncio.js não foi carregado antes de main.js."
+            );
+
+            return;
+
+        }
+
+
+        /* =============================================
+           VERIFICAR MÓDULO DE PAGINAÇÃO
+        ============================================= */
+
+        const paginacao =
+            obterModuloPaginacao();
+
+
+        if (!paginacao) {
+
+            console.error(
+                "MusicalWorld Feed: paginacao.js não foi carregado antes de main.js."
+            );
+
+            return;
+
+        }
+
+
+        /* =============================================
+           ESTADO INICIAL DA INTERFACE
+        ============================================= */
+
+        esconderElemento(
+            endElement
+        );
+
+
+        esconderElemento(
+            emptyElement
+        );
+
+
+        /* =============================================
+           INICIALIZAR VÍDEOS
+        ============================================= */
+
+        if (
+            typeof anuncio.inicializarVideos ===
+            "function"
+        ) {
+
+            anuncio.inicializarVideos();
+
+        }
+
+
+        if (
+            typeof anuncio.configurarVisibilidadeVideos ===
+            "function"
+        ) {
+
+            anuncio.configurarVisibilidadeVideos();
+
+        }
+
+
+        if (
+            typeof anuncio.configurarScrollVideos ===
+            "function"
+        ) {
+
+            anuncio.configurarScrollVideos();
+
+        }
+
+
+        /* =============================================
+           INICIALIZAR PAGINAÇÃO
+        ============================================= */
+
+        paginacao.inicializar({
+
+            sentinel:
+                sentinelElement,
+
+            limitePorPagina:
+                12,
+
+            callbackCarregar:
+                carregarPaginaProfissionais
 
         });
 
-        return;
+
+        /* =============================================
+           CARREGAR PRIMEIRA PÁGINA
+        ============================================= */
+
+        await carregarProfissionaisInicio();
 
     }
 
-    if (
-        navigator.clipboard &&
-        typeof navigator.clipboard.writeText ===
-            'function'
-    ) {
 
-        await navigator.clipboard.writeText(
-            url
-        );
+    /* =====================================================
+       API PÚBLICA DO FEED
+    ===================================================== */
 
-        console.log(
-            'Link do perfil copiado para a área de transferência.'
-        );
+    window.MusicalWorldFeed = {
 
-        return;
-
-    }
-
-    console.log(
-        'URL da publicação:',
-        url
-    );
-
-} catch (erro) {
-
-    /*
-     * Cancelamentos do compartilhamento nativo,
-     * principalmente no celular, não precisam ser
-     * tratados como erro crítico.
-     */
-
-    console.debug(
-        'Compartilhamento cancelado ou indisponível:',
-        erro
-    );
-
-}
+        inicializar:
+            inicializarFeed,
 
 
-}
-
-/* =========================================================
-CONTADOR
-========================================================= */
-
-function atualizarContador() {
+        recarregar:
+            carregarProfissionaisInicio,
 
 
-const contador =
-    document.getElementById(
-        'contador-profissionais'
-    );
+        carregarMais: () => {
 
-if (!contador) {
-    return;
-}
+            const paginacao =
+                obterModuloPaginacao();
 
-if (
-    FEED_CONFIG.totalCarregado > 0
-) {
-
-    contador.textContent =
-        `${FEED_CONFIG.totalCarregado} carregados`;
-
-}
-
-
-}
-
-/* =========================================================
-INFINITE SCROLL
-========================================================= */
-
-function configurarInfiniteScroll() {
-
-
-if (
-    FEED_CONFIG.observer
-) {
-
-    FEED_CONFIG.observer.disconnect();
-
-}
-
-const sentinela =
-    document.getElementById(
-        'feed-sentinela'
-    );
-
-if (!sentinela) {
-    return;
-}
-
-const areaRolagem =
-    document.querySelector(
-        '.main-content'
-    );
-
-FEED_CONFIG.observer =
-    new IntersectionObserver(
-
-        function (entries) {
-
-            const entrada =
-                entries[0];
 
             if (
-                entrada &&
-                entrada.isIntersecting
+                paginacao &&
+                typeof paginacao.carregarProximaPagina ===
+                "function"
             ) {
 
-                carregarProximaPagina();
+                return paginacao.carregarProximaPagina();
 
             }
 
         },
 
-        {
 
-            root:
-                areaRolagem || null,
+        definirFiltros:
+            filtros => {
 
-            rootMargin:
-                '500px 0px',
+                FEED_CONFIG.filtros =
+                    normalizarFiltros(
+                        filtros
+                    );
 
-            threshold:
-                0
 
-        }
+                return carregarProfissionaisInicio();
 
-    );
+            },
 
-FEED_CONFIG.observer.observe(
-    sentinela
-);
 
+        obterFiltros:
+            () => {
 
-}
+                return {
+                    ...FEED_CONFIG.filtros
+                };
 
-/* =========================================================
-CARREGAMENTO MAIS
-========================================================= */
+            },
 
-function mostrarCarregamentoMais(
-mostrar
-) {
 
+        existemFiltrosAtivos:
+            existemFiltrosAtivos,
 
-const elemento =
-    document.getElementById(
-        'feed-carregando-mais'
-    );
 
-if (!elemento) {
-    return;
-}
+        atualizarVideos:
+            () => {
 
-elemento.style.display =
-    mostrar
-        ? 'flex'
-        : 'none';
+                const anuncio =
+                    obterModuloAnuncio();
 
 
-}
+                if (
+                    anuncio &&
+                    typeof anuncio.atualizarVideos ===
+                    "function"
+                ) {
 
-/* =========================================================
-FIM DO FEED
-========================================================= */
+                    anuncio.atualizarVideos();
 
-function mostrarFimFeed() {
+                }
 
+            }
 
-const elemento =
-    document.getElementById(
-        'feed-fim'
-    );
+    };
 
-if (!elemento) {
-    return;
-}
 
-elemento.style.display =
-    'block';
-
-
-}
-
-/* =========================================================
-FEED VAZIO
-========================================================= */
-
-function mostrarFeedVazio() {
-
-
-const container =
-    document.getElementById(
-        'feed-profissionais'
-    );
-
-const vazio =
-    document.getElementById(
-        'feed-vazio'
-    );
-
-if (container) {
-
-    container.innerHTML =
-        '';
-
-}
-
-if (vazio) {
-
-    vazio.style.display =
-        'block';
-
-}
-
-
-}
-
-/* =========================================================
-ERRO DO FEED
-========================================================= */
-
-function mostrarErroFeed(
-mensagem
-) {
-
-
-const container =
-    document.getElementById(
-        'feed-profissionais'
-    );
-
-if (!container) {
-    return;
-}
-
-container.innerHTML = `
-
-    <div class="estado-vazio">
-
-        <strong>
-            Não foi possível carregar
-        </strong>
-
-        <p>
-            ${escaparHtml(
-                mensagem
-            )}
-        </p>
-
-    </div>
-
-`;
-
-
-}
-
-/* =========================================================
-RECEBER FILTROS DO MODAL
-========================================================= */
-
-function iniciarIntegracaoFiltros() {
-
-
-window.addEventListener(
-    'musicalworld:filtros-aplicados',
-    function (event) {
-
-        const filtros =
-            normalizarFiltros(
-                event?.detail?.filtros || {}
-            );
-
-        console.log(
-            'Filtros recebidos pelo feed:',
-            filtros
-        );
-
-        FEED_CONFIG.filtrosAtuais =
-            filtros;
-
-        carregarProfissionaisInicio(
-            filtros
-        );
-
-    }
-);
-
-
-}
-
-/* =========================================================
-COMPATIBILIDADE COM O FILTRO
-========================================================= */
-
-window.abrirModalFiltro =
-function () {
-
+    /* =====================================================
+       INICIALIZAÇÃO AUTOMÁTICA
+    ===================================================== */
 
     if (
-        window.ModalFiltro &&
-        typeof window.ModalFiltro.abrir ===
-            'function'
+        document.readyState ===
+        "loading"
     ) {
 
-        window.ModalFiltro.abrir();
+        document.addEventListener(
+            "DOMContentLoaded",
+            inicializarFeed,
+            {
+                once: true
+            }
+        );
 
-        return;
+    } else {
+
+        inicializarFeed();
 
     }
 
-    console.warn(
-        'ModalFiltro ainda não foi carregado.'
-    );
 
-};
-
-
-/* =========================================================
-INICIALIZAÇÃO
-========================================================= */
-
-document.addEventListener(
-'DOMContentLoaded',
-function () {
-
-
-    console.log(
-        'Inicializando feed social vertical MusicalWorld...'
-    );
-
-    iniciarAvisoFeed();
-
-    iniciarIntegracaoFiltros();
-
-    inicializarObservadorVideos();
-
-    configurarVisibilidadePaginaVideos();
-
-    configurarControleScrollVideos();
-
-    carregarProfissionaisInicio();
-
-}
-
-
-);
+})(window);
