@@ -1,1226 +1,1359 @@
 /* =========================================================
-   MUSICALWORLD — INDEX
-   Arquivo: feed.css
+MUSICALWORLD — INDEX
+Arquivo: css/feed.css
 
-   Responsabilidade:
-   Controlar exclusivamente a aparência visual das
-   publicações exibidas no feed principal.
+Responsabilidade:
+Controlar exclusivamente a aparência visual das
+publicações exibidas no feed principal.
 
-   ESTRUTURA VISUAL DA PUBLICAÇÃO:
+ESTRUTURA VISUAL DA PUBLICAÇÃO:
 
-   ┌──────────────────────────────────────┐
-   │                                      │
-   │             FOTO / VÍDEO             │
-   │                                      │
-   │                         ⋯            │
-   │                                      │
-   │  [avatar] Nome do artista            │
-   │           Cantor · Goiânia           │
-   │                                      │
-   └──────────────────────────────────────┘
-                    ↓
-              TIPO PUBLICAÇÃO
-                    ↓
-                ESTILOS
-                    ↓
-                DESCRIÇÃO
-                    ↓
-                 AÇÕES
+┌──────────────────────────────────────┐
+│ FOTO / VÍDEO                         │
+│                                      │
+│                         ⋯            │
+│                                      │
+│  [avatar] Nome do artista            │
+│           Cantor · Goiânia           │
+└──────────────────────────────────────┘
+↓
+TIPO PUBLICAÇÃO
+↓
+ESTILOS
+↓
+DESCRIÇÃO
+↓
+AÇÕES
 
-   A publicação NÃO deve parecer um card de marketplace.
+No celular:
 
-   No celular:
-   - A publicação ocupa toda a largura.
-   - A mídia pode encostar diretamente nas laterais.
-   - A identidade fica SOBRE a mídia.
-   - O degradê aparece somente na parte inferior.
-   - O menu permanece no canto superior direito.
-   - Tipo, estilos e descrição ficam abaixo da mídia.
-   - As ações ficam na parte inferior.
+* A publicação ocupa toda a largura.
+* A mídia pode encostar diretamente nas laterais.
+* A mídia também começa diretamente no topo da publicação.
+* A identidade fica SOBRE a mídia.
+* O degradê aparece somente na parte inferior.
+* O menu permanece no canto superior direito.
+* Tipo, estilos e descrição ficam abaixo da mídia.
+* As ações ficam na parte inferior.
 
-   NÃO controla:
-   - cabeçalho;
-   - menu inferior;
-   - filtros;
-   - busca;
-   - lógica JavaScript;
-   - Supabase;
-   - paginação.
-========================================================= */
+NÃO controla:
 
+* cabeçalho;
+* menu inferior;
+* filtros;
+* busca;
+* lógica JavaScript;
+* Supabase;
+* paginação.
+  ========================================================= */
 
 /* =========================================================
-   ÁREA PRINCIPAL DO FEED
+ÁREA PRINCIPAL DO FEED
 ========================================================= */
 
 .feed-profissionais {
 
-    width: 100%;
 
-    display: flex;
+width: 100%;
 
-    flex-direction: column;
+display: flex;
 
-    align-items: stretch;
+flex-direction: column;
 
-    gap: 0;
+align-items: stretch;
+
+gap: 0;
+
+
 }
 
-
 /* =========================================================
-   PUBLICAÇÃO
+PUBLICAÇÃO
 ========================================================= */
 
 .ad-card-novo {
 
-    position: relative;
 
-    width: 100%;
+position: relative;
 
-    padding: 16px 0 20px;
+width: 100%;
 
-    background: #ffffff;
+padding: 0px 0 20px;
 
-    border: none;
+background: #ffffff;
 
-    border-bottom:
-        1px solid rgba(23, 32, 51, 0.08);
+border: none;
 
-    border-radius: 0;
+border-bottom:
+    1px solid rgba(23, 32, 51, 0.08);
 
-    box-shadow: none;
+border-radius: 0;
 
-    overflow: visible;
+box-shadow: none;
+
+overflow: visible;
+
+
 }
 
-
 /* =========================================================
-   FEEDBACK DESKTOP
+FEEDBACK DESKTOP
 ========================================================= */
 
 @media (hover: hover) and (pointer: fine) {
 
-    .ad-card-novo:hover {
 
-        background:
-            rgba(248, 249, 252, 0.72);
-    }
+.ad-card-novo:hover {
+
+    background:
+        rgba(248, 249, 252, 0.72);
 }
 
 
+}
+
 /* =========================================================
-   MÍDIA
+MÍDIA
 ========================================================= */
 
 .ad-media-box {
 
-    position: relative;
 
-    width: 100%;
+position: relative;
 
-    margin: 0;
+width: 100%;
 
-    overflow: hidden;
+margin: 0;
 
-    background: #eef1f7;
+padding: 0;
 
-    border-radius: 14px;
+overflow: hidden;
+
+background: #eef1f7;
+
+border-radius: 14px;
+
+
 }
 
-
 /* =========================================================
-   LINK DA MÍDIA
+LINK DA MÍDIA
 ========================================================= */
 
 .ad-media-link {
 
-    position: relative;
 
-    display: block;
+position: relative;
 
-    width: 100%;
+display: block;
 
-    color: inherit;
+width: 100%;
 
-    text-decoration: none;
+margin: 0;
 
-    line-height: 0;
+padding: 0;
 
-    z-index: 1;
+color: inherit;
+
+text-decoration: none;
+
+line-height: 0;
+
+z-index: 1;
+
+
 }
 
-
 /* =========================================================
-   IMAGEM
+IMAGEM
 ========================================================= */
 
 .ad-media-img {
 
-    display: block;
 
-    width: 100%;
+display: block;
 
-    height: auto;
+width: 100%;
 
-    min-width: 100%;
+height: auto;
 
-    min-height: 0;
+min-width: 100%;
 
-    max-width: none;
+min-height: 0;
 
-    object-fit: cover;
+max-width: none;
 
-    object-position: center;
+margin: 0;
 
-    background: #eef1f7;
+padding: 0;
 
-    transform: none;
+object-fit: cover;
 
-    transition:
-        transform 0.30s ease;
+object-position: center;
+
+background: #eef1f7;
+
+transform: none;
+
+transition:
+    transform 0.30s ease;
+
+
 }
-
 
 @media (hover: hover) and (pointer: fine) {
 
-    .ad-card-novo:hover .ad-media-img {
 
-        transform: scale(1.008);
-    }
+.ad-card-novo:hover .ad-media-img {
+
+    transform: scale(1.008);
 }
 
 
+}
+
 /* =========================================================
-   VÍDEO
+VÍDEO
 ========================================================= */
 
 .ad-video-container {
 
-    position: relative;
 
-    width: 100%;
+position: relative;
 
-    overflow: hidden;
+width: 100%;
 
-    background: #000000;
+margin: 0;
 
-    border-radius: 14px;
+padding: 0;
+
+overflow: hidden;
+
+background: #000000;
+
+border-radius: 14px;
+
+
 }
-
 
 .ad-video-link {
 
-    position: relative;
 
-    display: block;
+position: relative;
 
-    width: 100%;
+display: block;
 
-    background: #000000;
+width: 100%;
 
-    z-index: 1;
+margin: 0;
+
+padding: 0;
+
+background: #000000;
+
+z-index: 1;
+
+
 }
-
 
 .ad-video-container .ad-media-video {
 
-    display: block;
 
-    width: 100%;
+display: block;
 
-    height: 360px;
+width: 100%;
 
-    min-width: 100%;
+height: 360px;
 
-    min-height: 0;
+min-width: 100%;
 
-    object-fit: cover;
+min-height: 0;
 
-    object-position: center;
+margin: 0;
 
-    background: #000000;
+padding: 0;
+
+object-fit: cover;
+
+object-position: center;
+
+background: #000000;
+
+
 }
 
-
 /* =========================================================
-   DEGRADÊ SOBRE A MÍDIA
+DEGRADÊ SOBRE A MÍDIA
 
-   O degradê serve somente para melhorar a leitura da
-   identidade do artista.
+O degradê serve somente para melhorar a leitura da
+identidade do artista.
 
-   Ele NÃO deve criar um bloco preto.
+Ele NÃO deve criar um bloco preto.
 
-   O preto aparece suavemente na parte inferior e
-   desaparece progressivamente em direção ao topo.
+O preto aparece suavemente na parte inferior e
+desaparece progressivamente em direção ao topo.
 ========================================================= */
 
 .ad-media-overlay {
 
-    position: absolute;
 
-    inset: 0;
+position: absolute;
 
-    z-index: 3;
+inset: 0;
 
-    pointer-events: none;
+z-index: 3;
 
-    background:
-        linear-gradient(
-            to top,
-            rgba(0, 0, 0, 0.78) 0%,
-            rgba(0, 0, 0, 0.48) 32%,
-            rgba(0, 0, 0, 0.12) 62%,
-            rgba(0, 0, 0, 0) 100%
-        );
+pointer-events: none;
+
+background:
+    linear-gradient(
+        to top,
+        rgba(0, 0, 0, 0.78) 0%,
+        rgba(0, 0, 0, 0.48) 32%,
+        rgba(0, 0, 0, 0.12) 62%,
+        rgba(0, 0, 0, 0) 100%
+    );
+
+
 }
 
-
 /* =========================================================
-   IDENTIDADE SOBRE A MÍDIA
+IDENTIDADE SOBRE A MÍDIA
 ========================================================= */
 
 .ad-media-identidade {
 
-    position: absolute;
 
-    left: 0;
+position: absolute;
 
-    right: 0;
+left: 0;
 
-    bottom: 0;
+right: 0;
 
-    z-index: 5;
+bottom: 0;
 
-    width: 100%;
+z-index: 5;
 
-    padding:
-        54px 18px 17px;
+width: 100%;
 
-    pointer-events: none;
+padding:
+    54px 18px 17px;
+
+pointer-events: none;
+
+
 }
 
-
 /* =========================================================
-   LINK DA IDENTIDADE
+LINK DA IDENTIDADE
 ========================================================= */
 
 .ad-media-identidade-link {
 
-    display: flex;
 
-    align-items: center;
+display: flex;
 
-    width: 100%;
+align-items: center;
 
-    min-width: 0;
+width: 100%;
 
-    gap: 10px;
+min-width: 0;
 
-    color: #ffffff;
+gap: 10px;
 
-    text-decoration: none;
+color: #ffffff;
 
-    pointer-events: auto;
+text-decoration: none;
 
-    border-radius: 8px;
+pointer-events: auto;
 
-    outline: none;
+border-radius: 8px;
+
+outline: none;
+
+
 }
 
-
 /* =========================================================
-   AVATAR DA IDENTIDADE
+AVATAR DA IDENTIDADE
 ========================================================= */
 
 .ad-media-avatar-wrapper {
 
-    position: relative;
 
-    display: flex;
+position: relative;
 
-    align-items: center;
+display: flex;
 
-    justify-content: center;
+align-items: center;
 
-    flex-shrink: 0;
+justify-content: center;
 
-    width: 44px;
+flex-shrink: 0;
 
-    height: 44px;
+width: 44px;
 
-    min-width: 44px;
+height: 44px;
 
-    min-height: 44px;
+min-width: 44px;
+
+min-height: 44px;
+
+
 }
 
-
 /* =========================================================
-   MINI AVATAR
+MINI AVATAR
 ========================================================= */
 
 .ad-mini-avatar,
 .ad-mini-avatar-fallback {
 
-    flex-shrink: 0;
 
-    width: 44px;
+flex-shrink: 0;
 
-    height: 44px;
+width: 44px;
 
-    min-width: 44px;
+height: 44px;
 
-    min-height: 44px;
+min-width: 44px;
 
-    border-radius: 50%;
+min-height: 44px;
 
-    overflow: hidden;
+border-radius: 50%;
 
-    border:
-        2px solid rgba(255, 255, 255, 0.92);
+overflow: hidden;
 
-    box-shadow:
-        0 2px 8px rgba(0, 0, 0, 0.22);
+border:
+    2px solid rgba(255, 255, 255, 0.92);
+
+box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.22);
+
+
 }
-
 
 .ad-mini-avatar {
 
-    display: block;
 
-    object-fit: cover;
+display: block;
 
-    background: #eef1f7;
+object-fit: cover;
+
+background: #eef1f7;
+
+
 }
-
 
 .ad-mini-avatar-fallback {
 
-    display: flex;
 
-    align-items: center;
+display: flex;
 
-    justify-content: center;
+align-items: center;
 
-    background:
-        linear-gradient(
-            135deg,
-            #6d4aff,
-            #8b6cff
-        );
+justify-content: center;
 
-    color: #ffffff;
+background:
+    linear-gradient(
+        135deg,
+        #6d4aff,
+        #8b6cff
+    );
 
-    font-size: 12px;
+color: #ffffff;
 
-    font-weight: 800;
+font-size: 12px;
 
-    text-transform: uppercase;
+font-weight: 800;
+
+text-transform: uppercase;
+
+
 }
-
 
 /*
- * Quando existe imagem, o fallback fica escondido
- * até que o carregamento da imagem falhe.
- */
+
+* Quando existe imagem, o fallback fica escondido
+* até que o carregamento da imagem falhe.
+  */
 
 .ad-mini-avatar:not(.ad-mini-avatar-fallback)
-    + .ad-mini-avatar-fallback {
++ .ad-mini-avatar-fallback {
 
-    display: none;
+
+display: none;
+
+
 }
 
-
 /* =========================================================
-   ÁREA DO NOME SOBRE A MÍDIA
+ÁREA DO NOME SOBRE A MÍDIA
 ========================================================= */
 
 .ad-media-nome-area {
 
-    min-width: 0;
 
-    flex: 1;
+min-width: 0;
 
-    overflow: hidden;
+flex: 1;
+
+overflow: hidden;
+
+
 }
 
-
 /* =========================================================
-   NOME DO ARTISTA
+NOME DO ARTISTA
 ========================================================= */
 
 .ad-media-nome {
 
-    display: block;
 
-    width: 100%;
+display: block;
 
-    min-width: 0;
+width: 100%;
 
-    margin: 0;
+min-width: 0;
 
-    color: #ffffff;
+margin: 0;
 
-    font-size: 15px;
+color: #ffffff;
 
-    font-weight: 800;
+font-size: 15px;
 
-    line-height: 1.25;
+font-weight: 800;
 
-    letter-spacing: -0.15px;
+line-height: 1.25;
 
-    white-space: nowrap;
+letter-spacing: -0.15px;
 
-    overflow: hidden;
+white-space: nowrap;
 
-    text-overflow: ellipsis;
+overflow: hidden;
 
-    text-shadow:
-        0 1px 4px rgba(0, 0, 0, 0.28);
+text-overflow: ellipsis;
+
+text-shadow:
+    0 1px 4px rgba(0, 0, 0, 0.28);
+
+
 }
 
-
 /* =========================================================
-   TIPO + LOCALIZAÇÃO SOBRE A MÍDIA
+TIPO + LOCALIZAÇÃO SOBRE A MÍDIA
 ========================================================= */
 
 .ad-media-tipo-localizacao {
 
-    display: flex;
 
-    align-items: center;
+display: flex;
 
-    flex-wrap: nowrap;
+align-items: center;
 
-    width: 100%;
+flex-wrap: nowrap;
 
-    min-width: 0;
+width: 100%;
 
-    margin-top: 3px;
+min-width: 0;
 
-    gap: 5px;
+margin-top: 3px;
 
-    overflow: hidden;
+gap: 5px;
 
-    color: rgba(255, 255, 255, 0.90);
+overflow: hidden;
 
-    text-shadow:
-        0 1px 4px rgba(0, 0, 0, 0.30);
+color: rgba(255, 255, 255, 0.90);
+
+text-shadow:
+    0 1px 4px rgba(0, 0, 0, 0.30);
+
+
 }
 
-
 /* =========================================================
-   TIPO DO ARTISTA
+TIPO DO ARTISTA
 ========================================================= */
 
 .ad-media-tipo {
 
-    display: inline-flex;
 
-    align-items: center;
+display: inline-flex;
 
-    flex: 0 0 auto;
+align-items: center;
 
-    width: auto;
+flex: 0 0 auto;
 
-    max-width: none;
+width: auto;
 
-    min-width: max-content;
+max-width: none;
 
-    margin: 0;
+min-width: max-content;
 
-    padding: 0;
+margin: 0;
 
-    color: rgba(255, 255, 255, 0.92);
+padding: 0;
 
-    font-size: 12px;
+color: rgba(255, 255, 255, 0.92);
 
-    font-weight: 600;
+font-size: 12px;
 
-    line-height: 1.3;
+font-weight: 600;
 
-    white-space: nowrap;
+line-height: 1.3;
 
-    overflow: visible;
+white-space: nowrap;
 
-    text-overflow: clip;
+overflow: visible;
+
+text-overflow: clip;
+
+
 }
 
-
 /* =========================================================
-   SEPARADOR
+SEPARADOR
 ========================================================= */
 
 .ad-media-tipo-separador {
 
-    display: inline-block;
 
-    flex-shrink: 0;
+display: inline-block;
 
-    margin: 0 1px;
+flex-shrink: 0;
 
-    color:
-        rgba(255, 255, 255, 0.62);
+margin: 0 1px;
+
+color:
+    rgba(255, 255, 255, 0.62);
+
+
 }
 
-
 /* =========================================================
-   LOCALIZAÇÃO
+LOCALIZAÇÃO
 ========================================================= */
 
 .ad-media-localizacao-inline {
 
-    display: inline-flex;
 
-    align-items: center;
+display: inline-flex;
 
-    gap: 4px;
+align-items: center;
 
-    flex: 1 1 auto;
+gap: 4px;
 
-    width: auto;
+flex: 1 1 auto;
 
-    min-width: 0;
+width: auto;
 
-    color:
-        rgba(255, 255, 255, 0.88);
+min-width: 0;
 
-    font-size: 12px;
+color:
+    rgba(255, 255, 255, 0.88);
 
-    font-weight: 500;
+font-size: 12px;
 
-    line-height: 1.3;
+font-weight: 500;
 
-    white-space: nowrap;
+line-height: 1.3;
 
-    overflow: hidden;
+white-space: nowrap;
 
-    text-overflow: ellipsis;
+overflow: hidden;
+
+text-overflow: ellipsis;
+
+
 }
-
 
 .ad-media-localizacao-inline svg {
 
-    flex-shrink: 0;
 
-    width: 13px;
+flex-shrink: 0;
 
-    height: 13px;
+width: 13px;
 
-    fill: none;
+height: 13px;
 
-    stroke: currentColor;
+fill: none;
 
-    stroke-width: 2;
+stroke: currentColor;
 
-    stroke-linecap: round;
+stroke-width: 2;
 
-    stroke-linejoin: round;
+stroke-linecap: round;
+
+stroke-linejoin: round;
+
+
 }
 
-
 /* =========================================================
-   MENU DA PUBLICAÇÃO
+MENU DA PUBLICAÇÃO
 
-   Fica acima da mídia, no canto superior direito.
+Fica acima da mídia, no canto superior direito.
 ========================================================= */
 
 .ad-card-menu {
 
-    position: absolute;
 
-    top: 12px;
+position: absolute;
 
-    right: 12px;
+top: 12px;
 
-    z-index: 7;
+right: 12px;
 
-    display: flex;
+z-index: 7;
 
-    align-items: center;
+display: flex;
 
-    justify-content: center;
+align-items: center;
 
-    flex-shrink: 0;
+justify-content: center;
 
-    width: 34px;
+flex-shrink: 0;
 
-    height: 34px;
+width: 34px;
 
-    margin: 0;
+height: 34px;
 
-    padding: 0;
+margin: 0;
 
-    border:
-        1px solid rgba(255, 255, 255, 0.18);
+padding: 0;
 
-    border-radius: 50%;
+border:
+    1px solid rgba(255, 255, 255, 0.18);
 
-    background:
-        rgba(10, 13, 20, 0.40);
+border-radius: 50%;
 
-    backdrop-filter: blur(7px);
+background:
+    rgba(10, 13, 20, 0.40);
 
-    -webkit-backdrop-filter: blur(7px);
+backdrop-filter: blur(7px);
 
-    color: #ffffff;
+-webkit-backdrop-filter: blur(7px);
 
-    cursor: pointer;
+color: #ffffff;
 
-    transition:
-        background 0.18s ease,
-        color 0.18s ease,
-        border-color 0.18s ease;
+cursor: pointer;
+
+transition:
+    background 0.18s ease,
+    color 0.18s ease,
+    border-color 0.18s ease;
+
+
 }
-
 
 .ad-card-menu:hover {
 
-    background:
-        rgba(10, 13, 20, 0.68);
 
-    border-color:
-        rgba(255, 255, 255, 0.28);
+background:
+    rgba(10, 13, 20, 0.68);
 
-    color: #ffffff;
+border-color:
+    rgba(255, 255, 255, 0.28);
+
+color: #ffffff;
+
+
 }
-
 
 .ad-card-menu svg {
 
-    width: 18px;
 
-    height: 18px;
+width: 18px;
 
-    fill: currentColor;
+height: 18px;
 
-    stroke: none;
+fill: currentColor;
+
+stroke: none;
+
+
 }
 
-
 /* =========================================================
-   CONTEÚDO DA PUBLICAÇÃO
+CONTEÚDO DA PUBLICAÇÃO
 
-   Tudo que vem depois da mídia.
+Tudo que vem depois da mídia.
 ========================================================= */
 
 .ad-card-conteudo {
 
-    width: 100%;
 
-    padding: 0;
+width: 100%;
 
-    margin: 0;
+padding: 0;
 
-    background: transparent;
+margin: 0;
+
+background: transparent;
+
+
 }
 
-
 /* =========================================================
-   TIPO DESTACADO DA PUBLICAÇÃO
+TIPO DESTACADO DA PUBLICAÇÃO
 ========================================================= */
 
 .ad-card-tipo-publicacao {
 
-    display: inline-flex;
 
-    align-items: center;
+display: inline-flex;
 
-    width: fit-content;
+align-items: center;
 
-    margin-top: 14px;
+width: fit-content;
 
-    padding: 5px 10px;
+margin-top: 14px;
 
-    border-radius: 7px;
+padding: 5px 10px;
 
-    background: #fff1df;
+border-radius: 7px;
 
-    color: #c96b00;
+background: #fff1df;
 
-    font-size: 12px;
+color: #c96b00;
 
-    font-weight: 800;
+font-size: 12px;
 
-    line-height: 1;
+font-weight: 800;
+
+line-height: 1;
+
+
 }
 
-
 /* =========================================================
-   ÍCONE DO TIPO DA PUBLICAÇÃO
+ÍCONE DO TIPO DA PUBLICAÇÃO
 ========================================================= */
 
 .ad-card-tipo-publicacao-icone {
 
-    display: inline-flex;
 
-    align-items: center;
+display: inline-flex;
 
-    justify-content: center;
+align-items: center;
 
-    margin-right: 5px;
+justify-content: center;
+
+margin-right: 5px;
+
+
 }
-
 
 .ad-card-tipo-publicacao-icone svg {
 
-    width: 13px;
 
-    height: 13px;
+width: 13px;
 
-    fill: currentColor;
+height: 13px;
 
-    stroke: none;
+fill: currentColor;
+
+stroke: none;
+
+
 }
 
-
 /* =========================================================
-   ESTILOS MUSICAIS
+ESTILOS MUSICAIS
 ========================================================= */
 
 .ad-card-estilos {
 
-    display: flex;
 
-    align-items: flex-start;
+display: flex;
 
-    width: 100%;
+align-items: flex-start;
 
-    margin-top: 8px;
+width: 100%;
 
-    gap: 6px;
+margin-top: 8px;
 
-    color: #5f6b7a;
+gap: 6px;
 
-    font-size: 13px;
+color: #5f6b7a;
 
-    font-weight: 600;
+font-size: 13px;
 
-    line-height: 1.4;
+font-weight: 600;
+
+line-height: 1.4;
+
+
 }
 
-
 /* =========================================================
-   ÍCONE DOS ESTILOS
+ÍCONE DOS ESTILOS
 ========================================================= */
 
 .ad-card-estilos-icone {
 
-    display: inline-flex;
 
-    align-items: center;
+display: inline-flex;
 
-    justify-content: center;
+align-items: center;
 
-    flex-shrink: 0;
+justify-content: center;
 
-    margin-top: 1px;
+flex-shrink: 0;
 
-    color: #6d4aff;
+margin-top: 1px;
+
+color: #6d4aff;
+
+
 }
-
 
 .ad-card-estilos-icone svg {
 
-    width: 15px;
 
-    height: 15px;
+width: 15px;
 
-    fill: none;
+height: 15px;
 
-    stroke: currentColor;
+fill: none;
 
-    stroke-width: 1.8;
+stroke: currentColor;
 
-    stroke-linecap: round;
+stroke-width: 1.8;
 
-    stroke-linejoin: round;
+stroke-linecap: round;
+
+stroke-linejoin: round;
+
+
 }
 
-
 /* =========================================================
-   LISTA DE ESTILOS
+LISTA DE ESTILOS
 ========================================================= */
 
 .ad-card-estilos-lista {
 
-    display: flex;
 
-    flex-wrap: wrap;
+display: flex;
 
-    align-items: center;
+flex-wrap: wrap;
 
-    gap: 5px;
+align-items: center;
 
-    min-width: 0;
+gap: 5px;
+
+min-width: 0;
+
+
 }
-
 
 .ad-card-estilo {
 
-    display: inline-block;
 
-    color: #5f6b7a;
+display: inline-block;
 
-    font-size: 13px;
+color: #5f6b7a;
 
-    font-weight: 600;
+font-size: 13px;
 
-    line-height: 1.4;
+font-weight: 600;
+
+line-height: 1.4;
+
+
 }
-
 
 .ad-card-estilo:not(:last-child)::after {
 
-    content: "·";
 
-    margin-left: 5px;
+content: "·";
 
-    color: #98a2b3;
+margin-left: 5px;
+
+color: #98a2b3;
+
+
 }
 
-
 /* =========================================================
-   TEXTO DA PUBLICAÇÃO
+TEXTO DA PUBLICAÇÃO
 ========================================================= */
 
 .ad-card-publicacao-texto {
 
-    width: 100%;
 
-    margin-top: 10px;
+width: 100%;
+
+margin-top: 10px;
+
+
 }
-
 
 .ad-card-descricao {
 
-    display: block;
 
-    width: 100%;
+display: block;
 
-    margin: 0;
+width: 100%;
 
-    color: #172033;
+margin: 0;
 
-    font-size: 15px;
+color: #172033;
 
-    font-weight: 400;
+font-size: 15px;
 
-    line-height: 1.48;
+font-weight: 400;
 
-    letter-spacing: -0.05px;
+line-height: 1.48;
 
-    overflow-wrap: anywhere;
+letter-spacing: -0.05px;
+
+overflow-wrap: anywhere;
+
+
 }
 
-
 /* =========================================================
-   INFORMAÇÕES COMPLEMENTARES
+INFORMAÇÕES COMPLEMENTARES
 
-   Compatibilidade com estruturas antigas.
+Compatibilidade com estruturas antigas.
 ========================================================= */
 
 .ad-card-informacoes {
 
-    display: none;
+
+display: none;
+
+
 }
 
-
 /* =========================================================
-   ELEMENTOS ANTIGOS DE METADADOS
+ELEMENTOS ANTIGOS DE METADADOS
 
-   Mantidos para compatibilidade.
+Mantidos para compatibilidade.
 ========================================================= */
 
 .ad-card-meta svg,
 .ad-card-estilos svg {
 
-    flex-shrink: 0;
 
-    width: 14px;
+flex-shrink: 0;
 
-    height: 14px;
+width: 14px;
 
-    fill: none;
+height: 14px;
 
-    stroke: currentColor;
+fill: none;
 
-    stroke-width: 2;
+stroke: currentColor;
 
-    stroke-linecap: round;
+stroke-width: 2;
 
-    stroke-linejoin: round;
+stroke-linecap: round;
+
+stroke-linejoin: round;
+
+
 }
 
-
 /* =========================================================
-   AÇÃO "VER PERFIL"
+AÇÃO "VER PERFIL"
 
-   Compatibilidade com estruturas antigas.
+Compatibilidade com estruturas antigas.
 ========================================================= */
 
 .ad-card-acao {
 
-    display: flex;
 
-    align-items: center;
+display: flex;
 
-    width: 100%;
+align-items: center;
 
-    margin-top: 8px;
+width: 100%;
+
+margin-top: 8px;
+
+
 }
-
 
 .ad-card-ver-perfil {
 
-    display: inline-flex;
 
-    align-items: center;
+display: inline-flex;
 
-    justify-content: center;
+align-items: center;
 
-    min-height: 30px;
+justify-content: center;
 
-    padding: 0 12px;
+min-height: 30px;
 
-    border:
-        1px solid rgba(109, 74, 255, 0.18);
+padding: 0 12px;
 
-    border-radius: 999px;
+border:
+    1px solid rgba(109, 74, 255, 0.18);
 
-    background: #f7f5ff;
+border-radius: 999px;
 
-    color: #5b3de0;
+background: #f7f5ff;
 
-    font-size: 11px;
+color: #5b3de0;
 
-    font-weight: 800;
+font-size: 11px;
 
-    line-height: 1;
+font-weight: 800;
 
-    text-decoration: none;
+line-height: 1;
 
-    transition:
-        background 0.18s ease,
-        color 0.18s ease;
+text-decoration: none;
+
+transition:
+    background 0.18s ease,
+    color 0.18s ease;
+
+
 }
-
 
 .ad-card-ver-perfil:hover {
 
-    background: #eeeaff;
 
-    color: #4e32ce;
+background: #eeeaff;
+
+color: #4e32ce;
+
+
 }
 
-
 /* =========================================================
-   AÇÕES SOCIAIS
+AÇÕES SOCIAIS
 ========================================================= */
 
 .ad-card-acoes {
 
-    display: flex;
 
-    align-items: center;
+display: flex;
 
-    justify-content: space-between;
+align-items: center;
 
-    width: 100%;
+justify-content: space-between;
 
-    min-height: 40px;
+width: 100%;
 
-    margin-top: 11px;
+min-height: 40px;
 
-    padding: 0;
+margin-top: 11px;
+
+padding: 0;
+
+
 }
-
 
 .ad-social-btn {
 
-    display: inline-flex;
 
-    align-items: center;
+display: inline-flex;
 
-    justify-content: center;
+align-items: center;
 
-    gap: 6px;
+justify-content: center;
 
-    min-width: 40px;
+gap: 6px;
 
-    min-height: 36px;
+min-width: 40px;
 
-    margin: 0;
+min-height: 36px;
 
-    padding: 6px 8px;
+margin: 0;
 
-    border: none;
+padding: 6px 8px;
 
-    border-radius: 999px;
+border: none;
 
-    background: transparent;
+border-radius: 999px;
 
-    color: #667085;
+background: transparent;
 
-    font-family: inherit;
+color: #667085;
 
-    font-size: 12px;
+font-family: inherit;
 
-    font-weight: 600;
+font-size: 12px;
 
-    line-height: 1;
+font-weight: 600;
 
-    cursor: pointer;
+line-height: 1;
 
-    transition:
-        background 0.18s ease,
-        color 0.18s ease;
+cursor: pointer;
+
+transition:
+    background 0.18s ease,
+    color 0.18s ease;
+
+
 }
-
 
 .ad-social-btn:hover {
 
-    background:
-        rgba(109, 74, 255, 0.08);
 
-    color: #6d4aff;
+background:
+    rgba(109, 74, 255, 0.08);
+
+color: #6d4aff;
+
+
 }
-
 
 .ad-social-btn:active {
 
-    background:
-        rgba(109, 74, 255, 0.13);
-}
 
+background:
+    rgba(109, 74, 255, 0.13);
+
+
+}
 
 .ad-social-btn svg {
 
-    flex-shrink: 0;
 
-    width: 17px;
+flex-shrink: 0;
 
-    height: 17px;
+width: 17px;
 
-    fill: none;
+height: 17px;
 
-    stroke: currentColor;
+fill: none;
 
-    stroke-width: 1.9;
+stroke: currentColor;
 
-    stroke-linecap: round;
+stroke-width: 1.9;
 
-    stroke-linejoin: round;
+stroke-linecap: round;
+
+stroke-linejoin: round;
+
+
 }
-
 
 .ad-social-label {
 
-    display: inline-block;
-}
 
+display: inline-block;
+
+
+}
 
 .ad-social-btn.ativo {
 
-    color: #6d4aff;
 
-    background:
-        rgba(109, 74, 255, 0.08);
+color: #6d4aff;
+
+background:
+    rgba(109, 74, 255, 0.08);
+
+
 }
 
-
 /* =========================================================
-   BOTÃO DE TELA CHEIA
+BOTÃO DE TELA CHEIA
 
-   O JS novo utiliza:
-   .ad-video-fullscreen
+O JS utiliza:
+.ad-video-fullscreen
 ========================================================= */
 
 .ad-video-fullscreen {
 
-    position: absolute;
 
-    right: 10px;
+position: absolute;
 
-    bottom: 10px;
+right: 10px;
 
-    z-index: 8;
+bottom: 10px;
 
-    display: flex;
+z-index: 8;
 
-    align-items: center;
+display: flex;
 
-    justify-content: center;
+align-items: center;
 
-    width: 34px;
+justify-content: center;
 
-    height: 34px;
+width: 34px;
 
-    padding: 0;
+height: 34px;
 
-    border:
-        1px solid rgba(255, 255, 255, 0.20);
+padding: 0;
 
-    border-radius: 50%;
+border:
+    1px solid rgba(255, 255, 255, 0.20);
 
-    background:
-        rgba(10, 13, 20, 0.58);
+border-radius: 50%;
 
-    backdrop-filter: blur(7px);
+background:
+    rgba(10, 13, 20, 0.58);
 
-    -webkit-backdrop-filter: blur(7px);
+backdrop-filter: blur(7px);
 
-    color: #ffffff;
+-webkit-backdrop-filter: blur(7px);
 
-    cursor: pointer;
+color: #ffffff;
 
-    opacity: 0;
+cursor: pointer;
 
-    visibility: hidden;
+opacity: 0;
 
-    transition:
-        opacity 0.20s ease,
-        background 0.20s ease;
+visibility: hidden;
+
+transition:
+    opacity 0.20s ease,
+    background 0.20s ease;
+
+
 }
-
 
 @media (hover: hover) and (pointer: fine) {
 
-    .ad-card-novo:hover .ad-video-fullscreen {
 
-        opacity: 1;
+.ad-card-novo:hover .ad-video-fullscreen {
 
-        visibility: visible;
-    }
+    opacity: 1;
+
+    visibility: visible;
 }
 
+
+}
 
 .ad-video-fullscreen:hover {
 
-    background:
-        rgba(10, 13, 20, 0.78);
-}
 
+background:
+    rgba(10, 13, 20, 0.78);
+
+
+}
 
 .ad-video-fullscreen svg {
 
-    width: 16px;
 
-    height: 16px;
+width: 16px;
 
-    fill: none;
+height: 16px;
 
-    stroke: currentColor;
+fill: none;
 
-    stroke-width: 2;
+stroke: currentColor;
 
-    stroke-linecap: round;
+stroke-width: 2;
 
-    stroke-linejoin: round;
+stroke-linecap: round;
+
+stroke-linejoin: round;
+
+
 }
 
-
 /* =========================================================
-   FOCO
+FOCO
 ========================================================= */
 
 .ad-media-identidade-link:focus-visible,
@@ -1229,470 +1362,526 @@
 .ad-card-ver-perfil:focus-visible,
 .ad-video-fullscreen:focus-visible {
 
-    outline:
-        2px solid #ffffff;
 
-    outline-offset: 2px;
+outline:
+    2px solid #ffffff;
+
+outline-offset: 2px;
+
+
 }
 
-
 /* =========================================================
-   DESKTOP
+DESKTOP
 ========================================================= */
 
 @media (min-width: 701px) {
 
-    .feed-profissionais {
 
-        width: 100%;
+.feed-profissionais {
 
-        max-width: 680px;
+    width: 100%;
 
-        margin: 0 auto;
-    }
+    max-width: 680px;
 
-
-    .ad-card-novo {
-
-        padding:
-            16px 4px 20px;
-    }
-
-
-    .ad-media-box {
-
-        border-radius: 14px;
-    }
-
-
-    .ad-video-container {
-
-        border-radius: 14px;
-    }
-
-
-    .ad-card-conteudo {
-
-        padding: 0;
-    }
-
-
-    .ad-card-acoes {
-
-        padding:
-            0 2px;
-    }
+    margin: 0 auto;
 }
 
 
+.ad-card-novo {
+
+    padding:
+        16px 4px 20px;
+}
+
+
+.ad-media-box {
+
+    border-radius: 14px;
+}
+
+
+.ad-video-container {
+
+    border-radius: 14px;
+}
+
+
+.ad-card-conteudo {
+
+    padding: 0;
+}
+
+
+.ad-card-acoes {
+
+    padding:
+        0 2px;
+}
+
+
+}
+
 /* =========================================================
-   TELAS MUITO LARGAS
+TELAS MUITO LARGAS
 ========================================================= */
 
 @media (min-width: 1200px) {
 
-    .feed-profissionais {
 
-        max-width: 700px;
-    }
+.feed-profissionais {
+
+    max-width: 700px;
 }
 
 
+}
+
 /* =========================================================
-   MOBILE
+MOBILE
 ========================================================= */
 
 @media (max-width: 700px) {
 
-    .feed-profissionais {
 
-        width: 100%;
+.feed-profissionais {
 
-        max-width: none;
+    width: 100%;
 
-        margin: 0;
-    }
+    max-width: none;
 
-
-    .ad-card-novo {
-
-        width: 100%;
-
-        padding:
-            12px 12px 14px;
-
-        border-radius: 0;
-
-        border-left: none;
-
-        border-right: none;
-
-        box-shadow: none;
-    }
-
-
-    /*
-     * A mídia escapa do padding interno da publicação.
-     */
-
-    .ad-media-box {
-
-        width: calc(100% + 24px);
-
-        margin-top: 0;
-
-        margin-left: -12px;
-
-        margin-right: -12px;
-
-        border-radius: 0;
-    }
-
-
-    .ad-video-container {
-
-        border-radius: 0;
-    }
-
-
-    .ad-media-link {
-
-        border-radius: 0;
-    }
-
-
-    .ad-media-img {
-
-        width: 100%;
-
-        border-radius: 0;
-    }
-
-
-    /*
-     * Vídeo no celular.
-     */
-
-    .ad-video-container .ad-media-video {
-
-        width: 100%;
-
-        height: 280px;
-
-        object-fit: cover;
-
-        object-position: center;
-    }
-
-
-    /*
-     * Identidade sobre a mídia.
-     */
-
-    .ad-media-identidade {
-
-        padding:
-            48px 14px 14px;
-    }
-
-
-    .ad-media-avatar-wrapper {
-
-        width: 40px;
-
-        height: 40px;
-
-        min-width: 40px;
-
-        min-height: 40px;
-    }
-
-
-    .ad-mini-avatar,
-    .ad-mini-avatar-fallback {
-
-        width: 40px;
-
-        height: 40px;
-
-        min-width: 40px;
-
-        min-height: 40px;
-    }
-
-
-    .ad-media-nome {
-
-        font-size: 14px;
-    }
-
-
-    .ad-media-tipo,
-    .ad-media-localizacao-inline {
-
-        font-size: 11px;
-    }
-
-
-    .ad-media-localizacao-inline svg {
-
-        width: 12px;
-
-        height: 12px;
-    }
-
-
-    /*
-     * Menu.
-     */
-
-    .ad-card-menu {
-
-        top: 10px;
-
-        right: 10px;
-
-        width: 32px;
-
-        height: 32px;
-    }
-
-
-    /*
-     * Tipo destacado.
-     */
-
-    .ad-card-tipo-publicacao {
-
-        margin-top: 12px;
-
-        font-size: 11px;
-
-        padding:
-            5px 9px;
-    }
-
-
-    /*
-     * Estilos musicais.
-     */
-
-    .ad-card-estilos {
-
-        margin-top: 7px;
-
-        font-size: 12px;
-    }
-
-
-    .ad-card-estilo {
-
-        font-size: 12px;
-    }
-
-
-    /*
-     * Descrição.
-     */
-
-    .ad-card-publicacao-texto {
-
-        margin-top: 9px;
-    }
-
-
-    .ad-card-descricao {
-
-        font-size: 14px;
-
-        line-height: 1.48;
-    }
-
-
-    /*
-     * Ações.
-     */
-
-    .ad-card-acoes {
-
-        min-height: 40px;
-
-        margin-top: 9px;
-    }
-
-
-    .ad-social-btn {
-
-        min-width: 36px;
-
-        min-height: 36px;
-
-        padding:
-            6px 7px;
-    }
-
-
-    .ad-social-label {
-
-        display: none;
-    }
-
-
-    .ad-social-btn svg {
-
-        width: 18px;
-
-        height: 18px;
-    }
-
-
-    /*
-     * O botão de tela cheia fica sempre disponível
-     * no celular.
-     */
-
-    .ad-video-fullscreen {
-
-        opacity: 1;
-
-        visibility: visible;
-
-        right: 10px;
-
-        bottom: 10px;
-    }
+    margin: 0;
 }
 
 
+/*
+ * IMPORTANTE:
+ *
+ * O padding superior foi removido para que a mídia
+ * comece diretamente no topo da publicação.
+ *
+ * O padding lateral continua existindo para que o
+ * conteúdo textual permaneça alinhado.
+ */
+
+.ad-card-novo {
+
+    width: 100%;
+
+    padding:
+        0 12px 14px;
+
+    border-radius: 0;
+
+    border-left: none;
+
+    border-right: none;
+
+    box-shadow: none;
+}
+
+
+/*
+ * A mídia escapa do padding interno da publicação.
+ *
+ * Resultado:
+ * - ocupa toda a largura;
+ * - encosta nas duas laterais;
+ * - começa diretamente no topo;
+ * - não deixa faixa branca acima do vídeo.
+ */
+
+.ad-media-box {
+
+    width: calc(100% + 24px);
+
+    margin-top: 0;
+
+    margin-left: -12px;
+
+    margin-right: -12px;
+
+    padding: 0;
+
+    border-radius: 0;
+}
+
+
+.ad-video-container {
+
+    margin: 0;
+
+    padding: 0;
+
+    border-radius: 0;
+}
+
+
+.ad-media-link {
+
+    margin: 0;
+
+    padding: 0;
+
+    border-radius: 0;
+}
+
+
+.ad-media-img {
+
+    width: 100%;
+
+    margin: 0;
+
+    padding: 0;
+
+    border-radius: 0;
+}
+
+
+/*
+ * Vídeo no celular.
+ */
+
+.ad-video-container .ad-media-video {
+
+    width: 100%;
+
+    height: 280px;
+
+    margin: 0;
+
+    padding: 0;
+
+    object-fit: cover;
+
+    object-position: center;
+}
+
+
+/*
+ * Identidade sobre a mídia.
+ */
+
+.ad-media-identidade {
+
+    padding:
+        48px 14px 14px;
+}
+
+
+.ad-media-avatar-wrapper {
+
+    width: 40px;
+
+    height: 40px;
+
+    min-width: 40px;
+
+    min-height: 40px;
+}
+
+
+.ad-mini-avatar,
+.ad-mini-avatar-fallback {
+
+    width: 40px;
+
+    height: 40px;
+
+    min-width: 40px;
+
+    min-height: 40px;
+}
+
+
+.ad-media-nome {
+
+    font-size: 14px;
+}
+
+
+.ad-media-tipo,
+.ad-media-localizacao-inline {
+
+    font-size: 11px;
+}
+
+
+.ad-media-localizacao-inline svg {
+
+    width: 12px;
+
+    height: 12px;
+}
+
+
+/*
+ * Menu.
+ */
+
+.ad-card-menu {
+
+    top: 10px;
+
+    right: 10px;
+
+    width: 32px;
+
+    height: 32px;
+}
+
+
+/*
+ * Tipo destacado.
+ */
+
+.ad-card-tipo-publicacao {
+
+    margin-top: 12px;
+
+    font-size: 11px;
+
+    padding:
+        5px 9px;
+}
+
+
+/*
+ * Estilos musicais.
+ */
+
+.ad-card-estilos {
+
+    margin-top: 7px;
+
+    font-size: 12px;
+}
+
+
+.ad-card-estilo {
+
+    font-size: 12px;
+}
+
+
+/*
+ * Descrição.
+ */
+
+.ad-card-publicacao-texto {
+
+    margin-top: 9px;
+}
+
+
+.ad-card-descricao {
+
+    font-size: 14px;
+
+    line-height: 1.48;
+}
+
+
+/*
+ * Ações.
+ */
+
+.ad-card-acoes {
+
+    min-height: 40px;
+
+    margin-top: 9px;
+}
+
+
+.ad-social-btn {
+
+    min-width: 36px;
+
+    min-height: 36px;
+
+    padding:
+        6px 7px;
+}
+
+
+.ad-social-label {
+
+    display: none;
+}
+
+
+.ad-social-btn svg {
+
+    width: 18px;
+
+    height: 18px;
+}
+
+
+/*
+ * O botão de tela cheia fica sempre disponível
+ * no celular.
+ */
+
+.ad-video-fullscreen {
+
+    opacity: 1;
+
+    visibility: visible;
+
+    right: 10px;
+
+    bottom: 10px;
+}
+
+
+}
+
 /* =========================================================
-   TELAS MUITO PEQUENAS
+TELAS MUITO PEQUENAS
 ========================================================= */
 
 @media (max-width: 380px) {
 
-    .ad-card-novo {
 
-        padding:
-            11px 10px 13px;
-    }
+/*
+ * Mantemos o mesmo comportamento:
+ * nenhum espaço acima da mídia.
+ */
 
+.ad-card-novo {
 
-    .ad-media-box {
-
-        width: calc(100% + 20px);
-
-        margin-left: -10px;
-
-        margin-right: -10px;
-    }
-
-
-    .ad-media-identidade {
-
-        padding:
-            44px 11px 12px;
-    }
-
-
-    .ad-media-avatar-wrapper {
-
-        width: 38px;
-
-        height: 38px;
-
-        min-width: 38px;
-
-        min-height: 38px;
-    }
-
-
-    .ad-mini-avatar,
-    .ad-mini-avatar-fallback {
-
-        width: 38px;
-
-        height: 38px;
-
-        min-width: 38px;
-
-        min-height: 38px;
-    }
-
-
-    .ad-media-nome {
-
-        font-size: 13px;
-    }
-
-
-    .ad-media-tipo,
-    .ad-media-localizacao-inline {
-
-        font-size: 10px;
-    }
-
-
-    .ad-media-localizacao-inline svg {
-
-        width: 11px;
-
-        height: 11px;
-    }
-
-
-    .ad-card-tipo-publicacao {
-
-        font-size: 10px;
-    }
-
-
-    .ad-card-estilos {
-
-        font-size: 11px;
-    }
-
-
-    .ad-card-estilo {
-
-        font-size: 11px;
-    }
-
-
-    .ad-card-descricao {
-
-        font-size: 13px;
-    }
-
-
-    .ad-social-btn {
-
-        min-width: 34px;
-
-        min-height: 34px;
-    }
+    padding:
+        0 0px 13px;
 }
 
 
+.ad-media-box {
+
+    width: calc(100% + 20px);
+
+    margin-top: 0;
+
+    margin-left: -10px;
+
+    margin-right: -10px;
+
+    padding: 0;
+}
+
+
+.ad-media-identidade {
+
+    padding:
+        44px 11px 12px;
+}
+
+
+.ad-media-avatar-wrapper {
+
+    width: 38px;
+
+    height: 38px;
+
+    min-width: 38px;
+
+    min-height: 38px;
+}
+
+
+.ad-mini-avatar,
+.ad-mini-avatar-fallback {
+
+    width: 38px;
+
+    height: 38px;
+
+    min-width: 38px;
+
+    min-height: 38px;
+}
+
+
+.ad-media-nome {
+
+    font-size: 13px;
+}
+
+
+.ad-media-tipo,
+.ad-media-localizacao-inline {
+
+    font-size: 10px;
+}
+
+
+.ad-media-localizacao-inline svg {
+
+    width: 11px;
+
+    height: 11px;
+}
+
+
+.ad-card-tipo-publicacao {
+
+    font-size: 10px;
+}
+
+
+.ad-card-estilos {
+
+    font-size: 11px;
+}
+
+
+.ad-card-estilo {
+
+    font-size: 11px;
+}
+
+
+.ad-card-descricao {
+
+    font-size: 13px;
+}
+
+
+.ad-social-btn {
+
+    min-width: 34px;
+
+    min-height: 34px;
+}
+
+
+}
+
 /* =========================================================
-   REDUÇÃO DE MOVIMENTO
+REDUÇÃO DE MOVIMENTO
 ========================================================= */
 
 @media (prefers-reduced-motion: reduce) {
 
-    .ad-card-novo,
-    .ad-media-img,
-    .ad-media-overlay,
-    .ad-card-ver-perfil,
-    .ad-social-btn,
-    .ad-card-menu,
-    .ad-video-fullscreen {
 
-        transition: none;
-    }
+.ad-card-novo,
+.ad-media-img,
+.ad-media-overlay,
+.ad-card-ver-perfil,
+.ad-social-btn,
+.ad-card-menu,
+.ad-video-fullscreen {
+
+    transition: none;
+}
 
 
-    .ad-card-novo:hover .ad-media-img {
+.ad-card-novo:hover .ad-media-img {
 
-        transform: none;
-    }
+    transform: none;
+}
+
+
 }
