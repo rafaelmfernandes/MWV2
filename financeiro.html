@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="theme-color"
+        content="#ffffff"
+    >
+
+    <title>Financeiro | MusicalWorld</title>
+
+    <!-- =====================================================
+         MUSICALWORLD — FINANCEIRO
+
+         Arquivo:
+         financeiro.html
+
+         Responsabilidade:
+         Estruturar a página financeira do usuário.
+
+         A página é única para todos os usuários do MusicalWorld.
+
+         Um mesmo usuário pode:
+         - contratar artistas;
+         - realizar pagamentos;
+         - prestar serviços;
+         - receber pagamentos;
+         - solicitar saques.
+
+         A diferenciação entre entrada e saída financeira
+         será determinada pelas movimentações relacionadas
+         aos contratos.
+
+         A integração com o Supabase será adicionada
+         posteriormente através dos módulos JavaScript.
+    ====================================================== -->
+
+    <!-- =====================================================
+         CSS ESPECÍFICO DO FINANCEIRO
+    ====================================================== -->
+
+    <link
+        rel="stylesheet"
+        href="css/financeiro/financeiro.css"
+    >
+
+</head>
+
+
+<body>
+
+    <!-- =====================================================
+         CONTAINER PRINCIPAL
+    ===================================================== -->
+
+    <div class="app-container">
+
+
+        <!-- =================================================
+             CABEÇALHO
+        ================================================= -->
+
+        <header class="navbar">
+
+            <div class="navbar-brand-area">
+
+                <a
+                    href="index.html"
+                    class="logo"
+                    aria-label="MusicalWorld"
+                >
+                    MusicalWorld
+                </a>
+
+            </div>
+
+
+            <div class="navbar-actions">
+
+                <!--
+                    Botão de voltar.
+                    A navegação poderá ser ajustada posteriormente
+                    para utilizar o histórico do navegador.
+                -->
+
+                <button
+                    type="button"
+                    class="nav-icon-btn financeiro-voltar"
+                    aria-label="Voltar"
+                >
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        aria-hidden="true"
+                    >
+
+                        <path d="M19 12H5"></path>
+
+                        <path d="M12 19l-7-7 7-7"></path>
+
+                    </svg>
+
+                </button>
+
+            </div>
+
+        </header>
+
+
+        <!-- =================================================
+             CONTEÚDO PRINCIPAL
+        ================================================= -->
+
+        <main class="financeiro-main">
+
+
+            <!-- =============================================
+                 CABEÇALHO DA PÁGINA
+            ============================================== -->
+
+            <section class="financeiro-header">
+
+                <div class="financeiro-header-texto">
+
+                    <span class="financeiro-eyebrow">
+                        Minha conta
+                    </span>
+
+                    <h1>
+                        Financeiro
+                    </h1>
+
+                    <p>
+                        Acompanhe seus pagamentos, recebimentos
+                        e movimentações no MusicalWorld.
+                    </p>
+
+                </div>
+
+            </section>
+
+
+            <!-- =============================================
+                 RESUMO FINANCEIRO
+            ============================================== -->
+
+            <section
+                class="financeiro-resumo"
+                aria-label="Resumo financeiro"
+            >
+
+
+                <!-- SALDO DISPONÍVEL -->
+
+                <article
+                    class="financeiro-card financeiro-card-principal"
+                >
+
+                    <div class="financeiro-card-topo">
+
+                        <div class="financeiro-card-icone">
+
+                            <svg
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                aria-hidden="true"
+                            >
+
+                                <rect
+                                    x="2"
+                                    y="5"
+                                    width="20"
+                                    height="14"
+                                    rx="2"
+                                ></rect>
+
+                                <line
+                                    x1="2"
+                                    y1="10"
+                                    x2="22"
+                                    y2="10"
+                                ></line>
+
+                            </svg>
+
+                        </div>
+
+                        <span class="financeiro-card-label">
+                            Saldo disponível
+                        </span>
+
+                    </div>
+
+
+                    <strong
+                        class="financeiro-valor"
+                        id="financeiro-saldo-disponivel"
+                    >
+                        R$ 0,00
+                    </strong>
+
+
+                    <p class="financeiro-card-descricao">
+                        Valor disponível para saque.
+                    </p>
+
+
+                    <button
+                        type="button"
+                        class="financeiro-btn-principal"
+                        id="btn-solicitar-saque"
+                    >
+
+                        Solicitar saque
+
+                    </button>
+
+                </article>
+
+
+                <!-- A RECEBER -->
+
+                <article class="financeiro-card">
+
+                    <div class="financeiro-card-topo">
+
+                        <div class="financeiro-card-icone">
+
+                            <svg
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                aria-hidden="true"
+                            >
+
+                                <path d="M12 2v20"></path>
+
+                                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H7"></path>
+
+                            </svg>
+
+                        </div>
+
+                        <span class="financeiro-card-label">
+                            A receber
+                        </span>
+
+                    </div>
+
+
+                    <strong
+                        class="financeiro-valor"
+                        id="financeiro-a-receber"
+                    >
+                        R$ 0,00
+                    </strong>
+
+
+                    <p class="financeiro-card-descricao">
+                        Valores de contratos ainda não liberados.
+                    </p>
+
+                </article>
+
+
+                <!-- TOTAL RECEBIDO -->
+
+                <article class="financeiro-card">
+
+                    <div class="financeiro-card-topo">
+
+                        <div class="financeiro-card-icone">
+
+                            <svg
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                aria-hidden="true"
+                            >
+
+                                <polyline
+                                    points="22 12 18 12 15 21 9 3 6 12 2 12"
+                                ></polyline>
+
+                            </svg>
+
+                        </div>
+
+                        <span class="financeiro-card-label">
+                            Total recebido
+                        </span>
+
+                    </div>
+
+
+                    <strong
+                        class="financeiro-valor"
+                        id="financeiro-total-recebido"
+                    >
+                        R$ 0,00
+                    </strong>
+
+
+                    <p class="financeiro-card-descricao">
+                        Total recebido através de contratos.
+                    </p>
+
+                </article>
+
+
+                <!-- TOTAL PAGO -->
+
+                <article class="financeiro-card">
+
+                    <div class="financeiro-card-topo">
+
+                        <div class="financeiro-card-icone">
+
+                            <svg
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                aria-hidden="true"
+                            >
+
+                                <path d="M12 20V4"></path>
+
+                                <path d="M6 10l6-6 6 6"></path>
+
+                            </svg>
+
+                        </div>
+
+                        <span class="financeiro-card-label">
+                            Total pago
+                        </span>
+
+                    </div>
+
+
+                    <strong
+                        class="financeiro-valor"
+                        id="financeiro-total-pago"
+                    >
+                        R$ 0,00
+                    </strong>
+
+
+                    <p class="financeiro-card-descricao">
+                        Total pago em contratações.
+                    </p>
+
+                </article>
+
+
+            </section>
+
+
+            <!-- =============================================
+                 MOVIMENTAÇÕES
+            ============================================== -->
+
+            <section class="financeiro-movimentacoes">
+
+
+                <div class="financeiro-secao-header">
+
+                    <div>
+
+                        <span class="financeiro-secao-eyebrow">
+                            Histórico
+                        </span>
+
+                        <h2>
+                            Movimentações
+                        </h2>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =========================================
+                     FILTROS
+                ========================================== -->
+
+                <div
+                    class="financeiro-filtros"
+                    role="tablist"
+                    aria-label="Filtrar movimentações"
+                >
+
+                    <button
+                        type="button"
+                        class="financeiro-filtro ativo"
+                        data-filtro="todas"
+                        role="tab"
+                        aria-selected="true"
+                    >
+                        Todas
+                    </button>
+
+                    <button
+                        type="button"
+                        class="financeiro-filtro"
+                        data-filtro="recebimentos"
+                        role="tab"
+                        aria-selected="false"
+                    >
+                        Recebimentos
+                    </button>
+
+                    <button
+                        type="button"
+                        class="financeiro-filtro"
+                        data-filtro="pagamentos"
+                        role="tab"
+                        aria-selected="false"
+                    >
+                        Pagamentos
+                    </button>
+
+                    <button
+                        type="button"
+                        class="financeiro-filtro"
+                        data-filtro="saques"
+                        role="tab"
+                        aria-selected="false"
+                    >
+                        Saques
+                    </button>
+
+                </div>
+
+
+                <!-- =========================================
+                     LISTA
+                ========================================== -->
+
+                <div
+                    class="financeiro-lista"
+                    id="financeiro-lista"
+                >
+
+
+                    <!--
+                        Estado inicial.
+
+                        Posteriormente este conteúdo será
+                        substituído pelos dados reais do Supabase.
+                    -->
+
+                    <div
+                        class="financeiro-vazio"
+                        id="financeiro-vazio"
+                    >
+
+                        <div class="financeiro-vazio-icone">
+
+                            <svg
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.8"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                aria-hidden="true"
+                            >
+
+                                <rect
+                                    x="3"
+                                    y="4"
+                                    width="18"
+                                    height="18"
+                                    rx="2"
+                                ></rect>
+
+                                <line
+                                    x1="16"
+                                    y1="2"
+                                    x2="16"
+                                    y2="6"
+                                ></line>
+
+                                <line
+                                    x1="8"
+                                    y1="2"
+                                    x2="8"
+                                    y2="6"
+                                ></line>
+
+                                <line
+                                    x1="3"
+                                    y1="10"
+                                    x2="21"
+                                    y2="10"
+                                ></line>
+
+                            </svg>
+
+                        </div>
+
+
+                        <h3>
+                            Nenhuma movimentação
+                        </h3>
+
+
+                        <p>
+                            Seus pagamentos, recebimentos e saques
+                            aparecerão aqui.
+                        </p>
+
+                    </div>
+
+
+                </div>
+
+
+            </section>
+
+
+            <!-- =============================================
+                 ÁREA DE SAQUES
+            ============================================== -->
+
+            <section class="financeiro-saques">
+
+
+                <div class="financeiro-secao-header">
+
+                    <div>
+
+                        <span class="financeiro-secao-eyebrow">
+                            Transferências
+                        </span>
+
+                        <h2>
+                            Saques
+                        </h2>
+
+                    </div>
+
+                </div>
+
+
+                <div class="financeiro-saque-card">
+
+
+                    <div class="financeiro-saque-icone">
+
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.8"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            aria-hidden="true"
+                        >
+
+                            <path d="M12 3v18"></path>
+
+                            <path d="M7 8l5-5 5 5"></path>
+
+                            <path d="M7 16l5 5 5-5"></path>
+
+                        </svg>
+
+                    </div>
+
+
+                    <div class="financeiro-saque-texto">
+
+                        <h3>
+                            Receba seus valores
+                        </h3>
+
+                        <p>
+                            Quando houver saldo disponível,
+                            você poderá solicitar um saque
+                            para sua conta cadastrada.
+                        </p>
+
+                    </div>
+
+
+                    <button
+                        type="button"
+                        class="financeiro-btn-secundario"
+                        id="btn-ver-saques"
+                    >
+                        Ver saques
+                    </button>
+
+
+                </div>
+
+            </section>
+
+
+        </main>
+
+
+        <!-- =================================================
+             MENU INFERIOR
+        ================================================= -->
+
+        <div id="menu-inferior-container"></div>
+
+
+    </div>
+
+
+    <!-- =====================================================
+         SCRIPTS
+    ===================================================== -->
+
+    <!-- Cliente/Supabase compartilhado -->
+
+    <script src="js/core/supabase.js"></script>
+
+
+    <!-- Componentes globais -->
+
+    <script src="js/components/menu-inferior.js"></script>
+
+
+    <!-- Financeiro -->
+
+    <script src="js/financeiro/financeiro.js"></script>
+
+
+</body>
+
+</html>
