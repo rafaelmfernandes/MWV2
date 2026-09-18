@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+
+<head>
+
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>Configurar conta | MusicalWorld</title>
+
+<!--
+    MUSICALWORLD — CONFIGURAÇÃO INICIAL DA CONTA
+
+    Responsabilidade:
+    - Apresentar o fluxo inicial de configuração da conta.
+    - Permitir escolher entre Contratante e Artista.
+    - Permitir escolher o tipo de artista.
+    - Confirmar os dados antes da criação do perfil.
+
+    Arquivos relacionados:
+    - css/configurar-conta.css
+    - js/auth/configurar-conta.js
+    - js/auth/Perfil.js
+    - js/core/SupabaseClient.js
+-->
+
+<link
+    rel="stylesheet"
+    href="css/configuracao-de-conta/configurar-conta.css"
+>
+
+<link
+    href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+>
+
+
+</head>
+
+<body>
+
+
+<main class="configurar-conta-page">
+
+    <section class="configurar-conta-container">
+
+        <!-- =====================================================
+             CABEÇALHO
+        ====================================================== -->
+
+        <header class="configurar-conta-header">
+
+            <div class="brand">
+
+                <span class="brand-name">
+                    MusicalWorld
+                </span>
+
+            </div>
+
+            <h1>
+                Vamos configurar sua conta
+            </h1>
+
+            <p>
+                Precisamos de algumas informações para preparar
+                seu perfil no MusicalWorld.
+            </p>
+
+        </header>
+
+
+        <!-- =====================================================
+             INDICADOR DE PROGRESSO
+        ====================================================== -->
+
+        <div
+            class="progresso-container"
+            aria-label="Progresso da configuração"
+        >
+
+            <div
+                class="progresso-etapa ativa"
+                data-progresso="1"
+            >
+
+                <span class="progresso-numero">
+                    1
+                </span>
+
+                <span class="progresso-label">
+                    Conta
+                </span>
+
+            </div>
+
+
+            <div class="progresso-linha"></div>
+
+
+            <div
+                class="progresso-etapa"
+                data-progresso="2"
+            >
+
+                <span class="progresso-numero">
+                    2
+                </span>
+
+                <span class="progresso-label">
+                    Perfil
+                </span>
+
+            </div>
+
+
+            <div class="progresso-linha"></div>
+
+
+            <div
+                class="progresso-etapa"
+                data-progresso="3"
+            >
+
+                <span class="progresso-numero">
+                    3
+                </span>
+
+                <span class="progresso-label">
+                    Confirmar
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             ÁREA PRINCIPAL
+        ====================================================== -->
+
+        <section class="configurar-card">
+
+
+            <!-- =================================================
+                 ETAPA 1 — TIPO DE CONTA
+            ================================================== -->
+
+            <div
+                id="etapa-1"
+                class="etapa ativa"
+            >
+
+                <div class="etapa-cabecalho">
+
+                    <span class="etapa-kicker">
+                        ETAPA 1
+                    </span>
+
+                    <h2>
+                        Como você pretende usar o MusicalWorld?
+                    </h2>
+
+                    <p>
+                        Escolha o tipo de conta que melhor representa
+                        o seu objetivo na plataforma.
+                    </p>
+
+                </div>
+
+
+                <div class="opcoes-conta">
+
+                    <button
+                        type="button"
+                        class="opcao-conta"
+                        data-tipo-perfil="contratante"
+                    >
+
+                        <span class="opcao-icone">
+
+                            <svg
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                            >
+
+                                <path
+                                    d="M20 21a8 8 0 0 0-16 0"
+                                />
+
+                                <circle
+                                    cx="12"
+                                    cy="7"
+                                    r="4"
+                                />
+
+                            </svg>
+
+                        </span>
+
+                        <span class="opcao-conteudo">
+
+                            <strong>
+                                Contratante
+                            </strong>
+
+                            <small>
+                                Quero contratar artistas para meus eventos.
+                            </small>
+
+                        </span>
+
+                        <span class="opcao-check">
+
+                            <svg
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                            >
+
+                                <path d="m5 12 4 4L19 6"/>
+
+                            </svg>
+
+                        </span>
+
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="opcao-conta"
+                        data-tipo-perfil="artista"
+                    >
+
+                        <span class="opcao-icone">
+
+                            <svg
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                            >
+
+                                <path
+                                    d="M9 18V5l12-2v13"
+                                />
+
+                                <circle
+                                    cx="6"
+                                    cy="18"
+                                    r="3"
+                                />
+
+                                <circle
+                                    cx="18"
+                                    cy="16"
+                                    r="3"
+                                />
+
+                            </svg>
+
+                        </span>
+
+                        <span class="opcao-conteudo">
+
+                            <strong>
+                                Artista
+                            </strong>
+
+                            <small>
+                                Quero divulgar meu trabalho e receber contratações.
+                            </small>
+
+                        </span>
+
+                        <span class="opcao-check">
+
+                            <svg
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                            >
+
+                                <path d="m5 12 4 4L19 6"/>
+
+                            </svg>
+
+                        </span>
+
+                    </button>
+
+                </div>
+
+
+                <div
+                    id="erro-etapa-1"
+                    class="mensagem-erro"
+                    role="alert"
+                ></div>
+
+            </div>
+
+
+            <!-- =================================================
+                 ETAPA 2 — PERFIL
+            ================================================== -->
+
+            <div
+                id="etapa-2"
+                class="etapa"
+            >
+
+                <div class="etapa-cabecalho">
+
+                    <span class="etapa-kicker">
+                        ETAPA 2
+                    </span>
+
+                    <h2>
+                        Conte um pouco sobre seu perfil
+                    </h2>
+
+                    <p>
+                        Essas informações serão usadas para preparar
+                        seu perfil inicial.
+                    </p>
+
+                </div>
+
+
+                <!-- =============================================
+                     ARTISTA
+                ============================================== -->
+
+                <div
+                    id="configuracao-artista"
+                    class="campo-grupo"
+                >
+
+                    <label for="tipo-artista">
+                        Qual é o seu tipo de atuação?
+                    </label>
+
+                    <select
+                        id="tipo-artista"
+                        name="tipo-artista"
+                    >
+
+                        <option value="">
+                            Selecione uma opção
+                        </option>
+
+                        <option value="Cantor(a)">
+                            Cantor(a)
+                        </option>
+
+                        <option value="Músico(a)">
+                            Músico(a)
+                        </option>
+
+                        <option value="Banda">
+                            Banda
+                        </option>
+
+                        <option value="Dupla musical">
+                            Dupla musical
+                        </option>
+
+                        <option value="DJ">
+                            DJ
+                        </option>
+
+                        <option value="Dançarino(a)">
+                            Dançarino(a)
+                        </option>
+
+                        <option value="Grupo de dança">
+                            Grupo de dança
+                        </option>
+
+                        <option value="MC">
+                            MC
+                        </option>
+
+                        <option value="Compositor(a)">
+                            Compositor(a)
+                        </option>
+
+                        <option value="Produtor(a) musical">
+                            Produtor(a) musical
+                        </option>
+
+                    </select>
+
+                    <div
+                        id="erro-tipo-artista"
+                        class="campo-erro"
+                        role="alert"
+                    ></div>
+
+                </div>
+
+
+                <!-- =============================================
+                     CONTRATANTE
+                ============================================== -->
+
+                <div
+                    id="configuracao-contratante"
+                    class="resumo-contratante"
+                >
+
+                    <div class="resumo-icone">
+
+                        <svg
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                        >
+
+                            <path
+                                d="M20 21a8 8 0 0 0-16 0"
+                            />
+
+                            <circle
+                                cx="12"
+                                cy="7"
+                                r="4"
+                            />
+
+                        </svg>
+
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            Conta de contratante
+                        </strong>
+
+                        <p>
+                            Você poderá encontrar artistas,
+                            visualizar perfis e realizar contratações.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="acoes-etapa">
+
+                    <button
+                        type="button"
+                        id="btn-voltar-etapa-1"
+                        class="btn-secundario"
+                    >
+                        Voltar
+                    </button>
+
+                    <button
+                        type="button"
+                        id="btn-continuar-etapa-2"
+                        class="btn-primario"
+                    >
+                        Continuar
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 ETAPA 3 — CONFIRMAÇÃO
+            ================================================== -->
+
+            <div
+                id="etapa-3"
+                class="etapa"
+            >
+
+                <div class="etapa-cabecalho">
+
+                    <span class="etapa-kicker">
+                        ETAPA 3
+                    </span>
+
+                    <h2>
+                        Confira seus dados
+                    </h2>
+
+                    <p>
+                        Tudo certo? Confirme para criar seu perfil.
+                    </p>
+
+                </div>
+
+
+                <div class="confirmacao">
+
+                    <div class="confirmacao-item">
+
+                        <span>
+                            Nome
+                        </span>
+
+                        <strong id="confirmacao-nome">
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <div class="confirmacao-item">
+
+                        <span>
+                            E-mail
+                        </span>
+
+                        <strong id="confirmacao-email">
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <div class="confirmacao-item">
+
+                        <span>
+                            Tipo de conta
+                        </span>
+
+                        <strong id="confirmacao-tipo">
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <div
+                        id="confirmacao-tipo-artista-container"
+                        class="confirmacao-item"
+                    >
+
+                        <span>
+                            Atuação
+                        </span>
+
+                        <strong id="confirmacao-tipo-artista">
+                            —
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="mensagem-configuracao"
+                    class="mensagem-configuracao"
+                    role="status"
+                    aria-live="polite"
+                ></div>
+
+
+                <div class="acoes-etapa">
+
+                    <button
+                        type="button"
+                        id="btn-voltar-etapa-2"
+                        class="btn-secundario"
+                    >
+                        Voltar
+                    </button>
+
+                    <button
+                        type="button"
+                        id="btn-concluir"
+                        class="btn-primario"
+                    >
+                        Concluir configuração
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 CARREGAMENTO
+            ================================================== -->
+
+            <div
+                id="estado-carregando"
+                class="estado-carregando"
+                aria-live="polite"
+            >
+
+                <span class="spinner"></span>
+
+                <span>
+                    Configurando sua conta...
+                </span>
+
+            </div>
+
+        </section>
+
+    </section>
+
+</main>
+
+
+<!-- =========================================================
+     SCRIPTS
+========================================================== -->
+
+<script
+    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"
+></script>
+
+<script src="js/core/SupabaseClient.js"></script>
+
+<script src="js/auth/Perfil.js"></script>
+
+<script src="js/auth/configurar-conta.js"></script>
+
+
+</body>
+
+</html>

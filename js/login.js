@@ -1,169 +1,716 @@
-function alternarAba(tipo) {
-const toggleContainer = document.querySelector('.auth-toggle-container');
-const tabLogin = document.getElementById('tab-login');
-const tabCadastro = document.getElementById('tab-cadastro');
-const containerConteudo = document.getElementById('auth-content-container');
+/* ============================================================
+   MUSICALWORLD — CONTROLADOR DA PÁGINA DE AUTENTICAÇÃO
+
+   Arquivo:
+   js/login.js
+
+   Responsabilidades:
+
+   - Controlar a interface da página de autenticação.
+   - Alternar entre Login e Cadastro.
+   - Montar os formulários.
+   - Validar visualmente os campos.
+   - Chamar o módulo Login.
+   - Chamar o módulo Cadastro.
+   - Exibir mensagens de erro na interface.
+   - Controlar o estado visual dos botões.
+   - Processar o retorno da autenticação social.
+   - Verificar se o usuário social já possui perfil.
+   - Direcionar usuários sociais para:
+       index.html
+       ou
+       configurar-conta.html
+
+   Regras de negócio de autenticação ficam em:
+   js/auth/Login.js
+
+   Regras de negócio de cadastro ficam em:
+   js/auth/Cadastro.js
+
+   Este arquivo é responsável pelo controle da interface
+   e pelo fluxo de navegação da página de autenticação.
+============================================================ */
 
 
-if (!toggleContainer || !tabLogin || !tabCadastro || !containerConteudo) {
-    console.error('❌ Elementos da autenticação não encontrados.');
-    return;
+/* ============================================================
+   CONTROLE INTERNO DO FLUXO DE AUTENTICAÇÃO
+============================================================ */
+
+/*
+   Evita que INITIAL_SESSION e SIGNED_IN processem o mesmo
+   usuário simultaneamente e provoquem dois redirecionamentos.
+*/
+let redirecionandoAposAutenticacao = false;
+
+
+/*
+   Identifica se a página está processando o retorno de um
+   fluxo OAuth.
+
+   O Supabase retorna para login.html depois do Google/Apple.
+   A presença de uma sessão já existente durante a inicialização
+   é suficiente para verificarmos o perfil.
+*/
+let processandoRetornoOAuth = false;
+
+
+/* ============================================================
+   CONTROLE VISUAL DOS ERROS
+============================================================ */
+
+/**
+ * Cria ou recupera a mensagem de erro de um campo.
+ */
+function obterElementoErroCampo(campo) {
+
+    if (!campo) {
+        return null;
+    }
+
+    const grupo =
+        campo.closest('.form-group');
+
+    if (!grupo) {
+        return null;
+    }
+
+    let mensagem =
+        grupo.querySelector('.auth-field-error');
+
+    if (!mensagem) {
+
+        mensagem =
+            document.createElement('div');
+
+        mensagem.className =
+            'auth-field-error';
+
+        grupo.appendChild(mensagem);
+    }
+
+    return mensagem;
 }
 
-if (tipo === 'login') {
 
-    toggleContainer.classList.remove('right');
+/**
+ * Exibe erro visual em um campo.
+ */
+function mostrarErroCampo(campo, mensagem) {
 
-    tabLogin.classList.add('active');
-    tabCadastro.classList.remove('active');
+    if (!campo) {
+        return;
+    }
 
-    containerConteudo.innerHTML = `
-        <form class="auth-form-pane" onsubmit="realizarLogin(event)">
+    campo.classList.add('input-error');
 
-            <div class="form-group">
-                <label>E-mail</label>
+    campo.setAttribute(
+        'aria-invalid',
+        'true'
+    );
 
-                <input
-                    type="email"
-                    name="email"
-                    class="input-custom"
-                    placeholder="seu@email.com"
-                    autocomplete="email"
-                    required>
-            </div>
+    const elementoErro =
+        obterElementoErroCampo(campo);
 
-            <div class="form-group">
-                <label>Senha</label>
+    if (elementoErro) {
 
-                <input
-                    type="password"
-                    name="senha"
-                    class="input-custom"
-                    placeholder="Sua senha"
-                    autocomplete="current-password"
-                    required>
-            </div>
+        elementoErro.textContent =
+            mensagem;
 
-            <div style="display: flex; justify-content: flex-end; margin-top: -4px;">
-                <a
-                    href="#"
-                    onclick="esqueciSenha(event)"
-                    class="link-esqueci-senha">
-                    Esqueceu a senha?
-                </a>
-            </div>
+        elementoErro.classList.add(
+            'visible'
+        );
 
-            <button
-                type="submit"
-                class="btn-continuar-proximo"
-                style="margin-top: 4px;">
-                Entrar na Conta
-            </button>
+        elementoErro.setAttribute(
+            'role',
+            'alert'
+        );
+    }
+}
 
-            <div class="auth-divider">
-                <span>ou entre com</span>
-            </div>
 
-            <div class="social-buttons-container">
+/**
+ * Remove erro visual de um campo.
+ */
+function limparErroCampo(campo) {
+
+    if (!campo) {
+        return;
+    }
+
+    campo.classList.remove(
+        'input-error'
+    );
+
+    campo.removeAttribute(
+        'aria-invalid'
+    );
+
+    const grupo =
+        campo.closest('.form-group');
+
+    if (!grupo) {
+        return;
+    }
+
+    const elementoErro =
+        grupo.querySelector(
+            '.auth-field-error'
+        );
+
+    if (elementoErro) {
+
+        elementoErro.textContent =
+            '';
+
+        elementoErro.classList.remove(
+            'visible'
+        );
+
+        elementoErro.removeAttribute(
+            'role'
+        );
+    }
+}
+
+
+/**
+ * Limpa todos os erros do formulário.
+ */
+function limparErrosFormulario(formulario) {
+
+    if (!formulario) {
+        return;
+    }
+
+    formulario
+        .querySelectorAll('.input-error')
+        .forEach(campo => {
+
+            limparErroCampo(campo);
+
+        });
+}
+
+
+/**
+ * Dá foco ao campo com erro.
+ */
+function focarCampoComErro(campo) {
+
+    if (!campo) {
+        return;
+    }
+
+    setTimeout(() => {
+
+        campo.focus();
+
+        if (
+            typeof campo.select === 'function' &&
+            campo.type !== 'password'
+        ) {
+
+            campo.select();
+        }
+
+    }, 50);
+}
+
+
+/**
+ * Remove o erro quando o usuário começa a corrigir o campo.
+ */
+function prepararLimpezaErroCampo(campo) {
+
+    if (
+        !campo ||
+        campo.dataset.erroPreparado === 'true'
+    ) {
+        return;
+    }
+
+    campo.dataset.erroPreparado =
+        'true';
+
+    campo.addEventListener(
+        'input',
+        () => {
+
+            if (
+                campo.classList.contains(
+                    'input-error'
+                )
+            ) {
+
+                limparErroCampo(campo);
+            }
+
+        }
+    );
+}
+
+
+/* ============================================================
+   REDIRECIONAMENTO APÓS AUTENTICAÇÃO
+============================================================ */
+
+/**
+ * Decide para onde um usuário autenticado deve ir.
+ *
+ * Fluxo:
+ *
+ * Usuário autenticado
+ *        ↓
+ * Login.verificarPerfilUsuario()
+ *        ↓
+ * ┌─────────────────────┐
+ * │                     │
+ * possui perfil     sem perfil
+ * │                     │
+ * ↓                     ↓
+ * index.html       configurar-conta.html
+ *
+ * Este método não cria perfil e não altera dados.
+ */
+async function processarUsuarioAutenticado(usuario) {
+
+    if (!usuario?.id) {
+
+        console.warn(
+            '⚠️ Não foi possível processar usuário autenticado.'
+        );
+
+        return;
+    }
+
+    if (redirecionandoAposAutenticacao) {
+
+        console.log(
+            '⏭️ Redirecionamento já está sendo processado.'
+        );
+
+        return;
+    }
+
+    redirecionandoAposAutenticacao =
+        true;
+
+    console.log(
+        '======================================'
+    );
+
+    console.log(
+        '🔐 PROCESSANDO USUÁRIO AUTENTICADO'
+    );
+
+    console.log(
+        '======================================'
+    );
+
+    console.log(
+        '👤 ID:',
+        usuario.id
+    );
+
+    console.log(
+        '📧 E-mail:',
+        usuario.email
+    );
+
+    try {
+
+        /* ====================================================
+           VERIFICAR PERFIL
+        ==================================================== */
+
+        const resultadoPerfil =
+            await Login.verificarPerfilUsuario(
+                usuario.id
+            );
+
+        if (!resultadoPerfil?.sucesso) {
+
+            console.error(
+                '❌ Não foi possível verificar o perfil:',
+                resultadoPerfil?.mensagem
+            );
+
+            /*
+               A consulta falhou.
+
+               Não redirecionamos para configurar-conta.html
+               porque isso poderia fazer um usuário que já possui
+               perfil criar um fluxo incorreto.
+
+               Liberamos o controle para uma nova tentativa.
+            */
+            redirecionandoAposAutenticacao =
+                false;
+
+            return;
+        }
+
+        /* ====================================================
+           USUÁRIO JÁ POSSUI PERFIL
+        ==================================================== */
+
+        if (resultadoPerfil.possuiPerfil) {
+
+            console.log(
+                '✅ Usuário já possui perfil.'
+            );
+
+            console.log(
+                '👤 Perfil:',
+                resultadoPerfil.perfil
+            );
+
+            console.log(
+                '➡️ Redirecionando para index.html...'
+            );
+
+            window.location.href =
+                'index.html';
+
+            return;
+        }
+
+        /* ====================================================
+           USUÁRIO AINDA NÃO POSSUI PERFIL
+        ==================================================== */
+
+        console.log(
+            '🆕 Usuário autenticado sem perfil.'
+        );
+
+        console.log(
+            '➡️ Redirecionando para configurar-conta.html...'
+        );
+
+        window.location.href =
+            'configurar-conta.html';
+
+    } catch (erro) {
+
+        console.error(
+            '❌ Erro ao processar usuário autenticado:',
+            erro
+        );
+
+        /*
+           Permite uma nova tentativa caso ocorra uma falha
+           inesperada durante a verificação.
+        */
+        redirecionandoAposAutenticacao =
+            false;
+    }
+}
+
+
+/* ============================================================
+   ALTERNAR LOGIN / CADASTRO
+============================================================ */
+
+function alternarAba(tipo) {
+
+    const toggleContainer =
+        document.querySelector(
+            '.auth-toggle-container'
+        );
+
+    const tabLogin =
+        document.getElementById(
+            'tab-login'
+        );
+
+    const tabCadastro =
+        document.getElementById(
+            'tab-cadastro'
+        );
+
+    const containerConteudo =
+        document.getElementById(
+            'auth-content-container'
+        );
+
+    if (
+        !toggleContainer ||
+        !tabLogin ||
+        !tabCadastro ||
+        !containerConteudo
+    ) {
+
+        console.error(
+            '❌ Elementos da autenticação não encontrados.'
+        );
+
+        return;
+    }
+
+
+    /* ========================================================
+       LOGIN
+    ======================================================== */
+
+    if (tipo === 'login') {
+
+        toggleContainer.classList.remove(
+            'right'
+        );
+
+        tabLogin.classList.add(
+            'active'
+        );
+
+        tabCadastro.classList.remove(
+            'active'
+        );
+
+        containerConteudo.innerHTML = `
+
+            <form
+                class="auth-form-pane"
+                onsubmit="realizarLogin(event)"
+                novalidate
+            >
+
+                <div class="form-group">
+
+                    <label for="login-email">
+                        E-mail
+                    </label>
+
+                    <input
+                        type="email"
+                        id="login-email"
+                        name="email"
+                        class="input-custom"
+                        placeholder="seu@email.com"
+                        autocomplete="email"
+                        required
+                    >
+
+                </div>
+
+                <div class="form-group">
+
+                    <label for="login-senha">
+                        Senha
+                    </label>
+
+                    <input
+                        type="password"
+                        id="login-senha"
+                        name="senha"
+                        class="input-custom"
+                        placeholder="Sua senha"
+                        autocomplete="current-password"
+                        required
+                    >
+
+                </div>
+
+                <div
+                    style="
+                        display: flex;
+                        justify-content: flex-end;
+                        margin-top: -4px;
+                    "
+                >
+
+                    <a
+                        href="#"
+                        onclick="esqueciSenha(event)"
+                        class="link-esqueci-senha"
+                    >
+                        Esqueceu a senha?
+                    </a>
+
+                </div>
 
                 <button
-                    type="button"
-                    class="btn-social"
-                    onclick="loginSocial('Google')">
-
-                    <svg viewBox="0 0 24 24" style="width: 16px; height: 16px;">
-                        <path
-                            fill="#4285F4"
-                            d="M23.745 12.27c-.07-.84-.63-1.56-1.42-1.87H12v4.74h6.58c-.3 1.54-1.67 2.69-3.28 2.69-1.99 0-3.6-1.61-3.6-3.6s1.61-3.6 3.6-3.6c.92 0 1.76.35 2.4 1l3.54-3.54c-1.39-1.3-3.22-2.1-5.94-2.1-4.97 0-9 4.03-9 9s4.03 9 9 9c4.97 0 9-4.03 9-9 0-.25-.03-.5-.05-.73z"/>
-                    </svg>
-
-                    Google
+                    type="submit"
+                    class="btn-continuar-proximo"
+                    style="margin-top: 4px;"
+                >
+                    Entrar na Conta
                 </button>
 
-                <button
-                    type="button"
-                    class="btn-social"
-                    onclick="loginSocial('Apple')">
+                <div class="auth-divider">
 
-                    <svg viewBox="0 0 24 24" style="width: 16px; height: 16px;">
-                        <path
-                            fill="#0f172a"
-                            d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 5.56c.57-.69 0-1.63 0-1.63s-1.01.12-1.67.8c-.59.61-.75 1.51-.7 1.55.53.04 1.34-.33 1.81-.72z"/>
-                    </svg>
+                    <span>
+                        ou entre com
+                    </span>
 
-                    Apple
-                </button>
+                </div>
 
-            </div>
+                <div class="social-buttons-container">
 
-        </form>
-    `;
+                    <button
+                        type="button"
+                        class="btn-social"
+                        onclick="loginSocial('Google')"
+                    >
 
-} else {
+                        <svg
+                            viewBox="0 0 24 24"
+                            style="
+                                width: 16px;
+                                height: 16px;
+                            "
+                        >
 
-    toggleContainer.classList.add('right');
+                            <path
+                                fill="#4285F4"
+                                d="M23.745 12.27c-.07-.84-.63-1.56-1.42-1.87H12v4.74h6.58c-.3 1.54-1.67 2.69-3.28 2.69-1.99 0-3.6-1.61-3.6-3.6s1.61-3.6 3.6-3.6c.92 0 1.76.35 2.4 1l3.54-3.54c-1.39-1.3-3.22-2.1-5.94-2.1-4.97 0-9 4.03-9 9s4.03 9 9 9c4.97 0 9-4.03 9-9 0-.25-.03-.5-.05-.73z"
+                            />
 
-    tabCadastro.classList.add('active');
-    tabLogin.classList.remove('active');
+                        </svg>
+
+                        Google
+
+                    </button>
+
+                    <button
+                        type="button"
+                        class="btn-social"
+                        onclick="loginSocial('Apple')"
+                    >
+
+                        <svg
+                            viewBox="0 0 24 24"
+                            style="
+                                width: 16px;
+                                height: 16px;
+                            "
+                        >
+
+                            <path
+                                fill="#0f172a"
+                                d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51.78 0 2.26-1.07 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 5.56c.57-.69 0-1.63 0-1.63s-1.01.12-1.67.8-.75 1.51-.7 1.55c.53.04 1.34-.33 1.81-.72z"
+                            />
+
+                        </svg>
+
+                        Apple
+
+                    </button>
+
+                </div>
+
+            </form>
+        `;
+
+        const email =
+            document.querySelector(
+                '#login-email'
+            );
+
+        const senha =
+            document.querySelector(
+                '#login-senha'
+            );
+
+        prepararLimpezaErroCampo(email);
+        prepararLimpezaErroCampo(senha);
+
+        return;
+    }
+
+
+    /* ========================================================
+       CADASTRO
+    ======================================================== */
+
+    toggleContainer.classList.add(
+        'right'
+    );
+
+    tabCadastro.classList.add(
+        'active'
+    );
+
+    tabLogin.classList.remove(
+        'active'
+    );
 
     containerConteudo.innerHTML = `
+
         <form
             class="auth-form-pane"
             onsubmit="realizarCadastro(event)"
-            style="margin-top: 14px;">
+            style="margin-top: 14px;"
+            novalidate
+        >
 
             <div class="form-group">
-                <label>Nome Completo</label>
+
+                <label for="cadastro-nome">
+                    Nome Completo
+                </label>
 
                 <input
                     type="text"
+                    id="cadastro-nome"
                     name="nome"
                     class="input-custom"
                     placeholder="Seu nome"
                     autocomplete="name"
-                    required>
+                    required
+                >
+
             </div>
 
             <div class="form-group">
-                <label>E-mail</label>
+
+                <label for="cadastro-email">
+                    E-mail
+                </label>
 
                 <input
                     type="email"
+                    id="cadastro-email"
                     name="email"
                     class="input-custom"
                     placeholder="seu@email.com"
                     autocomplete="email"
-                    required>
+                    required
+                >
+
             </div>
 
             <div class="form-group">
-                <label>Criar Senha</label>
+
+                <label for="cadastro-senha">
+                    Criar Senha
+                </label>
 
                 <input
                     type="password"
+                    id="cadastro-senha"
                     name="senha"
                     class="input-custom"
                     placeholder="Mínimo 6 caracteres"
                     autocomplete="new-password"
                     minlength="6"
-                    required>
-            </div>
+                    required
+                >
 
-            <!-- ==========================================
-                 OPÇÃO DE ARTISTA
-            =========================================== -->
+            </div>
 
             <div class="cadastro-artista-opcao">
 
                 <label
                     for="sou-artista"
-                    class="cadastro-artista-label">
+                    class="cadastro-artista-label"
+                >
 
                     <input
                         type="checkbox"
                         id="sou-artista"
                         name="souArtista"
-                        onchange="alternarTipoArtista()">
+                        onchange="alternarTipoArtista()"
+                    >
 
                     <span>
                         Sou artista
@@ -178,14 +725,11 @@ if (tipo === 'login') {
 
             </div>
 
-            <!-- ==========================================
-                 TIPO DE ARTISTA
-            =========================================== -->
-
             <div
                 id="tipo-artista-container"
                 class="form-group cadastro-tipo-artista"
-                style="display: none;">
+                style="display: none;"
+            >
 
                 <label for="tipo-artista">
                     Tipo de artista
@@ -194,7 +738,8 @@ if (tipo === 'login') {
                 <select
                     id="tipo-artista"
                     name="tipoArtista"
-                    class="input-custom">
+                    class="input-custom"
+                >
 
                     <option value="">
                         Selecione seu tipo de artista
@@ -248,7 +793,8 @@ if (tipo === 'login') {
                         margin-top: 6px;
                         color: #64748b;
                         font-size: 12px;
-                    ">
+                    "
+                >
                     Você poderá completar seu perfil artístico depois.
                 </small>
 
@@ -257,12 +803,17 @@ if (tipo === 'login') {
             <button
                 type="submit"
                 class="btn-continuar-proximo"
-                style="margin-top: 4px;">
+                style="margin-top: 4px;"
+            >
                 Criar Conta
             </button>
 
             <div class="auth-divider">
-                <span>ou cadastre-se com</span>
+
+                <span>
+                    ou cadastre-se com
+                </span>
+
             </div>
 
             <div class="social-buttons-container">
@@ -270,29 +821,21 @@ if (tipo === 'login') {
                 <button
                     type="button"
                     class="btn-social"
-                    onclick="loginSocial('Google')">
-
-                    <svg viewBox="0 0 24 24" style="width: 16px; height: 16px;">
-                        <path
-                            fill="#4285F4"
-                            d="M23.745 12.27c-.07-.84-.63-1.56-1.42-1.87H12v4.74h6.58c-.3 1.54-1.67 2.69-3.28 2.69-1.99 0-3.6-1.61-3.6-3.6s1.61-3.6 3.6-3.6c.92 0 1.76.35 2.4 1l3.54-3.54c-1.39-1.3-3.22-2.1-5.94-2.1-4.97 0-9 4.03-9 9s4.03 9 9 9c4.97 0 9-4.03 9-9 0-.25-.03-.5-.05-.73z"/>
-                    </svg>
+                    onclick="loginSocial('Google')"
+                >
 
                     Google
+
                 </button>
 
                 <button
                     type="button"
                     class="btn-social"
-                    onclick="loginSocial('Apple')">
-
-                    <svg viewBox="0 0 24 24" style="width: 16px; height: 16px;">
-                        <path
-                            fill="#0f172a"
-                            d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 5.56c.57-.69 0-1.63 0-1.63s-1.01.12-1.67.8-.75 1.51-.7 1.55c.53.04 1.34-.33 1.81-.72z"/>
-                    </svg>
+                    onclick="loginSocial('Apple')"
+                >
 
                     Apple
+
                 </button>
 
             </div>
@@ -302,779 +845,785 @@ if (tipo === 'login') {
 }
 
 
-}
-
-// ============================================================
-// ALTERNAR TIPO DE ARTISTA
-// ============================================================
+/* ============================================================
+   TIPO DE ARTISTA
+============================================================ */
 
 function alternarTipoArtista() {
 
-
-const checkbox =
-    document.getElementById('sou-artista');
-
-const container =
-    document.getElementById('tipo-artista-container');
-
-const select =
-    document.getElementById('tipo-artista');
-
-if (!checkbox || !container || !select) {
-    console.error(
-        '❌ Elementos do tipo de artista não encontrados.'
-    );
-
-    return;
-}
-
-if (checkbox.checked) {
-
-    container.style.display = 'block';
-
-    select.required = true;
-
-} else {
-
-    container.style.display = 'none';
-
-    select.required = false;
-
-    select.value = '';
-}
-
-
-}
-
-// ============================================================
-// LOGIN
-// ============================================================
-
-async function realizarLogin(e) {
-
-
-e.preventDefault();
-
-const formulario = e.target;
-const botao = formulario.querySelector('button[type="submit"]');
-
-const email =
-    formulario.querySelector('input[name="email"]')?.value
-        .trim()
-        .toLowerCase() || '';
-
-const senha =
-    formulario.querySelector('input[name="senha"]')?.value || '';
-
-if (!email || !senha) {
-    alert('Informe seu e-mail e sua senha.');
-    return;
-}
-
-if (botao) {
-    botao.disabled = true;
-    botao.textContent = 'Entrando...';
-}
-
-try {
-
-    console.log('======================================');
-    console.log('🔐 INICIANDO LOGIN');
-    console.log('======================================');
-    console.log('📧 E-mail:', email);
-
-    const {
-        data,
-        error
-    } = await supabaseClient.auth.signInWithPassword({
-        email: email,
-        password: senha
-    });
-
-    if (error) {
-
-        console.error('❌ Erro no login:', error);
-
-        const mensagem =
-            (error.message || '').toLowerCase();
-
-        if (
-            mensagem.includes('invalid login credentials') ||
-            mensagem.includes('invalid credentials')
-        ) {
-
-            alert('E-mail ou senha incorretos.');
-
-        } else if (
-            mensagem.includes('email not confirmed')
-        ) {
-
-            alert('Seu e-mail ainda não foi confirmado.');
-
-        } else {
-
-            alert(
-                'Não foi possível entrar na conta.\n\n' +
-                (error.message || 'Tente novamente.')
-            );
-        }
-
-        return;
-    }
-
-    if (!data?.session || !data?.user) {
-
-        console.error(
-            '❌ Login retornou sem sessão ou usuário:',
-            data
+    const checkbox =
+        document.getElementById(
+            'sou-artista'
         );
 
-        alert(
-            'O login foi processado, mas não foi possível criar a sessão.'
+    const container =
+        document.getElementById(
+            'tipo-artista-container'
         );
 
-        return;
-    }
-
-    console.log('======================================');
-    console.log('✅ LOGIN REALIZADO COM SUCESSO');
-    console.log('======================================');
-
-    console.log('👤 Usuário:', data.user);
-    console.log('🆔 ID:', data.user.id);
-    console.log('📧 E-mail:', data.user.email);
-    console.log('🔐 Sessão criada:', !!data.session);
-
-    // ========================================================
-    // SALVAR DADOS BÁSICOS DA SESSÃO LOCALMENTE
-    // ========================================================
-
-    try {
-
-        localStorage.setItem(
-            'musicalworld_usuario_id',
-            data.user.id
+    const select =
+        document.getElementById(
+            'tipo-artista'
         );
-
-        localStorage.setItem(
-            'musicalworld_usuario_email',
-            data.user.email || email
-        );
-
-    } catch (erroStorage) {
-
-        console.warn(
-            '⚠️ Não foi possível salvar dados auxiliares no localStorage:',
-            erroStorage
-        );
-    }
-
-    // ========================================================
-    // CONFIRMAR SESSÃO ATRAVÉS DO MÓDULO Sessao
-    // ========================================================
-
-    if (window.Sessao) {
-
-        const sessaoAtual =
-            await Sessao.obter();
-
-        if (sessaoAtual) {
-
-            console.log(
-                '🔐 Sessão confirmada pelo módulo Sessao.'
-            );
-
-            console.log(
-                '👤 Usuário da sessão:',
-                sessaoAtual.user
-            );
-
-        } else {
-
-            console.warn(
-                '⚠️ Login realizado, mas Sessao.obter() não retornou sessão.'
-            );
-        }
-
-    } else {
-
-        console.warn(
-            '⚠️ Módulo Sessao não encontrado. Verifique Sessao.js.'
-        );
-    }
-
-    // ========================================================
-    // REDIRECIONAMENTO
-    // ========================================================
-
-    console.log(
-        '➡️ Redirecionando para index.html...'
-    );
-
-    const destinoSalvo = null;
-
-    if (destinoSalvo) {
-
-        console.log(
-            '📍 Destino encontrado após login:',
-            destinoSalvo
-        );
-
-        sessionStorage.removeItem(
-            'musicalworld_destino_login'
-        );
-
-        window.location.href =
-            destinoSalvo;
-
-    } else {
-
-        console.log(
-            '🏠 Nenhum destino salvo. Indo para o início.'
-        );
-
-        window.location.href =
-            'index.html';
-    }
-
-} catch (erro) {
-
-    console.error(
-        '❌ Erro inesperado no login:',
-        erro
-    );
-
-    alert(
-        'Ocorreu um erro inesperado ao entrar na conta.'
-    );
-
-} finally {
-
-    if (botao) {
-
-        botao.disabled = false;
-        botao.textContent = 'Entrar na Conta';
-
-    }
-}
-
-
-}
-
-// ============================================================
-// CADASTRO
-// ============================================================
-
-async function realizarCadastro(e) {
-
-
-e.preventDefault();
-
-const formulario = e.target;
-const botao = formulario.querySelector('button[type="submit"]');
-
-const nome =
-    formulario.querySelector('input[name="nome"]')?.value
-        .trim() || '';
-
-const email =
-    formulario.querySelector('input[name="email"]')?.value
-        .trim()
-        .toLowerCase() || '';
-
-const senha =
-    formulario.querySelector('input[name="senha"]')?.value || '';
-
-const souArtista =
-    formulario.querySelector(
-        'input[name="souArtista"]'
-    )?.checked === true;
-
-const tipoArtista =
-    formulario.querySelector(
-        'select[name="tipoArtista"]'
-    )?.value
-        .trim() || '';
-
-// ========================================================
-// VALIDAÇÕES
-// ========================================================
-
-if (!nome) {
-
-    alert('Informe seu nome.');
-    return;
-}
-
-if (!email) {
-
-    alert('Informe seu e-mail.');
-    return;
-}
-
-if (!senha || senha.length < 6) {
-
-    alert(
-        'A senha deve ter pelo menos 6 caracteres.'
-    );
-
-    return;
-}
-
-if (souArtista && !tipoArtista) {
-
-    alert(
-        'Selecione seu tipo de artista.'
-    );
-
-    formulario
-        .querySelector('select[name="tipoArtista"]')
-        ?.focus();
-
-    return;
-}
-
-// ========================================================
-// DEFINIR TIPO DE PERFIL
-// ========================================================
-
-const tipoPerfil =
-    souArtista
-        ? 'artista'
-        : 'contratante';
-
-console.log('📝 Iniciando cadastro oficial do MusicalWorld...');
-console.log('👤 Nome:', nome);
-console.log('📧 E-mail:', email);
-console.log('🎭 Tipo de perfil:', tipoPerfil);
-console.log(
-    '🎤 Tipo de artista:',
-    souArtista
-        ? tipoArtista
-        : 'Não é artista'
-);
-
-// ========================================================
-// DADOS ENVIADOS PARA A EDGE FUNCTION
-// ========================================================
-
-const dadosCadastro = {
-    nome,
-    email,
-    senha,
-    tipoPerfil,
-    tipoArtista: souArtista
-        ? tipoArtista
-        : null
-};
-
-console.log(
-    '📦 Dados preparados para criar-conta:',
-    {
-        nome: dadosCadastro.nome,
-        email: dadosCadastro.email,
-        tipoPerfil: dadosCadastro.tipoPerfil,
-        tipoArtista: dadosCadastro.tipoArtista
-    }
-);
-
-if (botao) {
-
-    botao.disabled = true;
-    botao.textContent = 'Criando conta...';
-}
-
-try {
-
-    // =====================================================
-    // CHAMADA DA EDGE FUNCTION OFICIAL
-    // =====================================================
-
-    const resposta = await fetch(
-        `${SUPABASE_URL}/functions/v1/criar-conta`,
-        {
-            method: 'POST',
-
-            headers: {
-                'Content-Type': 'application/json',
-                'apikey': SUPABASE_ANON_KEY,
-                'Authorization':
-                    `Bearer ${SUPABASE_ANON_KEY}`
-            },
-
-            body: JSON.stringify(dadosCadastro)
-        }
-    );
-
-    let resultado;
-
-    try {
-
-        resultado =
-            await resposta.json();
-
-    } catch {
-
-        resultado = null;
-    }
-
-    console.log(
-        '📨 Resposta da criar-conta:',
-        resultado
-    );
-
-    // =====================================================
-    // ERRO NO CADASTRO
-    // =====================================================
 
     if (
-        !resposta.ok ||
-        !resultado?.sucesso
+        !checkbox ||
+        !container ||
+        !select
     ) {
 
         console.error(
-            '❌ A Edge Function recusou o cadastro:',
-            resultado
+            '❌ Elementos do tipo de artista não encontrados.'
         );
 
-        if (resposta.status === 409) {
+        return;
+    }
 
-            alert(
-                resultado?.mensagem ||
-                'Este e-mail já está cadastrado.'
+    if (checkbox.checked) {
+
+        container.style.display =
+            'block';
+
+        select.required =
+            true;
+
+    } else {
+
+        container.style.display =
+            'none';
+
+        select.required =
+            false;
+
+        select.value =
+            '';
+    }
+}
+
+
+/* ============================================================
+   REALIZAR LOGIN
+============================================================ */
+
+async function realizarLogin(e) {
+
+    e.preventDefault();
+
+    const formulario =
+        e.target;
+
+    const botao =
+        formulario.querySelector(
+            'button[type="submit"]'
+        );
+
+    const campoEmail =
+        formulario.querySelector(
+            'input[name="email"]'
+        );
+
+    const campoSenha =
+        formulario.querySelector(
+            'input[name="senha"]'
+        );
+
+    prepararLimpezaErroCampo(
+        campoEmail
+    );
+
+    prepararLimpezaErroCampo(
+        campoSenha
+    );
+
+    limparErrosFormulario(
+        formulario
+    );
+
+    const email =
+        campoEmail?.value
+            .trim()
+            .toLowerCase() || '';
+
+    const senha =
+        campoSenha?.value || '';
+
+
+    /* ========================================================
+       VALIDAÇÃO LOCAL
+    ======================================================== */
+
+    if (!email) {
+
+        mostrarErroCampo(
+            campoEmail,
+            'Informe seu e-mail.'
+        );
+
+        focarCampoComErro(
+            campoEmail
+        );
+
+        return;
+    }
+
+    if (!campoEmail.checkValidity()) {
+
+        mostrarErroCampo(
+            campoEmail,
+            'Informe um e-mail válido.'
+        );
+
+        focarCampoComErro(
+            campoEmail
+        );
+
+        return;
+    }
+
+    if (!senha) {
+
+        mostrarErroCampo(
+            campoSenha,
+            'Informe sua senha.'
+        );
+
+        focarCampoComErro(
+            campoSenha
+        );
+
+        return;
+    }
+
+
+    if (botao) {
+
+        botao.disabled =
+            true;
+
+        botao.textContent =
+            'Entrando...';
+    }
+
+
+    try {
+
+        const resultado =
+            await Login.entrar({
+                email,
+                senha
+            });
+
+        if (!resultado?.sucesso) {
+
+            if (
+                resultado?.tipo === 'email'
+            ) {
+
+                mostrarErroCampo(
+                    campoEmail,
+                    resultado.mensagem
+                );
+
+                focarCampoComErro(
+                    campoEmail
+                );
+
+            } else {
+
+                mostrarErroCampo(
+                    campoSenha,
+                    resultado?.mensagem ||
+                    'E-mail ou senha incorretos.'
+                );
+
+                focarCampoComErro(
+                    campoSenha
+                );
+            }
+
+            return;
+        }
+
+
+        /* ====================================================
+           LOGIN TRADICIONAL REALIZADO
+
+           O login tradicional já possui perfil porque o
+           Cadastro.criar() cria o perfil antes.
+
+           Portanto preservamos o comportamento existente:
+           destino salvo ou index.html.
+        ==================================================== */
+
+        console.log(
+            '➡️ Login tradicional realizado com sucesso.'
+        );
+
+        const destinoSalvo =
+            sessionStorage.getItem(
+                'musicalworld_destino_login'
             );
 
-        } else if (resposta.status === 400) {
+        if (destinoSalvo) {
+
+            console.log(
+                '📍 Destino encontrado:',
+                destinoSalvo
+            );
+
+            sessionStorage.removeItem(
+                'musicalworld_destino_login'
+            );
+
+            window.location.href =
+                destinoSalvo;
+
+        } else {
+
+            window.location.href =
+                'index.html';
+        }
+
+    } catch (erro) {
+
+        console.error(
+            '❌ Erro inesperado ao processar login:',
+            erro
+        );
+
+        mostrarErroCampo(
+            campoSenha,
+            'Ocorreu um erro ao entrar. Tente novamente.'
+        );
+
+        focarCampoComErro(
+            campoSenha
+        );
+
+    } finally {
+
+        if (botao) {
+
+            botao.disabled =
+                false;
+
+            botao.textContent =
+                'Entrar na Conta';
+        }
+    }
+}
+
+
+/* ============================================================
+   REALIZAR CADASTRO
+============================================================ */
+
+async function realizarCadastro(e) {
+
+    e.preventDefault();
+
+    const formulario =
+        e.target;
+
+    const botao =
+        formulario.querySelector(
+            'button[type="submit"]'
+        );
+
+    const campoNome =
+        formulario.querySelector(
+            'input[name="nome"]'
+        );
+
+    const campoEmail =
+        formulario.querySelector(
+            'input[name="email"]'
+        );
+
+    const campoSenha =
+        formulario.querySelector(
+            'input[name="senha"]'
+        );
+
+    const campoArtista =
+        formulario.querySelector(
+            'input[name="souArtista"]'
+        );
+
+    const campoTipoArtista =
+        formulario.querySelector(
+            'select[name="tipoArtista"]'
+        );
+
+    limparErrosFormulario(
+        formulario
+    );
+
+    const nome =
+        campoNome?.value
+            .trim() || '';
+
+    const email =
+        campoEmail?.value
+            .trim()
+            .toLowerCase() || '';
+
+    const senha =
+        campoSenha?.value || '';
+
+    const souArtista =
+        campoArtista?.checked === true;
+
+    const tipoArtista =
+        campoTipoArtista?.value
+            .trim() || '';
+
+    const tipoPerfil =
+        souArtista
+            ? 'artista'
+            : 'contratante';
+
+
+    /* ========================================================
+       VALIDAÇÕES VISUAIS
+    ======================================================== */
+
+    if (!nome) {
+
+        mostrarErroCampo(
+            campoNome,
+            'Informe seu nome.'
+        );
+
+        focarCampoComErro(
+            campoNome
+        );
+
+        return;
+    }
+
+    if (!email) {
+
+        mostrarErroCampo(
+            campoEmail,
+            'Informe seu e-mail.'
+        );
+
+        focarCampoComErro(
+            campoEmail
+        );
+
+        return;
+    }
+
+    if (!campoEmail.checkValidity()) {
+
+        mostrarErroCampo(
+            campoEmail,
+            'Informe um e-mail válido.'
+        );
+
+        focarCampoComErro(
+            campoEmail
+        );
+
+        return;
+    }
+
+    if (!senha || senha.length < 6) {
+
+        mostrarErroCampo(
+            campoSenha,
+            'A senha deve ter pelo menos 6 caracteres.'
+        );
+
+        focarCampoComErro(
+            campoSenha
+        );
+
+        return;
+    }
+
+    if (
+        souArtista &&
+        !tipoArtista
+    ) {
+
+        mostrarErroCampo(
+            campoTipoArtista,
+            'Selecione seu tipo de artista.'
+        );
+
+        focarCampoComErro(
+            campoTipoArtista
+        );
+
+        return;
+    }
+
+
+    if (botao) {
+
+        botao.disabled =
+            true;
+
+        botao.textContent =
+            'Criando conta...';
+    }
+
+
+    try {
+
+        const resultado =
+            await Cadastro.criar({
+
+                nome,
+
+                email,
+
+                senha,
+
+                tipoPerfil,
+
+                tipoArtista:
+                    souArtista
+                        ? tipoArtista
+                        : null
+
+            });
+
+
+        if (!resultado?.sucesso) {
+
+            let campoErro;
+
+            if (
+                resultado.campo === 'nome'
+            ) {
+
+                campoErro =
+                    campoNome;
+
+            } else if (
+                resultado.campo === 'email'
+            ) {
+
+                campoErro =
+                    campoEmail;
+
+            } else if (
+                resultado.campo === 'senha'
+            ) {
+
+                campoErro =
+                    campoSenha;
+
+            } else if (
+                resultado.campo === 'tipoArtista'
+            ) {
+
+                campoErro =
+                    campoTipoArtista;
+            }
+
+
+            if (campoErro) {
+
+                mostrarErroCampo(
+                    campoErro,
+                    resultado.mensagem
+                );
+
+                focarCampoComErro(
+                    campoErro
+                );
+
+            } else {
+
+                alert(
+                    resultado.mensagem ||
+                    'Não foi possível concluir o cadastro.'
+                );
+            }
+
+            return;
+        }
+
+
+        if (souArtista) {
 
             alert(
-                resultado?.mensagem ||
-                'Os dados informados não são válidos.'
+                'Conta criada com sucesso!\n\n' +
+                'Seu perfil artístico foi criado.\n\n' +
+                'Agora você poderá completar as informações do seu perfil.'
             );
 
         } else {
 
             alert(
-                resultado?.mensagem ||
-                'Não foi possível concluir o cadastro.'
+                'Conta criada com sucesso!\n\n' +
+                'Seu perfil já foi criado e sua conta está pronta para uso.'
             );
         }
 
-        return;
-    }
 
-    // =====================================================
-    // SUCESSO
-    // =====================================================
+        alternarAba(
+            'login'
+        );
 
-    console.log(
-        '✅ Conta criada pela Edge Function:',
-        resultado
-    );
+    } catch (erro) {
 
-    if (resultado.usuario?.id) {
+        console.error(
+            '❌ Erro inesperado ao processar cadastro:',
+            erro
+        );
 
-        try {
+        alert(
+            'Não foi possível concluir o cadastro. Tente novamente.'
+        );
 
-            localStorage.setItem(
-                'musicalworld_usuario_id',
-                resultado.usuario.id
-            );
+    } finally {
 
-            localStorage.setItem(
-                'musicalworld_usuario_email',
-                resultado.usuario.email || email
-            );
+        if (botao) {
 
-        } catch (erroStorage) {
+            botao.disabled =
+                false;
 
-            console.warn(
-                '⚠️ Não foi possível salvar os dados locais:',
-                erroStorage
-            );
+            botao.textContent =
+                'Criar Conta';
         }
-    }
-
-    if (souArtista) {
-
-        alert(
-            'Conta criada com sucesso!\n\n' +
-            'Seu perfil artístico foi criado.\n\n' +
-            'Agora você poderá completar as informações do seu perfil.'
-        );
-
-    } else {
-
-        alert(
-            'Conta criada com sucesso!\n\n' +
-            'Seu perfil já foi criado e sua conta está pronta para uso.'
-        );
-    }
-
-    // =====================================================
-    // VOLTAR PARA LOGIN
-    // =====================================================
-
-    alternarAba('login');
-
-} catch (erro) {
-
-    console.error(
-        '❌ Erro inesperado ao chamar criar-conta:',
-        erro
-    );
-
-    alert(
-        'Não foi possível conectar ao serviço de cadastro.\n\n' +
-        'Verifique sua conexão e tente novamente.'
-    );
-
-} finally {
-
-    if (botao) {
-
-        botao.disabled = false;
-        botao.textContent = 'Criar Conta';
     }
 }
 
 
-}
-
-// ============================================================
-// LOGIN SOCIAL
-// ============================================================
+/* ============================================================
+   LOGIN SOCIAL
+============================================================ */
 
 async function loginSocial(provedor) {
 
-
-console.log(
-    `🔐 Tentativa de autenticação social: ${provedor}`
-);
-
-if (
-    provedor !== 'Google' &&
-    provedor !== 'Apple'
-) {
-
-    alert(
-        'Provedor de autenticação não suportado.'
-    );
-
-    return;
-}
-
-alert(
-    `Autenticação com ${provedor} será configurada em uma próxima etapa.`
-);
-
-
-}
-
-// ============================================================
-// RECUPERAÇÃO DE SENHA
-// ============================================================
-
-async function esqueciSenha(e) {
-
-
-e.preventDefault();
-
-const email =
-    prompt(
-        'Digite seu e-mail cadastrado para recuperar a senha:'
-    );
-
-if (!email) {
-    return;
-}
-
-const emailNormalizado =
-    email.trim().toLowerCase();
-
-if (!emailNormalizado) {
-    alert('Informe um e-mail válido.');
-    return;
-}
-
-try {
-
     console.log(
-        '🔑 Solicitação de recuperação de senha:',
-        emailNormalizado
+        '🔐 Solicitando autenticação social:',
+        provedor
     );
 
-    const {
-        error
-    } =
-        await supabaseClient.auth.resetPasswordForEmail(
-            emailNormalizado,
-            {
-                redirectTo:
-                    `${window.location.origin}/login.html`
-            }
+    const resultado =
+        await Login.social(
+            provedor
         );
 
-    if (error) {
-
-        console.error(
-            '❌ Erro ao solicitar recuperação:',
-            error
-        );
+    if (
+        !resultado?.sucesso
+    ) {
 
         alert(
-            'Não foi possível solicitar a recuperação da senha.\n\n' +
-            (error.message || 'Tente novamente.')
+            resultado?.mensagem ||
+            'Não foi possível realizar a autenticação.'
         );
 
         return;
     }
 
-    alert(
-        'Se esse e-mail estiver cadastrado, ' +
-        'você receberá as instruções para redefinir sua senha.'
-    );
+    /*
+       O Supabase redireciona automaticamente para o provedor.
 
-} catch (erro) {
+       Quando o provedor retornar para login.html,
+       a inicialização da página detectará a sessão e chamará:
 
-    console.error(
-        '❌ Erro inesperado na recuperação:',
-        erro
-    );
+           processarUsuarioAutenticado()
 
-    alert(
-        'Ocorreu um erro ao solicitar a recuperação da senha.'
+       Não fazemos redirecionamento aqui.
+    */
+
+    console.log(
+        `🌐 Autenticação ${provedor} iniciada.`
     );
 }
 
 
+/* ============================================================
+   RECUPERAÇÃO DE SENHA
+============================================================ */
+
+async function esqueciSenha(e) {
+
+    e.preventDefault();
+
+    const email =
+        prompt(
+            'Digite seu e-mail cadastrado para recuperar a senha:'
+        );
+
+    if (!email) {
+        return;
+    }
+
+    const emailNormalizado =
+        email
+            .trim()
+            .toLowerCase();
+
+    if (!emailNormalizado) {
+
+        alert(
+            'Informe um e-mail válido.'
+        );
+
+        return;
+    }
+
+
+    const resultado =
+        await Login.recuperarSenha(
+            emailNormalizado
+        );
+
+
+    if (!resultado?.sucesso) {
+
+        alert(
+            resultado?.mensagem ||
+            'Não foi possível solicitar a recuperação da senha.'
+        );
+
+        return;
+    }
+
+
+    alert(
+        resultado.mensagem
+    );
 }
 
-// ============================================================
-// VERIFICAR SESSÃO AO CARREGAR LOGIN
-// ============================================================
 
-async function verificarSessaoInicial() {
+/* ============================================================
+   PROCESSAR SESSÃO EXISTENTE
+============================================================ */
 
-
-try {
+/**
+ * Verifica se existe uma sessão quando login.html é aberta.
+ *
+ * Isso é especialmente importante para OAuth.
+ *
+ * Depois que o Google autentica:
+ *
+ * Google
+ *   ↓
+ * Supabase
+ *   ↓
+ * login.html
+ *
+ * Ao carregar novamente esta página, o Supabase já possui
+ * uma sessão. Aqui verificamos o perfil e escolhemos o destino.
+ */
+async function processarSessaoInicial() {
 
     console.log(
         '🔎 Verificando sessão existente...'
     );
 
-    const {
-        data,
-        error
-    } =
-        await supabaseClient.auth.getSession();
+    try {
 
-    if (error) {
+        const sessao =
+            await Login.verificarSessaoInicial();
 
-        console.error(
-            '❌ Erro ao verificar sessão:',
-            error
-        );
+        if (!sessao?.user) {
 
-        return;
-    }
+            console.log(
+                '🔓 Nenhuma sessão existente.'
+            );
 
-    if (data?.session) {
+            return;
+        }
+
 
         console.log(
-            '🔐 Já existe uma sessão ativa.'
+            '🔐 Sessão encontrada.'
         );
 
         console.log(
             '👤 Usuário:',
-            data.session.user
+            sessao.user
         );
+
 
         /*
-         * Por enquanto não vamos redirecionar
-         * automaticamente.
-         *
-         * Isso evita problemas durante nossos testes.
-         * Depois criaremos um controlador central
-         * de autenticação para todas as páginas.
-         */
-
-    } else {
-
-        console.log(
-            '🔓 Nenhuma sessão ativa.'
-        );
-    }
-
-} catch (erro) {
-
-    console.error(
-        '❌ Erro ao verificar sessão inicial:',
-        erro
-    );
-}
-
-
-}
-
-// ============================================================
-// MONITORAR MUDANÇAS DE AUTENTICAÇÃO
-// ============================================================
-
-function observarAutenticacao() {
-
-
-if (!supabaseClient?.auth) {
-
-    console.error(
-        '❌ Cliente Supabase não disponível.'
-    );
-
-    return;
-}
-
-supabaseClient.auth.onAuthStateChange(
-    (evento, sessao) => {
-
-        console.log(
-            '🔄 Estado da autenticação:',
-            evento
-        );
-
-        if (sessao?.user) {
-
-            console.log(
-                '👤 Usuário autenticado:',
-                sessao.user.id
+           Se a URL contém parâmetros relacionados ao OAuth,
+           marcamos o fluxo apenas para fins de diagnóstico.
+        */
+        const urlAtual =
+            new URL(
+                window.location.href
             );
 
-        } else {
+        const possuiOAuthNaURL =
+            urlAtual.searchParams.has('code') ||
+            urlAtual.hash.includes('access_token') ||
+            urlAtual.hash.includes('refresh_token');
+
+        if (possuiOAuthNaURL) {
+
+            processandoRetornoOAuth =
+                true;
 
             console.log(
-                '🔓 Nenhum usuário autenticado.'
+                '🔗 Retorno de autenticação OAuth detectado.'
             );
         }
+
+
+        /*
+           O usuário possui uma sessão.
+           Agora precisamos verificar se ele já possui perfil.
+        */
+        await processarUsuarioAutenticado(
+            sessao.user
+        );
+
+    } catch (erro) {
+
+        console.error(
+            '❌ Erro ao processar sessão inicial:',
+            erro
+        );
     }
-);
-
-
 }
 
-// ============================================================
-// INICIALIZAÇÃO
-// ============================================================
 
-window.onload = function() {
+/* ============================================================
+   INICIALIZAÇÃO
+============================================================ */
+
+window.onload = function () {
+
+    console.log(
+        '🚀 Inicializando autenticação do MusicalWorld...'
+    );
 
 
-console.log(
-    '🚀 Inicializando autenticação do MusicalWorld...'
-);
+    /*
+       Monta a aba inicial.
+    */
+    alternarAba(
+        'login'
+    );
 
-alternarAba('login');
 
-verificarSessaoInicial();
+    /*
+       Primeiro verificamos a sessão existente.
 
-observarAutenticacao();
+       Isso cobre principalmente o retorno do Google/Apple.
+    */
+    processarSessaoInicial();
 
+
+    /*
+       Mantemos o observador de autenticação para diagnóstico
+       e para acompanhar mudanças futuras de sessão.
+
+       O redirecionamento principal é feito por
+       processarSessaoInicial(), evitando chamadas duplicadas.
+    */
+    Login.observarAutenticacao();
 
 };

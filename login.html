@@ -1,47 +1,136 @@
 <!DOCTYPE html>
+
 <html lang="pt-BR">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ArtistaShow - Acesso</title>
-  <link rel="stylesheet" href="css/login.css">
+
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>MusicalWorld - Acesso</title>
+
+<link
+    rel="stylesheet"
+    href="css/login.css"
+>
+
+
 </head>
+
 <body>
 
-  <div class="app-container">
+
+<div class="app-container">
 
     <div class="checkout-card">
 
-      <!-- Logo / Título -->
-      <div class="auth-header">
-        <h1 class="auth-title">Artista<span>Show</span></h1>
-        <p class="auth-subtitle">Entre ou cadastre-se para continuar</p>
-      </div>
+        <!-- ==================================================
+             LOGO / TÍTULO
+        =================================================== -->
 
-      <!-- Toggle Slider (Alternador) -->
-      <div class="auth-toggle-container">
-        <div id="auth-toggle-slider" class="auth-toggle-slider"></div>
-        <button type="button" class="auth-tab-btn active" id="tab-login" onclick="alternarAba('login')">Entrar</button>
-        <button type="button" class="auth-tab-btn" id="tab-cadastro" onclick="alternarAba('cadastro')">Cadastrar</button>
-      </div>
+        <div class="auth-header">
 
-      <!-- Conteúdo Dinâmico (Carregado abaixo via JS) -->
-      <div id="auth-content-container" style="width: 100%;">
-        <!-- O formulário correspondente será injetado aqui -->
-      </div>
+            <h1 class="auth-title">
+                Musical<span>World</span>
+            </h1>
+
+            <p class="auth-subtitle">
+                Entre ou cadastre-se para continuar
+            </p>
+
+        </div>
+
+        <!-- ==================================================
+             TOGGLE ENTRAR / CADASTRAR
+        =================================================== -->
+
+        <div class="auth-toggle-container">
+
+            <div
+                id="auth-toggle-slider"
+                class="auth-toggle-slider">
+            </div>
+
+            <button
+                type="button"
+                class="auth-tab-btn active"
+                id="tab-login"
+                onclick="alternarAba('login')"
+            >
+                Entrar
+            </button>
+
+            <button
+                type="button"
+                class="auth-tab-btn"
+                id="tab-cadastro"
+                onclick="alternarAba('cadastro')"
+            >
+                Cadastrar
+            </button>
+
+        </div>
+
+        <!-- ==================================================
+             CONTEÚDO DINÂMICO
+        =================================================== -->
+
+        <div
+            id="auth-content-container"
+            style="width: 100%;"
+        >
+            <!-- O formulário será inserido pelo JavaScript -->
+        </div>
 
     </div>
 
-  </div>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="js/core/SupabaseClient.js"></script>
-  <script src="js/core/Sessao.js"></script>
-  <script src="js/auth/Perfil.js"></script>
-  <script src="js/auth/Cadastro.js"></script>
-  <script src="js/login.js"></script>
+</div>
 
-  <script>
-    Sessao.observar((evento, sessao) => { console.log('🔐 Sessão:', evento, sessao); });
-  </script>
+<!-- ========================================================
+     SUPABASE
+========================================================= -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!-- ========================================================
+     MÓDULOS PRINCIPAIS
+========================================================= -->
+
+<script src="js/core/SupabaseClient.js"></script>
+
+<script src="js/core/Sessao.js"></script>
+
+<script src="js/auth/Perfil.js"></script>
+<script src="js/auth/Login.js"></script>
+<script src="js/auth/Cadastro.js"></script>
+
+
+<script src="js/login.js"></script>
+
+<!-- ========================================================
+     OBSERVADOR DA SESSÃO
+========================================================= -->
+
+<script>
+
+    Sessao.observar((evento, sessao) => {
+
+        console.log(
+            '🔐 Sessão:',
+            evento,
+            sessao
+        );
+
+    });
+
+</script>
+
+
 </body>
+
 </html>

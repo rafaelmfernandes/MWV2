@@ -1,0 +1,561 @@
+/* =========================================================
+MUSICALWORLD — ONBOARDING
+
+Arquivo:
+css/components/onboarding.css
+
+Responsabilidade:
+
+* Estilizar os balões de orientação do onboarding.
+* Criar a camada escura de destaque.
+* Destacar o elemento indicado pelo onboarding.
+* Manter o balão acima da camada de destaque.
+* Permitir que a seta seja posicionada dinamicamente
+  pelo JavaScript exatamente sobre o elemento indicado.
+
+Observação:
+Este arquivo foi criado inicialmente para a orientação
+do primeiro acesso no Index.
+========================================================= */
+
+/* =========================================================
+CAMADA DE DESTAQUE
+========================================================= */
+
+.musicalworld-onboarding-backdrop {
+
+
+position: fixed;
+
+inset: 0;
+
+z-index: 9998;
+
+background:
+    rgba(
+        12,
+        18,
+        30,
+        0.58
+    );
+
+opacity: 0;
+
+visibility: hidden;
+
+transition:
+    opacity 180ms ease,
+    visibility 180ms ease;
+
+pointer-events: none;
+
+
+}
+
+/* =========================================================
+CAMADA DE DESTAQUE — VISÍVEL
+========================================================= */
+
+.musicalworld-onboarding-backdrop.is-visible {
+
+
+opacity: 1;
+
+visibility: visible;
+
+
+}
+
+/* =========================================================
+BALÃO DE ORIENTAÇÃO
+========================================================= */
+
+.musicalworld-onboarding-tooltip {
+
+
+position: fixed;
+
+z-index: 10002;
+
+width: min(
+    calc(100vw - 32px),
+    320px
+);
+
+padding: 18px 18px 16px;
+
+background: #ffffff;
+
+border: 1px solid rgba(
+    109,
+    74,
+    255,
+    0.16
+);
+
+border-radius: 16px;
+
+box-shadow:
+    0 20px 50px rgba(
+        0,
+        0,
+        0,
+        0.24
+    ),
+    0 8px 20px rgba(
+        23,
+        32,
+        51,
+        0.16
+    );
+
+color: #172033;
+
+font-family:
+    Manrope,
+    sans-serif;
+
+opacity: 0;
+
+visibility: hidden;
+
+transform:
+    translateY(8px);
+
+transition:
+    opacity 180ms ease,
+    transform 180ms ease,
+    visibility 180ms ease;
+
+pointer-events: auto;
+
+--onboarding-arrow-left: 50%;
+
+
+}
+
+/* =========================================================
+ESTADO VISÍVEL
+========================================================= */
+
+.musicalworld-onboarding-tooltip.is-visible {
+
+
+opacity: 1;
+
+visibility: visible;
+
+transform:
+    translateY(0);
+
+
+}
+
+/* =========================================================
+TÍTULO
+========================================================= */
+
+.musicalworld-onboarding-tooltip-title {
+
+
+display: block;
+
+margin-bottom: 6px;
+
+color: #172033;
+
+font-size: 15px;
+
+font-weight: 800;
+
+line-height: 1.35;
+
+
+}
+
+/* =========================================================
+TEXTO
+========================================================= */
+
+.musicalworld-onboarding-tooltip-text {
+
+
+display: block;
+
+color: #5f6b7a;
+
+font-size: 13px;
+
+font-weight: 500;
+
+line-height: 1.55;
+
+
+}
+
+/* =========================================================
+SETA DO BALÃO
+========================================================= */
+
+.musicalworld-onboarding-tooltip::after {
+
+
+content: "";
+
+position: absolute;
+
+left:
+    var(--onboarding-arrow-left);
+
+bottom: -8px;
+
+width: 15px;
+
+height: 15px;
+
+background: #ffffff;
+
+border-right: 1px solid rgba(
+    109,
+    74,
+    255,
+    0.16
+);
+
+border-bottom: 1px solid rgba(
+    109,
+    74,
+    255,
+    0.16
+);
+
+transform:
+    translateX(-50%)
+    rotate(45deg);
+
+pointer-events: none;
+
+
+}
+
+/* =========================================================
+SETA — BALÃO ABAIXO DO ELEMENTO
+========================================================= */
+
+.musicalworld-onboarding-tooltip.tooltip-abaixo::after {
+
+
+top: -8px;
+
+bottom: auto;
+
+border-right:
+    1px solid rgba(
+        109,
+        74,
+        255,
+        0.16
+    );
+
+border-bottom: 0;
+
+border-top:
+    1px solid rgba(
+        109,
+        74,
+        255,
+        0.16
+    );
+
+transform:
+    translateX(-50%)
+    rotate(45deg);
+
+
+}
+
+/* =========================================================
+DESTAQUE DO ELEMENTO INDICADO
+=============================
+
+O elemento indicado precisa ficar acima do backdrop,
+mas abaixo do balão.
+
+========================================================= */
+
+.musicalworld-onboarding-target {
+
+
+position: relative;
+
+z-index: 10001 !important;
+
+border-radius: 14px;
+
+background-color: inherit;
+
+box-shadow:
+    0 0 0 4px rgba(
+        255,
+        255,
+        255,
+        0.95
+    ),
+    0 0 0 7px rgba(
+        109,
+        74,
+        255,
+        0.95
+    ),
+    0 0 0 12px rgba(
+        255,
+        255,
+        255,
+        0.18
+    ),
+    0 0 24px rgba(
+        109,
+        74,
+        255,
+        0.70
+    );
+
+animation:
+    musicalworldOnboardingPulse
+    1.8s
+    ease-in-out
+    infinite;
+
+
+}
+
+/* =========================================================
+ANIMAÇÃO DO DESTAQUE
+========================================================= */
+
+@keyframes musicalworldOnboardingPulse {
+
+
+0%,
+100% {
+
+    box-shadow:
+        0 0 0 4px rgba(
+            255,
+            255,
+            255,
+            0.95
+        ),
+        0 0 0 7px rgba(
+            109,
+            74,
+            255,
+            0.95
+        ),
+        0 0 0 12px rgba(
+            255,
+            255,
+            255,
+            0.18
+        ),
+        0 0 24px rgba(
+            109,
+            74,
+            255,
+            0.70
+        );
+
+}
+
+50% {
+
+    box-shadow:
+        0 0 0 5px rgba(
+            255,
+            255,
+            255,
+            1
+        ),
+        0 0 0 9px rgba(
+            109,
+            74,
+            255,
+            1
+        ),
+        0 0 0 14px rgba(
+            255,
+            255,
+            255,
+            0.22
+        ),
+        0 0 32px rgba(
+            109,
+            74,
+            255,
+            0.85
+        );
+
+}
+
+
+}
+
+/* =========================================================
+BOTÃO FECHAR
+========================================================= */
+
+.musicalworld-onboarding-close {
+
+
+position: absolute;
+
+top: 10px;
+
+right: 10px;
+
+width: 28px;
+
+height: 28px;
+
+display: flex;
+
+align-items: center;
+
+justify-content: center;
+
+padding: 0;
+
+border: 0;
+
+border-radius: 50%;
+
+background: transparent;
+
+color: #8993a2;
+
+cursor: pointer;
+
+transition:
+    background 150ms ease,
+    color 150ms ease;
+
+
+}
+
+.musicalworld-onboarding-close:hover {
+
+
+background: #f3f4f7;
+
+color: #172033;
+
+
+}
+
+.musicalworld-onboarding-close svg {
+
+
+width: 15px;
+
+height: 15px;
+
+
+}
+
+/* =========================================================
+MOBILE
+========================================================= */
+
+@media (max-width: 600px) {
+
+
+.musicalworld-onboarding-tooltip {
+
+    width: min(
+        calc(100vw - 24px),
+        310px
+    );
+
+    padding: 16px;
+
+    border-radius: 15px;
+
+}
+
+
+.musicalworld-onboarding-tooltip-title {
+
+    font-size: 14px;
+
+}
+
+
+.musicalworld-onboarding-tooltip-text {
+
+    font-size: 12.5px;
+
+}
+
+
+}
+
+/* =========================================================
+TELAS MUITO PEQUENAS
+========================================================= */
+
+@media (max-width: 380px) {
+
+
+.musicalworld-onboarding-tooltip {
+
+    width: min(
+        calc(100vw - 20px),
+        300px
+    );
+
+    padding: 15px;
+
+}
+
+
+.musicalworld-onboarding-tooltip-title {
+
+    font-size: 13.5px;
+
+}
+
+
+.musicalworld-onboarding-tooltip-text {
+
+    font-size: 12px;
+
+    line-height: 1.5;
+
+}
+
+
+}
+
+/* =========================================================
+REDUÇÃO DE MOVIMENTO
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+
+.musicalworld-onboarding-backdrop,
+.musicalworld-onboarding-tooltip {
+
+    transition: none;
+
+}
+
+
+.musicalworld-onboarding-target {
+
+    animation: none;
+
+}
+
+
+}
