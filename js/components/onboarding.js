@@ -1,1027 +1,1030 @@
 /* =========================================================
-MUSICALWORLD — ONBOARDING
+MUSICALWORLD — ONBOARDING DO INDEX
 
 Arquivo:
 js/components/onboarding.js
 
-Responsabilidade:
+Responsabilidades:
 
-* Controlar as orientações do primeiro acesso.
-* Identificar o botão Perfil no menu inferior.
-* Criar e posicionar o balão de orientação.
-* Criar a camada escura de destaque.
-* Destacar o botão Perfil.
-* Posicionar a seta exatamente sobre o elemento indicado.
-* Controlar o encerramento da primeira orientação.
-* Preparar a estrutura para futuras etapas do onboarding.
+* Exibir o onboarding inicial do Index.
+* Identificar o usuário autenticado pelo Supabase.
+* Verificar no banco se o usuário já concluiu
+  o onboarding do Index.
+* Exibir a orientação somente para usuários que
+  ainda não concluíram essa etapa.
+* Destacar o botão Perfil no menu inferior.
+* Exibir o fundo escurecido durante a orientação.
+* Marcar o onboarding como concluído quando o usuário
+  clicar em Perfil.
+* Manter uma função de teste para desenvolvimento.
 
-IMPORTANTE:
+Regra principal:
 
-Nesta primeira versão, o controle do primeiro acesso
-utiliza sessionStorage.
+* O controle NÃO utiliza sessionStorage para decidir
+  se o usuário já viu o onboarding.
+* O estado pertence à conta do usuário no Supabase.
 
-Isso é proposital para permitir testar o comportamento
-visual sem alterar ainda o banco de dados.
+Campo utilizado:
+public.usuarios.onboarding_index_concluido
 
-Depois que o visual for aprovado, podemos substituir
-essa parte pelo controle real no Supabase.
 ========================================================= */
+
+(function (window) {
+
+
+"use strict";
+
+
+/* =========================================================
+   OBJETO PRINCIPAL
+   ========================================================= */
 
 const MusicalWorldOnboarding = {
 
+    inicializado: false,
 
-/* =====================================================
-   CONTROLE
-===================================================== */
+    tooltip: null,
 
-inicializado: false,
+    backdrop: null,
 
-tooltip: null,
+    elementoAlvo: null,
 
-backdrop: null,
+    observadorMenu: null,
 
-elementoAlvo: null,
+    redimensionamentoConfigurado: false,
 
-observadorMenu: null,
+    /* -----------------------------------------------------
+       Chave utilizada somente para testes locais.
 
-redimensionamentoConfigurado: false,
+       IMPORTANTE:
+       Essa chave NÃO controla mais o onboarding real.
+       O controle real está no Supabase.
+       ----------------------------------------------------- */
 
-chaveTeste:
-    'musicalworld_onboarding_index_perfil',
-
-
-/* =====================================================
-   INICIALIZAR
-===================================================== */
-
-async iniciar() {
-
-    if (this.inicializado) {
-
-        return;
-
-    }
+    chaveTeste: "musicalworld_onboarding_index_perfil",
 
 
-    this.inicializado = true;
+    /* =====================================================
+       INICIALIZAÇÃO
+       ===================================================== */
 
+    async iniciar() {
 
-    /*
-     * Carrega o CSS do componente.
-     */
-
-    this.carregarCss();
-
-
-    /*
-     * Nesta primeira etapa estamos usando
-     * sessionStorage apenas para teste.
-     */
-
-    if (
-        sessionStorage.getItem(
-            this.chaveTeste
-        ) === 'concluido'
-    ) {
-
-        console.log(
-            'MusicalWorld Onboarding: orientação do Index já concluída nesta sessão.'
-        );
-
-        return;
-
-    }
-
-
-    /*
-     * O menu inferior é criado dinamicamente.
-     *
-     * Por isso aguardamos o botão Perfil
-     * caso ele ainda não exista.
-     */
-
-    const elementoPerfil =
-        await this.aguardarElemento(
-            '#nav-item-perfil',
-            5000
-        );
-
-
-    if (!elementoPerfil) {
-
-        console.warn(
-            'MusicalWorld Onboarding: botão Perfil não encontrado.'
-        );
-
-        return;
-
-    }
-
-
-    /*
-     * Guarda o elemento que receberá o destaque.
-     */
-
-    this.elementoAlvo =
-        elementoPerfil;
-
-
-    /*
-     * Cria a camada escura.
-     */
-
-    this.criarBackdrop();
-
-
-    /*
-     * Cria o balão.
-     */
-
-    this.criarTooltip();
-
-
-    /*
-     * Posiciona o balão e calcula
-     * a posição exata da seta.
-     */
-
-    this.posicionarTooltip();
-
-
-    /*
-     * Adiciona o destaque ao botão Perfil.
-     */
-
-    this.elementoAlvo.classList.add(
-        'musicalworld-onboarding-target'
-    );
-
-
-    /*
-     * Configura eventos de posicionamento.
-     */
-
-    this.configurarRedimensionamento();
-
-
-    /*
-     * Exibe a camada e o balão depois que
-     * tudo estiver pronto.
-     */
-
-    requestAnimationFrame(
-        () => {
-
-            if (this.backdrop) {
-
-                this.backdrop.classList.add(
-                    'is-visible'
-                );
-
-            }
-
-
-            if (this.tooltip) {
-
-                this.tooltip.classList.add(
-                    'is-visible'
-                );
-
-            }
-
+        if (this.inicializado) {
+            return;
         }
-    );
 
+        this.inicializado = true;
 
-    console.log(
-        'MusicalWorld Onboarding: primeira orientação exibida.'
-    );
+        this.carregarCss();
 
-},
+        try {
 
+            /* -------------------------------------------------
+               Aguarda o menu inferior criar o botão Perfil.
+               ------------------------------------------------- */
 
-/* =====================================================
-   CARREGAR CSS
-===================================================== */
+            const elementoPerfil = await this.aguardarElemento(
+                "#nav-item-perfil",
+                5000
+            );
 
-carregarCss() {
+            if (!elementoPerfil) {
 
-    const existente =
-        document.querySelector(
-            'link[data-musicalworld-onboarding-css="true"]'
-        );
-
-
-    if (existente) {
-
-        return;
-
-    }
-
-
-    const link =
-        document.createElement('link');
-
-
-    link.rel =
-        'stylesheet';
-
-
-    link.href =
-        'css/components/onboarding.css';
-
-
-    link.dataset.musicalworldOnboardingCss =
-        'true';
-
-
-    document.head.appendChild(
-        link
-    );
-
-},
-
-
-/* =====================================================
-   AGUARDAR ELEMENTO
-===================================================== */
-
-aguardarElemento(
-    seletor,
-    tempoMaximo = 5000
-) {
-
-    return new Promise(
-        resolve => {
-
-            const elementoInicial =
-                document.querySelector(
-                    seletor
+                console.warn(
+                    "MusicalWorldOnboarding: botão Perfil não encontrado."
                 );
 
+                this.inicializado = false;
 
-            if (elementoInicial) {
+                return;
+            }
 
-                resolve(
-                    elementoInicial
+            this.elementoAlvo = elementoPerfil;
+
+
+            /* -------------------------------------------------
+               Verifica o estado REAL do onboarding no Supabase.
+               ------------------------------------------------- */
+
+            const deveExibir = await this.deveExibirOnboarding();
+
+            if (!deveExibir) {
+
+                console.log(
+                    "MusicalWorldOnboarding: onboarding já concluído para este usuário."
                 );
 
                 return;
-
             }
 
 
-            const inicio =
-                Date.now();
+            /* -------------------------------------------------
+               Cria os elementos visuais.
+               ------------------------------------------------- */
+
+            this.criarBackdrop();
+
+            this.criarTooltip();
+
+            this.posicionarTooltip();
+
+            this.elementoAlvo.classList.add(
+                "musicalworld-onboarding-target"
+            );
+
+            this.configurarRedimensionamento();
 
 
-            const verificar =
-                () => {
+            /* -------------------------------------------------
+               Exibe somente depois que tudo estiver posicionado.
+               ------------------------------------------------- */
 
-                    const elemento =
-                        document.querySelector(
-                            seletor
-                        );
+            window.requestAnimationFrame(() => {
 
+                if (this.backdrop) {
+                    this.backdrop.classList.add("is-visible");
+                }
 
-                    if (elemento) {
+                if (this.tooltip) {
+                    this.tooltip.classList.add("is-visible");
+                }
 
-                        resolve(
-                            elemento
-                        );
+            });
 
-                        return;
+        } catch (erro) {
 
-                    }
+            console.error(
+                "MusicalWorldOnboarding: erro ao iniciar onboarding.",
+                erro
+            );
 
-
-                    if (
-                        Date.now() -
-                        inicio >=
-                        tempoMaximo
-                    ) {
-
-                        resolve(
-                            null
-                        );
-
-                        return;
-
-                    }
+            this.inicializado = false;
+        }
+    },
 
 
-                    requestAnimationFrame(
-                        verificar
-                    );
+    /* =====================================================
+       OBTER CLIENTE SUPABASE
+       ===================================================== */
 
-                };
+    obterSupabaseClient() {
 
+        try {
+
+            if (
+                window.SupabaseClient &&
+                typeof window.SupabaseClient.getClient === "function"
+            ) {
+                return window.SupabaseClient.getClient();
+            }
+
+            if (
+                window.SupabaseClient &&
+                window.SupabaseClient.client
+            ) {
+                return window.SupabaseClient.client;
+            }
+
+            if (
+                window.supabaseClient &&
+                typeof window.supabaseClient.from === "function"
+            ) {
+                return window.supabaseClient;
+            }
+
+            return null;
+
+        } catch (erro) {
+
+            console.error(
+                "MusicalWorldOnboarding: erro ao obter cliente Supabase.",
+                erro
+            );
+
+            return null;
+        }
+    },
+
+
+    /* =====================================================
+       OBTER USUÁRIO AUTENTICADO
+       ===================================================== */
+
+    async obterUsuarioAutenticado() {
+
+        const supabase = this.obterSupabaseClient();
+
+        if (!supabase) {
+
+            console.error(
+                "MusicalWorldOnboarding: cliente Supabase não encontrado."
+            );
+
+            return null;
+        }
+
+        try {
+
+            const {
+                data,
+                error
+            } = await supabase.auth.getUser();
+
+            if (error) {
+
+                console.error(
+                    "MusicalWorldOnboarding: erro ao obter usuário autenticado.",
+                    error
+                );
+
+                return null;
+            }
+
+            return data?.user || null;
+
+        } catch (erro) {
+
+            console.error(
+                "MusicalWorldOnboarding: falha ao consultar usuário autenticado.",
+                erro
+            );
+
+            return null;
+        }
+    },
+
+
+    /* =====================================================
+       VERIFICAR SE DEVE EXIBIR
+       ===================================================== */
+
+    async deveExibirOnboarding() {
+
+        const supabase = this.obterSupabaseClient();
+
+        if (!supabase) {
+
+            console.warn(
+                "MusicalWorldOnboarding: Supabase indisponível. Onboarding não será exibido."
+            );
+
+            return false;
+        }
+
+
+        const usuario = await this.obterUsuarioAutenticado();
+
+        if (!usuario) {
+
+            console.log(
+                "MusicalWorldOnboarding: nenhum usuário autenticado."
+            );
+
+            return false;
+        }
+
+
+        try {
+
+            const {
+                data,
+                error
+            } = await supabase
+                .from("usuarios")
+                .select("onboarding_index_concluido")
+                .eq("id", usuario.id)
+                .maybeSingle();
+
+
+            /* ---------------------------------------------
+               Caso exista erro na consulta.
+               --------------------------------------------- */
+
+            if (error) {
+
+                console.error(
+                    "MusicalWorldOnboarding: erro ao consultar estado do onboarding.",
+                    error
+                );
+
+                return false;
+            }
+
+
+            /* ---------------------------------------------
+               Segurança:
+
+               Se o registro do usuário ainda não existir,
+               não exibimos automaticamente.
+
+               O trigger de criação do usuário normalmente
+               deverá criar esse registro.
+               --------------------------------------------- */
+
+            if (!data) {
+
+                console.warn(
+                    "MusicalWorldOnboarding: registro do usuário não encontrado."
+                );
+
+                return false;
+            }
+
+
+            /* ---------------------------------------------
+               TRUE:
+               usuário já concluiu.
+               --------------------------------------------- */
+
+            if (data.onboarding_index_concluido === true) {
+
+                return false;
+            }
+
+
+            /* ---------------------------------------------
+               FALSE ou NULL:
+               usuário ainda não concluiu.
+               --------------------------------------------- */
+
+            return true;
+
+        } catch (erro) {
+
+            console.error(
+                "MusicalWorldOnboarding: erro ao verificar onboarding.",
+                erro
+            );
+
+            return false;
+        }
+    },
+
+
+    /* =====================================================
+       MARCAR ONBOARDING COMO CONCLUÍDO
+       ===================================================== */
+
+    async marcarComoConcluido() {
+
+        const supabase = this.obterSupabaseClient();
+
+        if (!supabase) {
+
+            console.error(
+                "MusicalWorldOnboarding: cliente Supabase não encontrado ao concluir onboarding."
+            );
+
+            return false;
+        }
+
+
+        const usuario = await this.obterUsuarioAutenticado();
+
+        if (!usuario) {
+
+            console.warn(
+                "MusicalWorldOnboarding: usuário não autenticado ao concluir onboarding."
+            );
+
+            return false;
+        }
+
+
+        try {
+
+            const {
+                error
+            } = await supabase
+                .from("usuarios")
+                .update({
+                    onboarding_index_concluido: true
+                })
+                .eq("id", usuario.id);
+
+
+            if (error) {
+
+                console.error(
+                    "MusicalWorldOnboarding: erro ao salvar conclusão.",
+                    error
+                );
+
+                return false;
+            }
+
+
+            console.log(
+                "MusicalWorldOnboarding: onboarding marcado como concluído."
+            );
+
+            return true;
+
+        } catch (erro) {
+
+            console.error(
+                "MusicalWorldOnboarding: falha ao salvar conclusão.",
+                erro
+            );
+
+            return false;
+        }
+    },
+
+
+    /* =====================================================
+       CARREGAR CSS
+       ===================================================== */
+
+    carregarCss() {
+
+        const href = "css/components/onboarding.css";
+
+        const cssExistente = Array.from(
+            document.querySelectorAll('link[rel="stylesheet"]')
+        ).find(link => link.href.includes(href));
+
+        if (cssExistente) {
+            return;
+        }
+
+        const link = document.createElement("link");
+
+        link.rel = "stylesheet";
+        link.href = href;
+
+        document.head.appendChild(link);
+    },
+
+
+    /* =====================================================
+       AGUARDAR ELEMENTO
+       ===================================================== */
+
+    aguardarElemento(seletor, timeout = 5000) {
+
+        return new Promise(resolve => {
+
+            const inicio = Date.now();
+
+            const verificar = () => {
+
+                const elemento = document.querySelector(seletor);
+
+                if (elemento) {
+
+                    resolve(elemento);
+
+                    return;
+                }
+
+
+                if (Date.now() - inicio >= timeout) {
+
+                    resolve(null);
+
+                    return;
+                }
+
+
+                window.requestAnimationFrame(verificar);
+            };
 
             verificar();
+        });
+    },
 
+
+    /* =====================================================
+       CRIAR BACKDROP
+       ===================================================== */
+
+    criarBackdrop() {
+
+        if (this.backdrop) {
+            return;
         }
-    );
 
-},
+        const existente = document.querySelector(
+            ".musicalworld-onboarding-backdrop"
+        );
+
+        if (existente) {
+
+            this.backdrop = existente;
+
+            return;
+        }
 
 
-/* =====================================================
-   CRIAR BACKDROP
-===================================================== */
+        const backdrop = document.createElement("div");
 
-criarBackdrop() {
+        backdrop.className =
+            "musicalworld-onboarding-backdrop";
 
-    /*
-     * Remove uma camada anterior, caso exista.
-     */
 
-    const existente =
-        document.querySelector(
-            '.musicalworld-onboarding-backdrop'
+        document.body.appendChild(backdrop);
+
+        this.backdrop = backdrop;
+    },
+
+
+    /* =====================================================
+       CRIAR TOOLTIP
+       ===================================================== */
+
+    criarTooltip() {
+
+        if (this.tooltip) {
+            return;
+        }
+
+        const existente = document.querySelector(
+            ".musicalworld-onboarding-tooltip"
+        );
+
+        if (existente) {
+
+            this.tooltip = existente;
+
+            return;
+        }
+
+
+        const tooltip = document.createElement("div");
+
+        tooltip.className =
+            "musicalworld-onboarding-tooltip";
+
+        tooltip.setAttribute(
+            "role",
+            "dialog"
+        );
+
+        tooltip.setAttribute(
+            "aria-label",
+            "Orientação para completar o cadastro"
         );
 
 
-    if (existente) {
-
-        existente.remove();
-
-    }
-
-
-    /*
-     * Cria a camada escura.
-     */
-
-    const backdrop =
-        document.createElement('div');
-
-
-    backdrop.className =
-        'musicalworld-onboarding-backdrop';
-
-
-    backdrop.setAttribute(
-        'aria-hidden',
-        'true'
-    );
-
-
-    /*
-     * Adiciona diretamente ao body para que
-     * ocupe toda a viewport.
-     */
-
-    document.body.appendChild(
-        backdrop
-    );
-
-
-    this.backdrop =
-        backdrop;
-
-},
-
-
-/* =====================================================
-   CRIAR BALÃO
-===================================================== */
-
-criarTooltip() {
-
-    /*
-     * Remove qualquer balão anterior deste componente.
-     */
-
-    const existente =
-        document.querySelector(
-            '.musicalworld-onboarding-tooltip'
-        );
-
-
-    if (existente) {
-
-        existente.remove();
-
-    }
-
-
-    /*
-     * Cria o elemento principal.
-     */
-
-    const tooltip =
-        document.createElement('div');
-
-
-    tooltip.className =
-        'musicalworld-onboarding-tooltip';
-
-
-    tooltip.setAttribute(
-        'role',
-        'dialog'
-    );
-
-
-    tooltip.setAttribute(
-        'aria-label',
-        'Orientação para completar o cadastro'
-    );
-
-
-    /*
-     * Conteúdo do balão.
-     */
-
-    tooltip.innerHTML = `
-
-        <button
-            type="button"
-            class="musicalworld-onboarding-close"
-            aria-label="Fechar orientação"
-            title="Fechar orientação"
-        >
-
-            <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                aria-hidden="true"
+        tooltip.innerHTML = `
+            <button
+                type="button"
+                class="musicalworld-onboarding-close"
+                aria-label="Fechar orientação"
             >
-
-                <path
-                    d="M6 6L18 18"
+                <svg
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
                     stroke="currentColor"
-                    stroke-width="1.8"
+                    stroke-width="2"
                     stroke-linecap="round"
-                />
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                >
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
 
-                <path
-                    d="M18 6L6 18"
-                    stroke="currentColor"
-                    stroke-width="1.8"
-                    stroke-linecap="round"
-                />
+            <div class="musicalworld-onboarding-content">
 
-            </svg>
+                <div class="musicalworld-onboarding-title">
+                    Complete seu cadastro
+                </div>
 
-        </button>
+                <div class="musicalworld-onboarding-text">
+                    Complete seu perfil para que ele possa aparecer
+                    no MusicalWorld e ser encontrado por outras pessoas.
+                    Clique em Perfil para começar.
+                </div>
 
-
-        <strong
-            class="musicalworld-onboarding-tooltip-title"
-        >
-            Complete seu cadastro
-        </strong>
-
-
-        <span
-            class="musicalworld-onboarding-tooltip-text"
-        >
-            Complete seu perfil para que ele possa aparecer
-            no MusicalWorld e ser encontrado por outras pessoas.
-            Clique em <strong>Perfil</strong> para começar.
-        </span>
-
-    `;
+            </div>
+        `;
 
 
-    /*
-     * Adiciona o balão ao body.
-     */
+        document.body.appendChild(tooltip);
 
-    document.body.appendChild(
-        tooltip
-    );
+        this.tooltip = tooltip;
 
 
-    /*
-     * Configura o botão de fechar.
-     */
+        /* -------------------------------------------------
+           Botão fechar.
 
-    const botaoFechar =
-        tooltip.querySelector(
-            '.musicalworld-onboarding-close'
+           Fechar a orientação também é considerado uma
+           conclusão da etapa, para que ela não volte.
+           ------------------------------------------------- */
+
+        const botaoFechar = tooltip.querySelector(
+            ".musicalworld-onboarding-close"
         );
 
+        if (botaoFechar) {
 
-    if (botaoFechar) {
+            botaoFechar.addEventListener(
+                "click",
+                async evento => {
 
-        botaoFechar.addEventListener(
-            'click',
-            event => {
+                    evento.preventDefault();
+                    evento.stopPropagation();
 
-                event.preventDefault();
+                    await this.marcarComoConcluido();
 
-                event.stopPropagation();
+                    this.encerrar();
+                }
+            );
+        }
 
-                this.encerrar();
 
-            }
-        );
+        /* -------------------------------------------------
+           Clique no Perfil.
 
-    }
+           Primeiro salva a conclusão e depois permite
+           que o menu inferior execute sua navegação.
+           ------------------------------------------------- */
 
+        if (this.elementoAlvo) {
 
-    /*
-     * Quando o usuário clicar no Perfil,
-     * a orientação também é encerrada.
-     *
-     * O evento é adicionado em captura para garantir
-     * que seja executado antes da navegação.
-     */
+            this.elementoAlvo.addEventListener(
+                "click",
+                async evento => {
 
-    if (this.elementoAlvo) {
+                    /*
+                     * Não usamos preventDefault aqui porque
+                     * o próprio menu inferior já possui sua
+                     * lógica de navegação.
+                     */
 
-        this.elementoAlvo.addEventListener(
-            'click',
-            () => {
+                    await this.marcarComoConcluido();
 
-                this.encerrar();
+                    this.encerrar();
 
-            },
-            {
-                once: true,
-                capture: true
-            }
-        );
+                },
+                {
+                    capture: true,
+                    once: true
+                }
+            );
+        }
+    },
 
-    }
 
+    /* =====================================================
+       POSICIONAR TOOLTIP
+       ===================================================== */
 
-    this.tooltip =
-        tooltip;
+    posicionarTooltip() {
 
-},
+        if (!this.tooltip || !this.elementoAlvo) {
+            return;
+        }
 
 
-/* =====================================================
-   POSICIONAR BALÃO
-===================================================== */
+        const alvo = this.elementoAlvo.getBoundingClientRect();
 
-posicionarTooltip() {
+        const larguraTooltip =
+            this.tooltip.offsetWidth;
 
-    if (
-        !this.tooltip ||
-        !this.elementoAlvo
-    ) {
+        const alturaTooltip =
+            this.tooltip.offsetHeight;
 
-        return;
+        const margem = 12;
 
-    }
+        const espaco = 16;
 
 
-    /*
-     * Obtém a posição real do botão Perfil
-     * dentro da viewport.
-     */
+        /* -------------------------------------------------
+           Centro horizontal do botão Perfil.
+           ------------------------------------------------- */
 
-    const alvo =
-        this.elementoAlvo.getBoundingClientRect();
+        const centroAlvo =
+            alvo.left + (alvo.width / 2);
 
 
-    const larguraTooltip =
-        this.tooltip.offsetWidth;
+        /* -------------------------------------------------
+           Centraliza inicialmente o tooltip sobre o alvo.
+           ------------------------------------------------- */
 
+        let esquerda =
+            centroAlvo - (larguraTooltip / 2);
 
-    const alturaTooltip =
-        this.tooltip.offsetHeight;
 
+        /* -------------------------------------------------
+           Mantém dentro da tela.
+           ------------------------------------------------- */
 
-    if (
-        !larguraTooltip ||
-        !alturaTooltip
-    ) {
-
-        return;
-
-    }
-
-
-    /*
-     * Distância entre o balão e o elemento indicado.
-     */
-
-    const distancia =
-        16;
-
-
-    /*
-     * Margem mínima entre o balão e as laterais
-     * da tela.
-     */
-
-    const margem =
-        12;
-
-
-    /*
-     * -------------------------------------------------
-     * POSIÇÃO HORIZONTAL
-     * -------------------------------------------------
-     */
-
-    const centroAlvo =
-        alvo.left +
-        (alvo.width / 2);
-
-
-    let esquerda =
-        centroAlvo -
-        (larguraTooltip / 2);
-
-
-    /*
-     * Mantém o balão dentro da viewport.
-     */
-
-    if (
-        esquerda <
-        margem
-    ) {
-
-        esquerda =
-            margem;
-
-    }
-
-
-    if (
-        esquerda +
-        larguraTooltip >
-        window.innerWidth -
-        margem
-    ) {
-
-        esquerda =
-            window.innerWidth -
-            larguraTooltip -
-            margem;
-
-    }
-
-
-    /*
-     * -------------------------------------------------
-     * POSIÇÃO VERTICAL
-     * -------------------------------------------------
-     */
-
-    let topo =
-        alvo.top -
-        alturaTooltip -
-        distancia;
-
-
-    /*
-     * -------------------------------------------------
-     * POSIÇÃO DA SETA
-     * -------------------------------------------------
-     *
-     * Calculamos a posição do centro real do Perfil
-     * dentro do balão.
-     */
-
-    let posicaoSeta =
-        centroAlvo -
-        esquerda;
-
-
-    const margemSeta =
-        18;
-
-
-    posicaoSeta =
-        Math.max(
-            margemSeta,
+        esquerda = Math.max(
+            margem,
             Math.min(
+                esquerda,
+                window.innerWidth -
                 larguraTooltip -
-                margemSeta,
-                posicaoSeta
+                margem
             )
         );
 
 
-    const percentualSeta =
-        (
-            posicaoSeta /
-            larguraTooltip
-        ) *
-        100;
+        /* -------------------------------------------------
+           Tenta posicionar acima do botão.
+           ------------------------------------------------- */
+
+        let topo =
+            alvo.top -
+            alturaTooltip -
+            espaco;
 
 
-    this.tooltip.style.setProperty(
-        '--onboarding-arrow-left',
-        `${percentualSeta}%`
-    );
+        let tooltipAbaixo = false;
 
 
-    /*
-     * -------------------------------------------------
-     * BALÃO ABAIXO DO ELEMENTO
-     * -------------------------------------------------
-     */
+        /* -------------------------------------------------
+           Se não houver espaço acima, coloca abaixo.
+           ------------------------------------------------- */
 
-    if (
-        topo <
-        margem
-    ) {
+        if (topo < margem) {
 
-        topo =
-            alvo.bottom +
-            distancia;
+            topo =
+                alvo.bottom +
+                espaco;
+
+            tooltipAbaixo = true;
+        }
 
 
-        this.tooltip.classList.add(
-            'tooltip-abaixo'
+        /* -------------------------------------------------
+           Limita verticalmente.
+           ------------------------------------------------- */
+
+        topo = Math.max(
+            margem,
+            Math.min(
+                topo,
+                window.innerHeight -
+                alturaTooltip -
+                margem
+            )
         );
 
-    }
 
-    else {
+        this.tooltip.style.left =
+            `${esquerda}px`;
 
-        this.tooltip.classList.remove(
-            'tooltip-abaixo'
-        );
-
-    }
+        this.tooltip.style.top =
+            `${topo}px`;
 
 
-    /*
-     * Aplica a posição final.
+        /* -------------------------------------------------
+           Calcula a posição EXATA da seta.
 
-     */
+           Isso garante que a seta aponte para o botão
+           Perfil mesmo quando o tooltip precisa ser
+           deslocado para não sair da tela.
+           ------------------------------------------------- */
 
-    this.tooltip.style.left =
-        `${esquerda}px`;
-
-
-    this.tooltip.style.top =
-        `${topo}px`;
-
-},
+        const seta =
+            centroAlvo - esquerda;
 
 
-/* =====================================================
-   CONFIGURAR REDIMENSIONAMENTO
-===================================================== */
+        const setaMinima = 18;
 
-configurarRedimensionamento() {
-
-    if (
-        this.redimensionamentoConfigurado
-    ) {
-
-        return;
-
-    }
+        const setaMaxima =
+            larguraTooltip - 18;
 
 
-    this.redimensionamentoConfigurado =
-        true;
-
-
-    const reposicionar =
-        () => {
-
-            requestAnimationFrame(
-                () => {
-
-                    this.posicionarTooltip();
-
-                }
+        const setaCorrigida =
+            Math.max(
+                setaMinima,
+                Math.min(
+                    seta,
+                    setaMaxima
+                )
             );
 
+
+        this.tooltip.style.setProperty(
+            "--onboarding-arrow-left",
+            `${setaCorrigida}px`
+        );
+
+
+        this.tooltip.classList.toggle(
+            "tooltip-abaixo",
+            tooltipAbaixo
+        );
+    },
+
+
+    /* =====================================================
+       REDIMENSIONAMENTO
+       ===================================================== */
+
+    configurarRedimensionamento() {
+
+        if (this.redimensionamentoConfigurado) {
+            return;
+        }
+
+        this.redimensionamentoConfigurado = true;
+
+
+        const atualizar = () => {
+
+            if (!this.tooltip) {
+                return;
+            }
+
+            this.posicionarTooltip();
         };
 
 
-    window.addEventListener(
-        'resize',
-        reposicionar,
-        {
-            passive: true
+        window.addEventListener(
+            "resize",
+            atualizar
+        );
+
+
+        window.addEventListener(
+            "orientationchange",
+            atualizar
+        );
+    },
+
+
+    /* =====================================================
+       ENCERRAR
+       ===================================================== */
+
+    encerrar() {
+
+        if (
+            this.elementoAlvo &&
+            this.elementoAlvo.classList
+        ) {
+
+            this.elementoAlvo.classList.remove(
+                "musicalworld-onboarding-target"
+            );
         }
-    );
 
 
-    window.addEventListener(
-        'orientationchange',
-        reposicionar,
-        {
-            passive: true
+        if (this.tooltip) {
+
+            this.tooltip.classList.remove(
+                "is-visible"
+            );
         }
-    );
-
-},
 
 
-/* =====================================================
-   ENCERRAR
-===================================================== */
+        if (this.backdrop) {
 
-encerrar() {
-
-    /*
-     * Salva que esta etapa foi concluída.
-     */
-
-    sessionStorage.setItem(
-        this.chaveTeste,
-        'concluido'
-    );
+            this.backdrop.classList.remove(
+                "is-visible"
+            );
+        }
 
 
-    /*
-     * Remove o destaque do botão Perfil.
+        window.setTimeout(() => {
 
-     */
+            if (this.tooltip) {
 
-    if (this.elementoAlvo) {
+                this.tooltip.remove();
 
-        this.elementoAlvo.classList.remove(
-            'musicalworld-onboarding-target'
-        );
+                this.tooltip = null;
+            }
 
+
+            if (this.backdrop) {
+
+                this.backdrop.remove();
+
+                this.backdrop = null;
+            }
+
+        }, 180);
+    },
+
+
+    /* =====================================================
+       TESTE — RESETAR PARA O USUÁRIO ATUAL
+       =====================================================
+
+       Esta função é diferente da lógica real.
+
+       Como agora o estado está no banco, apagar
+       sessionStorage NÃO é suficiente.
+
+       Para testar novamente com a mesma conta,
+       esta função altera temporariamente o banco para
+       false.
+
+       Depois disso, basta chamar:
+
+       MusicalWorldOnboarding.iniciar();
+
+       ===================================================== */
+
+    async resetarTeste() {
+
+        const supabase = this.obterSupabaseClient();
+
+        if (!supabase) {
+
+            console.error(
+                "MusicalWorldOnboarding: cliente Supabase não encontrado."
+            );
+
+            return false;
+        }
+
+
+        const usuario = await this.obterUsuarioAutenticado();
+
+        if (!usuario) {
+
+            console.error(
+                "MusicalWorldOnboarding: nenhum usuário autenticado."
+            );
+
+            return false;
+        }
+
+
+        try {
+
+            const {
+                error
+            } = await supabase
+                .from("usuarios")
+                .update({
+                    onboarding_index_concluido: false
+                })
+                .eq("id", usuario.id);
+
+
+            if (error) {
+
+                console.error(
+                    "MusicalWorldOnboarding: erro ao resetar teste.",
+                    error
+                );
+
+                return false;
+            }
+
+
+            console.log(
+                "MusicalWorldOnboarding: teste resetado. Recarregue o Index."
+            );
+
+            return true;
+
+        } catch (erro) {
+
+            console.error(
+                "MusicalWorldOnboarding: falha ao resetar teste.",
+                erro
+            );
+
+            return false;
+        }
     }
-
-
-    /*
-     * Remove a camada escura.
-
-     */
-
-    if (this.backdrop) {
-
-        this.backdrop.classList.remove(
-            'is-visible'
-        );
-
-    }
-
-
-    /*
-     * Remove o balão.
-
-     */
-
-    if (this.tooltip) {
-
-        this.tooltip.classList.remove(
-            'is-visible'
-        );
-
-
-        const tooltipAtual =
-            this.tooltip;
-
-
-        const backdropAtual =
-            this.backdrop;
-
-
-        setTimeout(
-            () => {
-
-                if (
-                    tooltipAtual &&
-                    tooltipAtual.parentNode
-                ) {
-
-                    tooltipAtual.remove();
-
-                }
-
-
-                if (
-                    backdropAtual &&
-                    backdropAtual.parentNode
-                ) {
-
-                    backdropAtual.remove();
-
-                }
-
-            },
-            180
-        );
-
-
-        this.tooltip =
-            null;
-
-        this.backdrop =
-            null;
-
-    }
-
-    else if (this.backdrop) {
-
-        this.backdrop.remove();
-
-        this.backdrop =
-            null;
-
-    }
-
-
-    console.log(
-        'MusicalWorld Onboarding: orientação encerrada.'
-    );
-
-},
-
-
-/* =====================================================
-   RESETAR TESTE
-===================================================== */
-
-resetarTeste() {
-
-    sessionStorage.removeItem(
-        this.chaveTeste
-    );
-
-
-    /*
-     * Remove o balão.
-
-     */
-
-    if (this.tooltip) {
-
-        this.tooltip.remove();
-
-        this.tooltip =
-            null;
-
-    }
-
-
-    /*
-     * Remove a camada escura.
-     */
-
-    if (this.backdrop) {
-
-        this.backdrop.remove();
-
-        this.backdrop =
-            null;
-
-    }
-
-
-    /*
-     * Remove o destaque do alvo.
-
-     */
-
-    if (this.elementoAlvo) {
-
-        this.elementoAlvo.classList.remove(
-            'musicalworld-onboarding-target'
-        );
-
-    }
-
-
-    /*
-     * Permite iniciar novamente na mesma página,
-     * caso seja necessário durante os testes.
-     */
-
-    this.inicializado =
-        false;
-
-
-    console.log(
-        'MusicalWorld Onboarding: teste resetado. Recarregue a página ou execute iniciar() novamente.'
-    );
-
-}
-
 
 };
 
+
 /* =========================================================
-DISPONIBILIZAR GLOBALMENTE
-========================================================= */
+   DISPONIBILIZAR GLOBALMENTE
+   ========================================================= */
 
 window.MusicalWorldOnboarding =
-MusicalWorldOnboarding;
+    MusicalWorldOnboarding;
+
 
 /* =========================================================
-INICIALIZAÇÃO AUTOMÁTICA
-========================================================= */
+   INICIALIZAÇÃO AUTOMÁTICA
+   ========================================================= */
 
-document.addEventListener(
-'DOMContentLoaded',
-() => {
+if (document.readyState === "loading") {
 
+    document.addEventListener(
+        "DOMContentLoaded",
+        () => {
+
+            MusicalWorldOnboarding.iniciar();
+
+        },
+        {
+            once: true
+        }
+    );
+
+} else {
 
     MusicalWorldOnboarding.iniciar();
-
 }
 
 
-);
+})(window);
