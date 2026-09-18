@@ -22,6 +22,8 @@ Responsabilidade deste módulo:
 - Exibir uma prévia de novas mensagens recebidas.
 - Verificar mensagens não lidas quando o usuário entra
   na sessão.
+- Exibir a quantidade de notificações não lidas.
+- Atualizar o contador de notificações em tempo real.
 
 O menu da conta atual é aberto através da:
 
@@ -43,6 +45,11 @@ A exibição do aviso visual de nova mensagem é feita por:
 
 A leitura da mensagem continua sendo responsabilidade
 do chat.
+
+A leitura das notificações continua sendo responsabilidade
+da página:
+
+    notificacoes.html
 
 =========================================================
 */
@@ -80,7 +87,7 @@ menuUsuarioAberto: false,
 
 /*
 ---------------------------------------------------------
-Canal Realtime responsável pelas mensagens.
+Canal Realtime responsável pelas mensagens e notificações.
 
 Criado somente quando existe um usuário autenticado.
 ---------------------------------------------------------
@@ -100,7 +107,7 @@ usuarioAtualId: null,
 
 /*
 ---------------------------------------------------------
-Evita consultas simultâneas do contador.
+Evita consultas simultâneas do contador de mensagens.
 ---------------------------------------------------------
 */
 
@@ -109,11 +116,20 @@ carregandoContadorMensagens: false,
 
 /*
 ---------------------------------------------------------
-Evita verificações iniciais simultâneas.
+Evita verificações iniciais simultâneas das mensagens.
 ---------------------------------------------------------
 */
 
 carregandoNotificacaoInicial: false,
+
+
+/*
+---------------------------------------------------------
+Evita consultas simultâneas do contador de notificações.
+---------------------------------------------------------
+*/
+
+carregandoContadorNotificacoes: false,
 
 
 /*
@@ -144,11 +160,13 @@ async iniciar() {
 
     /*
     -----------------------------------------------------
-    Inicialmente o contador permanece oculto.
+    Inicialmente os contadores permanecem ocultos.
     -----------------------------------------------------
     */
 
     this.ocultarContadorMensagens();
+
+    this.ocultarContadorNotificacoes();
 
 
     try {
@@ -313,6 +331,10 @@ mostrarDeslogado() {
         false;
 
 
+    this.carregandoContadorNotificacoes =
+        false;
+
+
     /*
     -----------------------------------------------------
     Fecha o novo menu da conta.
@@ -356,11 +378,14 @@ mostrarDeslogado() {
 
     /*
     -----------------------------------------------------
-    Usuário deslogado não possui mensagens não lidas.
+    Usuário deslogado não possui mensagens ou notificações
+    não lidas.
     -----------------------------------------------------
     */
 
     this.ocultarContadorMensagens();
+
+    this.ocultarContadorNotificacoes();
 
 },
 
@@ -611,6 +636,35 @@ mostrarUsuario(dados) {
 
     this.verificarNotificacaoInicialMensagens();
 
+
+    /*
+    -----------------------------------------------------
+    CONTADOR DE NOTIFICAÇÕES
+
+    As notificações possuem sua própria tabela:
+
+        public.notificacoes
+
+    Somente registros:
+
+        usuario_id = usuário atual
+        lida = false
+
+    são contabilizados.
+
+    Esta consulta NÃO marca notificações como lidas.
+    -----------------------------------------------------
+    */
+
+    this.atualizarContadorNotificacoes();
+
+
+    /*
+    -----------------------------------------------------
+    REALTIME
+    -----------------------------------------------------
+    */
+
     this.iniciarRealtimeMensagens();
 
 },
@@ -789,6 +843,290 @@ async atualizarContadorMensagens() {
             false;
 
     }
+
+},
+
+
+/*
+=========================================================
+CONTADOR DE NOTIFICAÇÕES NÃO LIDAS
+=========================================================
+
+Conta os registros da tabela:
+
+    public.notificacoes
+
+que pertencem ao usuário atual e ainda não foram lidos.
+
+Campos utilizados:
+
+    usuario_id
+    lida
+
+IMPORTANTE:
+
+Esta função apenas consulta a quantidade.
+
+Ela NÃO altera:
+
+    notificacoes.lida
+
+A leitura continua sendo responsabilidade da página
+notificacoes.html.
+
+=========================================================
+*/
+
+async atualizarContadorNotificacoes() {
+
+    if (!this.usuarioAtualId) {
+
+        this.ocultarContadorNotificacoes();
+
+        return;
+
+    }
+
+
+    if (this.carregandoContadorNotificacoes) {
+
+        return;
+
+    }
+
+
+    this.carregandoContadorNotificacoes =
+        true;
+
+
+    try {
+
+        if (
+            typeof supabaseClient ===
+            'undefined'
+        ) {
+
+            throw new Error(
+                'supabaseClient não está disponível.'
+            );
+
+        }
+
+
+        const {
+            count,
+            error
+        } =
+            await supabaseClient
+                .from('notificacoes')
+                .select(
+                    'id',
+                    {
+                        count: 'exact',
+                        head: true
+                    }
+                )
+                .eq(
+                    'usuario_id',
+                    this.usuarioAtualId
+                )
+                .eq(
+                    'lida',
+                    false
+                );
+
+
+        if (error) {
+
+            throw error;
+
+        }
+
+
+        const quantidade =
+            Number.isFinite(count)
+                ? count
+                : 0;
+
+
+        this.atualizarVisualContadorNotificacoes(
+            quantidade
+        );
+
+
+        console.log(
+            'Cabeçalho: notificações não lidas:',
+            quantidade
+        );
+
+
+    } catch (erro) {
+
+        console.error(
+            'Cabeçalho: erro ao consultar notificações não lidas:',
+            erro
+        );
+
+
+        this.ocultarContadorNotificacoes();
+
+    } finally {
+
+        this.carregandoContadorNotificacoes =
+            false;
+
+    }
+
+},
+
+
+/*
+=========================================================
+ATUALIZAR VISUAL DO CONTADOR DE NOTIFICAÇÕES
+=========================================================
+*/
+
+atualizarVisualContadorNotificacoes(
+    quantidade
+) {
+
+    const contador =
+        document.getElementById(
+            'badge-notificacoes'
+        );
+
+
+    if (!contador) {
+
+        console.warn(
+            'Cabeçalho: #badge-notificacoes não encontrado no HTML.'
+        );
+
+        return;
+
+    }
+
+
+    if (
+        !quantidade ||
+        quantidade <= 0
+    ) {
+
+        contador.textContent =
+            '';
+
+        contador.style.display =
+            'none';
+
+        contador.setAttribute(
+            'aria-hidden',
+            'true'
+        );
+
+        contador.setAttribute(
+            'aria-label',
+            'Nenhuma notificação não lida'
+        );
+
+        return;
+
+    }
+
+
+    contador.textContent =
+        quantidade > 99
+            ? '99+'
+            : String(quantidade);
+
+
+    contador.style.display =
+        'flex';
+
+
+    contador.setAttribute(
+        'aria-hidden',
+        'false'
+    );
+
+
+    contador.setAttribute(
+        'aria-label',
+        `${quantidade} notificações não lidas`
+    );
+
+},
+
+
+/*
+=========================================================
+OCULTAR CONTADOR DE NOTIFICAÇÕES
+=========================================================
+*/
+
+ocultarContadorNotificacoes() {
+
+    const contador =
+        document.getElementById(
+            'badge-notificacoes'
+        );
+
+
+    if (!contador) {
+
+        return;
+
+    }
+
+
+    contador.textContent =
+        '';
+
+
+    contador.style.display =
+        'none';
+
+
+    contador.setAttribute(
+        'aria-hidden',
+        'true'
+    );
+
+
+    contador.setAttribute(
+        'aria-label',
+        'Nenhuma notificação não lida'
+    );
+
+},
+
+
+/*
+=========================================================
+VERIFICAR NOTIFICAÇÕES NOVAS
+=========================================================
+
+Atualiza o contador de notificações quando necessário.
+
+A leitura NÃO acontece aqui.
+
+O contador desaparecerá naturalmente quando a tabela
+notificacoes estiver com lida = true para o usuário.
+
+=========================================================
+*/
+
+verificarNotificacoesNaoLidas() {
+
+    if (!this.usuarioAtualId) {
+
+        this.ocultarContadorNotificacoes();
+
+        return;
+
+    }
+
+
+    this.atualizarContadorNotificacoes();
 
 },
 
@@ -1063,7 +1401,7 @@ async verificarNotificacaoInicialMensagens() {
 
 /*
 =========================================================
-ATUALIZAR VISUAL DO CONTADOR
+ATUALIZAR VISUAL DO CONTADOR DE MENSAGENS
 =========================================================
 */
 
@@ -1183,7 +1521,7 @@ ocultarContadorMensagens() {
 
 /*
 =========================================================
-REALTIME DAS MENSAGENS
+REALTIME DAS MENSAGENS E NOTIFICAÇÕES
 =========================================================
 */
 
@@ -1218,14 +1556,14 @@ iniciarRealtimeMensagens() {
 
 
     console.log(
-        'Cabeçalho: iniciando Realtime das mensagens...'
+        'Cabeçalho: iniciando Realtime das mensagens e notificações...'
     );
 
 
     this.canalMensagensRealtime =
         supabaseClient
             .channel(
-                `cabecalho-mensagens-${this.usuarioAtualId}-${Date.now()}`
+                `cabecalho-${this.usuarioAtualId}-${Date.now()}`
             )
 
 
@@ -1333,6 +1671,135 @@ iniciarRealtimeMensagens() {
 
             /*
             -------------------------------------------------
+            NOVA NOTIFICAÇÃO
+            -------------------------------------------------
+
+            Quando uma nova linha for criada em:
+
+                public.notificacoes
+
+            atualizamos o contador.
+
+            A própria notificação permanece não lida até
+            que a página de notificações trate sua leitura.
+            -------------------------------------------------
+            */
+
+            .on(
+                'postgres_changes',
+                {
+                    event: 'INSERT',
+                    schema: 'public',
+                    table: 'notificacoes'
+                },
+                (payload) => {
+
+                    const notificacao =
+                        payload?.new;
+
+
+                    if (!notificacao) {
+
+                        return;
+
+                    }
+
+
+                    /*
+                    -----------------------------------------
+                    Garante que a notificação pertence ao
+                    usuário atualmente autenticado.
+                    -----------------------------------------
+                    */
+
+                    if (
+                        notificacao.usuario_id !==
+                        this.usuarioAtualId
+                    ) {
+
+                        return;
+
+                    }
+
+
+                    console.log(
+                        'Cabeçalho: nova notificação recebida.',
+                        notificacao
+                    );
+
+
+                    /*
+                    -----------------------------------------
+                    Atualiza a quantidade real no banco.
+                    -----------------------------------------
+                    */
+
+                    this.atualizarContadorNotificacoes();
+
+                }
+            )
+
+
+            /*
+            -------------------------------------------------
+            NOTIFICAÇÃO ATUALIZADA
+            -------------------------------------------------
+
+            Necessário principalmente quando:
+
+                lida: false
+                    ↓
+                lida: true
+
+            Assim o contador desaparece sem precisar
+            recarregar a página.
+            -------------------------------------------------
+            */
+
+            .on(
+                'postgres_changes',
+                {
+                    event: 'UPDATE',
+                    schema: 'public',
+                    table: 'notificacoes'
+                },
+                (payload) => {
+
+                    const notificacao =
+                        payload?.new;
+
+
+                    if (!notificacao) {
+
+                        return;
+
+                    }
+
+
+                    if (
+                        notificacao.usuario_id !==
+                        this.usuarioAtualId
+                    ) {
+
+                        return;
+
+                    }
+
+
+                    console.log(
+                        'Cabeçalho: notificação atualizada.',
+                        notificacao
+                    );
+
+
+                    this.atualizarContadorNotificacoes();
+
+                }
+            )
+
+
+            /*
+            -------------------------------------------------
             INSCRIÇÃO
             -------------------------------------------------
             */
@@ -1341,7 +1808,7 @@ iniciarRealtimeMensagens() {
                 (status) => {
 
                     console.log(
-                        'Cabeçalho: status Realtime mensagens:',
+                        'Cabeçalho: status Realtime:',
                         status
                     );
 
@@ -1705,7 +2172,7 @@ obterPreviewMensagem(
 
 /*
 =========================================================
-PARAR REALTIME DAS MENSAGENS
+PARAR REALTIME DAS MENSAGENS E NOTIFICAÇÕES
 =========================================================
 */
 
@@ -1736,7 +2203,7 @@ pararRealtimeMensagens() {
     } catch (erro) {
 
         console.error(
-            'Cabeçalho: erro ao encerrar Realtime das mensagens:',
+            'Cabeçalho: erro ao encerrar Realtime:',
             erro
         );
 

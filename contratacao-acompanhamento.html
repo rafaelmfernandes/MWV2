@@ -850,6 +850,133 @@
 
 
             <!-- =================================================
+                 AÇÕES DE CONCLUSÃO / SIMULAÇÃO DO EVENTO
+
+                 Esta área é controlada pelo:
+                 contratacao-acompanhamento-render.js
+
+                 O JavaScript decide quando ela deve aparecer:
+
+                 confirmada
+                 → Simular evento realizado
+
+                 evento
+                 → Confirmar serviço realizado
+                 ================================================= -->
+
+            <section
+                class="acoes-conclusao"
+                id="acoesConclusao"
+                hidden
+            >
+
+                <div class="acoes-conclusao-header">
+
+                    <span class="card-eyebrow">
+                        Próxima etapa
+                    </span>
+
+
+                    <h2>
+                        Continue a contratação
+                    </h2>
+
+
+                    <p>
+                        Registre a realização do evento e confirme
+                        a conclusão do serviço para avançar no fluxo.
+                    </p>
+
+                </div>
+
+
+                <div class="acoes-conclusao-botoes">
+
+                    <button
+                        type="button"
+                        class="btn-principal"
+                        id="btnConcluirContratacao"
+                    >
+
+                        <span>
+                            Continuar
+                        </span>
+
+
+                        <i data-lucide="arrow-right"></i>
+
+                    </button>
+
+                </div>
+
+
+                <p
+                    class="acoes-status"
+                    id="acoesConclusaoStatus"
+                    hidden
+                    aria-live="polite"
+                >
+                </p>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 AÇÃO LEGADA DE LIBERAÇÃO DO PAGAMENTO
+
+                 Mantida no DOM para compatibilidade com versões
+                 anteriores do JavaScript.
+
+                 O render atual controla sua visibilidade.
+                 ================================================= -->
+
+            <section
+                class="pagamento-acao"
+                id="pagamentoAcao"
+                hidden
+            >
+
+                <div class="pagamento-acao-conteudo">
+
+                    <span class="card-eyebrow">
+                        Pagamento
+                    </span>
+
+
+                    <h2>
+                        Liberar pagamento
+                    </h2>
+
+
+                    <p id="pagamentoAcaoStatus">
+                        O pagamento será liberado após a confirmação
+                        da realização do serviço.
+                    </p>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="btn-principal"
+                    id="btnLiberarPagamento"
+                >
+
+                    <span>
+                        Liberar pagamento
+                    </span>
+
+
+                    <i data-lucide="wallet"></i>
+
+                </button>
+
+            </section>
+
+
+
+            <!-- =================================================
                  PAGAMENTO
                  ================================================= -->
 
@@ -984,7 +1111,13 @@
          JAVASCRIPT DA PÁGINA
          ===================================================== -->
 
-    <script src="js/contratacao/contratacao-acompanhamento.js"></script>
+    <script src="js/contratacao/acompanhamento/contratacao-acompanhamento-dados.js"></script>
+
+    <script src="js/contratacao/acompanhamento/contratacao-acompanhamento-render.js"></script>
+
+    <script src="js/contratacao/acompanhamento/contratacao-acompanhamento-fluxo.js"></script>
+
+    <script src="js/contratacao/acompanhamento/contratacao-acompanhamento.js"></script>
 
 
 

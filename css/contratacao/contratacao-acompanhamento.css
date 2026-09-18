@@ -1,8 +1,10 @@
 /* =========================================================
    MUSICALWORLD — ACOMPANHAMENTO DA CONTRATAÇÃO
-   Arquivo: contratacao-acompanhamento.css
 
-   Responsabilidade:
+   Arquivo:
+   css/contratacao/contratacao-acompanhamento.css
+
+   Responsabilidades:
    - Estilizar toda a página de acompanhamento.
    - Apresentar a relação entre contratante e contratado.
    - Apresentar o status atual da contratação.
@@ -10,6 +12,7 @@
    - Exibir a timeline completa da contratação.
    - Exibir informações de pagamento.
    - Exibir ações para solicitações recebidas.
+   - Exibir ações para simulação e conclusão do evento.
    - Manter estados visuais de aceite, recusa, erro e carregamento.
    - Garantir responsividade em dispositivos móveis.
    ========================================================= */
@@ -856,12 +859,12 @@ button:disabled {
 }
 
 
-.acoes-solicitacao-cabecalho {
+.acoes-solicitacao-header {
     margin-bottom: 17px;
 }
 
 
-.acoes-solicitacao-cabecalho > span {
+.acoes-solicitacao-header > span {
     display: block;
 
     margin-bottom: 5px;
@@ -876,7 +879,7 @@ button:disabled {
 }
 
 
-.acoes-solicitacao-cabecalho strong {
+.acoes-solicitacao-header h2 {
     display: block;
 
     margin-bottom: 5px;
@@ -890,7 +893,7 @@ button:disabled {
 }
 
 
-.acoes-solicitacao-cabecalho p {
+.acoes-solicitacao-header p {
     color: #64748b;
 
     font-size: 12px;
@@ -1012,6 +1015,162 @@ button:disabled {
     transform: none;
 
     box-shadow: none;
+}
+
+
+/* =========================================================
+   AÇÕES DE CONCLUSÃO / SIMULAÇÃO
+   ========================================================= */
+
+.acoes-conclusao {
+    margin-bottom: 20px;
+
+    padding: 20px;
+
+    border: 1px solid #d9d2ff;
+    border-radius: 19px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #faf9ff 0%,
+            #f4f1ff 100%
+        );
+
+    box-shadow:
+        0 8px 26px rgba(109, 74, 255, 0.06);
+}
+
+
+.acoes-conclusao[hidden] {
+    display: none !important;
+}
+
+
+.acoes-conclusao-header {
+    margin-bottom: 17px;
+}
+
+
+.acoes-conclusao-header .card-eyebrow {
+    margin-bottom: 5px;
+}
+
+
+.acoes-conclusao-header h2 {
+    margin-bottom: 5px;
+
+    color: #172033;
+
+    font-size: 16px;
+    line-height: 1.4;
+
+    font-weight: 800;
+
+    letter-spacing: -0.015em;
+}
+
+
+.acoes-conclusao-header p {
+    color: #64748b;
+
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+
+.acoes-conclusao-botoes {
+    width: 100%;
+}
+
+
+.acoes-conclusao .btn-principal {
+    width: 100%;
+
+    background: #6d4aff;
+
+    box-shadow:
+        0 8px 20px rgba(109, 74, 255, 0.16);
+}
+
+
+.acoes-conclusao .btn-principal:hover {
+    background: #5d3ee4;
+}
+
+
+.acoes-conclusao .btn-principal:disabled {
+    opacity: 0.6;
+
+    transform: none;
+
+    cursor: not-allowed;
+}
+
+
+.acoes-conclusao .acoes-status {
+    margin-top: 12px;
+
+    color: #64748b;
+
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+
+.acoes-conclusao .acoes-status[hidden] {
+    display: none !important;
+}
+
+
+/* =========================================================
+   AÇÃO LEGADA DE PAGAMENTO
+   ========================================================= */
+
+.pagamento-acao {
+    margin-bottom: 20px;
+
+    padding: 20px;
+
+    border: 1px solid #d9d2ff;
+    border-radius: 19px;
+
+    background: #faf9ff;
+}
+
+
+.pagamento-acao[hidden] {
+    display: none !important;
+}
+
+
+.pagamento-acao-conteudo {
+    margin-bottom: 16px;
+}
+
+
+.pagamento-acao-conteudo h2 {
+    margin-bottom: 5px;
+
+    color: #172033;
+
+    font-size: 16px;
+    line-height: 1.4;
+
+    font-weight: 800;
+}
+
+
+.pagamento-acao-conteudo p {
+    color: #64748b;
+
+    font-size: 12px;
+    line-height: 1.55;
+}
+
+
+.pagamento-acao .btn-principal {
+    width: 100%;
 }
 
 
@@ -1353,6 +1512,26 @@ button:disabled {
     }
 
 
+    .acoes-conclusao {
+        padding: 18px;
+    }
+
+
+    .acoes-conclusao-header h2 {
+        font-size: 15px;
+    }
+
+
+    .acoes-conclusao-header p {
+        font-size: 11px;
+    }
+
+
+    .pagamento-acao {
+        padding: 18px;
+    }
+
+
     .pagamento-card {
         padding: 17px;
     }
@@ -1529,12 +1708,12 @@ button:disabled {
     }
 
 
-    .acoes-solicitacao-cabecalho strong {
+    .acoes-solicitacao-header h2 {
         font-size: 14px;
     }
 
 
-    .acoes-solicitacao-cabecalho p {
+    .acoes-solicitacao-header p {
         font-size: 11px;
     }
 
@@ -1542,6 +1721,26 @@ button:disabled {
     .btn-aceitar,
     .btn-recusar {
         font-size: 12px;
+    }
+
+
+    .acoes-conclusao {
+        padding: 16px;
+    }
+
+
+    .acoes-conclusao-header h2 {
+        font-size: 14px;
+    }
+
+
+    .acoes-conclusao-header p {
+        font-size: 11px;
+    }
+
+
+    .pagamento-acao {
+        padding: 16px;
     }
 
 

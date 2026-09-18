@@ -1,46 +1,62 @@
 /* =========================================================
-MUSICALWORLD — MENU INFERIOR
+   MUSICALWORLD — MENU INFERIOR
 
-Arquivo: menu-inferior.js
+   Arquivo:
+   menu-inferior.js
 
-Responsabilidade:
-Controlar a navegação principal inferior do aplicativo.
+   Responsabilidade:
+   Controlar a navegação principal inferior do aplicativo.
 
-Funções:
+   Funções:
 
-* Inicializar o menu inferior.
-* Carregar o painel de pesquisa.
-* Identificar automaticamente a página atual.
-* Controlar o item ativo.
-* Animar o indicador de seleção.
-* Abrir Home.
-* Abrir Pesquisa.
-* Abrir Financeiro.
-* Abrir Contratações.
-* Abrir Meu Perfil.
-* Identificar o usuário autenticado.
-* Exibir a foto do usuário logado no item Perfil.
+   - Inicializar o menu inferior.
+   - Carregar o painel de pesquisa.
+   - Carregar automaticamente os recursos da animação
+     do item Financeiro.
+   - Identificar automaticamente a página atual.
+   - Controlar o item ativo.
+   - Animar o indicador de seleção.
+   - Abrir Home.
+   - Abrir Pesquisa.
+   - Abrir Financeiro.
+   - Abrir Contratações.
+   - Abrir Meu Perfil.
+   - Identificar o usuário autenticado.
+   - Exibir a foto do usuário logado no item Perfil.
 
-IMPORTANTE:
-O menu inferior possui cinco áreas principais:
+   IMPORTANTE:
+   O menu inferior possui cinco áreas principais:
 
-1. Home
-2. Pesquisa
-3. Financeiro
-4. Contratações
-5. Perfil
+   1. Home
+   2. Pesquisa
+   3. Financeiro
+   4. Contratações
+   5. Perfil
 
-O acesso para criação de anúncios não faz mais parte
-do menu inferior. Ele será disponibilizado posteriormente
-na nova organização do cabeçalho superior.
+   O acesso para criação de anúncios não faz mais parte
+   do menu inferior. Ele será disponibilizado posteriormente
+   na nova organização do cabeçalho superior.
 
-Quando existe uma sessão autenticada, o item Perfil
-pode substituir o ícone padrão pela foto cadastrada
-em public.usuarios.foto_url.
+   Quando existe uma sessão autenticada, o item Perfil
+   pode substituir o ícone padrão pela foto cadastrada
+   em public.usuarios.foto_url.
 
-Caso não exista sessão ou não exista foto cadastrada,
-o ícone padrão de perfil permanece como fallback.
+   Caso não exista sessão ou não exista foto cadastrada,
+   o ícone padrão de perfil permanece como fallback.
+
+   RECURSOS DO MENU:
+
+   O menu inferior é o ponto central de carregamento dos
+   recursos que pertencem exclusivamente a ele.
+
+   Portanto, as páginas não precisam carregar diretamente:
+
+   - animacao-financeiro.js
+   - animacao-financeiro.css
+
+   O próprio menu faz esse carregamento automaticamente.
 ========================================================= */
+
 
 const MenuInferior = {
 
@@ -56,6 +72,8 @@ pesquisaCarregada: false,
 indicadorAnimando: false,
 
 fotoPerfilCarregada: false,
+
+animacaoFinanceiroCarregada: false,
 
 
 /* =====================================================
@@ -111,6 +129,21 @@ async iniciar() {
 
 
     /*
+     * Depois que o HTML do menu foi criado,
+     * carregamos os recursos específicos da animação
+     * do item Financeiro.
+     *
+     * Isso é importante porque o botão:
+     *
+     * #nav-item-financeiro
+     *
+     * somente passa a existir depois de criarMenu().
+     */
+
+    await this.carregarRecursosAnimacaoFinanceiro();
+
+
+    /*
      * Verifica se existe usuário autenticado
      * e carrega sua foto no item Perfil.
      */
@@ -135,6 +168,276 @@ async iniciar() {
     console.log(
         'Menu inferior inicializado corretamente.'
     );
+},
+
+
+/* =====================================================
+   CARREGAR RECURSOS DA ANIMAÇÃO FINANCEIRA
+===================================================== */
+
+/*
+ * Esta função pertence ao menu inferior porque a animação
+ * está vinculada diretamente ao botão Financeiro.
+ *
+ * Nenhuma página precisa importar manualmente:
+ *
+ * - animacao-financeiro.css
+ * - animacao-financeiro.js
+ *
+ * O menu faz isso automaticamente.
+ */
+
+async carregarRecursosAnimacaoFinanceiro() {
+
+    /*
+     * Primeiro carregamos o CSS.
+     */
+
+    this.carregarCssAnimacaoFinanceiro();
+
+
+    /*
+     * Se o objeto global já estiver disponível,
+     * significa que o JavaScript já foi carregado.
+     */
+
+    if (
+        window.MusicalWorldAnimacaoFinanceiro &&
+        typeof window.MusicalWorldAnimacaoFinanceiro.inicializar === 'function'
+    ) {
+
+        this.animacaoFinanceiroCarregada = true;
+
+        window.MusicalWorldAnimacaoFinanceiro.inicializar();
+
+        return;
+    }
+
+
+    /*
+     * Verifica se outro carregamento do mesmo arquivo
+     * já foi iniciado.
+     */
+
+    const scriptExistente =
+        document.querySelector(
+            'script[data-animacao-financeiro-js="true"]'
+        );
+
+
+    if (scriptExistente) {
+
+        await this.aguardarAnimacaoFinanceiro();
+
+        return;
+    }
+
+
+    /*
+     * Cria dinamicamente o elemento <script>.
+     */
+
+    const script =
+        document.createElement('script');
+
+
+    script.src =
+        'js/components/animacao-financeiro.js';
+
+
+    script.dataset.animacaoFinanceiroJs =
+        'true';
+
+
+    /*
+     * Quando o JavaScript terminar de carregar,
+     * inicializa a animação.
+     */
+
+    script.onload = () => {
+
+        console.log(
+            'JavaScript da animação financeira carregado automaticamente.'
+        );
+
+
+        this.animacaoFinanceiroCarregada =
+            true;
+
+
+        if (
+            window.MusicalWorldAnimacaoFinanceiro &&
+            typeof window.MusicalWorldAnimacaoFinanceiro.inicializar === 'function'
+        ) {
+
+            window.MusicalWorldAnimacaoFinanceiro.inicializar();
+
+        }
+
+    };
+
+
+    /*
+     * Caso o arquivo não seja encontrado,
+     * o restante do menu continua funcionando normalmente.
+     */
+
+    script.onerror = () => {
+
+        console.error(
+            'Não foi possível carregar js/components/animacao-financeiro.js'
+        );
+
+    };
+
+
+    /*
+     * Adiciona o script ao documento.
+     */
+
+    document.body.appendChild(script);
+
+
+    /*
+     * Aguarda o objeto global ficar disponível.
+     */
+
+    await this.aguardarAnimacaoFinanceiro();
+
+},
+
+
+/* =====================================================
+   AGUARDAR ANIMAÇÃO FINANCEIRA
+===================================================== */
+
+aguardarAnimacaoFinanceiro() {
+
+    return new Promise(resolve => {
+
+        let tentativas = 0;
+
+
+        const verificar = () => {
+
+            /*
+             * Verifica se o módulo da animação já foi
+             * disponibilizado globalmente.
+             */
+
+            if (
+                window.MusicalWorldAnimacaoFinanceiro &&
+                typeof window.MusicalWorldAnimacaoFinanceiro.inicializar === 'function'
+            ) {
+
+                this.animacaoFinanceiroCarregada =
+                    true;
+
+
+                /*
+                 * O menu já existe neste momento,
+                 * portanto podemos inicializar a animação.
+                 */
+
+                window.MusicalWorldAnimacaoFinanceiro.inicializar();
+
+
+                resolve();
+
+                return;
+            }
+
+
+            tentativas++;
+
+
+            /*
+             * Evita ficar aguardando indefinidamente
+             * caso o arquivo tenha algum problema.
+             */
+
+            if (tentativas >= 50) {
+
+                console.warn(
+                    'Animação financeira não ficou disponível a tempo.'
+                );
+
+
+                resolve();
+
+                return;
+            }
+
+
+            setTimeout(
+                verificar,
+                50
+            );
+
+        };
+
+
+        verificar();
+
+    });
+},
+
+
+/* =====================================================
+   CARREGAR CSS DA ANIMAÇÃO FINANCEIRA
+===================================================== */
+
+carregarCssAnimacaoFinanceiro() {
+
+    /*
+     * Verifica se o CSS já foi carregado.
+     *
+     * Isso impede que páginas ou inicializações múltiplas
+     * criem várias tags <link> para o mesmo arquivo.
+     */
+
+    const cssExistente =
+        document.querySelector(
+            'link[data-animacao-financeiro-css="true"]'
+        );
+
+
+    if (cssExistente) {
+        return;
+    }
+
+
+    /*
+     * Cria o elemento <link>.
+     */
+
+    const link =
+        document.createElement('link');
+
+
+    link.rel =
+        'stylesheet';
+
+
+    link.href =
+        'css/components/animacao-financeiro.css';
+
+
+    link.dataset.animacaoFinanceiroCss =
+        'true';
+
+
+    /*
+     * Adiciona o CSS ao <head>.
+     */
+
+    document.head.appendChild(link);
+
+
+    console.log(
+        'CSS da animação financeira carregado automaticamente.'
+    );
+
 },
 
 
@@ -358,6 +661,7 @@ async carregarFotoPerfilUsuario() {
                     'Meu perfil'
                 );
 
+
                 itemPerfil.setAttribute(
                     'title',
                     'Meu perfil'
@@ -425,8 +729,10 @@ async carregarRecursosPesquisa() {
 
     const script = document.createElement('script');
 
+
     script.src =
         'js/components/painel-pesquisa.js';
+
 
     script.dataset.painelPesquisaJs =
         'true';
@@ -467,6 +773,7 @@ async carregarRecursosPesquisa() {
 
 
     await this.aguardarPainelPesquisa();
+
 },
 
 
@@ -548,10 +855,13 @@ carregarCssPesquisa() {
 
     const link = document.createElement('link');
 
+
     link.rel = 'stylesheet';
+
 
     link.href =
         'css/painel-pesquisa.css';
+
 
     link.dataset.painelPesquisaCss =
         'true';
@@ -1127,6 +1437,7 @@ mudarAba(aba, elemento) {
             true
         );
 
+
         this.abrirMeuPerfil();
 
         return;
@@ -1312,7 +1623,7 @@ async abrirMeuPerfil() {
 
 
 /* =========================================================
-DISPONIBILIZAR GLOBALMENTE
+   DISPONIBILIZAR GLOBALMENTE
 ========================================================= */
 
 window.MenuInferior =
@@ -1320,7 +1631,7 @@ window.MenuInferior =
 
 
 /* =========================================================
-INICIALIZAÇÃO AUTOMÁTICA
+   INICIALIZAÇÃO AUTOMÁTICA
 ========================================================= */
 
 document.addEventListener(

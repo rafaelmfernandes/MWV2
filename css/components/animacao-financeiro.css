@@ -1,0 +1,613 @@
+/* =========================================================
+MUSICALWORLD — ANIMAÇÃO DO ÍCONE FINANCEIRO
+
+Arquivo:
+css/components/animacao-financeiro.css
+
+Responsabilidades:
+
+* Manter o ícone de carteira original.
+* Criar uma pulsação suave na carteira.
+* Criar pequenos brilhos ao redor do ícone.
+* Evitar o efeito de explosão saindo do centro.
+* Manter a animação discreta e elegante.
+  ========================================================= */
+
+/* =========================================================
+WRAPPER
+========================================================= */
+
+#nav-item-financeiro
+.financeiro-animation-wrapper {
+
+position: relative;
+
+display: inline-flex;
+
+align-items: center;
+
+justify-content: center;
+
+width: 24px;
+
+height: 24px;
+
+min-width: 24px;
+
+min-height: 24px;
+
+overflow: visible;
+
+}
+
+/* =========================================================
+CARTEIRA ORIGINAL
+========================================================= */
+
+#nav-item-financeiro
+.financeiro-animation-wrapper
+.nav-icon-svg {
+
+position: relative;
+
+z-index: 3;
+
+width: 24px !important;
+
+height: 24px !important;
+
+min-width: 24px !important;
+
+min-height: 24px !important;
+
+max-width: 24px !important;
+
+max-height: 24px !important;
+
+flex-shrink: 0;
+
+transform-origin: center center;
+
+}
+
+/* =========================================================
+ÁREA DOS BRILHOS
+========================================================= */
+
+#nav-item-financeiro
+.financeiro-luzes {
+
+position: absolute;
+
+left: 50%;
+
+top: 50%;
+
+width: 48px;
+
+height: 48px;
+
+margin-left: -24px;
+
+margin-top: -24px;
+
+pointer-events: none;
+
+z-index: 2;
+
+opacity: 0;
+
+transform:
+scale(.92);
+
+}
+
+/* =========================================================
+BRILHOS INDIVIDUAIS
+========================================================= */
+
+/*
+
+* Os brilhos NÃO começam no centro.
+*
+* Cada um já possui uma posição própria ao redor
+* da carteira.
+  */
+
+#nav-item-financeiro
+.financeiro-feixe {
+
+position: absolute;
+
+width: 3px;
+
+height: 7px;
+
+border-radius: 999px;
+
+background:
+#f5b82e;
+
+box-shadow:
+0 0 5px rgba(
+245,
+184,
+46,
+.55
+);
+
+opacity: 0;
+
+}
+
+/* =========================================================
+BRILHO SUPERIOR
+========================================================= */
+
+#nav-item-financeiro
+.financeiro-feixe:nth-child(1) {
+
+left: 23px;
+
+top: 2px;
+
+transform:
+rotate(8deg)
+scale(.6);
+
+}
+
+/* =========================================================
+BRILHO SUPERIOR DIREITO
+========================================================= */
+
+#nav-item-financeiro
+.financeiro-feixe:nth-child(2) {
+
+left: 35px;
+
+top: 9px;
+
+transform:
+rotate(48deg)
+scale(.55);
+
+}
+
+/* =========================================================
+BRILHO DIREITO
+========================================================= */
+
+#nav-item-financeiro
+.financeiro-feixe:nth-child(3) {
+
+left: 40px;
+
+top: 22px;
+
+transform:
+rotate(88deg)
+scale(.6);
+
+}
+
+/* =========================================================
+BRILHO INFERIOR DIREITO
+========================================================= */
+
+#nav-item-financeiro
+.financeiro-feixe:nth-child(4) {
+
+left: 34px;
+
+top: 34px;
+
+transform:
+rotate(135deg)
+scale(.55);
+
+}
+
+/* =========================================================
+BRILHO INFERIOR
+========================================================= */
+
+#nav-item-financeiro
+.financeiro-feixe:nth-child(5) {
+
+left: 22px;
+
+top: 39px;
+
+transform:
+rotate(178deg)
+scale(.6);
+
+}
+
+/* =========================================================
+BRILHO INFERIOR ESQUERDO
+========================================================= */
+
+#nav-item-financeiro
+.financeiro-feixe:nth-child(6) {
+
+left: 10px;
+
+top: 34px;
+
+transform:
+rotate(225deg)
+scale(.55);
+
+}
+
+/* =========================================================
+BRILHO ESQUERDO
+========================================================= */
+
+#nav-item-financeiro
+.financeiro-feixe:nth-child(7) {
+
+left: 4px;
+
+top: 22px;
+
+transform:
+rotate(270deg)
+scale(.6);
+
+}
+
+/* =========================================================
+BRILHO SUPERIOR ESQUERDO
+========================================================= */
+
+#nav-item-financeiro
+.financeiro-feixe:nth-child(8) {
+
+left: 10px;
+
+top: 9px;
+
+transform:
+rotate(315deg)
+scale(.55);
+
+}
+
+/* =========================================================
+PULSAÇÃO DA CARTEIRA
+========================================================= */
+
+#nav-item-financeiro
+.financeiro-animation-wrapper.financeiro-animando
+.nav-icon-svg {
+
+animation:
+financeiro-pulsacao-suave
+900ms
+cubic-bezier(
+.22,
+.8,
+.25,
+1
+)
+both;
+
+}
+
+/* =========================================================
+CARTEIRA PULSANDO
+========================================================= */
+
+@keyframes financeiro-pulsacao-suave {
+
+0% {
+
+
+transform:
+    scale(1);
+
+
+}
+
+22% {
+
+
+transform:
+    scale(1.08);
+
+
+}
+
+45% {
+
+
+transform:
+    scale(1.13);
+
+
+}
+
+68% {
+
+
+transform:
+    scale(1.05);
+
+
+}
+
+100% {
+
+
+transform:
+    scale(1);
+
+
+}
+
+}
+
+/* =========================================================
+ATIVAÇÃO DOS BRILHOS
+========================================================= */
+
+#nav-item-financeiro
+.financeiro-animation-wrapper.financeiro-luzes-ativas
+.financeiro-luzes {
+
+animation:
+financeiro-brilho-geral
+900ms
+ease-out
+both;
+
+}
+
+/* =========================================================
+MOVIMENTO SUAVE DOS BRILHOS
+========================================================= */
+
+@keyframes financeiro-brilho-geral {
+
+0% {
+
+
+opacity: 0;
+
+transform:
+    scale(.88);
+
+
+}
+
+25% {
+
+
+opacity: .45;
+
+transform:
+    scale(.96);
+
+
+}
+
+48% {
+
+
+opacity: 1;
+
+transform:
+    scale(1);
+
+
+}
+
+72% {
+
+
+opacity: .65;
+
+transform:
+    scale(1.04);
+
+
+}
+
+100% {
+
+
+opacity: 0;
+
+transform:
+    scale(1.1);
+
+
+}
+
+}
+
+/* =========================================================
+ANIMAÇÃO DOS BRILHOS
+========================================================= */
+
+#nav-item-financeiro
+.financeiro-animation-wrapper.financeiro-luzes-ativas
+.financeiro-feixe {
+
+animation:
+financeiro-feixe-suave
+760ms
+cubic-bezier(
+.25,
+.7,
+.25,
+1
+)
+both;
+
+}
+
+/* =========================================================
+BRILHO INDIVIDUAL
+========================================================= */
+
+@keyframes financeiro-feixe-suave {
+
+0% {
+
+
+opacity: 0;
+
+filter:
+    brightness(.9);
+
+
+}
+
+22% {
+
+
+opacity: .55;
+
+filter:
+    brightness(1.15);
+
+
+}
+
+48% {
+
+
+opacity: 1;
+
+filter:
+    brightness(1.45);
+
+
+}
+
+70% {
+
+
+opacity: .65;
+
+filter:
+    brightness(1.2);
+
+
+}
+
+100% {
+
+
+opacity: 0;
+
+filter:
+    brightness(1);
+
+
+}
+
+}
+
+/* =========================================================
+BADGE
+========================================================= */
+
+#nav-item-financeiro
+.financeiro-notificacao-badge {
+
+position: absolute;
+
+top: -5px;
+
+right: -6px;
+
+min-width: 17px;
+
+height: 17px;
+
+padding:
+0 4px;
+
+border-radius: 999px;
+
+display: none;
+
+align-items: center;
+
+justify-content: center;
+
+box-sizing: border-box;
+
+background:
+#ef4444 !important;
+
+color:
+#ffffff !important;
+
+border:
+2px solid #ffffff;
+
+font-family:
+Inter,
+Arial,
+Helvetica,
+sans-serif;
+
+font-size: 9px;
+
+font-weight: 700;
+
+line-height: 1;
+
+z-index: 10;
+
+pointer-events: none;
+
+}
+
+/* =========================================================
+REDUÇÃO DE MOVIMENTO
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+#nav-item-financeiro
+.financeiro-animation-wrapper
+.nav-icon-svg {
+
+
+animation: none !important;
+
+
+}
+
+#nav-item-financeiro
+.financeiro-animation-wrapper
+.financeiro-luzes {
+
+
+animation: none !important;
+
+opacity: 0 !important;
+
+
+}
+
+#nav-item-financeiro
+.financeiro-animation-wrapper
+.financeiro-feixe {
+
+
+animation: none !important;
+
+opacity: 0 !important;
+
+
+}
+
+}
