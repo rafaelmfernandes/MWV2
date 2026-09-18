@@ -4,9 +4,11 @@
 
     /* =========================================================
        MUSICALWORLD — MEU PERFIL UNIVERSAL
-       Arquivo: PerfilPublico.js
 
-       Responsabilidade:
+       Arquivo:
+       js/PerfilPublico.js
+
+       Responsabilidades:
 
        - Controlar a página "Meu Perfil".
        - Funcionar para todos os tipos de perfil.
@@ -15,34 +17,16 @@
        - Acionar os módulos de cada seção.
        - Preencher informações básicas.
        - Controlar ações da página.
-       - Controlar carteira e transações.
        - Abrir a apresentação pública universal.
        - Abrir o editor universal.
 
-       PÁGINAS UNIVERSAIS:
+       NÃO É RESPONSABILIDADE DESTE ARQUIVO:
 
-       Meu Perfil:
-       meu-perfil.html
-
-       Editar Perfil:
-       editar-perfil.html
-
-       Apresentar Perfil:
-       apresentar-perfil.html?id=ID_DO_PERFIL
-
-       TIPOS SUPORTADOS:
-
-       Cantor(a)
-       Músico(a)
-       Banda
-       Dupla musical
-       DJ
-       Dançarino(a)
-       Grupo de dança
-       MC
-       Compositor(a)
-       Produtor(a) musical
-       Contratante
+       - Carteira financeira.
+       - Saldo.
+       - Transações.
+       - Saques.
+       - Dados financeiros.
        ========================================================= */
 
 
@@ -77,25 +61,11 @@
 
         pagina: {
 
-            /*
-             * Fallback genérico.
-             *
-             * O tipo real sempre deve vir do banco.
-             */
-
             tipoArtista:
                 "Artista",
 
-            /*
-             * Página pública universal.
-             */
-
             apresentacao:
                 "apresentar-perfil.html",
-
-            /*
-             * Editor universal.
-             */
 
             edicao:
                 "editar-perfil.html"
@@ -123,11 +93,6 @@
             avaliacoes: {
                 id:
                     "tab-avaliacoes"
-            },
-
-            carteira: {
-                id:
-                    "tab-carteira"
             }
 
         },
@@ -140,12 +105,6 @@
 
             categoria:
                 "profileCategory",
-
-            /*
-             * Subtítulo do topo.
-             *
-             * O tipo real do perfil será colocado aqui.
-             */
 
             subtituloTipo:
                 "topbarProfileSubtitle",
@@ -202,19 +161,7 @@
                 "profileLink",
 
             qrImagem:
-                "qrImage",
-
-            walletTotal:
-                "walletTotal",
-
-            walletAvailable:
-                "walletAvailable",
-
-            walletPending:
-                "walletPending",
-
-            transactionList:
-                "transactionList"
+                "qrImage"
 
         },
 
@@ -240,10 +187,7 @@
                 "btnFecharQR",
 
             compartilharQR:
-                "btnCompartilharQR",
-
-            sacar:
-                "btnSacar"
+                "btnCompartilharQR"
 
         },
 
@@ -296,9 +240,6 @@
                 false,
 
             avaliacoes:
-                false,
-
-            carteira:
                 false
 
         },
@@ -328,12 +269,6 @@
             [],
 
         avaliacoes:
-            [],
-
-        carteira:
-            null,
-
-        transacoes:
             []
 
     };
@@ -442,14 +377,6 @@
                 ? String(valor)
                 : "Localização não informada";
 
-        /*
-         * O elemento #profileLocation possui
-         * um ícone SVG/Lucide e um <span>.
-         *
-         * Alterar textContent diretamente no elemento
-         * apagaria o ícone.
-         */
-
         const span =
             elemento.querySelector("span");
 
@@ -526,11 +453,6 @@
         }
 
 
-        /*
-         * Quando o Supabase retorna uma string,
-         * podemos utilizá-la diretamente.
-         */
-
         if (
             typeof valor !== "object"
         ) {
@@ -539,12 +461,6 @@
 
         }
 
-
-        /*
-         * Quando o Supabase retorna um objeto,
-         * nunca devemos convertê-lo diretamente para String,
-         * pois isso resultaria em "[object Object]".
-         */
 
         const valorExtraido =
             obterPrimeiroValor(
@@ -563,11 +479,6 @@
 
             );
 
-
-        /*
-         * Se o campo "tipo" também for um objeto,
-         * faz uma segunda extração.
-         */
 
         if (
             valorExtraido &&
@@ -594,11 +505,6 @@
 
         const candidatos = [
 
-            /*
-             * Prioridade máxima:
-             * tipo específico do perfil artístico.
-             */
-
             estado.perfilArtista?.tipo_artista,
 
             estado.perfilArtista?.tipoArtista,
@@ -609,10 +515,6 @@
 
             estado.perfilArtista?.tipoPerfil,
 
-            /*
-             * Possíveis campos diretamente em perfis.
-             */
-
             estado.perfil?.tipo_artista,
 
             estado.perfil?.tipoArtista,
@@ -622,10 +524,6 @@
             estado.perfil?.tipoPerfil,
 
             estado.perfil?.tipo,
-
-            /*
-             * Possíveis campos no usuário.
-             */
 
             estado.usuario?.tipo_artista,
 
@@ -667,6 +565,39 @@
 
 
     /* =====================================================
+       OBTER ABA INICIAL
+       ===================================================== */
+
+    function obterAbaInicial() {
+
+        const hash =
+            String(
+                window.location.hash || ""
+            )
+                .replace(
+                    "#",
+                    ""
+                )
+                .trim()
+                .toLowerCase();
+
+
+        if (
+            hash &&
+            CONFIG.abas[hash]
+        ) {
+
+            return hash;
+
+        }
+
+
+        return "sobre";
+
+    }
+
+
+    /* =====================================================
        INICIALIZAR
        ===================================================== */
 
@@ -691,31 +622,85 @@
                 "Inicializando Meu Perfil universal..."
             );
 
+
             configurarEventos();
 
             configurarAbas();
 
-            await carregarDados();
 
-            preencherInformacoesPerfil();
+            /*
+             * A aba deve ser ativada ANTES do carregamento
+             * dos dados.
+             *
+             * Assim, mesmo que alguma consulta demore ou
+             * apresente erro, o usuário consegue visualizar
+             * a aba clicada.
+             */
 
-            await carregarAba(
-                "sobre"
-            );
+            const abaInicial =
+                obterAbaInicial();
+
 
             ativarAba(
-                "sobre",
+                abaInicial,
                 false
             );
 
-            renderizarIcones();
+
+            /*
+             * O estado passa a ser considerado inicializado
+             * antes das consultas assíncronas para que os
+             * controles de aba continuem funcionando.
+             */
 
             estado.inicializado =
                 true;
 
-            log(
-                "Meu Perfil universal inicializado com sucesso."
+
+            try {
+
+                await carregarDados();
+
+            } catch (error) {
+
+                erro(
+                    "Erro durante o carregamento dos dados:",
+                    error
+                );
+
+                mostrarToast(
+                    "Alguns dados do perfil não puderam ser carregados.",
+                    "erro"
+                );
+
+            }
+
+
+            preencherInformacoesPerfil();
+
+
+            /*
+             * Carrega somente a aba inicial.
+             */
+
+            await carregarAba(
+                abaInicial
             );
+
+
+            ativarAba(
+                abaInicial,
+                false
+            );
+
+
+            renderizarIcones();
+
+
+            log(
+                "Meu Perfil universal inicializado."
+            );
+
 
         } catch (error) {
 
@@ -724,10 +709,12 @@
                 error
             );
 
+
             mostrarToast(
                 "Não foi possível carregar o perfil.",
                 "erro"
             );
+
 
         } finally {
 
@@ -752,6 +739,7 @@
             );
 
         }
+
 
         log(
             "Carregando dados do perfil..."
@@ -787,17 +775,16 @@
                     incluirAgenda:
                         true,
 
+                    /*
+                     * Avaliações podem ser carregadas
+                     * quando a aba for aberta.
+                     */
+
                     carregarAvaliacoes:
                         false,
 
                     incluirAvaliacoes:
-                        false,
-
-                    carregarCarteira:
-                        true,
-
-                    incluirCarteira:
-                        true
+                        false
 
                 });
 
@@ -861,15 +848,6 @@
 
             }
 
-
-            if (
-                typeof Dados.carregarCarteira === "function"
-            ) {
-
-                await Dados.carregarCarteira();
-
-            }
-
         }
 
 
@@ -930,28 +908,11 @@
 
 
         estado.avaliacoes =
-            [];
-
-
-        estado.carteira =
-            obterEstadoDados(
-                "obterCarteira",
-                resultado?.carteira
-            );
-
-
-        estado.transacoes =
             obterEstadoArray(
-                "obterTransacoes",
-                resultado?.transacoes
+                "obterAvaliacoes",
+                resultado?.avaliacoes
             );
 
-
-        /*
-         * Caso algum módulo retorne um objeto contendo
-         * o perfil dentro de "dados", tentamos recuperar
-         * os valores sem quebrar o fluxo.
-         */
 
         if (
             !estado.usuario &&
@@ -1034,10 +995,7 @@
                     estado.agenda.length,
 
                 avaliacoes:
-                    estado.avaliacoes.length,
-
-                transacoes:
-                    estado.transacoes.length
+                    estado.avaliacoes.length
 
             }
         );
@@ -1136,10 +1094,6 @@
             estado.perfilArtista || {};
 
 
-        /*
-         * O nome de exibição do perfil deve ter prioridade.
-         */
-
         const nome =
             obterPrimeiroValor(
 
@@ -1164,17 +1118,9 @@
             );
 
 
-        /*
-         * Obtém o tipo específico.
-         */
-
         const tipo =
             obterTipoPerfilAtual();
 
-
-        /*
-         * Localização.
-         */
 
         const localizacao =
             obterPrimeiroValor(
@@ -1194,10 +1140,6 @@
             );
 
 
-        /*
-         * Biografia.
-         */
-
         const bio =
             obterPrimeiroValor(
 
@@ -1216,10 +1158,6 @@
             );
 
 
-        /*
-         * Experiência.
-         */
-
         const experiencia =
             obterPrimeiroValor(
 
@@ -1233,10 +1171,6 @@
 
             );
 
-
-        /*
-         * Área de atendimento/atuação.
-         */
 
         const area =
             obterPrimeiroValor(
@@ -1260,10 +1194,6 @@
             );
 
 
-        /*
-         * Disponibilidade.
-         */
-
         const disponibilidade =
             obterPrimeiroValor(
 
@@ -1276,20 +1206,12 @@
             );
 
 
-        /*
-         * Nome.
-         */
-
         definirTexto(
             CONFIG.elementos.nome,
             nome,
             "Artista"
         );
 
-
-        /*
-         * Categoria.
-         */
 
         definirTexto(
             CONFIG.elementos.categoria,
@@ -1298,12 +1220,6 @@
         );
 
 
-        /*
-         * Subtítulo do topo.
-         *
-         * Só será preenchido se o elemento existir.
-         */
-
         definirTexto(
             CONFIG.elementos.subtituloTipo,
             tipo,
@@ -1311,18 +1227,10 @@
         );
 
 
-        /*
-         * Localização.
-         */
-
         definirLocalizacao(
             localizacao
         );
 
-
-        /*
-         * Biografia.
-         */
 
         definirTexto(
             CONFIG.elementos.bio,
@@ -1331,21 +1239,12 @@
         );
 
 
-        /*
-         * Experiência.
-         */
-
         definirTexto(
             CONFIG.elementos.experiencia,
             experiencia,
             "Não informado"
         );
 
-
-        /*
-         * Área.
-
-         */
 
         definirTexto(
             CONFIG.elementos.area,
@@ -1354,22 +1253,12 @@
         );
 
 
-        /*
-         * Tipo.
-
-         */
-
         definirTexto(
             CONFIG.elementos.tipo,
             tipo,
             "Artista"
         );
 
-
-        /*
-         * Disponibilidade.
-
-         */
 
         definirTexto(
             CONFIG.elementos.disponibilidade,
@@ -1409,9 +1298,6 @@
 
 
         preencherLinkPerfil();
-
-
-        preencherCarteira();
 
     }
 
@@ -1726,27 +1612,6 @@
 
 
     /* =====================================================
-       FOTO DO USUÁRIO
-       ===================================================== */
-
-    function usuarioFoto() {
-
-        return obterPrimeiroValor(
-
-            estado.usuario?.foto_url,
-
-            estado.usuario?.avatar_url,
-
-            estado.usuario?.foto,
-
-            estado.usuario?.avatar
-
-        );
-
-    }
-
-
-    /* =====================================================
        INICIAIS
        ===================================================== */
 
@@ -1982,7 +1847,7 @@
 
 
     /* =====================================================
-       GÊNEROS / ESTILOS / ESPECIALIDADES
+       GÊNEROS
        ===================================================== */
 
     function preencherGeneros(
@@ -2152,11 +2017,6 @@
         ];
 
 
-        /*
-         * Sem instrumentos:
-         * esconde completamente a seção.
-         */
-
         if (!instrumentosUnicos.length) {
 
             container.innerHTML =
@@ -2178,11 +2038,6 @@
 
         }
 
-
-        /*
-         * Com instrumentos:
-         * mostra a seção.
-         */
 
         if (section) {
 
@@ -2432,11 +2287,6 @@
                 valor.trim();
 
 
-            /*
-             * Tenta interpretar JSON quando
-             * o banco retornar uma string JSON.
-             */
-
             if (
                 texto.startsWith("[") &&
                 texto.endsWith("]")
@@ -2621,12 +2471,6 @@
             );
 
 
-        const sacar =
-            obterElemento(
-                CONFIG.botoes.sacar
-            );
-
-
         if (voltar) {
 
             voltar.addEventListener(
@@ -2692,16 +2536,6 @@
             compartilharQR.addEventListener(
                 "click",
                 compartilharQRPerfil
-            );
-
-        }
-
-
-        if (sacar) {
-
-            sacar.addEventListener(
-                "click",
-                solicitarSaque
             );
 
         }
@@ -2778,9 +2612,23 @@
         botoes.forEach(
             botao => {
 
+                /*
+                 * Impede que o botão seja interpretado
+                 * como submit caso esteja dentro de um form.
+                 */
+
+                botao.type =
+                    "button";
+
+
                 botao.addEventListener(
                     "click",
-                    async function () {
+                    async function (evento) {
+
+                        evento.preventDefault();
+
+                        evento.stopPropagation();
+
 
                         const nomeAba =
                             botao.dataset.tab;
@@ -2799,13 +2647,52 @@
                         }
 
 
+                        if (
+                            !CONFIG.abas[nomeAba]
+                        ) {
+
+                            aviso(
+                                "Aba não configurada:",
+                                nomeAba
+                            );
+
+
+                            return;
+
+                        }
+
+
+                        /*
+                         * PRIMEIRO:
+                         * troca visualmente a aba.
+                         *
+                         * Isso é propositalmente feito antes
+                         * do carregamento assíncrono.
+                         */
+
+                        ativarAba(
+                            nomeAba
+                        );
+
+
+                        /*
+                         * DEPOIS:
+                         * carrega o conteúdo.
+                         */
+
                         await carregarAba(
                             nomeAba
                         );
 
 
+                        /*
+                         * Garante que a aba continue ativa
+                         * depois do carregamento.
+                         */
+
                         ativarAba(
-                            nomeAba
+                            nomeAba,
+                            false
                         );
 
                     }
@@ -2830,6 +2717,21 @@
         nomeAba,
         atualizarHash = true
     ) {
+
+        if (
+            !CONFIG.abas[nomeAba]
+        ) {
+
+            aviso(
+                "Tentativa de ativar aba inexistente:",
+                nomeAba
+            );
+
+
+            return;
+
+        }
+
 
         const botoes =
             document.querySelectorAll(
@@ -2887,6 +2789,14 @@
                 conteudo.hidden =
                     !ativa;
 
+
+                conteudo.setAttribute(
+                    "aria-hidden",
+                    ativa
+                        ? "false"
+                        : "true"
+                );
+
             }
         );
 
@@ -2908,7 +2818,8 @@
             } catch (error) {
 
                 aviso(
-                    "Não foi possível atualizar o hash da aba."
+                    "Não foi possível atualizar o hash da aba.",
+                    error
                 );
 
             }
@@ -2945,7 +2856,8 @@
        ===================================================== */
 
     async function carregarAba(
-        nomeAba
+        nomeAba,
+        forcar = false
     ) {
 
         if (
@@ -2958,12 +2870,40 @@
             );
 
 
-            return;
+            return false;
+
+        }
+
+
+        /*
+         * Não faz uma nova consulta/renderização
+         * desnecessariamente.
+         *
+         * O parâmetro forcar permite recarregar
+         * explicitamente.
+         */
+
+        if (
+            estado.abasCarregadas[nomeAba] &&
+            !forcar
+        ) {
+
+            log(
+                `Aba "${nomeAba}" já foi carregada.`
+            );
+
+
+            return true;
 
         }
 
 
         try {
+
+            log(
+                `Carregando aba "${nomeAba}"...`
+            );
+
 
             switch (
                 nomeAba
@@ -2997,21 +2937,11 @@
                     break;
 
 
-                case "carteira":
-
-                    await carregarAbaCarteira();
-
-                    break;
-
-
                 default:
 
-                    aviso(
-                        "Nenhum carregador definido para:",
-                        nomeAba
+                    throw new Error(
+                        `Nenhum carregador definido para "${nomeAba}".`
                     );
-
-                    break;
 
             }
 
@@ -3022,7 +2952,21 @@
                 true;
 
 
+            log(
+                `Aba "${nomeAba}" carregada com sucesso.`
+            );
+
+
+            return true;
+
+
         } catch (error) {
+
+            estado.abasCarregadas[
+                nomeAba
+            ] =
+                false;
+
 
             erro(
                 `Erro ao carregar aba "${nomeAba}":`,
@@ -3034,6 +2978,9 @@
                 `Não foi possível carregar a aba ${nomeAba}.`,
                 "erro"
             );
+
+
+            return false;
 
         }
 
@@ -3080,19 +3027,26 @@
 
         if (!Portfolio) {
 
-            aviso(
+            throw new Error(
                 "PerfilPublicoPortfolio.js não foi carregado."
             );
-
-
-            return;
 
         }
 
 
         let portfolio =
-            estado.portfolio;
+            Array.isArray(
+                estado.portfolio
+            )
+                ? estado.portfolio
+                : [];
 
+
+        /*
+         * Se o carregamento inicial não trouxe
+         * o portfólio, busca diretamente no módulo
+         * de dados.
+         */
 
         if (
             !portfolio.length &&
@@ -3120,16 +3074,26 @@
             typeof Portfolio.renderizar === "function"
         ) {
 
-            Portfolio.renderizar(
-                portfolio
+            await Promise.resolve(
+                Portfolio.renderizar(
+                    portfolio
+                )
             );
 
         } else if (
             typeof Portfolio.inicializar === "function"
         ) {
 
-            Portfolio.inicializar(
-                portfolio
+            await Promise.resolve(
+                Portfolio.inicializar(
+                    portfolio
+                )
+            );
+
+        } else {
+
+            throw new Error(
+                "PerfilPublicoPortfolio.js não possui renderizar() nem inicializar()."
             );
 
         }
@@ -3148,18 +3112,19 @@
 
         if (!Agenda) {
 
-            aviso(
+            throw new Error(
                 "PerfilPublicoAgenda.js não foi carregado."
             );
-
-
-            return;
 
         }
 
 
         let agenda =
-            estado.agenda;
+            Array.isArray(
+                estado.agenda
+            )
+                ? estado.agenda
+                : [];
 
 
         if (
@@ -3188,16 +3153,26 @@
             typeof Agenda.renderizar === "function"
         ) {
 
-            Agenda.renderizar(
-                agenda
+            await Promise.resolve(
+                Agenda.renderizar(
+                    agenda
+                )
             );
 
         } else if (
             typeof Agenda.inicializar === "function"
         ) {
 
-            Agenda.inicializar(
-                agenda
+            await Promise.resolve(
+                Agenda.inicializar(
+                    agenda
+                )
+            );
+
+        } else {
+
+            throw new Error(
+                "PerfilPublicoAgenda.js não possui renderizar() nem inicializar()."
             );
 
         }
@@ -3216,67 +3191,91 @@
 
         if (!Avaliacoes) {
 
-            aviso(
+            throw new Error(
                 "PerfilPublicoAvaliacoes.js não foi carregado."
             );
-
-
-            return;
 
         }
 
 
-        estado.avaliacoes =
-            [];
+        /*
+         * Se as avaliações ainda não foram carregadas,
+         * busca diretamente no módulo de dados.
+         */
+
+        if (
+            !estado.avaliacoes.length &&
+            Dados &&
+            typeof Dados.carregarSomenteAvaliacoes === "function"
+        ) {
+
+            log(
+                "Buscando avaliações do perfil..."
+            );
 
 
-        const dadosAvaliacoes = {
+            await Dados.carregarSomenteAvaliacoes();
 
-            media:
-                0,
 
-            quantidade:
-                0,
+            estado.avaliacoes =
+                obterEstadoArray(
+                    "obterAvaliacoes",
+                    []
+                );
 
-            distribuicao: {
 
-                cinco:
-                    0,
+            log(
+                "Avaliações encontradas:",
+                estado.avaliacoes.length
+            );
 
-                quatro:
-                    0,
+        }
 
-                tres:
-                    0,
 
-                dois:
-                    0,
+        /*
+         * Caso o módulo de dados não tenha retornado
+         * avaliações, mantemos uma estrutura vazia,
+         * mas NÃO interrompemos a aba.
+         */
 
-                um:
-                    0
+        const lista =
+            Array.isArray(
+                estado.avaliacoes
+            )
+                ? estado.avaliacoes
+                : [];
 
-            },
 
-            avaliacoes:
-                []
-
-        };
+        const dadosAvaliacoes =
+            construirDadosAvaliacoes(
+                lista
+            );
 
 
         if (
             typeof Avaliacoes.renderizar === "function"
         ) {
 
-            Avaliacoes.renderizar(
-                dadosAvaliacoes
+            await Promise.resolve(
+                Avaliacoes.renderizar(
+                    dadosAvaliacoes
+                )
             );
 
         } else if (
             typeof Avaliacoes.inicializar === "function"
         ) {
 
-            Avaliacoes.inicializar(
-                dadosAvaliacoes
+            await Promise.resolve(
+                Avaliacoes.inicializar(
+                    dadosAvaliacoes
+                )
+            );
+
+        } else {
+
+            throw new Error(
+                "PerfilPublicoAvaliacoes.js não possui renderizar() nem inicializar()."
             );
 
         }
@@ -3291,424 +3290,170 @@
 
 
     /* =====================================================
-       ABA CARTEIRA
+       CONSTRUIR DADOS DAS AVALIAÇÕES
        ===================================================== */
 
-    async function carregarAbaCarteira() {
+    function construirDadosAvaliacoes(
+        avaliacoes
+    ) {
 
-        if (
-            Dados &&
-            typeof Dados.carregarSomenteCarteira === "function"
-        ) {
-
-            if (
-                !estado.carteira &&
-                !estado.transacoes.length
-            ) {
-
-                await Dados.carregarSomenteCarteira();
-
-            }
-
-        }
+        const lista =
+            Array.isArray(
+                avaliacoes
+            )
+                ? avaliacoes
+                : [];
 
 
-        estado.carteira =
-            obterEstadoDados(
-                "obterCarteira",
-                estado.carteira
-            );
+        const distribuicao = {
 
+            cinco:
+                0,
 
-        estado.transacoes =
-            obterEstadoArray(
-                "obterTransacoes",
-                estado.transacoes
-            );
+            quatro:
+                0,
 
+            tres:
+                0,
 
-        preencherCarteira();
+            dois:
+                0,
 
-
-        renderizarTransacoes();
-
-
-        renderizarIcones();
-
-    }
-
-
-    /* =====================================================
-       PREENCHER CARTEIRA
-       ===================================================== */
-
-    function preencherCarteira() {
-
-        const carteira =
-            estado.carteira || {};
-
-
-        const total =
-            obterPrimeiroValor(
-
-                carteira.saldo_total,
-
-                carteira.total,
-
-                carteira.saldo,
-
-                carteira.valor_total,
-
+            um:
                 0
 
-            );
+        };
 
 
-        const disponivel =
-            obterPrimeiroValor(
-
-                carteira.saldo_disponivel,
-
-                carteira.disponivel,
-
-                carteira.valor_disponivel,
-
-                0
-
-            );
-
-
-        const pendente =
-            obterPrimeiroValor(
-
-                carteira.saldo_pendente,
-
-                carteira.pendente,
-
-                carteira.valor_pendente,
-
-                0
-
-            );
-
-
-        definirTexto(
-            CONFIG.elementos.walletTotal,
-            formatarMoeda(total),
-            "R$ 0,00"
-        );
-
-
-        definirTexto(
-            CONFIG.elementos.walletAvailable,
-            formatarMoeda(disponivel),
-            "R$ 0,00"
-        );
-
-
-        definirTexto(
-            CONFIG.elementos.walletPending,
-            formatarMoeda(pendente),
-            "R$ 0,00"
-        );
-
-    }
-
-
-    /* =====================================================
-       RENDERIZAR TRANSAÇÕES
-       ===================================================== */
-
-    function renderizarTransacoes() {
-
-        const container =
-            obterElemento(
-                CONFIG.elementos.transactionList
-            );
-
-
-        if (!container) {
-            return;
-        }
-
-
-        if (
-            !estado.transacoes.length
-        ) {
-
-            container.innerHTML = `
-
-                <div class="empty-state">
-
-                    <i
-                        data-lucide="wallet"
-                    ></i>
-
-                    <p>
-                        Nenhuma movimentação encontrada.
-                    </p>
-
-                </div>
-
-            `;
-
-
-            renderizarIcones();
-
-
-            return;
-
-        }
-
-
-        container.innerHTML =
-            estado.transacoes
+        const notas =
+            lista
                 .map(
-                    (
-                        transacao,
-                        indice
-                    ) => {
-
-                        const descricao =
-                            obterPrimeiroValor(
-
-                                transacao.descricao,
-
-                                transacao.titulo,
-
-                                transacao.nome,
-
-                                transacao.tipo,
-
-                                `Movimentação ${indice + 1}`
-
-                            );
-
+                    avaliacao => {
 
                         const valor =
                             obterPrimeiroValor(
 
-                                transacao.valor,
+                                avaliacao?.nota,
 
-                                transacao.valor_transacao,
+                                avaliacao?.rating,
 
-                                transacao.amount,
+                                avaliacao?.avaliacao,
+
+                                avaliacao?.estrelas,
 
                                 0
 
                             );
 
 
-                        const data =
-                            obterPrimeiroValor(
-
-                                transacao.created_at,
-
-                                transacao.data,
-
-                                transacao.data_transacao
-
-                            );
-
-
-                        const tipo =
-                            obterPrimeiroValor(
-
-                                transacao.tipo,
-
-                                transacao.status,
-
-                                "movimentação"
-
-                            );
-
-
-                        return `
-
-                            <article class="transaction-item">
-
-                                <div class="transaction-icon">
-
-                                    <i
-                                        data-lucide="arrow-down-left"
-                                    ></i>
-
-                                </div>
-
-
-                                <div class="transaction-info">
-
-                                    <strong>
-                                        ${escaparHtml(
-                                            descricao
-                                        )}
-                                    </strong>
-
-                                    <span>
-                                        ${escaparHtml(
-                                            formatarData(
-                                                data
-                                            )
-                                        )}
-                                    </span>
-
-                                </div>
-
-
-                                <div class="transaction-value">
-
-                                    <strong>
-                                        ${escaparHtml(
-                                            formatarMoeda(
-                                                valor
-                                            )
-                                        )}
-                                    </strong>
-
-                                    <span>
-                                        ${escaparHtml(
-                                            tipo
-                                        )}
-                                    </span>
-
-                                </div>
-
-                            </article>
-
-                        `;
+                        return Number(
+                            valor
+                        );
 
                     }
                 )
-                .join("");
-
-
-        renderizarIcones();
-
-    }
-
-
-    /* =====================================================
-       FORMATAR MOEDA
-       ===================================================== */
-
-    function formatarMoeda(
-        valor
-    ) {
-
-        if (
-            Utils &&
-            typeof Utils.formatarMoeda === "function"
-        ) {
-
-            return Utils.formatarMoeda(
-                valor
-            );
-
-        }
-
-
-        let numero;
-
-
-        if (
-            typeof valor === "number"
-        ) {
-
-            numero =
-                valor;
-
-        } else {
-
-            numero =
-                Number(
-                    String(valor || 0)
-                        .replace(
-                            /\./g,
-                            ""
-                        )
-                        .replace(
-                            ",",
-                            "."
-                        )
+                .filter(
+                    numero =>
+                        Number.isFinite(numero) &&
+                        numero >= 1 &&
+                        numero <= 5
                 );
 
-        }
 
+        notas.forEach(
+            nota => {
 
-        if (
-            !Number.isFinite(numero)
-        ) {
+                if (nota >= 5) {
 
-            return "R$ 0,00";
+                    distribuicao.cinco++;
 
-        }
+                } else if (nota >= 4) {
 
+                    distribuicao.quatro++;
 
-        return numero.toLocaleString(
-            "pt-BR",
-            {
+                } else if (nota >= 3) {
 
-                style:
-                    "currency",
+                    distribuicao.tres++;
 
-                currency:
-                    "BRL"
+                } else if (nota >= 2) {
+
+                    distribuicao.dois++;
+
+                } else {
+
+                    distribuicao.um++;
+
+                }
 
             }
         );
 
-    }
+
+        let media =
+            0;
 
 
-    /* =====================================================
-       FORMATAR DATA
-       ===================================================== */
+        if (notas.length) {
 
-    function formatarData(
-        valor
-    ) {
+            media =
+                notas.reduce(
+                    (
+                        total,
+                        nota
+                    ) =>
+                        total + nota,
+                    0
+                ) /
+                notas.length;
 
-        if (!valor) {
+        } else {
 
-            return "Data não informada";
+            const mediaPerfil =
+                Number(
+                    obterPrimeiroValor(
+
+                        estado.perfilArtista?.avaliacao_media,
+
+                        estado.perfilArtista?.media_avaliacao,
+
+                        estado.perfil?.avaliacao_media,
+
+                        estado.perfil?.media_avaliacao,
+
+                        0
+
+                    )
+                );
+
+
+            if (
+                Number.isFinite(
+                    mediaPerfil
+                ) &&
+                mediaPerfil > 0
+            ) {
+
+                media =
+                    mediaPerfil;
+
+            }
 
         }
 
 
-        if (
-            Utils &&
-            typeof Utils.formatarData === "function"
-        ) {
+        return {
 
-            return Utils.formatarData(
-                valor
-            );
+            media,
 
-        }
+            quantidade:
+                lista.length,
 
+            distribuicao,
 
-        const data =
-            new Date(
-                valor
-            );
+            avaliacoes:
+                lista
 
-
-        if (
-            Number.isNaN(
-                data.getTime()
-            )
-        ) {
-
-            return String(
-                valor
-            );
-
-        }
-
-
-        return data.toLocaleDateString(
-            "pt-BR"
-        );
+        };
 
     }
 
@@ -3908,20 +3653,11 @@
 
         const mapa = {
 
-            /*
-             * Genérico
-             */
-
             "artista":
                 "Artista",
 
             "artista musical":
                 "Artista",
-
-
-            /*
-             * Cantor
-             */
 
             "cantor":
                 "Cantor(a)",
@@ -3932,11 +3668,6 @@
             "cantor(a)":
                 "Cantor(a)",
 
-
-            /*
-             * Músico
-             */
-
             "musico":
                 "Músico(a)",
 
@@ -3946,18 +3677,8 @@
             "musico(a)":
                 "Músico(a)",
 
-
-            /*
-             * Banda
-             */
-
             "banda":
                 "Banda",
-
-
-            /*
-             * Dupla
-             */
 
             "dupla":
                 "Dupla musical",
@@ -3965,18 +3686,8 @@
             "dupla musical":
                 "Dupla musical",
 
-
-            /*
-             * DJ
-             */
-
             "dj":
                 "DJ",
-
-
-            /*
-             * Dançarino
-             */
 
             "dancarino":
                 "Dançarino(a)",
@@ -3986,11 +3697,6 @@
 
             "dancarino(a)":
                 "Dançarino(a)",
-
-
-            /*
-             * Grupo de dança
-             */
 
             "grupo de danca":
                 "Grupo de dança",
@@ -4004,18 +3710,8 @@
             "grupo_de_danca":
                 "Grupo de dança",
 
-
-            /*
-             * MC
-             */
-
             "mc":
                 "MC",
-
-
-            /*
-             * Compositor
-             */
 
             "compositor":
                 "Compositor(a)",
@@ -4025,11 +3721,6 @@
 
             "compositor(a)":
                 "Compositor(a)",
-
-
-            /*
-             * Produtor musical
-             */
 
             "produtor":
                 "Produtor(a) musical",
@@ -4048,11 +3739,6 @@
 
             "produtor_musical":
                 "Produtor(a) musical",
-
-
-            /*
-             * Contratante
-             */
 
             "contratante":
                 "Contratante"
@@ -4258,7 +3944,7 @@
 
 
     /* =====================================================
-       OBTER PÁGINA DE APRESENTAÇÃO
+       OBTER PÁGINAS
        ===================================================== */
 
     function obterPaginaApresentacao() {
@@ -4268,20 +3954,12 @@
     }
 
 
-    /* =====================================================
-       OBTER PÁGINA DE PERFIL PÚBLICO
-       ===================================================== */
-
     function obterPaginaPerfilPublico() {
 
         return obterPaginaApresentacao();
 
     }
 
-
-    /* =====================================================
-       OBTER PÁGINA DE EDIÇÃO
-       ===================================================== */
 
     function obterPaginaEdicao() {
 
@@ -4304,12 +3982,6 @@
 
         }
 
-
-        /*
-         * Mantém o comportamento correto tanto quando
-         * a página é aberta no servidor local quanto
-         * quando estiver hospedada.
-         */
 
         const diretorio =
             window.location.pathname.replace(
@@ -4537,20 +4209,6 @@
 
 
     /* =====================================================
-       SOLICITAR SAQUE
-       ===================================================== */
-
-    function solicitarSaque() {
-
-        mostrarToast(
-            "A função de saque será disponibilizada em breve.",
-            "sucesso"
-        );
-
-    }
-
-
-    /* =====================================================
        TOAST
        ===================================================== */
 
@@ -4740,11 +4398,6 @@
             avaliacoes:
                 [
                     ...estado.avaliacoes
-                ],
-
-            transacoes:
-                [
-                    ...estado.transacoes
                 ]
 
         };
@@ -4758,19 +4411,30 @@
 
     async function recarregarAbaAtual() {
 
+        const aba =
+            estado.abaAtual;
+
+
         estado.abasCarregadas[
-            estado.abaAtual
+            aba
         ] =
             false;
 
 
+        ativarAba(
+            aba,
+            false
+        );
+
+
         await carregarAba(
-            estado.abaAtual
+            aba,
+            true
         );
 
 
         ativarAba(
-            estado.abaAtual,
+            aba,
             false
         );
 
@@ -4795,9 +4459,6 @@
                 false,
 
             avaliacoes:
-                false,
-
-            carteira:
                 false
 
         };
@@ -4809,8 +4470,15 @@
         preencherInformacoesPerfil();
 
 
+        ativarAba(
+            estado.abaAtual,
+            false
+        );
+
+
         await carregarAba(
-            estado.abaAtual
+            estado.abaAtual,
+            true
         );
 
 
@@ -4854,10 +4522,6 @@
         preencherInformacoesPerfil,
 
         preencherAvaliacao,
-
-        preencherCarteira,
-
-        renderizarTransacoes,
 
         preencherServicos,
 
