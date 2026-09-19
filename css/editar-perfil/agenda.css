@@ -28,7 +28,8 @@
         border-color 0.18s ease,
         background 0.18s ease,
         box-shadow 0.18s ease;
-}
+
+    margin-top: 15px;
 
 .agenda-edit-card:hover {
     border-color: #dcd8f7;
