@@ -4,33 +4,51 @@
 
 <head>
 
+
 <meta charset="UTF-8">
 
 <meta
-name="viewport"
-content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
 >
 
 <meta
-name="theme-color"
-content="#ffffff"
-
+    name="description"
+    content="Página de apresentação de perfil — MusicalWorld"
 >
 
 <title>Perfil | MusicalWorld</title>
 
-<!-- =====================================================
-     CSS PRINCIPAL
 
-     O arquivo agregador continua sendo utilizado porque
-     ele carrega os arquivos CSS específicos da página.
+<!-- =====================================================
+     MUSICALWORLD — APRESENTAÇÃO DE PERFIL — TESTE
+
+     Arquivo:
+     apresentar-perfil-teste.html
+
+     Responsabilidades:
+     - Estruturar a nova página de apresentação de perfil.
+     - Preparar a interface para dados reais do Supabase.
+     - Servir como ambiente independente para testes.
+     - Separar estrutura visual das regras de negócio.
+
+     Ações principais atuais:
+     - Voltar
+     - Mensagem
+     - Contratar
+
+     Módulos utilizados:
+     - ApresentarPerfilDados.js
+     - ApresentarPerfilRender.js
+     - ApresentarPerfilPortfolio.js
+     - ApresentarPerfilServicos.js
+     - ApresentarPerfilAcoes.js
      ===================================================== -->
 
-<link
-    rel="stylesheet"
-    href="css/apresentar-perfil/apresentar-perfil.css"
->
+
+<!-- =====================================================
+     TIPOGRAFIA
+     ===================================================== -->
 
 <link
     rel="preconnect"
@@ -48,79 +66,113 @@ content="#ffffff"
     rel="stylesheet"
 >
 
-<!-- =====================================================
-     LUCIDE
 
-     Biblioteca utilizada para os ícones da página.
+<!-- =====================================================
+     CSS
      ===================================================== -->
 
-<script src="https://unpkg.com/lucide@latest"></script>
+<link
+    rel="stylesheet"
+    href="css/apresentar-perfil/apresentar-perfil-teste.css"
+>
+
 
 </head>
 
 <body>
 
-<div class="app">
 
 <!-- =====================================================
      TOPBAR
-
-     Barra superior da página de perfil.
      ===================================================== -->
 
 <header class="topbar">
 
-
-<div class="topbar-left">
-
-    <button
-        type="button"
-        class="topbar-button"
-        id="btnVoltar"
-        aria-label="Voltar"
-    >
-
-        <i data-lucide="arrow-left"></i>
-
-    </button>
+    <div class="topbar-inner">
 
 
-    <div class="topbar-heading">
+        <!-- =================================================
+             VOLTAR
 
-        <span
-            class="topbar-title"
-            id="topbarProfileTitle"
+             O ID é utilizado pelo módulo:
+             ApresentarPerfilAcoes.js
+             ================================================= -->
+
+        <button
+            class="topbar-back"
+            id="btnVoltar"
+            type="button"
+            aria-label="Voltar"
+            data-action="back"
         >
+
+            <svg
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+            >
+
+                <path
+                    d="M15 18l-6-6 6-6"
+                ></path>
+
+            </svg>
+
+        </button>
+
+
+        <!-- TÍTULO -->
+
+        <div class="topbar-title">
             Perfil
-        </span>
+        </div>
 
 
-        <span class="topbar-subtitle">
-            MusicalWorld
-        </span>
+        <!-- MENU
+
+             Mantido na estrutura, mas a implementação
+             desse menu não faz parte das ações principais
+             desta etapa.
+        -->
+
+        <button
+            class="topbar-action"
+            id="btnMenu"
+            type="button"
+            aria-label="Mais opções"
+            data-action="menu"
+        >
+
+            <svg
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+            >
+
+                <circle
+                    cx="5"
+                    cy="12"
+                    r="1.5"
+                ></circle>
+
+                <circle
+                    cx="12"
+                    cy="12"
+                    r="1.5"
+                ></circle>
+
+                <circle
+                    cx="19"
+                    cy="12"
+                    r="1.5"
+                ></circle>
+
+            </svg>
+
+        </button>
 
     </div>
 
-</div>
-
-
-<div class="topbar-right">
-
-    <button
-        type="button"
-        class="topbar-button"
-        id="btnCompartilhar"
-        aria-label="Compartilhar perfil"
-    >
-
-        <i data-lucide="share-2"></i>
-
-    </button>
-
-</div>
-
-
 </header>
+
 
 <!-- =====================================================
      CONTEÚDO PRINCIPAL
@@ -128,567 +180,1141 @@ content="#ffffff"
 
 <main class="profile-page">
 
-
-<!-- =================================================
-     1. PORTFÓLIO PRINCIPAL
-     ================================================= -->
-
-<section class="profile-media-highlight">
-
     <div
-        class="portfolio-grid"
-        id="portfolioGrid"
+        class="profile-feed"
+        id="profileFeed"
     >
 
-        <div class="empty-state">
 
-            <i data-lucide="images"></i>
+        <!-- =================================================
+             PERFIL
+             ================================================= -->
 
-            <strong>
-                Portfólio vazio
-            </strong>
-
-            <span>
-                Este perfil ainda não adicionou trabalhos.
-            </span>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<!-- =================================================
-     2. IDENTIDADE DO ARTISTA
-     ================================================= -->
-
-<section class="profile-identity">
-
-    <div class="profile-identity-container">
-
-
-        <!-- FOTO DO PERFIL -->
-
-        <div
-            class="profile-avatar"
-            id="profileAvatar"
+        <article
+            class="profile-post"
+            id="profilePost"
         >
 
-            <span id="profileInitials">
-                --
-            </span>
 
-        </div>
+            <!-- =============================================
+                 ÁREA DE MÍDIA
+
+                 O módulo ApresentarPerfilPortfolio.js
+                 será responsável por inserir a imagem
+                 ou vídeo do portfólio.
+                 ============================================= -->
+
+            <div
+                class="profile-media"
+                id="profileMedia"
+                hidden
+            >
 
 
-        <!-- INFORMAÇÕES DO PERFIL -->
-
-        <div class="profile-info">
+                <!-- A mídia será inserida pelo JavaScript -->
 
 
-            <!-- NOME -->
+                <!-- CAMADA DE SOBREPOSIÇÃO -->
 
-            <div class="profile-name-row">
+                <div
+                    class="profile-media-overlay"
+                    id="profileMediaOverlay"
+                ></div>
 
-                <h1
-                    class="profile-name"
-                    id="profileName"
+
+                <!-- EXPANDIR MÍDIA -->
+
+                <button
+                    class="media-expand"
+                    id="btnExpandMedia"
+                    type="button"
+                    aria-label="Expandir mídia"
+                    data-action="expand"
                 >
-                    Carregando...
-                </h1>
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                    >
+
+                        <path
+                            d="M8 3H3v5"
+                        ></path>
+
+                        <path
+                            d="M16 3h5v5"
+                        ></path>
+
+                        <path
+                            d="M8 21H3v-5"
+                        ></path>
+
+                        <path
+                            d="M21 16v5h-5"
+                        ></path>
+
+                    </svg>
+
+                </button>
 
 
-                <span
-                    class="verified-badge"
-                    id="verifiedBadge"
-                    aria-label="Perfil verificado"
-                    hidden
-                >
+                <!-- =========================================
+                     INFORMAÇÕES SOBRE A MÍDIA
+                     ========================================= -->
 
-                    <i data-lucide="check"></i>
+                <div class="media-profile-info">
 
-                </span>
+
+                    <div class="profile-heading">
+
+
+                        <!-- AVATAR -->
+
+                        <div
+                            class="profile-avatar profile-avatar--media"
+                        >
+
+                            <img
+                                id="profileAvatarMedia"
+                                src=""
+                                alt=""
+                                hidden
+                            >
+
+                            <span
+                                id="profileInitialsMedia"
+                            ></span>
+
+                        </div>
+
+
+                        <!-- DADOS -->
+
+                        <div class="profile-heading-content">
+
+
+                            <h1
+                                class="profile-name"
+                                id="profileNameMedia"
+                            >
+                                Carregando...
+                            </h1>
+
+
+                            <div class="profile-meta">
+
+
+                                <span
+                                    id="profileTypeMedia"
+                                >
+                                    —
+                                </span>
+
+
+                                <span class="meta-separator">
+                                    ·
+                                </span>
+
+
+                                <span
+                                    class="location"
+                                    id="profileLocationMedia"
+                                >
+
+                                    <svg
+                                        viewBox="0 0 24 24"
+                                        aria-hidden="true"
+                                    >
+
+                                        <path
+                                            d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"
+                                        ></path>
+
+                                        <circle
+                                            cx="12"
+                                            cy="10"
+                                            r="2.5"
+                                        ></circle>
+
+                                    </svg>
+
+                                    —
+
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- MENU DO PERFIL -->
+
+                    <button
+                        class="profile-more profile-more--media"
+                        type="button"
+                        aria-label="Mais opções"
+                        data-action="menu"
+                    >
+
+                        <svg
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                        >
+
+                            <circle
+                                cx="5"
+                                cy="12"
+                                r="1.5"
+                            ></circle>
+
+                            <circle
+                                cx="12"
+                                cy="12"
+                                r="1.5"
+                            ></circle>
+
+                            <circle
+                                cx="19"
+                                cy="12"
+                                r="1.5"
+                            ></circle>
+
+                        </svg>
+
+                    </button>
+
+                </div>
 
             </div>
 
 
-            <!-- TIPO / CATEGORIA -->
-
-            <p
-                class="profile-category"
-                id="profileCategory"
-            >
-                Carregando...
-            </p>
-
-
-            <!-- LOCALIZAÇÃO -->
+            <!-- =============================================
+                 CABEÇALHO SEM MÍDIA
+                 ============================================= -->
 
             <div
-                class="profile-location"
-                id="profileLocation"
+                class="profile-header"
+                id="profileHeaderNoMedia"
             >
 
-                <i data-lucide="map-pin"></i>
 
-                <span>
-                    Localização não informada
-                </span>
+                <!-- AVATAR -->
 
-            </div>
+                <div class="profile-avatar">
 
+                    <img
+                        id="profileAvatar"
+                        src=""
+                        alt=""
+                        hidden
+                    >
 
-            <!-- AVALIAÇÃO -->
-
-            <div
-                class="profile-rating"
-                id="profileRating"
-            >
-
-                <div class="rating-stars">
-
-                    <i data-lucide="star"></i>
-                    <i data-lucide="star"></i>
-                    <i data-lucide="star"></i>
-                    <i data-lucide="star"></i>
-                    <i data-lucide="star"></i>
+                    <span
+                        id="profileInitials"
+                    >
+                        —
+                    </span>
 
                 </div>
 
 
-                <span
-                    class="rating-value"
-                    id="ratingValue"
-                >
-                    0,0
-                </span>
+                <!-- DADOS DO ARTISTA -->
+
+                <div class="profile-heading-content">
 
 
-                <span
-                    class="rating-reviews"
-                    id="ratingReviews"
+                    <h2
+                        class="profile-name"
+                        id="profileName"
+                    >
+                        Carregando...
+                    </h2>
+
+
+                    <div class="profile-meta">
+
+
+                        <span
+                            id="profileType"
+                        >
+                            —
+                        </span>
+
+
+                        <span class="meta-separator">
+                            ·
+                        </span>
+
+
+                        <span
+                            class="location"
+                            id="profileLocation"
+                        >
+
+                            <svg
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                            >
+
+                                <path
+                                    d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"
+                                ></path>
+
+                                <circle
+                                    cx="12"
+                                    cy="10"
+                                    r="2.5"
+                                ></circle>
+
+                            </svg>
+
+                            —
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- MENU DO PERFIL -->
+
+                <button
+                    class="profile-more"
+                    type="button"
+                    aria-label="Mais opções"
+                    data-action="menu"
                 >
-                    (0 avaliações)
-                </span>
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                    >
+
+                        <circle
+                            cx="5"
+                            cy="12"
+                            r="1.5"
+                        ></circle>
+
+                        <circle
+                            cx="12"
+                            cy="12"
+                            r="1.5"
+                        ></circle>
+
+                        <circle
+                            cx="19"
+                            cy="12"
+                            r="1.5"
+                        ></circle>
+
+                    </svg>
+
+                </button>
 
             </div>
 
 
-            <!-- GÊNEROS -->
+            <!-- =============================================
+                 CONTEÚDO DO PERFIL
+                 ============================================= -->
 
-            <div class="profile-genres">
+            <div class="profile-content">
+
+
+                <!-- =========================================
+                     TIPO DO ARTISTA
+                     ========================================= -->
+
+                <div
+                    class="artist-type"
+                    id="artistType"
+                >
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                    >
+
+                        <path
+                            d="m12 3 2.78 5.63 6.22.9-4.5 4.39 1.06 6.2L12 17.2l-5.56 2.92 1.06-6.2L3 9.53l6.22-.9L12 3Z"
+                        ></path>
+
+                    </svg>
+
+                    <span id="profileArtistType">
+                        —
+                    </span>
+
+                </div>
+
+
+                <!-- =========================================
+                     AVALIAÇÃO
+                     ========================================= -->
+
+                <div
+                    class="profile-rating"
+                    id="profileRating"
+                >
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                    >
+
+                        <path
+                            d="m12 3 2.78 5.63 6.22.9-4.5 4.39 1.06 6.2L12 17.2l-5.56 2.92 1.06-6.2L12 3Z"
+                        ></path>
+
+                    </svg>
+
+
+                    <strong id="ratingValue">
+                        —
+                    </strong>
+
+
+                    <span id="ratingReviews">
+                        (sem avaliações)
+                    </span>
+
+                </div>
+
+
+                <!-- =========================================
+                     GÊNEROS / ESTILOS
+                     ========================================= -->
 
                 <div
                     class="genre-list"
                     id="genreList"
                 >
 
-                    <span class="empty-inline">
-                        Nenhum gênero cadastrado.
+                    <span class="genre-icon">
+
+                        <svg
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                        >
+
+                            <path
+                                d="M9 18V5l12-2v13"
+                            ></path>
+
+                            <circle
+                                cx="6"
+                                cy="18"
+                                r="3"
+                            ></circle>
+
+                            <circle
+                                cx="18"
+                                cy="16"
+                                r="3"
+                            ></circle>
+
+                        </svg>
+
+                    </span>
+
+
+                    <span class="genre-placeholder">
+                        Carregando estilos...
                     </span>
 
                 </div>
 
+
+                <!-- =========================================
+                     DESCRIÇÃO
+                     ========================================= -->
+
+                <p
+                    class="profile-description"
+                    id="profileBio"
+                >
+                    Carregando descrição...
+                </p>
+
+
+                <!-- =========================================
+                     INFORMAÇÕES PROFISSIONAIS
+                     ========================================= -->
+
+                <div
+                    class="profile-professional"
+                    id="profileProfessional"
+                    hidden
+                >
+
+                    <div class="professional-item">
+
+                        <span class="professional-label">
+                            Experiência
+                        </span>
+
+                        <span
+                            class="professional-value"
+                            id="profileExperience"
+                        >
+                            —
+                        </span>
+
+                    </div>
+
+
+                    <div class="professional-item">
+
+                        <span class="professional-label">
+                            Área de atuação
+                        </span>
+
+                        <span
+                            class="professional-value"
+                            id="profileArea"
+                        >
+                            —
+                        </span>
+
+                    </div>
+
+
+                    <div class="professional-item">
+
+                        <span class="professional-label">
+                            Disponibilidade
+                        </span>
+
+                        <span
+                            class="professional-value"
+                            id="profileAvailability"
+                        >
+                            —
+                        </span>
+
+                    </div>
+
+                </div>
+
+
             </div>
 
 
-            <!-- STATUS
+            <!-- =============================================
+                 AÇÕES PRINCIPAIS
 
-                 Mantido oculto para compatibilidade. -->
+                 Nesta primeira etapa trabalharemos somente
+                 com as três ações principais:
+
+                 - Mensagem
+                 - Contratar
+
+                 O botão Voltar fica na topbar.
+
+                 Outras ações como curtir, comentar,
+                 compartilhar e conta serão implementadas
+                 posteriormente.
+                 ============================================= -->
 
             <div
-                class="profile-status"
-                id="profileStatus"
-                hidden
+                class="profile-main-actions"
+                id="profileMainActions"
             >
-                Disponível para contratação
+
+
+                <!-- MENSAGEM -->
+
+                <button
+                    class="profile-action-button profile-action-button--secondary"
+                    id="btnMandarMensagem"
+                    type="button"
+                >
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                    >
+
+                        <path
+                            d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7A8.38 8.38 0 0 1 4 11.5a8.5 8.5 0 0 1 4.7-7.6A8.38 8.38 0 0 1 12.5 3h.5a8.5 8.5 0 0 1 8 8v.5Z"
+                        ></path>
+
+                    </svg>
+
+                    <span>
+                        Mensagem
+                    </span>
+
+                </button>
+
+
+                <!-- CONTRATAR -->
+
+                <button
+                    class="profile-action-button profile-action-button--primary"
+                    id="btnContratar"
+                    type="button"
+                >
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                    >
+
+                        <path
+                            d="M20 7h-9"
+                        ></path>
+
+                        <path
+                            d="M14 17H5"
+                        ></path>
+
+                        <path
+                            d="M19 12H5"
+                        ></path>
+
+                        <path
+                            d="m19 12-2-2"
+                        ></path>
+
+                        <path
+                            d="m19 12-2 2"
+                        ></path>
+
+                    </svg>
+
+                    <span>
+                        Contratar
+                    </span>
+
+                </button>
+
+
             </div>
 
 
-        </div>
-
-    </div>
-
-</section>
+        </article>
 
 
-<!-- =================================================
-     3. SOBRE O ARTISTA
-     ================================================= -->
+        <!-- =================================================
+             SERVIÇOS
 
-<section class="profile-about">
+             Responsabilidade:
+             - Exibir os serviços cadastrados pelo artista.
+             - O conteúdo dos cards será criado pelo
+               ApresentarPerfilServicos.js.
+             - O módulo de dados já fornece os serviços
+               através de servicos_artistas.
+             ================================================= -->
+
+        <section
+            class="profile-services"
+            id="profileServices"
+            hidden
+        >
 
 
-    <div class="profile-about-header">
+            <!-- CABEÇALHO -->
 
-        <div class="profile-about-icon">
-
-            <i data-lucide="user-round"></i>
-
-        </div>
+            <div class="section-heading">
 
 
-        <div>
+                <div
+                    class="section-heading-icon"
+                    aria-hidden="true"
+                >
 
-            <h2 class="profile-about-title">
-                Sobre o artista
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+
+                        <path
+                            d="M20 7h-9"
+                        ></path>
+
+                        <path
+                            d="M14 17H5"
+                        ></path>
+
+                        <path
+                            d="M19 12H5"
+                        ></path>
+
+                        <path
+                            d="m19 12-2-2"
+                        ></path>
+
+                        <path
+                            d="m19 12-2 2"
+                        ></path>
+
+                    </svg>
+
+                </div>
+
+
+                <div>
+
+                    <span class="section-heading-eyebrow">
+                        Serviços
+                    </span>
+
+                    <h2 class="section-heading-title">
+                        O que este artista oferece
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <!-- LISTA -->
+
+            <div
+                class="services-list"
+                id="servicesList"
+            ></div>
+
+
+        </section>
+
+
+        <!-- =================================================
+             ESTADO DE ERRO
+             ================================================= -->
+
+        <section
+            class="profile-error"
+            id="profileError"
+            hidden
+        >
+
+            <div class="profile-error-icon">
+
+                <svg
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                >
+
+                    <circle
+                        cx="12"
+                        cy="12"
+                        r="9"
+                    ></circle>
+
+                    <path
+                        d="M12 8v4"
+                    ></path>
+
+                    <circle
+                        cx="12"
+                        cy="16"
+                        r="1"
+                    ></circle>
+
+                </svg>
+
+            </div>
+
+
+            <h2>
+                Não foi possível carregar este perfil
             </h2>
 
 
-            <p class="profile-about-subtitle">
-                Conheça um pouco mais sobre este artista.
+            <p id="profileErrorMessage">
+                Tente novamente mais tarde.
             </p>
 
-        </div>
-
-    </div>
-
-
-    <div
-        class="profile-about-content"
-        id="profileBio"
-    >
-
-        <span class="empty-inline">
-            Este artista ainda não adicionou uma apresentação.
-        </span>
-
-    </div>
-
-
-</section>
-
-
-<!-- =================================================
-     4. EXPERIÊNCIA PROFISSIONAL
-     ================================================= -->
-
-<section class="profile-section profile-professional-section">
-
-
-    <div class="section-header">
-
-        <div class="section-title-row">
-
-            <div class="section-title-icon">
-
-                <i data-lucide="briefcase-business"></i>
-
-            </div>
-
-            <div>
-
-                <h2 class="section-title">
-                    Experiência profissional
-                </h2>
-
-                <p class="section-subtitle">
-                    Informações sobre atuação e disponibilidade
-                </p>
-
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <div class="info-grid">
-
-
-        <!-- EXPERIÊNCIA -->
-
-        <div
-            class="info-card"
-            id="professionalExperienceCard"
-        >
-
-            <div class="info-card-heading">
-
-                <div class="info-card-icon">
-
-                    <i data-lucide="clock-3"></i>
-
-                </div>
-
-                <span class="info-card-label">
-                    Experiência
-                </span>
-
-            </div>
-
-            <span
-                class="info-card-value"
-                id="profileExperience"
-            ></span>
-
-        </div>
-
-
-        <!-- ÁREA DE ATUAÇÃO -->
-
-        <div
-            class="info-card"
-            id="professionalAreaCard"
-        >
-
-            <div class="info-card-heading">
-
-                <div class="info-card-icon">
-
-                    <i data-lucide="map-pin"></i>
-
-                </div>
-
-                <span class="info-card-label">
-                    Área de atuação
-                </span>
-
-            </div>
-
-            <span
-                class="info-card-value"
-                id="profileArea"
-            ></span>
-
-        </div>
-
-
-        <!-- TIPO DE PERFIL -->
-
-        <div
-            class="info-card"
-            id="professionalTypeCard"
-        >
-
-            <div class="info-card-heading">
-
-                <div class="info-card-icon">
-
-                    <i data-lucide="badge-check"></i>
-
-                </div>
-
-                <span class="info-card-label">
-                    Tipo de perfil
-                </span>
-
-            </div>
-
-            <span
-                class="info-card-value"
-                id="profileType"
-            ></span>
-
-        </div>
-
-
-        <!-- DISPONIBILIDADE -->
-
-        <div
-            class="info-card"
-            id="professionalAvailabilityCard"
-        >
-
-            <div class="info-card-heading">
-
-                <div class="info-card-icon">
-
-                    <i data-lucide="calendar-check-2"></i>
-
-                </div>
-
-                <span class="info-card-label">
-                    Disponibilidade
-                </span>
-
-            </div>
-
-            <span
-                class="info-card-value"
-                id="profileAvailability"
-            ></span>
-
-        </div>
+        </section>
 
 
     </div>
-
-
-</section>
-
-
-<!-- =================================================
-     5. SERVIÇOS
-     ================================================= -->
-
-<section class="profile-section profile-services-section">
-
-
-    <div class="section-header">
-
-        <div class="section-title-row">
-
-            <div class="section-title-icon">
-
-                <i data-lucide="handshake"></i>
-
-            </div>
-
-            <div>
-
-                <h2 class="section-title">
-                    Serviços
-                </h2>
-
-                <p class="section-subtitle">
-                    O que este artista oferece
-                </p>
-
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <div
-        class="services-list"
-        id="servicesList"
-    >
-
-        <div class="empty-state">
-
-            <i data-lucide="briefcase-business"></i>
-
-            <strong>
-                Nenhum serviço cadastrado
-            </strong>
-
-            <span>
-                Nenhum serviço foi informado.
-            </span>
-
-        </div>
-
-    </div>
-
-
-</section>
-
 
 </main>
 
+
 <!-- =====================================================
-     BARRA FIXA DE AÇÕES
+     MENU DE OPÇÕES
+
+     Mantido para implementação posterior das ações
+     secundárias.
      ===================================================== -->
 
-<div class="profile-action-bar">
+<div
+    class="action-menu"
+    id="actionMenu"
+    aria-hidden="true"
+>
 
 
-<div class="profile-action-container">
+    <div
+        class="action-menu-backdrop"
+        data-menu-action="cancel"
+    ></div>
 
 
-    <!-- BOTÃO CONTRATAR -->
-
-    <button
-        type="button"
-        class="profile-action-button profile-action-hire"
-        id="btnContratar"
-    >
-
-        <i data-lucide="handshake"></i>
-
-        <span>
-            Contratar
-        </span>
-
-    </button>
+    <div class="action-menu-panel">
 
 
-    <!-- BOTÃO MANDAR MENSAGEM -->
+        <!-- DENUNCIAR -->
 
-    <button
-        type="button"
-        class="profile-action-button profile-action-message"
-        id="btnMandarMensagem"
-    >
+        <button
+            type="button"
+            data-menu-action="report"
+        >
 
-        <i data-lucide="message-circle"></i>
+            <svg
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+            >
 
-    </button>
+                <path
+                    d="M4 4v16"
+                ></path>
 
+                <path
+                    d="M4 4h12l-2 4 2 4H4"
+                ></path>
+
+            </svg>
+
+            <span>
+                Denunciar perfil
+            </span>
+
+        </button>
+
+
+        <!-- COPIAR LINK -->
+
+        <button
+            type="button"
+            data-menu-action="copy"
+        >
+
+            <svg
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+            >
+
+                <rect
+                    x="9"
+                    y="9"
+                    width="11"
+                    height="11"
+                    rx="2"
+                ></rect>
+
+                <path
+                    d="M15 9V7a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"
+                ></path>
+
+            </svg>
+
+            <span>
+                Copiar link do perfil
+            </span>
+
+        </button>
+
+
+        <!-- CANCELAR -->
+
+        <button
+            type="button"
+            data-menu-action="cancel"
+        >
+
+            <span>
+                Cancelar
+            </span>
+
+        </button>
+
+    </div>
 
 </div>
 
-
-</div>
 
 <!-- =====================================================
      SCRIPTS
      ===================================================== -->
 
-<!-- SUPABASE -->
 
-<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<!-- =====================================================
+     SUPABASE
+     ===================================================== -->
+
+<script
+    src="https://unpkg.com/@supabase/supabase-js@2"
+></script>
+
 
 <!-- =====================================================
      MÓDULOS CORE
      ===================================================== -->
 
-<script src="js/core/SupabaseClient.js"></script>
+<script
+    src="js/core/SupabaseClient.js"
+></script>
 
-<script src="js/core/Sessao.js"></script>
+<script
+    src="js/core/Sessao.js"
+></script>
 
-<script src="js/core/UsuarioAtual.js"></script>
+<script
+    src="js/core/UsuarioAtual.js"
+></script>
 
-<script src="js/core/ControleSessao.js"></script>
+<script
+    src="js/core/ControleSessao.js"
+></script>
 
-<script src="js/core/RoteamentoPerfil.js"></script>
+<script
+    src="js/core/RoteamentoPerfil.js"
+></script>
+
 
 <!-- =====================================================
-     MÓDULOS DO PERFIL
+     DADOS DO PERFIL
      ===================================================== -->
 
-<script src="js/apresentar-perfil/ApresentarPerfilTipo.js"></script>
-
-<script src="js/apresentar-perfil/ApresentarPerfilUtils.js"></script>
-
-<script src="js/apresentar-perfil/ApresentarPerfilDados.js"></script>
-
-<script src="js/apresentar-perfil/portfolio/PortfolioConfig.js"></script>
-<script src="js/apresentar-perfil/portfolio/PortfolioUtils.js"></script>
-<script src="js/apresentar-perfil/portfolio/PortfolioDeck.js"></script>
-<script src="js/apresentar-perfil/portfolio/PortfolioRender.js"></script>
-<script src="js/apresentar-perfil/portfolio/PortfolioControle.js"></script>
-
-<script src="js/apresentar-perfil/ApresentarPerfilRender.js"></script>
-
-<script src="js/apresentar-perfil/ApresentarPerfilAcoes.js"></script>
-
-<script src="js/apresentar-perfil/ApresentarPerfilServicos.js"></script>
-
-<script src="js/apresentar-perfil/ApresentarPerfil.js"></script>
-
+<script
+    src="js/apresentar-perfil-teste/ApresentarPerfilDados.js"
+></script>
 
 
 <!-- =====================================================
-     INICIALIZAÇÃO DOS ÍCONES
+     RENDERIZAÇÃO DO PERFIL
+     ===================================================== -->
+
+<script
+    src="js/apresentar-perfil-teste/ApresentarPerfilRender.js"
+></script>
+
+
+<!-- =====================================================
+     PORTFÓLIO
+     ===================================================== -->
+
+<script
+    src="js/apresentar-perfil-teste/ApresentarPerfilPortfolio.js"
+></script>
+
+
+<!-- =====================================================
+     SERVIÇOS
+     ===================================================== -->
+
+<script
+    src="js/apresentar-perfil-teste/ApresentarPerfilServicos.js"
+></script>
+
+
+<!-- =====================================================
+     AÇÕES
+     ===================================================== -->
+
+<script
+    src="js/apresentar-perfil-teste/ApresentarPerfilAcoes.js"
+></script>
+
+
+<!-- =====================================================
+     INICIALIZAÇÃO DA PÁGINA
+
+     Responsabilidades:
+     - Carregar os dados.
+     - Renderizar informações gerais.
+     - Inicializar portfólio.
+     - Inicializar serviços.
+     - Inicializar ações.
+     - Exibir erros de carregamento.
      ===================================================== -->
 
 <script>
 
     document.addEventListener(
         "DOMContentLoaded",
-        function () {
+        async function () {
 
-            if (
-                window.lucide &&
-                typeof window.lucide.createIcons === "function"
-            ) {
+            console.log(
+                "MusicalWorld — Inicializando apresentação de perfil de teste..."
+            );
 
-                window.lucide.createIcons();
+
+            try {
+
+
+                /* =================================================
+                   1. VERIFICAR MÓDULO DE DADOS
+                   ================================================= */
+
+                if (
+                    !window.ApresentarPerfilDadosTeste
+                ) {
+
+                    throw new Error(
+                        "Módulo de dados não carregado."
+                    );
+
+                }
+
+
+                /* =================================================
+                   2. CARREGAR DADOS
+                   ================================================= */
+
+                await window
+                    .ApresentarPerfilDadosTeste
+                    .carregarTudo();
+
+
+                console.log(
+                    "MusicalWorld — Dados do perfil carregados."
+                );
+
+
+                /* =================================================
+                   3. RENDERIZAR DADOS GERAIS
+                   ================================================= */
+
+                if (
+                    window.ApresentarPerfilRenderTeste
+                ) {
+
+                    window
+                        .ApresentarPerfilRenderTeste
+                        .renderizar();
+
+                }
+
+
+                /* =================================================
+                   4. INICIALIZAR PORTFÓLIO
+                   ================================================= */
+
+                if (
+                    window.ApresentarPerfilPortfolioTeste
+                ) {
+
+                    await window
+                        .ApresentarPerfilPortfolioTeste
+                        .inicializar();
+
+                }
+
+
+                /* =================================================
+                   5. INICIALIZAR SERVIÇOS
+
+                   Os serviços já foram carregados pelo
+                   ApresentarPerfilDados.js.
+
+                   Portanto, este módulo NÃO precisa consultar
+                   o Supabase novamente.
+                   ================================================= */
+
+                if (
+                    window.ApresentarPerfilServicosTeste
+                ) {
+
+                    const dados =
+                        window
+                            .ApresentarPerfilDadosTeste
+                            .obterDados();
+
+
+                    const servicos =
+                        dados &&
+                        Array.isArray(
+                            dados.servicos
+                        )
+                            ? dados.servicos
+                            : [];
+
+
+                    window
+                        .ApresentarPerfilServicosTeste
+                        .inicializar(
+                            servicos
+                        );
+
+                }
+
+
+                /* =================================================
+                   6. INICIALIZAR AÇÕES
+                   ================================================= */
+
+                if (
+                    window.ApresentarPerfilAcoesTeste
+                ) {
+
+                    window
+                        .ApresentarPerfilAcoesTeste
+                        .inicializar();
+
+                }
+
+
+                console.log(
+                    "MusicalWorld — Apresentação de perfil carregada com sucesso."
+                );
+
+
+            } catch (erro) {
+
+
+                /* =================================================
+                   TRATAMENTO DE ERRO
+                   ================================================= */
+
+                console.error(
+                    "MusicalWorld — Erro ao iniciar apresentação do perfil:",
+                    erro
+                );
+
+
+                const erroContainer =
+                    document.getElementById(
+                        "profileError"
+                    );
+
+
+                const erroMensagem =
+                    document.getElementById(
+                        "profileErrorMessage"
+                    );
+
+
+                if (erroContainer) {
+
+                    erroContainer.hidden =
+                        false;
+
+                }
+
+
+                if (erroMensagem) {
+
+                    erroMensagem.textContent =
+                        erro &&
+                        erro.message
+                            ? erro.message
+                            : "Ocorreu um erro ao carregar o perfil.";
+
+                }
 
             }
 
@@ -697,7 +1323,6 @@ content="#ffffff"
 
 </script>
 
-</div>
 
 </body>
 
