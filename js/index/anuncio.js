@@ -1,3 +1,4 @@
+
 /* =========================================================
    MUSICALWORLD — MÓDULO DE ANÚNCIOS DO FEED
 
@@ -15,16 +16,38 @@
    - Controlar fallbacks de imagem, avatar e vídeo.
    - Observar os vídeos presentes no feed.
 
-   IMPORTANTE:
-   Este arquivo contém somente a lógica relacionada
-   aos anúncios/publicações do feed.
+   REGRA PRINCIPAL DA MÍDIA:
 
-   O carregamento dos profissionais, filtros,
-   paginação e comunicação com o Supabase permanecem
-   no arquivo main.js.
+   1. Vídeo de portfólio:
+      mostra o vídeo.
+
+   2. Imagem de portfólio:
+      mostra a imagem.
+
+   3. Sem mídia de portfólio, mas com foto de perfil:
+      mostra a foto de perfil.
+
+   4. Sem qualquer foto:
+      NÃO cria uma área grande de mídia.
+      Mostra somente o avatar padrão com iniciais
+      junto da identidade do artista.
+
+   5. Sem localização:
+      mostra "Localização não informada".
+
+   6. IDENTIDADE COM MÍDIA:
+      texto branco sobre a mídia.
+
+   7. IDENTIDADE SEM MÍDIA:
+      texto escuro em fluxo normal.
+
+   IMPORTANTE:
+   O avatar padrão pertence à identidade do artista.
+   Ele NÃO é considerado uma mídia de destaque.
 ========================================================= */
 
 (function (window) {
+
     "use strict";
 
 
@@ -344,7 +367,7 @@
 
 
     /* =========================================================
-       VÍDEOS
+       CONTROLE DOS VÍDEOS
     ========================================================= */
 
     function cancelarTimerVideo(video) {
@@ -484,8 +507,7 @@
 
             promessa.catch(() => {
                 /*
-                 * Alguns navegadores podem bloquear
-                 * o autoplay.
+                 * O navegador pode bloquear o autoplay.
                  */
             });
         }
@@ -734,7 +756,7 @@
 
 
     /* =========================================================
-       CRIAÇÃO DO ANÚNCIO
+       CRIAÇÃO DO CARD DO PROFISSIONAL
     ========================================================= */
 
     function criarCardProfissional(
@@ -747,6 +769,7 @@
             return null;
         }
 
+
         const card =
             document.createElement("article");
 
@@ -755,7 +778,7 @@
 
 
         /* =====================================================
-           IDENTIFICAÇÃO DO ARTISTA
+           IDENTIDADE
         ===================================================== */
 
         const nome =
@@ -763,23 +786,28 @@
             perfil?.nome ||
             "Profissional";
 
+
         const descricao =
             perfil?.descricao ||
             "Perfil profissional do MusicalWorld.";
 
+
         const localizacao =
-            artista?.localizacao ||
+            artista?.localizacao?.trim?.() ||
             "Localização não informada";
+
 
         const tipo =
             obterNomeTipo(
                 artista?.tipo_artista
             );
 
+
         const estilosLista =
             normalizarLista(
                 artista?.estilos
             );
+
 
         const fotoUrl =
             artista?.foto_url ||
@@ -788,12 +816,13 @@
             perfil?.foto ||
             "";
 
+
         const iniciais =
             gerarIniciais(nome);
 
 
         /* =====================================================
-           AVATAR
+           AVATAR DA IDENTIDADE
         ===================================================== */
 
         let avatarHtml = "";
@@ -811,6 +840,7 @@
                 <span
                     class="ad-mini-avatar-fallback"
                     aria-hidden="true"
+                    style="display:none;"
                 >
                     ${escaparHtml(iniciais)}
                 </span>
@@ -830,11 +860,212 @@
 
 
         /* =====================================================
-           IDENTIDADE SOBRE A MÍDIA
+           MÍDIA DE DESTAQUE
         ===================================================== */
 
+        let mediaHtml = "";
+
+        const tipoDestaque =
+            normalizarTexto(
+                destaque?.tipo
+            );
+
+
+        const arquivoUrl =
+            destaque?.arquivo_url ||
+            destaque?.url ||
+            "";
+
+
+        const thumbnailUrl =
+            destaque?.thumbnail_url ||
+            destaque?.capa_url ||
+            "";
+
+
+        const destaqueEhVideo =
+            tipoDestaque === "video" ||
+            tipoDestaque === "vídeo" ||
+            tipoDestaque === "mp4" ||
+            /\.(mp4|webm|ogg)(\?.*)?$/i.test(
+                arquivoUrl
+            );
+
+
+        const destaqueEhImagem =
+            !destaqueEhVideo &&
+            (
+                tipoDestaque === "imagem" ||
+                tipoDestaque === "foto" ||
+                !!arquivoUrl
+            );
+
+
+        /* =====================================================
+           VÍDEO
+        ===================================================== */
+
+        if (
+            destaqueEhVideo &&
+            arquivoUrl
+        ) {
+
+            mediaHtml = `
+                <div class="ad-video-container">
+
+                    <a
+                        href="${escaparHtml(
+                            obterPaginaPerfil()
+                        )}?id=${encodeURIComponent(
+                            perfil.id || ""
+                        )}"
+                        class="ad-media-link ad-video-link"
+                        aria-label="Ver perfil de ${escaparHtml(nome)}"
+                    >
+
+                        <video
+                            class="ad-media-video"
+                            muted
+                            loop
+                            playsinline
+                            preload="metadata"
+                            ${thumbnailUrl
+                                ? `poster="${escaparHtml(
+                                    thumbnailUrl
+                                )}"`
+                                : ""
+                            }
+                        >
+
+                            <source
+                                src="${escaparHtml(
+                                    arquivoUrl
+                                )}"
+                            >
+
+                        </video>
+
+                    </a>
+
+                    <button
+                        type="button"
+                        class="ad-video-fullscreen"
+                        aria-label="Assistir vídeo em tela cheia"
+                        title="Tela cheia"
+                    >
+
+                        <svg
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.8"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <path d="M8 3H5a2 2 0 0 0-2 2v3"/>
+                            <path d="M16 3h3a2 2 0 0 1 2 2v3"/>
+                            <path d="M21 16v3a2 2 0 0 1-2 2h-3"/>
+                            <path d="M3 16v3a2 2 0 0 0 2 2h3"/>
+                        </svg>
+
+                    </button>
+
+                </div>
+            `;
+
+
+        /* =====================================================
+           IMAGEM DE PORTFÓLIO
+        ===================================================== */
+
+        } else if (
+            destaqueEhImagem &&
+            arquivoUrl
+        ) {
+
+            mediaHtml = `
+                <a
+                    href="${escaparHtml(
+                        obterPaginaPerfil()
+                    )}?id=${encodeURIComponent(
+                        perfil.id || ""
+                    )}"
+                    class="ad-media-link"
+                    aria-label="Ver perfil de ${escaparHtml(nome)}"
+                >
+
+                    <img
+                        class="ad-media-img ad-media-destaque"
+                        src="${escaparHtml(
+                            arquivoUrl
+                        )}"
+                        alt=""
+                        loading="lazy"
+                    >
+
+                </a>
+            `;
+
+
+        /* =====================================================
+           FOTO DE PERFIL COMO FALLBACK
+        ===================================================== */
+
+        } else if (fotoUrl) {
+
+            mediaHtml = `
+                <a
+                    href="${escaparHtml(
+                        obterPaginaPerfil()
+                    )}?id=${encodeURIComponent(
+                        perfil.id || ""
+                    )}"
+                    class="ad-media-link"
+                    aria-label="Ver perfil de ${escaparHtml(nome)}"
+                >
+
+                    <img
+                        class="ad-media-img ad-media-foto-perfil"
+                        src="${escaparHtml(
+                            fotoUrl
+                        )}"
+                        alt=""
+                        loading="lazy"
+                    >
+
+                </a>
+            `;
+        }
+
+
+        /* =====================================================
+           IDENTIDADE DO ARTISTA
+
+           A classe visual depende da existência de mídia.
+
+           COM MÍDIA:
+           -> identidade sobre a mídia;
+           -> texto branco.
+
+           SEM MÍDIA:
+           -> identidade em fluxo normal;
+           -> texto escuro.
+        ===================================================== */
+
+        const identidadeClasse =
+            mediaHtml.trim()
+                ? "ad-identidade-com-midia"
+                : "ad-identidade-sem-midia";
+
+
         const identidadeHtml = `
-            <div class="ad-media-identidade">
+            <div
+                class="
+                    ad-media-identidade
+                    ${identidadeClasse}
+                "
+            >
 
                 <a
                     href="${escaparHtml(
@@ -847,7 +1078,9 @@
                 >
 
                     <div class="ad-media-avatar-wrapper">
+
                         ${avatarHtml}
+
                     </div>
 
                     <div class="ad-media-nome-area">
@@ -894,7 +1127,7 @@
 
 
         /* =====================================================
-           MENU
+           MENU DO CARD
         ===================================================== */
 
         const menuHtml = `
@@ -907,178 +1140,6 @@
                 ${obterIconeAnuncio("menu")}
             </button>
         `;
-
-
-        /* =====================================================
-           MÍDIA
-        ===================================================== */
-
-        let mediaHtml = "";
-
-        const tipoDestaque =
-            normalizarTexto(
-                destaque?.tipo
-            );
-
-        const arquivoUrl =
-            destaque?.arquivo_url ||
-            destaque?.url ||
-            "";
-
-        const thumbnailUrl =
-            destaque?.thumbnail_url ||
-            destaque?.capa_url ||
-            "";
-
-        const destaqueEhVideo =
-            tipoDestaque === "video" ||
-            tipoDestaque === "vídeo" ||
-            tipoDestaque === "mp4" ||
-            /\.(mp4|webm|ogg)(\?.*)?$/i.test(
-                arquivoUrl
-            );
-
-        const destaqueEhImagem =
-            !destaqueEhVideo &&
-            (
-                tipoDestaque === "imagem" ||
-                tipoDestaque === "foto" ||
-                !!arquivoUrl
-            );
-
-
-        if (
-            destaqueEhVideo &&
-            arquivoUrl
-        ) {
-
-            mediaHtml = `
-                <div class="ad-video-container">
-
-                    <a
-                        href="${escaparHtml(
-                            obterPaginaPerfil()
-                        )}?id=${encodeURIComponent(
-                            perfil.id || ""
-                        )}"
-                        class="ad-media-link ad-video-link"
-                        aria-label="Ver perfil de ${escaparHtml(nome)}"
-                    >
-
-                        <video
-                            class="ad-media-video"
-                            muted
-                            loop
-                            playsinline
-                            preload="metadata"
-                            ${thumbnailUrl
-                                ? `poster="${escaparHtml(
-                                    thumbnailUrl
-                                )}"`
-                                : ""
-                            }
-                        >
-                            <source
-                                src="${escaparHtml(
-                                    arquivoUrl
-                                )}"
-                            >
-                        </video>
-
-                    </a>
-
-                    <button
-                        type="button"
-                        class="ad-video-fullscreen"
-                        aria-label="Assistir vídeo em tela cheia"
-                        title="Tela cheia"
-                    >
-                        <svg
-                            viewBox="0 0 24 24"
-                            aria-hidden="true"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="1.8"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                        >
-                            <path d="M8 3H5a2 2 0 0 0-2 2v3"/>
-                            <path d="M16 3h3a2 2 0 0 1 2 2v3"/>
-                            <path d="M21 16v3a2 2 0 0 1-2 2h-3"/>
-                            <path d="M3 16v3a2 2 0 0 0 2 2h3"/>
-                        </svg>
-                    </button>
-
-                </div>
-            `;
-
-        } else if (
-            destaqueEhImagem &&
-            arquivoUrl
-        ) {
-
-            mediaHtml = `
-                <a
-                    href="${escaparHtml(
-                        obterPaginaPerfil()
-                    )}?id=${encodeURIComponent(
-                        perfil.id || ""
-                    )}"
-                    class="ad-media-link"
-                    aria-label="Ver perfil de ${escaparHtml(nome)}"
-                >
-                    <img
-                        class="ad-media-img ad-media-destaque"
-                        src="${escaparHtml(
-                            arquivoUrl
-                        )}"
-                        alt=""
-                        loading="lazy"
-                    >
-                </a>
-            `;
-
-        } else if (fotoUrl) {
-
-            mediaHtml = `
-                <a
-                    href="${escaparHtml(
-                        obterPaginaPerfil()
-                    )}?id=${encodeURIComponent(
-                        perfil.id || ""
-                    )}"
-                    class="ad-media-link"
-                    aria-label="Ver perfil de ${escaparHtml(nome)}"
-                >
-                    <img
-                        class="ad-media-img ad-media-foto-perfil"
-                        src="${escaparHtml(
-                            fotoUrl
-                        )}"
-                        alt=""
-                        loading="lazy"
-                    >
-                </a>
-            `;
-
-        } else {
-
-            mediaHtml = `
-                <a
-                    href="${escaparHtml(
-                        obterPaginaPerfil()
-                    )}?id=${encodeURIComponent(
-                        perfil.id || ""
-                    )}"
-                    class="ad-media-link ad-media-sem-foto"
-                    aria-label="Ver perfil de ${escaparHtml(nome)}"
-                >
-                    <span>
-                        ${escaparHtml(iniciais)}
-                    </span>
-                </a>
-            `;
-        }
 
 
         /* =====================================================
@@ -1135,7 +1196,7 @@
 
 
         /* =====================================================
-           AÇÕES SOCIAIS
+           AÇÕES
         ===================================================== */
 
         const acoesHtml = `
@@ -1158,6 +1219,7 @@
                     </span>
                 </button>
 
+
                 <button
                     type="button"
                     class="ad-social-btn"
@@ -1171,6 +1233,7 @@
                     </span>
                 </button>
 
+
                 <button
                     type="button"
                     class="ad-social-btn"
@@ -1183,6 +1246,7 @@
                         Compartilhar
                     </span>
                 </button>
+
 
                 <button
                     type="button"
@@ -1202,25 +1266,57 @@
 
 
         /* =====================================================
-           ESTRUTURA FINAL
+           ÁREA SUPERIOR DO CARD
+        ===================================================== */
+
+        let areaSuperiorHtml = "";
+
+
+        if (mediaHtml.trim()) {
+
+            areaSuperiorHtml = `
+
+                <div class="ad-media-box">
+
+                    ${mediaHtml}
+
+                    <div
+                        class="ad-media-overlay"
+                        aria-hidden="true"
+                    ></div>
+
+                    ${identidadeHtml}
+
+                    ${menuHtml}
+
+                </div>
+
+            `;
+
+        } else {
+
+            areaSuperiorHtml = `
+
+                <div class="ad-card-identidade-sem-midia">
+
+                    ${identidadeHtml}
+
+                    ${menuHtml}
+
+                </div>
+
+            `;
+        }
+
+
+        /* =====================================================
+           CONTEÚDO FINAL
         ===================================================== */
 
         card.innerHTML = `
 
-            <div class="ad-media-box">
+            ${areaSuperiorHtml}
 
-                ${mediaHtml}
-
-                <div
-                    class="ad-media-overlay"
-                    aria-hidden="true"
-                ></div>
-
-                ${identidadeHtml}
-
-                ${menuHtml}
-
-            </div>
 
             <div class="ad-card-conteudo">
 
@@ -1237,6 +1333,7 @@
                 </div>
 
             </div>
+
 
             ${acoesHtml}
 
@@ -1258,7 +1355,7 @@
 
 
         /* =====================================================
-           CLIQUE GERAL
+           CLIQUE NO CARD
         ===================================================== */
 
         card.addEventListener(
@@ -1329,7 +1426,7 @@
 
 
         /* =====================================================
-           ERRO DA IMAGEM
+           ERRO DA IMAGEM DE MÍDIA
         ===================================================== */
 
         card
@@ -1342,19 +1439,106 @@
                     "error",
                     () => {
 
-                        img.style.display =
-                            "none";
-
                         const mediaBox =
                             card.querySelector(
                                 ".ad-media-box"
                             );
 
-                        if (mediaBox) {
+                        if (!mediaBox) {
+                            return;
+                        }
 
-                            mediaBox.classList.add(
-                                "ad-media-fallback"
+
+                        const eraDestaque =
+                            img.classList.contains(
+                                "ad-media-destaque"
                             );
+
+
+                        if (
+                            eraDestaque &&
+                            fotoUrl
+                        ) {
+
+                            img.src =
+                                fotoUrl;
+
+                            img.classList.remove(
+                                "ad-media-destaque"
+                            );
+
+                            img.classList.add(
+                                "ad-media-foto-perfil"
+                            );
+
+                            return;
+                        }
+
+
+                        /*
+                         * Se não houver mais nenhuma imagem
+                         * disponível, removemos a mídia.
+                         *
+                         * A identidade precisa deixar de ser
+                         * "sobre mídia" e passar para o estado
+                         * normal.
+                         */
+
+                        mediaBox.remove();
+
+                        const identidadeSemMidia =
+                            card.querySelector(
+                                ".ad-media-identidade"
+                            );
+
+                        const containerSemMidia =
+                            document.createElement(
+                                "div"
+                            );
+
+                        containerSemMidia.className =
+                            "ad-card-identidade-sem-midia";
+
+
+                        if (identidadeSemMidia) {
+
+                            identidadeSemMidia.classList.remove(
+                                "ad-identidade-com-midia"
+                            );
+
+                            identidadeSemMidia.classList.add(
+                                "ad-identidade-sem-midia"
+                            );
+
+                            identidadeSemMidia.style.position =
+                                "static";
+
+                            containerSemMidia.appendChild(
+                                identidadeSemMidia
+                            );
+
+                            const menu =
+                                card.querySelector(
+                                    ".ad-card-menu"
+                                );
+
+                            if (menu) {
+
+                                containerSemMidia.appendChild(
+                                    menu
+                                );
+                            }
+
+                            card
+                                .querySelector(
+                                    ".ad-card-novo"
+                                );
+
+                            card
+                                .insertBefore(
+                                    containerSemMidia,
+                                    card.firstElementChild
+                                );
                         }
 
                     },
@@ -1374,6 +1558,7 @@
                 ".ad-media-video"
             );
 
+
         if (video) {
 
             video.addEventListener(
@@ -1384,27 +1569,28 @@
                         video
                     );
 
+
                     const container =
                         card.querySelector(
                             ".ad-video-container"
                         );
 
-                    if (!container) {
-                        return;
-                    }
 
                     const mediaBox =
                         card.querySelector(
                             ".ad-media-box"
                         );
 
-                    if (!mediaBox) {
+
+                    if (!container || !mediaBox) {
                         return;
                     }
+
 
                     if (fotoUrl) {
 
                         container.outerHTML = `
+
                             <a
                                 href="${escaparHtml(
                                     obterPaginaPerfil()
@@ -1416,6 +1602,7 @@
                                     nome
                                 )}"
                             >
+
                                 <img
                                     class="ad-media-img ad-media-foto-perfil"
                                     src="${escaparHtml(
@@ -1424,35 +1611,109 @@
                                     alt=""
                                     loading="lazy"
                                 >
+
                             </a>
+
                         `;
+
+
+                        const novaImagem =
+                            mediaBox.querySelector(
+                                ".ad-media-foto-perfil"
+                            );
+
+
+                        if (novaImagem) {
+
+                            novaImagem.addEventListener(
+                                "error",
+                                () => {
+
+                                    mediaBox.remove();
+
+                                },
+                                {
+                                    once: true
+                                }
+                            );
+                        }
+
 
                     } else {
 
-                        container.outerHTML = `
-                            <a
-                                href="${escaparHtml(
-                                    obterPaginaPerfil()
-                                )}?id=${encodeURIComponent(
-                                    perfil.id || ""
-                                )}"
-                                class="ad-media-link ad-media-sem-foto"
-                                aria-label="Ver perfil de ${escaparHtml(
-                                    nome
-                                )}"
-                            >
-                                <span>
-                                    ${escaparHtml(
-                                        iniciais
-                                    )}
-                                </span>
-                            </a>
-                        `;
-                    }
+                        /*
+                         * Sem foto de perfil:
+                         * remove somente a mídia.
+                         */
 
-                    mediaBox.classList.add(
-                        "ad-media-fallback"
-                    );
+                        mediaBox.remove();
+
+                        const identidade =
+                            card.querySelector(
+                                ".ad-media-identidade"
+                            );
+
+                        if (identidade) {
+
+                            identidade.classList.remove(
+                                "ad-identidade-com-midia"
+                            );
+
+                            identidade.classList.add(
+                                "ad-identidade-sem-midia"
+                            );
+                        }
+
+                        const wrapper =
+                            document.createElement(
+                                "div"
+                            );
+
+                        wrapper.className =
+                            "ad-card-identidade-sem-midia";
+
+
+                        const identidadeExistente =
+                            card.querySelector(
+                                ".ad-media-identidade"
+                            );
+
+                        const menu =
+                            card.querySelector(
+                                ".ad-card-menu"
+                            );
+
+
+                        if (identidadeExistente) {
+
+                            identidadeExistente
+                                .parentNode
+                                ?.removeChild(
+                                    identidadeExistente
+                                );
+
+                            wrapper.appendChild(
+                                identidadeExistente
+                            );
+                        }
+
+
+                        if (menu) {
+
+                            menu.parentNode
+                                ?.removeChild(menu);
+
+                            wrapper.appendChild(
+                                menu
+                            );
+                        }
+
+
+                        card.insertBefore(
+                            wrapper,
+                            card.firstElementChild
+                        );
+                    }
 
                 },
                 {
@@ -1463,13 +1724,14 @@
 
 
         /* =====================================================
-           TELA CHEIA
+           TELA CHEIA DO VÍDEO
         ===================================================== */
 
         const fullscreenButton =
             card.querySelector(
                 ".ad-video-fullscreen"
             );
+
 
         if (
             fullscreenButton &&
@@ -1484,6 +1746,7 @@
 
                     evento.stopPropagation();
 
+
                     try {
 
                         if (
@@ -1495,6 +1758,7 @@
                             return;
                         }
 
+
                         if (
                             video.requestFullscreen
                         ) {
@@ -1503,6 +1767,7 @@
 
                             return;
                         }
+
 
                         if (
                             video.webkitEnterFullscreen
@@ -1513,6 +1778,7 @@
                             return;
                         }
 
+
                     } catch (erro) {
 
                         console.warn(
@@ -1520,6 +1786,7 @@
                             erro
                         );
                     }
+
                 }
             );
         }
@@ -1533,6 +1800,7 @@
             card.querySelector(
                 ".ad-card-menu"
             );
+
 
         if (menuButton) {
 
@@ -1570,12 +1838,15 @@
 
                         evento.stopPropagation();
 
+
                         const acao =
                             botao.dataset.acao;
+
 
                         if (!acao) {
                             return;
                         }
+
 
                         if (
                             acao === "curtir" ||
@@ -1589,6 +1860,7 @@
 
                     }
                 );
+
             });
 
 
@@ -1597,16 +1869,19 @@
 
 
     /* =========================================================
-       API PÚBLICA DO MÓDULO DE ANÚNCIOS
+       API PÚBLICA
     ========================================================= */
 
     window.MusicalWorldAnuncio = {
 
-        criar: criarCardProfissional,
+        criar:
+            criarCardProfissional,
 
-        obterArtista: obterArtistaPerfil,
+        obterArtista:
+            obterArtistaPerfil,
 
-        obterDestaque: obterDestaquePortfolio,
+        obterDestaque:
+            obterDestaquePortfolio,
 
         inicializarVideos:
             inicializarObservadorVideos,
@@ -1626,3 +1901,4 @@
 
 
 })(window);
+
