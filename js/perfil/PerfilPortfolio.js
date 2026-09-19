@@ -1,5 +1,5 @@
-(function (window) {
 
+(function (window) {
 
 "use strict";
 
@@ -8,11 +8,8 @@
    PERFIL PORTFÓLIO — MUSICALWORLD
    ============================================================
 
-   Módulo UNIVERSAL de portfólio.
-
-   O formulário do portfólio é permanente e já existe no HTML.
-
-   Este módulo NÃO cria o formulário dinamicamente.
+   Arquivo:
+   js/perfil/PerfilPortfolio.js
 
    Responsabilidades:
 
@@ -26,19 +23,24 @@
    - renderização dos itens;
    - integração com PerfilEditor.
 
-   O tipo artístico do perfil NÃO determina este módulo.
+   O formulário do portfólio é permanente e já existe no HTML.
+
+   Este módulo NÃO cria o formulário dinamicamente.
 
    O vínculo do portfólio é feito através de:
 
        perfil_id
 
-   Já:
+   Os tipos de mídia são:
 
        imagem
-       vídeo
-       áudio
+       video
+       audio
 
-   representam o tipo da mídia do item.
+   IMPORTANTE:
+   O campo de título possui resolução por múltiplos IDs
+   para evitar que uma alteração no HTML ou no contexto
+   faça o valor ser interpretado como vazio.
 */
 
 
@@ -149,28 +151,121 @@ const estado = {
    ELEMENTOS
    ============================================================ */
 
-   /* ============================================================
-ELEMENTOS
-============================================================ */
-
 /*
-
-* Localiza elementos do formulário permanente do portfólio.
-*
-* O PerfilPortfolio pode receber um utilitário central
-* através de contexto.utils.el(), mas nunca deve depender
-* exclusivamente dele.
-*
-* Caso o utilitário central não encontre o elemento,
-* utilizamos diretamente document.getElementById().
-*
-* Os valores recebidos aqui são IDs, não seletores CSS.
-  */
+ * Localiza elementos do formulário permanente do portfólio.
+ *
+ * O PerfilPortfolio pode receber um utilitário central
+ * através de contexto.utils.el(), mas nunca depende
+ * exclusivamente dele.
+ *
+ * Os valores recebidos são IDs.
+ */
 
 function obterElemento(id) {
 
+    if (!id) {
 
-if (!id) {
+        return null;
+
+    }
+
+
+    /*
+     * Primeiro utiliza o resolvedor central do PerfilEditor,
+     * quando ele estiver disponível.
+     */
+
+    if (
+        contexto?.utils &&
+        typeof contexto.utils.el === "function"
+    ) {
+
+        const elemento =
+            contexto.utils.el(id);
+
+
+        if (elemento) {
+
+            return elemento;
+
+        }
+
+    }
+
+
+    /*
+     * Fallback direto no HTML.
+     */
+
+    return document.getElementById(id) || null;
+
+}
+
+
+/* ============================================================
+   RESOLUÇÃO DOS CAMPOS DO FORMULÁRIO
+   ============================================================ */
+
+/*
+ * Alguns arquivos do projeto podem fornecer os IDs através
+ * de contexto.ids.
+ *
+ * Para evitar que uma alteração de ID no HTML faça o título
+ * chegar vazio ao método adicionar(), utilizamos uma resolução
+ * centralizada para os campos do formulário.
+ */
+
+function obterElementoFormulario(
+    nome,
+    idsAlternativos = []
+) {
+
+    /*
+     * Primeiro tenta o ID configurado pelo contexto.
+     */
+
+    const idConfigurado =
+        contexto?.ids?.[nome] ||
+        "";
+
+
+    if (idConfigurado) {
+
+        const elementoConfigurado =
+            obterElemento(
+                idConfigurado
+            );
+
+
+        if (elementoConfigurado) {
+
+            return elementoConfigurado;
+
+        }
+
+    }
+
+
+    /*
+     * Depois tenta os IDs alternativos.
+     */
+
+    for (
+        const id of idsAlternativos
+    ) {
+
+        const elemento =
+            obterElemento(id);
+
+
+        if (elemento) {
+
+            return elemento;
+
+        }
+
+    }
+
 
     return null;
 
@@ -178,37 +273,83 @@ if (!id) {
 
 
 /*
- * Primeiro utiliza o resolvedor central do PerfilEditor,
- * quando ele estiver disponível.
+ * Campo de título.
+ *
+ * O primeiro ID esperado continua sendo:
+ *
+ *     portfolioTitulo
+ *
+ * Os demais funcionam como fallback caso o HTML utilize
+ * uma nomenclatura diferente.
  */
 
-if (
-    contexto?.utils &&
-    typeof contexto.utils.el === "function"
-) {
+function obterCampoTitulo() {
 
-    const elemento =
-        contexto.utils.el(id);
-
-
-    if (elemento) {
-
-        return elemento;
-
-    }
+    return obterElementoFormulario(
+        "portfolioTitulo",
+        [
+            "portfolioTitulo",
+            "tituloPortfolio",
+            "titulo",
+            "tituloItemPortfolio"
+        ]
+    );
 
 }
 
 
 /*
- * Fallback direto no HTML.
- *
- * O formulário do portfólio é permanente e utiliza
- * IDs fixos definidos no HTML.
+ * Campo de descrição.
  */
 
-return document.getElementById(id) || null;
+function obterCampoDescricao() {
 
+    return obterElementoFormulario(
+        "portfolioDescricao",
+        [
+            "portfolioDescricao",
+            "descricaoPortfolio",
+            "descricao",
+            "descricaoItemPortfolio"
+        ]
+    );
+
+}
+
+
+/*
+ * Campo de arquivo.
+ */
+
+function obterCampoArquivo() {
+
+    return obterElementoFormulario(
+        "portfolioArquivo",
+        [
+            "portfolioArquivo",
+            "arquivoPortfolio",
+            "arquivo"
+        ]
+    );
+
+}
+
+
+/*
+ * Campo de URL.
+ */
+
+function obterCampoUrl() {
+
+    return obterElementoFormulario(
+        "portfolioUrl",
+        [
+            "portfolioUrl",
+            "urlPortfolio",
+            "arquivoUrl",
+            "url"
+        ]
+    );
 
 }
 
@@ -274,6 +415,7 @@ function atualizarIcones() {
         return;
 
     }
+
 
     if (
         window.lucide &&
@@ -519,10 +661,7 @@ function selecionarTipo(tipo) {
 
 
     const arquivoInput =
-        obterElemento(
-            contexto?.ids?.portfolioArquivo ||
-            "portfolioArquivo"
-        );
+        obterCampoArquivo();
 
 
     if (arquivoInput) {
@@ -682,10 +821,7 @@ function validarArquivo(
 function atualizarCampoArquivo() {
 
     const arquivoInput =
-        obterElemento(
-            contexto?.ids?.portfolioArquivo ||
-            "portfolioArquivo"
-        );
+        obterCampoArquivo();
 
 
     const ajuda =
@@ -749,10 +885,7 @@ function atualizarCampoArquivo() {
 function arquivoSelecionado() {
 
     const arquivoInput =
-        obterElemento(
-            contexto?.ids?.portfolioArquivo ||
-            "portfolioArquivo"
-        );
+        obterCampoArquivo();
 
 
     if (!arquivoInput) {
@@ -936,44 +1069,58 @@ async function fazerUpload(
 
 function obterDadosFormulario() {
 
+    /*
+     * IMPORTANTE:
+     * Todos os campos são resolvidos pelos helpers centrais.
+     *
+     * Isso evita que contexto.ids contenha um ID antigo
+     * enquanto o HTML utiliza outro ID.
+     */
+
     const titulo =
-        obterElemento(
-            contexto?.ids?.portfolioTitulo ||
-            "portfolioTitulo"
-        );
+        obterCampoTitulo();
 
 
     const descricao =
-        obterElemento(
-            contexto?.ids?.portfolioDescricao ||
-            "portfolioDescricao"
-        );
+        obterCampoDescricao();
 
 
     const arquivo =
-        obterElemento(
-            contexto?.ids?.portfolioArquivo ||
-            "portfolioArquivo"
-        );
+        obterCampoArquivo();
 
 
     const url =
-        obterElemento(
-            contexto?.ids?.portfolioUrl ||
-            "portfolioUrl"
-        );
+        obterCampoUrl();
+
+
+    const valorTitulo =
+        String(
+            titulo?.value ?? ""
+        ).trim();
+
+
+    /*
+     * Log temporário e seguro para diagnóstico.
+     *
+     * Não exibimos o conteúdo do título no console.
+     */
+
+    console.log(
+        "PerfilPortfolio: campo de título localizado:",
+        Boolean(titulo),
+        "valor preenchido:",
+        Boolean(valorTitulo)
+    );
 
 
     return {
 
         titulo:
-            String(
-                titulo?.value || ""
-            ).trim(),
+            valorTitulo,
 
         descricao:
             String(
-                descricao?.value || ""
+                descricao?.value ?? ""
             ).trim() ||
             null,
 
@@ -983,7 +1130,7 @@ function obterDadosFormulario() {
 
         url:
             String(
-                url?.value || ""
+                url?.value ?? ""
             ).trim() ||
             null,
 
@@ -1114,7 +1261,29 @@ async function adicionar() {
             obterDadosFormulario();
 
 
+        /*
+         * O título é obrigatório tanto para um novo item
+         * quanto para uma edição.
+         */
+
         if (!dados.titulo) {
+
+            /*
+             * Mostra no console exatamente quais campos
+             * foram localizados para facilitar diagnóstico
+             * caso o HTML seja alterado novamente.
+             */
+
+            console.warn(
+                "PerfilPortfolio: título vazio.",
+                {
+                    campoTituloEncontrado:
+                        Boolean(
+                            obterCampoTitulo()
+                        )
+                }
+            );
+
 
             throw new Error(
                 "Informe um título para o item do portfólio."
@@ -1415,31 +1584,19 @@ async function editar(id) {
 
 
     const titulo =
-        obterElemento(
-            contexto?.ids?.portfolioTitulo ||
-            "portfolioTitulo"
-        );
+        obterCampoTitulo();
 
 
     const descricao =
-        obterElemento(
-            contexto?.ids?.portfolioDescricao ||
-            "portfolioDescricao"
-        );
+        obterCampoDescricao();
 
 
     const url =
-        obterElemento(
-            contexto?.ids?.portfolioUrl ||
-            "portfolioUrl"
-        );
+        obterCampoUrl();
 
 
     const arquivo =
-        obterElemento(
-            contexto?.ids?.portfolioArquivo ||
-            "portfolioArquivo"
-        );
+        obterCampoArquivo();
 
 
     if (titulo) {
@@ -1864,31 +2021,19 @@ function limparFormulario() {
 
 
     const titulo =
-        obterElemento(
-            contexto?.ids?.portfolioTitulo ||
-            "portfolioTitulo"
-        );
+        obterCampoTitulo();
 
 
     const descricao =
-        obterElemento(
-            contexto?.ids?.portfolioDescricao ||
-            "portfolioDescricao"
-        );
+        obterCampoDescricao();
 
 
     const arquivo =
-        obterElemento(
-            contexto?.ids?.portfolioArquivo ||
-            "portfolioArquivo"
-        );
+        obterCampoArquivo();
 
 
     const url =
-        obterElemento(
-            contexto?.ids?.portfolioUrl ||
-            "portfolioUrl"
-        );
+        obterCampoUrl();
 
 
     if (titulo) {
@@ -2320,10 +2465,7 @@ function inicializarEventosLista() {
 function inicializarFormulario() {
 
     const arquivoInput =
-        obterElemento(
-            contexto?.ids?.portfolioArquivo ||
-            "portfolioArquivo"
-        );
+        obterCampoArquivo();
 
 
     if (
@@ -2755,3 +2897,4 @@ window.PerfilPortfolio = {
 
 
 })(window);
+

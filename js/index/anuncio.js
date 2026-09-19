@@ -1,416 +1,580 @@
-
 /* =========================================================
-   MUSICALWORLD — MÓDULO DE ANÚNCIOS DO FEED
+MUSICALWORLD — MÓDULO DE ANÚNCIOS DO FEED
 
-   Arquivo:
-   js/anuncio.js
+Arquivo:
+js/anuncio.js
 
-   Responsabilidades:
-   - Criar e renderizar os anúncios do feed.
-   - Montar a identidade do artista.
-   - Renderizar imagem ou vídeo de destaque.
-   - Controlar reprodução automática dos vídeos.
-   - Controlar vídeo em tela cheia.
-   - Controlar menu da publicação.
-   - Controlar ações sociais da publicação.
-   - Controlar fallbacks de imagem, avatar e vídeo.
-   - Observar os vídeos presentes no feed.
+Responsabilidades:
 
-   REGRA PRINCIPAL DA MÍDIA:
+* Criar e renderizar os anúncios do feed.
+* Montar a identidade do artista.
+* Renderizar imagem ou vídeo de destaque.
+* Controlar reprodução automática dos vídeos.
+* Controlar vídeo em tela cheia.
+* Controlar menu da publicação.
+* Controlar ações sociais da publicação.
+* Controlar fallbacks de imagem, avatar e vídeo.
+* Observar os vídeos presentes no feed.
 
-   1. Vídeo de portfólio:
-      mostra o vídeo.
+REGRA PRINCIPAL DA MÍDIA:
 
-   2. Imagem de portfólio:
-      mostra a imagem.
+1. Vídeo de portfólio:
+   mostra o vídeo.
 
-   3. Sem mídia de portfólio, mas com foto de perfil:
-      mostra a foto de perfil.
+2. Imagem de portfólio:
+   mostra a imagem.
 
-   4. Sem qualquer foto:
-      NÃO cria uma área grande de mídia.
-      Mostra somente o avatar padrão com iniciais
-      junto da identidade do artista.
+3. Sem mídia de portfólio:
+   NÃO mostra a foto de perfil na área de destaque.
 
-   5. Sem localização:
-      mostra "Localização não informada".
+4. Foto de perfil:
+   aparece SOMENTE no avatar da identidade.
 
-   6. IDENTIDADE COM MÍDIA:
-      texto branco sobre a mídia.
+5. Sem foto de perfil:
+   mostra somente o avatar padrão com iniciais.
 
-   7. IDENTIDADE SEM MÍDIA:
-      texto escuro em fluxo normal.
+6. Se uma mídia de portfólio falhar:
+   o anúncio NÃO é removido.
+   A área de destaque é removida e o card
+   permanece sem mídia.
 
-   IMPORTANTE:
-   O avatar padrão pertence à identidade do artista.
-   Ele NÃO é considerado uma mídia de destaque.
+7. Sem localização:
+   mostra "Localização não informada".
+
+8. IDENTIDADE COM MÍDIA:
+   texto branco sobre a mídia.
+
+9. IDENTIDADE SEM MÍDIA:
+   texto escuro em fluxo normal.
+
+IMPORTANTE:
+A foto de perfil NUNCA é utilizada como mídia
+de destaque.
 ========================================================= */
 
 (function (window) {
 
-    "use strict";
+
+"use strict";
 
 
-    /* =========================================================
-       CONFIGURAÇÕES DOS VÍDEOS
-    ========================================================= */
+/* =========================================================
+   CONFIGURAÇÕES DOS VÍDEOS
+========================================================= */
 
-    const ANUNCIO_VIDEO_CONFIG = {
+const ANUNCIO_VIDEO_CONFIG = {
 
-        atrasoInicial: 2000,
+    atrasoInicial: 2000,
 
-        percentualMinimoVisivel: 0.55,
+    percentualMinimoVisivel: 0.55,
 
-        observer: null,
+    observer: null,
 
-        timers: new Map(),
+    timers: new Map(),
 
-        configurado: false
-    };
+    configurado: false
+};
 
 
-    /* =========================================================
-       UTILITÁRIOS
-    ========================================================= */
+/* =========================================================
+   UTILITÁRIOS
+========================================================= */
 
-    function normalizarTexto(valor) {
+function normalizarTexto(valor) {
 
-        return String(valor || "")
-            .normalize("NFD")
-            .replace(/[\u0300-\u036f]/g, "")
-            .trim()
-            .toLowerCase();
+    return String(valor || "")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .trim()
+        .toLowerCase();
+}
+
+
+function normalizarLista(valor) {
+
+    if (Array.isArray(valor)) {
+
+        return valor
+            .map(item => String(item || "").trim())
+            .filter(Boolean);
     }
 
+    if (typeof valor === "string") {
 
-    function normalizarLista(valor) {
-
-        if (Array.isArray(valor)) {
-
-            return valor
-                .map(item => String(item || "").trim())
-                .filter(Boolean);
-        }
-
-        if (typeof valor === "string") {
-
-            return valor
-                .split(",")
-                .map(item => item.trim())
-                .filter(Boolean);
-        }
-
-        return [];
+        return valor
+            .split(",")
+            .map(item => item.trim())
+            .filter(Boolean);
     }
 
+    return [];
+}
 
-    function escaparHtml(valor) {
 
-        return String(valor ?? "")
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&quot;")
-            .replace(/'/g, "&#039;");
+function escaparHtml(valor) {
+
+    return String(valor ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+
+function gerarIniciais(nome) {
+
+    const texto =
+        String(nome || "Profissional").trim();
+
+    if (!texto) {
+        return "P";
     }
 
+    const partes =
+        texto
+            .split(/\s+/)
+            .filter(Boolean);
 
-    function gerarIniciais(nome) {
+    if (partes.length === 1) {
 
-        const texto =
-            String(nome || "Profissional").trim();
+        return partes[0]
+            .substring(0, 2)
+            .toUpperCase();
+    }
 
-        if (!texto) {
-            return "P";
-        }
+    return (
+        partes[0].charAt(0) +
+        partes[partes.length - 1].charAt(0)
+    ).toUpperCase();
+}
 
-        const partes =
-            texto
-                .split(/\s+/)
-                .filter(Boolean);
 
-        if (partes.length === 1) {
+/* =========================================================
+   DADOS DO ARTISTA
+========================================================= */
 
-            return partes[0]
-                .substring(0, 2)
-                .toUpperCase();
-        }
+function obterArtistaPerfil(perfil) {
+
+    if (!perfil) {
+        return {};
+    }
+
+    return (
+        perfil.perfil_artista ||
+        perfil.perfis_artistas ||
+        perfil.artista ||
+        {}
+    );
+}
+
+
+function obterDestaquePortfolio(perfil) {
+
+    if (!perfil) {
+        return null;
+    }
+
+    const portfolio =
+        Array.isArray(perfil.portfolio_musicos)
+            ? perfil.portfolio_musicos
+            : [];
+
+    if (!portfolio.length) {
+        return null;
+    }
+
+    const ativos =
+        portfolio.filter(item => {
+
+            return item &&
+                item.ativo !== false;
+        });
+
+    if (!ativos.length) {
+        return null;
+    }
+
+    /*
+     * O feed deve utilizar o item marcado
+     * explicitamente como destaque do catálogo.
+     */
+
+    const destaque =
+        ativos.find(item => {
+
+            return (
+                item.destaque_catalogo === true ||
+                item.destaque_catalogo === "true"
+            );
+        });
+
+    /*
+     * Se não houver destaque_catalogo,
+     * não usamos nenhuma outra mídia como
+     * destaque automaticamente.
+     */
+
+    return destaque || null;
+}
+
+
+function obterNomeTipo(tipo) {
+
+    if (!tipo) {
+        return "Artista";
+    }
+
+    if (typeof tipo === "object") {
 
         return (
-            partes[0].charAt(0) +
-            partes[partes.length - 1].charAt(0)
-        ).toUpperCase();
-    }
-
-
-    /* =========================================================
-       DADOS DO ARTISTA
-    ========================================================= */
-
-    function obterArtistaPerfil(perfil) {
-
-        if (!perfil) {
-            return {};
-        }
-
-        return (
-            perfil.perfil_artista ||
-            perfil.perfis_artistas ||
-            perfil.artista ||
-            {}
+            tipo.nome ||
+            tipo.titulo ||
+            tipo.tipo ||
+            "Artista"
         );
     }
 
+    return String(tipo);
+}
 
-    function obterDestaquePortfolio(perfil) {
 
-        if (!perfil) {
-            return null;
-        }
+function obterPaginaPerfil() {
 
-        const portfolio =
-            Array.isArray(perfil.portfolio_musicos)
-                ? perfil.portfolio_musicos
-                : [];
+    return "apresentar-perfil.html";
+}
 
-        if (!portfolio.length) {
-            return null;
-        }
 
-        const ativos =
-            portfolio.filter(item => {
+/* =========================================================
+   ÍCONES DOS ANÚNCIOS
+========================================================= */
 
-                return item &&
-                    item.ativo !== false;
-            });
+function obterIconeAnuncio(tipo) {
 
-        if (!ativos.length) {
-            return null;
-        }
+    const icones = {
 
-        const destaque =
-            ativos.find(item => {
+        comentar: `
+            <svg
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            >
+                <path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7A8.4 8.4 0 0 1 4 11.5 8.5 8.5 0 0 1 8.7 3.9 8.4 8.4 0 0 1 12.5 3h.5a8.5 8.5 0 0 1 8 8z"/>
+            </svg>
+        `,
 
-                return item.destaque_catalogo === true;
-            });
+        curtir: `
+            <svg
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            >
+                <path d="M20.8 8.9c0 5.5-8.8 10.6-8.8 10.6S3.2 14.4 3.2 8.9A4.7 4.7 0 0 1 8 4.2c1.6 0 3.1.8 4 2.1.9-1.3 2.4-2.1 4-2.1a4.7 4.7 0 0 1 4.8 4.7z"/>
+            </svg>
+        `,
 
-        if (destaque) {
-            return destaque;
-        }
+        compartilhar: `
+            <svg
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            >
+                <circle cx="18" cy="5" r="2.5"/>
+                <circle cx="6" cy="12" r="2.5"/>
+                <circle cx="18" cy="19" r="2.5"/>
+                <path d="m8.2 10.8 7.6-4.6"/>
+                <path d="m8.2 13.2 7.6 4.6"/>
+            </svg>
+        `,
 
-        const ordenados =
-            [...ativos].sort((a, b) => {
+        salvar: `
+            <svg
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            >
+                <path d="M6 4.5A2.5 2.5 0 0 1 8.5 2h7A2.5 2.5 0 0 1 18 4.5V21l-6-3.5L6 21V4.5z"/>
+            </svg>
+        `,
 
-                const ordemA =
-                    Number(a?.ordem ?? 999999);
+        menu: `
+            <svg
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                fill="currentColor"
+            >
+                <circle cx="5" cy="12" r="1.5"/>
+                <circle cx="12" cy="12" r="1.5"/>
+                <circle cx="19" cy="12" r="1.5"/>
+            </svg>
+        `,
 
-                const ordemB =
-                    Number(b?.ordem ?? 999999);
+        localizacao: `
+            <svg
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            >
+                <path d="M20 10.5c0 5-8 11-8 11s-8-6-8-11a8 8 0 1 1 16 0z"/>
+                <circle cx="12" cy="10.5" r="2.5"/>
+            </svg>
+        `,
 
-                return ordemA - ordemB;
-            });
+        musica: `
+            <svg
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            >
+                <path d="M9 18V5l11-2v13"/>
+                <circle cx="6" cy="18" r="3"/>
+                <circle cx="17" cy="16" r="3"/>
+            </svg>
+        `,
 
-        return ordenados[0] || null;
+        estrela: `
+            <svg
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                fill="currentColor"
+            >
+                <path d="m12 2.8 2.8 5.7 6.3.9-4.6 4.5 1.1 6.3-5.6-3-5.6 3 1.1-6.3-4.6-4.5 6.3-.9L12 2.8z"/>
+            </svg>
+        `
+    };
+
+    return icones[tipo] || "";
+}
+
+
+/* =========================================================
+   CONTROLE DOS VÍDEOS
+========================================================= */
+
+function cancelarTimerVideo(video) {
+
+    if (!video) {
+        return;
     }
 
+    const timer =
+        ANUNCIO_VIDEO_CONFIG.timers.get(video);
 
-    function obterNomeTipo(tipo) {
+    if (timer) {
 
-        if (!tipo) {
-            return "Artista";
-        }
+        clearTimeout(timer);
 
-        if (typeof tipo === "object") {
-
-            return (
-                tipo.nome ||
-                tipo.titulo ||
-                tipo.tipo ||
-                "Artista"
-            );
-        }
-
-        return String(tipo);
+        ANUNCIO_VIDEO_CONFIG.timers.delete(video);
     }
+}
 
 
-    function obterPaginaPerfil() {
+function cancelarTodosTimersVideos() {
 
-        return "apresentar-perfil.html";
-    }
+    ANUNCIO_VIDEO_CONFIG.timers.forEach(timer => {
 
+        clearTimeout(timer);
+    });
 
-    /* =========================================================
-       ÍCONES DOS ANÚNCIOS
-    ========================================================= */
-
-    function obterIconeAnuncio(tipo) {
-
-        const icones = {
-
-            comentar: `
-                <svg
-                    viewBox="0 0 24 24"
-                    aria-hidden="true"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.8"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                >
-                    <path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7A8.4 8.4 0 0 1 4 11.5 8.5 8.5 0 0 1 8.7 3.9 8.4 8.4 0 0 1 12.5 3h.5a8.5 8.5 0 0 1 8 8z"/>
-                </svg>
-            `,
-
-            curtir: `
-                <svg
-                    viewBox="0 0 24 24"
-                    aria-hidden="true"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.8"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                >
-                    <path d="M20.8 8.9c0 5.5-8.8 10.6-8.8 10.6S3.2 14.4 3.2 8.9A4.7 4.7 0 0 1 8 4.2c1.6 0 3.1.8 4 2.1.9-1.3 2.4-2.1 4-2.1a4.7 4.7 0 0 1 4.8 4.7z"/>
-                </svg>
-            `,
-
-            compartilhar: `
-                <svg
-                    viewBox="0 0 24 24"
-                    aria-hidden="true"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.8"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                >
-                    <circle cx="18" cy="5" r="2.5"/>
-                    <circle cx="6" cy="12" r="2.5"/>
-                    <circle cx="18" cy="19" r="2.5"/>
-                    <path d="m8.2 10.8 7.6-4.6"/>
-                    <path d="m8.2 13.2 7.6 4.6"/>
-                </svg>
-            `,
-
-            salvar: `
-                <svg
-                    viewBox="0 0 24 24"
-                    aria-hidden="true"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.8"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                >
-                    <path d="M6 4.5A2.5 2.5 0 0 1 8.5 2h7A2.5 2.5 0 0 1 18 4.5V21l-6-3.5L6 21V4.5z"/>
-                </svg>
-            `,
-
-            menu: `
-                <svg
-                    viewBox="0 0 24 24"
-                    aria-hidden="true"
-                    fill="currentColor"
-                >
-                    <circle cx="5" cy="12" r="1.5"/>
-                    <circle cx="12" cy="12" r="1.5"/>
-                    <circle cx="19" cy="12" r="1.5"/>
-                </svg>
-            `,
-
-            localizacao: `
-                <svg
-                    viewBox="0 0 24 24"
-                    aria-hidden="true"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.8"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                >
-                    <path d="M20 10.5c0 5-8 11-8 11s-8-6-8-11a8 8 0 1 1 16 0z"/>
-                    <circle cx="12" cy="10.5" r="2.5"/>
-                </svg>
-            `,
-
-            musica: `
-                <svg
-                    viewBox="0 0 24 24"
-                    aria-hidden="true"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.8"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                >
-                    <path d="M9 18V5l11-2v13"/>
-                    <circle cx="6" cy="18" r="3"/>
-                    <circle cx="17" cy="16" r="3"/>
-                </svg>
-            `,
-
-            estrela: `
-                <svg
-                    viewBox="0 0 24 24"
-                    aria-hidden="true"
-                    fill="currentColor"
-                >
-                    <path d="m12 2.8 2.8 5.7 6.3.9-4.6 4.5 1.1 6.3-5.6-3-5.6 3 1.1-6.3-4.6-4.5 6.3-.9L12 2.8z"/>
-                </svg>
-            `
-        };
-
-        return icones[tipo] || "";
-    }
+    ANUNCIO_VIDEO_CONFIG.timers.clear();
+}
 
 
-    /* =========================================================
-       CONTROLE DOS VÍDEOS
-    ========================================================= */
+function pausarTodosVideos(exceptVideo = null) {
 
-    function cancelarTimerVideo(video) {
+    const videos =
+        document.querySelectorAll(
+            ".ad-media-video"
+        );
 
-        if (!video) {
+    videos.forEach(video => {
+
+        if (video === exceptVideo) {
             return;
         }
 
-        const timer =
-            ANUNCIO_VIDEO_CONFIG.timers.get(video);
+        cancelarTimerVideo(video);
 
-        if (timer) {
+        try {
 
-            clearTimeout(timer);
+            video.pause();
 
-            ANUNCIO_VIDEO_CONFIG.timers.delete(video);
+        } catch (erro) {
+
+            console.warn(
+                "MusicalWorld Anúncio: não foi possível pausar vídeo.",
+                erro
+            );
         }
+    });
+}
+
+
+function calcularVisibilidadeVideo(video) {
+
+    if (!video) {
+        return 0;
     }
 
+    const rect =
+        video.getBoundingClientRect();
 
-    function cancelarTodosTimersVideos() {
+    const alturaJanela =
+        window.innerHeight ||
+        document.documentElement.clientHeight;
 
-        ANUNCIO_VIDEO_CONFIG.timers.forEach(timer => {
+    if (
+        rect.bottom <= 0 ||
+        rect.top >= alturaJanela
+    ) {
+        return 0;
+    }
 
-            clearTimeout(timer);
+    const topoVisivel =
+        Math.max(0, rect.top);
+
+    const baixoVisivel =
+        Math.min(
+            alturaJanela,
+            rect.bottom
+        );
+
+    const alturaVisivel =
+        Math.max(
+            0,
+            baixoVisivel - topoVisivel
+        );
+
+    const alturaTotal =
+        Math.max(1, rect.height);
+
+    return (
+        alturaVisivel /
+        alturaTotal
+    );
+}
+
+
+function videoEstaVisivel(video) {
+
+    return (
+        calcularVisibilidadeVideo(video) >=
+        ANUNCIO_VIDEO_CONFIG.percentualMinimoVisivel
+    );
+}
+
+
+function reproduzirVideo(video) {
+
+    if (!video) {
+        return;
+    }
+
+    if (!videoEstaVisivel(video)) {
+        return;
+    }
+
+    cancelarTimerVideo(video);
+
+    pausarTodosVideos(video);
+
+    const promessa =
+        video.play();
+
+    if (
+        promessa &&
+        typeof promessa.catch === "function"
+    ) {
+
+        promessa.catch(() => {
+            /*
+             * O navegador pode bloquear o autoplay.
+             */
         });
+    }
+}
 
-        ANUNCIO_VIDEO_CONFIG.timers.clear();
+
+function agendarReproducaoVideo(video) {
+
+    if (!video) {
+        return;
     }
 
+    cancelarTimerVideo(video);
 
-    function pausarTodosVideos(exceptVideo = null) {
+    if (!videoEstaVisivel(video)) {
+        return;
+    }
 
-        const videos =
-            document.querySelectorAll(
-                ".ad-media-video"
+    const timer =
+        setTimeout(() => {
+
+            ANUNCIO_VIDEO_CONFIG.timers.delete(
+                video
             );
 
-        videos.forEach(video => {
-
-            if (video === exceptVideo) {
+            if (
+                !document.body.contains(video)
+            ) {
                 return;
             }
+
+            reproduzirVideo(video);
+
+        }, ANUNCIO_VIDEO_CONFIG.atrasoInicial);
+
+    ANUNCIO_VIDEO_CONFIG.timers.set(
+        video,
+        timer
+    );
+}
+
+
+function atualizarVideosVisiveis() {
+
+    const videos =
+        Array.from(
+            document.querySelectorAll(
+                ".ad-media-video"
+            )
+        );
+
+    if (!videos.length) {
+        return;
+    }
+
+    videos.forEach(video => {
+
+        if (videoEstaVisivel(video)) {
+
+            agendarReproducaoVideo(video);
+
+        } else {
 
             cancelarTimerVideo(video);
 
@@ -421,1298 +585,976 @@
             } catch (erro) {
 
                 console.warn(
-                    "MusicalWorld Anúncio: não foi possível pausar vídeo.",
+                    "MusicalWorld Anúncio: erro ao pausar vídeo.",
                     erro
                 );
             }
-        });
+        }
+    });
+}
+
+
+function inicializarObservadorVideos() {
+
+    if (
+        ANUNCIO_VIDEO_CONFIG.configurado &&
+        ANUNCIO_VIDEO_CONFIG.observer
+    ) {
+
+        observarVideosExistentes();
+
+        return;
     }
 
-
-    function calcularVisibilidadeVideo(video) {
-
-        if (!video) {
-            return 0;
-        }
-
-        const rect =
-            video.getBoundingClientRect();
-
-        const alturaJanela =
-            window.innerHeight ||
-            document.documentElement.clientHeight;
-
-        if (
-            rect.bottom <= 0 ||
-            rect.top >= alturaJanela
-        ) {
-            return 0;
-        }
-
-        const topoVisivel =
-            Math.max(0, rect.top);
-
-        const baixoVisivel =
-            Math.min(
-                alturaJanela,
-                rect.bottom
-            );
-
-        const alturaVisivel =
-            Math.max(
-                0,
-                baixoVisivel - topoVisivel
-            );
-
-        const alturaTotal =
-            Math.max(1, rect.height);
-
-        return (
-            alturaVisivel /
-            alturaTotal
-        );
-    }
-
-
-    function videoEstaVisivel(video) {
-
-        return (
-            calcularVisibilidadeVideo(video) >=
-            ANUNCIO_VIDEO_CONFIG.percentualMinimoVisivel
-        );
-    }
-
-
-    function reproduzirVideo(video) {
-
-        if (!video) {
-            return;
-        }
-
-        if (!videoEstaVisivel(video)) {
-            return;
-        }
-
-        cancelarTimerVideo(video);
-
-        pausarTodosVideos(video);
-
-        const promessa =
-            video.play();
-
-        if (
-            promessa &&
-            typeof promessa.catch === "function"
-        ) {
-
-            promessa.catch(() => {
-                /*
-                 * O navegador pode bloquear o autoplay.
-                 */
-            });
-        }
-    }
-
-
-    function agendarReproducaoVideo(video) {
-
-        if (!video) {
-            return;
-        }
-
-        cancelarTimerVideo(video);
-
-        if (!videoEstaVisivel(video)) {
-            return;
-        }
-
-        const timer =
-            setTimeout(() => {
-
-                ANUNCIO_VIDEO_CONFIG.timers.delete(
-                    video
-                );
-
-                if (
-                    !document.body.contains(video)
-                ) {
-                    return;
-                }
-
-                reproduzirVideo(video);
-
-            }, ANUNCIO_VIDEO_CONFIG.atrasoInicial);
-
-        ANUNCIO_VIDEO_CONFIG.timers.set(
-            video,
-            timer
-        );
-    }
-
-
-    function atualizarVideosVisiveis() {
-
-        const videos =
-            Array.from(
-                document.querySelectorAll(
-                    ".ad-media-video"
-                )
-            );
-
-        if (!videos.length) {
-            return;
-        }
-
-        videos.forEach(video => {
-
-            if (videoEstaVisivel(video)) {
-
-                agendarReproducaoVideo(video);
-
-            } else {
-
-                cancelarTimerVideo(video);
-
-                try {
-
-                    video.pause();
-
-                } catch (erro) {
-
-                    console.warn(
-                        "MusicalWorld Anúncio: erro ao pausar vídeo.",
-                        erro
-                    );
-                }
-            }
-        });
-    }
-
-
-    function inicializarObservadorVideos() {
-
-        if (
-            ANUNCIO_VIDEO_CONFIG.configurado &&
-            ANUNCIO_VIDEO_CONFIG.observer
-        ) {
-            return;
-        }
-
-        if (
-            !("IntersectionObserver" in window)
-        ) {
-
-            ANUNCIO_VIDEO_CONFIG.configurado =
-                true;
-
-            atualizarVideosVisiveis();
-
-            return;
-        }
-
-        ANUNCIO_VIDEO_CONFIG.observer =
-            new IntersectionObserver(
-                entradas => {
-
-                    entradas.forEach(entrada => {
-
-                        const video =
-                            entrada.target;
-
-                        if (!video) {
-                            return;
-                        }
-
-                        if (
-                            entrada.isIntersecting &&
-                            entrada.intersectionRatio >=
-                                ANUNCIO_VIDEO_CONFIG.percentualMinimoVisivel
-                        ) {
-
-                            agendarReproducaoVideo(
-                                video
-                            );
-
-                        } else {
-
-                            cancelarTimerVideo(
-                                video
-                            );
-
-                            try {
-
-                                video.pause();
-
-                            } catch (erro) {
-
-                                console.warn(
-                                    "MusicalWorld Anúncio: erro ao pausar vídeo.",
-                                    erro
-                                );
-                            }
-                        }
-                    });
-
-                },
-                {
-                    threshold: [
-                        0,
-                        ANUNCIO_VIDEO_CONFIG.percentualMinimoVisivel,
-                        0.75,
-                        1
-                    ]
-                }
-            );
+    if (
+        !("IntersectionObserver" in window)
+    ) {
 
         ANUNCIO_VIDEO_CONFIG.configurado =
             true;
 
-        observarVideosExistentes();
+        atualizarVideosVisiveis();
+
+        return;
     }
 
+    ANUNCIO_VIDEO_CONFIG.observer =
+        new IntersectionObserver(
+            entradas => {
 
-    function observarVideosExistentes() {
+                entradas.forEach(entrada => {
 
-        if (!ANUNCIO_VIDEO_CONFIG.observer) {
+                    const video =
+                        entrada.target;
+
+                    if (!video) {
+                        return;
+                    }
+
+                    if (
+                        entrada.isIntersecting &&
+                        entrada.intersectionRatio >=
+                            ANUNCIO_VIDEO_CONFIG.percentualMinimoVisivel
+                    ) {
+
+                        agendarReproducaoVideo(
+                            video
+                        );
+
+                    } else {
+
+                        cancelarTimerVideo(
+                            video
+                        );
+
+                        try {
+
+                            video.pause();
+
+                        } catch (erro) {
+
+                            console.warn(
+                                "MusicalWorld Anúncio: erro ao pausar vídeo.",
+                                erro
+                            );
+                        }
+                    }
+                });
+
+            },
+            {
+                threshold: [
+                    0,
+                    ANUNCIO_VIDEO_CONFIG.percentualMinimoVisivel,
+                    0.75,
+                    1
+                ]
+            }
+        );
+
+    ANUNCIO_VIDEO_CONFIG.configurado =
+        true;
+
+    observarVideosExistentes();
+}
+
+
+function observarVideosExistentes() {
+
+    if (!ANUNCIO_VIDEO_CONFIG.observer) {
+        return;
+    }
+
+    const videos =
+        document.querySelectorAll(
+            ".ad-media-video"
+        );
+
+    videos.forEach(video => {
+
+        if (
+            video.dataset.feedVideoObserved ===
+            "true"
+        ) {
             return;
         }
 
-        const videos =
-            document.querySelectorAll(
-                ".ad-media-video"
-            );
+        video.dataset.feedVideoObserved =
+            "true";
 
-        videos.forEach(video => {
-
-            if (
-                video.dataset.feedVideoObserved ===
-                "true"
-            ) {
-                return;
-            }
-
-            video.dataset.feedVideoObserved =
-                "true";
-
-            ANUNCIO_VIDEO_CONFIG.observer.observe(
-                video
-            );
-        });
-    }
-
-
-    function configurarVisibilidadePaginaVideos() {
-
-        document.addEventListener(
-            "visibilitychange",
-            () => {
-
-                if (document.hidden) {
-
-                    cancelarTodosTimersVideos();
-
-                    pausarTodosVideos();
-
-                } else {
-
-                    atualizarVideosVisiveis();
-                }
-            }
+        ANUNCIO_VIDEO_CONFIG.observer.observe(
+            video
         );
-    }
+    });
+}
 
 
-    function configurarControleScrollVideos() {
+function configurarVisibilidadePaginaVideos() {
 
-        let timeout = null;
+    document.addEventListener(
+        "visibilitychange",
+        () => {
 
-        const atualizar = () => {
+            if (document.hidden) {
 
-            if (timeout) {
-                clearTimeout(timeout);
+                cancelarTodosTimersVideos();
+
+                pausarTodosVideos();
+
+            } else {
+
+                atualizarVideosVisiveis();
             }
-
-            timeout =
-                setTimeout(() => {
-
-                    atualizarVideosVisiveis();
-
-                }, 100);
-        };
-
-        window.addEventListener(
-            "scroll",
-            atualizar,
-            {
-                passive: true
-            }
-        );
-
-        window.addEventListener(
-            "resize",
-            atualizar
-        );
-    }
+        }
+    );
+}
 
 
-    /* =========================================================
-       CRIAÇÃO DO CARD DO PROFISSIONAL
-    ========================================================= */
+function configurarControleScrollVideos() {
 
-    function criarCardProfissional(
-        perfil,
-        artista,
-        destaque
-    ) {
+    let timeout = null;
 
-        if (!perfil) {
-            return null;
+    const atualizar = () => {
+
+        if (timeout) {
+            clearTimeout(timeout);
         }
 
+        timeout =
+            setTimeout(() => {
 
-        const card =
-            document.createElement("article");
+                atualizarVideosVisiveis();
 
-        card.className =
-            "ad-card-novo";
+            }, 100);
+    };
 
+    window.addEventListener(
+        "scroll",
+        atualizar,
+        {
+            passive: true
+        }
+    );
 
-        /* =====================================================
-           IDENTIDADE
-        ===================================================== */
-
-        const nome =
-            perfil?.nome_exibicao ||
-            perfil?.nome ||
-            "Profissional";
-
-
-        const descricao =
-            perfil?.descricao ||
-            "Perfil profissional do MusicalWorld.";
-
-
-        const localizacao =
-            artista?.localizacao?.trim?.() ||
-            "Localização não informada";
+    window.addEventListener(
+        "resize",
+        atualizar
+    );
+}
 
 
-        const tipo =
-            obterNomeTipo(
-                artista?.tipo_artista
+/* =========================================================
+   TRANSFORMA O CARD PARA O ESTADO SEM MÍDIA
+
+   IMPORTANTE:
+   Esta função NÃO remove o anúncio.
+
+   Ela remove somente a área grande de mídia
+   e mantém a identidade do artista.
+
+   A foto de perfil continua no avatar.
+========================================================= */
+
+function transformarCardSemMidia(card) {
+
+    if (!card) {
+        return;
+    }
+
+    const mediaBox =
+        card.querySelector(
+            ".ad-media-box"
+        );
+
+    /*
+     * Capturamos os elementos ANTES de remover
+     * a área de mídia.
+     */
+
+    const identidade =
+        card.querySelector(
+            ".ad-media-identidade"
+        );
+
+    const menu =
+        card.querySelector(
+            ".ad-card-menu"
+        );
+
+
+    if (mediaBox) {
+
+        mediaBox.remove();
+    }
+
+
+    if (!identidade) {
+        return;
+    }
+
+
+    identidade.classList.remove(
+        "ad-identidade-com-midia"
+    );
+
+    identidade.classList.add(
+        "ad-identidade-sem-midia"
+    );
+
+
+    identidade.style.position =
+        "static";
+
+    identidade.style.inset =
+        "auto";
+
+    identidade.style.color =
+        "";
+
+
+    const containerExistente =
+        card.querySelector(
+            ".ad-card-identidade-sem-midia"
+        );
+
+
+    if (containerExistente) {
+
+        if (
+            !containerExistente.contains(
+                identidade
+            )
+        ) {
+
+            containerExistente.appendChild(
+                identidade
             );
+        }
 
+        if (
+            menu &&
+            !containerExistente.contains(
+                menu
+            )
+        ) {
 
-        const estilosLista =
-            normalizarLista(
-                artista?.estilos
+            containerExistente.appendChild(
+                menu
             );
+        }
+
+        return;
+    }
 
 
-        const fotoUrl =
-            artista?.foto_url ||
-            perfil?.foto_url ||
-            perfil?.avatar_url ||
-            perfil?.foto ||
-            "";
+    const container =
+        document.createElement(
+            "div"
+        );
+
+    container.className =
+        "ad-card-identidade-sem-midia";
 
 
-        const iniciais =
-            gerarIniciais(nome);
+    container.appendChild(
+        identidade
+    );
 
 
-        /* =====================================================
-           AVATAR DA IDENTIDADE
-        ===================================================== */
+    if (menu) {
 
-        let avatarHtml = "";
+        container.appendChild(
+            menu
+        );
+    }
 
-        if (fotoUrl) {
 
-            avatarHtml = `
+    card.insertBefore(
+        container,
+        card.firstElementChild
+    );
+}
+
+
+/* =========================================================
+   CRIAÇÃO DO CARD DO PROFISSIONAL
+========================================================= */
+
+function criarCardProfissional(
+    perfil,
+    artista,
+    destaque
+) {
+
+    if (!perfil) {
+        return null;
+    }
+
+
+    const card =
+        document.createElement("article");
+
+    card.className =
+        "ad-card-novo";
+
+
+    /* =====================================================
+       IDENTIDADE
+    ===================================================== */
+
+    const nome =
+        perfil?.nome_exibicao ||
+        perfil?.nome ||
+        "Profissional";
+
+
+    const descricao =
+        perfil?.descricao ||
+        "Perfil profissional do MusicalWorld.";
+
+
+    const localizacao =
+        typeof artista?.localizacao === "string" &&
+        artista.localizacao.trim()
+            ? artista.localizacao.trim()
+            : "Localização não informada";
+
+
+    const tipo =
+        obterNomeTipo(
+            artista?.tipo_artista
+        );
+
+
+    const estilosLista =
+        normalizarLista(
+            artista?.estilos
+        );
+
+
+    /*
+     * A foto de perfil é utilizada SOMENTE
+     * no pequeno avatar da identidade.
+     *
+     * Ela nunca será utilizada na área
+     * grande de destaque.
+     */
+
+    const fotoUrl =
+        artista?.foto_url ||
+        perfil?.foto_url ||
+        perfil?.avatar_url ||
+        perfil?.foto ||
+        "";
+
+
+    const iniciais =
+        gerarIniciais(nome);
+
+
+    /* =====================================================
+       AVATAR DA IDENTIDADE
+    ===================================================== */
+
+    let avatarHtml = "";
+
+
+    if (fotoUrl) {
+
+        avatarHtml = `
+            <img
+                class="ad-mini-avatar"
+                src="${escaparHtml(fotoUrl)}"
+                alt=""
+                loading="lazy"
+            >
+
+            <span
+                class="ad-mini-avatar-fallback"
+                aria-hidden="true"
+                style="display:none;"
+            >
+                ${escaparHtml(iniciais)}
+            </span>
+        `;
+
+    } else {
+
+        avatarHtml = `
+            <span
+                class="ad-mini-avatar-fallback ad-mini-avatar-fallback-principal"
+                aria-hidden="true"
+            >
+                ${escaparHtml(iniciais)}
+            </span>
+        `;
+    }
+
+
+    /* =====================================================
+       MÍDIA DE DESTAQUE
+
+       ATENÇÃO:
+
+       Aqui só entram mídias vindas do
+       portfolio_musicos.
+
+       A foto de perfil NÃO participa desta etapa.
+    ===================================================== */
+
+    let mediaHtml = "";
+
+
+    const tipoDestaque =
+        normalizarTexto(
+            destaque?.tipo
+        );
+
+
+    const arquivoUrl =
+        destaque?.arquivo_url ||
+        destaque?.url ||
+        "";
+
+
+    const thumbnailUrl =
+        destaque?.thumbnail_url ||
+        destaque?.capa_url ||
+        "";
+
+
+    const destaqueEhVideo =
+        tipoDestaque === "video" ||
+        tipoDestaque === "vídeo" ||
+        tipoDestaque === "mp4" ||
+        /\.(mp4|webm|ogg)(\?.*)?$/i.test(
+            arquivoUrl
+        );
+
+
+    const destaqueEhImagem =
+        !destaqueEhVideo &&
+        (
+            tipoDestaque === "imagem" ||
+            tipoDestaque === "foto" ||
+            /\.(jpg|jpeg|png|webp|gif|avif)(\?.*)?$/i.test(
+                arquivoUrl
+            )
+        );
+
+
+    /* =====================================================
+       VÍDEO DE PORTFÓLIO
+    ===================================================== */
+
+    if (
+        destaqueEhVideo &&
+        arquivoUrl
+    ) {
+
+        mediaHtml = `
+            <div class="ad-video-container">
+
+                <a
+                    href="${escaparHtml(
+                        obterPaginaPerfil()
+                    )}?id=${encodeURIComponent(
+                        perfil.id || ""
+                    )}"
+                    class="ad-media-link ad-video-link"
+                    aria-label="Ver perfil de ${escaparHtml(nome)}"
+                >
+
+                    <video
+                        class="ad-media-video"
+                        muted
+                        loop
+                        playsinline
+                        preload="metadata"
+                        ${thumbnailUrl
+                            ? `poster="${escaparHtml(
+                                thumbnailUrl
+                            )}"`
+                            : ""
+                        }
+                    >
+
+                        <source
+                            src="${escaparHtml(
+                                arquivoUrl
+                            )}"
+                        >
+
+                    </video>
+
+                </a>
+
+                <button
+                    type="button"
+                    class="ad-video-fullscreen"
+                    aria-label="Assistir vídeo em tela cheia"
+                    title="Tela cheia"
+                >
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+                        <path d="M8 3H5a2 2 0 0 0-2 2v3"/>
+                        <path d="M16 3h3a2 2 0 0 1 2 2v3"/>
+                        <path d="M21 16v3a2 2 0 0 1-2 2h-3"/>
+                        <path d="M3 16v3a2 2 0 0 0 2 2h3"/>
+                    </svg>
+
+                </button>
+
+            </div>
+        `;
+
+
+    /* =====================================================
+       IMAGEM DE PORTFÓLIO
+    ===================================================== */
+
+    } else if (
+        destaqueEhImagem &&
+        arquivoUrl
+    ) {
+
+        mediaHtml = `
+            <a
+                href="${escaparHtml(
+                    obterPaginaPerfil()
+                )}?id=${encodeURIComponent(
+                    perfil.id || ""
+                )}"
+                class="ad-media-link"
+                aria-label="Ver perfil de ${escaparHtml(nome)}"
+            >
+
                 <img
-                    class="ad-mini-avatar"
-                    src="${escaparHtml(fotoUrl)}"
+                    class="ad-media-img ad-media-destaque"
+                    src="${escaparHtml(
+                        arquivoUrl
+                    )}"
                     alt=""
                     loading="lazy"
                 >
 
-                <span
-                    class="ad-mini-avatar-fallback"
-                    aria-hidden="true"
-                    style="display:none;"
-                >
-                    ${escaparHtml(iniciais)}
-                </span>
-            `;
-
-        } else {
-
-            avatarHtml = `
-                <span
-                    class="ad-mini-avatar-fallback ad-mini-avatar-fallback-principal"
-                    aria-hidden="true"
-                >
-                    ${escaparHtml(iniciais)}
-                </span>
-            `;
-        }
+            </a>
+        `;
+    }
 
 
-        /* =====================================================
-           MÍDIA DE DESTAQUE
-        ===================================================== */
+    /* =====================================================
+       IMPORTANTE:
 
-        let mediaHtml = "";
+       NÃO existe mais:
 
-        const tipoDestaque =
-            normalizarTexto(
-                destaque?.tipo
-            );
+       else if (fotoUrl)
 
-
-        const arquivoUrl =
-            destaque?.arquivo_url ||
-            destaque?.url ||
-            "";
+       A foto de perfil NÃO pode criar
+       uma área grande de destaque.
+    ===================================================== */
 
 
-        const thumbnailUrl =
-            destaque?.thumbnail_url ||
-            destaque?.capa_url ||
-            "";
+    /* =====================================================
+       IDENTIDADE DO ARTISTA
+    ===================================================== */
+
+    const identidadeClasse =
+        mediaHtml.trim()
+            ? "ad-identidade-com-midia"
+            : "ad-identidade-sem-midia";
 
 
-        const destaqueEhVideo =
-            tipoDestaque === "video" ||
-            tipoDestaque === "vídeo" ||
-            tipoDestaque === "mp4" ||
-            /\.(mp4|webm|ogg)(\?.*)?$/i.test(
-                arquivoUrl
-            );
+    const identidadeHtml = `
+        <div
+            class="
+                ad-media-identidade
+                ${identidadeClasse}
+            "
+        >
 
-
-        const destaqueEhImagem =
-            !destaqueEhVideo &&
-            (
-                tipoDestaque === "imagem" ||
-                tipoDestaque === "foto" ||
-                !!arquivoUrl
-            );
-
-
-        /* =====================================================
-           VÍDEO
-        ===================================================== */
-
-        if (
-            destaqueEhVideo &&
-            arquivoUrl
-        ) {
-
-            mediaHtml = `
-                <div class="ad-video-container">
-
-                    <a
-                        href="${escaparHtml(
-                            obterPaginaPerfil()
-                        )}?id=${encodeURIComponent(
-                            perfil.id || ""
-                        )}"
-                        class="ad-media-link ad-video-link"
-                        aria-label="Ver perfil de ${escaparHtml(nome)}"
-                    >
-
-                        <video
-                            class="ad-media-video"
-                            muted
-                            loop
-                            playsinline
-                            preload="metadata"
-                            ${thumbnailUrl
-                                ? `poster="${escaparHtml(
-                                    thumbnailUrl
-                                )}"`
-                                : ""
-                            }
-                        >
-
-                            <source
-                                src="${escaparHtml(
-                                    arquivoUrl
-                                )}"
-                            >
-
-                        </video>
-
-                    </a>
-
-                    <button
-                        type="button"
-                        class="ad-video-fullscreen"
-                        aria-label="Assistir vídeo em tela cheia"
-                        title="Tela cheia"
-                    >
-
-                        <svg
-                            viewBox="0 0 24 24"
-                            aria-hidden="true"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="1.8"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                        >
-                            <path d="M8 3H5a2 2 0 0 0-2 2v3"/>
-                            <path d="M16 3h3a2 2 0 0 1 2 2v3"/>
-                            <path d="M21 16v3a2 2 0 0 1-2 2h-3"/>
-                            <path d="M3 16v3a2 2 0 0 0 2 2h3"/>
-                        </svg>
-
-                    </button>
-
-                </div>
-            `;
-
-
-        /* =====================================================
-           IMAGEM DE PORTFÓLIO
-        ===================================================== */
-
-        } else if (
-            destaqueEhImagem &&
-            arquivoUrl
-        ) {
-
-            mediaHtml = `
-                <a
-                    href="${escaparHtml(
-                        obterPaginaPerfil()
-                    )}?id=${encodeURIComponent(
-                        perfil.id || ""
-                    )}"
-                    class="ad-media-link"
-                    aria-label="Ver perfil de ${escaparHtml(nome)}"
-                >
-
-                    <img
-                        class="ad-media-img ad-media-destaque"
-                        src="${escaparHtml(
-                            arquivoUrl
-                        )}"
-                        alt=""
-                        loading="lazy"
-                    >
-
-                </a>
-            `;
-
-
-        /* =====================================================
-           FOTO DE PERFIL COMO FALLBACK
-        ===================================================== */
-
-        } else if (fotoUrl) {
-
-            mediaHtml = `
-                <a
-                    href="${escaparHtml(
-                        obterPaginaPerfil()
-                    )}?id=${encodeURIComponent(
-                        perfil.id || ""
-                    )}"
-                    class="ad-media-link"
-                    aria-label="Ver perfil de ${escaparHtml(nome)}"
-                >
-
-                    <img
-                        class="ad-media-img ad-media-foto-perfil"
-                        src="${escaparHtml(
-                            fotoUrl
-                        )}"
-                        alt=""
-                        loading="lazy"
-                    >
-
-                </a>
-            `;
-        }
-
-
-        /* =====================================================
-           IDENTIDADE DO ARTISTA
-
-           A classe visual depende da existência de mídia.
-
-           COM MÍDIA:
-           -> identidade sobre a mídia;
-           -> texto branco.
-
-           SEM MÍDIA:
-           -> identidade em fluxo normal;
-           -> texto escuro.
-        ===================================================== */
-
-        const identidadeClasse =
-            mediaHtml.trim()
-                ? "ad-identidade-com-midia"
-                : "ad-identidade-sem-midia";
-
-
-        const identidadeHtml = `
-            <div
-                class="
-                    ad-media-identidade
-                    ${identidadeClasse}
-                "
+            <a
+                href="${escaparHtml(
+                    obterPaginaPerfil()
+                )}?id=${encodeURIComponent(
+                    perfil.id || ""
+                )}"
+                class="ad-media-identidade-link"
+                aria-label="Ver perfil de ${escaparHtml(nome)}"
             >
 
-                <a
-                    href="${escaparHtml(
-                        obterPaginaPerfil()
-                    )}?id=${encodeURIComponent(
-                        perfil.id || ""
-                    )}"
-                    class="ad-media-identidade-link"
-                    aria-label="Ver perfil de ${escaparHtml(nome)}"
-                >
+                <div class="ad-media-avatar-wrapper">
 
-                    <div class="ad-media-avatar-wrapper">
+                    ${avatarHtml}
 
-                        ${avatarHtml}
+                </div>
 
+                <div class="ad-media-nome-area">
+
+                    <div class="ad-media-nome">
+                        ${escaparHtml(nome)}
                     </div>
 
-                    <div class="ad-media-nome-area">
+                    <div class="ad-media-tipo-localizacao">
 
-                        <div class="ad-media-nome">
-                            ${escaparHtml(nome)}
-                        </div>
+                        <span class="ad-media-tipo">
+                            ${escaparHtml(tipo)}
+                        </span>
 
-                        <div class="ad-media-tipo-localizacao">
+                        <span
+                            class="ad-media-tipo-separador"
+                            aria-hidden="true"
+                        >
+                            ·
+                        </span>
 
-                            <span class="ad-media-tipo">
-                                ${escaparHtml(tipo)}
-                            </span>
+                        <span class="ad-media-localizacao-inline">
 
-                            <span
-                                class="ad-media-tipo-separador"
-                                aria-hidden="true"
-                            >
-                                ·
-                            </span>
+                            ${obterIconeAnuncio(
+                                "localizacao"
+                            )}
 
-                            <span class="ad-media-localizacao-inline">
-
-                                ${obterIconeAnuncio(
-                                    "localizacao"
+                            <span>
+                                ${escaparHtml(
+                                    localizacao
                                 )}
-
-                                <span>
-                                    ${escaparHtml(
-                                        localizacao
-                                    )}
-                                </span>
-
                             </span>
 
-                        </div>
+                        </span>
 
                     </div>
 
-                </a>
+                </div>
+
+            </a>
+
+        </div>
+    `;
+
+
+    /* =====================================================
+       MENU DO CARD
+    ===================================================== */
+
+    const menuHtml = `
+        <button
+            type="button"
+            class="ad-card-menu"
+            aria-label="Mais opções"
+            title="Mais opções"
+        >
+            ${obterIconeAnuncio("menu")}
+        </button>
+    `;
+
+
+    /* =====================================================
+       ESTILOS MUSICAIS
+    ===================================================== */
+
+    let estilosHtml = "";
+
+
+    if (estilosLista.length) {
+
+        estilosHtml = `
+            <div class="ad-card-estilos">
+
+                <span class="ad-card-estilos-icone">
+                    ${obterIconeAnuncio("musica")}
+                </span>
+
+                <div class="ad-card-estilos-lista">
+
+                    ${estilosLista
+                        .slice(0, 6)
+                        .map(estilo => `
+                            <span class="ad-card-estilo">
+                                ${escaparHtml(estilo)}
+                            </span>
+                        `)
+                        .join("")
+                    }
+
+                </div>
 
             </div>
         `;
+    }
 
 
-        /* =====================================================
-           MENU DO CARD
-        ===================================================== */
+    /* =====================================================
+       TIPO DA PUBLICAÇÃO
+    ===================================================== */
 
-        const menuHtml = `
+    const tipoPublicacaoHtml = `
+        <div class="ad-card-tipo-publicacao">
+
+            <span class="ad-card-tipo-publicacao-icone">
+                ${obterIconeAnuncio("estrela")}
+            </span>
+
+            <span>
+                ${escaparHtml(tipo)}
+            </span>
+
+        </div>
+    `;
+
+
+    /* =====================================================
+       AÇÕES
+    ===================================================== */
+
+    const acoesHtml = `
+        <div
+            class="ad-card-acoes"
+            role="group"
+            aria-label="Ações da publicação"
+        >
+
             <button
                 type="button"
-                class="ad-card-menu"
-                aria-label="Mais opções"
-                title="Mais opções"
+                class="ad-social-btn"
+                data-acao="comentar"
+                aria-label="Comentar"
             >
-                ${obterIconeAnuncio("menu")}
+                ${obterIconeAnuncio("comentar")}
+
+                <span class="ad-social-label">
+                    Comentar
+                </span>
             </button>
-        `;
 
 
-        /* =====================================================
-           ESTILOS MUSICAIS
-        ===================================================== */
-
-        let estilosHtml = "";
-
-        if (estilosLista.length) {
-
-            estilosHtml = `
-                <div class="ad-card-estilos">
-
-                    <span class="ad-card-estilos-icone">
-                        ${obterIconeAnuncio("musica")}
-                    </span>
-
-                    <div class="ad-card-estilos-lista">
-
-                        ${estilosLista
-                            .slice(0, 6)
-                            .map(estilo => `
-                                <span class="ad-card-estilo">
-                                    ${escaparHtml(estilo)}
-                                </span>
-                            `)
-                            .join("")
-                        }
-
-                    </div>
-
-                </div>
-            `;
-        }
-
-
-        /* =====================================================
-           TIPO DA PUBLICAÇÃO
-        ===================================================== */
-
-        const tipoPublicacaoHtml = `
-            <div class="ad-card-tipo-publicacao">
-
-                <span class="ad-card-tipo-publicacao-icone">
-                    ${obterIconeAnuncio("estrela")}
-                </span>
-
-                <span>
-                    ${escaparHtml(tipo)}
-                </span>
-
-            </div>
-        `;
-
-
-        /* =====================================================
-           AÇÕES
-        ===================================================== */
-
-        const acoesHtml = `
-            <div
-                class="ad-card-acoes"
-                role="group"
-                aria-label="Ações da publicação"
+            <button
+                type="button"
+                class="ad-social-btn"
+                data-acao="curtir"
+                aria-label="Curtir"
             >
+                ${obterIconeAnuncio("curtir")}
 
-                <button
-                    type="button"
-                    class="ad-social-btn"
-                    data-acao="comentar"
-                    aria-label="Comentar"
-                >
-                    ${obterIconeAnuncio("comentar")}
-
-                    <span class="ad-social-label">
-                        Comentar
-                    </span>
-                </button>
+                <span class="ad-social-label">
+                    Curtir
+                </span>
+            </button>
 
 
-                <button
-                    type="button"
-                    class="ad-social-btn"
-                    data-acao="curtir"
-                    aria-label="Curtir"
-                >
-                    ${obterIconeAnuncio("curtir")}
+            <button
+                type="button"
+                class="ad-social-btn"
+                data-acao="compartilhar"
+                aria-label="Compartilhar"
+            >
+                ${obterIconeAnuncio("compartilhar")}
 
-                    <span class="ad-social-label">
-                        Curtir
-                    </span>
-                </button>
-
-
-                <button
-                    type="button"
-                    class="ad-social-btn"
-                    data-acao="compartilhar"
-                    aria-label="Compartilhar"
-                >
-                    ${obterIconeAnuncio("compartilhar")}
-
-                    <span class="ad-social-label">
-                        Compartilhar
-                    </span>
-                </button>
+                <span class="ad-social-label">
+                    Compartilhar
+                </span>
+            </button>
 
 
-                <button
-                    type="button"
-                    class="ad-social-btn"
-                    data-acao="salvar"
-                    aria-label="Salvar"
-                >
-                    ${obterIconeAnuncio("salvar")}
+            <button
+                type="button"
+                class="ad-social-btn"
+                data-acao="salvar"
+                aria-label="Salvar"
+            >
+                ${obterIconeAnuncio("salvar")}
 
-                    <span class="ad-social-label">
-                        Salvar
-                    </span>
-                </button>
+                <span class="ad-social-label">
+                    Salvar
+                </span>
+            </button>
 
-            </div>
-        `;
-
-
-        /* =====================================================
-           ÁREA SUPERIOR DO CARD
-        ===================================================== */
-
-        let areaSuperiorHtml = "";
+        </div>
+    `;
 
 
-        if (mediaHtml.trim()) {
+    /* =====================================================
+       ÁREA SUPERIOR DO CARD
+    ===================================================== */
 
-            areaSuperiorHtml = `
-
-                <div class="ad-media-box">
-
-                    ${mediaHtml}
-
-                    <div
-                        class="ad-media-overlay"
-                        aria-hidden="true"
-                    ></div>
-
-                    ${identidadeHtml}
-
-                    ${menuHtml}
-
-                </div>
-
-            `;
-
-        } else {
-
-            areaSuperiorHtml = `
-
-                <div class="ad-card-identidade-sem-midia">
-
-                    ${identidadeHtml}
-
-                    ${menuHtml}
-
-                </div>
-
-            `;
-        }
+    let areaSuperiorHtml = "";
 
 
-        /* =====================================================
-           CONTEÚDO FINAL
-        ===================================================== */
+    if (mediaHtml.trim()) {
 
-        card.innerHTML = `
+        areaSuperiorHtml = `
 
-            ${areaSuperiorHtml}
+            <div class="ad-media-box">
 
+                ${mediaHtml}
 
-            <div class="ad-card-conteudo">
+                <div
+                    class="ad-media-overlay"
+                    aria-hidden="true"
+                ></div>
 
-                ${tipoPublicacaoHtml}
+                ${identidadeHtml}
 
-                ${estilosHtml}
-
-                <div class="ad-card-publicacao-texto">
-
-                    <p class="ad-card-descricao">
-                        ${escaparHtml(descricao)}
-                    </p>
-
-                </div>
+                ${menuHtml}
 
             </div>
 
-
-            ${acoesHtml}
-
         `;
 
+    } else {
 
-        /* =====================================================
-           DADOS INTERNOS
-        ===================================================== */
+        areaSuperiorHtml = `
 
-        card.dataset.perfilId =
-            perfil.id || "";
+            <div class="ad-card-identidade-sem-midia">
 
-        card.dataset.tipoArtista =
-            tipo;
+                ${identidadeHtml}
 
-        card.dataset.nomeArtista =
-            nome;
+                ${menuHtml}
+
+            </div>
+
+        `;
+    }
 
 
-        /* =====================================================
-           CLIQUE NO CARD
-        ===================================================== */
+    /* =====================================================
+       CONTEÚDO FINAL
+    ===================================================== */
 
-        card.addEventListener(
-            "click",
-            evento => {
+    card.innerHTML = `
 
-                const elementoInterativo =
-                    evento.target.closest(
-                        "button, a, input, textarea, select"
-                    );
+        ${areaSuperiorHtml}
 
-                if (elementoInterativo) {
-                    return;
-                }
 
-                const perfilId =
-                    card.dataset.perfilId;
+        <div class="ad-card-conteudo">
 
-                if (!perfilId) {
-                    return;
-                }
+            ${tipoPublicacaoHtml}
 
-                window.location.href =
-                    `${obterPaginaPerfil()}?id=${encodeURIComponent(
-                        perfilId
-                    )}`;
+            ${estilosHtml}
+
+            <div class="ad-card-publicacao-texto">
+
+                <p class="ad-card-descricao">
+                    ${escaparHtml(descricao)}
+                </p>
+
+            </div>
+
+        </div>
+
+
+        ${acoesHtml}
+
+    `;
+
+
+    /* =====================================================
+       DADOS INTERNOS
+    ===================================================== */
+
+    card.dataset.perfilId =
+        perfil.id || "";
+
+    card.dataset.tipoArtista =
+        tipo;
+
+    card.dataset.nomeArtista =
+        nome;
+
+
+    /* =====================================================
+       CLIQUE NO CARD
+    ===================================================== */
+
+    card.addEventListener(
+        "click",
+        evento => {
+
+            const elementoInterativo =
+                evento.target.closest(
+                    "button, a, input, textarea, select"
+                );
+
+            if (elementoInterativo) {
+                return;
             }
-        );
+
+            const perfilId =
+                card.dataset.perfilId;
+
+            if (!perfilId) {
+                return;
+            }
+
+            window.location.href =
+                `${obterPaginaPerfil()}?id=${encodeURIComponent(
+                    perfilId
+                )}`;
+        }
+    );
 
 
-        /* =====================================================
-           ERRO DO AVATAR
-        ===================================================== */
+    /* =====================================================
+       ERRO DO AVATAR
 
-        card
-            .querySelectorAll(
-                ".ad-mini-avatar"
-            )
-            .forEach(img => {
+       Se a foto de perfil falhar, somente o
+       pequeno avatar é substituído pelas iniciais.
 
-                img.addEventListener(
-                    "error",
-                    () => {
+       Isso NÃO afeta a área de destaque.
+    ===================================================== */
 
-                        img.style.display =
-                            "none";
+    card
+        .querySelectorAll(
+            ".ad-mini-avatar"
+        )
+        .forEach(img => {
 
-                        const fallback =
-                            img.nextElementSibling;
-
-                        if (
-                            fallback &&
-                            fallback.classList.contains(
-                                "ad-mini-avatar-fallback"
-                            )
-                        ) {
-
-                            fallback.style.display =
-                                "flex";
-                        }
-
-                    },
-                    {
-                        once: true
-                    }
-                );
-            });
-
-
-        /* =====================================================
-           ERRO DA IMAGEM DE MÍDIA
-        ===================================================== */
-
-        card
-            .querySelectorAll(
-                ".ad-media-img"
-            )
-            .forEach(img => {
-
-                img.addEventListener(
-                    "error",
-                    () => {
-
-                        const mediaBox =
-                            card.querySelector(
-                                ".ad-media-box"
-                            );
-
-                        if (!mediaBox) {
-                            return;
-                        }
-
-
-                        const eraDestaque =
-                            img.classList.contains(
-                                "ad-media-destaque"
-                            );
-
-
-                        if (
-                            eraDestaque &&
-                            fotoUrl
-                        ) {
-
-                            img.src =
-                                fotoUrl;
-
-                            img.classList.remove(
-                                "ad-media-destaque"
-                            );
-
-                            img.classList.add(
-                                "ad-media-foto-perfil"
-                            );
-
-                            return;
-                        }
-
-
-                        /*
-                         * Se não houver mais nenhuma imagem
-                         * disponível, removemos a mídia.
-                         *
-                         * A identidade precisa deixar de ser
-                         * "sobre mídia" e passar para o estado
-                         * normal.
-                         */
-
-                        mediaBox.remove();
-
-                        const identidadeSemMidia =
-                            card.querySelector(
-                                ".ad-media-identidade"
-                            );
-
-                        const containerSemMidia =
-                            document.createElement(
-                                "div"
-                            );
-
-                        containerSemMidia.className =
-                            "ad-card-identidade-sem-midia";
-
-
-                        if (identidadeSemMidia) {
-
-                            identidadeSemMidia.classList.remove(
-                                "ad-identidade-com-midia"
-                            );
-
-                            identidadeSemMidia.classList.add(
-                                "ad-identidade-sem-midia"
-                            );
-
-                            identidadeSemMidia.style.position =
-                                "static";
-
-                            containerSemMidia.appendChild(
-                                identidadeSemMidia
-                            );
-
-                            const menu =
-                                card.querySelector(
-                                    ".ad-card-menu"
-                                );
-
-                            if (menu) {
-
-                                containerSemMidia.appendChild(
-                                    menu
-                                );
-                            }
-
-                            card
-                                .querySelector(
-                                    ".ad-card-novo"
-                                );
-
-                            card
-                                .insertBefore(
-                                    containerSemMidia,
-                                    card.firstElementChild
-                                );
-                        }
-
-                    },
-                    {
-                        once: true
-                    }
-                );
-            });
-
-
-        /* =====================================================
-           ERRO DO VÍDEO
-        ===================================================== */
-
-        const video =
-            card.querySelector(
-                ".ad-media-video"
-            );
-
-
-        if (video) {
-
-            video.addEventListener(
+            img.addEventListener(
                 "error",
                 () => {
 
-                    cancelarTimerVideo(
-                        video
-                    );
+                    img.style.display =
+                        "none";
 
+                    const fallback =
+                        img.nextElementSibling;
 
-                    const container =
-                        card.querySelector(
-                            ".ad-video-container"
-                        );
+                    if (
+                        fallback &&
+                        fallback.classList.contains(
+                            "ad-mini-avatar-fallback"
+                        )
+                    ) {
 
-
-                    const mediaBox =
-                        card.querySelector(
-                            ".ad-media-box"
-                        );
-
-
-                    if (!container || !mediaBox) {
-                        return;
-                    }
-
-
-                    if (fotoUrl) {
-
-                        container.outerHTML = `
-
-                            <a
-                                href="${escaparHtml(
-                                    obterPaginaPerfil()
-                                )}?id=${encodeURIComponent(
-                                    perfil.id || ""
-                                )}"
-                                class="ad-media-link"
-                                aria-label="Ver perfil de ${escaparHtml(
-                                    nome
-                                )}"
-                            >
-
-                                <img
-                                    class="ad-media-img ad-media-foto-perfil"
-                                    src="${escaparHtml(
-                                        fotoUrl
-                                    )}"
-                                    alt=""
-                                    loading="lazy"
-                                >
-
-                            </a>
-
-                        `;
-
-
-                        const novaImagem =
-                            mediaBox.querySelector(
-                                ".ad-media-foto-perfil"
-                            );
-
-
-                        if (novaImagem) {
-
-                            novaImagem.addEventListener(
-                                "error",
-                                () => {
-
-                                    mediaBox.remove();
-
-                                },
-                                {
-                                    once: true
-                                }
-                            );
-                        }
-
-
-                    } else {
-
-                        /*
-                         * Sem foto de perfil:
-                         * remove somente a mídia.
-                         */
-
-                        mediaBox.remove();
-
-                        const identidade =
-                            card.querySelector(
-                                ".ad-media-identidade"
-                            );
-
-                        if (identidade) {
-
-                            identidade.classList.remove(
-                                "ad-identidade-com-midia"
-                            );
-
-                            identidade.classList.add(
-                                "ad-identidade-sem-midia"
-                            );
-                        }
-
-                        const wrapper =
-                            document.createElement(
-                                "div"
-                            );
-
-                        wrapper.className =
-                            "ad-card-identidade-sem-midia";
-
-
-                        const identidadeExistente =
-                            card.querySelector(
-                                ".ad-media-identidade"
-                            );
-
-                        const menu =
-                            card.querySelector(
-                                ".ad-card-menu"
-                            );
-
-
-                        if (identidadeExistente) {
-
-                            identidadeExistente
-                                .parentNode
-                                ?.removeChild(
-                                    identidadeExistente
-                                );
-
-                            wrapper.appendChild(
-                                identidadeExistente
-                            );
-                        }
-
-
-                        if (menu) {
-
-                            menu.parentNode
-                                ?.removeChild(menu);
-
-                            wrapper.appendChild(
-                                menu
-                            );
-                        }
-
-
-                        card.insertBefore(
-                            wrapper,
-                            card.firstElementChild
-                        );
+                        fallback.style.display =
+                            "flex";
                     }
 
                 },
@@ -1720,91 +1562,188 @@
                     once: true
                 }
             );
-        }
+        });
 
 
-        /* =====================================================
-           TELA CHEIA DO VÍDEO
-        ===================================================== */
+    /* =====================================================
+       ERRO DA IMAGEM DE PORTFÓLIO
 
-        const fullscreenButton =
-            card.querySelector(
-                ".ad-video-fullscreen"
-            );
+       Se uma imagem do portfólio falhar:
 
+       NÃO usar foto de perfil.
 
-        if (
-            fullscreenButton &&
-            video
-        ) {
+       Apenas transformar o card para
+       o estado sem mídia.
+    ===================================================== */
 
-            fullscreenButton.addEventListener(
-                "click",
-                async evento => {
+    card
+        .querySelectorAll(
+            ".ad-media-img.ad-media-destaque"
+        )
+        .forEach(img => {
 
-                    evento.preventDefault();
+            img.addEventListener(
+                "error",
+                () => {
 
-                    evento.stopPropagation();
+                    transformarCardSemMidia(
+                        card
+                    );
 
-
-                    try {
-
-                        if (
-                            document.fullscreenElement
-                        ) {
-
-                            await document.exitFullscreen();
-
-                            return;
-                        }
-
-
-                        if (
-                            video.requestFullscreen
-                        ) {
-
-                            await video.requestFullscreen();
-
-                            return;
-                        }
-
-
-                        if (
-                            video.webkitEnterFullscreen
-                        ) {
-
-                            video.webkitEnterFullscreen();
-
-                            return;
-                        }
-
-
-                    } catch (erro) {
-
-                        console.warn(
-                            "MusicalWorld Anúncio: não foi possível abrir vídeo em tela cheia.",
-                            erro
-                        );
-                    }
-
+                },
+                {
+                    once: true
                 }
             );
-        }
+        });
 
 
-        /* =====================================================
-           MENU
-        ===================================================== */
+    /* =====================================================
+       ERRO DO VÍDEO DE PORTFÓLIO
 
-        const menuButton =
-            card.querySelector(
-                ".ad-card-menu"
-            );
+       Se o vídeo falhar:
+
+       NÃO usar foto de perfil.
+
+       Apenas remover a área de destaque.
+    ===================================================== */
+
+    const video =
+        card.querySelector(
+            ".ad-media-video"
+        );
 
 
-        if (menuButton) {
+    if (video) {
 
-            menuButton.addEventListener(
+        video.addEventListener(
+            "error",
+            () => {
+
+                cancelarTimerVideo(
+                    video
+                );
+
+                transformarCardSemMidia(
+                    card
+                );
+
+            },
+            {
+                once: true
+            }
+        );
+    }
+
+
+    /* =====================================================
+       TELA CHEIA DO VÍDEO
+    ===================================================== */
+
+    const fullscreenButton =
+        card.querySelector(
+            ".ad-video-fullscreen"
+        );
+
+
+    if (
+        fullscreenButton &&
+        video
+    ) {
+
+        fullscreenButton.addEventListener(
+            "click",
+            async evento => {
+
+                evento.preventDefault();
+
+                evento.stopPropagation();
+
+
+                try {
+
+                    if (
+                        document.fullscreenElement
+                    ) {
+
+                        await document.exitFullscreen();
+
+                        return;
+                    }
+
+
+                    if (
+                        video.requestFullscreen
+                    ) {
+
+                        await video.requestFullscreen();
+
+                        return;
+                    }
+
+
+                    if (
+                        video.webkitEnterFullscreen
+                    ) {
+
+                        video.webkitEnterFullscreen();
+
+                        return;
+                    }
+
+
+                } catch (erro) {
+
+                    console.warn(
+                        "MusicalWorld Anúncio: não foi possível abrir vídeo em tela cheia.",
+                        erro
+                    );
+                }
+
+            }
+        );
+    }
+
+
+    /* =====================================================
+       MENU
+    ===================================================== */
+
+    const menuButton =
+        card.querySelector(
+            ".ad-card-menu"
+        );
+
+
+    if (menuButton) {
+
+        menuButton.addEventListener(
+            "click",
+            evento => {
+
+                evento.preventDefault();
+
+                evento.stopPropagation();
+
+                menuButton.classList.toggle(
+                    "ativo"
+                );
+            }
+        );
+    }
+
+
+    /* =====================================================
+       AÇÕES SOCIAIS
+    ===================================================== */
+
+    card
+        .querySelectorAll(
+            ".ad-social-btn"
+        )
+        .forEach(botao => {
+
+            botao.addEventListener(
                 "click",
                 evento => {
 
@@ -1812,93 +1751,66 @@
 
                     evento.stopPropagation();
 
-                    menuButton.classList.toggle(
-                        "ativo"
-                    );
+
+                    const acao =
+                        botao.dataset.acao;
+
+
+                    if (!acao) {
+                        return;
+                    }
+
+
+                    if (
+                        acao === "curtir" ||
+                        acao === "salvar"
+                    ) {
+
+                        botao.classList.toggle(
+                            "ativo"
+                        );
+                    }
+
                 }
             );
-        }
+
+        });
 
 
-        /* =====================================================
-           AÇÕES SOCIAIS
-        ===================================================== */
-
-        card
-            .querySelectorAll(
-                ".ad-social-btn"
-            )
-            .forEach(botao => {
-
-                botao.addEventListener(
-                    "click",
-                    evento => {
-
-                        evento.preventDefault();
-
-                        evento.stopPropagation();
+    return card;
+}
 
 
-                        const acao =
-                            botao.dataset.acao;
+/* =========================================================
+   API PÚBLICA
+========================================================= */
 
+window.MusicalWorldAnuncio = {
 
-                        if (!acao) {
-                            return;
-                        }
+    criar:
+        criarCardProfissional,
 
+    obterArtista:
+        obterArtistaPerfil,
 
-                        if (
-                            acao === "curtir" ||
-                            acao === "salvar"
-                        ) {
+    obterDestaque:
+        obterDestaquePortfolio,
 
-                            botao.classList.toggle(
-                                "ativo"
-                            );
-                        }
+    inicializarVideos:
+        inicializarObservadorVideos,
 
-                    }
-                );
+    observarVideos:
+        observarVideosExistentes,
 
-            });
+    atualizarVideos:
+        atualizarVideosVisiveis,
 
+    configurarVisibilidadeVideos:
+        configurarVisibilidadePaginaVideos,
 
-        return card;
-    }
-
-
-    /* =========================================================
-       API PÚBLICA
-    ========================================================= */
-
-    window.MusicalWorldAnuncio = {
-
-        criar:
-            criarCardProfissional,
-
-        obterArtista:
-            obterArtistaPerfil,
-
-        obterDestaque:
-            obterDestaquePortfolio,
-
-        inicializarVideos:
-            inicializarObservadorVideos,
-
-        observarVideos:
-            observarVideosExistentes,
-
-        atualizarVideos:
-            atualizarVideosVisiveis,
-
-        configurarVisibilidadeVideos:
-            configurarVisibilidadePaginaVideos,
-
-        configurarScrollVideos:
-            configurarControleScrollVideos
-    };
+    configurarScrollVideos:
+        configurarControleScrollVideos
+};
 
 
 })(window);
-

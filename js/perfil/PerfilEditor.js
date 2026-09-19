@@ -1,6 +1,8 @@
 /* ============================================================
 MUSICALWORLD — PERFIL EDITOR
-Arquivo: PerfilEditor.js
+
+Arquivo:
+js/perfil/PerfilEditor.js
 
 RESPONSABILIDADE:
 
@@ -185,17 +187,6 @@ const CONFIG = {
 
 /* ========================================================
    ESTADO CENTRAL
-   ========================================================
-
-   O estado pertence ao orquestrador.
-
-   Os módulos UI e Dados recebem uma referência para este
-   mesmo objeto através do contexto.
-
-   Assim evitamos duplicação de estado entre arquivos.
-
-   Os módulos especializados também podem atualizar
-   partes específicas deste estado através do contexto.
    ======================================================== */
 
 const estado = {
@@ -256,6 +247,29 @@ const estado = {
 
 /* ========================================================
    IDs DOS ELEMENTOS DA INTERFACE
+
+   IMPORTANTE:
+
+   Estes IDs precisam corresponder exatamente ao HTML
+   atual de editar-perfil.html.
+
+   A versão anterior utilizava:
+
+   fotoInput: "fotoInput"
+   btnFoto: "btnFoto"
+
+   Porém o HTML atual utiliza:
+
+   inputFoto
+   btnRemoverFoto
+
+   O módulo PerfilEditorFoto também utiliza:
+
+   fotoPreview
+   fotoPlaceholder
+
+   Por isso todos os IDs relacionados à foto ficam
+   centralizados aqui.
    ======================================================== */
 
 const ids = {
@@ -291,11 +305,9 @@ const ids = {
         "emailConta",
 
 
-    avatarImage:
-        "avatarImage",
-
-    avatarInitials:
-        "avatarInitials",
+    /* ====================================================
+       FOTO DO PERFIL
+       ==================================================== */
 
     fotoPreview:
         "fotoPreview",
@@ -304,10 +316,30 @@ const ids = {
         "fotoPlaceholder",
 
     fotoInput:
-        "fotoInput",
+        "inputFoto",
 
-    btnFoto:
-        "btnFoto",
+    btnRemoverFoto:
+        "btnRemoverFoto",
+
+
+    /* ====================================================
+       COMPATIBILIDADE COM OUTROS MÓDULOS
+       ====================================================
+
+       Estes dois elementos pertenciam a uma versão
+       anterior da interface.
+
+       Eles não são utilizados pelo HTML atual da foto,
+       mas permanecem identificados aqui apenas para
+       evitar quebra caso algum módulo antigo ainda os
+       consulte.
+       ==================================================== */
+
+    avatarImage:
+        "avatarImage",
+
+    avatarInitials:
+        "avatarInitials",
 
 
     form:
@@ -433,7 +465,6 @@ const ids = {
     toastMessage:
         "toastMessage",
 
-
     loadingOverlay:
         "loadingOverlay",
 
@@ -445,23 +476,6 @@ const ids = {
 
 /* ========================================================
    CONTEXTO COMPARTILHADO
-   ========================================================
-
-   Todos os módulos recebem o mesmo contexto.
-
-   Isso evita dependências circulares e permite que:
-
-   PerfilEditorUI
-   PerfilEditorDados
-   PerfilEditorFoto
-   PerfilAbas
-   PerfilPortfolio
-   PerfilAgenda
-   PerfilServicos
-   PerfilInstrumentos
-   PerfilEstilos
-
-   trabalhem sobre o mesmo estado.
    ======================================================== */
 
 const contexto = {
@@ -491,7 +505,6 @@ const contexto = {
 
         }
 
-
         return el;
 
     },
@@ -518,7 +531,6 @@ function el(id) {
 
     }
 
-
     return document.getElementById(id);
 
 }
@@ -526,13 +538,6 @@ function el(id) {
 
 /* ========================================================
    TIPO ARTÍSTICO
-   ========================================================
-
-   Estas funções ficam aqui porque representam operações
-   de coordenação utilizadas por outros módulos.
-
-   A definição dos tipos continua pertencendo ao
-   PerfilEditorTipo.js.
    ======================================================== */
 
 function preencherTipoArtista(
@@ -545,7 +550,6 @@ function preencherTipoArtista(
         return;
 
     }
-
 
     if (
         window.PerfilEditorUI &&
@@ -560,7 +564,6 @@ function preencherTipoArtista(
         return;
 
     }
-
 
     console.warn(
         "PerfilEditor: PerfilEditorUI.preencherTipoArtista não está disponível."
@@ -582,7 +585,6 @@ function obterTipoConfigurado(valor) {
 
     }
 
-
     return null;
 
 }
@@ -600,7 +602,6 @@ function resolverTipo(valor) {
         );
 
     }
-
 
     return null;
 
@@ -624,7 +625,6 @@ function tipoPossuiRecurso(
 
     }
 
-
     return false;
 
 }
@@ -644,7 +644,6 @@ function tipoPossuiInstrumentos(
         );
 
     }
-
 
     return false;
 
@@ -697,7 +696,6 @@ function configurarInstrumentosPorTipo() {
 
         }
 
-
         return;
 
     }
@@ -737,19 +735,6 @@ function configurarInstrumentosPorTipo() {
 
 /* ========================================================
    CONFIGURAR ESTILOS MUSICAIS
-   ========================================================
-
-   O PerfilEstilos é responsável por:
-
-   * criar os chips de estilos;
-   * controlar seleção múltipla;
-   * carregar estilos já existentes;
-   * manter o estado dos estilos.
-
-   O PerfilEditor somente coordena o módulo.
-
-   O salvamento no Supabase continua pertencendo ao
-   PerfilEditorDados.js.
    ======================================================== */
 
 function configurarEstilos() {
@@ -876,10 +861,6 @@ async function configurarPortfolioPorTipo() {
 
 function configurarModulos() {
 
-    /*
-     * Disponibilizamos os módulos no contexto central.
-     */
-
     contexto.PerfilEditorUI =
         window.PerfilEditorUI || null;
 
@@ -919,10 +900,6 @@ function configurarModulos() {
     contexto.PerfilEstilos =
         window.PerfilEstilos || null;
 
-
-    /*
-     * Funções de coordenação disponíveis para os módulos.
-     */
 
     contexto.preencherTipoArtista =
         preencherTipoArtista;
@@ -1017,6 +994,12 @@ function configurarModulos() {
             contexto
         );
 
+    } else {
+
+        console.warn(
+            "PerfilEditor: PerfilEditorFoto não está disponível."
+        );
+
     }
 
 
@@ -1070,12 +1053,6 @@ function configurarModulos() {
 
     /* ====================================================
        SERVIÇOS
-       ====================================================
-
-       O PerfilServicos é responsável pelo próprio estado,
-       carregamento, renderização e CRUD.
-
-       O Editor somente fornece o contexto.
        ==================================================== */
 
     if (
@@ -1126,15 +1103,6 @@ function configurarModulos() {
 
 /* ========================================================
    CARREGAR DADOS
-   ========================================================
-
-   Primeiro carregamos o perfil principal.
-
-   Depois que PerfilEditorDados termina, os módulos que
-   possuem dados próprios são carregados.
-
-   Cada módulo continua responsável por sua própria
-   consulta e renderização.
    ======================================================== */
 
 async function carregarDados() {
@@ -1162,23 +1130,8 @@ async function carregarDados() {
     }
 
 
-    /* ====================================================
-       ESTILOS MUSICAIS
-       ====================================================
-
-       Inicializamos/carregamos os estilos antes do
-       preenchimento visual do formulário.
-
-       Assim, quando PerfilEditorUI tentar marcar os
-       estilos existentes, os chips já estarão disponíveis.
-       ==================================================== */
-
     configurarEstilos();
 
-
-    /* ====================================================
-       PREENCHIMENTO DA INTERFACE PRINCIPAL
-       ==================================================== */
 
     if (
         contexto.PerfilEditorUI &&
@@ -1190,28 +1143,11 @@ async function carregarDados() {
     }
 
 
-    /*
-     * Garantimos novamente o carregamento dos estilos
-     * depois do preenchimento do formulário.
-
-     * Isso mantém o módulo como fonte oficial da seleção
-     * dos estilos e também garante que os valores vindos
-     * do banco permaneçam sincronizados.
-     */
-
     carregarEstilos();
 
 
-    /* ====================================================
-       INSTRUMENTOS
-       ==================================================== */
-
     configurarInstrumentosPorTipo();
 
-
-    /* ====================================================
-       PORTFÓLIO
-       ==================================================== */
 
     try {
 
@@ -1226,28 +1162,6 @@ async function carregarDados() {
 
     }
 
-
-    /* ====================================================
-       SERVIÇOS
-       ====================================================
-
-       IMPORTANTE:
-
-       O PerfilServicos.carregar() já:
-
-       * consulta servicos_artistas;
-       * atualiza PerfilServicos.estado.lista;
-       * atualiza estado.servicosValores;
-       * renderiza servicosList.
-
-       Portanto, não copiamos novamente o retorno para o
-       estado aqui.
-
-       Isso evita que o Editor sobrescreva ou interfira
-       no estado próprio do módulo de serviços.
-
-       Os valores dos serviços também permanecem intactos.
-       ==================================================== */
 
     if (
         contexto.PerfilServicos &&
@@ -1269,10 +1183,6 @@ async function carregarDados() {
 
     }
 
-
-    /* ====================================================
-       AGENDA
-       ==================================================== */
 
     if (
         contexto.PerfilAgenda &&
@@ -1375,14 +1285,6 @@ function atualizarContador() {
 
 /* ========================================================
    SALVAR ABA SOBRE
-   ========================================================
-
-   A validação e o preparo dos dados pertencem ao fluxo
-   do editor.
-
-   A persistência fica no PerfilEditorDados.
-
-   O CRUD de serviços continua fora deste método.
    ======================================================== */
 
 async function salvarSobre() {
@@ -1489,14 +1391,6 @@ async function salvarSobre() {
             )
             : true;
 
-
-    /*
-     * PUBLICAÇÃO
-     *
-     * O valor vem exclusivamente do checkbox.
-     *
-     * Não existe regra de completude neste módulo.
-     */
 
     const perfilPublicado =
         campoPerfilPublicado
@@ -1677,17 +1571,6 @@ async function salvarSobre() {
 
     /* ====================================================
        ESTILOS MUSICAIS
-       ====================================================
-
-       Os estilos agora são controlados exclusivamente pelo
-       PerfilEstilos.js.
-
-       O módulo mantém o estado da seleção e entrega os
-       valores para o PerfilEditorDados.js.
-
-       O fallback para PerfilUtils permanece apenas como
-       compatibilidade caso o módulo ainda não esteja
-       disponível por algum motivo.
        ==================================================== */
 
     let estilos = [];
@@ -1743,15 +1626,6 @@ async function salvarSobre() {
 
     /* ====================================================
        CHIPS DE SERVIÇOS DO PERFIL
-       ====================================================
-
-       Estes valores pertencem ao perfil artístico.
-
-       Eles NÃO substituem os serviços cadastrados na
-       tabela servicos_artistas.
-
-       PerfilServicos continua responsável pelos serviços
-       com nome, descrição, duração e preço.
        ==================================================== */
 
     let servicos = [];
@@ -1820,12 +1694,16 @@ async function salvarSobre() {
             null;
 
 
+        let resultadoFoto =
+            null;
+
+
         if (
             contexto.PerfilEditorFoto &&
             typeof contexto.PerfilEditorFoto.fazerUpload === "function"
         ) {
 
-            const resultadoFoto =
+            resultadoFoto =
                 await contexto.PerfilEditorFoto.fazerUpload();
 
 
@@ -1905,6 +1783,29 @@ async function salvarSobre() {
 
 
         /* =================================================
+           FINALIZAR FOTO
+
+           A foto anterior só deve ser removida depois
+           que o banco confirmar a nova URL.
+
+           Isso evita deixar o perfil sem foto caso
+           a atualização do banco falhe.
+           ================================================= */
+
+        if (
+            resultadoFoto &&
+            contexto.PerfilEditorFoto &&
+            typeof contexto.PerfilEditorFoto.finalizarFoto === "function"
+        ) {
+
+            await contexto.PerfilEditorFoto.finalizarFoto(
+                resultadoFoto
+            );
+
+        }
+
+
+        /* =================================================
            REFLETIR PUBLICAÇÃO CONFIRMADA PELO BANCO
            ================================================= */
 
@@ -1940,11 +1841,32 @@ async function salvarSobre() {
         }
 
 
+        /* =================================================
+           ATUALIZAR FOTO LOCAL
+           ================================================= */
+
+        if (
+            fotoUrl
+        ) {
+
+            if (
+                !estado.perfilArtista
+            ) {
+
+                estado.perfilArtista =
+                    {};
+
+            }
+
+
+            estado.perfilArtista.foto_url =
+                fotoUrl;
+
+        }
+
+
         /*
          * Mantemos os estilos salvos também no estado central.
-         *
-         * Isso evita que uma próxima operação local perca
-         * a seleção que acabou de ser persistida.
          */
 
         if (
@@ -1988,14 +1910,29 @@ async function salvarSobre() {
 
 
         /* =================================================
-           AVATAR
+           AVATAR / FOTO
            ================================================= */
 
         preencherAvatar();
 
 
+        /*
+         * Depois que o salvamento terminou com sucesso,
+         * o arquivo temporário não é mais necessário.
+         */
+
         estado.fotoArquivo =
             null;
+
+
+        if (
+            contexto.PerfilEditorFoto &&
+            typeof contexto.PerfilEditorFoto.limpar === "function"
+        ) {
+
+            contexto.PerfilEditorFoto.limpar();
+
+        }
 
 
         mostrarLoading(
@@ -2099,42 +2036,42 @@ function bloquearBotoesSalvar(
    ======================================================== */
 
 function mostrarLoading(
-mostrar,
-texto
+    mostrar,
+    texto
 ) {
 
-
-const overlay =
-    el(ids.loadingOverlay);
-
-
-const loadingText =
-    el(ids.loadingText);
+    const overlay =
+        el(ids.loadingOverlay);
 
 
-if (!overlay) {
+    const loadingText =
+        el(ids.loadingText);
 
-    return;
+
+    if (!overlay) {
+
+        return;
+
+    }
+
+
+    if (
+        loadingText &&
+        texto
+    ) {
+
+        loadingText.textContent =
+            texto;
+
+    }
+
+
+    overlay.style.display =
+        mostrar
+            ? "grid"
+            : "none";
 
 }
-
-
-if (loadingText && texto) {
-
-    loadingText.textContent =
-        texto;
-
-}
-
-
-overlay.style.display =
-    mostrar
-        ? "grid"
-        : "none";
-
-
-}
-
 
 
 /* ========================================================
@@ -2190,22 +2127,13 @@ function mostrarToast(
                 3500
             );
 
-    } else {
+    } else if (
+        tipo === "erro"
+    ) {
 
-        /*
-         * Fallback apenas quando não existe componente
-         * de toast na página.
-         */
-
-        if (
-            tipo === "erro"
-        ) {
-
-            console.error(
-                mensagem
-            );
-
-        }
+        console.error(
+            mensagem
+        );
 
     }
 
@@ -2510,6 +2438,12 @@ async function iniciar() {
             contexto.PerfilEditorFoto.inicializar();
 
         }
+
+
+        /* =================================================
+           PORTFÓLIO
+           ================================================= */
+
         if (
             contexto.PerfilPortfolio &&
             typeof contexto.PerfilPortfolio.inicializar === "function"
@@ -2536,14 +2470,6 @@ async function iniciar() {
 
         /* =================================================
            SERVIÇOS
-           =================================================
-
-           O módulo é inicializado antes do carregamento
-           dos dados porque ele precisa registrar seus
-           eventos dos campos de serviço.
-
-           O carregamento real acontece depois que o
-           PerfilEditorDados disponibiliza o perfil_id.
            ================================================= */
 
         if (
@@ -2558,11 +2484,6 @@ async function iniciar() {
 
         /* =================================================
            ESTILOS MUSICAIS
-           =================================================
-
-           O módulo é inicializado antes do carregamento
-           dos dados para que os chips já existam quando
-           o PerfilEditorUI preencher o formulário.
            ================================================= */
 
         if (
