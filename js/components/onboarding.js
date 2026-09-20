@@ -1,4 +1,4 @@
-javascript
+
 /* =========================================================
    MUSICALWORLD — ONBOARDING DO INDEX
 
