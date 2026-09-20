@@ -10,8 +10,9 @@
    - Controlar o comportamento mobile.
    - Controlar o comportamento desktop.
    - Mobile: menu horizontal fixado na parte inferior.
-   - Desktop: menu vertical fixado próximo ao conteúdo
-     centralizado, sem alterar o fluxo do feed.
+   - Desktop: menu vertical fixado à esquerda da área
+     principal de conteúdo.
+   - Evitar sobreposição do menu sobre o conteúdo.
    - Estilizar o indicador do item ativo.
    - Estilizar os ícones.
    - Estilizar a foto do usuário.
@@ -27,15 +28,10 @@
 
    IMPORTANTE:
 
-   O menu desktop utiliza position: fixed.
+   No desktop o menu é FIXO e fica fora da coluna
+   principal do conteúdo.
 
-   Portanto:
-
-   - não ocupa espaço no layout;
-   - não empurra o feed;
-   - não altera a largura do conteúdo;
-   - o feed continua centralizado independentemente
-     da presença do menu.
+   O menu não participa do fluxo normal da página.
 ========================================================= */
 
 
@@ -78,7 +74,8 @@
     border-radius: 24px;
 
     box-shadow:
-        0 12px 30px rgba(15, 23, 42, 0.10);
+        0 12px 30px
+        rgba(15, 23, 42, 0.10);
 
     backdrop-filter:
         blur(20px);
@@ -176,7 +173,8 @@
 
     transition:
         color 0.2s ease,
-        transform 0.2s ease;
+        transform 0.2s ease,
+        background 0.2s ease;
 
 }
 
@@ -258,7 +256,8 @@
         rgba(255, 255, 255, 0.95);
 
     box-shadow:
-        0 2px 8px rgba(15, 23, 42, 0.12);
+        0 2px 8px
+        rgba(15, 23, 42, 0.12);
 
     background: #e2e8f0;
 
@@ -393,36 +392,43 @@
 
 @media (min-width: 768px) {
 
-
     /* =====================================================
-       MENU VERTICAL
+       MENU VERTICAL — DESKTOP
 
-       O menu fica próximo da área central onde o feed
-       está localizado.
+       O menu fica à esquerda da área principal.
 
-       O valor é calculado a partir do centro da viewport,
-       e não a partir da borda esquerda da tela.
+       IMPORTANTE:
 
-       Isso permite que o menu acompanhe visualmente
-       o conteúdo centralizado sem participar do fluxo.
+       Não usamos mais:
+
+           left: calc(50% - 400px);
+
+       porque esse valor pode colocar o menu em cima
+       do conteúdo dependendo da largura real do feed.
+
+       Agora usamos uma estrutura baseada em uma área
+       central conhecida.
     ===================================================== */
 
     .bottom-nav {
 
         position: fixed;
 
-        /*
-         * Feed centralizado:
-         *
-         * O menu é colocado imediatamente à esquerda
-         * da região central do conteúdo.
-         */
-        left: calc(50% - 400px);
-
-        right: auto;
-
         top: 50%;
         bottom: auto;
+
+        /*
+         * O conteúdo principal é considerado centralizado
+         * na viewport.
+         *
+         * A coluna do menu fica antes da área principal.
+         */
+        left: max(
+            24px,
+            calc(50% - 560px)
+        );
+
+        right: auto;
 
         transform:
             translateY(-50%);
@@ -476,10 +482,6 @@
 
     /* =====================================================
        INDICADOR — DESKTOP
-
-       No desktop o menu é vertical.
-
-       O JavaScript controla a posição pelo eixo Y.
     ===================================================== */
 
     .nav-active-indicator {
@@ -573,12 +575,6 @@
 
     /* =====================================================
        FINANCEIRO — DESKTOP
-
-       No desktop removemos o círculo especial usado
-       no menu inferior mobile.
-
-       Todos os itens passam a ter o mesmo tratamento
-       visual.
     ===================================================== */
 
     .bottom-nav-item[data-aba="financeiro"] {
@@ -656,7 +652,7 @@
 
 /* =========================================================
    DESKTOP GRANDE
-   Telas muito largas
+   A PARTIR DE 1200px
 ========================================================= */
 
 @media (min-width: 1200px) {
@@ -664,10 +660,15 @@
     .bottom-nav {
 
         /*
-         * Mantém o menu próximo do conteúdo centralizado
-         * mesmo em monitores maiores.
+         * Em telas grandes deixamos uma distância maior
+         * entre o menu e o centro da página.
+         *
+         * O menu permanece fora da coluna principal.
          */
-        left: calc(50% - 400px);
+        left: max(
+            32px,
+            calc(50% - 700px)
+        );
 
     }
 

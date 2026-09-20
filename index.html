@@ -11,9 +11,8 @@
 <meta charset="UTF-8">
 
 <meta
-name="viewport"
-content="width=device-width, initial-scale=1.0"
-
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
 >
 
 <title>MusicalWorld - Conectando a Cena</title>
@@ -91,6 +90,30 @@ content="width=device-width, initial-scale=1.0"
 >
 
 <!-- =====================================================
+     CSS DAS INTERAÇÕES DE PERFIL
+     =====================================================
+
+     Responsabilidade:
+
+     - Curtir perfil.
+     - Comentar perfil.
+     - Favoritar perfil.
+     - Exibir estados ativos.
+     - Exibir contadores.
+     - Estilizar a área de comentários.
+
+     Este componente é universal e poderá ser utilizado
+     tanto no Index quanto na página de apresentação
+     do perfil.
+
+     ===================================================== -->
+
+<link
+    rel="stylesheet"
+    href="css/components/interacoes-perfil.css"
+>
+
+<!-- =====================================================
      FONTES
      ===================================================== -->
 
@@ -149,7 +172,6 @@ content="width=device-width, initial-scale=1.0"
 
 <div class="navbar-brand-area">
 
-
 <!-- =============================================
      CONTAINER DA CONTA
      =============================================
@@ -160,7 +182,6 @@ content="width=device-width, initial-scale=1.0"
      ============================================= -->
 
 <div class="cabecalho-conta">
-
 
     <!-- =========================================
          LOGO + SETA
@@ -177,7 +198,6 @@ content="width=device-width, initial-scale=1.0"
         onclick="window.Cabecalho && typeof window.Cabecalho.alternarMenuConta === 'function' && window.Cabecalho.alternarMenuConta()"
     >
 
-
         <!-- =====================================
              LOGO MUSICALWORLD
              ===================================== -->
@@ -188,7 +208,6 @@ content="width=device-width, initial-scale=1.0"
         >
             Musical<span>World</span>
         </span>
-
 
         <!-- =====================================
              SETA DO MENU DA CONTA
@@ -213,9 +232,7 @@ content="width=device-width, initial-scale=1.0"
 
         </svg>
 
-
     </button>
-
 
     <!-- =============================================
          MENU DA CONTA
@@ -228,7 +245,6 @@ content="width=device-width, initial-scale=1.0"
         aria-hidden="true"
     >
 
-
         <!-- =========================================
              TROCAR DE USUÁRIO
              ========================================= -->
@@ -239,7 +255,6 @@ content="width=device-width, initial-scale=1.0"
             role="menuitem"
             onclick="window.Cabecalho && typeof window.Cabecalho.trocarConta === 'function' && window.Cabecalho.trocarConta()"
         >
-
 
             <!-- =====================================
                  ÍCONE TROCAR USUÁRIO
@@ -284,14 +299,11 @@ content="width=device-width, initial-scale=1.0"
 
             </svg>
 
-
             <span>
                 Trocar de usuário
             </span>
 
-
         </button>
-
 
         <!-- =========================================
              DIVISOR
@@ -301,7 +313,6 @@ content="width=device-width, initial-scale=1.0"
             class="cabecalho-menu-conta-divisor"
             aria-hidden="true"
         ></div>
-
 
         <!-- =========================================
              SAIR
@@ -313,7 +324,6 @@ content="width=device-width, initial-scale=1.0"
             role="menuitem"
             onclick="window.Cabecalho && typeof window.Cabecalho.sair === 'function' && window.Cabecalho.sair()"
         >
-
 
             <!-- =====================================
                  ÍCONE SAIR
@@ -350,20 +360,15 @@ content="width=device-width, initial-scale=1.0"
 
             </svg>
 
-
             <span>
                 Sair
             </span>
 
-
         </button>
-
 
     </div>
 
-
 </div>
-
 
 </div>
 
@@ -372,7 +377,6 @@ content="width=device-width, initial-scale=1.0"
      ================================================= -->
 
 <div class="navbar-actions">
-
 
 <!-- =============================================
      ANUNCIAR
@@ -393,7 +397,6 @@ content="width=device-width, initial-scale=1.0"
     title="Criar anúncio"
     aria-label="Criar anúncio"
 >
-
 
     <svg
         class="cabecalho-anunciar-icon"
@@ -419,14 +422,11 @@ content="width=device-width, initial-scale=1.0"
 
     </svg>
 
-
     <span>
         Anunciar
     </span>
 
-
 </button>
-
 
 <!-- =============================================
      NOTIFICAÇÕES
@@ -439,7 +439,6 @@ content="width=device-width, initial-scale=1.0"
     title="Notificações"
     aria-label="Notificações"
 >
-
 
     <svg
         class="top-icon-svg"
@@ -466,7 +465,6 @@ content="width=device-width, initial-scale=1.0"
 
     </svg>
 
-
     <span
         id="badge-notificacoes"
         class="notification-badge"
@@ -476,9 +474,7 @@ content="width=device-width, initial-scale=1.0"
         0
     </span>
 
-
 </button>
-
 
 <!-- =============================================
      MENSAGENS
@@ -491,7 +487,6 @@ content="width=device-width, initial-scale=1.0"
     title="Mensagens"
     aria-label="Mensagens"
 >
-
 
     <svg
         class="top-icon-svg"
@@ -511,7 +506,6 @@ content="width=device-width, initial-scale=1.0"
 
     </svg>
 
-
     <span
         id="badge-mensagens"
         class="notification-badge"
@@ -521,9 +515,7 @@ content="width=device-width, initial-scale=1.0"
         0
     </span>
 
-
 </button>
-
 
 <!-- =============================================
      CARREGAMENTO DO CABEÇALHO
@@ -540,7 +532,6 @@ content="width=device-width, initial-scale=1.0"
 
 </div>
 
-
 <!-- =============================================
      ESTADO DESLOGADO
      ============================================= -->
@@ -552,7 +543,6 @@ content="width=device-width, initial-scale=1.0"
     aria-hidden="true"
 ></div>
 
-
 <!-- =============================================
      ESTADO LOGADO
      ============================================= -->
@@ -563,7 +553,6 @@ content="width=device-width, initial-scale=1.0"
     style="display: none;"
     aria-hidden="true"
 ></div>
-
 
 </div>
 
@@ -591,7 +580,6 @@ content="width=device-width, initial-scale=1.0"
     id="feedAviso"
     class="feed-aviso"
 >
-
 
 <div class="feed-aviso-icone">
 
@@ -627,7 +615,6 @@ content="width=device-width, initial-scale=1.0"
 
 </div>
 
-
 <div class="feed-aviso-conteudo">
 
     <strong>
@@ -639,7 +626,6 @@ content="width=device-width, initial-scale=1.0"
     </span>
 
 </div>
-
 
 <button
     type="button"
@@ -674,7 +660,6 @@ content="width=device-width, initial-scale=1.0"
 
 </button>
 
-
 </section>
 
 <!-- =================================================
@@ -682,7 +667,6 @@ content="width=device-width, initial-scale=1.0"
      ================================================= -->
 
 <section class="profissionais-section">
-
 
 <!-- =============================================
      CONTADOR DE PROFISSIONAIS
@@ -692,7 +676,6 @@ content="width=device-width, initial-scale=1.0"
     id="contador-profissionais"
     class="contador-profissionais"
 ></div>
-
 
 <!-- =============================================
      FEED
@@ -717,7 +700,6 @@ content="width=device-width, initial-scale=1.0"
 
 </div>
 
-
 <!-- =============================================
      CARREGAMENTO DE MAIS PROFISSIONAIS
      ============================================= -->
@@ -735,7 +717,6 @@ content="width=device-width, initial-scale=1.0"
     </span>
 
 </div>
-
 
 <!-- =============================================
      FEED VAZIO
@@ -757,7 +738,6 @@ content="width=device-width, initial-scale=1.0"
 
 </div>
 
-
 <!-- =============================================
      SENTINELA DO SCROLL INFINITO
      ============================================= -->
@@ -766,7 +746,6 @@ content="width=device-width, initial-scale=1.0"
     id="feed-sentinela"
     aria-hidden="true"
 ></div>
-
 
 </section>
 
@@ -838,6 +817,25 @@ content="width=device-width, initial-scale=1.0"
 <script src="js/dados/municipios-brasil.js"></script>
 
 <script src="js/components/modal-filtro.js"></script>
+
+<!-- =====================================================
+     COMPONENTE UNIVERSAL DE INTERAÇÕES DE PERFIL
+     =====================================================
+
+     Responsabilidade:
+
+     - Curtidas.
+     - Comentários.
+     - Favoritos.
+     - Contadores.
+     - Estado das ações do usuário.
+
+     O componente é compartilhado entre o Index
+     e a página de apresentação do perfil.
+
+     ===================================================== -->
+
+<script src="js/components/interacoes-perfil.js"></script>
 
 <!-- =====================================================
      LÓGICA PRINCIPAL DO INDEX
@@ -933,6 +931,49 @@ document.addEventListener(
 
             console.warn(
                 'Modal Anunciar ainda não está disponível.'
+            );
+
+        }
+
+
+        /*
+        -------------------------------------------------
+        INTERAÇÕES DE PERFIL
+        -------------------------------------------------
+
+        O componente é universal e será utilizado pelos
+        perfis exibidos no Index.
+
+        A página de apresentação do perfil também utilizará
+        exatamente o mesmo componente.
+
+        O componente deverá localizar os elementos que
+        possuem data-perfil-id e inicializar as ações:
+
+        - Curtir.
+        - Comentar.
+        - Favoritar.
+
+        -------------------------------------------------
+        */
+
+        if (
+            window.InteracoesPerfil &&
+            typeof window.InteracoesPerfil.inicializar ===
+            'function'
+        ) {
+
+            await window.InteracoesPerfil.inicializar();
+
+
+            console.log(
+                'Interações de perfil inicializadas.'
+            );
+
+        } else {
+
+            console.warn(
+                'Componente de interações de perfil ainda não está disponível.'
             );
 
         }

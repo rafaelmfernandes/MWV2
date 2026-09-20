@@ -1,2002 +1,2447 @@
 /* =========================================================
-MUSICALWORLD — INDEX
-Arquivo: 10-responsividade.css
+   MUSICALWORLD — INDEX
+   Arquivo: 10-responsividade.css
 
-Responsabilidade:
-Adaptar o index para telas menores, preservando a
-estrutura vertical de publicações do feed.
+   Responsabilidade:
+   Adaptar o index para telas menores, preservando a
+   estrutura vertical de publicações do feed.
 
-Este arquivo NÃO controla a aparência principal do
-cabeçalho.
+   Este arquivo NÃO controla a aparência principal do
+   cabeçalho.
 
-A aparência visual do .navbar permanece exclusivamente no:
+   A aparência visual do .navbar permanece exclusivamente no:
 
-css/index/03-cabecalho.css
+   css/index/03-cabecalho.css
 
-A aparência principal do feed permanece no:
+   A aparência principal do feed permanece no:
 
-css/index/feed.css
+   css/index/feed.css
 
-Este arquivo controla apenas:
+   Este arquivo controla apenas:
 
-* dimensões;
-* espaçamentos;
-* tamanhos;
-* posicionamentos específicos para telas menores.
+   * dimensões;
+   * espaçamentos;
+   * tamanhos;
+   * posicionamentos específicos para telas menores.
 
-ESTRUTURA ATUAL DO FEED:
+   ESTRUTURA ATUAL DO FEED:
 
-* uma publicação abaixo da outra;
-* uma publicação por linha;
-* identidade primeiro;
-* nome + tipo + localização;
-* texto da publicação;
-* mídia;
-* ações sociais;
-* informações complementares;
-* ação para visualizar o perfil;
-* sem altura fixa na publicação;
-* mídia em fluxo normal.
+   * uma publicação abaixo da outra;
+   * uma publicação por linha;
+   * identidade primeiro;
+   * nome + tipo + localização;
+   * texto da publicação;
+   * mídia;
+   * ações sociais;
+   * informações complementares;
+   * ação para visualizar o perfil;
+   * sem altura fixa na publicação;
+   * mídia em fluxo normal.
 
-NO CELULAR:
+   NO CELULAR:
 
-* o feed ocupa toda a largura disponível;
-* o card não possui borda externa;
-* o card não possui border-radius;
-* o card não possui sombra;
-* a mídia pode tocar diretamente as laterais da tela;
-* a mídia permanece em fluxo normal;
-* a identidade permanece acima da publicação;
-* tipo e localização permanecem juntos;
-* o texto permanece antes da mídia;
-* as ações permanecem abaixo da mídia;
-* informações complementares continuam disponíveis;
-* o botão "Ver perfil" permanece disponível;
-* o botão de tela cheia permanece disponível.
+   * o feed ocupa toda a largura disponível;
+   * o card não possui borda externa;
+   * o card não possui border-radius;
+   * o card não possui sombra;
+   * a mídia pode tocar diretamente as laterais da tela;
+   * a mídia permanece em fluxo normal;
+   * a identidade permanece acima da publicação;
+   * tipo e localização permanecem juntos;
+   * o texto permanece antes da mídia;
+   * as ações permanecem abaixo da mídia;
+   * informações complementares continuam disponíveis;
+   * o botão "Ver perfil" permanece disponível;
+   * o botão de tela cheia permanece disponível.
 
-IMPORTANTE:
+   INTERAÇÕES:
 
-A altura específica dos vídeos é definida aqui para
-evitar que regras responsivas com height: 100% sobrescrevam
-o tamanho definido no feed.css.
+   * curtir;
+   * comentar;
+   * compartilhar;
+   * salvar/favoritar;
+   * contagens;
+   * lista de comentários;
+   * formulário de comentário;
+   * mensagens de estado.
 
-AJUSTE IMPORTANTE:
+   A lógica das interações pertence ao:
 
-O tipo do artista NÃO possui mais limite percentual.
+   js/components/interacoes-perfil.js
 
-Exemplo:
+   Este arquivo controla somente a apresentação responsiva
+   dessas interações.
 
+   IMPORTANTE:
 
-   Produtor(a) musical
-   Grupo de dança
-   Dançarino(a)
+   A altura específica dos vídeos é definida aqui para
+   evitar que regras responsivas com height: 100% sobrescrevam
+   o tamanho definido no feed.css.
 
+   AJUSTE IMPORTANTE:
 
-permanecem inteiros.
+   O tipo do artista NÃO possui mais limite percentual.
 
-A localização ocupa o espaço restante e somente ela
-poderá receber reticências quando faltar espaço.
+   Exemplo:
+
+      Produtor(a) musical
+      Grupo de dança
+      Dançarino(a)
+
+   permanecem inteiros.
+
+   A localização ocupa o espaço restante e somente ela
+   poderá receber reticências quando faltar espaço.
 ========================================================= */
 
+
 /* =========================================================
-CELULAR — ATÉ 600px
+   CELULAR — ATÉ 600px
 ========================================================= */
 
 @media (max-width: 600px) {
 
 
-/* =====================================================
-   ESTRUTURA DA PÁGINA
-===================================================== */
+    /* =====================================================
+       ESTRUTURA DA PÁGINA
+    ===================================================== */
 
-html,
-body {
+    html,
+    body {
 
-    width: 100%;
+        width: 100%;
 
-    min-height: 100%;
+        min-height: 100%;
 
-}
+    }
 
 
-.app-container {
+    .app-container {
 
-    width: 100%;
+        width: 100%;
 
-    height: 100dvh;
+        height: 100dvh;
 
-    min-height: 100dvh;
+        min-height: 100dvh;
 
-    max-height: none;
+        max-height: none;
 
-}
+    }
 
 
-/* =====================================================
-   CABEÇALHO
-===================================================== */
+    /* =====================================================
+       CABEÇALHO
+    ===================================================== */
 
-.navbar {
+    .navbar {
 
-    height: 60px;
+        height: 60px;
 
-    padding: 0 14px;
+        padding: 0 14px;
 
-    gap: 10px;
+        gap: 10px;
 
-}
+    }
 
-/* =====================================================
-   AVISO DO FEED — ABAIXO DO CABEÇALHO
-=====================================================
 
-   A navbar mobile possui 60px de altura.
+    /* =====================================================
+       AVISO DO FEED — ABAIXO DO CABEÇALHO
+    =====================================================
 
-   O aviso não deve ficar escondido atrás dela.
-   Mantemos o aviso no fluxo normal da página e
-   adicionamos apenas o espaçamento necessário
-   para começar abaixo do cabeçalho.
-===================================================== */
+       A navbar mobile possui 60px de altura.
 
-.feed-aviso {
+       O aviso não deve ficar escondido atrás dela.
+       Mantemos o aviso no fluxo normal da página e
+       adicionamos apenas o espaçamento necessário
+       para começar abaixo do cabeçalho.
+    ===================================================== */
 
-    position: relative;
+    .feed-aviso {
 
-    z-index: 2;
+        position: relative;
 
-    width: calc(100% - 5px);
+        z-index: 2;
 
-    margin: 60px auto 10px;
+        width: calc(100% - 5px);
 
-    box-sizing: border-box;
+        margin: 60px auto 10px;
 
-}
+        box-sizing: border-box;
 
-/* =====================================================
-   ÁREA DA MARCA
-===================================================== */
+    }
 
-.navbar-brand-area {
 
-    min-width: 0;
+    /* =====================================================
+       ÁREA DA MARCA
+    ===================================================== */
 
-    display: flex;
+    .navbar-brand-area {
 
-    align-items: center;
+        min-width: 0;
 
-}
+        display: flex;
 
+        align-items: center;
 
-/* =====================================================
-   LOGO
-===================================================== */
+    }
 
-.logo {
 
-    font-size: 19px;
+    /* =====================================================
+       LOGO
+    ===================================================== */
 
-    letter-spacing: -0.6px;
+    .logo {
 
-}
+        font-size: 19px;
 
+        letter-spacing: -0.6px;
 
-/* =====================================================
-   AÇÕES DO CABEÇALHO
-===================================================== */
+    }
 
-.navbar-actions {
 
-    gap: 3px;
+    /* =====================================================
+       AÇÕES DO CABEÇALHO
+    ===================================================== */
 
-    height: 100%;
+    .navbar-actions {
 
-    flex-shrink: 0;
+        gap: 3px;
 
-}
+        height: 100%;
 
+        flex-shrink: 0;
 
-/* =====================================================
-   BOTÕES DE ÍCONE
-===================================================== */
+    }
 
-.nav-icon-btn {
 
-    width: 42px;
+    /* =====================================================
+       BOTÕES DE ÍCONE
+    ===================================================== */
 
-    height: 42px;
+    .nav-icon-btn {
 
-    border-radius: 13px;
+        width: 42px;
 
-}
+        height: 42px;
 
+        border-radius: 13px;
 
-.top-icon-svg {
+    }
 
-    width: 26px;
 
-    height: 26px;
+    .top-icon-svg {
 
-}
+        width: 26px;
 
+        height: 26px;
 
-/* =====================================================
-   BADGES
-===================================================== */
+    }
 
-.notification-badge {
 
-    top: 1px;
+    /* =====================================================
+       BADGES
+    ===================================================== */
 
-    right: -1px;
+    .notification-badge {
 
-    min-width: 17px;
+        top: 1px;
 
-    height: 17px;
+        right: -1px;
 
-    padding: 0 3px;
+        min-width: 17px;
 
-    font-size: 8px;
+        height: 17px;
 
-}
+        padding: 0 3px;
 
+        font-size: 8px;
 
-/* =====================================================
-   USUÁRIO LOGADO
-===================================================== */
+    }
 
-.cabecalho-logado {
 
-    position: relative;
+    /* =====================================================
+       USUÁRIO LOGADO
+    ===================================================== */
 
-    display: flex;
+    .cabecalho-logado {
 
-    align-items: center;
+        position: relative;
 
-}
+        display: flex;
 
+        align-items: center;
 
-.cabecalho-usuario-btn {
+    }
 
-    width: 42px;
 
-    height: 42px;
+    .cabecalho-usuario-btn {
 
-    padding: 0;
+        width: 42px;
 
-    gap: 0;
+        height: 42px;
 
-}
+        padding: 0;
 
+        gap: 0;
 
-.cabecalho-avatar {
+    }
 
-    width: 33px;
 
-    height: 33px;
+    .cabecalho-avatar {
 
-    min-width: 33px;
+        width: 33px;
 
-    min-height: 33px;
+        height: 33px;
 
-}
+        min-width: 33px;
 
+        min-height: 33px;
 
-/*
- * O nome e o tipo do perfil permanecem presentes
- * no DOM para compatibilidade com Cabecalho.js.
- */
+    }
 
-.cabecalho-info-usuario {
 
-    position: absolute;
+    /*
+     * O nome e o tipo do perfil permanecem presentes
+     * no DOM para compatibilidade com Cabecalho.js.
+     */
 
-}
+    .cabecalho-info-usuario {
 
+        position: absolute;
 
-.cabecalho-chevron {
+    }
 
-    display: none;
 
-}
+    .cabecalho-chevron {
 
+        display: none;
 
-/* =====================================================
-   MENU DA CONTA
-===================================================== */
+    }
 
-.cabecalho-menu-usuario {
 
-    position: fixed;
+    /* =====================================================
+       MENU DA CONTA
+    ===================================================== */
 
-    top: 58px;
+    .cabecalho-menu-usuario {
 
-    right: 12px;
+        position: fixed;
 
-    left: auto;
+        top: 58px;
 
-    width: min(
-        210px,
-        calc(100vw - 24px)
-    );
+        right: 12px;
 
-    max-width: calc(100vw - 24px);
+        left: auto;
 
-    padding: 7px;
+        width: min(
+            210px,
+            calc(100vw - 24px)
+        );
 
-    border-radius: 13px;
+        max-width: calc(100vw - 24px);
 
-}
+        padding: 7px;
 
+        border-radius: 13px;
 
-.cabecalho-menu-usuario button {
+    }
 
-    min-height: 42px;
 
-    padding: 0 11px;
+    .cabecalho-menu-usuario button {
 
-}
+        min-height: 42px;
 
+        padding: 0 11px;
 
-/* =====================================================
-   ESTADO DESLOGADO
-===================================================== */
+    }
 
-.cabecalho-btn-entrar {
 
-    height: 36px;
+    /* =====================================================
+       ESTADO DESLOGADO
+    ===================================================== */
 
-    padding: 0 14px;
+    .cabecalho-btn-entrar {
 
-    border-radius: 9px;
+        height: 36px;
 
-    font-size: 12px;
+        padding: 0 14px;
 
-}
+        border-radius: 9px;
 
+        font-size: 12px;
 
-/* =====================================================
-   FEED — ESTRUTURA VERTICAL
-===================================================== */
+    }
 
-.feed-profissionais {
 
-    width: 100%;
+    /* =====================================================
+       FEED — ESTRUTURA VERTICAL
+    ===================================================== */
 
-    display: flex;
+    .feed-profissionais {
 
-    flex-direction: column;
+        width: 100%;
 
-    gap: 0;
+        display: flex;
 
-}
+        flex-direction: column;
 
+        gap: 0;
 
-.profissional-card-link {
+    }
 
-    display: block;
 
-    width: 100%;
+    .profissional-card-link {
 
-    min-width: 0;
+        display: block;
 
-}
+        width: 100%;
 
+        min-width: 0;
 
-/* =====================================================
-   PUBLICAÇÃO — CELULAR
-===================================================== */
+    }
 
-.ad-card-novo {
 
-    width: 100%;
+    /* =====================================================
+       PUBLICAÇÃO — CELULAR
+    ===================================================== */
 
-    height: auto;
+    .ad-card-novo {
 
-    min-height: 0;
+        width: 100%;
 
-    max-height: none;
+        height: auto;
 
-    margin: 0 ;
-    margin-bottom: 15px;
+        min-height: 0;
 
-    border: none;
+        max-height: none;
 
-    border:
-        1px solid rgba(15, 20, 31, 0.08);
+        margin: 0;
 
-    border-radius: 10px;
+        margin-bottom: 15px;
 
-    box-shadow: none;
+        border: none;
 
-}
+        border:
+            1px solid rgba(15, 20, 31, 0.08);
 
+        border-radius: 10px;
 
-/* =====================================================
-   IDENTIDADE DA PUBLICAÇÃO
-===================================================== */
+        box-shadow: none;
 
-.ad-card-identidade {
+    }
 
-    width: 100%;
 
-    min-width: 0;
+    /* =====================================================
+       IDENTIDADE DA PUBLICAÇÃO
+    ===================================================== */
 
-    margin: 0;
+    .ad-card-identidade {
 
-    display: flex;
+        width: 100%;
 
-    align-items: center;
+        min-width: 0;
 
-}
+        margin: 0;
 
+        display: flex;
 
-.ad-card-identidade-link {
+        align-items: center;
 
-    min-width: 0;
+    }
 
-}
 
+    .ad-card-identidade-link {
 
-/* =====================================================
-   AVATAR
-===================================================== */
+        min-width: 0;
 
-.ad-mini-avatar,
-.ad-mini-avatar-fallback {
+    }
 
-    width: 38px;
 
-    height: 38px;
+    /* =====================================================
+       AVATAR
+    ===================================================== */
 
-    min-width: 38px;
+    .ad-mini-avatar,
+    .ad-mini-avatar-fallback {
 
-    min-height: 38px;
+        width: 38px;
 
-}
+        height: 38px;
 
+        min-width: 38px;
 
-/* =====================================================
-   ÁREA DO NOME
-===================================================== */
+        min-height: 38px;
 
-.ad-card-nome-area {
+    }
 
-    min-width: 0;
 
-    flex: 1;
+    /* =====================================================
+       ÁREA DO NOME
+    ===================================================== */
 
-}
+    .ad-card-nome-area {
 
+        min-width: 0;
 
-/* =====================================================
-   NOME
-===================================================== */
+        flex: 1;
 
-.ad-card-nome {
+    }
 
-    min-width: 0;
 
-    max-width: 100%;
+    /* =====================================================
+       NOME
+    ===================================================== */
 
-    overflow: hidden;
+    .ad-card-nome {
 
-    text-overflow: ellipsis;
+        min-width: 0;
 
-    white-space: nowrap;
+        max-width: 100%;
 
-    font-size: 15px;
+        overflow: hidden;
 
-    line-height: 1.2;
+        text-overflow: ellipsis;
 
-}
+        white-space: nowrap;
 
+        font-size: 15px;
 
-/* =====================================================
-   TIPO + LOCALIZAÇÃO
-=====================================================
+        line-height: 1.2;
 
-   O tipo não recebe mais max-width: 45%.
+    }
 
-   Ele ocupa somente o espaço necessário para
-   permanecer completamente visível.
 
-   A localização ocupa o espaço restante.
-===================================================== */
+    /* =====================================================
+       TIPO + LOCALIZAÇÃO
+    =====================================================
 
-.ad-card-tipo-localizacao {
+       O tipo não recebe mais max-width: 45%.
 
-    display: flex;
+       Ele ocupa somente o espaço necessário para
+       permanecer completamente visível.
 
-    align-items: center;
+       A localização ocupa o espaço restante.
+    ===================================================== */
 
-    flex-wrap: nowrap;
+    .ad-card-tipo-localizacao {
 
-    width: 100%;
+        display: flex;
 
-    min-width: 0;
+        align-items: center;
 
-    margin-top: 2px;
+        flex-wrap: nowrap;
 
-    gap: 6px;
+        width: 100%;
 
-    overflow: hidden;
+        min-width: 0;
 
-}
+        margin-top: 2px;
 
+        gap: 6px;
 
-/* =====================================================
-   TIPO DO ARTISTA
-===================================================== */
+        overflow: hidden;
 
-.ad-card-tipo {
+    }
 
-    display: inline-flex;
 
-    align-items: center;
+    /* =====================================================
+       TIPO DO ARTISTA
+    ===================================================== */
 
-    flex: 0 0 auto;
+    .ad-card-tipo {
 
-    width: auto;
+        display: inline-flex;
 
-    max-width: none;
+        align-items: center;
 
-    min-width: max-content;
+        flex: 0 0 auto;
 
-    margin: 0;
+        width: auto;
 
-    padding: 0;
+        max-width: none;
 
-    font-size: 12px;
+        min-width: max-content;
 
-    font-weight: 700;
+        margin: 0;
 
-    line-height: 1.2;
+        padding: 0;
 
-    white-space: nowrap;
+        font-size: 12px;
 
-    overflow: visible;
+        font-weight: 700;
 
-    text-overflow: clip;
+        line-height: 1.2;
 
-}
+        white-space: nowrap;
 
+        overflow: visible;
 
-/* =====================================================
-   LOCALIZAÇÃO
-===================================================== */
+        text-overflow: clip;
 
-.ad-card-localizacao-inline {
+    }
 
-    display: inline-flex;
 
-    align-items: center;
+    /* =====================================================
+       LOCALIZAÇÃO
+    ===================================================== */
 
-    flex: 1 1 auto;
+    .ad-card-localizacao-inline {
 
-    width: auto;
+        display: inline-flex;
 
-    min-width: 0;
+        align-items: center;
 
-    max-width: none;
+        flex: 1 1 auto;
 
-    font-size: 12px;
+        width: auto;
 
-    font-weight: 500;
+        min-width: 0;
 
-    line-height: 1.2;
+        max-width: none;
 
-    white-space: nowrap;
+        font-size: 12px;
 
-    overflow: hidden;
+        font-weight: 500;
 
-}
+        line-height: 1.2;
 
+        white-space: nowrap;
 
-.ad-card-localizacao-inline .ad-card-localizacao-texto {
+        overflow: hidden;
 
-    flex: 1 1 auto;
+    }
 
-    min-width: 0;
 
-    overflow: hidden;
+    .ad-card-localizacao-inline
+    .ad-card-localizacao-texto {
 
-    white-space: nowrap;
+        flex: 1 1 auto;
 
-    text-overflow: ellipsis;
+        min-width: 0;
 
-}
+        overflow: hidden;
 
+        white-space: nowrap;
 
-.ad-card-localizacao-inline svg {
+        text-overflow: ellipsis;
 
-    width: 13px;
+    }
 
-    height: 13px;
 
-    min-width: 13px;
+    .ad-card-localizacao-inline svg {
 
-    flex-shrink: 0;
+        width: 13px;
 
-}
+        height: 13px;
 
+        min-width: 13px;
 
-/* =====================================================
-   MENU DA PUBLICAÇÃO
-===================================================== */
+        flex-shrink: 0;
 
-.ad-card-menu {
+    }
 
-    width: 32px;
 
-    height: 32px;
+    /* =====================================================
+       MENU DA PUBLICAÇÃO
+    ===================================================== */
 
-    margin-left: 6px;
+    .ad-card-menu {
 
-}
+        width: 32px;
 
+        height: 32px;
 
-.ad-card-menu svg {
+        margin-left: 6px;
 
-    width: 17px;
+    }
 
-    height: 17px;
 
-}
+    .ad-card-menu svg {
 
+        width: 17px;
 
-/* =====================================================
-   CONTEÚDO DA PUBLICAÇÃO
-===================================================== */
+        height: 17px;
 
-.ad-card-conteudo {
+    }
 
-    position: relative;
 
-    width: 100%;
+    /* =====================================================
+       CONTEÚDO DA PUBLICAÇÃO
+    ===================================================== */
 
-    padding: 8px 0 0;
+    .ad-card-conteudo {
 
-}
+        position: relative;
 
+        width: 100%;
 
-/*
- * Caso a identidade esteja dentro de
- * .ad-card-conteudo em alguma versão do HTML,
- * mantemos o espaçamento correto.
- */
+        padding: 8px 0 0;
 
-.ad-card-conteudo .ad-card-identidade {
+    }
 
-    margin-bottom: 8px;
 
-}
+    /*
+     * Caso a identidade esteja dentro de
+     * .ad-card-conteudo em alguma versão do HTML,
+     * mantemos o espaçamento correto.
+     */
 
+    .ad-card-conteudo .ad-card-identidade {
 
-/* =====================================================
-   TEXTO DA PUBLICAÇÃO
-===================================================== */
+        margin-bottom: 8px;
 
-.ad-card-publicacao-texto {
+    }
 
-    width: 100%;
 
-    margin-top: 10px;
+    /* =====================================================
+       TEXTO DA PUBLICAÇÃO
+    ===================================================== */
 
-}
+    .ad-card-publicacao-texto {
 
+        width: 100%;
 
-.ad-card-descricao {
+        margin-top: 10px;
 
-    display: block;
+    }
 
-    width: 100%;
 
-    margin: 0;
+    .ad-card-descricao {
 
-    font-size: 14px;
+        display: block;
 
-    line-height: 1.48;
+        width: 100%;
 
-    overflow-wrap: anywhere;
+        margin: 0;
 
-}
+        font-size: 14px;
 
+        line-height: 1.48;
 
-/* =====================================================
-   MÍDIA — CELULAR
-===================================================== */
+        overflow-wrap: anywhere;
 
-.ad-media-box {
+    }
 
-    position: relative;
 
-    inset: auto;
+    /* =====================================================
+       MÍDIA — CELULAR
+    ===================================================== */
 
-    width: calc(100% + 24px);
+    .ad-media-box {
 
-    height: auto;
+        position: relative;
 
-    min-height: 0;
+        inset: auto;
 
-    max-height: none;
+        width: calc(100% + 24px);
 
-    margin-left: -12px;
+        height: auto;
 
-    margin-right: -12px;
+        min-height: 0;
 
-    padding: 0;
+        max-height: none;
 
-    overflow: hidden;
+        margin-left: -12px;
 
-    border-radius: 0;
+        margin-right: -12px;
 
-}
+        padding: 0;
 
+        overflow: hidden;
 
-.ad-media-link {
+        border-radius: 0;
 
-    width: 100%;
+    }
 
-    border-radius: 0;
 
-}
+    .ad-media-link {
 
+        width: 100%;
 
-.ad-media-img {
+        border-radius: 0;
 
-    display: block;
+    }
 
-    width: 100%;
 
-    height: auto;
+    .ad-media-img {
 
-    min-height: 0;
+        display: block;
 
-    border-radius: 0;
+        width: 100%;
 
-    object-fit: cover;
+        height: auto;
 
-}
+        min-height: 0;
 
+        border-radius: 0;
 
-/* =====================================================
-   CONTAINER DE VÍDEO
-===================================================== */
+        object-fit: cover;
 
-.ad-video-container {
+    }
 
-    position: relative;
 
-    width: 100%;
+    /* =====================================================
+       CONTAINER DE VÍDEO
+    ===================================================== */
 
-    height: auto;
+    .ad-video-container {
 
-    min-height: 0;
+        position: relative;
 
-    overflow: hidden;
+        width: 100%;
 
-    border-radius: 10px;
+        height: auto;
 
-}
+        min-height: 0;
 
+        overflow: hidden;
 
-/*
- * Não utilizar height: 100%.
- *
- * O vídeo recebe uma altura real para evitar
- * comportamento incorreto em containers automáticos.
- */
+        border-radius: 10px;
 
-.ad-video-container .ad-media-video {
+    }
 
-    display: block;
 
-    width: 100%;
+    /*
+     * Não utilizar height: 100%.
+     *
+     * O vídeo recebe uma altura real para evitar
+     * comportamento incorreto em containers automáticos.
+     */
 
-    height: 280px;
+    .ad-video-container .ad-media-video {
 
-    min-height: 0;
+        display: block;
 
-    object-fit: cover;
+        width: 100%;
 
-    object-position: center;
+        height: 280px;
 
-}
+        min-height: 0;
 
+        object-fit: cover;
 
-/* =====================================================
-   FALLBACK SEM FOTO
-===================================================== */
+        object-position: center;
 
-.ad-media-sem-foto {
+    }
 
-    width: 100%;
 
-    min-height: 280px;
+    /* =====================================================
+       FALLBACK SEM FOTO
+    ===================================================== */
 
-}
+    .ad-media-sem-foto {
 
+        width: 100%;
 
-/* =====================================================
-   FALLBACK DE ERRO
-===================================================== */
+        min-height: 280px;
 
-.ad-media-fallback {
+    }
 
-    width: 100%;
 
-    min-height: 280px;
+    /* =====================================================
+       FALLBACK DE ERRO
+    ===================================================== */
 
-}
+    .ad-media-fallback {
 
+        width: 100%;
 
-/* =====================================================
-   AÇÕES SOCIAIS
-===================================================== */
+        min-height: 280px;
 
-.ad-card-acoes {
+    }
 
-    width: 100%;
 
-    min-height: 40px;
+    /* =====================================================
+       AÇÕES SOCIAIS
+    ===================================================== */
 
-    margin-top: 4px;
+    .ad-card-acoes {
 
-    display: flex;
+        width: 100%;
 
-    align-items: center;
+        min-height: 40px;
 
-    justify-content: space-between;
+        margin-top: 4px;
 
-    gap: 4px;
+        display: flex;
 
-}
+        align-items: center;
 
+        justify-content: space-between;
 
-.ad-social-btn {
+        gap: 4px;
 
-    min-width: 36px;
+    }
 
-    min-height: 36px;
 
-    padding: 6px 7px;
+    .ad-social-btn {
 
-}
+        min-width: 36px;
 
+        min-height: 36px;
 
-.ad-social-label {
+        padding: 6px 7px;
 
-    display: none;
+    }
 
-}
 
+    .ad-social-label {
 
-.ad-social-btn svg {
+        display: none;
 
-    width: 18px;
+    }
 
-    height: 18px;
 
-}
+    .ad-social-btn svg {
 
+        width: 18px;
 
-/* =====================================================
-   INFORMAÇÕES COMPLEMENTARES
-=====================================================
+        height: 18px;
 
-   A localização não pertence mais a esta área.
+    }
 
-   Ela foi movida para a identidade da publicação.
 
-   Mantemos somente estilos e outras informações
-   complementares que continuarem sendo utilizadas.
-===================================================== */
+    /* =====================================================
+       INTERAÇÕES DO PERFIL
+    =====================================================
 
-.ad-card-informacoes {
+       O componente universal:
 
-    width: 100%;
+       js/components/interacoes-perfil.js
 
-    margin-top: 2px;
+       controla a lógica.
 
-    opacity: 1;
+       Aqui controlamos apenas a apresentação
+       responsiva da área.
+    ===================================================== */
 
-    visibility: visible;
+    .interacoes-perfil {
 
-    max-height: none;
+        width: 100%;
 
-    transform: translateY(0);
+        min-width: 0;
 
-    pointer-events: auto;
+    }
 
-}
 
+    .interacoes-perfil .ad-social-btn {
 
-.ad-card-estilos {
+        flex: 0 0 auto;
 
-    display: flex;
+    }
 
-    width: 100%;
 
-    min-width: 0;
+    .interacoes-perfil-contagem {
 
-}
+        display: inline-flex;
 
+        align-items: center;
 
-/* =====================================================
-   AÇÃO — VER PERFIL
-===================================================== */
+        justify-content: center;
 
-.ad-card-acao {
+        min-width: 15px;
 
-    width: 100%;
+        margin-left: 3px;
 
-    opacity: 1;
+        font-size: 10px;
 
-    visibility: visible;
+        font-weight: 700;
 
-    transform: translateY(0);
+        line-height: 1;
 
-    pointer-events: auto;
+    }
 
-}
 
+    .interacoes-perfil-comentarios {
 
-/* =====================================================
-   TOPO DA MÍDIA
-===================================================== */
+        width: 100%;
 
-.ad-media-top {
+        margin-top: 6px;
 
-    top: 10px;
+        padding-top: 8px;
 
-    left: 10px;
+        border-top:
+            1px solid rgba(23, 32, 51, 0.08);
 
-    right: 10px;
+    }
 
-}
 
+    .interacoes-perfil-comentarios-lista {
 
-/* =====================================================
-   BOTÃO DE TELA CHEIA
-===================================================== */
+        width: 100%;
 
-.btn-video-tela-cheia {
+        max-height: 260px;
 
-    right: 9px;
+        overflow-y: auto;
 
-    bottom: 9px;
+    }
 
-    opacity: 1;
 
-    visibility: visible;
+    .interacao-comentario {
 
-}
+        width: 100%;
 
+        padding: 8px 0;
 
-/* =====================================================
-   CABEÇALHO DA SEÇÃO PROFISSIONAIS
-===================================================== */
+    }
 
-.feed-header {
 
-    gap: 10px;
+    .interacao-comentario-cabecalho {
 
-    margin-bottom: 16px;
+        display: flex;
 
-}
+        align-items: center;
 
+        gap: 8px;
 
-.feed-header-content {
+        min-width: 0;
 
-    min-width: 0;
+    }
 
-}
 
+    .interacao-comentario-avatar {
 
-.feed-header h2 {
+        width: 28px;
 
-    font-size: 20px;
+        height: 28px;
 
-}
+        min-width: 28px;
 
+        border-radius: 50%;
 
-.feed-header p {
+        object-fit: cover;
 
-    font-size: 12px;
+    }
 
-}
 
+    .interacao-comentario-avatar-fallback {
 
-/* =====================================================
-   BOTÃO DE FILTRO
-===================================================== */
+        display: flex;
 
-.feed-filtro-btn {
+        align-items: center;
 
-    width: 38px;
+        justify-content: center;
 
-    height: 38px;
+        width: 28px;
 
-    padding: 0;
+        height: 28px;
 
-    gap: 0;
+        min-width: 28px;
 
-    border-radius: 10px;
+        border-radius: 50%;
 
-}
+        font-size: 10px;
 
+        font-weight: 700;
 
-.feed-filtro-btn span {
+    }
 
-    display: none;
 
-}
+    .interacao-comentario-autor {
 
+        min-width: 0;
 
-.feed-filtro-btn svg {
+        overflow: hidden;
 
-    width: 18px;
+        text-overflow: ellipsis;
 
-    height: 18px;
+        white-space: nowrap;
 
-}
+        font-size: 11px;
 
+        font-weight: 700;
 
-/* =====================================================
-   PESQUISA — CELULAR
-===================================================== */
+    }
 
-.search-overlay-header {
 
-    min-height: 54px;
+    .interacao-comentario-data {
 
-    padding: 7px 11px;
+        flex-shrink: 0;
 
-    gap: 8px;
+        font-size: 9px;
 
-}
+        opacity: 0.6;
 
+    }
 
-.search-overlay-input {
 
-    height: 36px;
+    .interacao-comentario-texto {
 
-    padding-left: 34px;
+        margin:
+            4px
+            0
+            0
+            36px;
 
-    font-size: 12px;
+        font-size: 11px;
 
-    border-radius: 8px;
+        line-height: 1.45;
 
-}
+        overflow-wrap: anywhere;
 
+    }
 
-.search-overlay-icon {
 
-    left: 11px;
+    .interacoes-perfil-form {
 
-    width: 15px;
+        display: flex;
 
-    height: 15px;
+        align-items: flex-end;
 
-}
+        gap: 7px;
 
+        width: 100%;
 
-.search-overlay-cancelar {
+        margin-top: 8px;
 
-    height: 36px;
+    }
 
-    font-size: 11px;
 
-}
+    .interacoes-perfil-form textarea {
 
+        flex: 1 1 auto;
 
-.search-result-item {
+        width: 100%;
 
-    min-height: 64px;
+        min-width: 0;
 
-    padding: 8px 13px;
+        min-height: 36px;
 
-    gap: 10px;
+        max-height: 100px;
 
-}
+        padding: 9px 10px;
 
+        resize: vertical;
 
-.search-result-avatar-wrapper {
+        border:
+            1px solid rgba(23, 32, 51, 0.12);
 
-    width: 44px;
+        border-radius: 10px;
 
-    height: 44px;
+        font-family: inherit;
 
-    min-width: 44px;
+        font-size: 11px;
 
-    min-height: 44px;
+        line-height: 1.35;
 
-    flex-basis: 44px;
+    }
 
-}
 
+    .interacoes-perfil-form button {
 
-.search-result-avatar-fallback {
+        flex-shrink: 0;
 
-    font-size: 12px;
+        min-width: 36px;
 
-}
+        height: 36px;
 
+        padding: 0 10px;
 
-.search-result-name {
+        border: none;
 
-    font-size: 12px;
+        border-radius: 9px;
 
-    margin-bottom: 3px;
+        font-size: 10px;
 
-}
+        font-weight: 700;
 
+    }
 
-.search-result-location,
-.search-result-genre {
 
-    font-size: 9px;
+    .interacoes-perfil-status {
 
-    gap: 4px;
+        width: 100%;
 
-}
+        margin-top: 6px;
 
+        font-size: 10px;
 
-.search-result-location svg,
-.search-result-genre svg {
+        line-height: 1.4;
 
-    width: 11px;
+    }
 
-    height: 11px;
 
-    min-width: 11px;
+    .interacoes-perfil-vazio {
 
-    flex-basis: 11px;
+        padding: 10px 0;
 
-}
+        font-size: 10px;
 
+        opacity: 0.65;
 
-.search-result-arrow {
+    }
 
-    width: 15px;
 
-    height: 15px;
+    .interacoes-perfil-login {
 
-    min-width: 15px;
+        padding: 9px 0;
 
-    flex-basis: 15px;
+        font-size: 10px;
 
-}
+        line-height: 1.4;
+
+    }
+
+
+    /* =====================================================
+       INFORMAÇÕES COMPLEMENTARES
+    =====================================================
+
+       A localização não pertence mais a esta área.
+
+       Ela foi movida para a identidade da publicação.
+
+       Mantemos somente estilos e outras informações
+       complementares que continuarem sendo utilizadas.
+    ===================================================== */
+
+    .ad-card-informacoes {
+
+        width: 100%;
+
+        margin-top: 2px;
+
+        opacity: 1;
+
+        visibility: visible;
+
+        max-height: none;
+
+        transform: translateY(0);
+
+        pointer-events: auto;
+
+    }
+
+
+    .ad-card-estilos {
+
+        display: flex;
+
+        width: 100%;
+
+        min-width: 0;
+
+    }
+
+
+    /* =====================================================
+       AÇÃO — VER PERFIL
+    ===================================================== */
+
+    .ad-card-acao {
+
+        width: 100%;
+
+        opacity: 1;
+
+        visibility: visible;
+
+        transform: translateY(0);
+
+        pointer-events: auto;
+
+    }
+
+
+    /* =====================================================
+       TOPO DA MÍDIA
+    ===================================================== */
+
+    .ad-media-top {
+
+        top: 10px;
+
+        left: 10px;
+
+        right: 10px;
+
+    }
+
+
+    /* =====================================================
+       BOTÃO DE TELA CHEIA
+    ===================================================== */
 
+    .btn-video-tela-cheia {
 
+        right: 9px;
+
+        bottom: 9px;
+
+        opacity: 1;
+
+        visibility: visible;
+
+    }
+
+
+    /* =====================================================
+       CABEÇALHO DA SEÇÃO PROFISSIONAIS
+    ===================================================== */
+
+    .feed-header {
+
+        gap: 10px;
+
+        margin-bottom: 16px;
+
+    }
+
+
+    .feed-header-content {
+
+        min-width: 0;
+
+    }
+
+
+    .feed-header h2 {
+
+        font-size: 20px;
+
+    }
+
+
+    .feed-header p {
+
+        font-size: 12px;
+
+    }
+
+
+    /* =====================================================
+       BOTÃO DE FILTRO
+    ===================================================== */
+
+    .feed-filtro-btn {
+
+        width: 38px;
+
+        height: 38px;
+
+        padding: 0;
+
+        gap: 0;
+
+        border-radius: 10px;
+
+    }
+
+
+    .feed-filtro-btn span {
+
+        display: none;
+
+    }
+
+
+    .feed-filtro-btn svg {
+
+        width: 18px;
+
+        height: 18px;
+
+    }
+
+
+    /* =====================================================
+       PESQUISA — CELULAR
+    ===================================================== */
+
+    .search-overlay-header {
+
+        min-height: 54px;
+
+        padding: 7px 11px;
+
+        gap: 8px;
+
+    }
+
+
+    .search-overlay-input {
+
+        height: 36px;
+
+        padding-left: 34px;
+
+        font-size: 12px;
+
+        border-radius: 8px;
+
+    }
+
+
+    .search-overlay-icon {
+
+        left: 11px;
+
+        width: 15px;
+
+        height: 15px;
+
+    }
+
+
+    .search-overlay-cancelar {
+
+        height: 36px;
+
+        font-size: 11px;
+
+    }
+
+
+    .search-result-item {
+
+        min-height: 64px;
+
+        padding: 8px 13px;
+
+        gap: 10px;
+
+    }
+
+
+    .search-result-avatar-wrapper {
+
+        width: 44px;
+
+        height: 44px;
+
+        min-width: 44px;
+
+        min-height: 44px;
+
+        flex-basis: 44px;
+
+    }
+
+
+    .search-result-avatar-fallback {
+
+        font-size: 12px;
+
+    }
+
+
+    .search-result-name {
+
+        font-size: 12px;
+
+        margin-bottom: 3px;
+
+    }
+
+
+    .search-result-location,
+    .search-result-genre {
+
+        font-size: 9px;
+
+        gap: 4px;
+
+    }
+
+
+    .search-result-location svg,
+    .search-result-genre svg {
+
+        width: 11px;
+
+        height: 11px;
+
+        min-width: 11px;
+
+        flex-basis: 11px;
+
+    }
+
+
+    .search-result-arrow {
+
+        width: 15px;
+
+        height: 15px;
+
+        min-width: 15px;
+
+        flex-basis: 15px;
+
+    }
+
+
 }
+
 
 /* =========================================================
-TELAS MUITO PEQUENAS — ATÉ 380px
+   TELAS MUITO PEQUENAS — ATÉ 380px
 ========================================================= */
 
 @media (max-width: 380px) {
 
 
-/* =====================================================
-   CABEÇALHO
-===================================================== */
+    /* =====================================================
+       CABEÇALHO
+    ===================================================== */
 
-.navbar {
+    .navbar {
 
-    height: 58px;
+        height: 58px;
 
-    padding-left: 10px;
+        padding-left: 10px;
 
-    padding-right: 10px;
+        padding-right: 10px;
 
-    gap: 6px;
+        gap: 6px;
+
+    }
+
+
+    /* =====================================================
+       LOGO
+    ===================================================== */
+
+    .logo {
+
+        font-size: 18px;
+
+        letter-spacing: -0.5px;
+
+    }
+
+
+    /* =====================================================
+       AÇÕES DO CABEÇALHO
+    ===================================================== */
+
+    .navbar-actions {
+
+        gap: 2px;
+
+    }
+
+
+    /* =====================================================
+       BOTÕES DO CABEÇALHO
+    ===================================================== */
+
+    .nav-icon-btn {
+
+        width: 39px;
+
+        height: 39px;
+
+        border-radius: 12px;
+
+    }
+
+
+    .top-icon-svg {
+
+        width: 26px;
+
+        height: 26px;
+
+    }
+
+
+    .cabecalho-usuario-btn {
+
+        width: 39px;
+
+        height: 39px;
+
+    }
+
+
+    .cabecalho-avatar {
+
+        width: 30px;
+
+        height: 30px;
+
+        min-width: 30px;
+
+        min-height: 30px;
+
+    }
+
+
+    /* =====================================================
+       BADGES
+    ===================================================== */
+
+    .notification-badge {
+
+        top: 1px;
+
+        right: -1px;
+
+        min-width: 16px;
+
+        height: 16px;
+
+        font-size: 7px;
+
+        border-width: 1.5px;
+
+    }
+
+
+    /* =====================================================
+       ESTADO DESLOGADO
+    ===================================================== */
+
+    .cabecalho-btn-entrar {
+
+        height: 34px;
+
+        padding: 0 11px;
+
+        font-size: 11px;
+
+    }
+
+
+    /* =====================================================
+       MENU DA CONTA
+    ===================================================== */
+
+    .cabecalho-menu-usuario {
+
+        top: 56px;
+
+        right: 10px;
+
+        width: 180px;
+
+        max-width: calc(100vw - 20px);
+
+    }
+
+
+    /* =====================================================
+       FEED — TELA MUITO PEQUENA
+    ===================================================== */
+
+    .feed-profissionais {
+
+        width: 100%;
+
+        gap: 0;
+
+    }
+
+
+    .profissional-card-link {
+
+        width: 100%;
+
+    }
+
+
+    /* =====================================================
+       PUBLICAÇÃO
+    ===================================================== */
+
+    .ad-card-novo {
+
+        width: 100%;
+
+        height: auto;
+
+        min-height: 0;
+
+        max-height: none;
+
+        padding: 11px 10px 13px;
+
+        margin: 0;
+
+        border: none;
+
+        border-bottom:
+            1px solid rgba(23, 32, 51, 0.08);
+
+        border-radius: 0;
+
+        box-shadow: none;
+
+    }
+
+
+    /* =====================================================
+       IDENTIDADE
+    ===================================================== */
+
+    .ad-card-identidade {
+
+        gap: 8px;
+
+    }
+
+
+    .ad-mini-avatar,
+    .ad-mini-avatar-fallback {
+
+        width: 34px;
+
+        height: 34px;
+
+        min-width: 34px;
+
+        min-height: 34px;
+
+    }
+
+
+    .ad-card-nome {
+
+        font-size: 14px;
+
+        line-height: 1.2;
+
+    }
+
+
+    /* =====================================================
+       TIPO + LOCALIZAÇÃO
+    ===================================================== */
+
+    .ad-card-tipo-localizacao {
+
+        display: flex;
+
+        align-items: center;
+
+        flex-wrap: nowrap;
+
+        width: 100%;
+
+        min-width: 0;
+
+        gap: 5px;
+
+        margin-top: 2px;
+
+        overflow: hidden;
+
+    }
+
+
+    /*
+     * O tipo continua completamente visível.
+     *
+     * Não existe max-width: 45%.
+     *
+     * Não existe overflow hidden.
+     *
+     * Não existe text-overflow: ellipsis.
+     */
+
+    .ad-card-tipo {
+
+        display: inline-flex;
+
+        align-items: center;
+
+        flex: 0 0 auto;
+
+        width: auto;
+
+        max-width: none;
+
+        min-width: max-content;
+
+        font-size: 11px;
+
+        font-weight: 700;
+
+        line-height: 1.2;
+
+        white-space: nowrap;
+
+        overflow: visible;
+
+        text-overflow: clip;
+
+    }
+
+
+    /*
+     * A localização usa o espaço que restar.
+     */
+
+    .ad-card-localizacao-inline {
+
+        display: inline-flex;
+
+        align-items: center;
+
+        flex: 1 1 auto;
+
+        width: auto;
+
+        min-width: 0;
+
+        max-width: none;
+
+        font-size: 11px;
+
+        line-height: 1.2;
+
+        white-space: nowrap;
+
+        overflow: hidden;
+
+    }
+
+
+    .ad-card-localizacao-inline
+    .ad-card-localizacao-texto {
+
+        flex: 1 1 auto;
+
+        min-width: 0;
+
+        overflow: hidden;
+
+        white-space: nowrap;
+
+        text-overflow: ellipsis;
+
+    }
+
+
+    .ad-card-localizacao-inline svg {
+
+        width: 12px;
+
+        height: 12px;
+
+        min-width: 12px;
+
+        flex-shrink: 0;
+
+    }
+
+
+    /* =====================================================
+       MENU DA PUBLICAÇÃO
+    ===================================================== */
+
+    .ad-card-menu {
+
+        width: 30px;
+
+        height: 30px;
+
+        margin-left: 4px;
+
+    }
+
+
+    /* =====================================================
+       CONTEÚDO DA PUBLICAÇÃO
+    ===================================================== */
+
+    .ad-card-conteudo {
+
+        padding-top: 7px;
+
+    }
+
+
+    .ad-card-descricao {
+
+        font-size: 13px;
+
+        line-height: 1.42;
+
+    }
+
+
+    /* =====================================================
+       MÍDIA
+    ===================================================== */
+
+    .ad-media-box {
+
+        position: relative;
+
+        inset: auto;
+
+        width: calc(100% + 20px);
+
+        height: auto;
+
+        min-height: 0;
+
+        max-height: none;
+
+        margin-left: -10px;
+
+        margin-right: -10px;
+
+        margin-top: 10px;
+
+        padding: 0;
+
+        border-radius: 0;
+
+    }
+
+
+    .ad-media-img {
+
+        width: 100%;
+
+        height: auto;
+
+        min-height: 0;
+
+        object-fit: cover;
+
+    }
+
+
+    /* =====================================================
+       VÍDEO
+    ===================================================== */
+
+    .ad-video-container {
+
+        width: 100%;
+
+        height: auto;
+
+        min-height: 0;
+
+        border-radius: 0;
+
+    }
+
+
+    .ad-video-container .ad-media-video {
+
+        width: 100%;
+
+        height: 260px;
+
+        min-height: 0;
+
+        object-fit: cover;
+
+        object-position: center;
+
+    }
+
+
+    /* =====================================================
+       FALLBACK
+    ===================================================== */
+
+    .ad-media-sem-foto {
+
+        min-height: 260px;
+
+    }
+
+
+    .ad-media-fallback {
+
+        min-height: 260px;
+
+    }
+
+
+    /* =====================================================
+       AÇÕES SOCIAIS
+    ===================================================== */
+
+    .ad-card-acoes {
+
+        min-height: 38px;
+
+        margin-top: 3px;
+
+        gap: 2px;
+
+    }
+
+
+    .ad-social-btn {
+
+        min-width: 34px;
+
+        min-height: 34px;
+
+        padding: 5px 6px;
+
+    }
+
+
+    .ad-social-btn svg {
+
+        width: 17px;
+
+        height: 17px;
+
+    }
+
+
+    /* =====================================================
+       INTERAÇÕES — TELA MUITO PEQUENA
+    ===================================================== */
+
+    .interacoes-perfil {
+
+        width: 100%;
+
+        min-width: 0;
+
+    }
+
+
+    .interacoes-perfil-contagem {
+
+        min-width: 13px;
+
+        margin-left: 2px;
+
+        font-size: 9px;
+
+    }
+
+
+    .interacoes-perfil-comentarios {
+
+        margin-top: 5px;
+
+        padding-top: 7px;
+
+    }
+
+
+    .interacoes-perfil-comentarios-lista {
+
+        max-height: 220px;
+
+    }
+
+
+    .interacao-comentario {
+
+        padding: 7px 0;
+
+    }
+
+
+    .interacao-comentario-cabecalho {
+
+        gap: 7px;
+
+    }
+
+
+    .interacao-comentario-avatar,
+    .interacao-comentario-avatar-fallback {
+
+        width: 26px;
+
+        height: 26px;
+
+        min-width: 26px;
+
+    }
+
+
+    .interacao-comentario-autor {
+
+        font-size: 10px;
+
+    }
+
+
+    .interacao-comentario-data {
+
+        font-size: 8px;
+
+    }
+
+
+    .interacao-comentario-texto {
+
+        margin-left: 34px;
+
+        font-size: 10px;
+
+    }
+
+
+    .interacoes-perfil-form {
+
+        gap: 5px;
+
+    }
+
+
+    .interacoes-perfil-form textarea {
+
+        min-height: 34px;
+
+        padding: 8px;
+
+        font-size: 10px;
+
+    }
+
+
+    .interacoes-perfil-form button {
+
+        min-width: 34px;
+
+        height: 34px;
+
+        padding: 0 8px;
+
+        font-size: 9px;
+
+    }
+
+
+    .interacoes-perfil-status {
+
+        font-size: 9px;
+
+    }
+
+
+    .interacoes-perfil-vazio,
+    .interacoes-perfil-login {
+
+        font-size: 9px;
+
+    }
+
+
+    /* =====================================================
+       INFORMAÇÕES COMPLEMENTARES
+    ===================================================== */
+
+    .ad-card-informacoes {
+
+        opacity: 1;
+
+        visibility: visible;
+
+        max-height: none;
+
+        transform: translateY(0);
+
+        pointer-events: auto;
+
+    }
+
+
+    .ad-card-estilos {
+
+        display: flex;
+
+        width: 100%;
+
+        min-width: 0;
+
+    }
+
+
+    /* =====================================================
+       AÇÃO
+    ===================================================== */
+
+    .ad-card-acao {
+
+        opacity: 1;
+
+        visibility: visible;
+
+        transform: translateY(0);
+
+        pointer-events: auto;
+
+    }
+
+
+    /* =====================================================
+       TOPO DA MÍDIA
+    ===================================================== */
+
+    .ad-media-top {
+
+        top: 9px;
+
+        left: 9px;
+
+        right: 9px;
+
+    }
+
+
+    /* =====================================================
+       BOTÃO DE TELA CHEIA
+    ===================================================== */
+
+    .btn-video-tela-cheia {
+
+        right: 8px;
+
+        bottom: 8px;
+
+        opacity: 1;
+
+        visibility: visible;
+
+    }
+
+
+    /* =====================================================
+       AVISO DO FEED
+    ===================================================== */
+
+    .feed-aviso {
+
+        min-height: 48px;
+
+        gap: 8px;
+
+        padding: 8px;
+
+        margin-bottom: 12px;
+
+    }
+
+
+    .feed-aviso-icone {
+
+        width: 27px;
+
+        height: 27px;
+
+        min-width: 27px;
+
+    }
+
+
+    .feed-aviso-icone svg {
+
+        width: 16px;
+
+        height: 16px;
+
+    }
+
+
+    .feed-aviso-conteudo strong {
+
+        font-size: 11.5px;
+
+    }
+
+
+    .feed-aviso-conteudo span {
+
+        font-size: 10px;
+
+    }
+
+
+    .feed-aviso-fechar {
+
+        width: 26px;
+
+        height: 26px;
+
+        min-width: 26px;
+
+    }
+
+
+    /* =====================================================
+       CABEÇALHO DA SEÇÃO
+    ===================================================== */
+
+    .feed-header {
+
+        gap: 8px;
+
+        margin-bottom: 14px;
+
+    }
+
+
+    .feed-header h2 {
+
+        font-size: 18px;
+
+    }
+
+
+    .feed-header p {
+
+        font-size: 11px;
+
+    }
+
+
+    /* =====================================================
+       FILTRO
+    ===================================================== */
+
+    .feed-filtro-btn {
+
+        width: 36px;
+
+        height: 36px;
+
+        min-width: 36px;
+
+        border-radius: 9px;
+
+    }
+
+
+    .feed-filtro-btn svg {
+
+        width: 17px;
+
+        height: 17px;
+
+    }
+
+
+    /* =====================================================
+       PESQUISA — TELA MUITO PEQUENA
+    ===================================================== */
+
+    .search-overlay-header {
+
+        padding-left: 9px;
+
+        padding-right: 9px;
+
+    }
+
+
+    .search-result-item {
+
+        padding-left: 10px;
+
+        padding-right: 10px;
+
+    }
+
+
+    .search-result-avatar-wrapper {
+
+        width: 42px;
+
+        height: 42px;
+
+        min-width: 42px;
+
+        min-height: 42px;
+
+        flex-basis: 42px;
+
+    }
+
+
+    .search-result-name {
+
+        font-size: 11px;
+
+    }
+
+
+    .search-result-location,
+    .search-result-genre {
+
+        font-size: 8px;
+
+    }
+
+
+    .search-overlay-cancelar {
+
+        font-size: 10px;
+
+    }
+
 
 }
 
-
-/* =====================================================
-   LOGO
-===================================================== */
-
-.logo {
-
-    font-size: 18px;
-
-    letter-spacing: -0.5px;
-
-}
-
-
-/* =====================================================
-   AÇÕES DO CABEÇALHO
-===================================================== */
-
-.navbar-actions {
-
-    gap: 2px;
-
-}
-
-
-/* =====================================================
-   BOTÕES DO CABEÇALHO
-===================================================== */
-
-.nav-icon-btn {
-
-    width: 39px;
-
-    height: 39px;
-
-    border-radius: 12px;
-
-}
-
-
-.top-icon-svg {
-
-    width: 26px;
-
-    height: 26px;
-
-}
-
-
-.cabecalho-usuario-btn {
-
-    width: 39px;
-
-    height: 39px;
-
-}
-
-
-.cabecalho-avatar {
-
-    width: 30px;
-
-    height: 30px;
-
-    min-width: 30px;
-
-    min-height: 30px;
-
-}
-
-
-/* =====================================================
-   BADGES
-===================================================== */
-
-.notification-badge {
-
-    top: 1px;
-
-    right: -1px;
-
-    min-width: 16px;
-
-    height: 16px;
-
-    font-size: 7px;
-
-    border-width: 1.5px;
-
-}
-
-
-/* =====================================================
-   ESTADO DESLOGADO
-===================================================== */
-
-.cabecalho-btn-entrar {
-
-    height: 34px;
-
-    padding: 0 11px;
-
-    font-size: 11px;
-
-}
-
-
-/* =====================================================
-   MENU DA CONTA
-===================================================== */
-
-.cabecalho-menu-usuario {
-
-    top: 56px;
-
-    right: 10px;
-
-    width: 180px;
-
-    max-width: calc(100vw - 20px);
-
-}
-
-
-/* =====================================================
-   FEED — TELA MUITO PEQUENA
-===================================================== */
-
-.feed-profissionais {
-
-    width: 100%;
-
-    gap: 0;
-
-}
-
-
-.profissional-card-link {
-
-    width: 100%;
-
-}
-
-
-/* =====================================================
-   PUBLICAÇÃO
-===================================================== */
-
-.ad-card-novo {
-
-    width: 100%;
-
-    height: auto;
-
-    min-height: 0;
-
-    max-height: none;
-
-    padding: 11px 10px 13px;
-
-    margin: 0;
-
-    border: none;
-
-    border-bottom:
-        1px solid rgba(23, 32, 51, 0.08);
-
-    border-radius: 0;
-
-    box-shadow: none;
-
-}
-
-
-/* =====================================================
-   IDENTIDADE
-===================================================== */
-
-.ad-card-identidade {
-
-    gap: 8px;
-
-}
-
-
-.ad-mini-avatar,
-.ad-mini-avatar-fallback {
-
-    width: 34px;
-
-    height: 34px;
-
-    min-width: 34px;
-
-    min-height: 34px;
-
-}
-
-
-.ad-card-nome {
-
-    font-size: 14px;
-
-    line-height: 1.2;
-
-}
-
-
-/* =====================================================
-   TIPO + LOCALIZAÇÃO
-===================================================== */
-
-.ad-card-tipo-localizacao {
-
-    display: flex;
-
-    align-items: center;
-
-    flex-wrap: nowrap;
-
-    width: 100%;
-
-    min-width: 0;
-
-    gap: 5px;
-
-    margin-top: 2px;
-
-    overflow: hidden;
-
-}
-
-
-/*
- * O tipo continua completamente visível.
-
- * Não existe max-width: 45%.
-
- * Não existe overflow hidden.
-
- * Não existe text-overflow: ellipsis.
- */
-
-.ad-card-tipo {
-
-    display: inline-flex;
-
-    align-items: center;
-
-    flex: 0 0 auto;
-
-    width: auto;
-
-    max-width: none;
-
-    min-width: max-content;
-
-    font-size: 11px;
-
-    font-weight: 700;
-
-    line-height: 1.2;
-
-    white-space: nowrap;
-
-    overflow: visible;
-
-    text-overflow: clip;
-
-}
-
-
-/*
- * A localização usa o espaço que restar.
- */
-
-.ad-card-localizacao-inline {
-
-    display: inline-flex;
-
-    align-items: center;
-
-    flex: 1 1 auto;
-
-    width: auto;
-
-    min-width: 0;
-
-    max-width: none;
-
-    font-size: 11px;
-
-    line-height: 1.2;
-
-    white-space: nowrap;
-
-    overflow: hidden;
-
-}
-
-
-.ad-card-localizacao-inline .ad-card-localizacao-texto {
-
-    flex: 1 1 auto;
-
-    min-width: 0;
-
-    overflow: hidden;
-
-    white-space: nowrap;
-
-    text-overflow: ellipsis;
-
-}
-
-
-.ad-card-localizacao-inline svg {
-
-    width: 12px;
-
-    height: 12px;
-
-    min-width: 12px;
-
-    flex-shrink: 0;
-
-}
-
-
-/* =====================================================
-   MENU DA PUBLICAÇÃO
-===================================================== */
-
-.ad-card-menu {
-
-    width: 30px;
-
-    height: 30px;
-
-    margin-left: 4px;
-
-}
-
-
-/* =====================================================
-   CONTEÚDO DA PUBLICAÇÃO
-===================================================== */
-
-.ad-card-conteudo {
-
-    padding-top: 7px;
-
-}
-
-
-.ad-card-descricao {
-
-    font-size: 13px;
-
-    line-height: 1.42;
-
-}
-
-
-/* =====================================================
-   MÍDIA
-===================================================== */
-
-.ad-media-box {
-
-    position: relative;
-
-    inset: auto;
-
-    width: calc(100% + 20px);
-
-    height: auto;
-
-    min-height: 0;
-
-    max-height: none;
-
-    margin-left: -10px;
-
-    margin-right: -10px;
-
-    margin-top: 10px;
-
-    padding: 0;
-
-    border-radius: 0;
-
-}
-
-
-.ad-media-img {
-
-    width: 100%;
-
-    height: auto;
-
-    min-height: 0;
-
-    object-fit: cover;
-
-}
-
-
-/* =====================================================
-   VÍDEO
-===================================================== */
-
-.ad-video-container {
-
-    width: 100%;
-
-    height: auto;
-
-    min-height: 0;
-
-    border-radius: 0;
-
-}
-
-
-.ad-video-container .ad-media-video {
-
-    width: 100%;
-
-    height: 260px;
-
-    min-height: 0;
-
-    object-fit: cover;
-
-    object-position: center;
-
-}
-
-
-/* =====================================================
-   FALLBACK
-===================================================== */
-
-.ad-media-sem-foto {
-
-    min-height: 260px;
-
-}
-
-
-.ad-media-fallback {
-
-    min-height: 260px;
-
-}
-
-
-/* =====================================================
-   AÇÕES SOCIAIS
-===================================================== */
-
-.ad-card-acoes {
-
-    min-height: 38px;
-
-    margin-top: 3px;
-
-    gap: 2px;
-
-}
-
-
-.ad-social-btn {
-
-    min-width: 34px;
-
-    min-height: 34px;
-
-    padding: 5px 6px;
-
-}
-
-
-.ad-social-btn svg {
-
-    width: 17px;
-
-    height: 17px;
-
-}
-
-
-/* =====================================================
-   INFORMAÇÕES COMPLEMENTARES
-===================================================== */
-
-.ad-card-informacoes {
-
-    opacity: 1;
-
-    visibility: visible;
-
-    max-height: none;
-
-    transform: translateY(0);
-
-    pointer-events: auto;
-
-}
-
-
-.ad-card-estilos {
-
-    display: flex;
-
-    width: 100%;
-
-    min-width: 0;
-
-}
-
-
-/* =====================================================
-   AÇÃO
-===================================================== */
-
-.ad-card-acao {
-
-    opacity: 1;
-
-    visibility: visible;
-
-    transform: translateY(0);
-
-    pointer-events: auto;
-
-}
-
-
-/* =====================================================
-   TOPO DA MÍDIA
-===================================================== */
-
-.ad-media-top {
-
-    top: 9px;
-
-    left: 9px;
-
-    right: 9px;
-
-}
-
-
-/* =====================================================
-   BOTÃO DE TELA CHEIA
-===================================================== */
-
-.btn-video-tela-cheia {
-
-    right: 8px;
-
-    bottom: 8px;
-
-    opacity: 1;
-
-    visibility: visible;
-
-}
-
-
-/* =====================================================
-   AVISO DO FEED
-===================================================== */
-
-.feed-aviso {
-
-    min-height: 48px;
-
-    gap: 8px;
-
-    padding: 8px;
-
-    margin-bottom: 12px;
-    
-
-}
-
-
-.feed-aviso-icone {
-
-    width: 27px;
-
-    height: 27px;
-
-    min-width: 27px;
-
-}
-
-
-.feed-aviso-icone svg {
-
-    width: 16px;
-
-    height: 16px;
-
-}
-
-
-.feed-aviso-conteudo strong {
-
-    font-size: 11.5px;
-
-}
-
-
-.feed-aviso-conteudo span {
-
-    font-size: 10px;
-
-}
-
-
-.feed-aviso-fechar {
-
-    width: 26px;
-
-    height: 26px;
-
-    min-width: 26px;
-
-}
-
-
-/* =====================================================
-   CABEÇALHO DA SEÇÃO
-===================================================== */
-
-.feed-header {
-
-    gap: 8px;
-
-    margin-bottom: 14px;
-
-}
-
-
-.feed-header h2 {
-
-    font-size: 18px;
-
-}
-
-
-.feed-header p {
-
-    font-size: 11px;
-
-}
-
-
-/* =====================================================
-   FILTRO
-===================================================== */
-
-.feed-filtro-btn {
-
-    width: 36px;
-
-    height: 36px;
-
-    min-width: 36px;
-
-    border-radius: 9px;
-
-}
-
-
-.feed-filtro-btn svg {
-
-    width: 17px;
-
-    height: 17px;
-
-}
-
-
-/* =====================================================
-   PESQUISA — TELA MUITO PEQUENA
-===================================================== */
-
-.search-overlay-header {
-
-    padding-left: 9px;
-
-    padding-right: 9px;
-
-}
-
-
-.search-result-item {
-
-    padding-left: 10px;
-
-    padding-right: 10px;
-
-}
-
-
-.search-result-avatar-wrapper {
-
-    width: 42px;
-
-    height: 42px;
-
-    min-width: 42px;
-
-    min-height: 42px;
-
-    flex-basis: 42px;
-
-}
-
-
-.search-result-name {
-
-    font-size: 11px;
-
-}
-
-
-.search-result-location,
-.search-result-genre {
-
-    font-size: 8px;
-
-}
-
-
-.search-overlay-cancelar {
-
-    font-size: 10px;
-
-}
-
-
-}
 
 /* =========================================================
-REDUÇÃO DE MOVIMENTO
+   REDUÇÃO DE MOVIMENTO
 ========================================================= */
 
 @media (prefers-reduced-motion: reduce) {
 
 
-.navbar,
-.nav-icon-btn,
-.cabecalho-usuario-btn,
-.cabecalho-btn-entrar,
-.cabecalho-menu-usuario,
-.cabecalho-menu-usuario button,
-.feed-filtro-btn,
-.search-overlay,
-.search-overlay-input,
-.search-result-item,
-.search-result-arrow,
-.search-overlay-cancelar,
-.ad-card-novo,
-.ad-media-img,
-.ad-media-overlay,
-.ad-card-informacoes,
-.ad-card-acao,
-.ad-card-acoes,
-.ad-social-btn,
-.ad-card-menu,
-.btn-video-tela-cheia {
+    .navbar,
+    .nav-icon-btn,
+    .cabecalho-usuario-btn,
+    .cabecalho-btn-entrar,
+    .cabecalho-menu-usuario,
+    .cabecalho-menu-usuario button,
+    .feed-filtro-btn,
+    .search-overlay,
+    .search-overlay-input,
+    .search-result-item,
+    .search-result-arrow,
+    .search-overlay-cancelar,
+    .ad-card-novo,
+    .ad-media-img,
+    .ad-media-overlay,
+    .ad-card-informacoes,
+    .ad-card-acao,
+    .ad-card-acoes,
+    .ad-social-btn,
+    .ad-card-menu,
+    .btn-video-tela-cheia,
+    .interacoes-perfil,
+    .interacoes-perfil-comentarios,
+    .interacoes-perfil-form,
+    .interacoes-perfil-form textarea,
+    .interacoes-perfil-form button {
 
-    transition: none;
+        transition: none;
 
-}
-
-
-.search-loading-spinner,
-.cabecalho-usuario-loading span {
-
-    animation: none;
-
-}
+    }
 
 
-.profissional-card-link:hover .ad-card-novo {
+    .search-loading-spinner,
+    .cabecalho-usuario-loading span {
 
-    transform: none;
+        animation: none;
 
-}
+    }
 
 
-.profissional-card-link:hover .ad-media-img {
+    .profissional-card-link:hover .ad-card-novo {
 
-    transform: none;
+        transform: none;
 
-}
+    }
+
+
+    .profissional-card-link:hover .ad-media-img {
+
+        transform: none;
+
+    }
 
 
 }
