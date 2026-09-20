@@ -16,6 +16,10 @@
    - Verificar sessão existente.
    - Monitorar alterações no estado de autenticação.
    - Retornar resultados para o controlador visual da página.
+   - Gerar URLs de retorno compatíveis com:
+       • ambiente local
+       • GitHub Pages
+       • projeto publicado em subpasta
 
    Este arquivo NÃO controla HTML.
    Este arquivo NÃO altera elementos visuais.
@@ -29,7 +33,132 @@
 
     'use strict';
 
+
     const Login = {
+
+
+        /* ========================================================
+           OBTER URL BASE DO PROJETO
+
+           IMPORTANTE:
+
+           Não utilizamos apenas:
+
+               window.location.origin
+
+           porque no GitHub Pages o projeto está dentro de:
+
+               /MWV2/
+
+           Exemplo:
+
+               https://rafaelmfernandes.github.io/MWV2/
+
+           Enquanto no ambiente local normalmente temos:
+
+               http://localhost:3000/
+
+           Esta função identifica automaticamente o diretório
+           atual do projeto e monta as URLs corretamente.
+        ======================================================== */
+
+        obterUrlProjeto() {
+
+            try {
+
+                const urlAtual =
+                    new URL(
+                        window.location.href
+                    );
+
+                /*
+                 * Remove o nome do arquivo atual.
+                 *
+                 * Exemplo:
+                 *
+                 * /MWV2/login.html
+                 *
+                 * vira:
+                 *
+                 * /MWV2/
+                 */
+
+                const caminho =
+                    urlAtual.pathname
+                        .replace(
+                            /\/[^/]*$/,
+                            '/'
+                        );
+
+                return (
+                    urlAtual.origin +
+                    caminho
+                );
+
+            } catch (erro) {
+
+                console.warn(
+                    '⚠️ Não foi possível identificar a URL base do projeto:',
+                    erro
+                );
+
+                /*
+                 * Fallback para o diretório atual.
+                 */
+
+                return (
+                    window.location.origin +
+                    '/'
+                );
+
+            }
+
+        },
+
+
+        /* ========================================================
+           OBTER URL DE RETORNO DO LOGIN
+
+           Sempre retorna:
+
+               .../login.html
+
+           respeitando a pasta do projeto.
+
+           Exemplos:
+
+           Local:
+           http://localhost:3000/login.html
+
+           GitHub Pages:
+           https://rafaelmfernandes.github.io/MWV2/login.html
+        ======================================================== */
+
+        obterUrlLogin() {
+
+            try {
+
+                return new URL(
+                    'login.html',
+                    this.obterUrlProjeto()
+                ).href;
+
+            } catch (erro) {
+
+                console.error(
+                    '❌ Não foi possível montar a URL de retorno do login:',
+                    erro
+                );
+
+                return (
+                    window.location.origin +
+                    '/login.html'
+                );
+
+            }
+
+        },
+
 
         /* ========================================================
            REALIZAR LOGIN
@@ -43,6 +172,7 @@
 
             senha = senha || '';
 
+
             if (!email) {
 
                 return {
@@ -52,6 +182,7 @@
                 };
 
             }
+
 
             if (!senha) {
 
@@ -63,23 +194,39 @@
 
             }
 
-            console.log('======================================');
-            console.log('🔐 INICIANDO LOGIN');
-            console.log('======================================');
-            console.log('📧 E-mail:', email);
+
+            console.log(
+                '======================================'
+            );
+
+            console.log(
+                '🔐 INICIANDO LOGIN'
+            );
+
+            console.log(
+                '======================================'
+            );
+
+            console.log(
+                '📧 E-mail:',
+                email
+            );
+
 
             try {
 
                 const {
                     data,
                     error
-                } = await supabaseClient.auth.signInWithPassword({
+                } =
+                    await supabaseClient.auth.signInWithPassword({
 
-                    email: email,
+                        email: email,
 
-                    password: senha
+                        password: senha
 
-                });
+                    });
+
 
                 /* ====================================================
                    ERRO DO SUPABASE
@@ -99,6 +246,7 @@
                     };
 
                 }
+
 
                 /* ====================================================
                    GARANTIR SESSÃO
@@ -122,6 +270,7 @@
                     };
 
                 }
+
 
                 console.log(
                     '======================================'
@@ -155,6 +304,7 @@
                     !!data.session
                 );
 
+
                 /* ====================================================
                    SALVAR DADOS AUXILIARES
                 ==================================================== */
@@ -179,6 +329,7 @@
                     );
 
                 }
+
 
                 /* ====================================================
                    CONFIRMAR SESSÃO PELO MÓDULO Sessao
@@ -222,12 +373,14 @@
 
                 }
 
+
                 return {
                     sucesso: true,
                     usuario: data.user,
                     sessao: data.session,
                     mensagem: 'Login realizado com sucesso.'
                 };
+
 
             } catch (erro) {
 
@@ -250,19 +403,13 @@
 
         /* ========================================================
            IDENTIFICAR TIPO DO ERRO
-
-           O Supabase normalmente não diferencia de forma segura
-           "e-mail inexistente" de "senha incorreta".
-
-           Por isso, credenciais inválidas são tratadas como
-           erro de credenciais e a interface poderá destacar
-           o campo de senha sem revelar existência de conta.
         ======================================================== */
 
         identificarTipoErro(error) {
 
             const mensagem =
                 (error?.message || '').toLowerCase();
+
 
             if (
                 mensagem.includes('email not confirmed') ||
@@ -273,6 +420,7 @@
 
             }
 
+
             if (
                 mensagem.includes('invalid login credentials') ||
                 mensagem.includes('invalid credentials')
@@ -281,6 +429,7 @@
                 return 'credenciais';
 
             }
+
 
             return 'geral';
 
@@ -296,6 +445,7 @@
             const mensagem =
                 (error?.message || '').toLowerCase();
 
+
             if (
                 mensagem.includes('invalid login credentials') ||
                 mensagem.includes('invalid credentials')
@@ -304,6 +454,7 @@
                 return 'E-mail ou senha incorretos.';
 
             }
+
 
             if (
                 mensagem.includes('email not confirmed') ||
@@ -314,6 +465,7 @@
 
             }
 
+
             if (
                 mensagem.includes('too many requests') ||
                 mensagem.includes('rate limit')
@@ -322,6 +474,7 @@
                 return 'Muitas tentativas. Aguarde alguns minutos e tente novamente.';
 
             }
+
 
             return (
                 error?.message ||
@@ -341,6 +494,7 @@
                 .trim()
                 .toLowerCase();
 
+
             if (!email) {
 
                 return {
@@ -350,6 +504,7 @@
 
             }
 
+
             try {
 
                 console.log(
@@ -357,16 +512,27 @@
                     email
                 );
 
+
+                const redirectTo =
+                    this.obterUrlLogin();
+
+
+                console.log(
+                    '🔗 URL de retorno da recuperação:',
+                    redirectTo
+                );
+
+
                 const {
                     error
                 } =
                     await supabaseClient.auth.resetPasswordForEmail(
                         email,
                         {
-                            redirectTo:
-                                `${window.location.origin}/login.html`
+                            redirectTo: redirectTo
                         }
                     );
+
 
                 if (error) {
 
@@ -383,11 +549,13 @@
 
                 }
 
+
                 return {
                     sucesso: true,
                     mensagem:
                         'Se esse e-mail estiver cadastrado, você receberá as instruções para redefinir a senha.'
                 };
+
 
             } catch (erro) {
 
@@ -411,6 +579,7 @@
            AUTENTICAÇÃO SOCIAL
 
            Suporta:
+
            - Google
            - Apple
 
@@ -423,9 +592,11 @@
            usuário já possui perfil.
 
            Se possuir:
+
                index.html
 
            Se não possuir:
+
                configurar-conta.html
         ======================================================== */
 
@@ -439,8 +610,10 @@
 
             };
 
+
             const provider =
                 provedores[provedor];
+
 
             /* ====================================================
                VALIDAR PROVEDOR
@@ -460,6 +633,7 @@
                 };
 
             }
+
 
             /* ====================================================
                GARANTIR CLIENTE SUPABASE
@@ -482,6 +656,7 @@
 
             }
 
+
             console.log(
                 '======================================'
             );
@@ -494,24 +669,36 @@
                 '======================================'
             );
 
+
             try {
 
                 /* ====================================================
                    PÁGINA DE RETORNO
 
-                   O usuário volta para login.html depois do OAuth.
+                   IMPORTANTE:
 
-                   O js/login.js será responsável por verificar
-                   se existe perfil e decidir o destino final.
+                   Não usar:
+
+                       window.location.origin + '/login.html'
+
+                   porque o projeto pode estar dentro de uma
+                   subpasta, como acontece no GitHub Pages:
+
+                       /MWV2/
+
+                   A função obterUrlLogin() preserva automaticamente
+                   essa estrutura.
                 ==================================================== */
 
                 const redirectTo =
-                    `${window.location.origin}/login.html`;
+                    this.obterUrlLogin();
+
 
                 console.log(
                     '🔗 URL de retorno OAuth:',
                     redirectTo
                 );
+
 
                 /* ====================================================
                    INICIAR OAUTH
@@ -532,6 +719,7 @@
                         }
 
                     });
+
 
                 /* ====================================================
                    ERRO AO INICIAR OAUTH
@@ -554,6 +742,7 @@
 
                 }
 
+
                 /* ====================================================
                    O SUPABASE NORMALMENTE REDIRECIONA AUTOMATICAMENTE
 
@@ -570,6 +759,7 @@
                     data?.url || 'não informada'
                 );
 
+
                 return {
                     sucesso: true,
                     provedor: provedor,
@@ -579,6 +769,7 @@
                     mensagem:
                         `Redirecionando para ${provedor}...`
                 };
+
 
             } catch (erro) {
 
@@ -602,22 +793,6 @@
 
         /* ========================================================
            VERIFICAR PERFIL DO USUÁRIO
-
-           Responsabilidades:
-           - Verificar se o usuário autenticado possui perfil.
-           - Retornar o perfil encontrado.
-           - Não criar perfil.
-           - Não alterar dados.
-           - Não redirecionar páginas.
-
-           O controlador visual utiliza esse resultado para
-           decidir entre:
-
-               index.html
-
-           ou:
-
-               configurar-conta.html
         ======================================================== */
 
         async verificarPerfilUsuario(usuarioId) {
@@ -638,6 +813,7 @@
 
             }
 
+
             if (
                 typeof supabaseClient === 'undefined' ||
                 !supabaseClient
@@ -657,12 +833,14 @@
 
             }
 
+
             try {
 
                 console.log(
                     '🔎 Verificando perfil do usuário:',
                     usuarioId
                 );
+
 
                 const {
                     data,
@@ -682,6 +860,7 @@
                         `)
                         .eq('usuario_id', usuarioId)
                         .limit(1);
+
 
                 /* ====================================================
                    ERRO NA CONSULTA
@@ -704,6 +883,7 @@
 
                 }
 
+
                 /* ====================================================
                    USUÁRIO SEM PERFIL
                 ==================================================== */
@@ -712,6 +892,7 @@
                     Array.isArray(data)
                         ? data[0] || null
                         : null;
+
 
                 if (!perfil) {
 
@@ -729,6 +910,7 @@
 
                 }
 
+
                 /* ====================================================
                    PERFIL ENCONTRADO
                 ==================================================== */
@@ -743,6 +925,7 @@
                     perfil?.tipos_perfil?.nome || 'Não identificado'
                 );
 
+
                 return {
                     sucesso: true,
                     possuiPerfil: true,
@@ -750,6 +933,7 @@
                     mensagem:
                         'Perfil já configurado.'
                 };
+
 
             } catch (erro) {
 
@@ -783,11 +967,13 @@
                     '🔎 Verificando sessão existente...'
                 );
 
+
                 const {
                     data,
                     error
                 } =
                     await supabaseClient.auth.getSession();
+
 
                 if (error) {
 
@@ -799,6 +985,7 @@
                     return null;
 
                 }
+
 
                 if (data?.session) {
 
@@ -815,11 +1002,13 @@
 
                 }
 
+
                 console.log(
                     '🔓 Nenhuma sessão ativa.'
                 );
 
                 return null;
+
 
             } catch (erro) {
 
@@ -858,6 +1047,7 @@
 
             }
 
+
             return supabaseClient.auth.onAuthStateChange(
                 (evento, sessao) => {
 
@@ -865,6 +1055,7 @@
                         '🔄 Estado da autenticação:',
                         evento
                     );
+
 
                     if (sessao?.user) {
 
