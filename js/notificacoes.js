@@ -1,4 +1,5 @@
 (function (window) {
+
     "use strict";
 
 
@@ -9,9 +10,11 @@
        js/notificacoes.js
 
        Responsabilidades:
+
        - Carregar as notificações do usuário.
        - Exibir notificações lidas e não lidas.
        - Identificar o remetente.
+       - Exibir foto ou iniciais do remetente.
        - Marcar notificações como lidas.
        - Marcar todas as notificações como lidas.
        - Atualizar a página em tempo real através do
@@ -28,11 +31,17 @@
        ========================================================= */
 
     const CONFIG = {
+
         tabela: "notificacoes",
+
         tabelaUsuarios: "usuarios",
+
         limiteInicial: 100,
+
         paginaAnterior: "index.html",
+
         imagemSistema: "img/logo-musicalworld.svg"
+
     };
 
 
@@ -41,12 +50,19 @@
        ========================================================= */
 
     const estado = {
+
         inicializado: false,
+
         usuarioId: null,
+
         notificacoes: [],
+
         remetentes: new Map(),
+
         canalRealtime: null,
+
         carregando: false
+
     };
 
 
@@ -64,26 +80,36 @@
             window.supabaseClient &&
             typeof window.supabaseClient.from === "function"
         ) {
+
             return window.supabaseClient;
+
         }
+
 
         if (
             window.SupabaseClient &&
             typeof window.SupabaseClient.getClient === "function"
         ) {
+
             return window.SupabaseClient.getClient();
+
         }
+
 
         if (
             window.SupabaseClient &&
             window.SupabaseClient.client
         ) {
+
             return window.SupabaseClient.client;
+
         }
+
 
         throw new Error(
             "Cliente Supabase não encontrado."
         );
+
     }
 
 
@@ -97,27 +123,39 @@
             window.Sessao &&
             typeof window.Sessao.usuarioAtual === "function"
         ) {
+
             const usuario =
                 await window.Sessao.usuarioAtual();
 
+
             if (usuario) {
+
                 return usuario;
+
             }
+
         }
+
 
         const supabase =
             obterSupabase();
+
 
         const {
             data,
             error
         } = await supabase.auth.getUser();
 
+
         if (error) {
+
             throw error;
+
         }
 
+
         return data?.user || null;
+
     }
 
 
@@ -126,31 +164,33 @@
        ========================================================= */
 
     function obterElemento(id) {
+
         return document.getElementById(id);
+
     }
 
 
     function obterContainer() {
 
         return (
+
             obterElemento("listaNotificacoes") ||
-            document.querySelector(".lista-notificacoes") ||
-            document.querySelector("[data-lista-notificacoes]")
+
+            document.querySelector(
+                ".lista-notificacoes"
+            ) ||
+
+            document.querySelector(
+                "[data-lista-notificacoes]"
+            )
+
         );
+
     }
 
 
     /* =========================================================
        CONTROLE DOS ESTADOS DA PÁGINA
-
-       Estados possíveis:
-
-       1. Carregando
-       2. Lista de notificações
-       3. Lista vazia
-       4. Erro
-
-       Apenas o estado correspondente deve permanecer visível.
        ========================================================= */
 
     function ocultarTodosEstados() {
@@ -164,17 +204,27 @@
         const erro =
             obterElemento("estadoErro");
 
+
         if (carregando) {
+
             carregando.hidden = true;
+
         }
+
 
         if (vazio) {
+
             vazio.hidden = true;
+
         }
 
+
         if (erro) {
+
             erro.hidden = true;
+
         }
+
     }
 
 
@@ -189,17 +239,27 @@
         const erro =
             obterElemento("estadoErro");
 
+
         if (carregando) {
+
             carregando.hidden = false;
+
         }
+
 
         if (vazio) {
+
             vazio.hidden = true;
+
         }
 
+
         if (erro) {
+
             erro.hidden = true;
+
         }
+
     }
 
 
@@ -214,17 +274,27 @@
         const erro =
             obterElemento("estadoErro");
 
+
         if (carregando) {
+
             carregando.hidden = true;
+
         }
+
 
         if (vazio) {
+
             vazio.hidden = false;
+
         }
 
+
         if (erro) {
+
             erro.hidden = true;
+
         }
+
     }
 
 
@@ -242,25 +312,38 @@
         const mensagemErro =
             obterElemento("mensagemErro");
 
+
         if (carregando) {
+
             carregando.hidden = true;
+
         }
+
 
         if (vazio) {
+
             vazio.hidden = true;
+
         }
 
+
         if (erro) {
+
             erro.hidden = false;
+
         }
+
 
         if (
             mensagemErro &&
             mensagem
         ) {
+
             mensagemErro.textContent =
                 mensagem;
+
         }
+
     }
 
 
@@ -273,53 +356,82 @@
         const supabase =
             obterSupabase();
 
+
         if (!estado.usuarioId) {
+
             return;
+
         }
+
 
         const {
             data,
             error
         } = await supabase
+
             .from(CONFIG.tabela)
+
             .select(
+
                 [
+
                     "id",
+
                     "usuario_id",
+
                     "remetente_id",
+
                     "tipo",
+
                     "titulo",
+
                     "mensagem",
+
                     "referencia_id",
+
                     "referencia_tipo",
+
                     "lida",
+
                     "created_at"
+
                 ].join(",")
+
             )
+
             .eq(
                 "usuario_id",
                 estado.usuarioId
             )
+
             .order(
                 "created_at",
                 {
                     ascending: false
                 }
             )
+
             .limit(
                 CONFIG.limiteInicial
             );
 
+
         if (error) {
+
             throw error;
+
         }
+
 
         estado.notificacoes =
             data || [];
 
+
         await carregarRemetentes();
 
+
         renderizarNotificacoes();
+
     }
 
 
@@ -332,54 +444,69 @@
 
     async function carregarRemetentes() {
 
-        const ids =
-            [
-                ...new Set(
-                    estado.notificacoes
-                        .map(
-                            notificacao =>
-                                notificacao.remetente_id
-                        )
-                        .filter(Boolean)
-                )
-            ];
+        const ids = [
+
+            ...new Set(
+
+                estado.notificacoes
+
+                    .map(
+                        notificacao =>
+                            notificacao.remetente_id
+                    )
+
+                    .filter(Boolean)
+
+            )
+
+        ];
+
 
         if (!ids.length) {
+
             return;
+
         }
+
 
         const supabase =
             obterSupabase();
+
 
         const {
             data,
             error
         } = await supabase
+
             .from(
                 CONFIG.tabelaUsuarios
             )
+
             .select(
                 "id,nome,foto_url"
             )
+
             .in(
                 "id",
                 ids
             );
 
+
         if (error) {
 
-            /*
-             * A notificação continua sendo exibida mesmo que
-             * a busca do remetente falhe.
-             */
-
             console.warn(
-                "MusicalWorldNotificacoes: não foi possível carregar remetentes.",
+
+                "MusicalWorldNotificacoes: " +
+                "não foi possível carregar remetentes.",
+
                 error
+
             );
 
             return;
+
         }
+
 
         (data || []).forEach(
             usuario => {
@@ -388,8 +515,10 @@
                     usuario.id,
                     usuario
                 );
+
             }
         );
+
     }
 
 
@@ -400,41 +529,55 @@
     function formatarData(data) {
 
         if (!data) {
+
             return "";
+
         }
+
 
         const valor =
             new Date(data);
+
 
         if (
             Number.isNaN(
                 valor.getTime()
             )
         ) {
+
             return "";
+
         }
+
 
         const hoje =
             new Date();
 
+
         const ontem =
             new Date();
+
 
         ontem.setDate(
             ontem.getDate() - 1
         );
+
 
         const mesmaData =
             (
                 primeiro,
                 segundo
             ) =>
+
                 primeiro.getFullYear() ===
                     segundo.getFullYear() &&
+
                 primeiro.getMonth() ===
                     segundo.getMonth() &&
+
                 primeiro.getDate() ===
                     segundo.getDate();
+
 
         if (
             mesmaData(
@@ -442,6 +585,7 @@
                 hoje
             )
         ) {
+
             return `Hoje, ${valor.toLocaleTimeString(
                 "pt-BR",
                 {
@@ -449,7 +593,9 @@
                     minute: "2-digit"
                 }
             )}`;
+
         }
+
 
         if (
             mesmaData(
@@ -457,6 +603,7 @@
                 ontem
             )
         ) {
+
             return `Ontem, ${valor.toLocaleTimeString(
                 "pt-BR",
                 {
@@ -464,18 +611,27 @@
                     minute: "2-digit"
                 }
             )}`;
+
         }
+
 
         return valor.toLocaleString(
             "pt-BR",
             {
+
                 day: "2-digit",
+
                 month: "2-digit",
+
                 year: "numeric",
+
                 hour: "2-digit",
+
                 minute: "2-digit"
+
             }
         );
+
     }
 
 
@@ -488,33 +644,44 @@
         switch (tipo) {
 
             case "mensagem":
+
             case "nova_mensagem":
 
                 return `
+
                     <svg
                         viewBox="0 0 24 24"
                         aria-hidden="true"
                         focusable="false"
                     >
+
                         <path
                             d="M21 11.5a8.38 8.38 0 0 1-9 8.5 9.7 9.7 0 0 1-4-.8L3 21l1.8-4.2A8.4 8.4 0 0 1 3 11.5a8.38 8.38 0 0 1 9-8.5 8.38 8.38 0 0 1 9 8.5Z"
                         ></path>
+
                     </svg>
+
                 `;
 
 
             case "contratacao":
+
             case "nova_contratacao":
+
             case "solicitacao_contratacao":
+
             case "contratacao_aceita":
+
             case "contratacao_recusada":
 
                 return `
+
                     <svg
                         viewBox="0 0 24 24"
                         aria-hidden="true"
                         focusable="false"
                     >
+
                         <rect
                             x="3"
                             y="4"
@@ -534,18 +701,22 @@
                         <path
                             d="M3 10h18"
                         ></path>
+
                     </svg>
+
                 `;
 
 
             default:
 
                 return `
+
                     <svg
                         viewBox="0 0 24 24"
                         aria-hidden="true"
                         focusable="false"
                     >
+
                         <path
                             d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"
                         ></path>
@@ -553,9 +724,13 @@
                         <path
                             d="M10 21h4"
                         ></path>
+
                     </svg>
+
                 `;
+
         }
+
     }
 
 
@@ -568,21 +743,27 @@
         if (
             notificacao?.titulo
         ) {
+
             return notificacao.titulo;
+
         }
+
 
         switch (
             notificacao?.tipo
         ) {
 
             case "mensagem":
+
             case "nova_mensagem":
 
                 return "Nova mensagem";
 
 
             case "contratacao":
+
             case "nova_contratacao":
+
             case "solicitacao_contratacao":
 
                 return "Nova solicitação";
@@ -601,24 +782,14 @@
             default:
 
                 return "Nova notificação";
+
         }
+
     }
 
 
     /* =========================================================
        URL DA NOTIFICAÇÃO
-
-       Regras:
-
-       Mensagem:
-       → chat.html
-
-       Qualquer notificação relacionada a contratação:
-       → contratacoes.html
-
-       O referencia_id continua sendo enviado na URL para
-       permitir que contratacoes.html identifique a
-       contratação específica.
        ========================================================= */
 
     function obterUrlNotificacao(notificacao) {
@@ -626,8 +797,11 @@
         if (
             !notificacao?.referencia_id
         ) {
+
             return null;
+
         }
+
 
         const tipo =
             notificacao.tipo;
@@ -638,48 +812,47 @@
            ----------------------------------------------------- */
 
         if (
+
             tipo === "mensagem" ||
+
             tipo === "nova_mensagem"
+
         ) {
+
             return `chat.html?id=${encodeURIComponent(
                 notificacao.referencia_id
             )}`;
+
         }
 
 
         /* -----------------------------------------------------
-           TODAS AS NOTIFICAÇÕES DE CONTRATAÇÃO
-
-           Independentemente de ser:
-
-           - nova contratação
-           - solicitação
-           - contratação aceita
-           - contratação recusada
-
-           todas levam para:
-
-           contratacoes.html
+           NOTIFICAÇÕES DE CONTRATAÇÃO
            ----------------------------------------------------- */
 
         if (
+
             tipo === "contratacao" ||
+
             tipo === "nova_contratacao" ||
+
             tipo === "solicitacao_contratacao" ||
+
             tipo === "contratacao_aceita" ||
+
             tipo === "contratacao_recusada"
+
         ) {
+
             return `contratacoes.html?id=${encodeURIComponent(
                 notificacao.referencia_id
             )}`;
+
         }
 
 
-        /* -----------------------------------------------------
-           TIPO DESCONHECIDO
-           ----------------------------------------------------- */
-
         return null;
+
     }
 
 
@@ -692,27 +865,43 @@
         if (
             !notificacao?.remetente_id
         ) {
+
             return {
+
                 nome: "MusicalWorld",
+
                 foto: CONFIG.imagemSistema,
+
                 sistema: true
+
             };
+
         }
+
 
         const remetente =
             estado.remetentes.get(
                 notificacao.remetente_id
             );
 
+
         if (!remetente) {
+
             return {
+
                 nome: "Usuário",
+
                 foto: "",
+
                 sistema: false
+
             };
+
         }
 
+
         return {
+
             nome:
                 remetente.nome ||
                 "Usuário",
@@ -722,15 +911,141 @@
                 "",
 
             sistema: false
+
         };
+
+    }
+
+
+    /* =========================================================
+       OBTER INICIAIS DO NOME
+       =========================================================
+
+       Exemplos:
+
+       João Silva
+       → JS
+
+       Maria
+       → M
+
+       Carlos Eduardo Souza
+       → CS
+
+       Ana Paula
+       → AP
+
+       Também remove palavras muito comuns do meio do nome
+       quando necessário para deixar as iniciais mais limpas.
+       ========================================================= */
+
+    function obterIniciais(nome) {
+
+        if (
+            !nome ||
+            typeof nome !== "string"
+        ) {
+
+            return "?";
+
+        }
+
+
+        const palavras =
+            nome
+                .trim()
+                .split(/\s+/)
+                .filter(Boolean);
+
+
+        if (!palavras.length) {
+
+            return "?";
+
+        }
+
+
+        /* -----------------------------------------------------
+           NOME COM UMA PALAVRA
+           ----------------------------------------------------- */
+
+        if (
+            palavras.length === 1
+        ) {
+
+            return palavras[0]
+                .charAt(0)
+                .toUpperCase();
+
+        }
+
+
+        /* -----------------------------------------------------
+           PALAVRAS QUE NORMALMENTE NÃO DEVEM SER UTILIZADAS
+           COMO INICIAIS PRINCIPAIS.
+           ----------------------------------------------------- */
+
+        const palavrasIgnoradas =
+            new Set([
+
+                "da",
+
+                "das",
+
+                "de",
+
+                "do",
+
+                "dos",
+
+                "e"
+
+            ]);
+
+
+        const palavrasValidas =
+            palavras.filter(
+                palavra =>
+                    !palavrasIgnoradas.has(
+                        palavra.toLowerCase()
+                    )
+            );
+
+
+        /* -----------------------------------------------------
+           CASO O FILTRO REMOVA TODAS AS PALAVRAS,
+           VOLTA PARA O NOME ORIGINAL.
+           ----------------------------------------------------- */
+
+        const base =
+            palavrasValidas.length
+                ? palavrasValidas
+                : palavras;
+
+
+        /* -----------------------------------------------------
+           PRIMEIRA + ÚLTIMA PALAVRA
+           ----------------------------------------------------- */
+
+        const primeira =
+            base[0]
+                .charAt(0)
+                .toUpperCase();
+
+
+        const ultima =
+            base[base.length - 1]
+                .charAt(0)
+                .toUpperCase();
+
+
+        return primeira + ultima;
+
     }
 
 
     /* =========================================================
        ESCAPE HTML
-
-       Evita que conteúdo vindo do banco seja interpretado
-       como HTML.
        ========================================================= */
 
     function escaparHtml(valor) {
@@ -740,52 +1055,137 @@
                 "div"
             );
 
+
         div.textContent =
             valor === null ||
             valor === undefined
                 ? ""
                 : String(valor);
 
+
         return div.innerHTML;
+
     }
 
 
     /* =========================================================
        AVATAR
+       =========================================================
+
+       Comportamento:
+
+       1. Sistema:
+          → mostra ícone do MusicalWorld.
+
+       2. Usuário com foto:
+          → mostra foto.
+
+       3. Usuário sem foto:
+          → mostra iniciais.
+
+       4. Foto quebrada:
+          → substitui automaticamente pelas iniciais.
        ========================================================= */
 
     function renderizarAvatar(remetente) {
+
+        /* -----------------------------------------------------
+           NOTIFICAÇÃO DO SISTEMA
+           ----------------------------------------------------- */
+
+        if (
+            remetente.sistema
+        ) {
+
+            return `
+
+                <div
+                    class="notificacao-avatar notificacao-avatar-fallback notificacao-avatar-sistema"
+                    aria-label="MusicalWorld"
+                >
+
+                    ${obterIcone("sistema")}
+
+                </div>
+
+            `;
+
+        }
+
+
+        const nome =
+            remetente.nome ||
+            "Usuário";
+
+
+        const iniciais =
+            obterIniciais(
+                nome
+            );
+
+
+        /* -----------------------------------------------------
+           USUÁRIO COM FOTO
+           ----------------------------------------------------- */
 
         if (
             remetente.foto
         ) {
 
             return `
+
                 <img
                     class="notificacao-avatar"
                     src="${escaparHtml(
                         remetente.foto
                     )}"
                     alt="${escaparHtml(
-                        remetente.nome
+                        nome
                     )}"
                     loading="lazy"
+                    onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
                 >
+
+                <div
+                    class="notificacao-avatar notificacao-avatar-iniciais"
+                    aria-label="${escaparHtml(
+                        nome
+                    )}"
+                    style="display: none;"
+                >
+
+                    ${escaparHtml(
+                        iniciais
+                    )}
+
+                </div>
+
             `;
+
         }
 
+
+        /* -----------------------------------------------------
+           USUÁRIO SEM FOTO
+           ----------------------------------------------------- */
+
         return `
+
             <div
-                class="notificacao-avatar notificacao-avatar-fallback"
-                aria-hidden="true"
+                class="notificacao-avatar notificacao-avatar-iniciais"
+                aria-label="${escaparHtml(
+                    nome
+                )}"
             >
-                ${obterIcone(
-                    remetente.sistema
-                        ? "sistema"
-                        : "usuario"
+
+                ${escaparHtml(
+                    iniciais
                 )}
+
             </div>
+
         `;
+
     }
 
 
@@ -800,27 +1200,34 @@
                 notificacao
             );
 
+
         const url =
             obterUrlNotificacao(
                 notificacao
             );
+
 
         const titulo =
             obterTituloPadrao(
                 notificacao
             );
 
+
         const mensagem =
             notificacao.mensagem ||
             "";
+
 
         const data =
             formatarData(
                 notificacao.created_at
             );
 
+
         const classes = [
+
             "notificacao-item"
+
         ];
 
 
@@ -831,9 +1238,11 @@
         if (
             !notificacao.lida
         ) {
+
             classes.push(
                 "nao-lida"
             );
+
         }
 
 
@@ -842,21 +1251,26 @@
            ----------------------------------------------------- */
 
         if (url) {
+
             classes.push(
                 "clicavel"
             );
+
         }
 
 
         const atributoUrl =
             url
+
                 ? `data-url="${escaparHtml(
                       url
                   )}"`
+
                 : "";
 
 
         return `
+
             <article
                 class="${classes.join(" ")}"
                 data-notificacao-id="${escaparHtml(
@@ -925,12 +1339,16 @@
 
                     ${
                         !notificacao.lida
+
                             ? `
+
                                 <span
                                     class="notificacao-indicador"
                                     aria-label="Não lida"
                                 ></span>
+
                             `
+
                             : ""
                     }
 
@@ -946,7 +1364,9 @@
                 </div>
 
             </article>
+
         `;
+
     }
 
 
@@ -959,6 +1379,7 @@
         const container =
             obterContainer();
 
+
         if (!container) {
 
             console.warn(
@@ -966,13 +1387,9 @@
             );
 
             return;
+
         }
 
-
-        /*
-         * A partir deste ponto os dados já foram carregados.
-         * Portanto, o estado "Carregando..." deve desaparecer.
-         */
 
         ocultarTodosEstados();
 
@@ -992,6 +1409,7 @@
             atualizarContadorNaoLidas();
 
             return;
+
         }
 
 
@@ -1001,15 +1419,19 @@
 
         container.innerHTML =
             estado.notificacoes
+
                 .map(
                     criarHtmlNotificacao
                 )
+
                 .join("");
 
 
         configurarEventosItens();
 
+
         atualizarContadorNaoLidas();
+
     }
 
 
@@ -1035,6 +1457,7 @@
                 "[data-notificacoes-nao-lidas]"
             );
 
+
         elementos.forEach(
             elemento => {
 
@@ -1043,8 +1466,10 @@
                         ? quantidade
                         : "";
 
+
                 elemento.hidden =
                     quantidade === 0;
+
             }
         );
 
@@ -1058,6 +1483,7 @@
                 "contadorNotificacoes"
             );
 
+
         if (contador) {
 
             contador.textContent =
@@ -1065,9 +1491,12 @@
                     ? quantidade
                     : "";
 
+
             contador.hidden =
                 quantidade === 0;
+
         }
+
     }
 
 
@@ -1080,30 +1509,41 @@
     ) {
 
         if (!notificationId) {
+
             return;
+
         }
+
 
         const supabase =
             obterSupabase();
 
+
         const {
             error
         } = await supabase
+
             .from(CONFIG.tabela)
+
             .update({
                 lida: true
             })
+
             .eq(
                 "id",
                 notificationId
             )
+
             .eq(
                 "usuario_id",
                 estado.usuarioId
             );
 
+
         if (error) {
+
             throw error;
+
         }
 
 
@@ -1118,10 +1558,12 @@
                     String(notificationId)
             );
 
+
         if (notificacao) {
 
             notificacao.lida =
                 true;
+
         }
 
 
@@ -1129,17 +1571,20 @@
 
 
         /* -----------------------------------------------------
-           ATUALIZA VISUALMENTE O ITEM SEM RECARREGAR A LISTA
+           ATUALIZA VISUALMENTE O ITEM
            ----------------------------------------------------- */
 
         const elemento =
             document.querySelector(
+
                 `[data-notificacao-id="${CSS.escape(
                     String(
                         notificationId
                     )
                 )}"]`
+
             );
+
 
         if (elemento) {
 
@@ -1147,15 +1592,21 @@
                 "nao-lida"
             );
 
+
             const indicador =
                 elemento.querySelector(
                     ".notificacao-indicador"
                 );
 
+
             if (indicador) {
+
                 indicador.remove();
+
             }
+
         }
+
     }
 
 
@@ -1168,41 +1619,49 @@
         const supabase =
             obterSupabase();
 
+
         const {
             error
         } = await supabase
+
             .from(CONFIG.tabela)
+
             .update({
                 lida: true
             })
+
             .eq(
                 "usuario_id",
                 estado.usuarioId
             )
+
             .eq(
                 "lida",
                 false
             );
 
+
         if (error) {
+
             throw error;
+
         }
 
-
-        /* -----------------------------------------------------
-           ATUALIZA O ESTADO LOCAL
-           ----------------------------------------------------- */
 
         estado.notificacoes =
             estado.notificacoes.map(
                 notificacao => ({
+
                     ...notificacao,
+
                     lida: true
+
                 })
             );
 
 
         renderizarNotificacoes();
+
     }
 
 
@@ -1217,12 +1676,14 @@
                 ".notificacao-item"
             );
 
+
         itens.forEach(
             item => {
 
                 const id =
                     item.dataset
                         .notificacaoId;
+
 
                 const url =
                     item.dataset.url;
@@ -1238,11 +1699,6 @@
 
                         try {
 
-                            /*
-                             * Marca a notificação como lida antes
-                             * de sair da página.
-                             */
-
                             await marcarComoLida(
                                 id
                             );
@@ -1252,30 +1708,30 @@
                         ) {
 
                             console.error(
-                                "MusicalWorldNotificacoes: erro ao marcar notificação como lida.",
+
+                                "MusicalWorldNotificacoes: " +
+                                "erro ao marcar notificação como lida.",
+
                                 erro
+
                             );
+
                         }
 
-
-                        /* -----------------------------------------
-                           NAVEGAÇÃO
-                           ----------------------------------------- */
 
                         if (url) {
 
                             window.location.href =
                                 url;
+
                         }
+
                     }
                 );
 
 
                 /* -------------------------------------------------
                    TECLADO
-
-                   Permite abrir a notificação utilizando Enter
-                   ou Espaço quando o item estiver focado.
                    ------------------------------------------------- */
 
                 item.addEventListener(
@@ -1285,19 +1741,29 @@
                     ) {
 
                         if (
+
                             evento.key !== "Enter" &&
+
                             evento.key !== " "
+
                         ) {
+
                             return;
+
                         }
+
 
                         evento.preventDefault();
 
+
                         item.click();
+
                     }
                 );
+
             }
         );
+
     }
 
 
@@ -1309,8 +1775,13 @@
 
         const botoes =
             document.querySelectorAll(
-                "#btnMarcarTodas, #marcarTodasLidas, [data-marcar-todas-lidas]"
+
+                "#btnMarcarTodas, " +
+                "#marcarTodasLidas, " +
+                "[data-marcar-todas-lidas]"
+
             );
+
 
         botoes.forEach(
             botao => {
@@ -1324,6 +1795,7 @@
                             botao.disabled =
                                 true;
 
+
                             await marcarTodasComoLidas();
 
                         } catch (
@@ -1331,19 +1803,27 @@
                         ) {
 
                             console.error(
-                                "MusicalWorldNotificacoes: erro ao marcar todas como lidas.",
+
+                                "MusicalWorldNotificacoes: " +
+                                "erro ao marcar todas como lidas.",
+
                                 erro
+
                             );
 
                         } finally {
 
                             botao.disabled =
                                 false;
+
                         }
+
                     }
                 );
+
             }
         );
+
     }
 
 
@@ -1356,13 +1836,17 @@
         if (
             !estado.canalRealtime
         ) {
+
             return;
+
         }
+
 
         try {
 
             const supabase =
                 obterSupabase();
+
 
             supabase.removeChannel(
                 estado.canalRealtime
@@ -1373,13 +1857,20 @@
         ) {
 
             console.warn(
-                "MusicalWorldNotificacoes: erro ao encerrar canal Realtime.",
+
+                "MusicalWorldNotificacoes: " +
+                "erro ao encerrar canal Realtime.",
+
                 erro
+
             );
+
         }
+
 
         estado.canalRealtime =
             null;
+
     }
 
 
@@ -1388,16 +1879,20 @@
         const supabase =
             obterSupabase();
 
+
         encerrarRealtime();
 
 
         if (!estado.usuarioId) {
+
             return;
+
         }
 
 
         const canal =
             supabase
+
                 .channel(
                     "notificacoes-pagina"
                 )
@@ -1408,61 +1903,80 @@
                    --------------------------------------------- */
 
                 .on(
+
                     "postgres_changes",
+
                     {
+
                         event: "INSERT",
+
                         schema: "public",
+
                         table: CONFIG.tabela,
+
                         filter:
                             `usuario_id=eq.${estado.usuarioId}`
+
                     },
+
                     async function (
                         payload
                     ) {
 
                         console.info(
-                            "MusicalWorldNotificacoes: nova notificação recebida.",
+
+                            "MusicalWorldNotificacoes: " +
+                            "nova notificação recebida.",
+
                             payload.new
+
                         );
+
 
                         const nova =
                             payload.new;
 
 
                         if (
+
                             !nova ||
+
                             String(
                                 nova.usuario_id
                             ) !==
-                                String(
-                                    estado.usuarioId
-                                )
+                            String(
+                                estado.usuarioId
+                            )
+
                         ) {
+
                             return;
+
                         }
 
 
                         const jaExiste =
                             estado.notificacoes.some(
+
                                 notificacao =>
+
                                     String(
                                         notificacao.id
                                     ) ===
+
                                     String(
                                         nova.id
                                     )
+
                             );
 
+
                         if (jaExiste) {
+
                             return;
+
                         }
 
-
-                        /*
-                         * Insere a nova notificação no início da
-                         * lista porque a lista está ordenada da
-                         * mais recente para a mais antiga.
-                         */
 
                         estado.notificacoes.unshift(
                             nova
@@ -1471,7 +1985,9 @@
 
                         await carregarRemetentes();
 
+
                         renderizarNotificacoes();
+
                     }
                 )
 
@@ -1481,22 +1997,35 @@
                    --------------------------------------------- */
 
                 .on(
+
                     "postgres_changes",
+
                     {
+
                         event: "UPDATE",
+
                         schema: "public",
+
                         table: CONFIG.tabela,
+
                         filter:
                             `usuario_id=eq.${estado.usuarioId}`
+
                     },
+
                     function (
                         payload
                     ) {
 
                         console.info(
-                            "MusicalWorldNotificacoes: notificação atualizada.",
+
+                            "MusicalWorldNotificacoes: " +
+                            "notificação atualizada.",
+
                             payload.new
+
                         );
+
 
                         const atualizada =
                             payload.new;
@@ -1504,20 +2033,26 @@
 
                         const indice =
                             estado.notificacoes.findIndex(
+
                                 notificacao =>
+
                                     String(
                                         notificacao.id
                                     ) ===
+
                                     String(
                                         atualizada.id
                                     )
+
                             );
 
 
                         if (
                             indice === -1
                         ) {
+
                             return;
+
                         }
 
 
@@ -1528,6 +2063,7 @@
 
 
                         renderizarNotificacoes();
+
                     }
                 )
 
@@ -1537,20 +2073,28 @@
                    --------------------------------------------- */
 
                 .subscribe(
+
                     function (
                         status
                     ) {
 
                         console.info(
-                            "MusicalWorldNotificacoes: Realtime:",
+
+                            "MusicalWorldNotificacoes: " +
+                            "Realtime:",
+
                             status
+
                         );
+
                     }
+
                 );
 
 
         estado.canalRealtime =
             canal;
+
     }
 
 
@@ -1562,8 +2106,12 @@
 
         const botoes =
             document.querySelectorAll(
-                "#btnVoltar, [data-voltar-notificacoes]"
+
+                "#btnVoltar, " +
+                "[data-voltar-notificacoes]"
+
             );
+
 
         botoes.forEach(
             botao => {
@@ -1574,10 +2122,13 @@
 
                         window.location.href =
                             CONFIG.paginaAnterior;
+
                     }
                 );
+
             }
         );
+
     }
 
 
@@ -1592,8 +2143,11 @@
                 "btnTentarNovamente"
             );
 
+
         if (!botao) {
+
             return;
+
         }
 
 
@@ -1606,7 +2160,9 @@
                     botao.disabled =
                         true;
 
+
                     mostrarEstadoCarregando();
+
 
                     await carregarNotificacoes();
 
@@ -1615,21 +2171,31 @@
                 ) {
 
                     console.error(
-                        "MusicalWorldNotificacoes: erro ao tentar carregar novamente.",
+
+                        "MusicalWorldNotificacoes: " +
+                        "erro ao tentar carregar novamente.",
+
                         erro
+
                     );
 
+
                     mostrarEstadoErro(
+
                         "Ocorreu um problema ao carregar suas notificações."
+
                     );
 
                 } finally {
 
                     botao.disabled =
                         false;
+
                 }
+
             }
         );
+
     }
 
 
@@ -1642,25 +2208,24 @@
         if (
             estado.inicializado
         ) {
+
             return;
+
         }
 
 
         if (
             estado.carregando
         ) {
+
             return;
+
         }
 
 
         estado.carregando =
             true;
 
-
-        /*
-         * Mostra o estado de carregamento enquanto a sessão
-         * e as notificações estão sendo obtidas.
-         */
 
         mostrarEstadoCarregando();
 
@@ -1682,6 +2247,7 @@
                 throw new Error(
                     "Usuário não autenticado."
                 );
+
             }
 
 
@@ -1727,44 +2293,52 @@
         ) {
 
             console.error(
-                "MusicalWorldNotificacoes: erro ao inicializar.",
+
+                "MusicalWorldNotificacoes: " +
+                "erro ao inicializar.",
+
                 erro
+
             );
 
 
             const container =
                 obterContainer();
 
+
             if (container) {
+
                 container.innerHTML = "";
+
             }
 
 
             mostrarEstadoErro(
+
                 "Ocorreu um problema ao carregar suas notificações."
+
             );
 
         } finally {
-
-            /*
-             * Garantia adicional:
-             * depois que a inicialização termina, o estado
-             * "Carregando..." nunca deve permanecer visível.
-             */
 
             const carregando =
                 obterElemento(
                     "estadoCarregando"
                 );
 
+
             if (carregando) {
+
                 carregando.hidden = true;
+
             }
 
 
             estado.carregando =
                 false;
+
         }
+
     }
 
 
@@ -1780,13 +2354,17 @@
         estado.inicializado =
             false;
 
+
         estado.usuarioId =
             null;
+
 
         estado.notificacoes =
             [];
 
+
         estado.remetentes.clear();
+
     }
 
 
@@ -1807,6 +2385,7 @@
         iniciarRealtime,
 
         destruir
+
     };
 
 
@@ -1826,6 +2405,7 @@
     } else {
 
         inicializar();
+
     }
 
 

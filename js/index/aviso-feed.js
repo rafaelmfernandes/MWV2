@@ -2,7 +2,7 @@
    MUSICALWORLD — AVISO DO FEED
 
    Arquivo:
-   js/index/aviso.js
+   js/index/aviso-feed.js
 
    Responsabilidades:
    - Controlar o aviso inicial exibido no feed.
