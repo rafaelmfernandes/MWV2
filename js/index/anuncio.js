@@ -147,6 +147,7 @@
 
 
         if (!texto) {
+
             return "P";
         }
 
@@ -179,6 +180,7 @@
     function obterArtistaPerfil(perfil) {
 
         if (!perfil) {
+
             return {};
         }
 
@@ -195,6 +197,7 @@
     function obterDestaquePortfolio(perfil) {
 
         if (!perfil) {
+
             return null;
         }
 
@@ -206,6 +209,7 @@
 
 
         if (!portfolio.length) {
+
             return null;
         }
 
@@ -219,14 +223,10 @@
 
 
         if (!ativos.length) {
+
             return null;
         }
 
-
-        /*
-         * O feed deve utilizar o item marcado
-         * explicitamente como destaque do catálogo.
-         */
 
         const destaque =
             ativos.find(item => {
@@ -238,12 +238,6 @@
             });
 
 
-        /*
-         * Se não houver destaque_catalogo,
-         * não usamos nenhuma outra mídia como
-         * destaque automaticamente.
-         */
-
         return destaque || null;
     }
 
@@ -251,6 +245,7 @@
     function obterNomeTipo(tipo) {
 
         if (!tipo) {
+
             return "Artista";
         }
 
@@ -417,6 +412,7 @@
     function cancelarTimerVideo(video) {
 
         if (!video) {
+
             return;
         }
 
@@ -457,6 +453,7 @@
         videos.forEach(video => {
 
             if (video === exceptVideo) {
+
                 return;
             }
 
@@ -482,6 +479,7 @@
     function calcularVisibilidadeVideo(video) {
 
         if (!video) {
+
             return 0;
         }
 
@@ -545,11 +543,13 @@
     function reproduzirVideo(video) {
 
         if (!video) {
+
             return;
         }
 
 
         if (!videoEstaVisivel(video)) {
+
             return;
         }
 
@@ -581,6 +581,7 @@
     function agendarReproducaoVideo(video) {
 
         if (!video) {
+
             return;
         }
 
@@ -589,6 +590,7 @@
 
 
         if (!videoEstaVisivel(video)) {
+
             return;
         }
 
@@ -632,6 +634,7 @@
 
 
         if (!videos.length) {
+
             return;
         }
 
@@ -700,6 +703,7 @@
 
 
                         if (!video) {
+
                             return;
                         }
 
@@ -758,6 +762,7 @@
     function observarVideosExistentes() {
 
         if (!ANUNCIO_VIDEO_CONFIG.observer) {
+
             return;
         }
 
@@ -819,6 +824,7 @@
         const atualizar = () => {
 
             if (timeout) {
+
                 clearTimeout(timeout);
             }
 
@@ -860,6 +866,7 @@
     function transformarCardSemMidia(card) {
 
         if (!card) {
+
             return;
         }
 
@@ -889,6 +896,7 @@
 
 
         if (!identidade) {
+
             return;
         }
 
@@ -984,6 +992,14 @@
 
     /* =========================================================
        COMPARTILHAR PERFIL
+
+       Retorna:
+
+       true  = compartilhamento/cópia realizado
+       false = cancelado ou não realizado
+
+       O contador só será incrementado quando esta função
+       retornar true.
     ========================================================= */
 
     async function compartilharPerfil(
@@ -992,7 +1008,8 @@
     ) {
 
         if (!perfilId) {
-            return;
+
+            return false;
         }
 
 
@@ -1033,7 +1050,8 @@
                     dadosCompartilhamento
                 );
 
-                return;
+
+                return true;
             }
 
 
@@ -1054,7 +1072,7 @@
                 );
 
 
-                return;
+                return true;
             }
 
 
@@ -1063,6 +1081,9 @@
                 url.href
             );
 
+
+            return false;
+
         } catch (erro) {
 
             if (
@@ -1070,7 +1091,7 @@
                 erro.name === "AbortError"
             ) {
 
-                return;
+                return false;
             }
 
 
@@ -1078,6 +1099,65 @@
                 "MusicalWorld Anúncio: não foi possível compartilhar o perfil.",
                 erro
             );
+
+
+            return false;
+        }
+    }
+
+
+    /* =========================================================
+       REGISTRA O COMPARTILHAMENTO
+
+       A tabela compartilhamentos_perfis registra uma pessoa
+       compartilhando um determinado perfil.
+
+       Existe uma restrição única por:
+
+           perfil_id + usuario_id
+
+       Portanto, a mesma pessoa não aumenta novamente
+       o contador ao compartilhar o mesmo perfil várias vezes.
+    ========================================================= */
+
+    async function registrarCompartilhamento(card) {
+
+        if (!card) {
+
+            return false;
+        }
+
+
+        if (
+            !window.InteracoesPerfil ||
+            typeof window.InteracoesPerfil
+                .registrarCompartilhamento !==
+                "function"
+        ) {
+
+            console.warn(
+                "MusicalWorld Anúncio: componente de interações não possui registrarCompartilhamento()."
+            );
+
+
+            return false;
+        }
+
+
+        try {
+
+            return await window.InteracoesPerfil
+                .registrarCompartilhamento(card);
+
+        } catch (erro) {
+
+            console.error(
+                "MusicalWorld Anúncio: erro ao registrar compartilhamento.",
+                erro
+            );
+
+
+            return false;
         }
     }
 
@@ -1093,6 +1173,8 @@
        * Curtir
        * Comentar
        * Salvar
+       * Contadores
+       * Compartilhamentos
 
        O componente NÃO deve reconstruir o card.
     ========================================================= */
@@ -1100,6 +1182,7 @@
     function inicializarInteracoesCard(card) {
 
         if (!card) {
+
             return;
         }
 
@@ -1110,13 +1193,6 @@
                 .inicializarElemento !==
                 "function"
         ) {
-
-            /*
-             * O arquivo de interações pode ainda não
-             * ter sido carregado quando o card for criado.
-             *
-             * Nesse caso não quebramos o card.
-             */
 
             return;
         }
@@ -1145,6 +1221,7 @@
     ) {
 
         if (!perfil) {
+
             return null;
         }
 
@@ -1558,10 +1635,12 @@
         /* =====================================================
            AÇÕES SOCIAIS
 
-           Os três botões de interação possuem
-           data-interacao desde a criação.
+           Os botões possuem contadores próprios.
 
-           O compartilhamento continua independente.
+           O valor inicial é 0.
+
+           O componente interacoes-perfil.js carrega os
+           valores reais no banco depois que o card é criado.
         ===================================================== */
 
         const acoesHtml = `
@@ -1583,6 +1662,13 @@
                     <span class="ad-social-label">
                         Comentar
                     </span>
+
+                    <span
+                        class="interacoes-contador"
+                        aria-label="Quantidade de comentários"
+                    >
+                        0
+                    </span>
                 </button>
 
 
@@ -1599,6 +1685,13 @@
                     <span class="ad-social-label">
                         Curtir
                     </span>
+
+                    <span
+                        class="interacoes-contador"
+                        aria-label="Quantidade de curtidas"
+                    >
+                        0
+                    </span>
                 </button>
 
 
@@ -1612,6 +1705,13 @@
 
                     <span class="ad-social-label">
                         Compartilhar
+                    </span>
+
+                    <span
+                        class="interacoes-contador"
+                        aria-label="Quantidade de compartilhamentos"
+                    >
+                        0
                     </span>
                 </button>
 
@@ -1628,6 +1728,13 @@
 
                     <span class="ad-social-label">
                         Salvar
+                    </span>
+
+                    <span
+                        class="interacoes-contador"
+                        aria-label="Quantidade de pessoas que salvaram"
+                    >
+                        0
                     </span>
                 </button>
 
@@ -1744,6 +1851,7 @@
 
 
                 if (elementoInterativo) {
+
                     return;
                 }
 
@@ -1753,6 +1861,7 @@
 
 
                 if (!perfilId) {
+
                     return;
                 }
 
@@ -1920,7 +2029,6 @@
                             return;
                         }
 
-
                     } catch (erro) {
 
                         console.warn(
@@ -1993,9 +2101,28 @@
                         "artista";
 
 
-                    await compartilharPerfil(
-                        perfilId,
-                        nomeArtista
+                    /*
+                     * Primeiro executamos o compartilhamento.
+                     *
+                     * Somente se ele realmente for concluído
+                     * registramos a pessoa no banco.
+                     */
+
+                    const compartilhado =
+                        await compartilharPerfil(
+                            perfilId,
+                            nomeArtista
+                        );
+
+
+                    if (!compartilhado) {
+
+                        return;
+                    }
+
+
+                    await registrarCompartilhamento(
+                        card
                     );
                 }
             );
@@ -2074,7 +2201,13 @@
             configurarVisibilidadePaginaVideos,
 
         configurarScrollVideos:
-            configurarControleScrollVideos
+            configurarControleScrollVideos,
+
+        compartilharPerfil:
+            compartilharPerfil,
+
+        registrarCompartilhamento:
+            registrarCompartilhamento
     };
 
 

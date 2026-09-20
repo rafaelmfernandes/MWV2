@@ -12,6 +12,8 @@
    * Estilizar o modal de comentários.
    * Estilizar formulário de novo comentário.
    * Estilizar lista de comentários.
+   * Estilizar ações individuais dos comentários.
+   * Estilizar exclusão do próprio comentário.
    * Manter o componente independente do Index.
 ========================================================= */
 
@@ -758,6 +760,113 @@
 
 
 /* =========================================================
+   AÇÕES DO COMENTÁRIO
+========================================================= */
+
+.interacoes-comentario-acoes {
+
+    flex: 0 0 auto;
+
+    display: flex;
+
+    align-items: center;
+
+    margin-left: 8px;
+}
+
+
+/* =========================================================
+   BOTÃO EXCLUIR COMENTÁRIO
+========================================================= */
+
+.interacoes-comentario-excluir {
+
+    min-width: 34px;
+
+    height: 32px;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 5px;
+
+    padding:
+        0
+        8px;
+
+    border: 0;
+
+    border-radius: 8px;
+
+    background: transparent;
+
+    color: #98a2b3;
+
+    font-family: inherit;
+
+    font-size: 11px;
+
+    font-weight: 600;
+
+    line-height: 1;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.18s ease,
+        color 0.18s ease,
+        transform 0.18s ease;
+}
+
+
+.interacoes-comentario-excluir:hover {
+
+    background: #fff1f2;
+
+    color: #dc2626;
+}
+
+
+.interacoes-comentario-excluir:active {
+
+    transform: scale(0.95);
+}
+
+
+.interacoes-comentario-excluir:disabled {
+
+    opacity: 0.55;
+
+    cursor: wait;
+}
+
+
+.interacoes-comentario-excluir svg {
+
+    width: 16px;
+
+    height: 16px;
+
+    flex: 0 0 16px;
+}
+
+
+/* =========================================================
+   ESTADO DE CARREGAMENTO DO BOTÃO EXCLUIR
+========================================================= */
+
+.interacoes-comentario-excluir.carregando {
+
+    pointer-events: none;
+
+    opacity: 0.55;
+}
+
+
+/* =========================================================
    ESTADOS DA LISTA
 ========================================================= */
 
@@ -924,6 +1033,12 @@
     }
 
 
+    .interacoes-comentario {
+
+        gap: 8px;
+    }
+
+
     .interacoes-comentario-avatar {
 
         width: 34px;
@@ -939,6 +1054,28 @@
         flex-direction: column;
 
         gap: 2px;
+    }
+
+
+    .interacoes-comentario-acoes {
+
+        margin-left: 4px;
+    }
+
+
+    .interacoes-comentario-excluir {
+
+        width: 32px;
+
+        min-width: 32px;
+
+        padding: 0;
+    }
+
+
+    .interacoes-comentario-excluir span {
+
+        display: none;
     }
 }
 
@@ -956,6 +1093,7 @@
 
     .interacao-perfil-botao,
     .interacoes-comentario-enviar,
+    .interacoes-comentario-excluir,
     .interacoes-modal-comentarios-fechar {
 
         transition: none;

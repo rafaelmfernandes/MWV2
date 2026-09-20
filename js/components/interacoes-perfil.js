@@ -9,6 +9,11 @@
    - Controlar curtidas de perfis.
    - Controlar favoritos de perfis.
    - Controlar comentários de perfis.
+   - Permitir que o usuário exclua apenas os próprios
+     comentários.
+   - Confirmar a exclusão antes de remover o comentário.
+   - Atualizar o contador de comentários após exclusão.
+   - Controlar compartilhamentos de perfis.
    - Carregar os contadores das interações.
    - Identificar o usuário autenticado.
    - Trabalhar com os botões existentes nos cards.
@@ -24,6 +29,7 @@
    - curtidas_perfis
    - favoritos_perfis
    - comentarios_perfis
+   - compartilhamentos_perfis
 
    Todas as interações utilizam:
 
@@ -60,6 +66,9 @@
 
         tabelaComentarios:
             "comentarios_perfis",
+
+        tabelaCompartilhamentos:
+            "compartilhamentos_perfis",
 
         limiteComentarios: 20
 
@@ -402,6 +411,15 @@
     }
 
 
+    function localizarBotaoCompartilhar(container) {
+
+        return localizarBotao(
+            container,
+            "compartilhar"
+        );
+    }
+
+
     function localizarBotaoSalvar(container) {
 
         return localizarBotao(
@@ -533,7 +551,8 @@
             const [
                 curtidas,
                 favoritos,
-                comentarios
+                comentarios,
+                compartilhamentos
             ] = await Promise.all([
 
                 obterContagem(
@@ -551,6 +570,12 @@
                 obterContagem(
                     supabase,
                     CONFIG.tabelaComentarios,
+                    perfilId
+                ),
+
+                obterContagem(
+                    supabase,
+                    CONFIG.tabelaCompartilhamentos,
                     perfilId
                 )
 
@@ -638,6 +663,8 @@
                 favoritos,
 
                 comentarios,
+
+                compartilhamentos,
 
                 usuarioCurtiu,
 
@@ -732,6 +759,12 @@
             );
 
 
+        const botaoCompartilhar =
+            localizarBotaoCompartilhar(
+                container
+            );
+
+
         const botaoSalvar =
             localizarBotaoSalvar(
                 container
@@ -778,6 +811,19 @@
             atualizarContador(
                 botaoComentar,
                 dados.comentarios
+            );
+        }
+
+
+        if (botaoCompartilhar) {
+
+            botaoCompartilhar.dataset.interacao =
+                "compartilhar";
+
+
+            atualizarContador(
+                botaoCompartilhar,
+                dados.compartilhamentos
             );
         }
 
@@ -1152,6 +1198,182 @@
             if (botao) {
                 botao.disabled = false;
             }
+        }
+    }
+
+
+    /* =====================================================
+       REGISTRAR COMPARTILHAMENTO
+    ===================================================== */
+
+    async function registrarCompartilhamento(
+        container
+    ) {
+
+        const supabase =
+            obterSupabase();
+
+
+        if (!supabase) {
+            return false;
+        }
+
+
+        let dados =
+            estado.get(container);
+
+
+        if (!dados) {
+
+            await carregarEstado(
+                container
+            );
+
+            dados =
+                estado.get(container);
+        }
+
+
+        if (!dados) {
+            return false;
+        }
+
+
+        const usuario =
+            dados.usuario ||
+            await obterUsuarioAtual();
+
+
+        /*
+         * O compartilhamento pode continuar funcionando
+         * mesmo sem usuário autenticado.
+         *
+         * Porém, para registrar "pessoas que compartilharam",
+         * precisamos de um usuário identificado.
+         */
+
+        if (!usuario) {
+
+            console.warn(
+                "MusicalWorld Interações: compartilhamento não registrado porque não há usuário autenticado."
+            );
+
+            return false;
+        }
+
+
+        try {
+
+            /*
+             * A tabela possui uma restrição UNIQUE:
+             *
+             * perfil_id + usuario_id
+             *
+             * Portanto, a mesma pessoa só é contabilizada
+             * uma vez para aquele perfil.
+             */
+
+            const resultado =
+                await supabase
+                    .from(
+                        CONFIG.tabelaCompartilhamentos
+                    )
+                    .insert({
+
+                        perfil_id:
+                            dados.perfilId,
+
+                        usuario_id:
+                            usuario.id
+
+                    });
+
+
+            /*
+             * Se o registro já existir, a restrição UNIQUE
+             * poderá retornar erro. Nesse caso não
+             * incrementamos o contador novamente.
+             */
+
+            if (resultado.error) {
+
+                const mensagem =
+                    String(
+                        resultado.error.message ||
+                        ""
+                    ).toLowerCase();
+
+
+                const codigo =
+                    String(
+                        resultado.error.code ||
+                        ""
+                    );
+
+
+                const duplicado =
+                    codigo === "23505" ||
+                    mensagem.includes(
+                        "duplicate"
+                    ) ||
+                    mensagem.includes(
+                        "unique"
+                    );
+
+
+                if (duplicado) {
+
+                    return false;
+                }
+
+
+                throw resultado.error;
+            }
+
+
+            dados.compartilhamentos += 1;
+
+
+            dados.usuario =
+                usuario;
+
+
+            dados.usuarioId =
+                usuario.id;
+
+
+            estado.set(
+                container,
+                dados
+            );
+
+
+            atualizarInterface(
+                container
+            );
+
+
+            return true;
+
+        } catch (erro) {
+
+            console.error(
+                "MusicalWorld Interações: erro ao registrar compartilhamento.",
+                erro
+            );
+
+
+            /*
+             * Recarrega o estado para garantir que o
+             * contador visual não fique divergente.
+             */
+
+            await carregarEstado(
+                container
+            );
+
+
+            return false;
         }
     }
 
@@ -1820,6 +2042,15 @@
         }
 
 
+        const dados =
+            estado.get(container);
+
+
+        const usuarioAtualId =
+            dados?.usuarioId ||
+            null;
+
+
         lista.innerHTML =
             comentarios
                 .map(
@@ -1875,12 +2106,55 @@
                                 `;
 
 
+                        /*
+                         * Só o próprio autor pode receber
+                         * visualmente o botão de exclusão.
+                         *
+                         * A proteção real também é feita
+                         * novamente em excluirComentario()
+                         * antes do DELETE.
+                         */
+
+                        const ehDoUsuarioAtual =
+                            Boolean(
+                                usuarioAtualId &&
+                                comentario.usuario_id &&
+                                String(
+                                    comentario.usuario_id
+                                ) === String(
+                                    usuarioAtualId
+                                )
+                            );
+
+
+                        const botaoExcluir =
+                            ehDoUsuarioAtual
+                                ? `
+
+                                    <button
+                                        type="button"
+                                        class="interacoes-comentario-excluir"
+                                        data-comentario-id="${escaparHtml(
+                                            comentario.id
+                                        )}"
+                                        aria-label="Excluir comentário"
+                                    >
+                                        Excluir
+                                    </button>
+
+                                `
+                                : "";
+
+
                         return `
 
                             <article
                                 class="interacoes-comentario"
                                 data-comentario-id="${escaparHtml(
                                     comentario.id
+                                )}"
+                                data-usuario-id="${escaparHtml(
+                                    comentario.usuario_id
                                 )}"
                             >
 
@@ -1923,6 +2197,11 @@
                                         )}
                                     </p>
 
+
+                                    ${
+                                        botaoExcluir
+                                    }
+
                                 </div>
 
                             </article>
@@ -1932,6 +2211,11 @@
                 )
                 .join("");
 
+
+        /*
+         * Trata falhas no carregamento da imagem
+         * do avatar.
+         */
 
         lista
             .querySelectorAll(
@@ -1986,6 +2270,396 @@
                     );
                 }
             );
+
+
+        /*
+         * Eventos dos botões de exclusão.
+         *
+         * Como a lista é reconstruída depois de cada
+         * carregamento, os eventos são adicionados
+         * novamente aos botões existentes.
+         */
+
+        lista
+            .querySelectorAll(
+                ".interacoes-comentario-excluir"
+            )
+            .forEach(
+                botao => {
+
+                    botao.addEventListener(
+                        "click",
+                        async evento => {
+
+                            evento.preventDefault();
+
+                            evento.stopPropagation();
+
+
+                            const comentarioId =
+                                botao.dataset.comentarioId;
+
+
+                            if (!comentarioId) {
+                                return;
+                            }
+
+
+                            await excluirComentario(
+                                container,
+                                comentarioId,
+                                botao
+                            );
+
+                        }
+                    );
+                }
+            );
+    }
+
+
+    /* =====================================================
+       EXCLUIR COMENTÁRIO
+    ===================================================== */
+
+    async function excluirComentario(
+        container,
+        comentarioId,
+        botao
+    ) {
+
+        const supabase =
+            obterSupabase();
+
+
+        if (!supabase) {
+            return;
+        }
+
+
+        if (!container || !comentarioId) {
+            return;
+        }
+
+
+        let dados =
+            estado.get(container);
+
+
+        if (!dados) {
+
+            await carregarEstado(
+                container
+            );
+
+            dados =
+                estado.get(container);
+        }
+
+
+        if (!dados) {
+            return;
+        }
+
+
+        /*
+         * Precisamos obrigatoriamente de um usuário
+         * autenticado para permitir a exclusão.
+         */
+
+        const usuario =
+            dados.usuario ||
+            await obterUsuarioAtual();
+
+
+        if (!usuario) {
+
+            alert(
+                "Você precisa estar conectado para excluir um comentário."
+            );
+
+            return;
+        }
+
+
+        /*
+         * Primeiro localizamos o comentário no DOM.
+         */
+
+        const artigo =
+            containerComentariosAtual === container
+                ? modalComentariosAtual
+                    ?.querySelector(
+                        `.interacoes-comentario[data-comentario-id="${CSS.escape(
+                            String(comentarioId)
+                        )}"]`
+                    )
+                : null;
+
+
+        /*
+         * Proteção adicional:
+         *
+         * Antes de excluir, buscamos novamente o comentário
+         * no banco e verificamos quem é o proprietário.
+         *
+         * Dessa forma, não confiamos apenas no botão
+         * exibido no navegador.
+         */
+
+        try {
+
+            const consulta =
+                await supabase
+                    .from(
+                        CONFIG.tabelaComentarios
+                    )
+                    .select(
+                        "id, perfil_id, usuario_id"
+                    )
+                    .eq(
+                        "id",
+                        comentarioId
+                    )
+                    .eq(
+                        "perfil_id",
+                        dados.perfilId
+                    )
+                    .maybeSingle();
+
+
+            if (consulta.error) {
+                throw consulta.error;
+            }
+
+
+            const comentarioBanco =
+                consulta.data;
+
+
+            /*
+             * Comentário inexistente.
+             */
+
+            if (!comentarioBanco) {
+
+                alert(
+                    "Este comentário não está mais disponível."
+                );
+
+
+                await carregarComentarios(
+                    container
+                );
+
+
+                await carregarEstado(
+                    container
+                );
+
+
+                return;
+            }
+
+
+            /*
+             * PROTEÇÃO PRINCIPAL NO JAVASCRIPT:
+             *
+             * O usuário atual precisa ser exatamente
+             * o mesmo usuário que criou o comentário.
+             */
+
+            if (
+                !comentarioBanco.usuario_id ||
+                String(
+                    comentarioBanco.usuario_id
+                ) !== String(
+                    usuario.id
+                )
+            ) {
+
+                console.warn(
+                    "MusicalWorld Interações: tentativa de excluir comentário de outro usuário bloqueada."
+                );
+
+
+                alert(
+                    "Você só pode excluir os seus próprios comentários."
+                );
+
+
+                return;
+            }
+
+
+            /*
+             * Confirmação antes da exclusão.
+             */
+
+            const confirmar =
+                window.confirm(
+                    "Excluir este comentário?\n\nEssa ação não poderá ser desfeita."
+                );
+
+
+            if (!confirmar) {
+                return;
+            }
+
+
+            if (botao) {
+
+                botao.disabled =
+                    true;
+
+                botao.textContent =
+                    "Excluindo...";
+            }
+
+
+            /*
+             * O DELETE utiliza três filtros:
+             *
+             * 1. id do comentário;
+             * 2. perfil ao qual pertence;
+             * 3. usuário proprietário.
+             *
+             * Mesmo que alguém tente alterar o DOM,
+             * não será possível excluir outro comentário
+             * por esta função.
+             */
+
+            const resultado =
+                await supabase
+                    .from(
+                        CONFIG.tabelaComentarios
+                    )
+                    .delete()
+                    .eq(
+                        "id",
+                        comentarioId
+                    )
+                    .eq(
+                        "perfil_id",
+                        dados.perfilId
+                    )
+                    .eq(
+                        "usuario_id",
+                        usuario.id
+                    );
+
+
+            if (resultado.error) {
+                throw resultado.error;
+            }
+
+
+            /*
+             * Atualiza o estado local somente depois
+             * que o DELETE foi confirmado pelo Supabase.
+             */
+
+            dados.comentarios =
+                Math.max(
+                    0,
+                    Number(
+                        dados.comentarios || 0
+                    ) - 1
+                );
+
+
+            dados.usuario =
+                usuario;
+
+
+            dados.usuarioId =
+                usuario.id;
+
+
+            estado.set(
+                container,
+                dados
+            );
+
+
+            /*
+             * Atualiza imediatamente o contador
+             * no card.
+             */
+
+            atualizarInterface(
+                container
+            );
+
+
+            /*
+             * Remove imediatamente o elemento da lista
+             * para dar resposta visual rápida ao usuário.
+             */
+
+            if (artigo && artigo.parentNode) {
+
+                artigo.remove();
+            }
+
+
+            /*
+             * Recarrega os comentários para garantir que
+             * a interface esteja exatamente sincronizada
+             * com o banco.
+             */
+
+            await carregarComentarios(
+                container
+            );
+
+
+            /*
+             * Recarrega o contador real do banco.
+             *
+             * Isso evita divergência caso outra pessoa tenha
+             * publicado/excluído comentários enquanto o modal
+             * estava aberto.
+             */
+
+            await carregarEstado(
+                container
+            );
+
+        } catch (erro) {
+
+            console.error(
+                "MusicalWorld Interações: erro ao excluir comentário.",
+                erro
+            );
+
+
+            /*
+             * Se a exclusão falhar, recuperamos o estado
+             * real do banco e não alteramos o contador
+             * permanentemente.
+             */
+
+            await carregarEstado(
+                container
+            );
+
+
+            alert(
+                "Não foi possível excluir o comentário."
+            );
+
+        } finally {
+
+            if (botao) {
+
+                botao.disabled =
+                    false;
+
+                botao.textContent =
+                    "Excluir";
+            }
+        }
     }
 
 
@@ -2254,7 +2928,7 @@
 
     /* =====================================================
        DELEGAÇÃO GLOBAL DE CLIQUES
-       
+
        IMPORTANTE:
 
        Os cards do Index são criados dinamicamente.
@@ -2504,7 +3178,11 @@
 
         alternarFavorito,
 
+        registrarCompartilhamento,
+
         enviarComentario,
+
+        excluirComentario,
 
         alternarComentarios,
 
