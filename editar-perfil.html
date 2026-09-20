@@ -4,12 +4,12 @@
 
 <head>
 
-
 <meta charset="UTF-8">
 
 <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
+name="viewport"
+content="width=device-width, initial-scale=1.0"
+
 >
 
 <title>Editar Perfil | MusicalWorld</title>
@@ -34,7 +34,6 @@
     href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
     rel="stylesheet"
 >
-
 
 </head>
 
@@ -106,7 +105,6 @@
     style="display: none;"
 ></div>
 
-
 <!-- =================================================
      ABAS
 ================================================== -->
@@ -130,7 +128,6 @@
 
     </button>
 
-
     <button
         type="button"
         class="editor-tab"
@@ -144,7 +141,6 @@
         </span>
 
     </button>
-
 
     <button
         type="button"
@@ -160,11 +156,22 @@
 
     </button>
 
+    <!--
+        SOMENTE ARTISTA
+
+        A aba permanece no HTML porque o editor
+        universal utiliza a mesma estrutura para
+        artistas e contratantes.
+
+        O PerfilEditorUI.js irá ocultá-la para
+        usuários do tipo contratante.
+    -->
 
     <button
         type="button"
         class="editor-tab"
         data-editor-tab="servicos"
+        data-perfil-somente="artista"
     >
 
         <i data-lucide="briefcase-business"></i>
@@ -176,7 +183,6 @@
     </button>
 
 </nav>
-
 
 <!-- =================================================
      ABA — INFORMAÇÕES
@@ -191,7 +197,7 @@
          FOTO DO PERFIL
     ============================================== -->
 
-    <section class="perfil-card foto-card">
+    <section class="perfil-card">
 
         <div class="secao-cabecalho">
 
@@ -215,7 +221,6 @@
 
         </div>
 
-
         <div class="foto-editor">
 
             <div class="foto-preview-wrapper">
@@ -238,7 +243,6 @@
 
             </div>
 
-
             <div class="foto-acoes">
 
                 <label
@@ -252,13 +256,11 @@
 
                 </label>
 
-
                 <input
                     type="file"
                     id="inputFoto"
                     accept="image/*"
                 >
-
 
                 <button
                     type="button"
@@ -274,7 +276,6 @@
 
             </div>
 
-
             <span class="foto-ajuda">
                 JPG ou PNG. Recomendamos uma imagem quadrada.
             </span>
@@ -282,7 +283,6 @@
         </div>
 
     </section>
-
 
     <!-- =============================================
          INFORMAÇÕES PESSOAIS
@@ -312,7 +312,6 @@
 
         </div>
 
-
         <div class="form-grid">
 
             <div class="campo">
@@ -330,7 +329,6 @@
                 >
 
             </div>
-
 
             <div class="campo">
 
@@ -352,7 +350,6 @@
 
             </div>
 
-
             <div class="campo">
 
                 <label for="telefone">
@@ -369,8 +366,14 @@
 
             </div>
 
+            <!--
+                SOMENTE ARTISTA
+            -->
 
-            <div class="campo">
+            <div
+                class="campo"
+                data-perfil-somente="artista"
+            >
 
                 <label for="tipoArtista">
                     Tipo de perfil
@@ -437,7 +440,6 @@
 
     </section>
 
-
     <!-- =============================================
          LOCALIZAÇÃO
     ============================================== -->
@@ -455,17 +457,16 @@
             <div>
 
                 <h2>
-                    Localização e atendimento
+                    Localização
                 </h2>
 
                 <p>
-                    Informe onde você está e onde pode realizar seus trabalhos.
+                    Informe onde você está localizado.
                 </p>
 
             </div>
 
         </div>
-
 
         <div class="form-grid">
 
@@ -484,8 +485,14 @@
 
             </div>
 
+            <!--
+                SOMENTE ARTISTA
+            -->
 
-            <div class="campo">
+            <div
+                class="campo"
+                data-perfil-somente="artista"
+            >
 
                 <label for="areaAtendimento">
                     Área de atendimento
@@ -503,7 +510,6 @@
         </div>
 
     </section>
-
 
     <!-- =============================================
          SOBRE
@@ -526,13 +532,12 @@
                 </h2>
 
                 <p>
-                    Conte um pouco sobre sua experiência e seu trabalho.
+                    Conte um pouco sobre você e sua trajetória.
                 </p>
 
             </div>
 
         </div>
-
 
         <div class="campo">
 
@@ -548,7 +553,6 @@
                 placeholder="Conte um pouco sobre você, sua trajetória e seu trabalho..."
             ></textarea>
 
-
             <div class="contador-caracteres">
 
                 <span id="contadorDescricao">
@@ -561,8 +565,14 @@
 
         </div>
 
+        <!--
+            SOMENTE ARTISTA
+        -->
 
-        <div class="campo">
+        <div
+            class="campo"
+            data-perfil-somente="artista"
+        >
 
             <label for="experiencia">
                 Experiência
@@ -579,12 +589,15 @@
 
     </section>
 
-
     <!-- =============================================
          ESTILOS / ESPECIALIDADES
+         SOMENTE ARTISTA
     ============================================== -->
 
-    <section class="perfil-card">
+    <section
+        class="perfil-card"
+        data-perfil-somente="artista"
+    >
 
         <div class="secao-cabecalho">
 
@@ -608,7 +621,6 @@
 
         </div>
 
-
         <div class="campo">
 
             <label>
@@ -619,14 +631,12 @@
                 Selecione os estilos musicais que representam seu trabalho.
             </span>
 
-
             <div
                 class="chips estilos-container"
                 id="estilos"
             ></div>
 
         </div>
-
 
         <div
             class="campo campo-instrumentos"
@@ -641,7 +651,6 @@
                 Selecione um ou mais instrumentos que você toca.
             </span>
 
-
             <div
                 class="chips instrumentos-container"
                 id="instrumentos"
@@ -651,12 +660,15 @@
 
     </section>
 
-
     <!-- =============================================
          DISPONIBILIDADE
+         SOMENTE ARTISTA
     ============================================== -->
 
-    <section class="perfil-card">
+    <section
+        class="perfil-card"
+        data-perfil-somente="artista"
+    >
 
         <div class="secao-cabecalho">
 
@@ -680,7 +692,6 @@
 
         </div>
 
-
         <label
             class="switch-row"
             for="disponivel"
@@ -698,20 +709,17 @@
 
             </span>
 
-
             <input
                 type="checkbox"
                 id="disponivel"
                 name="disponivel"
             >
 
-
             <span class="switch"></span>
 
         </label>
 
     </section>
-
 
     <!-- =============================================
          CONTA
@@ -741,7 +749,6 @@
 
         </div>
 
-
         <div class="campo">
 
             <label for="emailConta">
@@ -762,7 +769,6 @@
         </div>
 
     </section>
-
 
     <!-- =============================================
          PUBLICAÇÃO
@@ -792,7 +798,6 @@
 
         </div>
 
-
         <label
             class="switch-row"
             for="perfilPublicado"
@@ -810,13 +815,11 @@
 
             </span>
 
-
             <input
                 type="checkbox"
                 id="perfilPublicado"
                 name="perfilPublicado"
             >
-
 
             <span class="switch"></span>
 
@@ -826,9 +829,9 @@
 
 </section>
 
-
 <!-- =================================================
      ABA — PORTFÓLIO
+     DISPONÍVEL PARA ARTISTA E CONTRATANTE
 ================================================== -->
 
 <section
@@ -837,10 +840,6 @@
 >
 
     <section class="perfil-card">
-
-        <!-- =========================================
-             CABEÇALHO DO PORTFÓLIO
-        ========================================== -->
 
         <div class="secao-cabecalho">
 
@@ -863,11 +862,6 @@
             </div>
 
         </div>
-
-
-        <!-- =========================================
-             FORMULÁRIO DE NOVO ITEM
-        ========================================== -->
 
         <div
             id="portfolioForm"
@@ -896,11 +890,6 @@
 
             </div>
 
-
-            <!-- =====================================
-                 TIPO DE CONTEÚDO
-            ====================================== -->
-
             <div class="campo">
 
                 <label>
@@ -910,7 +899,6 @@
                 <span class="campo-ajuda">
                     Escolha o tipo de conteúdo que deseja adicionar.
                 </span>
-
 
                 <div
                     class="portfolio-tipo-tabs"
@@ -934,7 +922,6 @@
 
                     </button>
 
-
                     <button
                         type="button"
                         class="portfolio-tipo"
@@ -950,7 +937,6 @@
                         </span>
 
                     </button>
-
 
                     <button
                         type="button"
@@ -972,11 +958,6 @@
 
             </div>
 
-
-            <!-- =====================================
-                 TÍTULO
-            ====================================== -->
-
             <div class="campo">
 
                 <label for="portfolioTitulo">
@@ -993,11 +974,6 @@
 
             </div>
 
-
-            <!-- =====================================
-                 DESCRIÇÃO
-            ====================================== -->
-
             <div class="campo">
 
                 <label for="portfolioDescricao">
@@ -1013,11 +989,6 @@
                 ></textarea>
 
             </div>
-
-
-            <!-- =====================================
-                 ARQUIVO
-            ====================================== -->
 
             <div class="portfolio-arquivo-group">
 
@@ -1041,11 +1012,6 @@
 
             </div>
 
-
-            <!-- =====================================
-                 LINK EXTERNO
-            ====================================== -->
-
             <div class="portfolio-url-group">
 
                 <label for="portfolioUrl">
@@ -1064,11 +1030,6 @@
                 </span>
 
             </div>
-
-
-            <!-- =====================================
-                 AÇÃO
-            ====================================== -->
 
             <div class="portfolio-form-actions">
 
@@ -1089,11 +1050,6 @@
 
         </div>
 
-
-        <!-- =========================================
-             ITENS EXISTENTES
-        ========================================== -->
-
         <div
             id="portfolioEditList"
             class="portfolio-edit-list"
@@ -1103,9 +1059,9 @@
 
 </section>
 
-
 <!-- =================================================
      ABA — AGENDA
+     DISPONÍVEL PARA ARTISTA E CONTRATANTE
 ================================================== -->
 
 <section
@@ -1123,7 +1079,6 @@
 
             </div>
 
-
             <div>
 
                 <h2>
@@ -1138,19 +1093,9 @@
 
         </div>
 
-
-        <!-- =========================================
-             FORMULÁRIO DA AGENDA
-        ========================================== -->
-
         <div class="agenda-form">
 
             <div class="form-grid">
-
-
-                <!-- =================================
-                     TÍTULO
-                ================================== -->
 
                 <div class="campo">
 
@@ -1165,16 +1110,6 @@
                     >
 
                 </div>
-
-
-                <!-- =================================
-                     TIPO
-                     
-                     IMPORTANTE:
-                     Estes valores correspondem exatamente
-                     ao CHECK CONSTRAINT da tabela
-                     agenda_musicos.
-                ================================== -->
 
                 <div class="campo">
 
@@ -1208,11 +1143,6 @@
 
                 </div>
 
-
-                <!-- =================================
-                     DATA E HORA DE INÍCIO
-                ================================== -->
-
                 <div class="campo">
 
                     <label for="agendaInicio">
@@ -1225,13 +1155,6 @@
                     >
 
                 </div>
-
-
-                <!-- =================================
-                     DATA E HORA DE TÉRMINO
-                     
-                     O banco permite NULL neste campo.
-                ================================== -->
 
                 <div class="campo">
 
@@ -1246,11 +1169,6 @@
 
                 </div>
 
-
-                <!-- =================================
-                     LOCALIZAÇÃO
-                ================================== -->
-
                 <div class="campo">
 
                     <label for="agendaLocalizacao">
@@ -1264,16 +1182,6 @@
                     >
 
                 </div>
-
-
-                <!-- =================================
-                     STATUS
-                     
-                     IMPORTANTE:
-                     Estes valores correspondem exatamente
-                     ao CHECK CONSTRAINT da tabela
-                     agenda_musicos.
-                ================================== -->
 
                 <div class="campo">
 
@@ -1303,11 +1211,6 @@
 
                 </div>
 
-
-                <!-- =================================
-                     DESCRIÇÃO
-                ================================== -->
-
                 <div class="campo">
 
                     <label for="agendaDescricao">
@@ -1323,11 +1226,6 @@
                 </div>
 
             </div>
-
-
-            <!-- =========================================
-                 BOTÃO DE ADIÇÃO
-            ========================================== -->
 
             <button
                 type="button"
@@ -1345,11 +1243,6 @@
 
         </div>
 
-
-        <!-- =========================================
-             LISTA DE AGENDAS
-        ========================================== -->
-
         <div
             id="agendaEditList"
             class="agenda-edit-list"
@@ -1359,14 +1252,15 @@
 
 </section>
 
-
 <!-- =================================================
      ABA — SERVIÇOS
+     SOMENTE ARTISTA
 ================================================== -->
 
 <section
     class="editor-panel"
     data-editor-panel="servicos"
+    data-perfil-somente="artista"
 >
 
     <section class="perfil-card">
@@ -1378,7 +1272,6 @@
                 <i data-lucide="briefcase-business"></i>
 
             </div>
-
 
             <div>
 
@@ -1394,22 +1287,14 @@
 
         </div>
 
-
         <div
             id="servicosList"
             class="servicos-edit-list"
         ></div>
 
-
-        <!--
-             Instrução para adicionar um novo serviço.
-             Este é o único conteúdo acrescentado nesta versão.
-        -->
-
         <p class="servico-instrucao">
             Para adicionar um novo serviço, clique no botão abaixo.
         </p>
-
 
         <button
             type="button"
@@ -1427,7 +1312,6 @@
 
 </section>
 
-
 <!-- =================================================
      AÇÕES FINAIS
 ================================================== -->
@@ -1441,7 +1325,6 @@
     >
         Cancelar
     </button>
-
 
     <button
         type="button"
@@ -1462,17 +1345,18 @@
 
 <!-- =====================================================
      MODAL — SERVIÇO
+     SOMENTE ARTISTA
 ====================================================== -->
 
 <div
     id="modalServico"
     class="modal-overlay"
     style="display: none;"
+    data-perfil-somente="artista"
 >
 
 
 <div class="modal">
-
 
     <div class="modal-header">
 
@@ -1488,7 +1372,6 @@
 
         </div>
 
-
         <button
             type="button"
             id="btnFecharModalServico"
@@ -1502,9 +1385,7 @@
 
     </div>
 
-
     <div class="modal-body">
-
 
         <div class="campo">
 
@@ -1520,7 +1401,6 @@
 
         </div>
 
-
         <div class="campo">
 
             <label for="servicoDescricao">
@@ -1535,9 +1415,7 @@
 
         </div>
 
-
         <div class="form-grid">
-
 
             <div class="campo">
 
@@ -1552,7 +1430,6 @@
                 >
 
             </div>
-
 
             <div class="campo">
 
@@ -1580,7 +1457,6 @@
 
         </div>
 
-
         <div
             class="campo"
             id="campoValorServico"
@@ -1600,7 +1476,6 @@
 
         </div>
 
-
         <label
             class="switch-row"
             for="servicoAtivo"
@@ -1618,7 +1493,6 @@
 
             </span>
 
-
             <input
                 type="checkbox"
                 id="servicoAtivo"
@@ -1631,7 +1505,6 @@
 
     </div>
 
-
     <div class="modal-footer">
 
         <button
@@ -1641,7 +1514,6 @@
         >
             Cancelar
         </button>
-
 
         <button
             type="button"
@@ -1740,11 +1612,6 @@
 <script src="js/perfil/PerfilEditorTipo.js"></script>
 
 <script src="js/perfil/PerfilPortfolio.js"></script>
-
-<!--
-     PerfilAgenda.js é o módulo responsável pela Agenda.
-     Ele deve ser a única implementação de CRUD da Agenda.
--->
 
 <script src="js/perfil/PerfilAgenda.js"></script>
 

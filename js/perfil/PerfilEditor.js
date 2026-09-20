@@ -25,6 +25,53 @@ Ele é responsável por:
 * decidir qual módulo deve executar cada ação;
 * controlar a navegação do editor.
 
+SUPORTE AOS TIPOS DE PERFIL:
+
+ARTISTA:
+
+* Foto
+* Nome
+* Nome de exibição
+* Telefone
+* E-mail
+* Localização
+* Sobre você
+* Tipo de artista
+* Área de atendimento
+* Experiência
+* Estilos
+* Instrumentos
+* Disponibilidade
+* Conta
+* Publicação
+* Portfólio
+* Agenda
+* Serviços
+
+CONTRATANTE:
+
+* Foto
+* Nome
+* Nome de exibição
+* Telefone
+* E-mail
+* Localização
+* Sobre você
+* Conta
+* Publicação
+* Portfólio
+* Agenda
+
+O contratante NÃO utiliza:
+
+* Tipo de artista
+* Área de atendimento
+* Experiência
+* Estilos
+* Instrumentos
+* Disponibilidade
+* Serviços
+
 ESTE MÓDULO NÃO É RESPONSÁVEL POR:
 
 * fazer consultas diretamente ao Supabase;
@@ -38,37 +85,7 @@ ESTE MÓDULO NÃO É RESPONSÁVEL POR:
 * implementar o CRUD de serviços;
 * implementar diretamente a seleção visual dos estilos.
 
-Essas responsabilidades ficam nos módulos especializados:
-
-PerfilEditorDados.js
-→ banco de dados e estado vindo do Supabase.
-
-PerfilEditorUI.js
-→ interface, formulário, avatar e publicação.
-
-PerfilEditorTipo.js
-→ tipos artísticos e recursos por tipo.
-
-PerfilEditorFoto.js
-→ seleção e upload da foto.
-
-PerfilAbas.js
-→ controle das abas.
-
-PerfilPortfolio.js
-→ portfólio.
-
-PerfilAgenda.js
-→ agenda.
-
-PerfilServicos.js
-→ serviços e valores.
-
-PerfilInstrumentos.js
-→ instrumentos.
-
-PerfilEstilos.js
-→ estilos musicais e seleção dos chips.
+Essas responsabilidades ficam nos módulos especializados.
 
 IMPORTANTE SOBRE PUBLICAÇÃO:
 
@@ -77,22 +94,13 @@ perfil_publicado NÃO é calculado neste arquivo.
 O valor deve ser definido pelo checkbox #perfilPublicado
 e salvo diretamente pelo PerfilEditorDados.js.
 
-Este arquivo não possui nenhuma regra que publique ou
-despublique automaticamente.
-
 IMPORTANTE SOBRE SERVIÇOS:
 
-Os serviços cadastrados com seus respectivos valores
-pertencem à tabela servicos_artistas.
+Serviços pertencem exclusivamente ao perfil de artista.
 
-O CRUD e a renderização dos serviços pertencem exclusivamente
-ao PerfilServicos.js.
-
-O PerfilEditor.js apenas configura o módulo e solicita
-o carregamento dos serviços.
-
-Não utilizar os chips de "servicos" do perfil para substituir
-os serviços cadastrados na tabela servicos_artistas.
+O PerfilEditor.js somente configura e solicita o
+carregamento do PerfilServicos quando o perfil atual
+for um artista.
 
 ============================================================ */
 
@@ -203,6 +211,15 @@ const estado = {
     perfilArtista:
         null,
 
+    tipoPerfil:
+        null,
+
+    isArtista:
+        false,
+
+    isContratante:
+        false,
+
 
     fotoArquivo:
         null,
@@ -247,29 +264,6 @@ const estado = {
 
 /* ========================================================
    IDs DOS ELEMENTOS DA INTERFACE
-
-   IMPORTANTE:
-
-   Estes IDs precisam corresponder exatamente ao HTML
-   atual de editar-perfil.html.
-
-   A versão anterior utilizava:
-
-   fotoInput: "fotoInput"
-   btnFoto: "btnFoto"
-
-   Porém o HTML atual utiliza:
-
-   inputFoto
-   btnRemoverFoto
-
-   O módulo PerfilEditorFoto também utiliza:
-
-   fotoPreview
-   fotoPlaceholder
-
-   Por isso todos os IDs relacionados à foto ficam
-   centralizados aqui.
    ======================================================== */
 
 const ids = {
@@ -324,15 +318,6 @@ const ids = {
 
     /* ====================================================
        COMPATIBILIDADE COM OUTROS MÓDULOS
-       ====================================================
-
-       Estes dois elementos pertenciam a uma versão
-       anterior da interface.
-
-       Eles não são utilizados pelo HTML atual da foto,
-       mas permanecem identificados aqui apenas para
-       evitar quebra caso algum módulo antigo ainda os
-       consulte.
        ==================================================== */
 
     avatarImage:
@@ -531,7 +516,150 @@ function el(id) {
 
     }
 
+
     return document.getElementById(id);
+
+}
+
+
+/* ========================================================
+   TIPO DE PERFIL
+   ======================================================== */
+
+function obterTipoPerfil() {
+
+    const tipo =
+        String(
+            estado.tipoPerfil || ""
+        )
+            .trim()
+            .toLowerCase();
+
+
+    if (
+        tipo === "artista" ||
+        tipo === "contratante"
+    ) {
+
+        return tipo;
+
+    }
+
+
+    if (estado.isArtista === true) {
+
+        return "artista";
+
+    }
+
+
+    if (estado.isContratante === true) {
+
+        return "contratante";
+
+    }
+
+
+    return "";
+
+}
+
+
+/* ========================================================
+   VERIFICAR ARTISTA
+   ======================================================== */
+
+function ehArtista() {
+
+    return obterTipoPerfil() === "artista";
+
+}
+
+
+/* ========================================================
+   VERIFICAR CONTRATANTE
+   ======================================================== */
+
+function ehContratante() {
+
+    return obterTipoPerfil() === "contratante";
+
+}
+
+
+/* ========================================================
+   ATUALIZAR ESTADO DO TIPO DE PERFIL
+   ======================================================== */
+
+function atualizarEstadoTipoPerfil(
+    resultado
+) {
+
+    if (!resultado) {
+
+        return;
+
+    }
+
+
+    if (
+        resultado.tipoPerfil
+    ) {
+
+        estado.tipoPerfil =
+            String(
+                resultado.tipoPerfil
+            )
+                .trim()
+                .toLowerCase();
+
+    }
+
+
+    if (
+        typeof resultado.isArtista === "boolean"
+    ) {
+
+        estado.isArtista =
+            resultado.isArtista;
+
+    }
+
+
+    if (
+        typeof resultado.isContratante === "boolean"
+    ) {
+
+        estado.isContratante =
+            resultado.isContratante;
+
+    }
+
+
+    if (
+        estado.tipoPerfil === "artista"
+    ) {
+
+        estado.isArtista =
+            true;
+
+        estado.isContratante =
+            false;
+
+    }
+
+
+    if (
+        estado.tipoPerfil === "contratante"
+    ) {
+
+        estado.isArtista =
+            false;
+
+        estado.isContratante =
+            true;
+
+    }
 
 }
 
@@ -551,6 +679,7 @@ function preencherTipoArtista(
 
     }
 
+
     if (
         window.PerfilEditorUI &&
         typeof window.PerfilEditorUI.preencherTipoArtista === "function"
@@ -565,6 +694,7 @@ function preencherTipoArtista(
 
     }
 
+
     console.warn(
         "PerfilEditor: PerfilEditorUI.preencherTipoArtista não está disponível."
     );
@@ -572,7 +702,9 @@ function preencherTipoArtista(
 }
 
 
-function obterTipoConfigurado(valor) {
+function obterTipoConfigurado(
+    valor
+) {
 
     if (
         window.PerfilEditorTipo &&
@@ -585,12 +717,15 @@ function obterTipoConfigurado(valor) {
 
     }
 
+
     return null;
 
 }
 
 
-function resolverTipo(valor) {
+function resolverTipo(
+    valor
+) {
 
     if (
         window.PerfilEditorTipo &&
@@ -602,6 +737,7 @@ function resolverTipo(valor) {
         );
 
     }
+
 
     return null;
 
@@ -625,6 +761,7 @@ function tipoPossuiRecurso(
 
     }
 
+
     return false;
 
 }
@@ -645,6 +782,7 @@ function tipoPossuiInstrumentos(
 
     }
 
+
     return false;
 
 }
@@ -652,9 +790,49 @@ function tipoPossuiInstrumentos(
 
 /* ========================================================
    CONFIGURAR INSTRUMENTOS POR TIPO
+   ========================================================
+
+   Somente artistas possuem instrumentos.
+
+   Para contratante:
+
+   - não inicializa PerfilInstrumentos;
+   - não carrega instrumentos;
+   - oculta o campo;
+   - não acessa perfilArtista.
+
    ======================================================== */
 
 function configurarInstrumentosPorTipo() {
+
+    if (!ehArtista()) {
+
+        if (
+            window.PerfilInstrumentos &&
+            typeof window.PerfilInstrumentos.destruir === "function"
+        ) {
+
+            window.PerfilInstrumentos.destruir();
+
+        }
+
+
+        const campoInstrumentos =
+            el("campoInstrumentos");
+
+
+        if (campoInstrumentos) {
+
+            campoInstrumentos.style.display =
+                "none";
+
+        }
+
+
+        return;
+
+    }
+
 
     const tipoAtual =
         estado.perfilArtista?.tipo_artista;
@@ -696,6 +874,7 @@ function configurarInstrumentosPorTipo() {
 
         }
 
+
         return;
 
     }
@@ -735,9 +914,20 @@ function configurarInstrumentosPorTipo() {
 
 /* ========================================================
    CONFIGURAR ESTILOS MUSICAIS
+   ========================================================
+
+   Somente artistas possuem estilos.
+
    ======================================================== */
 
 function configurarEstilos() {
+
+    if (!ehArtista()) {
+
+        return;
+
+    }
+
 
     if (!window.PerfilEstilos) {
 
@@ -778,6 +968,13 @@ function configurarEstilos() {
 
 function carregarEstilos() {
 
+    if (!ehArtista()) {
+
+        return;
+
+    }
+
+
     if (!window.PerfilEstilos) {
 
         return;
@@ -803,6 +1000,15 @@ function carregarEstilos() {
 
 /* ========================================================
    CONFIGURAR PORTFÓLIO
+   ========================================================
+
+   Portfólio permanece disponível para:
+
+   - artista;
+   - contratante.
+
+   Por isso não existe bloqueio por tipo aqui.
+
    ======================================================== */
 
 async function configurarPortfolioPorTipo() {
@@ -937,6 +1143,14 @@ function configurarModulos() {
         configurarPortfolioPorTipo;
 
 
+    contexto.ehArtista =
+        ehArtista;
+
+
+    contexto.ehContratante =
+        ehContratante;
+
+
     /* ====================================================
        UI
        ==================================================== */
@@ -1053,6 +1267,14 @@ function configurarModulos() {
 
     /* ====================================================
        SERVIÇOS
+       ====================================================
+
+       A configuração pode acontecer normalmente, mas o
+       módulo só será inicializado/carregado para artista.
+
+       Isso evita que o módulo de serviços execute lógica
+       artística para contratantes.
+
        ==================================================== */
 
     if (
@@ -1130,8 +1352,43 @@ async function carregarDados() {
     }
 
 
-    configurarEstilos();
+    /* ====================================================
+       ATUALIZAR TIPO DE PERFIL
+       ==================================================== */
 
+    atualizarEstadoTipoPerfil(
+        resultado
+    );
+
+
+    /* ====================================================
+       ATUALIZAR UI POR TIPO
+       ==================================================== */
+
+    if (
+        contexto.PerfilEditorUI &&
+        typeof contexto.PerfilEditorUI.atualizarInterfacePorTipoPerfil === "function"
+    ) {
+
+        contexto.PerfilEditorUI.atualizarInterfacePorTipoPerfil();
+
+    }
+
+
+    /* ====================================================
+       CONFIGURAÇÕES EXCLUSIVAS DE ARTISTA
+       ==================================================== */
+
+    if (ehArtista()) {
+
+        configurarEstilos();
+
+    }
+
+
+    /* ====================================================
+       FORMULÁRIO
+       ==================================================== */
 
     if (
         contexto.PerfilEditorUI &&
@@ -1143,11 +1400,27 @@ async function carregarDados() {
     }
 
 
-    carregarEstilos();
+    /* ====================================================
+       ESTILOS
+       ==================================================== */
 
+    if (ehArtista()) {
+
+        carregarEstilos();
+
+    }
+
+
+    /* ====================================================
+       INSTRUMENTOS
+       ==================================================== */
 
     configurarInstrumentosPorTipo();
 
+
+    /* ====================================================
+       PORTFÓLIO
+       ==================================================== */
 
     try {
 
@@ -1163,7 +1436,16 @@ async function carregarDados() {
     }
 
 
+    /* ====================================================
+       SERVIÇOS
+       ====================================================
+
+       SOMENTE ARTISTA.
+
+       ==================================================== */
+
     if (
+        ehArtista() &&
         contexto.PerfilServicos &&
         typeof contexto.PerfilServicos.carregar === "function"
     ) {
@@ -1183,6 +1465,14 @@ async function carregarDados() {
 
     }
 
+
+    /* ====================================================
+       AGENDA
+       ====================================================
+
+       Artista e contratante.
+
+       ==================================================== */
 
     if (
         contexto.PerfilAgenda &&
@@ -1296,6 +1586,10 @@ async function salvarSobre() {
     }
 
 
+    const artista =
+        ehArtista();
+
+
     const campoNome =
         el(ids.nome);
 
@@ -1366,30 +1660,54 @@ async function salvarSobre() {
         ).trim();
 
 
-    const experiencia =
-        String(
-            campoExperiencia?.value || ""
-        ).trim();
+    /* ====================================================
+       CAMPOS EXCLUSIVOS DO ARTISTA
+       ==================================================== */
+
+    let experiencia =
+        "";
 
 
-    const areaAtendimento =
-        String(
-            campoArea?.value || ""
-        ).trim();
+    let areaAtendimento =
+        "";
 
 
-    const tipoSelecionado =
-        String(
-            campoTipo?.value || ""
-        ).trim();
+    let tipoSelecionado =
+        "";
 
 
-    const disponivel =
-        campoDisponivel
-            ? Boolean(
-                campoDisponivel.checked
-            )
-            : true;
+    let disponivel =
+        true;
+
+
+    if (artista) {
+
+        experiencia =
+            String(
+                campoExperiencia?.value || ""
+            ).trim();
+
+
+        areaAtendimento =
+            String(
+                campoArea?.value || ""
+            ).trim();
+
+
+        tipoSelecionado =
+            String(
+                campoTipo?.value || ""
+            ).trim();
+
+
+        disponivel =
+            campoDisponivel
+                ? Boolean(
+                    campoDisponivel.checked
+                )
+                : true;
+
+    }
 
 
     const perfilPublicado =
@@ -1450,215 +1768,230 @@ async function salvarSobre() {
 
 
     /* ====================================================
-       TIPO ARTÍSTICO
+       DADOS ARTÍSTICOS
        ==================================================== */
 
     let tipoValidado =
-        resolverTipo(
-            tipoSelecionado
-        );
+        null;
 
 
-    if (!tipoValidado) {
+    let instrumentos =
+        [];
 
-        const tipoDaPagina =
-            contexto.PerfilEditorTipo &&
-            typeof contexto.PerfilEditorTipo.obterTipoDaPaginaAtual === "function"
 
-                ? contexto.PerfilEditorTipo.obterTipoDaPaginaAtual()
+    let estilos =
+        [];
 
-                : null;
 
+    let servicos =
+        [];
+
+
+    if (artista) {
+
+        /* ================================================
+           TIPO ARTÍSTICO
+           ================================================ */
 
         tipoValidado =
-            tipoDaPagina ||
-            null;
-
-    }
-
-
-    if (!tipoValidado) {
-
-        mostrarToast(
-            "Selecione um tipo artístico válido.",
-            "erro"
-        );
-
-        campoTipo?.focus();
-
-        return;
-
-    }
-
-
-    /* ====================================================
-       VERIFICAR ALTERAÇÃO DO TIPO
-       ==================================================== */
-
-    const tipoAnterior =
-        resolverTipo(
-            estado.perfilArtista?.tipo_artista
-        );
-
-
-    const tipoMudou =
-        Boolean(
-            tipoAnterior?.nome &&
-            tipoValidado?.nome &&
-            tipoAnterior.nome !== tipoValidado.nome
-        );
-
-
-    if (tipoMudou) {
-
-        const confirmar =
-            window.confirm(
-                `O tipo artístico será alterado de "${tipoAnterior.nome}" para "${tipoValidado.nome}". Deseja continuar?`
+            resolverTipo(
+                tipoSelecionado
             );
 
 
-        if (!confirmar) {
+        if (!tipoValidado) {
+
+            const tipoDaPagina =
+                contexto.PerfilEditorTipo &&
+                typeof contexto.PerfilEditorTipo.obterTipoDaPaginaAtual === "function"
+
+                    ? contexto.PerfilEditorTipo.obterTipoDaPaginaAtual()
+
+                    : null;
+
+
+            tipoValidado =
+                tipoDaPagina ||
+                null;
+
+        }
+
+
+        if (!tipoValidado) {
+
+            mostrarToast(
+                "Selecione um tipo artístico válido.",
+                "erro"
+            );
+
+            campoTipo?.focus();
 
             return;
 
         }
 
-    }
+
+        /* ================================================
+           VERIFICAR ALTERAÇÃO DO TIPO
+           ================================================ */
+
+        const tipoAnterior =
+            resolverTipo(
+                estado.perfilArtista?.tipo_artista
+            );
 
 
-    /* ====================================================
-       INSTRUMENTOS
-       ==================================================== */
+        const tipoMudou =
+            Boolean(
+                tipoAnterior?.nome &&
+                tipoValidado?.nome &&
+                tipoAnterior.nome !== tipoValidado.nome
+            );
 
-    let instrumentos = [];
+
+        if (tipoMudou) {
+
+            const confirmar =
+                window.confirm(
+                    `O tipo artístico será alterado de "${tipoAnterior.nome}" para "${tipoValidado.nome}". Deseja continuar?`
+                );
 
 
-    if (
-        tipoPossuiInstrumentos(
-            tipoValidado
-        )
-    ) {
+            if (!confirmar) {
+
+                return;
+
+            }
+
+        }
+
+
+        /* ================================================
+           INSTRUMENTOS
+           ================================================ */
 
         if (
-            contexto.PerfilInstrumentos &&
-            typeof contexto.PerfilInstrumentos.obterSelecionados === "function"
+            tipoPossuiInstrumentos(
+                tipoValidado
+            )
         ) {
 
-            instrumentos =
-                contexto.PerfilInstrumentos.obterSelecionados();
+            if (
+                contexto.PerfilInstrumentos &&
+                typeof contexto.PerfilInstrumentos.obterSelecionados === "function"
+            ) {
+
+                instrumentos =
+                    contexto.PerfilInstrumentos.obterSelecionados() || [];
+
+            } else if (
+                contexto.PerfilInstrumentos &&
+                typeof contexto.PerfilInstrumentos.obterValores === "function"
+            ) {
+
+                instrumentos =
+                    contexto.PerfilInstrumentos.obterValores() || [];
+
+            } else {
+
+                instrumentos =
+                    Array.isArray(
+                        estado.perfilArtista?.instrumentos
+                    )
+                        ? estado.perfilArtista.instrumentos
+                        : [];
+
+            }
+
+        }
+
+
+        /* ================================================
+           ESTILOS MUSICAIS
+           ================================================ */
+
+        if (
+            contexto.PerfilEstilos &&
+            typeof contexto.PerfilEstilos.obterSelecionados === "function"
+        ) {
+
+            estilos =
+                contexto.PerfilEstilos.obterSelecionados() || [];
 
         } else if (
-            contexto.PerfilInstrumentos &&
-            typeof contexto.PerfilInstrumentos.obterValores === "function"
+            window.PerfilEstilos &&
+            typeof window.PerfilEstilos.obterSelecionados === "function"
         ) {
 
-            instrumentos =
-                contexto.PerfilInstrumentos.obterValores();
+            estilos =
+                window.PerfilEstilos.obterSelecionados() || [];
+
+        } else if (
+            window.PerfilUtils &&
+            typeof window.PerfilUtils.obterChipsSelecionados === "function"
+        ) {
+
+            estilos =
+                window.PerfilUtils.obterChipsSelecionados(
+                    "estilos"
+                ) || [];
+
+        } else if (
+            window.PerfilUtils &&
+            typeof window.PerfilUtils.obterValoresChips === "function"
+        ) {
+
+            estilos =
+                window.PerfilUtils.obterValoresChips(
+                    "estilos"
+                ) || [];
 
         } else {
 
-            instrumentos =
+            estilos =
                 Array.isArray(
-                    estado.perfilArtista?.instrumentos
+                    estado.perfilArtista?.estilos
                 )
-                    ? estado.perfilArtista.instrumentos
+                    ? estado.perfilArtista.estilos
                     : [];
 
         }
 
-    }
 
+        /* ================================================
+           CHIPS DE SERVIÇOS DO PERFIL
+           ================================================ */
 
-    /* ====================================================
-       ESTILOS MUSICAIS
-       ==================================================== */
+        if (
+            window.PerfilUtils &&
+            typeof window.PerfilUtils.obterChipsSelecionados === "function"
+        ) {
 
-    let estilos = [];
+            servicos =
+                window.PerfilUtils.obterChipsSelecionados(
+                    "servicos"
+                ) || [];
 
+        } else if (
+            window.PerfilUtils &&
+            typeof window.PerfilUtils.obterValoresChips === "function"
+        ) {
 
-    if (
-        contexto.PerfilEstilos &&
-        typeof contexto.PerfilEstilos.obterSelecionados === "function"
-    ) {
+            servicos =
+                window.PerfilUtils.obterValoresChips(
+                    "servicos"
+                ) || [];
 
-        estilos =
-            contexto.PerfilEstilos.obterSelecionados() || [];
+        } else {
 
-    } else if (
-        window.PerfilEstilos &&
-        typeof window.PerfilEstilos.obterSelecionados === "function"
-    ) {
+            servicos =
+                Array.isArray(
+                    estado.perfilArtista?.servicos
+                )
+                    ? estado.perfilArtista.servicos
+                    : [];
 
-        estilos =
-            window.PerfilEstilos.obterSelecionados() || [];
-
-    } else if (
-        window.PerfilUtils &&
-        typeof window.PerfilUtils.obterChipsSelecionados === "function"
-    ) {
-
-        estilos =
-            window.PerfilUtils.obterChipsSelecionados(
-                "estilos"
-            ) || [];
-
-    } else if (
-        window.PerfilUtils &&
-        typeof window.PerfilUtils.obterValoresChips === "function"
-    ) {
-
-        estilos =
-            window.PerfilUtils.obterValoresChips(
-                "estilos"
-            ) || [];
-
-    } else {
-
-        estilos =
-            Array.isArray(
-                estado.perfilArtista?.estilos
-            )
-                ? estado.perfilArtista.estilos
-                : [];
-
-    }
-
-
-    /* ====================================================
-       CHIPS DE SERVIÇOS DO PERFIL
-       ==================================================== */
-
-    let servicos = [];
-
-
-    if (
-        window.PerfilUtils &&
-        typeof window.PerfilUtils.obterChipsSelecionados === "function"
-    ) {
-
-        servicos =
-            window.PerfilUtils.obterChipsSelecionados(
-                "servicos"
-            ) || [];
-
-    } else if (
-        window.PerfilUtils &&
-        typeof window.PerfilUtils.obterValoresChips === "function"
-    ) {
-
-        servicos =
-            window.PerfilUtils.obterValoresChips(
-                "servicos"
-            ) || [];
-
-    } else {
-
-        servicos =
-            Array.isArray(
-                estado.perfilArtista?.servicos
-            )
-                ? estado.perfilArtista.servicos
-                : [];
+        }
 
     }
 
@@ -1689,9 +2022,18 @@ async function salvarSobre() {
            ================================================= */
 
         let fotoUrl =
-            estado.perfilArtista?.foto_url ||
-            estado.usuario?.foto_url ||
-            null;
+            artista
+
+                ? (
+                    estado.perfilArtista?.foto_url ||
+                    estado.usuario?.foto_url ||
+                    null
+                )
+
+                : (
+                    estado.usuario?.foto_url ||
+                    null
+                );
 
 
         let resultadoFoto =
@@ -1784,12 +2126,6 @@ async function salvarSobre() {
 
         /* =================================================
            FINALIZAR FOTO
-
-           A foto anterior só deve ser removida depois
-           que o banco confirmar a nova URL.
-
-           Isso evita deixar o perfil sem foto caso
-           a atualização do banco falhe.
            ================================================= */
 
         if (
@@ -1806,7 +2142,7 @@ async function salvarSobre() {
 
 
         /* =================================================
-           REFLETIR PUBLICAÇÃO CONFIRMADA PELO BANCO
+           REFLETIR PUBLICAÇÃO
            ================================================= */
 
         if (
@@ -1828,26 +2164,52 @@ async function salvarSobre() {
 
 
         /* =================================================
-           ATUALIZAR TIPO LOCAL
+           ATUALIZAR DADOS COMUNS LOCALMENTE
            ================================================= */
 
-        if (
-            resultado?.perfilArtista?.tipo_artista
-        ) {
+        if (estado.usuario) {
 
-            estado.perfilArtista.tipo_artista =
-                resultado.perfilArtista.tipo_artista;
+            estado.usuario.nome =
+                nome;
+
+            estado.usuario.telefone =
+                telefone;
+
+        }
+
+
+        if (estado.perfil) {
+
+            estado.perfil.nome_exibicao =
+                nomeExibicao;
+
+            estado.perfil.descricao =
+                descricao;
+
+            estado.perfil.perfil_publicado =
+                perfilPublicado;
 
         }
 
 
         /* =================================================
-           ATUALIZAR FOTO LOCAL
+           ATUALIZAR DADOS ARTÍSTICOS LOCALMENTE
            ================================================= */
 
-        if (
-            fotoUrl
-        ) {
+        if (artista) {
+
+            if (
+                resultado?.perfilArtista
+            ) {
+
+                estado.perfilArtista =
+                    {
+                        ...estado.perfilArtista,
+                        ...resultado.perfilArtista
+                    };
+
+            }
+
 
             if (
                 !estado.perfilArtista
@@ -1859,45 +2221,92 @@ async function salvarSobre() {
             }
 
 
-            estado.perfilArtista.foto_url =
-                fotoUrl;
+            if (
+                tipoValidado?.nome
+            ) {
 
-        }
+                estado.perfilArtista.tipo_artista =
+                    tipoValidado.nome;
+
+            }
 
 
-        /*
-         * Mantemos os estilos salvos também no estado central.
-         */
+            if (
+                fotoUrl
+            ) {
 
-        if (
-            Array.isArray(
-                resultado?.perfilArtista?.estilos
-            )
-        ) {
+                estado.perfilArtista.foto_url =
+                    fotoUrl;
 
-            estado.perfilArtista.estilos =
+            }
+
+
+            estado.perfilArtista.experiencia =
+                experiencia;
+
+
+            estado.perfilArtista.area_atendimento =
+                areaAtendimento;
+
+
+            estado.perfilArtista.disponivel =
+                disponivel;
+
+
+            estado.perfilArtista.instrumentos =
                 [
-                    ...resultado.perfilArtista.estilos
+                    ...instrumentos
                 ];
 
-        } else {
 
             estado.perfilArtista.estilos =
                 [
                     ...estilos
                 ];
 
+
+            estado.perfilArtista.servicos =
+                [
+                    ...servicos
+                ];
+
         }
 
 
+        /* =================================================
+           ATUALIZAR FOTO NO USUÁRIO
+           ================================================= */
+
         if (
-            contexto.PerfilEditorUI &&
-            typeof contexto.PerfilEditorUI.atualizarTipo === "function"
+            fotoUrl &&
+            estado.usuario
         ) {
 
-            contexto.PerfilEditorUI.atualizarTipo(
-                estado.perfilArtista?.tipo_artista
-            );
+            estado.usuario.foto_url =
+                fotoUrl;
+
+        }
+
+
+        /* =================================================
+           ATUALIZAR TIPO VISUAL
+           ================================================= */
+
+        if (
+            artista &&
+            resultado?.perfilArtista?.tipo_artista
+        ) {
+
+            if (
+                contexto.PerfilEditorUI &&
+                typeof contexto.PerfilEditorUI.atualizarTipo === "function"
+            ) {
+
+                contexto.PerfilEditorUI.atualizarTipo(
+                    resultado.perfilArtista.tipo_artista
+                );
+
+            }
 
         }
 
@@ -1906,7 +2315,11 @@ async function salvarSobre() {
            ATUALIZAR INSTRUMENTOS
            ================================================= */
 
-        configurarInstrumentosPorTipo();
+        if (artista) {
+
+            configurarInstrumentosPorTipo();
+
+        }
 
 
         /* =================================================
@@ -1916,10 +2329,9 @@ async function salvarSobre() {
         preencherAvatar();
 
 
-        /*
-         * Depois que o salvamento terminou com sucesso,
-         * o arquivo temporário não é mais necessário.
-         */
+        /* =================================================
+           FINALIZAR ESTADO DA FOTO
+           ================================================= */
 
         estado.fotoArquivo =
             null;
@@ -2276,6 +2688,7 @@ function inicializarEventos() {
                     case "servicos":
 
                         if (
+                            ehArtista() &&
                             contexto.PerfilServicos &&
                             typeof contexto.PerfilServicos.salvar === "function"
                         ) {
@@ -2442,6 +2855,10 @@ async function iniciar() {
 
         /* =================================================
            PORTFÓLIO
+           =================================================
+
+           Disponível para artista e contratante.
+
            ================================================= */
 
         if (
@@ -2456,6 +2873,10 @@ async function iniciar() {
 
         /* =================================================
            AGENDA
+           =================================================
+
+           Disponível para artista e contratante.
+
            ================================================= */
 
         if (
@@ -2470,9 +2891,68 @@ async function iniciar() {
 
         /* =================================================
            SERVIÇOS
+           =================================================
+
+           Não inicializar a lógica de serviços para
+           contratante.
+
+           ================================================= */
+
+        /*
+
+           A inicialização será feita depois que os dados
+           forem carregados e o tipo de perfil for conhecido.
+
+        */
+
+
+        /* =================================================
+           ESTILOS MUSICAIS
+           =================================================
+
+           Não inicializar antes de saber se o usuário é
+           artista.
+
+           ================================================= */
+
+        /*
+
+           A inicialização será feita em carregarDados().
+
+        */
+
+
+        /* =================================================
+           CHIPS
+           =================================================
+
+           Os chips são inicializados somente quando
+           aplicáveis ao perfil.
+
+           ================================================= */
+
+        /*
+
+           PerfilEstilos poderá inicializar seus próprios
+           chips quando o perfil for identificado como
+           artista.
+
+        */
+
+
+        /* =================================================
+           CARREGAR DADOS
+           ================================================= */
+
+        await carregarDados();
+
+
+        /* =================================================
+           SERVIÇOS — ARTISTA
            ================================================= */
 
         if (
+            ehArtista() &&
             contexto.PerfilServicos &&
             typeof contexto.PerfilServicos.inicializar === "function"
         ) {
@@ -2483,10 +2963,11 @@ async function iniciar() {
 
 
         /* =================================================
-           ESTILOS MUSICAIS
+           ESTILOS — ARTISTA
            ================================================= */
 
         if (
+            ehArtista() &&
             contexto.PerfilEstilos &&
             typeof contexto.PerfilEstilos.inicializar === "function"
         ) {
@@ -2501,6 +2982,7 @@ async function iniciar() {
            ================================================= */
 
         if (
+            ehArtista() &&
             window.PerfilUtils &&
             typeof window.PerfilUtils.inicializarChips === "function"
         ) {
@@ -2508,13 +2990,6 @@ async function iniciar() {
             window.PerfilUtils.inicializarChips();
 
         }
-
-
-        /* =================================================
-           CARREGAR DADOS
-           ================================================= */
-
-        await carregarDados();
 
 
         inicializado =
@@ -2608,7 +3083,16 @@ return {
     carregarEstilos,
 
 
-    configurarPortfolioPorTipo
+    configurarPortfolioPorTipo,
+
+
+    obterTipoPerfil,
+
+
+    ehArtista,
+
+
+    ehContratante
 
 };
 

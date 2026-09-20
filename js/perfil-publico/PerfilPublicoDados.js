@@ -1,4 +1,3 @@
-
 /* =========================================================
    MUSICALWORLD — PERFIL PÚBLICO
 
@@ -6,27 +5,42 @@
    js/perfil-publico/PerfilPublicoDados.js
 
    Responsabilidades:
+
    - Obter o usuário atual.
    - Carregar o perfil principal.
-   - Carregar os dados artísticos.
-   - Carregar serviços.
-   - Carregar portfólio.
-   - Carregar agenda.
-   - Carregar avaliações.
+   - Identificar o tipo geral do perfil.
+   - Carregar dados artísticos somente para artistas.
+   - Carregar serviços somente para artistas.
+   - Carregar portfólio para qualquer tipo de perfil.
+   - Carregar agenda para qualquer tipo de perfil.
+   - Carregar avaliações para qualquer tipo de perfil.
+   - Centralizar os dados utilizados pelo Perfil Público.
+
+   REGRAS:
+
+   ARTISTA:
+   - perfis
+   - perfis_artistas
+   - servicos_artistas
+   - portfolio_musicos
+   - agenda_musicos
+   - avaliacoes_musicos
+
+   CONTRATANTE:
+   - perfis
+   - portfolio_musicos
+   - agenda_musicos
+   - avaliacoes_musicos
 
    IMPORTANTE:
-   Este módulo NÃO é específico de Cantor ou Músico.
 
-   Ele trabalha com a estrutura geral do perfil e pode
-   ser utilizado pelos diferentes tipos de artistas.
+   Este módulo NÃO decide qual tela, campo ou componente
+   deve aparecer.
 
-   Regras específicas de cada tipo devem ficar em:
+   Ele apenas identifica o tipo do perfil e fornece os
+   dados corretos para os módulos superiores.
 
-   js/perfis/
-
-   OBSERVAÇÃO:
-   Carteira e transações foram removidas deste módulo.
-   A parte financeira não pertence mais ao Perfil Público.
+   Carteira e transações NÃO pertencem mais ao Perfil Público.
 
 ========================================================= */
 
@@ -67,6 +81,16 @@
             avaliacoes:
                 "avaliacoes_musicos"
 
+        },
+
+        tiposPerfil: {
+
+            artista:
+                "artista",
+
+            contratante:
+                "contratante"
+
         }
 
     };
@@ -74,8 +98,6 @@
 
     /* =====================================================
        ESTADO INTERNO
-
-       Guarda somente os dados necessários ao Perfil Público.
     ===================================================== */
 
     const estado = {
@@ -92,21 +114,51 @@
         perfil:
             null,
 
+        /*
+         * Tipo geral do perfil.
+         *
+         * Valores possíveis:
+         *
+         * "artista"
+         * "contratante"
+         */
+        tipoPerfil:
+            null,
+
+        /*
+         * Dados específicos do artista.
+         *
+         * Para contratante permanece null.
+         */
         perfilArtista:
             null,
 
         perfilId:
             null,
 
+        /*
+         * Serviços existem somente para artistas.
+         *
+         * Para contratantes permanece [].
+         */
         servicos:
             [],
 
+        /*
+         * Portfólio é compartilhado entre os tipos.
+         */
         portfolio:
             [],
 
+        /*
+         * Agenda é compartilhada entre os tipos.
+         */
         agenda:
             [],
 
+        /*
+         * Avaliações são compartilhadas entre os tipos.
+         */
         avaliacoes:
             [],
 
@@ -123,7 +175,8 @@
     function obterClienteSupabase() {
 
         if (
-            estado.clienteSupabase
+            estado.clienteSupabase &&
+            typeof estado.clienteSupabase.from === "function"
         ) {
 
             return estado.clienteSupabase;
@@ -181,10 +234,12 @@
 
 
     /* =====================================================
-       OBTER USUÁRIO ATUAL
+       OBTER ID DO USUÁRIO ATUAL
 
-       Primeiro tenta utilizar UsuarioAtual.
-       Caso não esteja disponível, utiliza o Auth do Supabase.
+       Primeiro tenta UsuarioAtual.
+
+       Caso não esteja disponível, utiliza o Auth
+       do Supabase.
     ===================================================== */
 
     async function obterUsuarioId() {
@@ -276,7 +331,6 @@
                 erro
             );
 
-
             return null;
 
         }
@@ -305,6 +359,10 @@
             );
 
         }
+
+
+        estado.usuarioId =
+            id;
 
 
         const supabase =
@@ -362,7 +420,6 @@
                 erro
             );
 
-
             throw erro;
 
         }
@@ -372,6 +429,13 @@
 
     /* =====================================================
        CARREGAR PERFIS DO USUÁRIO
+
+       A relação com tipos_perfil é carregada junto.
+
+       Isso permite identificar corretamente:
+
+       artista
+       contratante
     ===================================================== */
 
     async function carregarPerfis(
@@ -391,6 +455,10 @@
             );
 
         }
+
+
+        estado.usuarioId =
+            id;
 
 
         const supabase =
@@ -451,7 +519,6 @@
                 erro
             );
 
-
             throw erro;
 
         }
@@ -460,7 +527,293 @@
 
 
     /* =====================================================
-       IDENTIFICAR PERFIL PRINCIPAL
+       NORMALIZAR TIPO DE PERFIL
+
+       Esta função trabalha somente com o tipo GERAL:
+
+       artista
+       contratante
+
+       Ela NÃO trata "Cantor(a)", "DJ", "Banda" etc.
+
+       Esses valores pertencem ao tipo artístico.
+    ===================================================== */
+
+    function normalizarTipoPerfil(
+        valor
+    ) {
+
+        if (
+            valor === null ||
+            valor === undefined
+        ) {
+
+            return null;
+
+        }
+
+
+        /*
+         * Caso seja um objeto vindo de relacionamento.
+         */
+
+        if (
+            typeof valor === "object"
+        ) {
+
+            valor =
+                valor.nome ||
+                valor.name ||
+                valor.tipo ||
+                valor.tipo_perfil ||
+                null;
+
+        }
+
+
+        if (
+            valor === null ||
+            valor === undefined
+        ) {
+
+            return null;
+
+        }
+
+
+        const texto =
+            String(valor)
+                .trim()
+                .toLowerCase()
+                .normalize("NFD")
+                .replace(
+                    /[\u0300-\u036f]/g,
+                    ""
+                );
+
+
+        if (!texto) {
+
+            return null;
+
+        }
+
+
+        /*
+         * ARTISTA
+         */
+
+        if (
+            texto === "artista" ||
+            texto === "artistas"
+        ) {
+
+            return CONFIG.tiposPerfil.artista;
+
+        }
+
+
+        /*
+         * CONTRATANTE
+         */
+
+        if (
+            texto === "contratante" ||
+            texto === "contratantes" ||
+            texto === "cliente" ||
+            texto === "clientes"
+        ) {
+
+            return CONFIG.tiposPerfil.contratante;
+
+        }
+
+
+        return null;
+
+    }
+
+
+    /* =====================================================
+       IDENTIFICAR TIPO DO PERFIL
+
+       Prioridade:
+
+       1. relacionamento tipos_perfil
+       2. campos antigos de compatibilidade
+    ===================================================== */
+
+    function identificarTipoPerfil(
+        perfil
+    ) {
+
+        if (
+            !perfil ||
+            typeof perfil !== "object"
+        ) {
+
+            return null;
+
+        }
+
+
+        /*
+         * -------------------------------------------------
+         * FONTE PRINCIPAL
+         * -------------------------------------------------
+         *
+         * Resultado esperado da relação:
+         *
+         * tipos_perfil: {
+         *     id: "...",
+         *     nome: "artista"
+         * }
+         */
+
+        const relacionamento =
+            perfil.tipos_perfil;
+
+
+        if (
+            relacionamento &&
+            typeof relacionamento === "object" &&
+            !Array.isArray(relacionamento)
+        ) {
+
+            const tipo =
+                normalizarTipoPerfil(
+                    relacionamento
+                );
+
+
+            if (tipo) {
+
+                return tipo;
+
+            }
+
+        }
+
+
+        /*
+         * Alguns relacionamentos podem retornar array.
+         */
+
+        if (
+            Array.isArray(relacionamento) &&
+            relacionamento.length > 0
+        ) {
+
+            const tipo =
+                normalizarTipoPerfil(
+                    relacionamento[0]
+                );
+
+
+            if (tipo) {
+
+                return tipo;
+
+            }
+
+        }
+
+
+        /*
+         * -------------------------------------------------
+         * FALLBACKS
+         * -------------------------------------------------
+         *
+         * Mantidos apenas para compatibilidade com
+         * estruturas antigas.
+         */
+
+        const camposFallback = [
+
+            perfil.tipo_perfil_nome,
+
+            perfil.tipoPerfilNome,
+
+            perfil.tipo_perfil,
+
+            perfil.tipoPerfil,
+
+            perfil.tipo
+
+        ];
+
+
+        for (
+            const valor of camposFallback
+        ) {
+
+            const tipo =
+                normalizarTipoPerfil(
+                    valor
+                );
+
+
+            if (tipo) {
+
+                return tipo;
+
+            }
+
+        }
+
+
+        return null;
+
+    }
+
+
+    /* =====================================================
+       ATUALIZAR TIPO DO PERFIL
+    ===================================================== */
+
+    function atualizarTipoPerfil() {
+
+        estado.tipoPerfil =
+            identificarTipoPerfil(
+                estado.perfil
+            );
+
+
+        return estado.tipoPerfil;
+
+    }
+
+
+    /* =====================================================
+       VERIFICAR SE É ARTISTA
+    ===================================================== */
+
+    function ehArtista() {
+
+        return (
+            estado.tipoPerfil ===
+            CONFIG.tiposPerfil.artista
+        );
+
+    }
+
+
+    /* =====================================================
+       VERIFICAR SE É CONTRATANTE
+    ===================================================== */
+
+    function ehContratante() {
+
+        return (
+            estado.tipoPerfil ===
+            CONFIG.tiposPerfil.contratante
+        );
+
+    }
+
+
+    /* =====================================================
+       CARREGAR PERFIL PRINCIPAL
     ===================================================== */
 
     async function carregarPerfil(
@@ -481,10 +834,23 @@
             estado.perfilId =
                 null;
 
+            estado.tipoPerfil =
+                null;
+
+            estado.perfilArtista =
+                null;
+
+            estado.servicos =
+                [];
+
             return null;
 
         }
 
+
+        /*
+         * Prioriza perfil ativo.
+         */
 
         let perfilEncontrado =
             perfis.find(
@@ -498,6 +864,11 @@
                 }
             );
 
+
+        /*
+         * Caso não exista ativo,
+         * utiliza o primeiro perfil.
+         */
 
         if (!perfilEncontrado) {
 
@@ -516,18 +887,160 @@
             null;
 
 
+        atualizarTipoPerfil();
+
+
         return estado.perfil;
 
     }
 
 
     /* =====================================================
+       CARREGAR PERFIL POR ID
+    ===================================================== */
+
+    async function carregarPerfilPorId(
+        perfilId
+    ) {
+
+        if (!perfilId) {
+
+            estado.perfil =
+                null;
+
+            estado.perfilId =
+                null;
+
+            estado.tipoPerfil =
+                null;
+
+            estado.perfilArtista =
+                null;
+
+            estado.servicos =
+                [];
+
+            return null;
+
+        }
+
+
+        const supabase =
+            obterClienteSupabase();
+
+
+        if (!supabase) {
+
+            throw new Error(
+                "Cliente Supabase não disponível."
+            );
+
+        }
+
+
+        try {
+
+            const {
+                data,
+                error
+            } = await supabase
+                .from(
+                    CONFIG.tabelas.perfis
+                )
+                .select(`
+                    *,
+                    ${CONFIG.tabelas.tiposPerfil} (
+                        id,
+                        nome
+                    )
+                `)
+                .eq(
+                    "id",
+                    perfilId
+                )
+                .maybeSingle();
+
+
+            if (error) {
+
+                console.error(
+                    "PerfilPublicoDados: erro ao carregar perfil específico.",
+                    error
+                );
+
+                throw error;
+
+            }
+
+
+            estado.perfil =
+                data || null;
+
+
+            estado.perfilId =
+                data?.id || null;
+
+
+            atualizarTipoPerfil();
+
+
+            /*
+             * Limpa dados artísticos sempre que o perfil
+             * carregado não for artista.
+             */
+
+            if (!ehArtista()) {
+
+                estado.perfilArtista =
+                    null;
+
+                estado.servicos =
+                    [];
+
+            }
+
+
+            return estado.perfil;
+
+        } catch (erro) {
+
+            console.error(
+                "PerfilPublicoDados: falha ao carregar perfil específico.",
+                erro
+            );
+
+            throw erro;
+
+        }
+
+    }
+
+
+    /* =====================================================
        CARREGAR PERFIL ARTÍSTICO
+
+       SOMENTE ARTISTAS.
     ===================================================== */
 
     async function carregarPerfilArtista(
         perfilId = null
     ) {
+
+        /*
+         * Regra absoluta:
+         *
+         * se não for artista, não existe consulta.
+         */
+
+        if (!ehArtista()) {
+
+            estado.perfilArtista =
+                null;
+
+            return null;
+
+        }
+
 
         const id =
             perfilId ||
@@ -599,7 +1112,6 @@
                 erro
             );
 
-
             throw erro;
 
         }
@@ -609,11 +1121,27 @@
 
     /* =====================================================
        CARREGAR SERVIÇOS
+
+       SOMENTE ARTISTAS.
     ===================================================== */
 
     async function carregarServicos(
         perfilId = null
     ) {
+
+        /*
+         * Contratante nunca consulta servicos_artistas.
+         */
+
+        if (!ehArtista()) {
+
+            estado.servicos =
+                [];
+
+            return [];
+
+        }
+
 
         const id =
             perfilId ||
@@ -646,7 +1174,7 @@
         try {
 
             console.log(
-                "PerfilPublicoDados: carregando serviços do perfil:",
+                "PerfilPublicoDados: carregando serviços do artista:",
                 id
             );
 
@@ -685,8 +1213,7 @@
 
             console.log(
                 "PerfilPublicoDados: serviços encontrados:",
-                estado.servicos.length,
-                estado.servicos
+                estado.servicos.length
             );
 
 
@@ -699,7 +1226,6 @@
                 erro
             );
 
-
             throw erro;
 
         }
@@ -709,6 +1235,8 @@
 
     /* =====================================================
        CARREGAR PORTFÓLIO
+
+       COMPARTILHADO ENTRE ARTISTA E CONTRATANTE.
     ===================================================== */
 
     async function carregarPortfolio(
@@ -745,8 +1273,8 @@
 
         try {
 
-            let consulta =
-                supabase
+            let resultado =
+                await supabase
                     .from(
                         CONFIG.tabelas.portfolio
                     )
@@ -754,11 +1282,7 @@
                     .eq(
                         "perfil_id",
                         id
-                    );
-
-
-            let resultado =
-                await consulta
+                    )
                     .eq(
                         "ativo",
                         true
@@ -772,11 +1296,8 @@
 
 
             /*
-             * Alguns registros ou versões antigas da tabela
-             * podem não possuir o campo "ativo".
-             *
-             * Nesse caso, fazemos uma segunda consulta sem
-             * utilizar esse campo.
+             * Compatibilidade com versões antigas
+             * que eventualmente não possuam "ativo".
              */
 
             if (
@@ -839,7 +1360,6 @@
                 erro
             );
 
-
             throw erro;
 
         }
@@ -849,6 +1369,8 @@
 
     /* =====================================================
        CARREGAR AGENDA
+
+       COMPARTILHADA ENTRE ARTISTA E CONTRATANTE.
     ===================================================== */
 
     async function carregarAgenda(
@@ -932,7 +1454,6 @@
                 erro
             );
 
-
             throw erro;
 
         }
@@ -942,6 +1463,8 @@
 
     /* =====================================================
        CARREGAR AVALIAÇÕES
+
+       COMPARTILHADAS ENTRE ARTISTA E CONTRATANTE.
     ===================================================== */
 
     async function carregarAvaliacoes(
@@ -1025,7 +1548,6 @@
                 erro
             );
 
-
             throw erro;
 
         }
@@ -1036,13 +1558,18 @@
     /* =====================================================
        CARREGAR DADOS COMPLETOS
 
-       Este método NÃO carrega mais carteira ou transações.
+       FLUXO:
 
-       Opções disponíveis:
-       - incluirServicos
-       - incluirPortfolio
-       - incluirAgenda
-       - incluirAvaliacoes
+       1. Usuário
+       2. Perfil
+       3. Tipo do perfil
+       4. Perfil artístico somente se artista
+       5. Serviços somente se artista
+       6. Portfólio
+       7. Agenda
+       8. Avaliações
+
+       Carteira e transações NÃO são carregadas.
     ===================================================== */
 
     async function carregarTudo(
@@ -1085,8 +1612,34 @@
             idUsuario;
 
 
+        /*
+         * Limpa os dados dependentes do carregamento atual.
+         *
+         * Isso evita que dados de um artista anterior
+         * permaneçam ao carregar um contratante.
+         */
+
+        estado.perfilArtista =
+            null;
+
+        estado.servicos =
+            [];
+
+        estado.portfolio =
+            [];
+
+        estado.agenda =
+            [];
+
+        estado.avaliacoes =
+            [];
+
+        estado.carregado =
+            false;
+
+
         /* =================================================
-           CARREGAR USUÁRIO
+           USUÁRIO
         ================================================= */
 
         await carregarUsuario(
@@ -1095,63 +1648,14 @@
 
 
         /* =================================================
-           CARREGAR PERFIL
+           PERFIL
         ================================================= */
 
         if (perfilId) {
 
-            estado.perfilId =
-                perfilId;
-
-
-            const supabase =
-                obterClienteSupabase();
-
-
-            if (!supabase) {
-
-                throw new Error(
-                    "Cliente Supabase não disponível."
-                );
-
-            }
-
-
-            const {
-                data,
-                error
-            } = await supabase
-                .from(
-                    CONFIG.tabelas.perfis
-                )
-                .select(`
-                    *,
-                    ${CONFIG.tabelas.tiposPerfil} (
-                        id,
-                        nome
-                    )
-                `)
-                .eq(
-                    "id",
-                    perfilId
-                )
-                .maybeSingle();
-
-
-            if (error) {
-
-                console.error(
-                    "PerfilPublicoDados: erro ao carregar perfil específico.",
-                    error
-                );
-
-                throw error;
-
-            }
-
-
-            estado.perfil =
-                data || null;
+            await carregarPerfilPorId(
+                perfilId
+            );
 
         } else {
 
@@ -1162,23 +1666,79 @@
         }
 
 
-        /* =================================================
-           CARREGAR PERFIL ARTÍSTICO
-        ================================================= */
+        /*
+         * Sem perfil, não existem dados suficientes.
+         */
 
-        await carregarPerfilArtista(
-            estado.perfilId
+        if (!estado.perfilId) {
+
+            estado.carregado =
+                true;
+
+            return obterEstado();
+
+        }
+
+
+        /*
+         * Garante que o tipo esteja atualizado.
+         */
+
+        atualizarTipoPerfil();
+
+
+        console.log(
+            "PerfilPublicoDados: tipo do perfil:",
+            estado.tipoPerfil
         );
 
 
         /* =================================================
-           CARREGAR MÓDULOS
+           PERFIL ARTÍSTICO
         ================================================= */
 
-        const promessas = [];
+        if (
+            ehArtista()
+        ) {
+
+            await carregarPerfilArtista(
+                estado.perfilId
+            );
+
+        } else {
+
+            /*
+             * Garantia adicional:
+             * contratante nunca mantém dados artísticos.
+             */
+
+            estado.perfilArtista =
+                null;
+
+            estado.servicos =
+                [];
+
+        }
 
 
-        if (incluirServicos) {
+        /* =================================================
+           CONSULTAS COMPARTILHADAS
+        ================================================= */
+
+        const promessas =
+            [];
+
+
+        /*
+         * Serviços:
+         *
+         * Somente artista.
+         */
+
+        if (
+            incluirServicos &&
+            ehArtista()
+        ) {
 
             promessas.push(
                 carregarServicos(
@@ -1189,7 +1749,15 @@
         }
 
 
-        if (incluirPortfolio) {
+        /*
+         * Portfólio:
+         *
+         * Artista e contratante.
+         */
+
+        if (
+            incluirPortfolio
+        ) {
 
             promessas.push(
                 carregarPortfolio(
@@ -1200,7 +1768,15 @@
         }
 
 
-        if (incluirAgenda) {
+        /*
+         * Agenda:
+         *
+         * Artista e contratante.
+         */
+
+        if (
+            incluirAgenda
+        ) {
 
             promessas.push(
                 carregarAgenda(
@@ -1211,7 +1787,15 @@
         }
 
 
-        if (incluirAvaliacoes) {
+        /*
+         * Avaliações:
+         *
+         * Artista e contratante.
+         */
+
+        if (
+            incluirAvaliacoes
+        ) {
 
             promessas.push(
                 carregarAvaliacoes(
@@ -1223,8 +1807,7 @@
 
 
         /*
-         * As consultas independentes são executadas em paralelo
-         * para reduzir o tempo de carregamento da página.
+         * Executa consultas independentes em paralelo.
          */
 
         await Promise.all(
@@ -1242,7 +1825,7 @@
 
 
     /* =====================================================
-       CARREGAR APENAS SERVIÇOS
+       CARREGAR SOMENTE SERVIÇOS
     ===================================================== */
 
     async function carregarSomenteServicos(
@@ -1257,7 +1840,7 @@
 
 
     /* =====================================================
-       CARREGAR APENAS PORTFÓLIO
+       CARREGAR SOMENTE PORTFÓLIO
     ===================================================== */
 
     async function carregarSomentePortfolio(
@@ -1272,7 +1855,7 @@
 
 
     /* =====================================================
-       CARREGAR APENAS AGENDA
+       CARREGAR SOMENTE AGENDA
     ===================================================== */
 
     async function carregarSomenteAgenda(
@@ -1287,7 +1870,7 @@
 
 
     /* =====================================================
-       CARREGAR APENAS AVALIAÇÕES
+       CARREGAR SOMENTE AVALIAÇÕES
     ===================================================== */
 
     async function carregarSomenteAvaliacoes(
@@ -1317,6 +1900,9 @@
 
             perfil:
                 estado.perfil,
+
+            tipoPerfil:
+                estado.tipoPerfil,
 
             perfilArtista:
                 estado.perfilArtista,
@@ -1378,6 +1964,17 @@
     function obterPerfil() {
 
         return estado.perfil;
+
+    }
+
+
+    /* =====================================================
+       OBTER TIPO DO PERFIL
+    ===================================================== */
+
+    function obterTipoPerfil() {
+
+        return estado.tipoPerfil;
 
     }
 
@@ -1490,6 +2087,9 @@
         estado.perfil =
             null;
 
+        estado.tipoPerfil =
+            null;
+
         estado.perfilArtista =
             null;
 
@@ -1534,6 +2134,18 @@
 
         carregarPerfil,
 
+        carregarPerfilPorId,
+
+        identificarTipoPerfil,
+
+        normalizarTipoPerfil,
+
+        atualizarTipoPerfil,
+
+        ehArtista,
+
+        ehContratante,
+
         carregarPerfilArtista,
 
         carregarServicos,
@@ -1559,6 +2171,8 @@
         obterUsuario,
 
         obterPerfil,
+
+        obterTipoPerfil,
 
         obterPerfilArtista,
 
@@ -1597,4 +2211,3 @@
 
 
 })(window);
-

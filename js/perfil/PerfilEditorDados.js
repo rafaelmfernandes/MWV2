@@ -1,311 +1,455 @@
 /* ============================================================
-   MUSICALWORLD — PERFIL EDITOR DADOS
-   Arquivo: PerfilEditorDados.js
-   ============================================================
+MUSICALWORLD — PERFIL EDITOR DADOS
+Arquivo: js/perfil/PerfilEditorDados.js
+=======================================
 
-   RESPONSABILIDADE:
+RESPONSABILIDADE:
 
-   Este módulo é responsável exclusivamente pela comunicação
-   entre o editor de perfil e o Supabase.
+Este módulo é responsável exclusivamente pela comunicação
+entre o editor de perfil e o Supabase.
 
-   Ele cuida de:
+Ele suporta os dois tipos de perfil do MusicalWorld:
 
-   - carregar o usuário;
-   - carregar o perfil;
-   - localizar o perfil artístico;
-   - carregar os dados de perfis_artistas;
-   - salvar usuarios;
-   - salvar perfis;
-   - salvar perfis_artistas;
-   - confirmar os dados retornados pelo Supabase;
-   - atualizar o estado local após o salvamento.
+* ARTISTA
+* CONTRATANTE
 
-   ESTE MÓDULO NÃO É RESPONSÁVEL POR:
+ARTISTA:
 
-   - manipular diretamente a interface;
-   - controlar eventos de botões;
-   - preencher campos HTML;
-   - alterar visualmente o avatar;
-   - controlar abas;
-   - fazer upload de fotos.
+* usuarios
+* perfis
+* perfis_artistas
 
-   A interface fica no PerfilEditorUI.js.
+CONTRATANTE:
 
-   O PerfilEditor.js coordena este módulo.
+* usuarios
+* perfis
 
-   IMPORTANTE:
+O contratante NÃO utiliza a tabela perfis_artistas.
 
-   perfil_publicado é controlado diretamente pelo checkbox
-   da interface.
+Este módulo cuida de:
 
-   Este módulo NÃO deve criar regras automáticas que alterem
-   o valor de perfil_publicado.
+* carregar o usuário autenticado;
+* carregar os dados de usuarios;
+* localizar o perfil correto;
+* identificar o tipo do perfil;
+* carregar perfis_artistas somente para artistas;
+* salvar usuarios;
+* salvar perfis;
+* salvar perfis_artistas somente para artistas;
+* confirmar os dados retornados pelo Supabase;
+* atualizar o estado local após o salvamento.
 
-   ============================================================ */
+ESTE MÓDULO NÃO É RESPONSÁVEL POR:
+
+* manipular diretamente a interface;
+* controlar eventos de botões;
+* preencher campos HTML;
+* alterar visualmente o avatar;
+* controlar abas;
+* fazer upload de fotos.
+
+A interface fica no PerfilEditorUI.js.
+
+O PerfilEditor.js coordena este módulo.
+
+IMPORTANTE:
+
+perfil_publicado é controlado diretamente pelo checkbox
+da interface.
+
+Este módulo NÃO deve criar regras automáticas que alterem
+o valor de perfil_publicado.
+
+============================================================ */
 
 const PerfilEditorDados = (() => {
 
-    "use strict";
+
+"use strict";
 
 
-    let contexto = null;
+let contexto = null;
 
 
-    /* ========================================================
-       CONFIGURAÇÃO
-       ======================================================== */
+/* ========================================================
+   CONFIGURAÇÃO
+   ======================================================== */
 
-    function configurar(novoContexto) {
+function configurar(novoContexto) {
 
-        contexto =
-            novoContexto || null;
+    contexto =
+        novoContexto || null;
 
-    }
-
-
-    /* ========================================================
-       SUPABASE
-       ======================================================== */
-
-    function obterSupabase() {
-
-        if (
-            contexto &&
-            contexto.supabase
-        ) {
-
-            return contexto.supabase;
-
-        }
+}
 
 
-        return window.supabaseClient;
+/* ========================================================
+   SUPABASE
+   ======================================================== */
+
+function obterSupabase() {
+
+    if (
+        contexto &&
+        contexto.supabase
+    ) {
+
+        return contexto.supabase;
 
     }
 
 
-    /* ========================================================
-       CARREGAR DADOS DO PERFIL
-       ======================================================== */
+    return window.supabaseClient;
 
-    async function carregarDados() {
+}
 
-        if (!contexto) {
 
-            throw new Error(
-                "PerfilEditorDados: contexto não configurado."
-            );
+/* ========================================================
+   IDENTIFICAR TIPO DE PERFIL
+   ======================================================== */
 
-        }
+function normalizarTipoPerfil(valor) {
 
+    return String(
+        valor || ""
+    )
+        .trim()
+        .toLowerCase();
 
-        const estado =
-            contexto.estado;
+}
 
 
-        const CONFIG =
-            contexto.CONFIG;
+function identificarTipoPerfil(perfis) {
 
+    const lista =
+        Array.isArray(perfis)
+            ? perfis
+            : [];
 
-        if (!window.Sessao) {
 
-            throw new Error(
-                "Módulo Sessao não carregado."
-            );
+    const perfilArtista =
+        lista.find(
+            (perfil) => {
 
-        }
+                const nomeTipo =
+                    perfil?.tipos_perfil?.nome || "";
 
 
-        estado.usuarioAuth =
-            await window.Sessao.usuarioAtual();
-
-
-        if (!estado.usuarioAuth) {
-
-            sessionStorage.setItem(
-                "musicalworld_destino_login",
-                CONFIG.paginaAtual
-            );
-
-
-            window.location.href =
-                "login.html";
-
-
-            return null;
-
-        }
-
-
-        const supabase =
-            obterSupabase();
-
-
-        if (!supabase) {
-
-            throw new Error(
-                "SupabaseClient não foi carregado."
-            );
-
-        }
-
-
-        /* ====================================================
-           USUÁRIO
-           ==================================================== */
-
-        const {
-            data: usuario,
-            error: erroUsuario
-        } = await supabase
-            .from(
-                CONFIG.tabelas.usuarios
-            )
-            .select(
-                "id,nome,email,telefone,foto_url,ativo"
-            )
-            .eq(
-                "id",
-                estado.usuarioAuth.id
-            )
-            .maybeSingle();
-
-
-        if (erroUsuario) {
-
-            throw erroUsuario;
-
-        }
-
-
-        estado.usuario =
-            usuario || {
-
-                id:
-                    estado.usuarioAuth.id,
-
-                nome:
-                    estado.usuarioAuth.user_metadata?.nome ||
-                    estado.usuarioAuth.email ||
-                    "Usuário",
-
-                email:
-                    estado.usuarioAuth?.email ||
-                    estado.usuarioAuth?.user?.email ||
-                    "",
-
-                telefone:
-                    null,
-
-                foto_url:
-                    null,
-
-                ativo:
-                    true
-
-            };
-
-
-        /* ====================================================
-           PERFIS
-           ==================================================== */
-
-        const {
-            data: perfis,
-            error: erroPerfil
-        } = await supabase
-            .from(
-                CONFIG.tabelas.perfis
-            )
-            .select(
-                "id,usuario_id,tipo_perfil_id,nome_exibicao,descricao,ativo,perfil_publicado,tipos_perfil(id,nome,descricao)"
-            )
-            .eq(
-                "usuario_id",
-                estado.usuarioAuth.id
-            )
-            .eq(
-                "ativo",
-                true
-            );
-
-
-        if (erroPerfil) {
-
-            throw erroPerfil;
-
-        }
-
-
-        const perfilArtistaTipo =
-            (perfis || []).find(
-                (perfil) => {
-
-                    const nomeTipo =
-                        perfil?.tipos_perfil?.nome ||
-                        "";
-
-
-                    return (
-                        String(
-                            nomeTipo
-                        )
-                            .trim()
-                            .toLowerCase() ===
-                        "artista"
-                    );
-
-                }
-            );
-
-
-        const perfilContratanteTipo =
-            (perfis || []).find(
-                (perfil) => {
-
-                    const nomeTipo =
-                        perfil?.tipos_perfil?.nome ||
-                        "";
-
-
-                    return (
-                        String(
-                            nomeTipo
-                        )
-                            .trim()
-                            .toLowerCase() ===
-                        "contratante"
-                    );
-
-                }
-            );
-
-
-        if (!perfilArtistaTipo) {
-
-            if (perfilContratanteTipo) {
-
-                throw new Error(
-                    "Este é um perfil de Contratante. O editor artístico não deve ser utilizado para este perfil."
+                return (
+                    normalizarTipoPerfil(
+                        nomeTipo
+                    ) === "artista"
                 );
 
             }
+        );
 
 
-            throw new Error(
-                "Perfil artístico não encontrado."
-            );
+    const perfilContratante =
+        lista.find(
+            (perfil) => {
 
-        }
-
-
-        estado.perfil =
-            perfilArtistaTipo;
+                const nomeTipo =
+                    perfil?.tipos_perfil?.nome || "";
 
 
-        /* ====================================================
-           PERFIL ARTÍSTICO
-           ==================================================== */
+                return (
+                    normalizarTipoPerfil(
+                        nomeTipo
+                    ) === "contratante"
+                );
+
+            }
+        );
+
+
+    /*
+     * Se existir um perfil artístico, ele continua tendo
+     * prioridade para preservar o comportamento atual do
+     * editor utilizado pelos artistas.
+     *
+     * Caso não exista artista, mas exista contratante,
+     * o editor trabalha como contratante.
+     */
+
+    if (perfilArtista) {
+
+        return {
+
+            tipoPerfil:
+                "artista",
+
+            perfil:
+                perfilArtista
+
+        };
+
+    }
+
+
+    if (perfilContratante) {
+
+        return {
+
+            tipoPerfil:
+                "contratante",
+
+            perfil:
+                perfilContratante
+
+        };
+
+    }
+
+
+    return {
+
+        tipoPerfil:
+            null,
+
+        perfil:
+            null
+
+    };
+
+}
+
+
+/* ========================================================
+   CARREGAR DADOS DO PERFIL
+   ======================================================== */
+
+async function carregarDados() {
+
+    if (!contexto) {
+
+        throw new Error(
+            "PerfilEditorDados: contexto não configurado."
+        );
+
+    }
+
+
+    const estado =
+        contexto.estado;
+
+
+    const CONFIG =
+        contexto.CONFIG;
+
+
+    if (!window.Sessao) {
+
+        throw new Error(
+            "Módulo Sessao não carregado."
+        );
+
+    }
+
+
+    /* ====================================================
+       SESSÃO
+       ==================================================== */
+
+    estado.usuarioAuth =
+        await window.Sessao.usuarioAtual();
+
+
+    if (!estado.usuarioAuth) {
+
+        sessionStorage.setItem(
+            "musicalworld_destino_login",
+            CONFIG.paginaAtual
+        );
+
+
+        window.location.href =
+            "login.html";
+
+
+        return null;
+
+    }
+
+
+    const supabase =
+        obterSupabase();
+
+
+    if (!supabase) {
+
+        throw new Error(
+            "SupabaseClient não foi carregado."
+        );
+
+    }
+
+
+    /* ====================================================
+       USUÁRIO
+       ==================================================== */
+
+    const {
+        data: usuario,
+        error: erroUsuario
+    } = await supabase
+        .from(
+            CONFIG.tabelas.usuarios
+        )
+        .select(
+            "id,nome,email,telefone,foto_url,ativo"
+        )
+        .eq(
+            "id",
+            estado.usuarioAuth.id
+        )
+        .maybeSingle();
+
+
+    if (erroUsuario) {
+
+        throw erroUsuario;
+
+    }
+
+
+    const emailAuth =
+        estado.usuarioAuth?.email ||
+        estado.usuarioAuth?.user?.email ||
+        "";
+
+
+    const nomeAuth =
+        estado.usuarioAuth?.user_metadata?.nome ||
+        emailAuth ||
+        "Usuário";
+
+
+    estado.usuario =
+        usuario || {
+
+            id:
+                estado.usuarioAuth.id,
+
+            nome:
+                nomeAuth,
+
+            email:
+                emailAuth,
+
+            telefone:
+                null,
+
+            foto_url:
+                null,
+
+            ativo:
+                true
+
+        };
+
+
+    /*
+     * O e-mail de autenticação é a fonte mais confiável
+     * para o endereço de acesso.
+     *
+     * Se usuarios.email estiver vazio, usamos o e-mail
+     * da sessão apenas para disponibilizá-lo ao editor.
+     *
+     * Não alteramos o e-mail automaticamente no banco.
+     */
+
+    if (
+        !estado.usuario.email &&
+        emailAuth
+    ) {
+
+        estado.usuario.email =
+            emailAuth;
+
+    }
+
+
+    /* ====================================================
+       PERFIS
+       ==================================================== */
+
+    const {
+        data: perfis,
+        error: erroPerfil
+    } = await supabase
+        .from(
+            CONFIG.tabelas.perfis
+        )
+        .select(
+            "id,usuario_id,tipo_perfil_id,nome_exibicao,descricao,ativo,perfil_publicado,tipos_perfil(id,nome,descricao)"
+        )
+        .eq(
+            "usuario_id",
+            estado.usuarioAuth.id
+        )
+        .eq(
+            "ativo",
+            true
+        );
+
+
+    if (erroPerfil) {
+
+        throw erroPerfil;
+
+    }
+
+
+    const resultadoTipo =
+        identificarTipoPerfil(
+            perfis
+        );
+
+
+    if (!resultadoTipo.perfil) {
+
+        throw new Error(
+            "Nenhum perfil ativo de Artista ou Contratante foi encontrado para este usuário."
+        );
+
+    }
+
+
+    estado.tipoPerfil =
+        resultadoTipo.tipoPerfil;
+
+
+    estado.perfil =
+        resultadoTipo.perfil;
+
+
+    /*
+     * Mantemos também uma propriedade booleana simples
+     * para facilitar verificações nos outros módulos.
+     */
+
+    estado.isArtista =
+        estado.tipoPerfil === "artista";
+
+
+    estado.isContratante =
+        estado.tipoPerfil === "contratante";
+
+
+    console.log(
+        "PerfilEditorDados: tipo de perfil identificado:",
+        estado.tipoPerfil
+    );
+
+
+    /* ====================================================
+       PERFIL ARTÍSTICO
+       ==================================================== */
+
+    if (
+        estado.isArtista
+    ) {
 
         const {
             data: perfilArtista,
@@ -370,9 +514,9 @@ const PerfilEditorDados = (() => {
             };
 
 
-        /* ====================================================
+        /* ================================================
            TIPO ARTÍSTICO
-           ==================================================== */
+           ================================================ */
 
         const tipoInformado =
             estado.perfilArtista.tipo_artista;
@@ -410,357 +554,475 @@ const PerfilEditorDados = (() => {
 
         }
 
-
-        return {
-
-            usuario:
-                estado.usuario,
-
-            perfil:
-                estado.perfil,
-
-            perfilArtista:
-                estado.perfilArtista
-
-        };
-
-    }
-
-
-    /* ========================================================
-       OBTER VALOR DE PUBLICAÇÃO
-       ======================================================== */
-
-    function obterValorPublicacao() {
-
-        const checkbox =
-            document.getElementById(
-                "perfilPublicado"
-            );
-
-
-        if (checkbox) {
-
-            return Boolean(
-                checkbox.checked
-            );
-
-        }
-
-
-        return contexto?.estado?.perfil?.perfil_publicado === true;
-
-    }
-
-
-    /* ========================================================
-       SALVAR PERFIL
-       ======================================================== */
-
-    async function salvarPerfil(
-        dados
-    ) {
-
-        if (!contexto) {
-
-            throw new Error(
-                "PerfilEditorDados: contexto não configurado."
-            );
-
-        }
-
-
-        const estado =
-            contexto.estado;
-
-
-        const CONFIG =
-            contexto.CONFIG;
-
-
-        const supabase =
-            obterSupabase();
-
-
-        if (!supabase) {
-
-            throw new Error(
-                "SupabaseClient não foi carregado."
-            );
-
-        }
-
-
-        const agora =
-            new Date().toISOString();
-
-
-        const nome =
-            String(
-                dados?.nome || ""
-            ).trim();
-
-
-        const nomeExibicao =
-            String(
-                dados?.nomeExibicao || ""
-            ).trim();
-
-
-        const telefone =
-            String(
-                dados?.telefone || ""
-            ).trim();
-
-
-        const localizacao =
-            String(
-                dados?.localizacao || ""
-            ).trim();
-
-
-        const descricao =
-            String(
-                dados?.descricao || ""
-            ).trim();
-
-
-        const experiencia =
-            String(
-                dados?.experiencia || ""
-            ).trim();
-
-
-        const areaAtendimento =
-            String(
-                dados?.areaAtendimento || ""
-            ).trim();
-
-
-        const tipoValidado =
-            dados?.tipoValidado;
-
-
-        const disponivel =
-            Boolean(
-                dados?.disponivel
-            );
-
-
-        const instrumentos =
-            Array.isArray(
-                dados?.instrumentos
-            )
-                ? dados.instrumentos
-                : [];
-
-
-        const estilos =
-            Array.isArray(
-                dados?.estilos
-            )
-                ? dados.estilos
-                : [];
-
-
-        const servicos =
-            Array.isArray(
-                dados?.servicos
-            )
-                ? dados.servicos
-                : [];
-
-
-        const fotoUrl =
-            dados?.fotoUrl ||
-            null;
-
+    } else {
 
         /*
-         * IMPORTANTE:
+         * Contratante não possui perfil artístico.
          *
-         * O valor vem diretamente do checkbox.
-         *
-         * Não existe aqui nenhuma regra de "perfil completo".
-         * O banco deve respeitar exatamente o que o usuário
-         * marcou no editor.
+         * Explicitamente mantemos null para impedir que
+         * módulos posteriores tratem este usuário como artista.
          */
 
-        const perfilPublicado =
-            dados?.perfilPublicado !== undefined
+        estado.perfilArtista =
+            null;
 
-                ? Boolean(
-                    dados.perfilPublicado
-                )
-
-                : obterValorPublicacao();
+    }
 
 
-        /* ====================================================
-           USUARIOS
-           ==================================================== */
+    /* ====================================================
+       RESULTADO
+       ==================================================== */
 
-        const dadosUsuario = {
+    return {
 
-            nome,
+        usuario:
+            estado.usuario,
 
-            telefone:
-                telefone || null,
+        perfil:
+            estado.perfil,
 
-            foto_url:
-                fotoUrl
+        perfilArtista:
+            estado.perfilArtista,
 
-        };
+        tipoPerfil:
+            estado.tipoPerfil,
 
+        isArtista:
+            estado.isArtista,
 
-        const {
-            error: erroUsuario
-        } = await supabase
-            .from(
-                CONFIG.tabelas.usuarios
-            )
-            .update(
-                dadosUsuario
-            )
-            .eq(
-                "id",
-                estado.usuarioAuth.id
-            );
+        isContratante:
+            estado.isContratante
+
+    };
+
+}
 
 
-        if (erroUsuario) {
+/* ========================================================
+   OBTER VALOR DE PUBLICAÇÃO
+   ======================================================== */
 
-            throw erroUsuario;
+function obterValorPublicacao() {
 
-        }
-
-
-        /* ====================================================
-           PERFIS
-           ==================================================== */
-
-        const dadosPerfil = {
-
-            nome_exibicao:
-                nomeExibicao,
-
-            descricao:
-                descricao || null,
-
-            ativo:
-                true,
-
-            perfil_publicado:
-                perfilPublicado,
-
-            updated_at:
-                agora
-
-        };
-
-
-        console.log(
-            "PerfilEditorDados: salvando PERFIS:",
-            {
-                perfilId:
-                    estado.perfil.id,
-
-                usuarioId:
-                    estado.usuarioAuth.id,
-
-                perfilPublicado,
-
-                dados:
-                    dadosPerfil
-            }
+    const checkbox =
+        document.getElementById(
+            "perfilPublicado"
         );
 
 
-        const {
-            data: perfilAtualizado,
-            error: erroPerfil
-        } = await supabase
-            .from(
-                CONFIG.tabelas.perfis
+    if (checkbox) {
+
+        return Boolean(
+            checkbox.checked
+        );
+
+    }
+
+
+    return contexto?.estado?.perfil?.perfil_publicado === true;
+
+}
+
+
+/* ========================================================
+   SALVAR PERFIL
+   ======================================================== */
+
+async function salvarPerfil(
+    dados
+) {
+
+    if (!contexto) {
+
+        throw new Error(
+            "PerfilEditorDados: contexto não configurado."
+        );
+
+    }
+
+
+    const estado =
+        contexto.estado;
+
+
+    const CONFIG =
+        contexto.CONFIG;
+
+
+    const supabase =
+        obterSupabase();
+
+
+    if (!supabase) {
+
+        throw new Error(
+            "SupabaseClient não foi carregado."
+        );
+
+    }
+
+
+    if (
+        !estado.perfil ||
+        !estado.tipoPerfil
+    ) {
+
+        throw new Error(
+            "O tipo do perfil não foi identificado antes do salvamento."
+        );
+
+    }
+
+
+    const agora =
+        new Date().toISOString();
+
+
+    /* ====================================================
+       DADOS COMUNS
+       ==================================================== */
+
+    const nome =
+        String(
+            dados?.nome || ""
+        ).trim();
+
+
+    const nomeExibicao =
+        String(
+            dados?.nomeExibicao || ""
+        ).trim();
+
+
+    const telefone =
+        String(
+            dados?.telefone || ""
+        ).trim();
+
+
+    const localizacao =
+        String(
+            dados?.localizacao || ""
+        ).trim();
+
+
+    const descricao =
+        String(
+            dados?.descricao || ""
+        ).trim();
+
+
+    const experiencia =
+        String(
+            dados?.experiencia || ""
+        ).trim();
+
+
+    const areaAtendimento =
+        String(
+            dados?.areaAtendimento || ""
+        ).trim();
+
+
+    const tipoValidado =
+        dados?.tipoValidado;
+
+
+    const disponivel =
+        Boolean(
+            dados?.disponivel
+        );
+
+
+    const instrumentos =
+        Array.isArray(
+            dados?.instrumentos
+        )
+            ? dados.instrumentos
+            : [];
+
+
+    const estilos =
+        Array.isArray(
+            dados?.estilos
+        )
+            ? dados.estilos
+            : [];
+
+
+    const servicos =
+        Array.isArray(
+            dados?.servicos
+        )
+            ? dados.servicos
+            : [];
+
+
+    /*
+     * Para o contratante, o local principal da foto é
+     * usuarios.foto_url.
+     *
+     * Para artista, mantemos o mesmo comportamento atual.
+     */
+
+    const fotoUrl =
+        dados?.fotoUrl !== undefined
+            ? (
+                dados.fotoUrl ||
+                null
             )
-            .update(
+            : (
+                estado.usuario?.foto_url ||
+                null
+            );
+
+
+    /* ====================================================
+       PUBLICAÇÃO
+       ==================================================== */
+
+    /*
+     * O valor vem diretamente do checkbox.
+     *
+     * Não existe aqui nenhuma regra de "perfil completo".
+     */
+
+    const perfilPublicado =
+        dados?.perfilPublicado !== undefined
+
+            ? Boolean(
+                dados.perfilPublicado
+            )
+
+            : obterValorPublicacao();
+
+
+    /* ====================================================
+       USUARIOS
+       ==================================================== */
+
+    const dadosUsuario = {
+
+        nome,
+
+        telefone:
+            telefone || null,
+
+        foto_url:
+            fotoUrl
+
+    };
+
+
+    const {
+        data: usuarioAtualizado,
+        error: erroUsuario
+    } = await supabase
+        .from(
+            CONFIG.tabelas.usuarios
+        )
+        .update(
+            dadosUsuario
+        )
+        .eq(
+            "id",
+            estado.usuarioAuth.id
+        )
+        .select(
+            "id,nome,email,telefone,foto_url,ativo"
+        )
+        .maybeSingle();
+
+
+    if (erroUsuario) {
+
+        throw erroUsuario;
+
+    }
+
+
+    if (usuarioAtualizado) {
+
+        estado.usuario =
+            usuarioAtualizado;
+
+    } else {
+
+        estado.usuario = {
+
+            ...estado.usuario,
+
+            ...dadosUsuario
+
+        };
+
+    }
+
+
+    /* ====================================================
+       PERFIS
+       ==================================================== */
+
+    const dadosPerfil = {
+
+        nome_exibicao:
+            nomeExibicao,
+
+        descricao:
+            descricao || null,
+
+        ativo:
+            true,
+
+        perfil_publicado:
+            perfilPublicado,
+
+        updated_at:
+            agora
+
+    };
+
+
+    console.log(
+        "PerfilEditorDados: salvando PERFIS:",
+        {
+            perfilId:
+                estado.perfil.id,
+
+            usuarioId:
+                estado.usuarioAuth.id,
+
+            tipoPerfil:
+                estado.tipoPerfil,
+
+            perfilPublicado,
+
+            dados:
                 dadosPerfil
-            )
-            .eq(
-                "id",
-                estado.perfil.id
-            )
-            .eq(
-                "usuario_id",
-                estado.usuarioAuth.id
-            )
-            .select(
-                "id,usuario_id,tipo_perfil_id,nome_exibicao,descricao,ativo,perfil_publicado,updated_at,tipos_perfil(id,nome,descricao)"
-            )
-            .maybeSingle();
-
-
-        if (erroPerfil) {
-
-            console.error(
-                "PerfilEditorDados: erro ao atualizar PERFIS:",
-                erroPerfil
-            );
-
-
-            throw erroPerfil;
-
         }
+    );
 
 
-        if (!perfilAtualizado) {
+    const {
+        data: perfilAtualizado,
+        error: erroPerfil
+    } = await supabase
+        .from(
+            CONFIG.tabelas.perfis
+        )
+        .update(
+            dadosPerfil
+        )
+        .eq(
+            "id",
+            estado.perfil.id
+        )
+        .eq(
+            "usuario_id",
+            estado.usuarioAuth.id
+        )
+        .select(
+            "id,usuario_id,tipo_perfil_id,nome_exibicao,descricao,ativo,perfil_publicado,updated_at,tipos_perfil(id,nome,descricao)"
+        )
+        .maybeSingle();
 
-            throw new Error(
-                "O perfil não foi atualizado no banco. Verifique as políticas de acesso da tabela perfis."
-            );
 
-        }
+    if (erroPerfil) {
 
-
-        console.log(
-            "PerfilEditorDados: PERFIL confirmado pelo Supabase:",
-            {
-                id:
-                    perfilAtualizado.id,
-
-                perfilPublicadoEnviado:
-                    perfilPublicado,
-
-                perfilPublicadoRecebido:
-                    perfilAtualizado.perfil_publicado,
-
-                ativoRecebido:
-                    perfilAtualizado.ativo
-            }
+        console.error(
+            "PerfilEditorDados: erro ao atualizar PERFIS:",
+            erroPerfil
         );
 
+
+        throw erroPerfil;
+
+    }
+
+
+    if (!perfilAtualizado) {
+
+        throw new Error(
+            "O perfil não foi atualizado no banco. Verifique as políticas de acesso da tabela perfis."
+        );
+
+    }
+
+
+    console.log(
+        "PerfilEditorDados: PERFIL confirmado pelo Supabase:",
+        {
+            id:
+                perfilAtualizado.id,
+
+            tipoPerfil:
+                estado.tipoPerfil,
+
+            perfilPublicadoEnviado:
+                perfilPublicado,
+
+            perfilPublicadoRecebido:
+                perfilAtualizado.perfil_publicado,
+
+            ativoRecebido:
+                perfilAtualizado.ativo
+        }
+    );
+
+
+    if (
+        Boolean(
+            perfilAtualizado.perfil_publicado
+        ) !==
+        Boolean(
+            perfilPublicado
+        )
+    ) {
+
+        throw new Error(
+            `O banco não confirmou a publicação do perfil. Enviado: ${perfilPublicado ? "true" : "false"} | Recebido: ${perfilAtualizado.perfil_publicado ? "true" : "false"}`
+        );
+
+    }
+
+
+    /* ====================================================
+       PERFIS_ARTISTAS
+       SOMENTE PARA ARTISTAS
+       ==================================================== */
+
+    let perfilArtistaAtualizado =
+        null;
+
+
+    let dadosArtista =
+        null;
+
+
+    if (
+        estado.isArtista
+    ) {
+
+        /*
+         * Segurança adicional:
+         *
+         * Um artista precisa ter um tipo artístico válido
+         * antes de gravarmos perfis_artistas.
+         */
 
         if (
-            Boolean(
-                perfilAtualizado.perfil_publicado
-            ) !==
-            Boolean(
-                perfilPublicado
-            )
+            !tipoValidado ||
+            !tipoValidado.nome
         ) {
 
             throw new Error(
-                `O banco não confirmou a publicação do perfil. Enviado: ${perfilPublicado ? "true" : "false"} | Recebido: ${perfilAtualizado.perfil_publicado ? "true" : "false"}`
+                "O tipo artístico não foi definido corretamente."
             );
 
         }
 
 
-        /* ====================================================
-           PERFIS_ARTISTAS
-           ==================================================== */
-
-        const dadosArtista = {
+        dadosArtista = {
 
             tipo_artista:
                 tipoValidado.nome,
@@ -801,10 +1063,6 @@ const PerfilEditorDados = (() => {
                     dadosArtista
             }
         );
-
-
-        let perfilArtistaAtualizado =
-            null;
 
 
         if (
@@ -879,46 +1137,6 @@ const PerfilEditorDados = (() => {
         }
 
 
-        /* ====================================================
-           ATUALIZA ESTADO LOCAL
-           ==================================================== */
-
-        estado.usuario = {
-
-            ...estado.usuario,
-
-            nome,
-
-            telefone:
-                telefone || null,
-
-            foto_url:
-                fotoUrl
-
-        };
-
-
-        estado.perfil = {
-
-            ...estado.perfil,
-
-            ...perfilAtualizado,
-
-            nome_exibicao:
-                perfilAtualizado.nome_exibicao,
-
-            descricao:
-                perfilAtualizado.descricao,
-
-            ativo:
-                perfilAtualizado.ativo,
-
-            perfil_publicado:
-                perfilAtualizado.perfil_publicado
-
-        };
-
-
         estado.perfilArtista = {
 
             ...estado.perfilArtista,
@@ -932,48 +1150,115 @@ const PerfilEditorDados = (() => {
 
         };
 
+    } else {
 
-        return {
+        /*
+         * CONTRATANTE:
+         *
+         * Nunca criamos, atualizamos ou removemos registros
+         * em perfis_artistas.
+         */
 
-            usuario:
-                estado.usuario,
-
-            perfil:
-                perfilAtualizado,
-
-            perfilArtista:
-                estado.perfilArtista,
-
-            perfilPublicado:
-                perfilAtualizado.perfil_publicado,
-
-            fotoUrl,
-
-            dadosArtista
-
-        };
+        estado.perfilArtista =
+            null;
 
     }
 
 
-    /* ========================================================
-       API PÚBLICA
-       ======================================================== */
+    /* ====================================================
+       ATUALIZA ESTADO LOCAL
+       ==================================================== */
 
-    return {
+    estado.usuario = {
 
-        configurar,
+        ...estado.usuario,
 
-        carregarDados,
+        nome,
 
-        salvarPerfil,
+        telefone:
+            telefone || null,
 
-        obterValorPublicacao
+        foto_url:
+            fotoUrl
 
     };
 
+
+    estado.perfil = {
+
+        ...estado.perfil,
+
+        ...perfilAtualizado,
+
+        nome_exibicao:
+            perfilAtualizado.nome_exibicao,
+
+        descricao:
+            perfilAtualizado.descricao,
+
+        ativo:
+            perfilAtualizado.ativo,
+
+        perfil_publicado:
+            perfilAtualizado.perfil_publicado
+
+    };
+
+
+    /* ====================================================
+       RESULTADO
+       ==================================================== */
+
+    return {
+
+        usuario:
+            estado.usuario,
+
+        perfil:
+            perfilAtualizado,
+
+        perfilArtista:
+            estado.perfilArtista,
+
+        tipoPerfil:
+            estado.tipoPerfil,
+
+        isArtista:
+            estado.isArtista,
+
+        isContratante:
+            estado.isContratante,
+
+        perfilPublicado:
+            perfilAtualizado.perfil_publicado,
+
+        fotoUrl,
+
+        dadosArtista
+
+    };
+
+}
+
+
+/* ========================================================
+   API PÚBLICA
+   ======================================================== */
+
+return {
+
+    configurar,
+
+    carregarDados,
+
+    salvarPerfil,
+
+    obterValorPublicacao
+
+};
+
+
 })();
 
-
 window.PerfilEditorDados =
-    PerfilEditorDados;
+PerfilEditorDados;

@@ -1,456 +1,810 @@
 /* ============================================================
-   MUSICALWORLD — PERFIL EDITOR UI
-   Arquivo: PerfilEditorUI.js
-   ============================================================
+MUSICALWORLD — PERFIL EDITOR UI
+Arquivo: js/perfil/PerfilEditorUI.js
+====================================
 
-   RESPONSABILIDADE:
+RESPONSABILIDADE:
 
-   Este módulo é responsável exclusivamente pela INTERFACE
-   do editor universal de perfil.
+Este módulo é responsável exclusivamente pela INTERFACE
+do editor universal de perfil.
 
-   Ele cuida de:
+Ele cuida de:
 
-   - preencher os campos do formulário;
-   - preencher o tipo artístico no select;
-   - preencher e atualizar o avatar;
-   - controlar o checkbox de publicação;
-   - atualizar o contador da descrição;
-   - atualizar visualmente informações do perfil.
+* preencher os campos do formulário;
+* identificar visualmente o tipo de perfil;
+* preencher o tipo artístico no select;
+* preencher e atualizar o avatar;
+* controlar o checkbox de publicação;
+* atualizar o contador da descrição;
+* mostrar ou ocultar campos específicos de artista;
+* atualizar visualmente informações do perfil.
 
-   ESTE MÓDULO NÃO É RESPONSÁVEL POR:
+TIPOS DE PERFIL SUPORTADOS:
 
-   - consultar o Supabase;
-   - salvar dados no banco;
-   - controlar autenticação;
-   - decidir regras de negócio;
-   - fazer upload de arquivos.
+* artista
+* contratante
 
-   O módulo recebe o contexto do PerfilEditor.js e trabalha
-   somente com os dados que já foram carregados.
+REGRAS:
 
-   ============================================================ */
+ARTISTA:
+
+* possui campos artísticos;
+* possui tipo de artista;
+* possui área de atendimento;
+* possui experiência;
+* possui estilos;
+* possui instrumentos;
+* possui disponibilidade;
+* possui serviços.
+
+CONTRATANTE:
+
+* possui apenas os dados comuns;
+* NÃO utiliza dados de perfis_artistas;
+* NÃO exibe campos artísticos;
+* NÃO exibe Serviços.
+
+ESTE MÓDULO NÃO É RESPONSÁVEL POR:
+
+* consultar o Supabase;
+* salvar dados no banco;
+* controlar autenticação;
+* decidir regras de negócio;
+* fazer upload de arquivos.
+
+O módulo recebe o contexto do PerfilEditor.js e trabalha
+somente com os dados que já foram carregados.
+
+============================================================ */
 
 const PerfilEditorUI = (() => {
 
-    "use strict";
+
+"use strict";
 
 
-    let contexto = null;
+let contexto = null;
 
 
-    /* ========================================================
-       CONFIGURAÇÃO
-       ======================================================== */
+/* ========================================================
+   CONFIGURAÇÃO
+   ======================================================== */
 
-    function configurar(novoContexto) {
+function configurar(novoContexto) {
 
-        contexto =
-            novoContexto || null;
+    contexto =
+        novoContexto || null;
 
-    }
-
-
-    /* ========================================================
-       ELEMENTO
-       ======================================================== */
-
-    function el(id) {
-
-        if (
-            contexto &&
-            typeof contexto.el === "function"
-        ) {
-
-            return contexto.el(id);
-
-        }
+}
 
 
-        return document.getElementById(id);
+/* ========================================================
+   ELEMENTO
+   ======================================================== */
 
-    }
+function el(id) {
 
-
-    /* ========================================================
-       PREENCHER TIPO ARTÍSTICO
-       ======================================================== */
-
-    function preencherTipoArtista(
-        campoTipo,
-        tipoBanco
+    if (
+        contexto &&
+        typeof contexto.el === "function"
     ) {
 
-        if (!campoTipo) {
+        return contexto.el(id);
 
-            return;
+    }
+
+
+    return document.getElementById(id);
+
+}
+
+
+/* ========================================================
+   IDENTIFICAR TIPO DO PERFIL
+   ========================================================
+
+   Retorna:
+
+   "artista"
+   "contratante"
+
+   A prioridade é dada ao valor já calculado pelo
+   PerfilEditorDados.js.
+
+   ======================================================== */
+
+function obterTipoPerfil() {
+
+    if (!contexto) {
+
+        return "";
+
+    }
+
+
+    const estado =
+        contexto.estado || {};
+
+
+    const tipo =
+        String(
+            estado.tipoPerfil || ""
+        )
+            .trim()
+            .toLowerCase();
+
+
+    if (
+        tipo === "artista" ||
+        tipo === "contratante"
+    ) {
+
+        return tipo;
+
+    }
+
+
+    if (estado.isArtista === true) {
+
+        return "artista";
+
+    }
+
+
+    if (estado.isContratante === true) {
+
+        return "contratante";
+
+    }
+
+
+    return "";
+
+}
+
+
+/* ========================================================
+   VERIFICAR SE É ARTISTA
+   ======================================================== */
+
+function ehArtista() {
+
+    return obterTipoPerfil() === "artista";
+
+}
+
+
+/* ========================================================
+   VERIFICAR SE É CONTRATANTE
+   ======================================================== */
+
+function ehContratante() {
+
+    return obterTipoPerfil() === "contratante";
+
+}
+
+
+/* ========================================================
+   CONTROLAR CAMPOS POR TIPO DE PERFIL
+   ========================================================
+
+   Elementos do HTML podem utilizar:
+
+   data-perfil-somente="artista"
+
+   ou:
+
+   data-perfil-somente="contratante"
+
+   Exemplo:
+
+   <div data-perfil-somente="artista">
+
+   Também funciona em:
+
+   - campo;
+   - seção;
+   - card;
+   - aba;
+   - painel.
+
+   O elemento inteiro será ocultado quando não
+   corresponder ao tipo atual.
+
+   ======================================================== */
+
+function atualizarInterfacePorTipoPerfil() {
+
+    if (!contexto) {
+
+        return;
+
+    }
+
+
+    const tipo =
+        obterTipoPerfil();
+
+
+    if (!tipo) {
+
+        return;
+
+    }
+
+
+    const elementos =
+        document.querySelectorAll(
+            "[data-perfil-somente]"
+        );
+
+
+    elementos.forEach(
+        (elemento) => {
+
+            const somente =
+                String(
+                    elemento.dataset.perfilSomente || ""
+                )
+                    .trim()
+                    .toLowerCase();
+
+
+            const deveExibir =
+                somente === tipo;
+
+
+            elemento.hidden =
+                !deveExibir;
+
+
+            elemento.style.display =
+                deveExibir
+                    ? ""
+                    : "none";
 
         }
+    );
 
 
-        const tipoSalvo =
-            String(
-                tipoBanco || ""
-            ).trim();
+    /* ====================================================
+       CONTROLE ESPECÍFICO DA ABA DE SERVIÇOS
+       ====================================================
+
+       Caso o HTML ainda não tenha recebido
+       data-perfil-somente="artista" na aba/painel,
+       fazemos uma proteção adicional pelos IDs.
+
+       ==================================================== */
+
+    if (ehContratante()) {
+
+        const idsServicos = [
+
+            "abaServicos",
+            "tabServicos",
+            "servicosTab",
+            "painelServicos",
+            "servicosPanel",
+            "aba-servicos",
+            "painel-servicos"
+
+        ];
 
 
-        if (!tipoSalvo) {
+        idsServicos.forEach(
+            (id) => {
 
-            return;
-
-        }
-
-
-        if (
-            window.PerfilEditorTipo &&
-            typeof window.PerfilEditorTipo.identificar === "function"
-        ) {
-
-            const tipo =
-                window.PerfilEditorTipo.identificar(
-                    tipoSalvo
-                );
+                const elemento =
+                    document.getElementById(id);
 
 
-            if (tipo) {
-
-                const opcoes =
-                    Array.from(
-                        campoTipo.options || []
-                    );
-
-
-                const opcao =
-                    opcoes.find(
-                        (opcaoAtual) => {
-
-                            const valor =
-                                String(
-                                    opcaoAtual.value || ""
-                                ).trim();
-
-
-                            const texto =
-                                String(
-                                    opcaoAtual.textContent || ""
-                                ).trim();
-
-
-                            return (
-
-                                valor === tipo.id ||
-
-                                valor === tipo.slug ||
-
-                                valor === tipo.nome ||
-
-                                texto === tipo.nome ||
-
-                                texto === tipo.slug
-
-                            );
-
-                        }
-                    );
-
-
-                if (opcao) {
-
-                    campoTipo.value =
-                        opcao.value;
+                if (!elemento) {
 
                     return;
 
                 }
 
+
+                elemento.hidden =
+                    true;
+
+                elemento.style.display =
+                    "none";
+
             }
-
-        }
-
-
-        const opcaoExata =
-            Array.from(
-                campoTipo.options || []
-            ).find(
-                (opcao) =>
-
-                    String(
-                        opcao.value || ""
-                    ).trim() === tipoSalvo
-            );
-
-
-        if (opcaoExata) {
-
-            campoTipo.value =
-                opcaoExata.value;
-
-            return;
-
-        }
-
-
-        let tipoNormalizado =
-            tipoSalvo;
-
-
-        if (
-            window.PerfilUtils &&
-            typeof window.PerfilUtils.normalizarTipoArtista === "function"
-        ) {
-
-            tipoNormalizado =
-                window.PerfilUtils.normalizarTipoArtista(
-                    tipoSalvo
-                );
-
-        }
-
-
-        const opcaoNormalizada =
-            Array.from(
-                campoTipo.options || []
-            ).find(
-                (opcao) => {
-
-                    const valorOpcao =
-                        String(
-                            opcao.value || ""
-                        ).trim();
-
-
-                    const textoOpcao =
-                        String(
-                            opcao.textContent || ""
-                        ).trim();
-
-
-                    let valorNormalizado =
-                        valorOpcao;
-
-
-                    let textoNormalizado =
-                        textoOpcao;
-
-
-                    if (
-                        window.PerfilUtils &&
-                        typeof window.PerfilUtils.normalizarTipoArtista === "function"
-                    ) {
-
-                        valorNormalizado =
-                            window.PerfilUtils.normalizarTipoArtista(
-                                valorOpcao
-                            );
-
-
-                        textoNormalizado =
-                            window.PerfilUtils.normalizarTipoArtista(
-                                textoOpcao
-                            );
-
-                    }
-
-
-                    return (
-
-                        valorNormalizado ===
-                        tipoNormalizado ||
-
-                        textoNormalizado ===
-                        tipoNormalizado
-
-                    );
-
-                }
-            );
-
-
-        if (opcaoNormalizada) {
-
-            campoTipo.value =
-                opcaoNormalizada.value;
-
-            return;
-
-        }
-
-
-        const limpar =
-            (valor) =>
-
-                String(
-                    valor || ""
-                )
-                    .normalize("NFD")
-                    .replace(
-                        /[\u0300-\u036f]/g,
-                        ""
-                    )
-                    .replace(
-                        /\s+/g,
-                        ""
-                    )
-                    .toLowerCase();
-
-
-        const tipoLimpo =
-            limpar(
-                tipoSalvo
-            );
-
-
-        const opcaoFlexivel =
-            Array.from(
-                campoTipo.options || []
-            ).find(
-                (opcao) =>
-
-                    limpar(
-                        opcao.value
-                    ) === tipoLimpo ||
-
-                    limpar(
-                        opcao.textContent
-                    ) === tipoLimpo
-            );
-
-
-        if (opcaoFlexivel) {
-
-            campoTipo.value =
-                opcaoFlexivel.value;
-
-            return;
-
-        }
-
-
-        console.warn(
-            "PerfilEditorUI: não foi possível localizar o tipo artístico no select:",
-            tipoSalvo
         );
 
     }
 
+}
 
-    /* ========================================================
-       PREENCHER FORMULÁRIO
-       ======================================================== */
 
-    function preencherFormulario() {
+/* ========================================================
+   PREENCHER TIPO ARTÍSTICO
+   ======================================================== */
 
-        if (!contexto) {
+function preencherTipoArtista(
+    campoTipo,
+    tipoBanco
+) {
 
-            console.error(
-                "PerfilEditorUI: contexto não configurado."
+    if (!campoTipo) {
+
+        return;
+
+    }
+
+
+    const tipoSalvo =
+        String(
+            tipoBanco || ""
+        ).trim();
+
+
+    if (!tipoSalvo) {
+
+        return;
+
+    }
+
+
+    if (
+        window.PerfilEditorTipo &&
+        typeof window.PerfilEditorTipo.identificar === "function"
+    ) {
+
+        const tipo =
+            window.PerfilEditorTipo.identificar(
+                tipoSalvo
             );
 
-            return;
+
+        if (tipo) {
+
+            const opcoes =
+                Array.from(
+                    campoTipo.options || []
+                );
+
+
+            const opcao =
+                opcoes.find(
+                    (opcaoAtual) => {
+
+                        const valor =
+                            String(
+                                opcaoAtual.value || ""
+                            ).trim();
+
+
+                        const texto =
+                            String(
+                                opcaoAtual.textContent || ""
+                            ).trim();
+
+
+                        return (
+
+                            valor === tipo.id ||
+
+                            valor === tipo.slug ||
+
+                            valor === tipo.nome ||
+
+                            texto === tipo.nome ||
+
+                            texto === tipo.slug
+
+                        );
+
+                    }
+                );
+
+
+            if (opcao) {
+
+                campoTipo.value =
+                    opcao.value;
+
+                return;
+
+            }
 
         }
 
-
-        const estado =
-            contexto.estado || {};
+    }
 
 
-        const ids =
-            contexto.ids || {};
+    const opcaoExata =
+        Array.from(
+            campoTipo.options || []
+        ).find(
+            (opcao) =>
+
+                String(
+                    opcao.value || ""
+                ).trim() === tipoSalvo
+        );
 
 
-        const usuario =
-            estado.usuario || {};
+    if (opcaoExata) {
+
+        campoTipo.value =
+            opcaoExata.value;
+
+        return;
+
+    }
 
 
-        const perfil =
-            estado.perfil || {};
+    let tipoNormalizado =
+        tipoSalvo;
 
 
-        const artista =
-            estado.perfilArtista || {};
+    if (
+        window.PerfilUtils &&
+        typeof window.PerfilUtils.normalizarTipoArtista === "function"
+    ) {
+
+        tipoNormalizado =
+            window.PerfilUtils.normalizarTipoArtista(
+                tipoSalvo
+            );
+
+    }
 
 
-        const campoNome =
-            el(ids.nome);
+    const opcaoNormalizada =
+        Array.from(
+            campoTipo.options || []
+        ).find(
+            (opcao) => {
+
+                const valorOpcao =
+                    String(
+                        opcao.value || ""
+                    ).trim();
 
 
-        const campoNomeExibicao =
-            el(ids.nomeExibicao);
+                const textoOpcao =
+                    String(
+                        opcao.textContent || ""
+                    ).trim();
 
 
-        const campoTelefone =
-            el(ids.telefone);
+                let valorNormalizado =
+                    valorOpcao;
 
 
-        const campoLocalizacao =
-            el(ids.localizacao);
+                let textoNormalizado =
+                    textoOpcao;
 
 
-        const campoDescricao =
-            el(ids.descricao);
+                if (
+                    window.PerfilUtils &&
+                    typeof window.PerfilUtils.normalizarTipoArtista === "function"
+                ) {
+
+                    valorNormalizado =
+                        window.PerfilUtils.normalizarTipoArtista(
+                            valorOpcao
+                        );
 
 
-        const campoExperiencia =
-            el(ids.experiencia);
+                    textoNormalizado =
+                        window.PerfilUtils.normalizarTipoArtista(
+                            textoOpcao
+                        );
+
+                }
 
 
-        const campoArea =
-            el(ids.areaAtendimento);
+                return (
+
+                    valorNormalizado ===
+                    tipoNormalizado ||
+
+                    textoNormalizado ===
+                    tipoNormalizado
+
+                );
+
+            }
+        );
 
 
-        const campoTipo =
-            el(ids.tipoArtista);
+    if (opcaoNormalizada) {
+
+        campoTipo.value =
+            opcaoNormalizada.value;
+
+        return;
+
+    }
 
 
-        const campoDisponivel =
-            el(ids.disponivel);
+    const limpar =
+        (valor) =>
+
+            String(
+                valor || ""
+            )
+                .normalize("NFD")
+                .replace(
+                    /[\u0300-\u036f]/g,
+                    ""
+                )
+                .replace(
+                    /\s+/g,
+                    ""
+                )
+                .toLowerCase();
 
 
-        const campoEmail =
-            el(ids.emailConta);
+    const tipoLimpo =
+        limpar(
+            tipoSalvo
+        );
 
 
-        if (campoNome) {
+    const opcaoFlexivel =
+        Array.from(
+            campoTipo.options || []
+        ).find(
+            (opcao) =>
 
-            campoNome.value =
-                usuario.nome || "";
+                limpar(
+                    opcao.value
+                ) === tipoLimpo ||
+
+                limpar(
+                    opcao.textContent
+                ) === tipoLimpo
+        );
+
+
+    if (opcaoFlexivel) {
+
+        campoTipo.value =
+            opcaoFlexivel.value;
+
+        return;
+
+    }
+
+
+    console.warn(
+        "PerfilEditorUI: não foi possível localizar o tipo artístico no select:",
+        tipoSalvo
+    );
+
+}
+
+
+/* ========================================================
+   PREENCHER FORMULÁRIO
+   ======================================================== */
+
+function preencherFormulario() {
+
+    if (!contexto) {
+
+        console.error(
+            "PerfilEditorUI: contexto não configurado."
+        );
+
+        return;
+
+    }
+
+
+    const estado =
+        contexto.estado || {};
+
+
+    const ids =
+        contexto.ids || {};
+
+
+    const usuario =
+        estado.usuario || {};
+
+
+    const perfil =
+        estado.perfil || {};
+
+
+    const artista =
+        estado.perfilArtista || {};
+
+
+    const perfilArtistaExiste =
+        !!estado.perfilArtista;
+
+
+    const tipoPerfil =
+        obterTipoPerfil();
+
+
+    /* ====================================================
+       CAMPOS COMUNS
+       ==================================================== */
+
+    const campoNome =
+        el(ids.nome);
+
+
+    const campoNomeExibicao =
+        el(ids.nomeExibicao);
+
+
+    const campoTelefone =
+        el(ids.telefone);
+
+
+    const campoLocalizacao =
+        el(ids.localizacao);
+
+
+    const campoDescricao =
+        el(ids.descricao);
+
+
+    const campoEmail =
+        el(ids.emailConta);
+
+
+    if (campoNome) {
+
+        campoNome.value =
+            usuario.nome || "";
+
+    }
+
+
+    if (campoNomeExibicao) {
+
+        campoNomeExibicao.value =
+            perfil.nome_exibicao ||
+            usuario.nome ||
+            "";
+
+    }
+
+
+    if (campoTelefone) {
+
+        campoTelefone.value =
+            usuario.telefone || "";
+
+    }
+
+
+    /* ====================================================
+       LOCALIZAÇÃO
+       ====================================================
+
+       Para artista:
+
+       perfilArtista.localizacao
+
+       Para contratante:
+
+       perfil.localizacao
+
+       Caso futuramente o banco tenha outra origem
+       comum para localização, ela pode ser acrescentada
+       aqui sem alterar o restante da interface.
+
+       ==================================================== */
+
+    if (campoLocalizacao) {
+
+        campoLocalizacao.value =
+            tipoPerfil === "artista"
+
+                ? (
+                    artista.localizacao ||
+                    perfil.localizacao ||
+                    ""
+                )
+
+                : (
+                    perfil.localizacao ||
+                    usuario.localizacao ||
+                    ""
+                );
+
+    }
+
+
+    if (campoDescricao) {
+
+        campoDescricao.value =
+            perfil.descricao || "";
+
+    }
+
+
+    /* ====================================================
+       E-MAIL
+       ====================================================
+
+       A prioridade é:
+
+       1. sessão/auth;
+       2. tabela usuarios.
+
+       Isso evita que o campo fique vazio quando
+       usuarios.email não estiver preenchido, mas o
+       usuário estiver autenticado normalmente.
+
+       ==================================================== */
+
+    if (campoEmail) {
+
+        const emailAuth =
+            estado.usuarioAuth?.email ||
+            estado.usuarioAuth?.user?.email ||
+            "";
+
+
+        const emailBanco =
+            usuario.email ||
+            "";
+
+
+        const email =
+            emailAuth ||
+            emailBanco ||
+            "";
+
+
+        if (
+            "value" in campoEmail
+        ) {
+
+            campoEmail.value =
+                email;
+
+        } else {
+
+            campoEmail.textContent =
+                email ||
+                "Não informado";
 
         }
 
-
-        if (campoNomeExibicao) {
-
-            campoNomeExibicao.value =
-                perfil.nome_exibicao ||
-                usuario.nome ||
-                "";
-
-        }
+    }
 
 
-        if (campoTelefone) {
+    /* ====================================================
+       CAMPOS EXCLUSIVOS DE ARTISTA
+       ==================================================== */
 
-            campoTelefone.value =
-                usuario.telefone || "";
-
-        }
-
-
-        if (campoLocalizacao) {
-
-            campoLocalizacao.value =
-                artista.localizacao || "";
-
-        }
+    const campoExperiencia =
+        el(ids.experiencia);
 
 
-        if (campoDescricao) {
+    const campoArea =
+        el(ids.areaAtendimento);
 
-            campoDescricao.value =
-                perfil.descricao || "";
 
-        }
+    const campoTipo =
+        el(ids.tipoArtista);
 
+
+    const campoDisponivel =
+        el(ids.disponivel);
+
+
+    if (tipoPerfil === "artista") {
+
+        /* ================================================
+           EXPERIÊNCIA
+           ================================================ */
 
         if (campoExperiencia) {
 
@@ -460,6 +814,10 @@ const PerfilEditorUI = (() => {
         }
 
 
+        /* ================================================
+           ÁREA DE ATENDIMENTO
+           ================================================ */
+
         if (campoArea) {
 
             campoArea.value =
@@ -467,6 +825,10 @@ const PerfilEditorUI = (() => {
 
         }
 
+
+        /* ================================================
+           TIPO ARTÍSTICO
+           ================================================ */
 
         if (campoTipo) {
 
@@ -516,6 +878,16 @@ const PerfilEditorUI = (() => {
 
 
             if (
+                !estado.perfilArtista
+            ) {
+
+                estado.perfilArtista =
+                    {};
+
+            }
+
+
+            if (
                 !estado.perfilArtista.tipo_artista
             ) {
 
@@ -527,6 +899,10 @@ const PerfilEditorUI = (() => {
         }
 
 
+        /* ================================================
+           DISPONIBILIDADE
+           ================================================ */
+
         if (campoDisponivel) {
 
             campoDisponivel.checked =
@@ -534,355 +910,443 @@ const PerfilEditorUI = (() => {
 
         }
 
+    } else {
 
-        if (campoEmail) {
+        /* =================================================
+           CONTRATANTE
 
-            const emailAuth =
-                estado.usuarioAuth?.email ||
-                estado.usuarioAuth?.user?.email ||
+           Limpa os campos artísticos caso o HTML tenha
+           sido carregado anteriormente com valores.
+
+           Isso impede que dados antigos permaneçam
+           visualmente no formulário.
+
+           ================================================= */
+
+        if (campoExperiencia) {
+
+            campoExperiencia.value =
                 "";
-
-
-            const emailBanco =
-                estado.usuario?.email ||
-                "";
-
-
-            const email =
-                emailAuth ||
-                emailBanco ||
-                "";
-
-
-            if (
-                "value" in campoEmail
-            ) {
-
-                campoEmail.value =
-                    email;
-
-            } else {
-
-                campoEmail.textContent =
-                    email ||
-                    "Não informado";
-
-            }
 
         }
 
 
-        /* ====================================================
-           PUBLICAÇÃO DO PERFIL
-           ====================================================
+        if (campoArea) {
 
-           O checkbox representa diretamente o valor salvo
-           no banco.
-
-           true  = publicado
-           false = não publicado
-
-           NÃO usamos !== false.
-        */
-
-        const campoPerfilPublicado =
-            el("perfilPublicado");
-
-
-        if (campoPerfilPublicado) {
-
-            campoPerfilPublicado.checked =
-                perfil.perfil_publicado === true;
-
-
-            console.log(
-                "PerfilEditorUI: publicação carregada do banco:",
-                {
-                    perfilId:
-                        perfil.id,
-
-                    perfilPublicadoBanco:
-                        perfil.perfil_publicado,
-
-                    checkboxMarcado:
-                        campoPerfilPublicado.checked
-                }
-            );
+            campoArea.value =
+                "";
 
         }
 
 
-        if (
-            window.PerfilUtils &&
-            typeof window.PerfilUtils.marcarChips === "function"
-        ) {
+        if (campoTipo) {
 
-            window.PerfilUtils.marcarChips(
-                "estilos",
-                artista.estilos || []
-            );
-
-
-            window.PerfilUtils.marcarChips(
-                "servicos",
-                artista.servicos || []
-            );
+            campoTipo.value =
+                "";
 
         }
 
 
-        atualizarContador();
+        if (campoDisponivel) {
 
-        preencherAvatar();
+            campoDisponivel.checked =
+                false;
+
+        }
 
     }
 
 
-    /* ========================================================
-       AVATAR
-       ======================================================== */
+    /* ====================================================
+       PUBLICAÇÃO DO PERFIL
+       ====================================================
 
-    function preencherAvatar() {
+       O checkbox representa diretamente o valor salvo
+       no banco.
 
-        if (!contexto) {
+       true  = publicado
+       false = não publicado
 
-            return;
+       NÃO usamos !== false.
 
-        }
+       ==================================================== */
 
-
-        const estado =
-            contexto.estado || {};
-
-
-        const ids =
-            contexto.ids || {};
+    const campoPerfilPublicado =
+        el("perfilPublicado");
 
 
-        const imagem =
-            el(ids.avatarImage) ||
-            el(ids.fotoPreview);
+    if (campoPerfilPublicado) {
+
+        campoPerfilPublicado.checked =
+            perfil.perfil_publicado === true;
 
 
-        const iniciais =
-            el(ids.avatarInitials) ||
-            el(ids.fotoPlaceholder);
+        console.log(
+            "PerfilEditorUI: publicação carregada do banco:",
+            {
+                tipoPerfil,
+
+                perfilId:
+                    perfil.id,
+
+                perfilPublicadoBanco:
+                    perfil.perfil_publicado,
+
+                checkboxMarcado:
+                    campoPerfilPublicado.checked
+            }
+        );
+
+    }
 
 
-        const foto =
+    /* ====================================================
+       CHIPS DE ARTISTA
+       ====================================================
+
+       Somente artistas possuem estilos e serviços.
+
+       Contratantes não devem receber marcações vindas
+       de perfis_artistas.
+
+       ==================================================== */
+
+    if (
+        window.PerfilUtils &&
+        typeof window.PerfilUtils.marcarChips === "function"
+    ) {
+
+        window.PerfilUtils.marcarChips(
+            "estilos",
+            tipoPerfil === "artista"
+                ? artista.estilos || []
+                : []
+        );
+
+
+        window.PerfilUtils.marcarChips(
+            "servicos",
+            tipoPerfil === "artista"
+                ? artista.servicos || []
+                : []
+        );
+
+    }
+
+
+    /* ====================================================
+       INTERFACE POR TIPO DE PERFIL
+       ==================================================== */
+
+    atualizarInterfacePorTipoPerfil();
+
+
+    atualizarContador();
+
+    preencherAvatar();
+
+}
+
+
+/* ========================================================
+   AVATAR
+   ========================================================
+
+   ARTISTA:
+
+   1. foto de perfis_artistas;
+   2. foto de usuarios.
+
+   CONTRATANTE:
+
+   1. foto de usuarios.
+
+   Isso evita que o contratante dependa de uma linha
+   inexistente em perfis_artistas.
+
+   ======================================================== */
+
+function preencherAvatar() {
+
+    if (!contexto) {
+
+        return;
+
+    }
+
+
+    const estado =
+        contexto.estado || {};
+
+
+    const ids =
+        contexto.ids || {};
+
+
+    const imagem =
+        el(ids.avatarImage) ||
+        el(ids.fotoPreview);
+
+
+    const iniciais =
+        el(ids.avatarInitials) ||
+        el(ids.fotoPlaceholder);
+
+
+    const tipoPerfil =
+        obterTipoPerfil();
+
+
+    let foto =
+        "";
+
+
+    if (tipoPerfil === "artista") {
+
+        foto =
             estado.perfilArtista?.foto_url ||
             estado.usuario?.foto_url ||
             "";
 
+    } else {
 
-        if (foto) {
-
-            if (imagem) {
-
-                imagem.src =
-                    foto;
-
-                imagem.style.display =
-                    "block";
-
-            }
-
-
-            if (iniciais) {
-
-                iniciais.style.display =
-                    "none";
-
-            }
-
-
-            return;
-
-        }
-
-
-        const nome =
-            estado.perfil?.nome_exibicao ||
-            estado.usuario?.nome ||
+        foto =
+            estado.usuario?.foto_url ||
+            estado.perfil?.foto_url ||
             "";
 
+    }
 
-        const textoIniciais =
-            window.PerfilUtils &&
-            typeof window.PerfilUtils.obterIniciais === "function"
 
-                ? window.PerfilUtils.obterIniciais(
-                    nome
-                )
+    foto =
+        String(
+            foto || ""
+        ).trim();
 
-                : "MW";
 
+    if (foto) {
 
         if (imagem) {
 
-            imagem.removeAttribute(
-                "src"
-            );
+            imagem.src =
+                foto;
 
             imagem.style.display =
-                "none";
+                "block";
 
         }
 
 
         if (iniciais) {
 
-            if (
-                iniciais.classList.contains(
-                    "foto-placeholder"
-                )
-            ) {
-
-                iniciais.style.display =
-                    "flex";
-
-            } else {
-
-                iniciais.textContent =
-                    textoIniciais;
-
-                iniciais.style.display =
-                    "flex";
-
-            }
+            iniciais.style.display =
+                "none";
 
         }
+
+
+        return;
 
     }
 
 
-    /* ========================================================
-       CONTADOR DA DESCRIÇÃO
-       ======================================================== */
-
-    function atualizarContador() {
-
-        if (!contexto) {
-
-            return;
-
-        }
+    const nome =
+        estado.perfil?.nome_exibicao ||
+        estado.usuario?.nome ||
+        "";
 
 
-        const ids =
-            contexto.ids || {};
+    const textoIniciais =
+        window.PerfilUtils &&
+        typeof window.PerfilUtils.obterIniciais === "function"
+
+            ? window.PerfilUtils.obterIniciais(
+                nome
+            )
+
+            : "MW";
 
 
-        const campo =
-            el(ids.descricao);
+    if (imagem) {
 
-
-        const contador =
-            el(ids.contadorDescricao);
-
-
-        if (!campo || !contador) {
-
-            return;
-
-        }
-
-
-        const quantidade =
-            campo.value.length;
-
-
-        contador.textContent =
-            quantidade;
-
-    }
-
-
-    /* ========================================================
-       ATUALIZAR CHECKBOX DE PUBLICAÇÃO
-       ======================================================== */
-
-    function atualizarPublicacaoConfirmada(
-        valor
-    ) {
-
-        const checkbox =
-            el("perfilPublicado");
-
-
-        if (!checkbox) {
-
-            return;
-
-        }
-
-
-        checkbox.checked =
-            valor === true;
-
-    }
-
-
-    /* ========================================================
-       ATUALIZAR SELECT DE TIPO
-       ======================================================== */
-
-    function atualizarTipo(
-        tipo
-    ) {
-
-        if (!contexto) {
-
-            return;
-
-        }
-
-
-        const campoTipo =
-            el(
-                contexto.ids?.tipoArtista
-            );
-
-
-        if (!campoTipo) {
-
-            return;
-
-        }
-
-
-        preencherTipoArtista(
-            campoTipo,
-            tipo
+        imagem.removeAttribute(
+            "src"
         );
 
+        imagem.style.display =
+            "none";
+
     }
 
 
-    /* ========================================================
-       API PÚBLICA
-       ======================================================== */
+    if (iniciais) {
 
-    return {
+        if (
+            iniciais.classList.contains(
+                "foto-placeholder"
+            )
+        ) {
 
-        configurar,
+            iniciais.style.display =
+                "flex";
 
-        preencherFormulario,
+        } else {
 
-        preencherAvatar,
+            iniciais.textContent =
+                textoIniciais;
 
-        atualizarContador,
+            iniciais.style.display =
+                "flex";
 
-        preencherTipoArtista,
+        }
 
-        atualizarPublicacaoConfirmada,
+    }
 
-        atualizarTipo
+}
 
-    };
+
+/* ========================================================
+   CONTADOR DA DESCRIÇÃO
+   ======================================================== */
+
+function atualizarContador() {
+
+    if (!contexto) {
+
+        return;
+
+    }
+
+
+    const ids =
+        contexto.ids || {};
+
+
+    const campo =
+        el(ids.descricao);
+
+
+    const contador =
+        el(ids.contadorDescricao);
+
+
+    if (!campo || !contador) {
+
+        return;
+
+    }
+
+
+    const quantidade =
+        campo.value.length;
+
+
+    contador.textContent =
+        quantidade;
+
+}
+
+
+/* ========================================================
+   ATUALIZAR CHECKBOX DE PUBLICAÇÃO
+   ======================================================== */
+
+function atualizarPublicacaoConfirmada(
+    valor
+) {
+
+    const checkbox =
+        el("perfilPublicado");
+
+
+    if (!checkbox) {
+
+        return;
+
+    }
+
+
+    checkbox.checked =
+        valor === true;
+
+}
+
+
+/* ========================================================
+   ATUALIZAR SELECT DE TIPO
+   ======================================================== */
+
+function atualizarTipo(
+    tipo
+) {
+
+    if (!contexto) {
+
+        return;
+
+    }
+
+
+    if (!ehArtista()) {
+
+        return;
+
+    }
+
+
+    const campoTipo =
+        el(
+            contexto.ids?.tipoArtista
+        );
+
+
+    if (!campoTipo) {
+
+        return;
+
+    }
+
+
+    preencherTipoArtista(
+        campoTipo,
+        tipo
+    );
+
+}
+
+
+/* ========================================================
+   API PÚBLICA
+   ======================================================== */
+
+return {
+
+    configurar,
+
+    preencherFormulario,
+
+    preencherAvatar,
+
+    atualizarContador,
+
+    preencherTipoArtista,
+
+    atualizarPublicacaoConfirmada,
+
+    atualizarTipo,
+
+    atualizarInterfacePorTipoPerfil,
+
+    obterTipoPerfil,
+
+    ehArtista,
+
+    ehContratante
+
+};
+
 
 })();
 
-
 window.PerfilEditorUI =
-    PerfilEditorUI;
+PerfilEditorUI;

@@ -1,33 +1,45 @@
+/* =========================================================
+   MUSICALWORLD — MEU PERFIL UNIVERSAL
+
+   Arquivo:
+   js/PerfilPublico.js
+
+   Responsabilidade:
+
+   - Controlar a página "Meu Perfil".
+   - Inicializar o perfil.
+   - Carregar os dados através do PerfilPublicoDados.
+   - Controlar as abas.
+   - Acionar os módulos de portfólio, serviços, agenda
+     e avaliações.
+   - Controlar navegação.
+   - Controlar WhatsApp.
+   - Controlar QR Code.
+   - Construir links públicos.
+   - Manter o estado geral da página.
+
+   Renderização:
+
+   js/PerfilPublicoRender.js
+
+   Dados:
+
+   js/perfil-publico/PerfilPublicoDados.js
+
+   IMPORTANTE:
+
+   Este arquivo NÃO deve conter regras extensas de
+   apresentação visual.
+
+   A renderização básica do perfil pertence ao:
+   js/PerfilPublicoRender.js
+
+   ========================================================= */
+
+
 (function (window) {
 
     "use strict";
-
-    /* =========================================================
-       MUSICALWORLD — MEU PERFIL UNIVERSAL
-
-       Arquivo:
-       js/PerfilPublico.js
-
-       Responsabilidades:
-
-       - Controlar a página "Meu Perfil".
-       - Funcionar para todos os tipos de perfil.
-       - Controlar as abas.
-       - Carregar os dados.
-       - Acionar os módulos de cada seção.
-       - Preencher informações básicas.
-       - Controlar ações da página.
-       - Abrir a apresentação pública universal.
-       - Abrir o editor universal.
-
-       NÃO É RESPONSABILIDADE DESTE ARQUIVO:
-
-       - Carteira financeira.
-       - Saldo.
-       - Transações.
-       - Saques.
-       - Dados financeiros.
-       ========================================================= */
 
 
     /* =====================================================
@@ -35,22 +47,31 @@
        ===================================================== */
 
     const Utils =
-        window.PerfilPublicoUtils || null;
+        window.PerfilPublicoUtils;
+
 
     const Dados =
-        window.PerfilPublicoDados || null;
+        window.PerfilPublicoDados;
+
+
+    const Render =
+        window.PerfilPublicoRender;
+
 
     const Portfolio =
-        window.PerfilPublicoPortfolio || null;
+        window.PerfilPublicoPortfolio;
+
 
     const Servicos =
-        window.PerfilPublicoServicos || null;
+        window.PerfilPublicoServicos;
+
 
     const Agenda =
-        window.PerfilPublicoAgenda || null;
+        window.PerfilPublicoAgenda;
+
 
     const Avaliacoes =
-        window.PerfilPublicoAvaliacoes || null;
+        window.PerfilPublicoAvaliacoes;
 
 
     /* =====================================================
@@ -61,9 +82,6 @@
 
         pagina: {
 
-            tipoArtista:
-                "Artista",
-
             apresentacao:
                 "apresentar-perfil.html",
 
@@ -73,89 +91,54 @@
         },
 
 
+        tiposPerfil: {
+
+            artista:
+                "artista",
+
+            contratante:
+                "contratante"
+
+        },
+
+
         abas: {
 
             sobre: {
+
                 id:
                     "tab-sobre"
+
             },
+
 
             portfolio: {
+
                 id:
                     "tab-portfolio"
+
             },
+
 
             agenda: {
+
                 id:
                     "tab-agenda"
+
             },
 
+
             avaliacoes: {
+
                 id:
                     "tab-avaliacoes"
+
             }
 
         },
 
 
         elementos: {
-
-            nome:
-                "profileName",
-
-            categoria:
-                "profileCategory",
-
-            subtituloTipo:
-                "topbarProfileSubtitle",
-
-            localizacao:
-                "profileLocation",
-
-            avaliacao:
-                "profileRating",
-
-            avaliacaoValor:
-                "ratingValue",
-
-            avaliacaoAvaliacoes:
-                "ratingReviews",
-
-            status:
-                "profileStatus",
-
-            avatar:
-                "profileAvatar",
-
-            iniciais:
-                "profileInitials",
-
-            bio:
-                "profileBio",
-
-            experiencia:
-                "profileExperience",
-
-            area:
-                "profileArea",
-
-            tipo:
-                "profileType",
-
-            disponibilidade:
-                "profileAvailability",
-
-            generos:
-                "genreList",
-
-            instrumentos:
-                "instrumentList",
-
-            instrumentosSection:
-                "instrumentosSection",
-
-            servicos:
-                "servicesList",
 
             linkPerfil:
                 "profileLink",
@@ -222,11 +205,14 @@
         inicializado:
             false,
 
+
         carregando:
             false,
 
+
         abaAtual:
             "sobre",
+
 
         abasCarregadas: {
 
@@ -244,29 +230,42 @@
 
         },
 
+
         perfil:
             null,
+
 
         perfilArtista:
             null,
 
+
         usuario:
             null,
+
 
         usuarioId:
             null,
 
+
         perfilId:
             null,
+
+
+        tipoPerfil:
+            null,
+
 
         portfolio:
             [],
 
+
         servicos:
             [],
 
+
         agenda:
             [],
+
 
         avaliacoes:
             []
@@ -312,91 +311,24 @@
        ELEMENTOS
        ===================================================== */
 
-    function obterElemento(id) {
+    function obterElemento(
+        id
+    ) {
 
         if (!id) {
             return null;
         }
 
-        return document.getElementById(id);
+
+        return document.getElementById(
+            id
+        );
 
     }
 
 
     /* =====================================================
-       DEFINIR TEXTO
-       ===================================================== */
-
-    function definirTexto(
-        id,
-        valor,
-        padrao = ""
-    ) {
-
-        const elemento =
-            obterElemento(id);
-
-        if (!elemento) {
-            return;
-        }
-
-        const texto =
-            valor !== null &&
-            valor !== undefined &&
-            String(valor).trim() !== ""
-                ? String(valor)
-                : padrao;
-
-        elemento.textContent =
-            texto;
-
-    }
-
-
-    /* =====================================================
-       DEFINIR LOCALIZAÇÃO
-       ===================================================== */
-
-    function definirLocalizacao(
-        valor
-    ) {
-
-        const elemento =
-            obterElemento(
-                CONFIG.elementos.localizacao
-            );
-
-        if (!elemento) {
-            return;
-        }
-
-        const texto =
-            valor !== null &&
-            valor !== undefined &&
-            String(valor).trim() !== ""
-                ? String(valor)
-                : "Localização não informada";
-
-        const span =
-            elemento.querySelector("span");
-
-        if (span) {
-
-            span.textContent =
-                texto;
-
-        } else {
-
-            elemento.textContent =
-                texto;
-
-        }
-
-    }
-
-
-    /* =====================================================
-       OBTER PRIMEIRO VALOR
+       PRIMEIRO VALOR
        ===================================================== */
 
     function obterPrimeiroValor(
@@ -414,6 +346,7 @@
 
         }
 
+
         for (
             const valor of valores
         ) {
@@ -421,7 +354,9 @@
             if (
                 valor !== null &&
                 valor !== undefined &&
-                String(valor).trim() !== ""
+                String(
+                    valor
+                ).trim() !== ""
             ) {
 
                 return valor;
@@ -430,22 +365,239 @@
 
         }
 
+
         return "";
 
     }
 
 
     /* =====================================================
-       EXTRAIR VALOR DE TIPO
+       NORMALIZAR TIPO DE PERFIL
        ===================================================== */
 
-    function extrairValorTipo(
+    function normalizarTipoPerfil(
         valor
     ) {
 
         if (
-            valor === null ||
-            valor === undefined
+            Dados &&
+            typeof Dados.normalizarTipoPerfil === "function"
+        ) {
+
+            return Dados.normalizarTipoPerfil(
+                valor
+            );
+
+        }
+
+
+        if (
+            typeof valor === "object" &&
+            valor !== null
+        ) {
+
+            valor =
+                obterPrimeiroValor(
+
+                    valor.nome,
+
+                    valor.tipo,
+
+                    valor.valor
+
+                );
+
+        }
+
+
+        const texto =
+            String(
+                valor || ""
+            )
+                .normalize("NFD")
+                .replace(
+                    /[\u0300-\u036f]/g,
+                    ""
+                )
+                .trim()
+                .toLowerCase();
+
+
+        if (
+            texto === "artista" ||
+            texto === "artistas"
+        ) {
+
+            return CONFIG.tiposPerfil.artista;
+
+        }
+
+
+        if (
+            texto === "contratante" ||
+            texto === "contratantes" ||
+            texto === "cliente" ||
+            texto === "clientes"
+        ) {
+
+            return CONFIG.tiposPerfil.contratante;
+
+        }
+
+
+        return "";
+
+    }
+
+
+    /* =====================================================
+       OBTER TIPO DO PERFIL
+       ===================================================== */
+
+    function obterTipoPerfilAtual() {
+
+        if (
+            Dados &&
+            typeof Dados.obterTipoPerfil === "function"
+        ) {
+
+            const tipo =
+                normalizarTipoPerfil(
+                    Dados.obterTipoPerfil()
+                );
+
+
+            if (tipo) {
+
+                estado.tipoPerfil =
+                    tipo;
+
+
+                return tipo;
+
+            }
+
+        }
+
+
+        const perfil =
+            estado.perfil || {};
+
+
+        let relacionamento =
+            perfil.tipos_perfil;
+
+
+        if (
+            Array.isArray(
+                relacionamento
+            )
+        ) {
+
+            relacionamento =
+                relacionamento[0];
+
+        }
+
+
+        const tipo =
+            normalizarTipoPerfil(
+
+                relacionamento,
+
+                perfil.tipoPerfil,
+
+                perfil.tipo_perfil,
+
+                perfil.tipo
+
+            );
+
+
+        estado.tipoPerfil =
+            tipo || null;
+
+
+        return tipo;
+
+    }
+
+
+    /* =====================================================
+       VERIFICAR PERFIL
+       ===================================================== */
+
+    function ehArtista() {
+
+        if (
+            Dados &&
+            typeof Dados.ehArtista === "function"
+        ) {
+
+            return Dados.ehArtista();
+
+        }
+
+
+        return (
+            obterTipoPerfilAtual() ===
+            CONFIG.tiposPerfil.artista
+        );
+
+    }
+
+
+    function ehContratante() {
+
+        if (
+            Dados &&
+            typeof Dados.ehContratante === "function"
+        ) {
+
+            return Dados.ehContratante();
+
+        }
+
+
+        return (
+            obterTipoPerfilAtual() ===
+            CONFIG.tiposPerfil.contratante
+        );
+
+    }
+
+
+    /* =====================================================
+       TIPO DE ARTISTA
+       ===================================================== */
+
+    function normalizarTipoArtista(
+        valor
+    ) {
+
+        if (
+            Render &&
+            typeof Render.normalizarTipoArtista === "function"
+        ) {
+
+            return Render.normalizarTipoArtista(
+                valor
+            );
+
+        }
+
+
+        return String(
+            valor || ""
+        ).trim();
+
+    }
+
+
+    function obterTipoArtistaAtual() {
+
+        if (
+            !ehArtista()
         ) {
 
             return "";
@@ -454,118 +606,56 @@
 
 
         if (
-            typeof valor !== "object"
+            Dados &&
+            typeof Dados.obterPerfilArtista === "function"
         ) {
 
-            return String(valor).trim();
-
-        }
-
-
-        const valorExtraido =
-            obterPrimeiroValor(
-
-                valor.tipo_artista,
-
-                valor.tipoArtista,
-
-                valor.nome,
-
-                valor.nome_exibicao,
-
-                valor.tipo,
-
-                valor.valor
-
-            );
+            const artista =
+                Dados.obterPerfilArtista();
 
 
-        if (
-            valorExtraido &&
-            typeof valorExtraido === "object"
-        ) {
+            const tipo =
+                obterPrimeiroValor(
 
-            return extrairValorTipo(
-                valorExtraido
-            );
+                    artista?.tipo_artista,
 
-        }
+                    artista?.tipoArtista,
 
+                    artista?.tipo
 
-        return valorExtraido;
-
-    }
-
-
-    /* =====================================================
-       OBTER TIPO BRUTO DO PERFIL
-       ===================================================== */
-
-    function obterTipoBrutoPerfil() {
-
-        const candidatos = [
-
-            estado.perfilArtista?.tipo_artista,
-
-            estado.perfilArtista?.tipoArtista,
-
-            estado.perfilArtista?.tipo,
-
-            estado.perfilArtista?.tipo_perfil,
-
-            estado.perfilArtista?.tipoPerfil,
-
-            estado.perfil?.tipo_artista,
-
-            estado.perfil?.tipoArtista,
-
-            estado.perfil?.tipo_perfil,
-
-            estado.perfil?.tipoPerfil,
-
-            estado.perfil?.tipo,
-
-            estado.usuario?.tipo_artista,
-
-            estado.usuario?.tipoArtista,
-
-            estado.usuario?.tipo_perfil,
-
-            estado.usuario?.tipoPerfil
-
-        ];
-
-
-        for (
-            const candidato of candidatos
-        ) {
-
-            const valor =
-                extrairValorTipo(
-                    candidato
                 );
 
 
-            if (
-                valor !== null &&
-                valor !== undefined &&
-                String(valor).trim() !== ""
-            ) {
+            if (tipo) {
 
-                return valor;
+                return normalizarTipoArtista(
+                    tipo
+                );
 
             }
 
         }
 
 
-        return CONFIG.pagina.tipoArtista;
+        return normalizarTipoArtista(
+
+            obterPrimeiroValor(
+
+                estado.perfilArtista?.tipo_artista,
+
+                estado.perfilArtista?.tipoArtista,
+
+                estado.perfilArtista?.tipo
+
+            )
+
+        );
 
     }
 
 
     /* =====================================================
-       OBTER ABA INICIAL
+       ABA INICIAL
        ===================================================== */
 
     function obterAbaInicial() {
@@ -583,7 +673,6 @@
 
 
         if (
-            hash &&
             CONFIG.abas[hash]
         ) {
 
@@ -603,18 +692,23 @@
 
     async function inicializar() {
 
-        if (estado.carregando) {
+        if (
+            estado.carregando
+        ) {
 
             aviso(
                 "A página já está sendo inicializada."
             );
 
+
             return;
 
         }
 
+
         estado.carregando =
             true;
+
 
         try {
 
@@ -623,82 +717,53 @@
             );
 
 
-            configurarEventos();
+            if (!Render) {
 
-            configurarAbas();
-
-
-            /*
-             * A aba deve ser ativada ANTES do carregamento
-             * dos dados.
-             *
-             * Assim, mesmo que alguma consulta demore ou
-             * apresente erro, o usuário consegue visualizar
-             * a aba clicada.
-             */
-
-            const abaInicial =
-                obterAbaInicial();
-
-
-            ativarAba(
-                abaInicial,
-                false
-            );
-
-
-            /*
-             * O estado passa a ser considerado inicializado
-             * antes das consultas assíncronas para que os
-             * controles de aba continuem funcionando.
-             */
-
-            estado.inicializado =
-                true;
-
-
-            try {
-
-                await carregarDados();
-
-            } catch (error) {
-
-                erro(
-                    "Erro durante o carregamento dos dados:",
-                    error
-                );
-
-                mostrarToast(
-                    "Alguns dados do perfil não puderam ser carregados.",
-                    "erro"
+                throw new Error(
+                    "PerfilPublicoRender.js não foi carregado."
                 );
 
             }
 
 
+            estado.abaAtual =
+                obterAbaInicial();
+
+
+            configurarEventos();
+
+            configurarAbas();
+
+
+            await carregarDados();
+
+
+            aplicarRegrasDePerfil();
+
+
             preencherInformacoesPerfil();
 
 
-            /*
-             * Carrega somente a aba inicial.
-             */
-
             await carregarAba(
-                abaInicial
+                estado.abaAtual
             );
 
 
             ativarAba(
-                abaInicial,
+                estado.abaAtual,
                 false
             );
 
 
-            renderizarIcones();
+            Render.renderizarIcones();
+
+
+            estado.inicializado =
+                true;
 
 
             log(
-                "Meu Perfil universal inicializado."
+                "Meu Perfil universal inicializado com sucesso."
             );
 
 
@@ -757,31 +822,14 @@
             resultado =
                 await Dados.carregarTudo({
 
-                    carregarPortfolio:
-                        true,
-
                     incluirPortfolio:
-                        true,
-
-                    carregarServicos:
                         true,
 
                     incluirServicos:
                         true,
 
-                    carregarAgenda:
-                        true,
-
                     incluirAgenda:
                         true,
-
-                    /*
-                     * Avaliações podem ser carregadas
-                     * quando a aba for aberta.
-                     */
-
-                    carregarAvaliacoes:
-                        false,
 
                     incluirAvaliacoes:
                         false
@@ -790,10 +838,10 @@
 
         } else {
 
-            aviso(
-                "carregarTudo() não encontrado. Tentando carregamento individual."
-            );
-
+            /*
+             * Compatibilidade com versões anteriores
+             * do módulo de dados.
+             */
 
             if (
                 typeof Dados.carregarUsuario === "function"
@@ -832,7 +880,8 @@
 
 
             if (
-                typeof Dados.carregarServicos === "function"
+                typeof Dados.carregarServicos === "function" &&
+                ehArtista()
             ) {
 
                 await Dados.carregarServicos();
@@ -886,6 +935,33 @@
             );
 
 
+        estado.tipoPerfil =
+            normalizarTipoPerfil(
+
+                obterEstadoDados(
+                    "obterTipoPerfil",
+                    resultado?.tipoPerfil
+                )
+
+            ) || null;
+
+
+        /*
+         * Garante que o ID do perfil seja obtido mesmo
+         * quando a versão do Dados não o devolve diretamente.
+         */
+
+        if (
+            !estado.perfilId &&
+            estado.perfil?.id
+        ) {
+
+            estado.perfilId =
+                estado.perfil.id;
+
+        }
+
+
         estado.portfolio =
             obterEstadoArray(
                 "obterPortfolio",
@@ -893,11 +969,26 @@
             );
 
 
-        estado.servicos =
-            obterEstadoArray(
-                "obterServicos",
-                resultado?.servicos
-            );
+        /*
+         * Serviços são exclusivos de artistas.
+         */
+
+        if (
+            ehArtista()
+        ) {
+
+            estado.servicos =
+                obterEstadoArray(
+                    "obterServicos",
+                    resultado?.servicos
+                );
+
+        } else {
+
+            estado.servicos =
+                [];
+
+        }
 
 
         estado.agenda =
@@ -914,57 +1005,23 @@
             );
 
 
-        if (
-            !estado.usuario &&
-            resultado?.dados?.usuario
-        ) {
-
-            estado.usuario =
-                resultado.dados.usuario;
-
-        }
-
+        /*
+         * Segunda proteção:
+         *
+         * Se o tipo for contratante, não mantemos
+         * dados de artista na memória do controlador.
+         */
 
         if (
-            !estado.perfil &&
-            resultado?.dados?.perfil
-        ) {
-
-            estado.perfil =
-                resultado.dados.perfil;
-
-        }
-
-
-        if (
-            !estado.perfilArtista &&
-            resultado?.dados?.perfilArtista
+            !ehArtista()
         ) {
 
             estado.perfilArtista =
-                resultado.dados.perfilArtista;
-
-        }
+                null;
 
 
-        if (
-            !estado.usuarioId &&
-            resultado?.dados?.usuarioId
-        ) {
-
-            estado.usuarioId =
-                resultado.dados.usuarioId;
-
-        }
-
-
-        if (
-            !estado.perfilId &&
-            resultado?.dados?.perfilId
-        ) {
-
-            estado.perfilId =
-                resultado.dados.perfilId;
+            estado.servicos =
+                [];
 
         }
 
@@ -982,8 +1039,8 @@
                 tipoPerfil:
                     obterTipoPerfilAtual(),
 
-                tipoBruto:
-                    obterTipoBrutoPerfil(),
+                tipoArtista:
+                    obterTipoArtistaAtual(),
 
                 portfolio:
                     estado.portfolio.length,
@@ -998,24 +1055,6 @@
                     estado.avaliacoes.length
 
             }
-        );
-
-
-        log(
-            "Perfil carregado:",
-            estado.perfil
-        );
-
-
-        log(
-            "Perfil artístico carregado:",
-            estado.perfilArtista
-        );
-
-
-        log(
-            "Serviços encontrados:",
-            estado.servicos
         );
 
     }
@@ -1050,14 +1089,11 @@
 
         }
 
+
         return fallback;
 
     }
 
-
-    /* =====================================================
-       OBTER ARRAY DO ESTADO
-       ===================================================== */
 
     function obterEstadoArray(
         metodo,
@@ -1071,7 +1107,9 @@
             );
 
 
-        return Array.isArray(valor)
+        return Array.isArray(
+            valor
+        )
             ? valor
             : [];
 
@@ -1079,429 +1117,34 @@
 
 
     /* =====================================================
-       PREENCHER PERFIL
+       REGRAS DE PERFIL
+       ===================================================== */
+
+    function aplicarRegrasDePerfil() {
+
+        if (!Render) {
+            return;
+        }
+
+
+        Render.aplicarRegrasDePerfil(
+            estado
+        );
+
+    }
+
+
+    /* =====================================================
+       PREENCHER INFORMAÇÕES
        ===================================================== */
 
     function preencherInformacoesPerfil() {
 
-        const usuario =
-            estado.usuario || {};
+        if (!Render) {
 
-        const perfil =
-            estado.perfil || {};
-
-        const artista =
-            estado.perfilArtista || {};
-
-
-        const nome =
-            obterPrimeiroValor(
-
-                perfil.nome_exibicao,
-
-                artista.nome_artistico,
-
-                artista.nomeArtistico,
-
-                artista.nome,
-
-                perfil.nome_artistico,
-
-                perfil.nome,
-
-                usuario.nome,
-
-                usuario.nome_completo,
-
-                "Artista"
-
+            erro(
+                "PerfilPublicoRender.js não está disponível."
             );
-
-
-        const tipo =
-            obterTipoPerfilAtual();
-
-
-        const localizacao =
-            obterPrimeiroValor(
-
-                artista.localizacao,
-
-                artista.localizacao_texto,
-
-                artista.cidade,
-
-                perfil.localizacao,
-
-                perfil.cidade,
-
-                usuario.cidade
-
-            );
-
-
-        const bio =
-            obterPrimeiroValor(
-
-                perfil.descricao,
-
-                artista.descricao,
-
-                artista.biografia,
-
-                artista.bio,
-
-                perfil.biografia,
-
-                perfil.bio
-
-            );
-
-
-        const experiencia =
-            obterPrimeiroValor(
-
-                artista.experiencia,
-
-                artista.tempo_experiencia,
-
-                artista.anos_experiencia,
-
-                perfil.experiencia
-
-            );
-
-
-        const area =
-            obterPrimeiroValor(
-
-                artista.area_atendimento,
-
-                artista.areaAtendimento,
-
-                artista.area_atuacao,
-
-                artista.areaAtuacao,
-
-                artista.area,
-
-                perfil.area_atendimento,
-
-                perfil.areaAtendimento,
-
-                perfil.area_atuacao
-
-            );
-
-
-        const disponibilidade =
-            obterPrimeiroValor(
-
-                artista.disponivel,
-
-                artista.disponibilidade,
-
-                perfil.disponibilidade
-
-            );
-
-
-        definirTexto(
-            CONFIG.elementos.nome,
-            nome,
-            "Artista"
-        );
-
-
-        definirTexto(
-            CONFIG.elementos.categoria,
-            tipo,
-            "Artista"
-        );
-
-
-        definirTexto(
-            CONFIG.elementos.subtituloTipo,
-            tipo,
-            "Perfil"
-        );
-
-
-        definirLocalizacao(
-            localizacao
-        );
-
-
-        definirTexto(
-            CONFIG.elementos.bio,
-            bio,
-            "Nenhuma biografia informada."
-        );
-
-
-        definirTexto(
-            CONFIG.elementos.experiencia,
-            experiencia,
-            "Não informado"
-        );
-
-
-        definirTexto(
-            CONFIG.elementos.area,
-            area,
-            "Não informado"
-        );
-
-
-        definirTexto(
-            CONFIG.elementos.tipo,
-            tipo,
-            "Artista"
-        );
-
-
-        definirTexto(
-            CONFIG.elementos.disponibilidade,
-            obterTextoDisponibilidade(
-                disponibilidade
-            ),
-            "Não informado"
-        );
-
-
-        preencherStatus(
-            disponibilidade
-        );
-
-
-        preencherAvatar(
-            artista,
-            perfil,
-            nome
-        );
-
-
-        preencherAvaliacao();
-
-
-        preencherGeneros(
-            artista
-        );
-
-
-        preencherInstrumentos(
-            artista
-        );
-
-
-        preencherServicos();
-
-
-        preencherLinkPerfil();
-
-    }
-
-
-    /* =====================================================
-       STATUS DO PERFIL
-       ===================================================== */
-
-    function preencherStatus(
-        disponibilidade
-    ) {
-
-        const elemento =
-            obterElemento(
-                CONFIG.elementos.status
-            );
-
-        if (!elemento) {
-            return;
-        }
-
-
-        const disponivel =
-            disponibilidade === true ||
-            disponibilidade === "true" ||
-            disponibilidade === 1 ||
-            disponibilidade === "1";
-
-
-        elemento.classList.toggle(
-            "available",
-            disponivel
-        );
-
-
-        elemento.classList.toggle(
-            "unavailable",
-            !disponivel
-        );
-
-
-        const texto =
-            disponivel
-                ? "Disponível"
-                : "Indisponível";
-
-
-        const span =
-            elemento.querySelector(
-                ".status-text"
-            ) ||
-            elemento.querySelector(
-                "span"
-            );
-
-
-        if (span) {
-
-            span.textContent =
-                texto;
-
-        } else {
-
-            elemento.textContent =
-                texto;
-
-        }
-
-    }
-
-
-    /* =====================================================
-       AVATAR
-       ===================================================== */
-
-    function preencherAvatar(
-        artista,
-        perfil,
-        nome
-    ) {
-
-        const container =
-            obterElemento(
-                CONFIG.elementos.avatar
-            );
-
-
-        const iniciais =
-            obterElemento(
-                CONFIG.elementos.iniciais
-            );
-
-
-        if (!container) {
-
-            aviso(
-                "Elemento #profileAvatar não encontrado."
-            );
-
-            return;
-
-        }
-
-
-        let imagem =
-            container.querySelector(
-                "img.profile-avatar-image"
-            );
-
-
-        if (!imagem) {
-
-            imagem =
-                document.createElement(
-                    "img"
-                );
-
-            imagem.className =
-                "profile-avatar-image";
-
-            imagem.alt =
-                `Foto de perfil de ${nome || "artista"}`;
-
-            container.appendChild(
-                imagem
-            );
-
-        } else {
-
-            imagem.alt =
-                `Foto de perfil de ${nome || "artista"}`;
-
-        }
-
-
-        const url =
-            obterPrimeiroValor(
-
-                artista?.foto_url,
-
-                artista?.avatar_url,
-
-                artista?.foto,
-
-                artista?.avatar,
-
-                perfil?.foto_url,
-
-                perfil?.avatar_url,
-
-                estado.usuario?.foto_url,
-
-                estado.usuario?.avatar_url,
-
-                estado.usuario?.foto,
-
-                estado.usuario?.avatar
-
-            );
-
-
-        if (iniciais) {
-
-            iniciais.textContent =
-                obterIniciais(
-                    nome
-                );
-
-            iniciais.style.display =
-                "none";
-
-            iniciais.hidden =
-                true;
-
-        }
-
-
-        if (!url) {
-
-            imagem.removeAttribute(
-                "src"
-            );
-
-            imagem.style.display =
-                "none";
-
-            imagem.hidden =
-                true;
-
-
-            if (iniciais) {
-
-                iniciais.textContent =
-                    obterIniciais(
-                        nome
-                    );
-
-                iniciais.style.display =
-                    "flex";
-
-                iniciais.hidden =
-                    false;
-
-            }
 
 
             return;
@@ -1509,564 +1152,27 @@
         }
 
 
-        container.hidden =
-            false;
-
-        container.style.display =
-            "";
-
-
-        imagem.hidden =
-            false;
-
-        imagem.style.display =
-            "block";
-
-
-        imagem.onload =
-            function () {
-
-                imagem.hidden =
-                    false;
-
-                imagem.style.display =
-                    "block";
-
-
-                if (iniciais) {
-
-                    iniciais.style.display =
-                        "none";
-
-                    iniciais.hidden =
-                        true;
-
-                }
-
-            };
-
-
-        imagem.onerror =
-            function () {
-
-                erro(
-                    "Não foi possível carregar a imagem do avatar:",
-                    imagem.src
-                );
-
-
-                imagem.style.display =
-                    "none";
-
-                imagem.hidden =
-                    true;
-
-
-                if (iniciais) {
-
-                    iniciais.textContent =
-                        obterIniciais(
-                            nome
-                        );
-
-                    iniciais.style.display =
-                        "flex";
-
-                    iniciais.hidden =
-                        false;
-
-                }
-
-            };
-
-
-        imagem.src =
-            String(url);
-
-
-        if (
-            imagem.complete &&
-            imagem.naturalWidth > 0
-        ) {
-
-            imagem.hidden =
-                false;
-
-            imagem.style.display =
-                "block";
-
-
-            if (iniciais) {
-
-                iniciais.style.display =
-                    "none";
-
-                iniciais.hidden =
-                    true;
-
-            }
-
-        }
+        Render.preencherInformacoes(
+            estado
+        );
 
     }
 
 
     /* =====================================================
-       INICIAIS
-       ===================================================== */
-
-    function obterIniciais(
-        nome
-    ) {
-
-        if (
-            Utils &&
-            typeof Utils.obterIniciais === "function"
-        ) {
-
-            return Utils.obterIniciais(
-                nome
-            );
-
-        }
-
-
-        const partes =
-            String(nome || "")
-                .trim()
-                .split(/\s+/)
-                .filter(Boolean);
-
-
-        if (!partes.length) {
-
-            return "A";
-
-        }
-
-
-        if (partes.length === 1) {
-
-            return partes[0]
-                .substring(
-                    0,
-                    2
-                )
-                .toUpperCase();
-
-        }
-
-
-        return (
-
-            partes[0].charAt(0) +
-
-            partes[
-                partes.length - 1
-            ].charAt(0)
-
-        ).toUpperCase();
-
-    }
-
-
-    /* =====================================================
-       AVALIAÇÃO DO CABEÇALHO
+       AVALIAÇÃO
        ===================================================== */
 
     function preencherAvaliacao() {
 
-        let nota =
-            0;
-
-
-        let quantidade =
-            0;
-
-
-        if (
-            Array.isArray(
-                estado.avaliacoes
-            ) &&
-            estado.avaliacoes.length
-        ) {
-
-            const notas =
-                estado.avaliacoes
-                    .map(
-                        avaliacao =>
-                            Number(
-                                obterPrimeiroValor(
-
-                                    avaliacao.nota,
-
-                                    avaliacao.rating,
-
-                                    avaliacao.avaliacao,
-
-                                    0
-
-                                )
-                            )
-                    )
-                    .filter(
-                        numero =>
-                            Number.isFinite(numero) &&
-                            numero > 0
-                    );
-
-
-            if (notas.length) {
-
-                nota =
-                    notas.reduce(
-                        (
-                            total,
-                            valor
-                        ) =>
-                            total + valor,
-                        0
-                    ) /
-                    notas.length;
-
-
-                quantidade =
-                    notas.length;
-
-            }
-
+        if (!Render) {
+            return;
         }
 
 
-        const notaPerfil =
-            obterPrimeiroValor(
-
-                estado.perfilArtista?.avaliacao_media,
-
-                estado.perfilArtista?.media_avaliacao,
-
-                estado.perfil?.avaliacao_media,
-
-                estado.perfil?.media_avaliacao
-
-            );
-
-
-        if (
-            !nota &&
-            notaPerfil !== ""
-        ) {
-
-            const numero =
-                Number(
-                    notaPerfil
-                );
-
-
-            if (
-                Number.isFinite(numero) &&
-                numero > 0
-            ) {
-
-                nota =
-                    numero;
-
-            }
-
-        }
-
-
-        const quantidadePerfil =
-            obterPrimeiroValor(
-
-                estado.perfilArtista?.quantidade_avaliacoes,
-
-                estado.perfilArtista?.total_avaliacoes,
-
-                estado.perfil?.quantidade_avaliacoes,
-
-                estado.perfil?.total_avaliacoes
-
-            );
-
-
-        if (
-            !quantidade &&
-            quantidadePerfil !== ""
-        ) {
-
-            const numero =
-                Number(
-                    quantidadePerfil
-                );
-
-
-            if (
-                Number.isFinite(numero) &&
-                numero >= 0
-            ) {
-
-                quantidade =
-                    numero;
-
-            }
-
-        }
-
-
-        const notaFormatada =
-            nota > 0
-                ? nota
-                    .toFixed(1)
-                    .replace(
-                        ".",
-                        ","
-                    )
-                : "0,0";
-
-
-        definirTexto(
-            CONFIG.elementos.avaliacaoValor,
-            notaFormatada,
-            "0,0"
+        Render.preencherAvaliacao(
+            estado
         );
-
-
-        definirTexto(
-            CONFIG.elementos.avaliacaoAvaliacoes,
-
-            quantidade === 1
-                ? "(1 avaliação)"
-                : `(${quantidade} avaliações)`,
-
-            "(0 avaliações)"
-
-        );
-
-    }
-
-
-    /* =====================================================
-       GÊNEROS
-       ===================================================== */
-
-    function preencherGeneros(
-        artista
-    ) {
-
-        const container =
-            obterElemento(
-                CONFIG.elementos.generos
-            );
-
-
-        if (!container) {
-            return;
-        }
-
-
-        const generos =
-            obterPrimeiroValor(
-
-                artista.generos,
-
-                artista.generos_musicais,
-
-                artista.estilos,
-
-                artista.estilos_musicais,
-
-                artista.especialidades,
-
-                artista.areas_atuacao,
-
-                estado.perfil?.generos,
-
-                estado.perfil?.estilos,
-
-                estado.perfil?.especialidades
-
-            );
-
-
-        const lista =
-            normalizarLista(
-                generos
-            );
-
-
-        if (!lista.length) {
-
-            container.innerHTML = `
-
-                <span class="empty-inline">
-                    Nenhuma informação cadastrada.
-                </span>
-
-            `;
-
-
-            return;
-
-        }
-
-
-        container.innerHTML =
-            lista
-                .map(
-                    item => `
-
-                        <span class="genre-tag">
-                            ${escaparHtml(
-                                item
-                            )}
-                        </span>
-
-                    `
-                )
-                .join("");
-
-
-        renderizarIcones();
-
-    }
-
-
-    /* =====================================================
-       INSTRUMENTOS
-       ===================================================== */
-
-    function preencherInstrumentos(
-        artista
-    ) {
-
-        const container =
-            obterElemento(
-                CONFIG.elementos.instrumentos
-            );
-
-
-        const section =
-            obterElemento(
-                CONFIG.elementos.instrumentosSection
-            );
-
-
-        if (!container) {
-
-            return;
-
-        }
-
-
-        let instrumentos =
-            artista?.instrumentos;
-
-
-        if (
-            typeof instrumentos === "string"
-        ) {
-
-            const texto =
-                instrumentos.trim();
-
-
-            if (
-                texto.startsWith("[") &&
-                texto.endsWith("]")
-            ) {
-
-                try {
-
-                    instrumentos =
-                        JSON.parse(
-                            texto
-                        );
-
-                } catch (error) {
-
-                    aviso(
-                        "Não foi possível interpretar os instrumentos como JSON.",
-                        error
-                    );
-
-                }
-
-            }
-
-        }
-
-
-        const lista =
-            normalizarLista(
-                instrumentos
-            );
-
-
-        const instrumentosUnicos = [
-            ...new Set(
-
-                lista
-                    .map(
-                        item =>
-                            String(item).trim()
-                    )
-                    .filter(Boolean)
-
-            )
-        ];
-
-
-        if (!instrumentosUnicos.length) {
-
-            container.innerHTML =
-                "";
-
-
-            if (section) {
-
-                section.style.display =
-                    "none";
-
-                section.hidden =
-                    true;
-
-            }
-
-
-            return;
-
-        }
-
-
-        if (section) {
-
-            section.style.display =
-                "";
-
-            section.hidden =
-                false;
-
-        }
-
-
-        container.innerHTML =
-            instrumentosUnicos
-                .map(
-                    instrumento => `
-
-                        <span class="genre-tag">
-                            ${escaparHtml(
-                                instrumento
-                            )}
-                        </span>
-
-                    `
-                )
-                .join("");
-
-
-        renderizarIcones();
 
     }
 
@@ -2077,107 +1183,46 @@
 
     function preencherServicos() {
 
-        const servicos =
-            Array.isArray(
-                estado.servicos
-            )
-                ? estado.servicos
-                : [];
-
-
-        if (
-            Servicos &&
-            typeof Servicos.renderizar === "function"
-        ) {
-
-            Servicos.renderizar(
-                servicos
-            );
-
-
-            return;
-
-        }
-
-
-        const container =
-            obterElemento(
-                CONFIG.elementos.servicos
-            );
-
-
-        if (!container) {
+        if (!Render) {
             return;
         }
 
 
-        if (!servicos.length) {
-
-            container.innerHTML = `
-
-                <span class="empty-inline">
-                    Nenhum serviço informado.
-                </span>
-
-            `;
-
-
-            return;
-
-        }
-
-
-        container.innerHTML =
-            servicos
-                .map(
-                    servico => {
-
-                        const nome =
-                            obterPrimeiroValor(
-
-                                servico?.nome,
-
-                                servico?.titulo,
-
-                                servico?.nome_servico,
-
-                                servico?.nomeServico,
-
-                                servico?.servico,
-
-                                "Serviço"
-
-                            );
-
-
-                        return `
-
-                            <span class="service-tag">
-                                ${escaparHtml(
-                                    nome
-                                )}
-                            </span>
-
-                        `;
-
-                    }
-                )
-                .join("");
-
-
-        renderizarIcones();
+        Render.preencherServicos(
+            estado
+        );
 
     }
 
-
-    /* =====================================================
-       CARREGAR SERVIÇOS
-       ===================================================== */
 
     async function carregarServicos() {
 
         if (!Dados) {
             return;
+        }
+
+
+        /*
+         * Contratantes não possuem serviços de artista.
+         */
+
+        if (
+            !ehArtista()
+        ) {
+
+            estado.servicos =
+                [];
+
+
+            if (Render) {
+
+                Render.limparServicos();
+
+            }
+
+
+            return;
+
         }
 
 
@@ -2206,219 +1251,11 @@
         preencherServicos();
 
 
-        renderizarIcones();
+        if (Render) {
 
-    }
-
-
-    /* =====================================================
-       NORMALIZAR LISTA
-       ===================================================== */
-
-    function normalizarLista(
-        valor
-    ) {
-
-        if (
-            Utils &&
-            typeof Utils.normalizarArray === "function"
-        ) {
-
-            const resultado =
-                Utils.normalizarArray(
-                    valor
-                );
-
-
-            return Array.isArray(resultado)
-                ? resultado
-                : [];
+            Render.renderizarIcones();
 
         }
-
-
-        if (
-            Array.isArray(valor)
-        ) {
-
-            return valor
-                .map(
-                    item => {
-
-                        if (
-                            item &&
-                            typeof item === "object"
-                        ) {
-
-                            return obterPrimeiroValor(
-
-                                item.nome,
-
-                                item.titulo,
-
-                                item.descricao,
-
-                                item.valor
-
-                            );
-
-                        }
-
-
-                        return item;
-
-                    }
-                )
-                .filter(
-                    item =>
-                        item !== null &&
-                        item !== undefined &&
-                        String(item).trim() !== ""
-                );
-
-        }
-
-
-        if (
-            typeof valor === "string"
-        ) {
-
-            const texto =
-                valor.trim();
-
-
-            if (
-                texto.startsWith("[") &&
-                texto.endsWith("]")
-            ) {
-
-                try {
-
-                    return normalizarLista(
-                        JSON.parse(
-                            texto
-                        )
-                    );
-
-                } catch (error) {
-
-                    aviso(
-                        "Não foi possível interpretar lista JSON.",
-                        error
-                    );
-
-                }
-
-            }
-
-
-            return texto
-                .split(",")
-                .map(
-                    item =>
-                        item.trim()
-                )
-                .filter(Boolean);
-
-        }
-
-
-        return [];
-
-    }
-
-
-    /* =====================================================
-       DISPONIBILIDADE
-       ===================================================== */
-
-    function obterTextoDisponibilidade(
-        valor
-    ) {
-
-        if (
-            Utils &&
-            typeof Utils.obterTextoDisponibilidade === "function"
-        ) {
-
-            return Utils.obterTextoDisponibilidade(
-                valor
-            );
-
-        }
-
-
-        if (
-            valor === true ||
-            valor === "true" ||
-            valor === 1 ||
-            valor === "1"
-        ) {
-
-            return "Disponível";
-
-        }
-
-
-        if (
-            valor === false ||
-            valor === "false" ||
-            valor === 0 ||
-            valor === "0"
-        ) {
-
-            return "Indisponível";
-
-        }
-
-
-        return valor ||
-            "Não informado";
-
-    }
-
-
-    /* =====================================================
-       LINK DO PERFIL
-       ===================================================== */
-
-    function preencherLinkPerfil() {
-
-        const elemento =
-            obterElemento(
-                CONFIG.elementos.linkPerfil
-            );
-
-
-        if (!elemento) {
-            return;
-        }
-
-
-        const url =
-            construirLinkPerfil();
-
-
-        if (!url) {
-
-            elemento.textContent =
-                "Perfil ainda não disponível.";
-
-            elemento.removeAttribute(
-                "data-url"
-            );
-
-            return;
-
-        }
-
-
-        elemento.textContent =
-            url;
-
-
-        elemento.dataset.url =
-            url;
 
     }
 
@@ -2612,11 +1449,6 @@
         botoes.forEach(
             botao => {
 
-                /*
-                 * Impede que o botão seja interpretado
-                 * como submit caso esteja dentro de um form.
-                 */
-
                 botao.type =
                     "button";
 
@@ -2662,33 +1494,15 @@
                         }
 
 
-                        /*
-                         * PRIMEIRO:
-                         * troca visualmente a aba.
-                         *
-                         * Isso é propositalmente feito antes
-                         * do carregamento assíncrono.
-                         */
-
                         ativarAba(
                             nomeAba
                         );
 
 
-                        /*
-                         * DEPOIS:
-                         * carrega o conteúdo.
-                         */
-
                         await carregarAba(
                             nomeAba
                         );
 
-
-                        /*
-                         * Garante que a aba continue ativa
-                         * depois do carregamento.
-                         */
 
                         ativarAba(
                             nomeAba,
@@ -2827,7 +1641,11 @@
         }
 
 
-        renderizarIcones();
+        if (Render) {
+
+            Render.renderizarIcones();
+
+        }
 
     }
 
@@ -2874,14 +1692,6 @@
 
         }
 
-
-        /*
-         * Não faz uma nova consulta/renderização
-         * desnecessariamente.
-         *
-         * O parâmetro forcar permite recarregar
-         * explicitamente.
-         */
 
         if (
             estado.abasCarregadas[nomeAba] &&
@@ -2996,25 +1806,47 @@
         preencherInformacoesPerfil();
 
 
+        /*
+         * Serviços existem somente para artistas.
+         */
+
         if (
-            Servicos &&
-            typeof Servicos.renderizar === "function"
+            ehArtista()
         ) {
 
-            Servicos.renderizar(
-                estado.servicos
-            );
+            if (
+                Servicos &&
+                typeof Servicos.renderizar === "function"
+            ) {
 
-        } else if (
-            !estado.servicos.length
-        ) {
+                Servicos.renderizar(
+                    estado.servicos
+                );
 
-            await carregarServicos();
+            } else if (
+                !estado.servicos.length
+            ) {
+
+                await carregarServicos();
+
+            }
+
+        } else {
+
+            if (Render) {
+
+                Render.limparServicos();
+
+            }
 
         }
 
 
-        renderizarIcones();
+        if (Render) {
+
+            Render.renderizarIcones();
+
+        }
 
     }
 
@@ -3041,12 +1873,6 @@
                 ? estado.portfolio
                 : [];
 
-
-        /*
-         * Se o carregamento inicial não trouxe
-         * o portfólio, busca diretamente no módulo
-         * de dados.
-         */
 
         if (
             !portfolio.length &&
@@ -3099,7 +1925,11 @@
         }
 
 
-        renderizarIcones();
+        if (Render) {
+
+            Render.renderizarIcones();
+
+        }
 
     }
 
@@ -3178,7 +2008,11 @@
         }
 
 
-        renderizarIcones();
+        if (Render) {
+
+            Render.renderizarIcones();
+
+        }
 
     }
 
@@ -3197,11 +2031,6 @@
 
         }
 
-
-        /*
-         * Se as avaliações ainda não foram carregadas,
-         * busca diretamente no módulo de dados.
-         */
 
         if (
             !estado.avaliacoes.length &&
@@ -3231,12 +2060,6 @@
 
         }
 
-
-        /*
-         * Caso o módulo de dados não tenha retornado
-         * avaliações, mantemos uma estrutura vazia,
-         * mas NÃO interrompemos a aba.
-         */
 
         const lista =
             Array.isArray(
@@ -3284,7 +2107,11 @@
         preencherAvaliacao();
 
 
-        renderizarIcones();
+        if (Render) {
+
+            Render.renderizarIcones();
+
+        }
 
     }
 
@@ -3354,7 +2181,9 @@
                 )
                 .filter(
                     numero =>
-                        Number.isFinite(numero) &&
+                        Number.isFinite(
+                            numero
+                        ) &&
                         numero >= 1 &&
                         numero <= 5
                 );
@@ -3498,6 +2327,7 @@
                 "erro"
             );
 
+
             return;
 
         }
@@ -3514,6 +2344,7 @@
                 "erro"
             );
 
+
             return;
 
         }
@@ -3523,8 +2354,11 @@
             "Visualizando perfil público universal:",
             {
 
-                tipo:
+                tipoPerfil:
                     obterTipoPerfilAtual(),
+
+                tipoArtista:
+                    obterTipoArtistaAtual(),
 
                 perfilId:
                     id,
@@ -3558,6 +2392,7 @@
                 "erro"
             );
 
+
             return;
 
         }
@@ -3574,6 +2409,7 @@
                 "erro"
             );
 
+
             return;
 
         }
@@ -3589,8 +2425,11 @@
             "Abrindo editor universal:",
             {
 
-                tipo:
+                tipoPerfil:
                     obterTipoPerfilAtual(),
+
+                tipoArtista:
+                    obterTipoArtistaAtual(),
 
                 perfilId:
                     id,
@@ -3608,152 +2447,6 @@
 
 
     /* =====================================================
-       OBTER TIPO DO PERFIL ATUAL
-       ===================================================== */
-
-    function obterTipoPerfilAtual() {
-
-        const tipo =
-            obterTipoBrutoPerfil();
-
-
-        return normalizarTipoArtista(
-            tipo
-        );
-
-    }
-
-
-    /* =====================================================
-       NORMALIZAR TIPO ARTISTA / PERFIL
-       ===================================================== */
-
-    function normalizarTipoArtista(
-        valor
-    ) {
-
-        const valorExtraido =
-            extrairValorTipo(
-                valor
-            );
-
-
-        const texto =
-            String(
-                valorExtraido || ""
-            )
-                .trim()
-                .toLowerCase()
-                .normalize("NFD")
-                .replace(
-                    /[\u0300-\u036f]/g,
-                    ""
-                );
-
-
-        const mapa = {
-
-            "artista":
-                "Artista",
-
-            "artista musical":
-                "Artista",
-
-            "cantor":
-                "Cantor(a)",
-
-            "cantora":
-                "Cantor(a)",
-
-            "cantor(a)":
-                "Cantor(a)",
-
-            "musico":
-                "Músico(a)",
-
-            "musica":
-                "Músico(a)",
-
-            "musico(a)":
-                "Músico(a)",
-
-            "banda":
-                "Banda",
-
-            "dupla":
-                "Dupla musical",
-
-            "dupla musical":
-                "Dupla musical",
-
-            "dj":
-                "DJ",
-
-            "dancarino":
-                "Dançarino(a)",
-
-            "dancarina":
-                "Dançarino(a)",
-
-            "dancarino(a)":
-                "Dançarino(a)",
-
-            "grupo de danca":
-                "Grupo de dança",
-
-            "grupo danca":
-                "Grupo de dança",
-
-            "grupo de dança":
-                "Grupo de dança",
-
-            "grupo_de_danca":
-                "Grupo de dança",
-
-            "mc":
-                "MC",
-
-            "compositor":
-                "Compositor(a)",
-
-            "compositora":
-                "Compositor(a)",
-
-            "compositor(a)":
-                "Compositor(a)",
-
-            "produtor":
-                "Produtor(a) musical",
-
-            "produtora":
-                "Produtor(a) musical",
-
-            "produtor musical":
-                "Produtor(a) musical",
-
-            "produtora musical":
-                "Produtor(a) musical",
-
-            "produtor(a) musical":
-                "Produtor(a) musical",
-
-            "produtor_musical":
-                "Produtor(a) musical",
-
-            "contratante":
-                "Contratante"
-
-        };
-
-
-        return mapa[texto] ||
-            valorExtraido ||
-            CONFIG.pagina.tipoArtista;
-
-    }
-
-
-    /* =====================================================
        WHATSAPP
        ===================================================== */
 
@@ -3762,11 +2455,17 @@
         const nome =
             obterPrimeiroValor(
 
-                estado.perfilArtista?.nome_artistico,
+                ehArtista()
+                    ? estado.perfilArtista?.nome_artistico
+                    : "",
 
-                estado.perfilArtista?.nome,
+                ehArtista()
+                    ? estado.perfilArtista?.nome
+                    : "",
 
                 estado.perfil?.nome_exibicao,
+
+                estado.perfil?.nome,
 
                 estado.usuario?.nome,
 
@@ -3782,9 +2481,17 @@
         const telefone =
             obterPrimeiroValor(
 
-                estado.perfilArtista?.telefone,
+                ehArtista()
+                    ? estado.perfilArtista?.telefone
+                    : "",
 
-                estado.perfilArtista?.whatsapp,
+                ehArtista()
+                    ? estado.perfilArtista?.whatsapp
+                    : "",
+
+                estado.perfil?.telefone,
+
+                estado.perfil?.whatsapp,
 
                 estado.usuario?.telefone,
 
@@ -3878,6 +2585,7 @@
                 "erro"
             );
 
+
             return;
 
         }
@@ -3938,18 +2646,23 @@
         );
 
 
-        renderizarIcones();
+        if (Render) {
+
+            Render.renderizarIcones();
+
+        }
 
     }
 
 
     /* =====================================================
-       OBTER PÁGINAS
+       PÁGINAS
        ===================================================== */
 
     function obterPaginaApresentacao() {
 
-        return CONFIG.pagina.apresentacao || "";
+        return CONFIG.pagina.apresentacao ||
+            "";
 
     }
 
@@ -3963,7 +2676,8 @@
 
     function obterPaginaEdicao() {
 
-        return CONFIG.pagina.edicao || "";
+        return CONFIG.pagina.edicao ||
+            "";
 
     }
 
@@ -4006,7 +2720,8 @@
     function construirLinkPerfil() {
 
         const id =
-            estado.perfilId || "";
+            estado.perfilId ||
+            "";
 
 
         const pagina =
@@ -4131,6 +2846,7 @@
                 "erro"
             );
 
+
             return;
 
         }
@@ -4190,7 +2906,8 @@
         } catch (error) {
 
             if (
-                error?.name === "AbortError"
+                error?.name ===
+                "AbortError"
             ) {
 
                 return;
@@ -4286,126 +3003,6 @@
 
 
     /* =====================================================
-       ESCAPAR HTML
-       ===================================================== */
-
-    function escaparHtml(
-        valor
-    ) {
-
-        if (
-            Utils &&
-            typeof Utils.escaparHtml === "function"
-        ) {
-
-            return Utils.escaparHtml(
-                valor
-            );
-
-        }
-
-
-        if (
-            valor === null ||
-            valor === undefined
-        ) {
-
-            return "";
-
-        }
-
-
-        return String(valor)
-            .replace(
-                /&/g,
-                "&amp;"
-            )
-            .replace(
-                /</g,
-                "&lt;"
-            )
-            .replace(
-                />/g,
-                "&gt;"
-            )
-            .replace(
-                /"/g,
-                "&quot;"
-            )
-            .replace(
-                /'/g,
-                "&#039;"
-            );
-
-    }
-
-
-    /* =====================================================
-       RENDERIZAR ÍCONES
-       ===================================================== */
-
-    function renderizarIcones() {
-
-        if (
-            Utils &&
-            typeof Utils.renderizarIcones === "function"
-        ) {
-
-            Utils.renderizarIcones();
-
-            return;
-
-        }
-
-
-        if (
-            window.lucide &&
-            typeof window.lucide.createIcons === "function"
-        ) {
-
-            window.lucide.createIcons();
-
-        }
-
-    }
-
-
-    /* =====================================================
-       OBTER ESTADO
-       ===================================================== */
-
-    function obterEstado() {
-
-        return {
-
-            ...estado,
-
-            portfolio:
-                [
-                    ...estado.portfolio
-                ],
-
-            servicos:
-                [
-                    ...estado.servicos
-                ],
-
-            agenda:
-                [
-                    ...estado.agenda
-                ],
-
-            avaliacoes:
-                [
-                    ...estado.avaliacoes
-                ]
-
-        };
-
-    }
-
-
-    /* =====================================================
        RECARREGAR ABA ATUAL
        ===================================================== */
 
@@ -4464,7 +3061,27 @@
         };
 
 
+        /*
+         * Evita que dados do perfil anterior permaneçam
+         * durante uma nova leitura.
+         */
+
+        estado.tipoPerfil =
+            null;
+
+
+        estado.perfilArtista =
+            null;
+
+
+        estado.servicos =
+            [];
+
+
         await carregarDados();
+
+
+        aplicarRegrasDePerfil();
 
 
         preencherInformacoesPerfil();
@@ -4488,7 +3105,46 @@
         );
 
 
-        renderizarIcones();
+        if (Render) {
+
+            Render.renderizarIcones();
+
+        }
+
+    }
+
+
+    /* =====================================================
+       OBTER ESTADO
+       ===================================================== */
+
+    function obterEstado() {
+
+        return {
+
+            ...estado,
+
+            portfolio:
+                [
+                    ...estado.portfolio
+                ],
+
+            servicos:
+                [
+                    ...estado.servicos
+                ],
+
+            agenda:
+                [
+                    ...estado.agenda
+                ],
+
+            avaliacoes:
+                [
+                    ...estado.avaliacoes
+                ]
+
+        };
 
     }
 
@@ -4525,11 +3181,19 @@
 
         preencherServicos,
 
-        preencherInstrumentos,
-
         obterTipoPerfilAtual,
 
+        obterTipoArtistaAtual,
+
+        normalizarTipoPerfil,
+
         normalizarTipoArtista,
+
+        ehArtista,
+
+        ehContratante,
+
+        aplicarRegrasDePerfil,
 
         obterPaginaApresentacao,
 
@@ -4584,5 +3248,6 @@
     console.log(
         "PerfilPublico.js — Meu Perfil universal carregado."
     );
+
 
 })(window);

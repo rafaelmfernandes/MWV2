@@ -1,1165 +1,1135 @@
 /* =========================================================
-PAINEL DE PESQUISA — MUSICALWORLD
-Pesquisa global de profissionais
-========================================================= */
+   PAINEL DE PESQUISA — MUSICALWORLD
+
+   Arquivo:
+   js/components/painel-pesquisa.js
+
+   Responsabilidades:
+   - Criar e controlar o painel de pesquisa.
+   - Pesquisar profissionais no Supabase.
+   - Filtrar resultados por nome, tipo, localização,
+     experiência, área de atendimento, estilos,
+     instrumentos, serviços e portfólio.
+   - Renderizar os resultados encontrados.
+   - Direcionar o usuário para a apresentação pública
+     do perfil selecionado.
+
+   ========================================================= */
 
 const PainelPesquisa = {
 
+    /* =====================================================
+       ESTADO
+       ===================================================== */
 
-inicializado: false,
-pesquisando: false,
-ultimoTermo: '',
-timeoutPesquisa: null,
-
-/* =====================================================
-   INICIALIZAÇÃO
-   ===================================================== */
-
-iniciar() {
-
-    if (this.inicializado) {
-        return;
-    }
-
-    this.criarPainel();
-    this.configurarEventos();
-
-    this.inicializado = true;
-
-    console.log(
-        '🔎 Painel de pesquisa inicializado corretamente.'
-    );
-},
+    inicializado: false,
+    pesquisando: false,
+    ultimoTermo: '',
+    timeoutPesquisa: null,
 
 
-/* =====================================================
-   CRIA / LOCALIZA O PAINEL
-   ===================================================== */
+    /* =====================================================
+       INICIALIZAÇÃO
+       ===================================================== */
 
-criarPainel() {
+    iniciar() {
 
+        if (this.inicializado) {
+            return;
+        }
 
-let painel =
-    document.getElementById('painel-pesquisa');
+        this.criarPainel();
+        this.configurarEventos();
 
-/*
- * Se o painel já existir, reutiliza.
- */
-if (painel) {
-    return painel;
-}
+        this.inicializado = true;
 
-/*
- * Cria o painel diretamente no BODY.
- *
- * NÃO criamos:
- * #painel-pesquisa-container
- *
- * Isso elimina o box externo.
- */
-
-painel =
-    document.createElement('div');
-
-painel.id =
-    'painel-pesquisa';
-
-painel.className =
-    'search-overlay';
-
-
-painel.innerHTML = `
-
-    <div class="search-overlay-header">
-
-        <div class="search-overlay-input-wrapper">
-
-            <svg
-                class="search-overlay-icon"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                aria-hidden="true"
-            >
-                <circle
-                    cx="11"
-                    cy="11"
-                    r="8"
-                ></circle>
-
-                <line
-                    x1="21"
-                    y1="21"
-                    x2="16.65"
-                    y2="16.65"
-                ></line>
-            </svg>
-
-
-            <input
-                type="text"
-                id="campo-pesquisa"
-                class="search-overlay-input"
-                placeholder="Buscar artistas, estilos, eventos..."
-                autocomplete="off"
-            >
-
-        </div>
-
-
-        <button
-            type="button"
-            class="search-overlay-cancelar"
-            id="btn-fechar-pesquisa"
-        >
-            Cancelar
-        </button>
-
-    </div>
-
-
-    <div
-        id="resultados-pesquisa"
-        class="search-results"
-    >
-
-        <p class="search-estado-vazio">
-            Digite algo para buscar em todas as categorias.
-        </p>
-
-    </div>
-
-`;
-
-
-/*
- * DIRETAMENTE NO BODY.
- */
-document.body.appendChild(
-    painel
-);
-
-
-console.log(
-    '🔎 Painel de pesquisa criado diretamente no body.'
-);
-
-
-return painel;
-
-
-},
-
-
-
-/* =====================================================
-   EVENTOS
-   ===================================================== */
-
-configurarEventos() {
-
-    const campo =
-        document.getElementById(
-            'campo-pesquisa'
+        console.log(
+            '🔎 Painel de pesquisa inicializado corretamente.'
         );
+    },
 
 
-    const botaoFechar =
-        document.getElementById(
-            'btn-fechar-pesquisa'
-        );
+    /* =====================================================
+       CRIA / LOCALIZA O PAINEL
+       ===================================================== */
 
+    criarPainel() {
 
-    if (campo) {
+        let painel =
+            document.getElementById('painel-pesquisa');
 
         /*
-         * Remove listener anterior caso o método seja
-         * chamado novamente.
+         * Se o painel já existir, reutiliza.
          */
 
-        campo.oninput = evento => {
+        if (painel) {
+            return painel;
+        }
 
-            const termo =
-                evento.target.value.trim();
+        /*
+         * Cria o painel diretamente no BODY.
+         *
+         * NÃO criamos:
+         * #painel-pesquisa-container
+         *
+         * Isso elimina o box externo.
+         */
 
-            this.filtrar(
-                termo
+        painel =
+            document.createElement('div');
+
+        painel.id =
+            'painel-pesquisa';
+
+        painel.className =
+            'search-overlay';
+
+
+        painel.innerHTML = `
+
+            <div class="search-overlay-header">
+
+                <div class="search-overlay-input-wrapper">
+
+                    <svg
+                        class="search-overlay-icon"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        aria-hidden="true"
+                    >
+
+                        <circle
+                            cx="11"
+                            cy="11"
+                            r="8"
+                        ></circle>
+
+                        <line
+                            x1="21"
+                            y1="21"
+                            x2="16.65"
+                            y2="16.65"
+                        ></line>
+
+                    </svg>
+
+
+                    <input
+                        type="text"
+                        id="campo-pesquisa"
+                        class="search-overlay-input"
+                        placeholder="Buscar artistas, estilos, eventos..."
+                        autocomplete="off"
+                    >
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="search-overlay-cancelar"
+                    id="btn-fechar-pesquisa"
+                >
+                    Cancelar
+                </button>
+
+            </div>
+
+
+            <div
+                id="resultados-pesquisa"
+                class="search-results"
+            >
+
+                <p class="search-estado-vazio">
+                    Digite algo para buscar em todas as categorias.
+                </p>
+
+            </div>
+
+        `;
+
+
+        /*
+         * DIRETAMENTE NO BODY.
+         */
+
+        document.body.appendChild(
+            painel
+        );
+
+
+        console.log(
+            '🔎 Painel de pesquisa criado diretamente no body.'
+        );
+
+
+        return painel;
+    },
+
+
+    /* =====================================================
+       EVENTOS
+       ===================================================== */
+
+    configurarEventos() {
+
+        const campo =
+            document.getElementById(
+                'campo-pesquisa'
             );
-        };
 
 
-        campo.onkeydown = evento => {
-
-            if (
-                evento.key === 'Escape'
-            ) {
-
-                evento.preventDefault();
-
-                this.fechar();
-            }
-        };
-    }
+        const botaoFechar =
+            document.getElementById(
+                'btn-fechar-pesquisa'
+            );
 
 
-    if (botaoFechar) {
+        if (campo) {
 
-        botaoFechar.onclick = () => {
+            /*
+             * Remove listener anterior caso o método seja
+             * chamado novamente.
+             */
 
-            this.fechar();
+            campo.oninput = evento => {
 
-        };
-    }
+                const termo =
+                    evento.target.value.trim();
+
+                this.filtrar(
+                    termo
+                );
+            };
 
 
-    /*
-     * ESC global
-     */
-
-    if (!this._eventoEscapeRegistrado) {
-
-        document.addEventListener(
-            'keydown',
-            evento => {
+            campo.onkeydown = evento => {
 
                 if (
-                    evento.key !== 'Escape'
+                    evento.key === 'Escape'
                 ) {
-                    return;
-                }
 
-
-                const painel =
-                    document.getElementById(
-                        'painel-pesquisa'
-                    );
-
-
-                if (
-                    painel &&
-                    painel.classList.contains('ativo')
-                ) {
+                    evento.preventDefault();
 
                     this.fechar();
                 }
-
-            }
-        );
-
-
-        this._eventoEscapeRegistrado =
-            true;
-    }
-},
+            };
+        }
 
 
-/* =====================================================
-   ABRIR
-   ===================================================== */
+        if (botaoFechar) {
 
-abrir() {
+            botaoFechar.onclick = () => {
 
-    /*
-     * Garante que o objeto esteja inicializado.
-     */
+                this.fechar();
 
-    if (!this.inicializado) {
+            };
+        }
 
-        this.iniciar();
-    }
-
-
-    /*
-     * Procura novamente o painel.
-     */
-
-    let painel =
-        document.getElementById(
-            'painel-pesquisa'
-        );
-
-
-    /*
-     * Se por algum motivo não existir,
-     * cria agora.
-     */
-
-    if (!painel) {
-
-        painel =
-            this.criarPainel();
 
         /*
-         * Os eventos também precisam ser ligados
-         * caso o painel tenha sido criado agora.
+         * ESC global
          */
 
-        this.configurarEventos();
-    }
+        if (!this._eventoEscapeRegistrado) {
+
+            document.addEventListener(
+                'keydown',
+                evento => {
+
+                    if (
+                        evento.key !== 'Escape'
+                    ) {
+                        return;
+                    }
 
 
-    if (!painel) {
-
-        console.error(
-            '❌ Não foi possível criar o painel de pesquisa.'
-        );
-
-        return;
-    }
+                    const painel =
+                        document.getElementById(
+                            'painel-pesquisa'
+                        );
 
 
-    /*
-     * Abre o painel.
-     */
+                    if (
+                        painel &&
+                        painel.classList.contains('ativo')
+                    ) {
 
-    painel.classList.add(
-        'ativo'
-    );
+                        this.fechar();
+                    }
 
-
-    this.ultimoTermo =
-        '';
-
-
-    const campo =
-        document.getElementById(
-            'campo-pesquisa'
-        );
+                }
+            );
 
 
-    if (campo) {
-
-        campo.value = '';
-
-
-        setTimeout(() => {
-
-            campo.focus();
-
-        }, 200);
-    }
+            this._eventoEscapeRegistrado =
+                true;
+        }
+    },
 
 
-    this.mostrarEstadoInicial();
-},
+    /* =====================================================
+       ABRIR
+       ===================================================== */
+
+    abrir() {
+
+        /*
+         * Garante que o objeto esteja inicializado.
+         */
+
+        if (!this.inicializado) {
+
+            this.iniciar();
+        }
 
 
-/* =====================================================
-   FECHAR
-   ===================================================== */
+        /*
+         * Procura novamente o painel.
+         */
 
-fechar() {
-
-    const painel =
-        document.getElementById(
-            'painel-pesquisa'
-        );
+        let painel =
+            document.getElementById(
+                'painel-pesquisa'
+            );
 
 
-    if (!painel) {
-        return;
-    }
+        /*
+         * Se por algum motivo não existir,
+         * cria agora.
+         */
+
+        if (!painel) {
+
+            painel =
+                this.criarPainel();
+
+            /*
+             * Os eventos também precisam ser ligados
+             * caso o painel tenha sido criado agora.
+             */
+
+            this.configurarEventos();
+        }
 
 
-    painel.classList.remove(
-        'ativo'
-    );
+        if (!painel) {
+
+            console.error(
+                '❌ Não foi possível criar o painel de pesquisa.'
+            );
+
+            return;
+        }
 
 
-    this.ultimoTermo =
-        '';
+        /*
+         * Abre o painel.
+         */
 
-
-    this.pesquisando =
-        false;
-
-
-    if (this.timeoutPesquisa) {
-
-        clearTimeout(
-            this.timeoutPesquisa
-        );
-
-        this.timeoutPesquisa =
-            null;
-    }
-
-
-    const campo =
-        document.getElementById(
-            'campo-pesquisa'
-        );
-
-
-    if (campo) {
-
-        campo.value = '';
-    }
-
-
-    this.mostrarEstadoInicial();
-},
-
-
-/* =====================================================
-   ESTADO INICIAL
-   ===================================================== */
-
-mostrarEstadoInicial() {
-
-    const resultados =
-        document.getElementById(
-            'resultados-pesquisa'
+        painel.classList.add(
+            'ativo'
         );
 
 
-    if (!resultados) {
-        return;
-    }
+        this.ultimoTermo =
+            '';
 
 
-    resultados.innerHTML = `
-
-        <p class="search-estado-vazio">
-            Digite algo para buscar em todas as categorias.
-        </p>
-
-    `;
-},
+        const campo =
+            document.getElementById(
+                'campo-pesquisa'
+            );
 
 
-/* =====================================================
-   NORMALIZAR TEXTO
-   ===================================================== */
+        if (campo) {
 
-normalizarTexto(valor) {
-
-    if (
-        valor === null ||
-        valor === undefined
-    ) {
-
-        return '';
-    }
+            campo.value = '';
 
 
-    return String(valor)
+            setTimeout(() => {
 
-        .normalize('NFD')
+                campo.focus();
 
-        .replace(
-            /[\u0300-\u036f]/g,
-            ''
-        )
-
-        .toLowerCase()
-
-        .trim();
-},
+            }, 200);
+        }
 
 
-/* =====================================================
-   NORMALIZAR LISTAS
-   ===================================================== */
-
-normalizarLista(valor) {
-
-    if (
-        valor === null ||
-        valor === undefined
-    ) {
-
-        return [];
-    }
+        this.mostrarEstadoInicial();
+    },
 
 
-    if (
-        Array.isArray(valor)
-    ) {
+    /* =====================================================
+       FECHAR
+       ===================================================== */
 
-        return valor
+    fechar() {
 
-            .filter(
-                item =>
-                    item !== null &&
-                    item !== undefined &&
-                    String(item).trim() !== ''
+        const painel =
+            document.getElementById(
+                'painel-pesquisa'
+            );
+
+
+        if (!painel) {
+            return;
+        }
+
+
+        painel.classList.remove(
+            'ativo'
+        );
+
+
+        this.ultimoTermo =
+            '';
+
+
+        this.pesquisando =
+            false;
+
+
+        if (this.timeoutPesquisa) {
+
+            clearTimeout(
+                this.timeoutPesquisa
+            );
+
+            this.timeoutPesquisa =
+                null;
+        }
+
+
+        const campo =
+            document.getElementById(
+                'campo-pesquisa'
+            );
+
+
+        if (campo) {
+
+            campo.value = '';
+        }
+
+
+        this.mostrarEstadoInicial();
+    },
+
+
+    /* =====================================================
+       ESTADO INICIAL
+       ===================================================== */
+
+    mostrarEstadoInicial() {
+
+        const resultados =
+            document.getElementById(
+                'resultados-pesquisa'
+            );
+
+
+        if (!resultados) {
+            return;
+        }
+
+
+        resultados.innerHTML = `
+
+            <p class="search-estado-vazio">
+                Digite algo para buscar em todas as categorias.
+            </p>
+
+        `;
+    },
+
+
+    /* =====================================================
+       NORMALIZAR TEXTO
+       ===================================================== */
+
+    normalizarTexto(valor) {
+
+        if (
+            valor === null ||
+            valor === undefined
+        ) {
+
+            return '';
+        }
+
+
+        return String(valor)
+
+            .normalize('NFD')
+
+            .replace(
+                /[\u0300-\u036f]/g,
+                ''
             )
 
-            .map(
-                item =>
-                    String(item).trim()
-            );
-    }
+            .toLowerCase()
+
+            .trim();
+    },
 
 
-    if (
-        typeof valor === 'string'
-    ) {
+    /* =====================================================
+       NORMALIZAR LISTAS
+       ===================================================== */
 
-        return valor
+    normalizarLista(valor) {
 
-            .split(',')
+        if (
+            valor === null ||
+            valor === undefined
+        ) {
 
-            .map(
-                item =>
-                    item.trim()
+            return [];
+        }
+
+
+        if (
+            Array.isArray(valor)
+        ) {
+
+            return valor
+
+                .filter(
+                    item =>
+                        item !== null &&
+                        item !== undefined &&
+                        String(item).trim() !== ''
+                )
+
+                .map(
+                    item =>
+                        String(item).trim()
+                );
+        }
+
+
+        if (
+            typeof valor === 'string'
+        ) {
+
+            return valor
+
+                .split(',')
+
+                .map(
+                    item =>
+                        item.trim()
+                )
+
+                .filter(
+                    item =>
+                        item !== ''
+                );
+        }
+
+
+        return [
+            String(valor)
+        ];
+    },
+
+
+    /* =====================================================
+       OBTER PERFIL DO ARTISTA
+       ===================================================== */
+
+    obterArtistaPerfil(perfil) {
+
+        if (!perfil) {
+            return null;
+        }
+
+
+        if (
+            Array.isArray(
+                perfil.perfis_artistas
             )
+        ) {
 
-            .filter(
-                item =>
-                    item !== ''
+            return (
+                perfil.perfis_artistas[0] ||
+                null
             );
-    }
+        }
 
 
-    return [
-        String(valor)
-    ];
-},
-
-
-/* =====================================================
-   OBTER PERFIL DO ARTISTA
-   ===================================================== */
-
-obterArtistaPerfil(perfil) {
-
-    if (!perfil) {
-        return null;
-    }
-
-
-    if (
-        Array.isArray(
+        if (
             perfil.perfis_artistas
-        )
-    ) {
+        ) {
+
+            return perfil.perfis_artistas;
+        }
+
+
+        if (
+            perfil.perfil_artista
+        ) {
+
+            return perfil.perfil_artista;
+        }
+
+
+        return null;
+    },
+
+
+    /* =====================================================
+       INICIAIS
+       ===================================================== */
+
+    gerarIniciais(nome) {
+
+        const texto =
+            String(
+                nome || 'Artista'
+            ).trim();
+
+
+        if (!texto) {
+            return 'A';
+        }
+
+
+        const partes =
+            texto
+                .split(/\s+/)
+                .filter(Boolean);
+
+
+        if (
+            partes.length === 1
+        ) {
+
+            return partes[0]
+                .substring(0, 2)
+                .toUpperCase();
+        }
+
 
         return (
-            perfil.perfis_artistas[0] ||
-            null
-        );
-    }
+            partes[0][0] +
+            partes[partes.length - 1][0]
+        ).toUpperCase();
+    },
 
 
-    if (
-        perfil.perfis_artistas
-    ) {
+    /* =====================================================
+       ESCAPAR HTML
+       ===================================================== */
 
-        return perfil.perfis_artistas;
-    }
+    escaparHtml(valor) {
 
-
-    if (
-        perfil.perfil_artista
-    ) {
-
-        return perfil.perfil_artista;
-    }
-
-
-    return null;
-},
-
-
-/* =====================================================
-   INICIAIS
-   ===================================================== */
-
-gerarIniciais(nome) {
-
-    const texto =
-        String(
-            nome || 'Artista'
-        ).trim();
-
-
-    if (!texto) {
-        return 'A';
-    }
-
-
-    const partes =
-        texto
-            .split(/\s+/)
-            .filter(Boolean);
-
-
-    if (
-        partes.length === 1
-    ) {
-
-        return partes[0]
-            .substring(0, 2)
-            .toUpperCase();
-    }
-
-
-    return (
-        partes[0][0] +
-        partes[partes.length - 1][0]
-    ).toUpperCase();
-},
-
-
-/* =====================================================
-   ESCAPAR HTML
-   ===================================================== */
-
-escaparHtml(valor) {
-
-    return String(
-        valor ?? ''
-    )
-
-        .replace(
-            /&/g,
-            '&amp;'
+        return String(
+            valor ?? ''
         )
 
-        .replace(
-            /</g,
-            '&lt;'
-        )
+            .replace(
+                /&/g,
+                '&amp;'
+            )
 
-        .replace(
-            />/g,
-            '&gt;'
-        )
+            .replace(
+                /</g,
+                '&lt;'
+            )
 
-        .replace(
-            /"/g,
-            '&quot;'
-        )
+            .replace(
+                />/g,
+                '&gt;'
+            )
 
-        .replace(
-            /'/g,
-            '&#039;'
-        );
-},
+            .replace(
+                /"/g,
+                '&quot;'
+            )
 
-
-/* =====================================================
-   DEFINIR PÁGINA DO PERFIL
-   ===================================================== */
-
-obterPaginaPerfil(tipoArtista) {
-
-    const tipo =
-        this.normalizarTexto(
-            tipoArtista
-        );
+            .replace(
+                /'/g,
+                '&#039;'
+            );
+    },
 
 
-    if (
-        tipo === 'musico' ||
-        tipo === 'musica' ||
-        tipo === 'instrumentista'
-    ) {
+    /* =====================================================
+       DEFINIR PÁGINA DO PERFIL
 
-        return 'apresentar-perfil-musico.html';
-    }
+       Mantido no módulo para compatibilidade com
+       outras chamadas existentes.
 
+       Os resultados da pesquisa, porém, agora utilizam
+       sempre apresentar-perfil.html.
+       ===================================================== */
 
-    if (
-        tipo === 'cantor' ||
-        tipo === 'cantora'
-    ) {
+    obterPaginaPerfil(tipoArtista) {
 
-        return 'apresentar-perfil-cantor.html';
-    }
-
-
-    return 'apresentar-perfil-profissional.html';
-},
+        const tipo =
+            this.normalizarTexto(
+                tipoArtista
+            );
 
 
-/* =====================================================
-   BUSCAR NO SUPABASE
-   ===================================================== */
+        if (
+            tipo === 'musico' ||
+            tipo === 'musica' ||
+            tipo === 'instrumentista'
+        ) {
 
-async buscarNoBanco(termo) {
-
-    const supabase =
-        window.supabaseClient ||
-        window._supabase ||
-        window.supabase;
+            return 'apresentar-perfil-musico.html';
+        }
 
 
-    if (!supabase) {
+        if (
+            tipo === 'cantor' ||
+            tipo === 'cantora'
+        ) {
 
-        console.error(
-            '❌ Cliente Supabase não encontrado.'
-        );
-
-        return [];
-    }
+            return 'apresentar-perfil-cantor.html';
+        }
 
 
-    const { data, error } =
-        await supabase
+        return 'apresentar-perfil-profissional.html';
+    },
 
-            .from('perfis')
 
-            .select(`
-                id,
-                usuario_id,
-                tipo_perfil_id,
-                nome_exibicao,
-                descricao,
-                ativo,
-                perfil_publicado,
-                created_at,
+    /* =====================================================
+       BUSCAR NO SUPABASE
+       ===================================================== */
 
-                perfis_artistas (
+    async buscarNoBanco(termo) {
+
+        const supabase =
+            window.supabaseClient ||
+            window._supabase ||
+            window.supabase;
+
+
+        if (!supabase) {
+
+            console.error(
+                '❌ Cliente Supabase não encontrado.'
+            );
+
+            return [];
+        }
+
+
+        const { data, error } =
+            await supabase
+
+                .from('perfis')
+
+                .select(`
                     id,
-                    perfil_id,
-                    tipo_artista,
-                    localizacao,
-                    experiencia,
-                    area_atendimento,
-                    disponivel,
-                    instrumentos,
-                    estilos,
-                    servicos,
-                    foto_url
-                ),
-
-                portfolio_musicos (
-                    id,
-                    perfil_id,
-                    tipo,
-                    titulo,
+                    usuario_id,
+                    tipo_perfil_id,
+                    nome_exibicao,
                     descricao,
-                    arquivo_url,
-                    thumbnail_url,
-                    ordem,
                     ativo,
-                    destaque_catalogo
+                    perfil_publicado,
+                    created_at,
+
+                    perfis_artistas (
+                        id,
+                        perfil_id,
+                        tipo_artista,
+                        localizacao,
+                        experiencia,
+                        area_atendimento,
+                        disponivel,
+                        instrumentos,
+                        estilos,
+                        servicos,
+                        foto_url
+                    ),
+
+                    portfolio_musicos (
+                        id,
+                        perfil_id,
+                        tipo,
+                        titulo,
+                        descricao,
+                        arquivo_url,
+                        thumbnail_url,
+                        ordem,
+                        ativo,
+                        destaque_catalogo
+                    )
+                `)
+
+                .eq(
+                    'ativo',
+                    true
                 )
-            `)
 
-            .eq(
-                'ativo',
-                true
-            )
+                .eq(
+                    'perfil_publicado',
+                    true
+                )
 
-            .eq(
-                'perfil_publicado',
-                true
-            )
+                .order(
+                    'created_at',
+                    {
+                        ascending: false
+                    }
+                );
 
-            .order(
-                'created_at',
-                {
-                    ascending: false
+
+        if (error) {
+
+            console.error(
+                '❌ Erro ao buscar profissionais:',
+                error
+            );
+
+            return [];
+        }
+
+
+        if (!data) {
+            return [];
+        }
+
+
+        const termoNormalizado =
+            this.normalizarTexto(
+                termo
+            );
+
+
+        if (!termoNormalizado) {
+            return [];
+        }
+
+
+        const resultados =
+            data.filter(
+                perfil => {
+
+                    const artista =
+                        this.obterArtistaPerfil(
+                            perfil
+                        );
+
+
+                    if (!artista) {
+                        return false;
+                    }
+
+
+                    const estilos =
+                        this.normalizarLista(
+                            artista.estilos
+                        );
+
+
+                    const instrumentos =
+                        this.normalizarLista(
+                            artista.instrumentos
+                        );
+
+
+                    const servicos =
+                        this.normalizarLista(
+                            artista.servicos
+                        );
+
+
+                    const portfolio =
+                        Array.isArray(
+                            perfil.portfolio_musicos
+                        )
+                            ? perfil.portfolio_musicos
+                            : [];
+
+
+                    const textos = [
+
+                        perfil.nome_exibicao,
+
+                        perfil.descricao,
+
+                        artista.tipo_artista,
+
+                        artista.localizacao,
+
+                        artista.experiencia,
+
+                        artista.area_atendimento,
+
+                        ...estilos,
+
+                        ...instrumentos,
+
+                        ...servicos,
+
+                        ...portfolio.map(
+                            item =>
+                                item.titulo
+                        ),
+
+                        ...portfolio.map(
+                            item =>
+                                item.descricao
+                        )
+
+                    ];
+
+
+                    const textoCompleto =
+                        textos
+
+                            .filter(
+                                valor =>
+                                    valor !== null &&
+                                    valor !== undefined
+                            )
+
+                            .map(
+                                valor =>
+                                    this.normalizarTexto(
+                                        valor
+                                    )
+                            )
+
+                            .join(' ');
+
+
+                    return textoCompleto.includes(
+                        termoNormalizado
+                    );
                 }
             );
 
 
-    if (error) {
+        return resultados;
+    },
 
-        console.error(
-            '❌ Erro ao buscar profissionais:',
-            error
-        );
 
-        return [];
-    }
+    /* =====================================================
+       CRIAR RESULTADO
+       ===================================================== */
 
+    criarResultado(perfil) {
 
-    if (!data) {
-        return [];
-    }
+        const artista =
+            this.obterArtistaPerfil(
+                perfil
+            );
 
 
-    const termoNormalizado =
-        this.normalizarTexto(
-            termo
-        );
+        if (!artista) {
+            return '';
+        }
 
 
-    if (!termoNormalizado) {
-        return [];
-    }
+        const nome =
+            perfil.nome_exibicao ||
+            'Artista';
 
 
-    const resultados =
-        data.filter(
-            perfil => {
+        const localizacao =
+            artista.localizacao ||
+            'Localização não informada';
 
-                const artista =
-                    this.obterArtistaPerfil(
-                        perfil
-                    );
 
+        const estilos =
+            this.normalizarLista(
+                artista.estilos
+            );
 
-                if (!artista) {
-                    return false;
-                }
 
+        let generoMusical =
+            estilos
+                .slice(0, 2)
+                .join(' • ');
 
-                const estilos =
-                    this.normalizarLista(
-                        artista.estilos
-                    );
 
+        if (!generoMusical) {
 
-                const instrumentos =
-                    this.normalizarLista(
-                        artista.instrumentos
-                    );
+            generoMusical =
+                artista.tipo_artista ||
+                'Gênero não informado';
+        }
 
 
-                const servicos =
-                    this.normalizarLista(
-                        artista.servicos
-                    );
+        const foto =
+            artista.foto_url ||
+            '';
 
 
-                const portfolio =
-                    Array.isArray(
-                        perfil.portfolio_musicos
-                    )
-                        ? perfil.portfolio_musicos
-                        : [];
+        const iniciais =
+            this.gerarIniciais(
+                nome
+            );
 
 
-                const textos = [
+        /*
+         * Todos os resultados da pesquisa utilizam
+         * a página única de apresentação de perfil.
+         *
+         * O ID do perfil é enviado pela URL para que
+         * apresentar-perfil.html carregue os dados corretos.
+         */
 
-                    perfil.nome_exibicao,
+        const href =
+            `apresentar-perfil.html?id=${encodeURIComponent(perfil.id)}`;
 
-                    perfil.descricao,
 
-                    artista.tipo_artista,
+        let fotoHtml = '';
 
-                    artista.localizacao,
 
-                    artista.experiencia,
+        if (foto) {
 
-                    artista.area_atendimento,
+            fotoHtml = `
 
-                    ...estilos,
-
-                    ...instrumentos,
-
-                    ...servicos,
-
-                    ...portfolio.map(
-                        item =>
-                            item.titulo
-                    ),
-
-                    ...portfolio.map(
-                        item =>
-                            item.descricao
-                    )
-
-                ];
-
-
-                const textoCompleto =
-                    textos
-
-                        .filter(
-                            valor =>
-                                valor !== null &&
-                                valor !== undefined
-                        )
-
-                        .map(
-                            valor =>
-                                this.normalizarTexto(
-                                    valor
-                                )
-                        )
-
-                        .join(' ');
-
-
-                return textoCompleto.includes(
-                    termoNormalizado
-                );
-            }
-        );
-
-
-    return resultados;
-},
-
-
-/* =====================================================
-   CRIAR RESULTADO
-   ===================================================== */
-
-criarResultado(perfil) {
-
-    const artista =
-        this.obterArtistaPerfil(
-            perfil
-        );
-
-
-    if (!artista) {
-        return '';
-    }
-
-
-    const nome =
-        perfil.nome_exibicao ||
-        'Artista';
-
-
-    const localizacao =
-        artista.localizacao ||
-        'Localização não informada';
-
-
-    const estilos =
-        this.normalizarLista(
-            artista.estilos
-        );
-
-
-    let generoMusical =
-        estilos
-            .slice(0, 2)
-            .join(' • ');
-
-
-    if (!generoMusical) {
-
-        generoMusical =
-            artista.tipo_artista ||
-            'Gênero não informado';
-    }
-
-
-    const foto =
-        artista.foto_url ||
-        '';
-
-
-    const iniciais =
-        this.gerarIniciais(
-            nome
-        );
-
-
-    const paginaPerfil =
-        this.obterPaginaPerfil(
-            artista.tipo_artista
-        );
-
-
-    const href =
-        `${paginaPerfil}?id=${encodeURIComponent(perfil.id)}`;
-
-
-    let fotoHtml = '';
-
-
-    if (foto) {
-
-        fotoHtml = `
-
-            <img
-                class="search-result-avatar"
-                src="${this.escaparHtml(foto)}"
-                alt="${this.escaparHtml(nome)}"
-                loading="lazy"
-                onerror="
-                    this.style.display='none';
-                    this.nextElementSibling.style.display='flex';
-                "
-            >
-
-            <span
-                class="search-result-avatar-fallback"
-                style="display:none;"
-            >
-                ${this.escaparHtml(iniciais)}
-            </span>
-
-        `;
-
-    } else {
-
-        fotoHtml = `
-
-            <span
-                class="search-result-avatar-fallback"
-            >
-                ${this.escaparHtml(iniciais)}
-            </span>
-
-        `;
-    }
-
-
-    return `
-
-        <a
-            href="${this.escaparHtml(href)}"
-            class="search-result-item"
-            aria-label="Abrir perfil de ${this.escaparHtml(nome)}"
-        >
-
-            <div
-                class="search-result-avatar-wrapper"
-            >
-                ${fotoHtml}
-            </div>
-
-
-            <div
-                class="search-result-info"
-            >
-
-                <h4
-                    class="search-result-name"
+                <img
+                    class="search-result-avatar"
+                    src="${this.escaparHtml(foto)}"
+                    alt="${this.escaparHtml(nome)}"
+                    loading="lazy"
+                    onerror="
+                        this.style.display='none';
+                        this.nextElementSibling.style.display='flex';
+                    "
                 >
-                    ${this.escaparHtml(nome)}
-                </h4>
 
+                <span
+                    class="search-result-avatar-fallback"
+                    style="display:none;"
+                >
+                    ${this.escaparHtml(iniciais)}
+                </span>
+
+            `;
+
+        } else {
+
+            fotoHtml = `
+
+                <span
+                    class="search-result-avatar-fallback"
+                >
+                    ${this.escaparHtml(iniciais)}
+                </span>
+
+            `;
+        }
+
+
+        return `
+
+            <a
+                href="${this.escaparHtml(href)}"
+                class="search-result-item"
+                aria-label="Abrir perfil de ${this.escaparHtml(nome)}"
+            >
 
                 <div
-                    class="search-result-location"
+                    class="search-result-avatar-wrapper"
                 >
-
-                    <svg
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        aria-hidden="true"
-                    >
-
-                        <path
-                            d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"
-                        ></path>
-
-                        <circle
-                            cx="12"
-                            cy="10"
-                            r="2.5"
-                        ></circle>
-
-                    </svg>
-
-
-                    <span>
-                        ${this.escaparHtml(localizacao)}
-                    </span>
-
+                    ${fotoHtml}
                 </div>
 
 
                 <div
-                    class="search-result-genre"
+                    class="search-result-info"
                 >
 
-                    <svg
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        aria-hidden="true"
+                    <h4
+                        class="search-result-name"
+                    >
+                        ${this.escaparHtml(nome)}
+                    </h4>
+
+
+                    <div
+                        class="search-result-location"
                     >
 
-                        <path
-                            d="M9 18V5l12-2v13"
-                        ></path>
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            aria-hidden="true"
+                        >
 
-                        <circle
-                            cx="6"
-                            cy="18"
-                            r="3"
-                        ></circle>
+                            <path
+                                d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"
+                            ></path>
 
-                        <circle
-                            cx="18"
-                            cy="16"
-                            r="3"
-                        ></circle>
+                            <circle
+                                cx="12"
+                                cy="10"
+                                r="2.5"
+                            ></circle>
 
-                    </svg>
+                        </svg>
 
 
-                    <span>
-                        ${this.escaparHtml(generoMusical)}
-                    </span>
+                        <span>
+                            ${this.escaparHtml(localizacao)}
+                        </span>
+
+                    </div>
+
+
+                    <div
+                        class="search-result-genre"
+                    >
+
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            aria-hidden="true"
+                        >
+
+                            <path
+                                d="M9 18V5l12-2v13"
+                            ></path>
+
+                            <circle
+                                cx="6"
+                                cy="18"
+                                r="3"
+                            ></circle>
+
+                            <circle
+                                cx="18"
+                                cy="16"
+                                r="3"
+                            ></circle>
+
+                        </svg>
+
+
+                        <span>
+                            ${this.escaparHtml(generoMusical)}
+                        </span>
+
+                    </div>
 
                 </div>
 
-            </div>
-
-
-            <svg
-                class="search-result-arrow"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                aria-hidden="true"
-            >
-
-                <path
-                    d="m9 18 6-6-6-6"
-                ></path>
-
-            </svg>
-
-        </a>
-
-    `;
-},
-
-
-/* =====================================================
-   RENDERIZAR RESULTADOS
-   ===================================================== */
-
-renderizarResultados(resultados) {
-
-    const container =
-        document.getElementById(
-            'resultados-pesquisa'
-        );
-
-
-    if (!container) {
-
-        console.warn(
-            '⚠️ Container de resultados não encontrado.'
-        );
-
-        return;
-    }
-
-
-    if (
-        !resultados ||
-        resultados.length === 0
-    ) {
-
-        container.innerHTML = `
-
-            <div
-                class="search-estado-sem-resultados"
-            >
 
                 <svg
+                    class="search-result-arrow"
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
@@ -1169,140 +1139,23 @@ renderizarResultados(resultados) {
                     aria-hidden="true"
                 >
 
-                    <circle
-                        cx="11"
-                        cy="11"
-                        r="8"
-                    ></circle>
-
-                    <line
-                        x1="21"
-                        y1="21"
-                        x2="16.65"
-                        y2="16.65"
-                    ></line>
+                    <path
+                        d="m9 18 6-6-6-6"
+                    ></path>
 
                 </svg>
 
-
-                <p>
-                    Nenhum profissional encontrado.
-                </p>
-
-            </div>
+            </a>
 
         `;
-
-        return;
-    }
+    },
 
 
-    container.innerHTML =
-        resultados
+    /* =====================================================
+       RENDERIZAR RESULTADOS
+       ===================================================== */
 
-            .map(
-                perfil =>
-                    this.criarResultado(
-                        perfil
-                    )
-            )
-
-            .join('');
-},
-
-
-/* =====================================================
-   CARREGANDO
-   ===================================================== */
-
-mostrarCarregando() {
-
-    const container =
-        document.getElementById(
-            'resultados-pesquisa'
-        );
-
-
-    if (!container) {
-        return;
-    }
-
-
-    container.innerHTML = `
-
-        <div
-            class="search-estado-carregando"
-        >
-
-            <div
-                class="search-loading-spinner"
-                aria-hidden="true"
-            ></div>
-
-
-            <p>
-                Buscando...
-            </p>
-
-        </div>
-
-    `;
-},
-
-
-/* =====================================================
-   PESQUISAR
-   ===================================================== */
-
-async filtrar(termo) {
-
-    const termoLimpo =
-        String(
-            termo || ''
-        ).trim();
-
-
-    this.ultimoTermo =
-        termoLimpo;
-
-
-    /*
-     * Cancela pesquisa anterior agendada.
-     */
-
-    if (this.timeoutPesquisa) {
-
-        clearTimeout(
-            this.timeoutPesquisa
-        );
-
-        this.timeoutPesquisa =
-            null;
-    }
-
-
-    /*
-     * Campo vazio.
-     */
-
-    if (!termoLimpo) {
-
-        this.pesquisando =
-            false;
-
-        this.mostrarEstadoInicial();
-
-        return;
-    }
-
-
-    /*
-     * Evita pesquisa para apenas uma letra.
-     */
-
-    if (
-        termoLimpo.length < 2
-    ) {
+    renderizarResultados(resultados) {
 
         const container =
             document.getElementById(
@@ -1310,176 +1163,343 @@ async filtrar(termo) {
             );
 
 
-        if (container) {
+        if (!container) {
+
+            console.warn(
+                '⚠️ Container de resultados não encontrado.'
+            );
+
+            return;
+        }
+
+
+        if (
+            !resultados ||
+            resultados.length === 0
+        ) {
 
             container.innerHTML = `
 
-                <p
-                    class="search-estado-vazio"
+                <div
+                    class="search-estado-sem-resultados"
                 >
-                    Digite pelo menos 2 caracteres.
-                </p>
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        aria-hidden="true"
+                    >
+
+                        <circle
+                            cx="11"
+                            cy="11"
+                            r="8"
+                        ></circle>
+
+                        <line
+                            x1="21"
+                            y1="21"
+                            x2="16.65"
+                            y2="16.65"
+                        ></line>
+
+                    </svg>
+
+
+                    <p>
+                        Nenhum profissional encontrado.
+                    </p>
+
+                </div>
 
             `;
+
+            return;
         }
 
-        return;
-    }
+
+        container.innerHTML =
+            resultados
+
+                .map(
+                    perfil =>
+                        this.criarResultado(
+                            perfil
+                        )
+                )
+
+                .join('');
+    },
 
 
-    /*
-     * Pequeno debounce para não consultar o banco
-     * a cada tecla imediatamente.
-     */
+    /* =====================================================
+       CARREGANDO
+       ===================================================== */
 
-    this.timeoutPesquisa =
-        setTimeout(
-            async () => {
+    mostrarCarregando() {
 
-                const termoPesquisa =
-                    this.ultimoTermo;
-
-
-                this.pesquisando =
-                    true;
+        const container =
+            document.getElementById(
+                'resultados-pesquisa'
+            );
 
 
-                this.mostrarCarregando();
+        if (!container) {
+            return;
+        }
 
 
-                try {
+        container.innerHTML = `
 
-                    const resultados =
-                        await this.buscarNoBanco(
-                            termoPesquisa
-                        );
+            <div
+                class="search-estado-carregando"
+            >
 
-
-                    /*
-                     * Se o usuário já digitou outra
-                     * coisa enquanto a consulta estava
-                     * acontecendo, ignora o resultado.
-                     */
-
-                    if (
-                        this.ultimoTermo !==
-                        termoPesquisa
-                    ) {
-
-                        return;
-                    }
+                <div
+                    class="search-loading-spinner"
+                    aria-hidden="true"
+                ></div>
 
 
-                    this.renderizarResultados(
-                        resultados
-                    );
+                <p>
+                    Buscando...
+                </p>
+
+            </div>
+
+        `;
+    },
 
 
-                } catch (erro) {
+    /* =====================================================
+       PESQUISAR
+       ===================================================== */
 
-                    console.error(
-                        '❌ Erro durante a pesquisa:',
-                        erro
-                    );
+    async filtrar(termo) {
+
+        const termoLimpo =
+            String(
+                termo || ''
+            ).trim();
 
 
-                    if (
-                        this.ultimoTermo ===
-                        termoPesquisa
-                    ) {
+        this.ultimoTermo =
+            termoLimpo;
 
-                        const container =
-                            document.getElementById(
-                                'resultados-pesquisa'
+
+        /*
+         * Cancela pesquisa anterior agendada.
+         */
+
+        if (this.timeoutPesquisa) {
+
+            clearTimeout(
+                this.timeoutPesquisa
+            );
+
+            this.timeoutPesquisa =
+                null;
+        }
+
+
+        /*
+         * Campo vazio.
+         */
+
+        if (!termoLimpo) {
+
+            this.pesquisando =
+                false;
+
+            this.mostrarEstadoInicial();
+
+            return;
+        }
+
+
+        /*
+         * Evita pesquisa para apenas uma letra.
+         */
+
+        if (
+            termoLimpo.length < 2
+        ) {
+
+            const container =
+                document.getElementById(
+                    'resultados-pesquisa'
+                );
+
+
+            if (container) {
+
+                container.innerHTML = `
+
+                    <p
+                        class="search-estado-vazio"
+                    >
+                        Digite pelo menos 2 caracteres.
+                    </p>
+
+                `;
+            }
+
+            return;
+        }
+
+
+        /*
+         * Pequeno debounce para não consultar o banco
+         * a cada tecla imediatamente.
+         */
+
+        this.timeoutPesquisa =
+            setTimeout(
+                async () => {
+
+                    const termoPesquisa =
+                        this.ultimoTermo;
+
+
+                    this.pesquisando =
+                        true;
+
+
+                    this.mostrarCarregando();
+
+
+                    try {
+
+                        const resultados =
+                            await this.buscarNoBanco(
+                                termoPesquisa
                             );
 
 
-                        if (container) {
+                        /*
+                         * Se o usuário já digitou outra
+                         * coisa enquanto a consulta estava
+                         * acontecendo, ignora o resultado.
+                         */
 
-                            container.innerHTML = `
+                        if (
+                            this.ultimoTermo !==
+                            termoPesquisa
+                        ) {
 
-                                <div
-                                    class="search-estado-erro"
-                                >
+                            return;
+                        }
 
-                                    <p>
-                                        Não foi possível realizar a pesquisa.
-                                    </p>
 
-                                </div>
+                        this.renderizarResultados(
+                            resultados
+                        );
 
-                            `;
+
+                    } catch (erro) {
+
+                        console.error(
+                            '❌ Erro durante a pesquisa:',
+                            erro
+                        );
+
+
+                        if (
+                            this.ultimoTermo ===
+                            termoPesquisa
+                        ) {
+
+                            const container =
+                                document.getElementById(
+                                    'resultados-pesquisa'
+                                );
+
+
+                            if (container) {
+
+                                container.innerHTML = `
+
+                                    <div
+                                        class="search-estado-erro"
+                                    >
+
+                                        <p>
+                                            Não foi possível realizar a pesquisa.
+                                        </p>
+
+                                    </div>
+
+                                `;
+                            }
+                        }
+
+                    } finally {
+
+                        if (
+                            this.ultimoTermo ===
+                            termoPesquisa
+                        ) {
+
+                            this.pesquisando =
+                                false;
                         }
                     }
 
-                } finally {
-
-                    if (
-                        this.ultimoTermo ===
-                        termoPesquisa
-                    ) {
-
-                        this.pesquisando =
-                            false;
-                    }
-                }
-
-            },
-            300
-        );
-}
-
+                },
+                300
+            );
+    }
 
 };
+
 
 /* =========================================================
-EXPORTAÇÕES GLOBAIS
-========================================================= */
+   EXPORTAÇÕES GLOBAIS
+   ========================================================= */
 
 window.PainelPesquisa =
-PainelPesquisa;
+    PainelPesquisa;
+
 
 window.abrirPesquisa =
-() => {
+    () => {
 
+        PainelPesquisa.abrir();
 
-    PainelPesquisa.abrir();
-
-};
+    };
 
 
 window.fecharPesquisa =
-() => {
+    () => {
 
+        PainelPesquisa.fechar();
 
-    PainelPesquisa.fechar();
-
-};
+    };
 
 
 window.filtrarPesquisa =
-termo => {
+    termo => {
 
+        PainelPesquisa.filtrar(
+            termo
+        );
 
-    PainelPesquisa.filtrar(
-        termo
-    );
-
-};
+    };
 
 
 /* =========================================================
-DOM READY
-========================================================= */
+   DOM READY
+   ========================================================= */
 
 document.addEventListener(
-'DOMContentLoaded',
-() => {
+    'DOMContentLoaded',
+    () => {
 
+        PainelPesquisa.iniciar();
 
-    PainelPesquisa.iniciar();
-
-}
-
-
+    }
 );
