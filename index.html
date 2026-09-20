@@ -55,15 +55,6 @@
 
 <!-- =====================================================
      CSS DO MODAL ANUNCIAR
-     =====================================================
-
-     O Modal Anunciar anteriormente era carregado
-     dinamicamente pelo menu inferior.
-
-     Como "Anunciar" agora pertence ao cabeçalho,
-     o componente passa a ser carregado diretamente
-     nesta página.
-
      ===================================================== -->
 
 <link
@@ -73,15 +64,6 @@
 
 <!-- =====================================================
      CSS DO ONBOARDING
-     =====================================================
-
-     Responsabilidade:
-
-     - Estilizar os balões de orientação.
-     - Destacar o elemento indicado.
-     - Controlar a aparência da primeira orientação
-       apresentada ao usuário.
-
      ===================================================== -->
 
 <link
@@ -91,21 +73,6 @@
 
 <!-- =====================================================
      CSS DAS INTERAÇÕES DE PERFIL
-     =====================================================
-
-     Responsabilidade:
-
-     - Curtir perfil.
-     - Comentar perfil.
-     - Favoritar perfil.
-     - Exibir estados ativos.
-     - Exibir contadores.
-     - Estilizar a área de comentários.
-
-     Este componente é universal e poderá ser utilizado
-     tanto no Index quanto na página de apresentação
-     do perfil.
-
      ===================================================== -->
 
 <link
@@ -145,23 +112,6 @@
 
 <!-- =====================================================
      CABEÇALHO PRINCIPAL
-     =====================================================
-
-     Responsabilidade:
-
-     - Exibir a identidade visual do MusicalWorld.
-     - Abrir o menu da conta através da seta ao lado
-       da logo.
-     - Abrir o fluxo de criação de anúncio.
-     - Exibir notificações.
-     - Exibir mensagens.
-
-     O acesso ao perfil do usuário não fica mais
-     representado por avatar no topo.
-
-     O menu da conta fica vinculado à identidade
-     visual da marca.
-
      ===================================================== -->
 
 <header class="navbar">
@@ -174,11 +124,6 @@
 
 <!-- =============================================
      CONTAINER DA CONTA
-     =============================================
-
-     A logo e a seta formam o controle responsável
-     por abrir o menu da conta.
-
      ============================================= -->
 
 <div class="cabecalho-conta">
@@ -306,6 +251,52 @@
         </button>
 
         <!-- =========================================
+             SALVOS E CURTIDOS
+             ========================================= -->
+
+        <button
+            type="button"
+            class="cabecalho-menu-conta-item"
+            role="menuitem"
+            onclick="window.Cabecalho && typeof window.Cabecalho.abrirSalvosCurtidos === 'function' && window.Cabecalho.abrirSalvosCurtidos()"
+        >
+
+            <!-- =====================================
+                 ÍCONE SALVOS E CURTIDOS
+                 ===================================== -->
+
+            <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                aria-hidden="true"
+            >
+
+                <path
+                    d="M6.5 4.5C6.5 4.22 6.72 4 7 4H17C17.28 4 17.5 4.22 17.5 4.5V20L12 16.5L6.5 20V4.5Z"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                />
+
+                <path
+                    d="M9.5 9.8C9.5 8.81 10.28 8 11.25 8C11.61 8 11.94 8.11 12.2 8.32C12.46 8.11 12.79 8 13.15 8C14.12 8 14.9 8.81 14.9 9.8C14.9 11.18 12.2 12.7 12.2 12.7C12.2 12.7 9.5 11.18 9.5 9.8Z"
+                    stroke="currentColor"
+                    stroke-width="1.6"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                />
+
+            </svg>
+
+            <span>
+                Salvos e curtidos
+            </span>
+
+        </button>
+
+        <!-- =========================================
              DIVISOR
              ========================================= -->
 
@@ -380,14 +371,6 @@
 
 <!-- =============================================
      ANUNCIAR
-     =============================================
-
-     O botão Anunciar foi retirado do menu inferior
-     e passa a ocupar o cabeçalho.
-
-     Ele abre o mesmo ModalAnunciar utilizado
-     anteriormente pelo menu inferior.
-
      ============================================= -->
 
 <button
@@ -761,19 +744,6 @@
 
 <!-- =================================================
      MENU INFERIOR
-     =================================================
-
-     O menu é criado dinamicamente pelo
-     menu-inferior.js.
-
-     Estrutura atual:
-
-     Home
-     Pesquisa
-     Financeiro
-     Contratações
-     Perfil
-
      ================================================= -->
 
 <div
@@ -820,19 +790,6 @@
 
 <!-- =====================================================
      COMPONENTE UNIVERSAL DE INTERAÇÕES DE PERFIL
-     =====================================================
-
-     Responsabilidade:
-
-     - Curtidas.
-     - Comentários.
-     - Favoritos.
-     - Contadores.
-     - Estado das ações do usuário.
-
-     O componente é compartilhado entre o Index
-     e a página de apresentação do perfil.
-
      ===================================================== -->
 
 <script src="js/components/interacoes-perfil.js"></script>
@@ -885,8 +842,8 @@ document.addEventListener(
         mensagens não lidas, Realtime e prévias de novas
         mensagens.
 
-        Também passa a controlar o menu da conta aberto
-        através da seta ao lado da logo.
+        Também controla o menu da conta aberto através
+        da seta ao lado da logo.
 
         -------------------------------------------------
         */
@@ -944,15 +901,8 @@ document.addEventListener(
         O componente é universal e será utilizado pelos
         perfis exibidos no Index.
 
-        A página de apresentação do perfil também utilizará
+        A página de apresentação do perfil também utiliza
         exatamente o mesmo componente.
-
-        O componente deverá localizar os elementos que
-        possuem data-perfil-id e inicializar as ações:
-
-        - Curtir.
-        - Comentar.
-        - Favoritar.
 
         -------------------------------------------------
         */

@@ -1,0 +1,1002 @@
+/* =========================================================
+MUSICALWORLD — PERFIS SALVOS E CURTIDOS
+
+Arquivo:
+css/salvos-curtidos/salvos-curtidos.css
+
+Responsabilidades:
+
+* Estilizar a página de perfis salvos e curtidos.
+* Criar a navegação por abas.
+* Estilizar os cartões dos perfis.
+* Controlar estados de carregamento, vazio e erro.
+* Manter o visual alinhado ao padrão claro do MusicalWorld.
+  ========================================================= */
+
+/* =========================================================
+RESET
+========================================================= */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  }
+
+html,
+body {
+min-height: 100%;
+
+
+font-family:
+    "Manrope",
+    Arial,
+    sans-serif;
+
+background: #f5f7fb;
+
+color: #172033;
+
+-webkit-font-smoothing: antialiased;
+
+
+}
+
+body {
+min-height: 100vh;
+}
+
+/* =========================================================
+ELEMENTOS GERAIS
+========================================================= */
+
+button {
+font: inherit;
+}
+
+/*
+O atributo HTML "hidden" precisa sempre esconder
+o elemento, independentemente de outras regras
+de display existentes no CSS.
+
+Isso é importante porque o JavaScript desta página
+controla os estados usando:
+
+elemento.hidden = true;
+elemento.hidden = false;
+*/
+
+[hidden] {
+display: none !important;
+}
+
+/* =========================================================
+PÁGINA
+========================================================= */
+
+.salvos-curtidos-pagina {
+width: 100%;
+min-height: 100vh;
+
+
+padding-bottom: 48px;
+
+
+}
+
+/* =========================================================
+CABEÇALHO
+========================================================= */
+
+.salvos-curtidos-cabecalho {
+width: 100%;
+
+
+min-height: 76px;
+
+display: flex;
+
+align-items: center;
+
+gap: 14px;
+
+padding:
+    16px
+    max(20px, calc((100vw - 1180px) / 2));
+
+background: #ffffff;
+
+border-bottom:
+    1px solid #e9edf4;
+
+
+}
+
+.salvos-curtidos-voltar {
+width: 40px;
+height: 40px;
+
+
+flex: 0 0 40px;
+
+display: inline-flex;
+
+align-items: center;
+justify-content: center;
+
+border: 0;
+
+border-radius: 11px;
+
+background: #f5f7fb;
+
+color: #475467;
+
+cursor: pointer;
+
+transition:
+    background-color 0.18s ease,
+    color 0.18s ease,
+    transform 0.18s ease;
+
+
+}
+
+.salvos-curtidos-voltar:hover {
+background: #edf0f5;
+
+
+color: #172033;
+
+
+}
+
+.salvos-curtidos-voltar:active {
+transform: scale(0.96);
+}
+
+.salvos-curtidos-voltar svg {
+width: 19px;
+height: 19px;
+}
+
+.salvos-curtidos-titulo-area {
+min-width: 0;
+}
+
+.salvos-curtidos-titulo-area h1 {
+margin: 0;
+
+
+color: #172033;
+
+font-size: 21px;
+
+font-weight: 800;
+
+line-height: 1.2;
+
+
+}
+
+.salvos-curtidos-titulo-area p {
+margin-top: 4px;
+
+
+color: #667085;
+
+font-size: 12px;
+
+font-weight: 500;
+
+line-height: 1.4;
+
+
+}
+
+/* =========================================================
+ABAS
+========================================================= */
+
+.salvos-curtidos-abas {
+width: min(100%, 1180px);
+
+
+margin:
+    24px
+    auto
+    0;
+
+padding: 5px;
+
+display: grid;
+
+grid-template-columns:
+    repeat(
+        2,
+        minmax(0, 1fr)
+    );
+
+gap: 4px;
+
+background: #e9edf4;
+
+border-radius: 13px;
+
+
+}
+
+.salvos-curtidos-aba {
+min-height: 44px;
+
+
+display: flex;
+
+align-items: center;
+justify-content: center;
+
+gap: 7px;
+
+border: 0;
+
+border-radius: 9px;
+
+background: transparent;
+
+color: #667085;
+
+font-size: 13px;
+
+font-weight: 700;
+
+cursor: pointer;
+
+transition:
+    background-color 0.18s ease,
+    color 0.18s ease,
+    box-shadow 0.18s ease;
+
+
+}
+
+.salvos-curtidos-aba:hover {
+color: #172033;
+}
+
+.salvos-curtidos-aba.ativa {
+background: #ffffff;
+
+
+color: #6d4aff;
+
+box-shadow:
+    0 2px 8px
+    rgba(15, 23, 42, 0.07);
+
+
+}
+
+/*
+Corrigido:
+
+Antes:
+
+.salvos-curtidos-aba.ativa
+.salvos-curtidos-aba-contador
+
+Isso significava "contador dentro de uma aba ativa".
+
+O objetivo é estilizar o contador que pertence
+à aba ativa, portanto utilizamos o seletor
+de elemento filho direto.
+*/
+
+.salvos-curtidos-aba.ativa
+.salvos-curtidos-aba-contador {
+background: #f0ebff;
+
+
+color: #6d4aff;
+
+
+}
+
+.salvos-curtidos-aba-contador {
+min-width: 21px;
+height: 21px;
+
+
+display: inline-flex;
+
+align-items: center;
+justify-content: center;
+
+padding:
+    0
+    6px;
+
+border-radius: 20px;
+
+background: #f0f2f7;
+
+color: #667085;
+
+font-size: 10px;
+
+font-weight: 800;
+
+
+}
+
+/* =========================================================
+CONTEÚDO
+========================================================= */
+
+.salvos-curtidos-conteudo {
+width: min(
+calc(100% - 40px),
+1180px
+);
+
+
+margin:
+    18px
+    auto
+    0;
+
+
+}
+
+/* =========================================================
+GRADE
+========================================================= */
+
+.salvos-curtidos-grade {
+display: grid;
+
+
+grid-template-columns:
+    repeat(
+        3,
+        minmax(0, 1fr)
+    );
+
+gap: 16px;
+
+
+}
+
+/* =========================================================
+CARD
+========================================================= */
+
+.salvos-curtidos-card {
+min-width: 0;
+
+
+display: flex;
+
+flex-direction: column;
+
+overflow: hidden;
+
+background: #ffffff;
+
+border:
+    1px solid #e8ebf2;
+
+border-radius: 18px;
+
+box-shadow:
+    0 4px 16px
+    rgba(15, 23, 42, 0.04);
+
+transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    border-color 0.18s ease;
+
+
+}
+
+.salvos-curtidos-card:hover {
+transform: translateY(-2px);
+
+
+border-color: #ddd6fe;
+
+box-shadow:
+    0 12px 28px
+    rgba(15, 23, 42, 0.08);
+
+
+}
+
+/* =========================================================
+ÁREA CLICÁVEL
+========================================================= */
+
+.salvos-curtidos-card-conteudo {
+width: 100%;
+
+
+display: flex;
+
+align-items: center;
+
+gap: 13px;
+
+padding: 16px;
+
+border: 0;
+
+background: #ffffff;
+
+color: inherit;
+
+text-align: left;
+
+cursor: pointer;
+
+
+}
+
+.salvos-curtidos-card-conteudo:focus-visible {
+outline:
+3px solid
+rgba(109, 74, 255, 0.18);
+
+
+outline-offset: -3px;
+
+
+}
+
+/* =========================================================
+AVATAR
+========================================================= */
+
+.salvos-curtidos-avatar {
+width: 58px;
+height: 58px;
+
+
+flex: 0 0 58px;
+
+display: flex;
+
+align-items: center;
+justify-content: center;
+
+overflow: hidden;
+
+border-radius: 50%;
+
+background:
+    linear-gradient(
+        145deg,
+        #ede9fe,
+        #ddd6fe
+    );
+
+color: #6d4aff;
+
+font-size: 16px;
+
+font-weight: 800;
+
+
+}
+
+.salvos-curtidos-avatar img {
+width: 100%;
+height: 100%;
+
+
+display: block;
+
+object-fit: cover;
+
+
+}
+
+/* =========================================================
+INFORMAÇÕES
+========================================================= */
+
+.salvos-curtidos-card-info {
+min-width: 0;
+
+
+flex: 1;
+
+
+}
+
+.salvos-curtidos-card-nome {
+overflow: hidden;
+
+
+color: #172033;
+
+font-size: 14px;
+
+font-weight: 800;
+
+line-height: 1.3;
+
+text-overflow: ellipsis;
+
+white-space: nowrap;
+
+
+}
+
+.salvos-curtidos-card-tipo {
+margin-top: 4px;
+
+
+overflow: hidden;
+
+color: #667085;
+
+font-size: 12px;
+
+font-weight: 600;
+
+line-height: 1.3;
+
+text-overflow: ellipsis;
+
+white-space: nowrap;
+
+
+}
+
+.salvos-curtidos-card-localizacao {
+margin-top: 3px;
+
+
+overflow: hidden;
+
+color: #98a2b3;
+
+font-size: 11px;
+
+font-weight: 500;
+
+line-height: 1.3;
+
+text-overflow: ellipsis;
+
+white-space: nowrap;
+
+
+}
+
+/* =========================================================
+AÇÕES DO CARD
+========================================================= */
+
+.salvos-curtidos-card-acoes {
+display: flex;
+
+
+align-items: center;
+
+justify-content: space-between;
+
+gap: 8px;
+
+padding:
+    10px
+    12px;
+
+border-top:
+    1px solid #edf0f5;
+
+background: #fbfcfe;
+
+
+}
+
+.salvos-curtidos-card-status {
+display: inline-flex;
+
+
+align-items: center;
+
+gap: 5px;
+
+color: #98a2b3;
+
+font-size: 10px;
+
+font-weight: 600;
+
+
+}
+
+.salvos-curtidos-card-status svg {
+width: 14px;
+height: 14px;
+}
+
+/* =========================================================
+BOTÃO REMOVER
+========================================================= */
+
+.salvos-curtidos-remover {
+min-height: 30px;
+
+
+display: inline-flex;
+
+align-items: center;
+
+justify-content: center;
+
+gap: 5px;
+
+padding:
+    0
+    9px;
+
+border: 0;
+
+border-radius: 8px;
+
+background: transparent;
+
+color: #98a2b3;
+
+font-size: 11px;
+
+font-weight: 700;
+
+cursor: pointer;
+
+transition:
+    background-color 0.18s ease,
+    color 0.18s ease,
+    transform 0.18s ease;
+
+
+}
+
+.salvos-curtidos-remover:hover {
+background: #fff1f2;
+
+
+color: #dc2626;
+
+
+}
+
+.salvos-curtidos-remover:active {
+transform: scale(0.96);
+}
+
+.salvos-curtidos-remover:disabled {
+opacity: 0.5;
+
+
+cursor: wait;
+
+
+}
+
+.salvos-curtidos-remover svg {
+width: 15px;
+height: 15px;
+}
+
+/* =========================================================
+ESTADOS
+========================================================= */
+
+.salvos-curtidos-estado {
+min-height: 360px;
+
+
+display: flex;
+
+flex-direction: column;
+
+align-items: center;
+
+justify-content: center;
+
+padding:
+    40px
+    20px;
+
+text-align: center;
+
+
+}
+
+/* =========================================================
+ÍCONE DOS ESTADOS
+========================================================= */
+
+.salvos-curtidos-estado-icone {
+width: 58px;
+height: 58px;
+
+
+display: flex;
+
+align-items: center;
+justify-content: center;
+
+margin-bottom: 16px;
+
+border-radius: 17px;
+
+background: #f0ebff;
+
+color: #6d4aff;
+
+
+}
+
+.salvos-curtidos-estado-icone svg {
+width: 28px;
+height: 28px;
+}
+
+/* =========================================================
+TEXTO DOS ESTADOS
+========================================================= */
+
+.salvos-curtidos-estado h2 {
+color: #172033;
+
+
+font-size: 17px;
+
+font-weight: 800;
+
+
+}
+
+.salvos-curtidos-estado p {
+max-width: 360px;
+
+
+margin-top: 7px;
+
+color: #667085;
+
+font-size: 13px;
+
+line-height: 1.5;
+
+
+}
+
+/* =========================================================
+SPINNER
+========================================================= */
+
+.salvos-curtidos-spinner {
+width: 30px;
+height: 30px;
+
+
+margin-bottom: 14px;
+
+border:
+    3px solid
+    #e7e2ff;
+
+border-top-color: #6d4aff;
+
+border-radius: 50%;
+
+animation:
+    salvosCurtidosSpinner
+    0.8s
+    linear
+    infinite;
+
+
+}
+
+@keyframes salvosCurtidosSpinner {
+
+
+to {
+    transform: rotate(360deg);
+}
+
+
+}
+
+/* =========================================================
+ERRO
+========================================================= */
+
+/*
+Corrigido:
+
+O seletor anterior:
+
+.salvos-curtidos-estado-erro
+.salvos-curtidos-estado-icone
+
+selecionava apenas um ícone que estivesse
+dentro do estado de erro.
+
+Agora aplicamos explicitamente o estilo
+ao ícone que pertence ao estado de erro.
+*/
+
+.salvos-curtidos-estado-erro
+.salvos-curtidos-estado-icone {
+background: #fff1f2;
+
+
+color: #dc2626;
+
+
+}
+
+.salvos-curtidos-botao-retry,
+.salvos-curtidos-botao-explorar {
+min-height: 40px;
+
+
+margin-top: 18px;
+
+padding:
+    0
+    16px;
+
+border: 0;
+
+border-radius: 10px;
+
+background: #6d4aff;
+
+color: #ffffff;
+
+font-size: 12px;
+
+font-weight: 700;
+
+cursor: pointer;
+
+transition:
+    background-color 0.18s ease,
+    transform 0.18s ease;
+
+
+}
+
+.salvos-curtidos-botao-retry:hover,
+.salvos-curtidos-botao-explorar:hover {
+background: #5c3ee0;
+}
+
+.salvos-curtidos-botao-retry:active,
+.salvos-curtidos-botao-explorar:active {
+transform: scale(0.97);
+}
+
+/* =========================================================
+RESPONSIVIDADE
+========================================================= */
+
+@media (max-width: 900px) {
+
+
+.salvos-curtidos-grade {
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(0, 1fr)
+        );
+}
+
+
+}
+
+@media (max-width: 700px) {
+
+
+.salvos-curtidos-cabecalho {
+    padding:
+        14px
+        16px;
+}
+
+
+.salvos-curtidos-abas {
+    width: calc(100% - 32px);
+
+    margin-top: 16px;
+}
+
+
+.salvos-curtidos-conteudo {
+    width: calc(100% - 32px);
+
+    margin-top: 14px;
+}
+
+
+.salvos-curtidos-grade {
+    grid-template-columns: 1fr;
+
+    gap: 12px;
+}
+
+
+.salvos-curtidos-estado {
+    min-height: 300px;
+}
+
+
+}
+
+@media (max-width: 480px) {
+
+
+.salvos-curtidos-titulo-area h1 {
+    font-size: 19px;
+}
+
+
+.salvos-curtidos-titulo-area p {
+    font-size: 11px;
+}
+
+
+.salvos-curtidos-card-conteudo {
+    padding: 14px;
+}
+
+
+.salvos-curtidos-avatar {
+    width: 52px;
+    height: 52px;
+
+    flex-basis: 52px;
+}
+
+
+.salvos-curtidos-card-acoes {
+    padding:
+        9px
+        10px;
+}
+
+
+}
+
+/* =========================================================
+ACESSIBILIDADE
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+
+.salvos-curtidos-card,
+.salvos-curtidos-remover,
+.salvos-curtidos-aba,
+.salvos-curtidos-voltar,
+.salvos-curtidos-botao-retry,
+.salvos-curtidos-botao-explorar {
+
+    transition: none;
+}
+
+
+.salvos-curtidos-spinner {
+    animation: none;
+}
+
+
+}

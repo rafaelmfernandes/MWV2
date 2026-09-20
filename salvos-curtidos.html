@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+
+<head>
+
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>Meus perfis | MusicalWorld</title>
+
+<meta
+    name="description"
+    content="Veja os perfis que você salvou e curtiu no MusicalWorld."
+>
+
+
+<!--
+    =========================================================
+    MUSICALWORLD — PÁGINA DE PERFIS SALVOS E CURTIDOS
+
+    Arquivo:
+    salvos-curtidos.html
+
+    Responsabilidades:
+
+    * Exibir os perfis salvos pelo usuário.
+    * Exibir os perfis curtidos pelo usuário.
+    * Permitir alternar entre as duas listas.
+    * Abrir a apresentação pública do perfil selecionado.
+    * Permitir remover um perfil salvo ou curtido.
+
+    A definição da aba inicial é feita pelo JavaScript
+    depois que os dados do banco são carregados.
+    =========================================================
+-->
+
+
+<!-- =====================================================
+     FONTES
+====================================================== -->
+
+<link
+    rel="preconnect"
+    href="https://fonts.googleapis.com"
+>
+
+<link
+    rel="preconnect"
+    href="https://fonts.gstatic.com"
+    crossorigin
+>
+
+<link
+    href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+>
+
+
+<!-- =====================================================
+     CSS DA PÁGINA
+====================================================== -->
+
+<link
+    rel="stylesheet"
+    href="css/salvos-curtidos/salvos-curtidos.css"
+>
+
+
+</head>
+
+<body>
+
+
+<!-- =====================================================
+     PÁGINA
+====================================================== -->
+
+<main class="salvos-curtidos-pagina">
+
+
+    <!-- =================================================
+         CABEÇALHO
+    ================================================== -->
+
+    <header class="salvos-curtidos-cabecalho">
+
+
+        <!-- =============================================
+             BOTÃO VOLTAR
+        ============================================== -->
+
+        <button
+            type="button"
+            class="salvos-curtidos-voltar"
+            id="btnVoltar"
+            aria-label="Voltar"
+            title="Voltar"
+        >
+
+            <svg
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            >
+
+                <path d="M19 12H5"></path>
+
+                <path d="M12 19l-7-7 7-7"></path>
+
+            </svg>
+
+        </button>
+
+
+        <!-- =============================================
+             TÍTULO
+        ============================================== -->
+
+        <div class="salvos-curtidos-titulo-area">
+
+            <h1>
+                Meus perfis
+            </h1>
+
+            <p>
+                Perfis que você salvou ou curtiu.
+            </p>
+
+        </div>
+
+    </header>
+
+
+    <!-- =================================================
+         ABAS
+    ================================================== -->
+
+    <nav
+        class="salvos-curtidos-abas"
+        aria-label="Listas de perfis"
+    >
+
+
+        <!-- =============================================
+             ABA — SALVOS
+        ============================================== -->
+
+        <button
+            type="button"
+            class="salvos-curtidos-aba"
+            data-aba="salvos"
+            aria-selected="false"
+        >
+
+            <span>
+                Salvos
+            </span>
+
+
+            <span
+                class="salvos-curtidos-aba-contador"
+                id="contadorSalvos"
+            >
+                0
+            </span>
+
+        </button>
+
+
+        <!-- =============================================
+             ABA — CURTIDOS
+        ============================================== -->
+
+        <button
+            type="button"
+            class="salvos-curtidos-aba"
+            data-aba="curtidos"
+            aria-selected="false"
+        >
+
+            <span>
+                Curtidos
+            </span>
+
+
+            <span
+                class="salvos-curtidos-aba-contador"
+                id="contadorCurtidos"
+            >
+                0
+            </span>
+
+        </button>
+
+    </nav>
+
+
+    <!-- =================================================
+         CONTEÚDO
+    ================================================== -->
+
+    <section
+        class="salvos-curtidos-conteudo"
+        aria-live="polite"
+    >
+
+
+        <!-- =============================================
+             ESTADO — CARREGANDO
+        ============================================== -->
+
+        <div
+            class="salvos-curtidos-estado"
+            id="estadoCarregando"
+            hidden
+        >
+
+            <div
+                class="salvos-curtidos-spinner"
+                aria-hidden="true"
+            ></div>
+
+
+            <p>
+                Carregando seus perfis...
+            </p>
+
+        </div>
+
+
+        <!-- =============================================
+             ESTADO — ERRO
+        ============================================== -->
+
+        <div
+            class="salvos-curtidos-estado salvos-curtidos-estado-erro"
+            id="estadoErro"
+            hidden
+        >
+
+
+            <div class="salvos-curtidos-estado-icone">
+
+                <svg
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                >
+
+                    <circle
+                        cx="12"
+                        cy="12"
+                        r="9"
+                    ></circle>
+
+
+                    <path
+                        d="M12 8v4"
+                    ></path>
+
+
+                    <path
+                        d="M12 16h.01"
+                    ></path>
+
+                </svg>
+
+            </div>
+
+
+            <h2>
+                Não foi possível carregar
+            </h2>
+
+
+            <p id="mensagemErro">
+                Tente novamente.
+            </p>
+
+
+            <button
+                type="button"
+                class="salvos-curtidos-botao-retry"
+                id="btnTentarNovamente"
+            >
+                Tentar novamente
+            </button>
+
+        </div>
+
+
+        <!-- =============================================
+             ESTADO — VAZIO
+        ============================================== -->
+
+        <div
+            class="salvos-curtidos-estado"
+            id="estadoVazio"
+            hidden
+        >
+
+
+            <div class="salvos-curtidos-estado-icone">
+
+                <svg
+                    id="iconeEstadoVazio"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                >
+
+                    <path
+                        d="M20.8 8.8c0-2.7-2-4.8-4.7-4.8-1.6 0-3 .8-4.1 2.1C10.9 4.8 9.5 4 7.9 4 5.2 4 3.2 6.1 3.2 8.8c0 5.1 5.4 8.7 8.8 11.2 3.4-2.5 8.8-6.1 8.8-11.2Z"
+                    ></path>
+
+                </svg>
+
+            </div>
+
+
+            <h2 id="tituloEstadoVazio">
+                Nenhum perfil salvo
+            </h2>
+
+
+            <p id="mensagemEstadoVazio">
+                Quando você salvar um perfil,
+                ele aparecerá aqui.
+            </p>
+
+
+            <button
+                type="button"
+                class="salvos-curtidos-botao-explorar"
+                id="btnExplorar"
+            >
+                Explorar perfis
+            </button>
+
+        </div>
+
+
+        <!-- =============================================
+             LISTA DE PERFIS
+        ============================================== -->
+
+        <div
+            class="salvos-curtidos-grade"
+            id="listaPerfis"
+            hidden
+        ></div>
+
+    </section>
+
+</main>
+
+
+<!-- =====================================================
+     SUPABASE
+====================================================== -->
+
+<script
+    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"
+></script>
+
+
+<!-- =====================================================
+     CORE MUSICALWORLD
+====================================================== -->
+
+
+<!--
+    Cliente centralizado do Supabase.
+
+    Responsabilidade:
+    Disponibilizar window.supabaseClient.
+-->
+
+<script
+    src="js/core/SupabaseClient.js"
+></script>
+
+
+<!--
+    Sessão centralizada.
+
+    Responsabilidade:
+    Controle e leitura da sessão autenticada.
+-->
+
+<script
+    src="js/core/Sessao.js"
+></script>
+
+
+<!--
+    Usuário atual.
+
+    Responsabilidade:
+    Dados do usuário autenticado.
+-->
+
+<script
+    src="js/core/UsuarioAtual.js"
+></script>
+
+
+<!--
+    Controle de sessão.
+
+    Responsabilidade:
+    Verificação e proteção do acesso à página.
+-->
+
+<script
+    src="js/core/ControleSessao.js"
+></script>
+
+
+<!--
+    Roteamento de perfis.
+
+    Responsabilidade:
+    Padronizar a abertura dos perfis públicos.
+-->
+
+<script
+    src="js/core/RoteamentoPerfil.js"
+></script>
+
+
+<!-- =====================================================
+     JAVASCRIPT DA PÁGINA
+====================================================== -->
+
+<script
+    src="js/salvos-curtidos/salvos-curtidos.js"
+></script>
+
+
+</body>
+
+</html>

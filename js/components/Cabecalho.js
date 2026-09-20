@@ -11,6 +11,7 @@ Responsabilidade deste módulo:
 - Exibir o logo do MusicalWorld.
 - Identificar o usuário autenticado.
 - Controlar o menu da conta através da logo.
+- Controlar acesso à página de perfis salvos e curtidos.
 - Controlar troca de usuário.
 - Controlar logout.
 - Manter compatibilidade com ControleSessao.js.
@@ -43,7 +44,6 @@ da página:
 A exibição visual temporária é responsabilidade de:
 
     window.ModalNotificacao
-
 =========================================================
 */
 
@@ -371,9 +371,6 @@ const Cabecalho = {
         /*
         -------------------------------------------------
         GUARDA E VALIDA O ID DO USUÁRIO.
-
-        Esta validação é importante porque as consultas
-        abaixo utilizam este ID no Supabase.
         -------------------------------------------------
         */
 
@@ -556,10 +553,6 @@ const Cabecalho = {
         =================================================
         CONTADOR DE MENSAGENS
         =================================================
-
-        1. Consulta quantidade atual.
-        2. Verifica mensagens não lidas antigas.
-        3. Inicia Realtime.
         */
 
         this.atualizarContadorMensagens();
@@ -575,14 +568,6 @@ const Cabecalho = {
 
         this.atualizarContadorNotificacoes();
 
-
-        /*
-        -------------------------------------------------
-        Verifica se já existe uma notificação não lida
-        no banco que ainda não foi apresentada pelo
-        ModalNotificacao.
-        -------------------------------------------------
-        */
 
         this.verificarNotificacaoInicialBanco();
 
@@ -605,19 +590,6 @@ const Cabecalho = {
     */
 
     async atualizarContadorMensagens() {
-
-        /*
-        -------------------------------------------------
-        PROTEÇÃO IMPORTANTE.
-
-        Nunca consultar o Supabase se o ID não for uma
-        string válida.
-
-        Isso evita gerar:
-
-            remetente_id=neq.null
-        -------------------------------------------------
-        */
 
         if (
             !this.usuarioAtualId ||
@@ -1101,12 +1073,6 @@ const Cabecalho = {
             }
 
 
-            /*
-            -------------------------------------------------
-            BUSCAR CONVERSAS DO USUÁRIO
-            -------------------------------------------------
-            */
-
             const {
                 data: conversas,
                 error: erroConversas
@@ -1155,12 +1121,6 @@ const Cabecalho = {
 
             }
 
-
-            /*
-            -------------------------------------------------
-            BUSCAR MENSAGENS NÃO LIDAS
-            -------------------------------------------------
-            */
 
             const {
                 data: mensagens,
@@ -1226,12 +1186,6 @@ const Cabecalho = {
 
             }
 
-
-            /*
-            -------------------------------------------------
-            ENCONTRAR A PRIMEIRA MENSAGEM AINDA NÃO EXIBIDA
-            -------------------------------------------------
-            */
 
             let mensagemParaExibir =
                 null;
@@ -1312,26 +1266,6 @@ const Cabecalho = {
     /*
     =====================================================
     VERIFICAR NOTIFICAÇÃO INICIAL DO BANCO
-    =====================================================
-
-    Procura uma notificação não lida em:
-
-        public.notificacoes
-
-    e exibe a mais recente que ainda não foi apresentada
-    pelo ModalNotificacao.
-
-    Esta função NÃO marca a notificação como lida.
-
-    IMPORTANTE:
-
-    referencia_id e referencia_tipo são carregados porque
-    são utilizados para descobrir a ação da notificação.
-
-    Para contratação:
-
-        referencia_tipo = "contratacao"
-        referencia_id   = ID da contratação
     =====================================================
     */
 
@@ -1529,23 +1463,6 @@ const Cabecalho = {
     =====================================================
     PROCESSAR NOVA NOTIFICAÇÃO
     =====================================================
-
-    Regras de navegação:
-
-    - Notificações de contratação utilizam:
-          referencia_tipo = "contratacao"
-          referencia_id   = ID da contratação
-
-    - A página de acompanhamento recebe o ID através de:
-          ?id=ID_DA_CONTRATACAO
-
-    - URL correta da página:
-          contratacao-acompanhamento.html
-
-    - Outras notificações continuam sem ação automática,
-      a menos que o payload forneça explicitamente uma
-      URL através de acao_url ou url.
-    =====================================================
     */
 
     async processarNovaNotificacao(
@@ -1604,55 +1521,16 @@ const Cabecalho = {
         }
 
 
-        /*
-        -------------------------------------------------
-        TÍTULO
-        -------------------------------------------------
-        */
-
         const titulo =
             this.obterTituloNotificacao(
                 notificacao
             );
 
 
-        /*
-        -------------------------------------------------
-        PRÉVIA
-        -------------------------------------------------
-        */
-
         const preview =
             notificacao.mensagem ||
             'Você recebeu uma nova notificação.';
 
-
-        /*
-        -------------------------------------------------
-        AÇÃO DA NOTIFICAÇÃO
-        -------------------------------------------------
-
-        Para contratação, a própria notificação já possui:
-
-            referencia_tipo = "contratacao"
-            referencia_id   = ID da contratação
-
-        Portanto, não precisamos consultar novamente
-        a tabela contratacoes.
-
-        A URL final será:
-
-            contratacao-acompanhamento.html?id=ID
-
-        Isso funciona tanto para:
-
-        - notificações carregadas inicialmente do banco;
-        - notificações recebidas pelo Realtime.
-
-        O payload.new do Realtime contém os campos
-        gravados na tabela notificacoes.
-        -------------------------------------------------
-        */
 
         let acaoUrl =
             '';
@@ -1702,15 +1580,6 @@ const Cabecalho = {
 
         } else {
 
-            /*
-            -------------------------------------------------
-            COMPATIBILIDADE
-
-            Caso algum payload futuro possua uma URL
-            explícita, ela continua sendo aceita.
-            -------------------------------------------------
-            */
-
             acaoUrl =
                 notificacao.acao_url ||
                 notificacao.url ||
@@ -1718,12 +1587,6 @@ const Cabecalho = {
 
         }
 
-
-        /*
-        -------------------------------------------------
-        EXIBIR MODAL
-        -------------------------------------------------
-        */
 
         window.ModalNotificacao.mostrar({
 
@@ -2149,31 +2012,8 @@ const Cabecalho = {
                         );
 
 
-                        /*
-                        -----------------------------------------
-                        Atualiza o contador.
-                        -----------------------------------------
-                        */
-
                         this.atualizarContadorNotificacoes();
 
-
-                        /*
-                        -----------------------------------------
-                        Exibe o modal visual.
-
-                        A notificação continua não lida.
-
-                        Se for contratação, o payload contém:
-
-                            referencia_tipo
-                            referencia_id
-
-                        e processarNovaNotificacao() cria:
-
-                            contratacao-acompanhamento.html?id=ID
-                        -----------------------------------------
-                        */
 
                         await this.processarNovaNotificacao(
                             notificacao
@@ -2818,13 +2658,41 @@ const Cabecalho = {
 
     fecharMenuUsuario() {
 
-        /*
-        O antigo menu não existe mais.
+        this.fecharMenuConta();
 
-        Mantemos o método para compatibilidade.
-        */
+    },
+
+
+    /*
+    =====================================================
+    ABRIR PÁGINA DE SALVOS E CURTIDOS
+    =====================================================
+
+    Responsabilidade:
+
+    - Fechar o menu da conta.
+    - Abrir a página onde o usuário visualiza os
+      perfis que salvou e curtiu.
+
+    URL:
+
+        salvos-curtidos.html
+
+    =====================================================
+    */
+
+    abrirSalvosCurtidos() {
+
+        console.log(
+            'Cabeçalho: abrindo página de perfis salvos e curtidos.'
+        );
+
 
         this.fecharMenuConta();
+
+
+        window.location.href =
+            'salvos-curtidos.html';
 
     },
 
