@@ -1,15 +1,12 @@
 /* =========================================================
-   MUSICALWORLD — MENU INFERIOR
+   MUSICALWORLD — MENU PRINCIPAL
 
    Arquivo:
-   menu-inferior.js
+   js/components/menu-inferior.js
 
    Responsabilidade:
-   Controlar a navegação principal inferior do aplicativo.
 
-   Funções:
-
-   - Inicializar o menu inferior.
+   - Inicializar o menu principal.
    - Carregar o painel de pesquisa.
    - Carregar automaticamente os recursos da animação
      do item Financeiro.
@@ -25,7 +22,8 @@
    - Exibir a foto do usuário logado no item Perfil.
 
    IMPORTANTE:
-   O menu inferior possui cinco áreas principais:
+
+   O menu possui cinco áreas principais:
 
    1. Home
    2. Pesquisa
@@ -33,28 +31,39 @@
    4. Contratações
    5. Perfil
 
+   RESPONSIVIDADE:
+
+   - Mobile:
+     Menu horizontal fixado na parte inferior.
+
+   - Desktop:
+     Menu vertical fixado no lado esquerdo da tela,
+     centralizado verticalmente.
+
+   O menu desktop utiliza position: fixed para não
+   participar do fluxo do feed.
+
+   Dessa forma, o feed continua centralizado
+   independentemente da presença do menu.
+
+   O indicador de seleção também possui comportamento
+   responsivo:
+
+   - Mobile: movimentação horizontal.
+   - Desktop: movimentação vertical.
+
    O acesso para criação de anúncios não faz mais parte
-   do menu inferior. Ele será disponibilizado posteriormente
-   na nova organização do cabeçalho superior.
-
-   Quando existe uma sessão autenticada, o item Perfil
-   pode substituir o ícone padrão pela foto cadastrada
-   em public.usuarios.foto_url.
-
-   Caso não exista sessão ou não exista foto cadastrada,
-   o ícone padrão de perfil permanece como fallback.
+   deste menu.
 
    RECURSOS DO MENU:
 
-   O menu inferior é o ponto central de carregamento dos
-   recursos que pertencem exclusivamente a ele.
+   O menu é responsável por carregar os recursos que
+   pertencem exclusivamente a ele.
 
    Portanto, as páginas não precisam carregar diretamente:
 
    - animacao-financeiro.js
    - animacao-financeiro.css
-
-   O próprio menu faz esse carregamento automaticamente.
 ========================================================= */
 
 
@@ -129,15 +138,8 @@ async iniciar() {
 
 
     /*
-     * Depois que o HTML do menu foi criado,
-     * carregamos os recursos específicos da animação
+     * Carrega os recursos específicos da animação
      * do item Financeiro.
-     *
-     * Isso é importante porque o botão:
-     *
-     * #nav-item-financeiro
-     *
-     * somente passa a existir depois de criarMenu().
      */
 
     await this.carregarRecursosAnimacaoFinanceiro();
@@ -165,6 +167,57 @@ async iniciar() {
     this.configurarEventos();
 
 
+    /*
+     * Recalcula o indicador caso o navegador termine
+     * de ajustar layout, fontes ou dimensões.
+     */
+
+    requestAnimationFrame(() => {
+
+        const itemAtivo =
+            document.querySelector(
+                '#menu-inferior .bottom-nav-item.ativo'
+            );
+
+        if (itemAtivo) {
+
+            this.definirAtivo(
+                itemAtivo,
+                false
+            );
+
+        }
+
+    });
+
+
+    /*
+     * Recalcula o indicador quando a janela muda
+     * de tamanho ou orientação.
+     */
+
+    window.addEventListener(
+        'resize',
+        () => {
+
+            const itemAtivo =
+                document.querySelector(
+                    '#menu-inferior .bottom-nav-item.ativo'
+                );
+
+            if (itemAtivo) {
+
+                this.definirAtivo(
+                    itemAtivo,
+                    false
+                );
+
+            }
+
+        }
+    );
+
+
     console.log(
         'Menu inferior inicializado corretamente.'
     );
@@ -174,18 +227,6 @@ async iniciar() {
 /* =====================================================
    CARREGAR RECURSOS DA ANIMAÇÃO FINANCEIRA
 ===================================================== */
-
-/*
- * Esta função pertence ao menu inferior porque a animação
- * está vinculada diretamente ao botão Financeiro.
- *
- * Nenhuma página precisa importar manualmente:
- *
- * - animacao-financeiro.css
- * - animacao-financeiro.js
- *
- * O menu faz isso automaticamente.
- */
 
 async carregarRecursosAnimacaoFinanceiro() {
 
@@ -333,11 +374,6 @@ aguardarAnimacaoFinanceiro() {
                 this.animacaoFinanceiroCarregada =
                     true;
 
-
-                /*
-                 * O menu já existe neste momento,
-                 * portanto podemos inicializar a animação.
-                 */
 
                 window.MusicalWorldAnimacaoFinanceiro.inicializar();
 
@@ -1389,15 +1425,6 @@ mudarAba(aba, elemento) {
         );
 
 
-        /*
-         * A área financeira é exclusiva do usuário
-         * autenticado.
-         *
-         * A própria página financeiro.html fará a
-         * validação da sessão e poderá redirecionar
-         * para login caso necessário.
-         */
-
         window.location.href =
             'financeiro.html';
 
@@ -1449,6 +1476,22 @@ mudarAba(aba, elemento) {
 /* =====================================================
    DEFINIR ITEM ATIVO
 ===================================================== */
+
+/*
+ * Esta função agora entende os dois layouts:
+ *
+ * MOBILE
+ * - Indicador se move horizontalmente.
+ *
+ * DESKTOP
+ * - Indicador se move verticalmente.
+ *
+ * O CSS continua responsável pelo tamanho,
+ * aparência e posição inicial do indicador.
+ *
+ * O JavaScript apenas calcula a coordenada
+ * necessária para centralizá-lo no item ativo.
+ */
 
 definirAtivo(elemento, animar = true) {
 
@@ -1515,20 +1558,23 @@ definirAtivo(elemento, animar = true) {
         elemento.getBoundingClientRect();
 
 
-    const centro =
-        elementoRect.left +
-        (elementoRect.width / 2) -
-        menuRect.left;
+    /*
+     * Detecta se estamos utilizando o layout desktop.
+     *
+     * O mesmo breakpoint utilizado no CSS é aplicado aqui.
+     */
+
+    const layoutDesktop =
+        window.matchMedia(
+            '(min-width: 768px)'
+        ).matches;
 
 
-    const largura =
-        indicador.offsetWidth;
-
-
-    const posicao =
-        centro -
-        (largura / 2);
-
+    /*
+     * Desliga temporariamente a animação quando
+     * estamos apenas posicionando o indicador
+     * inicialmente ou após redimensionamento.
+     */
 
     if (!animar) {
 
@@ -1538,9 +1584,75 @@ definirAtivo(elemento, animar = true) {
     }
 
 
-    indicador.style.transform =
-        `translate3d(${posicao}px, -50%, 0)`;
+    /* =================================================
+       DESKTOP
+       ================================================= */
 
+    if (layoutDesktop) {
+
+        /*
+         * No desktop o menu é vertical.
+         *
+         * Portanto calculamos a posição pelo eixo Y.
+         */
+
+        const centroVertical =
+            elementoRect.top +
+            (elementoRect.height / 2) -
+            menuRect.top;
+
+
+        const altura =
+            indicador.offsetHeight;
+
+
+        const posicaoVertical =
+            centroVertical -
+            (altura / 2);
+
+
+        indicador.style.transform =
+            `translate3d(-50%, ${posicaoVertical}px, 0)`;
+
+    }
+
+
+    /* =================================================
+       MOBILE
+       ================================================= */
+
+    else {
+
+        /*
+         * No mobile o menu continua horizontal.
+         *
+         * Portanto calculamos a posição pelo eixo X.
+         */
+
+        const centroHorizontal =
+            elementoRect.left +
+            (elementoRect.width / 2) -
+            menuRect.left;
+
+
+        const largura =
+            indicador.offsetWidth;
+
+
+        const posicaoHorizontal =
+            centroHorizontal -
+            (largura / 2);
+
+
+        indicador.style.transform =
+            `translate3d(${posicaoHorizontal}px, -50%, 0)`;
+
+    }
+
+
+    /*
+     * Restaura a transição depois do posicionamento inicial.
+     */
 
     if (!animar) {
 
