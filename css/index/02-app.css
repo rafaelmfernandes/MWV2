@@ -1,58 +1,52 @@
+
 /* =========================================================
-MUSICALWORLD — ESTRUTURA DO APLICATIVO
-Arquivo: 02-app.css
+   MUSICALWORLD — ESTRUTURA DO APLICATIVO
+   Arquivo: 02-app.css
 
-Responsabilidade:
+   Responsabilidade:
 
-* Controlar o tamanho do aplicativo.
-* Centralizar o aplicativo em telas maiores.
-* Manter a estrutura vertical da aplicação.
-* Criar a camada visual de fundo necessária para
-  os elementos com efeito de vidro.
+   * Controlar o tamanho do aplicativo.
+   * Centralizar o aplicativo em telas maiores.
+   * Manter a estrutura vertical da aplicação.
+   * Criar a camada visual de fundo necessária para
+     os elementos com efeito de vidro.
 
-IMPORTANTE:
-Este arquivo não altera o alinhamento do body.
-O body continua sendo controlado pelo 01-base.css.
+   IMPORTANTE:
+   Este arquivo não altera o alinhamento do body.
+   O body continua sendo controlado pelo 01-base.css.
+
+   ALTERAÇÃO:
+   O aplicativo não fica mais preso a uma altura fixa.
+   O scroll deve ser o scroll normal da página.
 ========================================================= */
 
+
 /* =========================================================
-CONTAINER PRINCIPAL
+   CONTAINER PRINCIPAL
 ========================================================= */
 
 .app-container {
 
+    width: 100%;
 
-width: 100%;
-max-width: 1200px;
+    max-width: none;
 
-height: 100vh;
-max-height: 900px;
+    min-height: 100vh;
 
-/*
- * Fundo base.
- *
- * O fundo deixa de ser apenas branco.
- * Gradientes extremamente suaves criam profundidade
- * atrás dos elementos com backdrop-filter.
- */
+    overflow: visible;
 
+    display: flex;
 
-display: flex;
-flex-direction: column;
+    flex-direction: column;
 
-position: relative;
+    position: relative;
 
-overflow: hidden;
-
-box-shadow:
-    0 0 25px rgba(15, 23, 42, 0.08);
-
-
+    box-shadow: none;
 }
 
 /* =========================================================
-CAMADA VISUAL DE PROFUNDIDADE
-=============================
+   CAMADA VISUAL DE PROFUNDIDADE
+=========================================================
 
 Esta camada existe principalmente para fornecer
 conteúdo visual ao backdrop-filter dos elementos
@@ -63,66 +57,66 @@ Ela não interfere nos cliques.
 
 .app-container::before {
 
+    content: "";
 
-content: "";
+    position: absolute;
 
-position: absolute;
+    inset: 0;
 
-inset: 0;
+    z-index: 0;
 
-z-index: 0;
+    pointer-events: none;
 
-pointer-events: none;
-
-background:
-    radial-gradient(
-        circle at 10% 12%,
-        rgba(56, 189, 248, 0.12),
-        transparent 28%
-    ),
-    radial-gradient(
-        circle at 92% 18%,
-        rgba(109, 74, 255, 0.10),
-        transparent 27%
-    ),
-    radial-gradient(
-        circle at 55% 78%,
-        rgba(59, 130, 246, 0.06),
-        transparent 32%
-    );
-
-
+    background:
+        radial-gradient(
+            circle at 10% 12%,
+            rgba(56, 189, 248, 0.12),
+            transparent 28%
+        ),
+        radial-gradient(
+            circle at 92% 18%,
+            rgba(109, 74, 255, 0.10),
+            transparent 27%
+        ),
+        radial-gradient(
+            circle at 55% 78%,
+            rgba(59, 130, 246, 0.06),
+            transparent 32%
+        );
 }
 
+
 /* =========================================================
-GARANTE QUE O CONTEÚDO FIQUE ACIMA DA CAMADA DE FUNDO
+   GARANTE QUE O CONTEÚDO FIQUE ACIMA DA CAMADA DE FUNDO
 ========================================================= */
 
 .app-container > * {
 
+    position: relative;
 
-position: relative;
-
-z-index: 1;
-
-
+    z-index: 1;
 }
 
+
 /* =========================================================
-DESKTOP
+   DESKTOP
 ========================================================= */
 
 @media (min-width: 481px) {
 
+    .app-container {
 
-.app-container {
+        /*
+         * Removemos a borda lateral que fazia o aplicativo
+         * parecer uma caixa delimitada.
+         */
+        border: none;
 
-    border:
-        1px solid #e2e8f0;
-
-    border-radius:
-        24px;
+        /*
+         * Removemos o arredondamento para que o aplicativo
+         * se comporte visualmente como uma página aberta.
+         */
+        border-radius: 0;
+    }
 }
 
-
-}

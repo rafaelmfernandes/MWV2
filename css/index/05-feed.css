@@ -1,4 +1,3 @@
-
 /* =========================================================
    MUSICALWORLD — INDEX
    Arquivo: css/feed.css
@@ -7,18 +6,26 @@
    Controlar exclusivamente a aparência visual das
    publicações exibidas no feed principal.
 
-   REGRA DE CORES DA IDENTIDADE:
+   ESTRUTURA:
 
-   COM MÍDIA:
-   - identidade sobre foto/vídeo;
-   - texto branco;
-   - sombra para leitura.
+   CARD
+   ├── MÍDIA
+   │   ├── imagem / vídeo
+   │   └── identidade sobre a mídia
+   │
+   └── CONTEÚDO
+       ├── tipo da publicação
+       ├── estilos
+       ├── descrição
+       └── ações
 
-   SEM MÍDIA:
-   - identidade em fluxo normal;
-   - texto escuro;
-   - sem posicionamento absoluto;
-   - sem degradê.
+   REGRA IMPORTANTE:
+
+   - A MÍDIA ocupa toda a largura do card.
+   - O CONTEÚDO possui espaçamento lateral próprio.
+   - A identidade sobre a mídia possui espaçamento próprio.
+   - O card NÃO utiliza padding lateral para criar
+     espaço ao redor da mídia.
 ========================================================= */
 
 
@@ -36,7 +43,14 @@
 
     align-items: stretch;
 
-    gap: 0;
+    /*
+     * Espaçamento entre as publicações.
+     */
+    gap: 16px;
+
+    margin: 0;
+
+    padding: 0;
 }
 
 
@@ -50,7 +64,18 @@
 
     width: 100%;
 
-    padding: 0 0 20px;
+    margin: 0;
+
+    /*
+     * IMPORTANTE:
+     *
+     * Não existe padding lateral no card.
+     *
+     * Isso permite que a mídia ocupe toda a largura
+     * disponível e encoste nas bordas.
+     */
+    padding:
+        0 0 20px;
 
     background: #ffffff;
 
@@ -59,7 +84,7 @@
     border-bottom:
         1px solid rgba(23, 32, 51, 0.08);
 
-    border-radius: 0;
+    border-radius: 10px;
 
     box-shadow: none;
 
@@ -305,11 +330,6 @@
 }
 
 
-/*
- * Todos os elementos textuais da identidade permanecem
- * explicitamente brancos quando estão sobre a mídia.
- */
-
 .ad-identidade-com-midia .ad-media-identidade-link {
 
     color: #ffffff;
@@ -359,17 +379,6 @@
 /* =========================================================
    ESTADO: IDENTIDADE SEM MÍDIA
 ========================================================= */
-
-/*
- * Este estado NÃO deve herdar o comportamento de identidade
- * sobre mídia.
- *
- * Portanto:
- * - deixa de ser absoluto;
- * - volta ao fluxo normal;
- * - não ocupa uma área de mídia;
- * - utiliza texto escuro.
- */
 
 .ad-card-identidade-sem-midia {
 
@@ -466,9 +475,9 @@
 }
 
 
-/*
- * O ícone de localização acompanha a cor do texto.
- */
+/* =========================================================
+   ÍCONE DE LOCALIZAÇÃO
+========================================================= */
 
 .ad-card-identidade-sem-midia
 .ad-media-localizacao-inline svg {
@@ -595,22 +604,12 @@
 }
 
 
-/*
- * Quando existe imagem, o fallback fica escondido
- * até que o carregamento da imagem falhe.
- */
-
 .ad-mini-avatar:not(.ad-mini-avatar-fallback)
 + .ad-mini-avatar-fallback {
 
     display: none;
 }
 
-
-/*
- * Quando a identidade está sem mídia, o avatar continua
- * com aparência de avatar sobre fundo claro.
- */
 
 .ad-card-identidade-sem-midia
 .ad-mini-avatar,
@@ -868,10 +867,6 @@
 }
 
 
-/*
- * Menu quando não existe mídia.
- */
-
 .ad-card-identidade-sem-midia
 .ad-card-menu {
 
@@ -938,7 +933,16 @@
 
     width: 100%;
 
-    padding: 0;
+    /*
+     * O espaçamento lateral pertence ao conteúdo,
+     * não ao card.
+     *
+     * Dessa forma:
+     * - a mídia toca as bordas;
+     * - os textos não ficam encostados.
+     */
+    padding:
+        0 16px;
 
     margin: 0;
 
@@ -1460,41 +1464,109 @@
 
         width: 100%;
 
-        max-width: 680px;
+        max-width: 580px;
 
-        margin: 0 auto;
+        margin: 0;
+
+        padding: 0;
     }
 
+
+    /* =====================================================
+       PUBLICAÇÃO — DESKTOP
+
+       A mídia ocupa toda a largura do card.
+
+       O espaçamento lateral dos textos é controlado
+       pelo .ad-card-conteudo.
+    ===================================================== */
 
     .ad-card-novo {
 
+        margin-top: 0;
+
         padding:
-            16px 4px 20px;
+            0 0 20px;
     }
 
 
+    /* =====================================================
+       MÍDIA DESKTOP
+    ===================================================== */
+
     .ad-media-box {
 
+        height: 300px;
+
         border-radius: 14px;
+    }
+
+
+    .ad-media-link {
+
+        height: 100%;
+    }
+
+
+    .ad-media-img {
+
+        width: 100%;
+
+        height: 100%;
+
+        min-width: 100%;
+
+        min-height: 100%;
+
+        object-fit: cover;
+
+        object-position: center;
     }
 
 
     .ad-video-container {
 
+        height: 300px;
+
         border-radius: 14px;
+    }
+
+
+    .ad-video-link {
+
+        height: 100%;
+    }
+
+
+    .ad-video-container .ad-media-video {
+
+        width: 100%;
+
+        height: 300px;
+
+        min-width: 100%;
+
+        min-height: 100%;
+
+        object-fit: cover;
+
+        object-position: center;
     }
 
 
     .ad-card-conteudo {
 
-        padding: 0;
+        width: 100%;
+
+        padding:
+            0 16px;
     }
 
 
     .ad-card-acoes {
 
         padding:
-            0 2px;
+            0;
     }
 
 
@@ -1515,7 +1587,11 @@
 
     .feed-profissionais {
 
-        max-width: 700px;
+        max-width: 500px;
+
+        margin: 0;
+
+        padding: 0;
     }
 }
 
@@ -1533,71 +1609,140 @@
         max-width: none;
 
         margin: 0;
+
+        padding: 0;
     }
 
+
+    /* =====================================================
+       PUBLICAÇÃO — MOBILE
+
+       O card não possui padding lateral.
+
+       Isso permite que a mídia toque diretamente
+       as bordas laterais do card.
+    ===================================================== */
 
     .ad-card-novo {
 
         width: 100%;
 
+        margin: 0;
+
         padding:
-            0 12px 14px;
+            0 0 14px;
 
-        border-radius: 0;
+        background: #ffffff;
 
-        border-left: none;
+        border:
+            1px solid rgba(23, 32, 51, 0.08);
 
-        border-right: none;
+        border-radius: 14px;
 
         box-shadow: none;
+
+        overflow: hidden;
     }
 
+
+    /* =====================================================
+       MÍDIA — MOBILE
+
+       Altura controlada para evitar mídia exageradamente
+       alta em telas pequenas.
+    ===================================================== */
 
     .ad-media-box {
 
-        width: calc(100% + 24px);
+        width: 100%;
 
-        margin-top: 0;
-
-        margin-left: -12px;
-
-        margin-right: -12px;
-
-        padding: 0;
-
-        border-radius: 0;
-    }
-
-
-    .ad-video-container {
+        height: 220px;
 
         margin: 0;
 
         padding: 0;
 
-        border-radius: 0;
+        border-radius: 14px;
+
+        overflow: hidden;
     }
 
 
     .ad-media-link {
 
+        width: 100%;
+
+        height: 100%;
+
         margin: 0;
 
         padding: 0;
 
-        border-radius: 0;
+        border-radius: 14px;
+
+        overflow: hidden;
     }
 
 
     .ad-media-img {
 
+        display: block;
+
         width: 100%;
+
+        height: 100%;
+
+        min-width: 100%;
+
+        min-height: 100%;
 
         margin: 0;
 
         padding: 0;
 
-        border-radius: 0;
+        border-radius: 14px;
+
+        object-fit: cover;
+
+        object-position: center;
+    }
+
+
+    /* =====================================================
+       VÍDEO — MOBILE
+    ===================================================== */
+
+    .ad-video-container {
+
+        width: 100%;
+
+        height: 220px;
+
+        margin: 0;
+
+        padding: 0;
+
+        border-radius: 14px;
+
+        overflow: hidden;
+
+        background: #000000;
+    }
+
+
+    .ad-video-link {
+
+        width: 100%;
+
+        height: 100%;
+
+        margin: 0;
+
+        padding: 0;
+
+        border-radius: 14px;
+
+        overflow: hidden;
     }
 
 
@@ -1605,15 +1750,23 @@
 
         width: 100%;
 
-        height: 280px;
+        height: 220px;
+
+        min-width: 100%;
+
+        min-height: 100%;
 
         margin: 0;
 
         padding: 0;
 
+        border-radius: 14px;
+
         object-fit: cover;
 
         object-position: center;
+
+        background: #000000;
     }
 
 
@@ -1636,6 +1789,23 @@
 
 
     /* =====================================================
+       CONTEÚDO — MOBILE
+
+       A mídia continua encostando nas bordas.
+
+       O conteúdo textual possui espaçamento próprio.
+    ===================================================== */
+
+    .ad-card-conteudo {
+
+        width: 100%;
+
+        padding:
+            0 12px;
+    }
+
+
+    /* =====================================================
        IDENTIDADE SEM MÍDIA — MOBILE
     ===================================================== */
 
@@ -1645,6 +1815,8 @@
 
         padding:
             12px 50px 12px 12px;
+
+        border-radius: 14px;
     }
 
 
@@ -1766,6 +1938,9 @@
         min-height: 40px;
 
         margin-top: 9px;
+
+        padding-left:6px;
+        padding-right:6px;
     }
 
 
@@ -1815,22 +1990,95 @@
 
     .ad-card-novo {
 
+        margin: 0;
+
+        /*
+         * Continua sem padding lateral para que a mídia
+         * permaneça encostada nas bordas.
+         */
         padding:
             0 0 13px;
+
+        border-radius: 14px;
+    }
+
+
+    .ad-card-conteudo {
+
+        padding:
+            0 10px;
     }
 
 
     .ad-media-box {
 
-        width: calc(100% + 20px);
+        width: 100%;
 
-        margin-top: 0;
+        height: 210px;
 
-        margin-left: -10px;
-
-        margin-right: -10px;
+        margin: 0;
 
         padding: 0;
+
+        border-radius: 14px;
+
+        overflow: hidden;
+    }
+
+
+    .ad-media-link {
+
+        width: 100%;
+
+        height: 100%;
+    }
+
+
+    .ad-media-img {
+
+        width: 100%;
+
+        height: 100%;
+
+        min-width: 100%;
+
+        min-height: 100%;
+
+        object-fit: cover;
+
+        object-position: center;
+
+        border-radius: 14px;
+    }
+
+
+    .ad-video-container {
+
+        width: 100%;
+
+        height: 210px;
+
+        border-radius: 14px;
+
+        overflow: hidden;
+    }
+
+
+    .ad-video-container .ad-media-video {
+
+        width: 100%;
+
+        height: 210px;
+
+        min-width: 100%;
+
+        min-height: 100%;
+
+        object-fit: cover;
+
+        object-position: center;
+
+        border-radius: 14px;
     }
 
 
@@ -1852,6 +2100,8 @@
 
         padding:
             11px 48px 11px 10px;
+
+        border-radius: 14px;
     }
 
 
@@ -1964,4 +2214,3 @@
         transform: none;
     }
 }
-

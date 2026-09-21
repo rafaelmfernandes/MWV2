@@ -21,9 +21,7 @@
    - Identificar o usuário autenticado.
    - Exibir a foto do usuário logado no item Perfil.
 
-   IMPORTANTE:
-
-   O menu possui cinco áreas principais:
+   ÁREAS:
 
    1. Home
    2. Pesquisa
@@ -37,23 +35,23 @@
      Menu horizontal fixado na parte inferior.
 
    - Desktop:
-     Menu vertical fixado no lado esquerdo da tela,
-     centralizado verticalmente.
+     Menu vertical fixado lateralmente,
+     com ícone e texto.
 
    O menu desktop utiliza position: fixed para não
    participar do fluxo do feed.
 
-   Dessa forma, o feed continua centralizado
-   independentemente da presença do menu.
+   Dessa forma, o feed continua independente
+   da presença do menu.
 
-   O indicador de seleção também possui comportamento
+   O indicador de seleção possui comportamento
    responsivo:
 
    - Mobile: movimentação horizontal.
    - Desktop: movimentação vertical.
 
-   O acesso para criação de anúncios não faz mais parte
-   deste menu.
+   O acesso para criação de anúncios não faz mais
+   parte deste menu.
 
    RECURSOS DO MENU:
 
@@ -219,7 +217,7 @@ async iniciar() {
 
 
     console.log(
-        'Menu inferior inicializado corretamente.'
+        'Menu principal inicializado corretamente.'
     );
 },
 
@@ -892,7 +890,8 @@ carregarCssPesquisa() {
     const link = document.createElement('link');
 
 
-    link.rel = 'stylesheet';
+    link.rel =
+        'stylesheet';
 
 
     link.href =
@@ -918,6 +917,14 @@ criarMenu(container) {
      * Nenhum item recebe "ativo" diretamente.
      *
      * O item ativo será definido por definirPaginaAtual().
+     *
+     * Cada item possui:
+     *
+     * - ícone;
+     * - texto visível no desktop;
+     * - aria-label para acessibilidade.
+     *
+     * O CSS esconde o texto no mobile.
      */
 
     container.innerHTML = `
@@ -937,7 +944,7 @@ criarMenu(container) {
 
 
             <!-- =====================================
-                 INÍCIO
+                 HOME
                  ===================================== -->
 
             <button
@@ -945,8 +952,8 @@ criarMenu(container) {
                 class="bottom-nav-item"
                 id="nav-item-home"
                 data-aba="home"
-                aria-label="Início"
-                title="Início"
+                aria-label="Home"
+                title="Home"
             >
 
                 <span class="nav-icon-wrapper">
@@ -976,6 +983,10 @@ criarMenu(container) {
 
                     </svg>
 
+                </span>
+
+                <span class="nav-item-label">
+                    Home
                 </span>
 
             </button>
@@ -1019,6 +1030,10 @@ criarMenu(container) {
 
                     </svg>
 
+                </span>
+
+                <span class="nav-item-label">
+                    Pesquisa
                 </span>
 
             </button>
@@ -1068,6 +1083,10 @@ criarMenu(container) {
 
                     </svg>
 
+                </span>
+
+                <span class="nav-item-label">
+                    Financeiro
                 </span>
 
             </button>
@@ -1127,6 +1146,10 @@ criarMenu(container) {
 
                 </span>
 
+                <span class="nav-item-label">
+                    Contratações
+                </span>
+
             </button>
 
 
@@ -1183,6 +1206,10 @@ criarMenu(container) {
                         aria-hidden="true"
                     ></span>
 
+                </span>
+
+                <span class="nav-item-label">
+                    Perfil
                 </span>
 
             </button>
@@ -1301,7 +1328,7 @@ definirPaginaAtual() {
 
 
     console.log(
-        `Menu inferior: página atual identificada como "${abaAtual}".`
+        `Menu principal: página atual identificada como "${abaAtual}".`
     );
 },
 
@@ -1477,22 +1504,6 @@ mudarAba(aba, elemento) {
    DEFINIR ITEM ATIVO
 ===================================================== */
 
-/*
- * Esta função agora entende os dois layouts:
- *
- * MOBILE
- * - Indicador se move horizontalmente.
- *
- * DESKTOP
- * - Indicador se move verticalmente.
- *
- * O CSS continua responsável pelo tamanho,
- * aparência e posição inicial do indicador.
- *
- * O JavaScript apenas calcula a coordenada
- * necessária para centralizá-lo no item ativo.
- */
-
 definirAtivo(elemento, animar = true) {
 
     const menu =
@@ -1559,9 +1570,13 @@ definirAtivo(elemento, animar = true) {
 
 
     /*
-     * Detecta se estamos utilizando o layout desktop.
+     * Detecta o layout atual.
      *
-     * O mesmo breakpoint utilizado no CSS é aplicado aqui.
+     * Mobile:
+     * indicador horizontal.
+
+     * Desktop:
+     * indicador vertical.
      */
 
     const layoutDesktop =
@@ -1586,14 +1601,14 @@ definirAtivo(elemento, animar = true) {
 
     /* =================================================
        DESKTOP
-       ================================================= */
+    ================================================= */
 
     if (layoutDesktop) {
 
         /*
          * No desktop o menu é vertical.
          *
-         * Portanto calculamos a posição pelo eixo Y.
+         * Calculamos a posição pelo eixo Y.
          */
 
         const centroVertical =
@@ -1619,14 +1634,14 @@ definirAtivo(elemento, animar = true) {
 
     /* =================================================
        MOBILE
-       ================================================= */
+    ================================================= */
 
     else {
 
         /*
          * No mobile o menu continua horizontal.
          *
-         * Portanto calculamos a posição pelo eixo X.
+         * Calculamos a posição pelo eixo X.
          */
 
         const centroHorizontal =

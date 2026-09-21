@@ -81,14 +81,29 @@ const Cabecalho = {
     ESTADO DO CABEÇALHO DURANTE A ROLAGEM
     =====================================================
 
-    O cabeçalho inteligente funciona somente em telas
-    de dispositivos móveis.
+    O comportamento inteligente existe SOMENTE no
+    mobile.
 
-    Ao rolar para baixo:
-        cabeçalho desaparece.
+    Desktop:
+        - cabeçalho permanece visível;
+        - menu lateral permanece fixo.
 
-    Ao rolar para cima:
-        cabeçalho reaparece.
+    Mobile:
+        - descendo → cabeçalho desaparece;
+        - subindo → cabeçalho reaparece;
+        - topo → cabeçalho permanece visível.
+
+    IMPORTANTE:
+
+    A página inteira é o elemento de rolagem no mobile.
+
+    Portanto, o listener de scroll utiliza:
+
+        window
+
+    e não:
+
+        .main-content
 
     =====================================================
     */
@@ -131,13 +146,11 @@ const Cabecalho = {
 
         /*
         -------------------------------------------------
-        Inicializa o comportamento do cabeçalho móvel.
-        -------------------------------------------------
+        O comportamento do cabeçalho é independente da
+        autenticação.
 
-        Isso é independente da sessão do usuário.
-
-        O cabeçalho precisa responder à rolagem mesmo
-        quando o usuário ainda não estiver autenticado.
+        Mesmo deslogado, o cabeçalho precisa responder
+        ao scroll no mobile.
         -------------------------------------------------
         */
 
@@ -206,25 +219,23 @@ const Cabecalho = {
     CABEÇALHO INTELIGENTE — ROLAGEM MOBILE
     =====================================================
 
-    Comportamento:
+    Desktop:
 
-    - Somente abaixo de 768px.
-    - Rolando para baixo:
-        esconde o cabeçalho.
-    - Rolando para cima:
-        mostra o cabeçalho.
-    - No topo:
-        cabeçalho sempre visível.
+        O cabeçalho NÃO é escondido.
 
-    O código procura primeiro por:
+    Mobile:
 
-        .main-content
+        ↓ descendo:
+            esconde.
 
-    porque o MusicalWorld utiliza essa área como
-    container principal de rolagem.
+        ↑ subindo:
+            mostra.
 
-    Caso ela não exista, utiliza o window como
-    fallback.
+        topo:
+            mostra.
+
+    O scroll é acompanhado pelo WINDOW porque a página
+    inteira é o elemento responsável pela rolagem.
 
     =====================================================
     */
@@ -259,14 +270,16 @@ const Cabecalho = {
 
         /*
         -------------------------------------------------
-        Identifica o elemento responsável pela rolagem.
+        IMPORTANTE:
+
+        O elemento real de rolagem é a janela.
+
+        Não utilizamos .main-content porque ele não é
+        atualmente um container de scroll independente.
         -------------------------------------------------
         */
 
         const elementoScroll =
-            document.querySelector(
-                '.main-content'
-            ) ||
             window;
 
 
@@ -286,13 +299,7 @@ const Cabecalho = {
 
         /*
         -------------------------------------------------
-        Configuração visual inicial.
-
-        A transição é aplicada diretamente pelo JS para
-        que não seja necessário alterar o HTML.
-
-        O cabeçalho continua ocupando seu espaço normal
-        no layout; apenas desliza visualmente para cima.
+        ESTADO VISUAL INICIAL
         -------------------------------------------------
         */
 
@@ -308,16 +315,20 @@ const Cabecalho = {
             'translateY(0)';
 
 
+        this.cabecalhoOculto =
+            false;
+
+
         /*
         -------------------------------------------------
-        Listener de rolagem.
+        LISTENER DE SCROLL
 
-        passive:true melhora a performance do scroll
-        em dispositivos móveis.
+        O listener pertence ao window porque é a página
+        que está realizando a rolagem.
         -------------------------------------------------
         */
 
-        elementoScroll.addEventListener(
+        window.addEventListener(
             'scroll',
             () => {
 
@@ -332,13 +343,11 @@ const Cabecalho = {
 
         /*
         -------------------------------------------------
-        Quando a orientação/tamanho da tela mudar,
-        verificamos novamente se o comportamento deve
-        estar ativo.
+        RESIZE
 
-        Isso evita que o cabeçalho permaneça escondido
-        quando o usuário gira o aparelho ou passa para
-        uma largura de desktop.
+        Necessário para manter o comportamento correto
+        quando o dispositivo muda de orientação ou
+        quando a largura passa de mobile para desktop.
         -------------------------------------------------
         */
 
@@ -360,7 +369,7 @@ const Cabecalho = {
 
 
         console.log(
-            'Cabeçalho: comportamento inteligente de rolagem inicializado.'
+            'Cabeçalho: comportamento inteligente de rolagem inicializado usando window.'
         );
 
     },
@@ -376,12 +385,22 @@ const Cabecalho = {
         elemento
     ) {
 
+        /*
+        -------------------------------------------------
+        WINDOW
+
+        Esta é a situação utilizada atualmente pelo
+        MusicalWorld.
+        -------------------------------------------------
+        */
+
         if (
             elemento ===
             window
         ) {
 
-            return (
+            return Math.max(
+                0,
                 window.scrollY ||
                 window.pageYOffset ||
                 0
@@ -390,7 +409,18 @@ const Cabecalho = {
         }
 
 
-        return (
+        /*
+        -------------------------------------------------
+        FALLBACK
+
+        Mantido para compatibilidade futura caso algum
+        container volte a ser utilizado como elemento
+        de rolagem.
+        -------------------------------------------------
+        */
+
+        return Math.max(
+            0,
             elemento?.scrollTop ||
             0
         );
@@ -408,8 +438,8 @@ const Cabecalho = {
 
         /*
         -------------------------------------------------
-        Proteção contra chamadas excessivas durante
-        o mesmo frame de animação.
+        Evita processar dezenas de eventos de scroll
+        dentro do mesmo frame.
         -------------------------------------------------
         */
 
@@ -447,13 +477,16 @@ const Cabecalho = {
 
 
                 /*
-                -------------------------------------------------
-                O comportamento inteligente existe somente
-                em telas de celular/tablet pequeno.
+                =================================================
+                DESKTOP
+                =================================================
 
-                A partir de 769px o cabeçalho volta ao
-                comportamento normal.
-                -------------------------------------------------
+                Acima de 768px:
+
+                - cabeçalho permanece visível;
+                - nunca é escondido pelo scroll;
+                - menu lateral continua fixo;
+                - estado de scroll é apenas atualizado.
                 */
 
                 if (
@@ -463,27 +496,34 @@ const Cabecalho = {
 
                     this.mostrarCabecalhoScroll();
 
+
+                    navbar.classList.remove(
+                        'cabecalho-em-subida'
+                    );
+
+
                     this.cabecalhoUltimoScroll =
                         this.obterPosicaoScroll(
                             this.cabecalhoScrollElemento
                         );
+
 
                     return;
 
                 }
 
 
+                /*
+                =================================================
+                MOBILE
+                =================================================
+                */
+
                 const posicaoAtual =
                     this.obterPosicaoScroll(
                         this.cabecalhoScrollElemento
                     );
 
-
-                /*
-                -------------------------------------------------
-                Nunca deixamos a posição ficar negativa.
-                -------------------------------------------------
-                */
 
                 const posicaoNormalizada =
                     Math.max(
@@ -494,7 +534,12 @@ const Cabecalho = {
 
                 /*
                 -------------------------------------------------
-                Se chegou ao topo, o cabeçalho sempre aparece.
+                TOPO
+
+                Até 5px:
+
+                - cabeçalho sempre visível;
+                - remove o estado de subida.
                 -------------------------------------------------
                 */
 
@@ -504,6 +549,11 @@ const Cabecalho = {
                 ) {
 
                     this.mostrarCabecalhoScroll();
+
+
+                    navbar.classList.remove(
+                        'cabecalho-em-subida'
+                    );
 
 
                     this.cabecalhoUltimoScroll =
@@ -517,8 +567,7 @@ const Cabecalho = {
 
                 /*
                 -------------------------------------------------
-                Calcula a diferença entre a posição anterior
-                e a posição atual.
+                DIREÇÃO
                 -------------------------------------------------
                 */
 
@@ -529,10 +578,8 @@ const Cabecalho = {
 
                 /*
                 -------------------------------------------------
-                Ignora movimentos muito pequenos.
-
-                Isso evita que o cabeçalho fique piscando
-                durante pequenos movimentos do dedo.
+                Pequenos movimentos são ignorados para evitar
+                oscilações.
                 -------------------------------------------------
                 */
 
@@ -551,18 +598,9 @@ const Cabecalho = {
 
 
                 /*
-                -------------------------------------------------
-                USUÁRIO DESCENDO
-                -------------------------------------------------
-
-                Scroll positivo significa que a posição
-                atual aumentou.
-
-                Portanto:
-
-                    página descendo
-                    = cabeçalho desaparece
-                -------------------------------------------------
+                =================================================
+                DESCENDO
+                =================================================
                 */
 
                 if (
@@ -570,30 +608,31 @@ const Cabecalho = {
                     0
                 ) {
 
+                    navbar.classList.remove(
+                        'cabecalho-em-subida'
+                    );
+
+
                     this.esconderCabecalhoScroll();
 
                 }
 
 
                 /*
-                -------------------------------------------------
-                USUÁRIO SUBINDO
-                -------------------------------------------------
-
-                Scroll negativo significa que a posição
-                atual diminuiu.
-
-                Portanto:
-
-                    página subindo
-                    = cabeçalho reaparece
-                -------------------------------------------------
+                =================================================
+                SUBINDO
+                =================================================
                 */
 
                 else if (
                     diferenca <
                     0
                 ) {
+
+                    navbar.classList.add(
+                        'cabecalho-em-subida'
+                    );
+
 
                     this.mostrarCabecalhoScroll();
 
@@ -620,7 +659,7 @@ const Cabecalho = {
 
         /*
         -------------------------------------------------
-        Não executa em desktop.
+        Nunca esconder no desktop.
         -------------------------------------------------
         */
 
@@ -645,6 +684,11 @@ const Cabecalho = {
             return;
 
         }
+
+
+        navbar.classList.remove(
+            'cabecalho-em-subida'
+        );
 
 
         if (
@@ -709,13 +753,6 @@ const Cabecalho = {
             window.innerWidth;
 
 
-        /*
-        -------------------------------------------------
-        Não precisamos executar novamente quando a largura
-        não mudou.
-        -------------------------------------------------
-        */
-
         if (
             larguraAtual ===
             this.cabecalhoLarguraAnterior
@@ -732,10 +769,7 @@ const Cabecalho = {
 
         /*
         -------------------------------------------------
-        Desktop:
-
-        O comportamento de esconder/mostrar pelo scroll
-        é desativado.
+        DESKTOP
         -------------------------------------------------
         */
 
@@ -745,6 +779,21 @@ const Cabecalho = {
         ) {
 
             this.mostrarCabecalhoScroll();
+
+
+            const navbar =
+                document.querySelector(
+                    '.navbar'
+                );
+
+
+            if (navbar) {
+
+                navbar.classList.remove(
+                    'cabecalho-em-subida'
+                );
+
+            }
 
 
             if (
@@ -766,12 +815,10 @@ const Cabecalho = {
 
         /*
         -------------------------------------------------
-        Mobile:
+        MOBILE
 
-        Mantém o cabeçalho visível inicialmente.
-
-        A partir da próxima interação de scroll, o
-        comportamento inteligente assume o controle.
+        Ao entrar no modo mobile, o cabeçalho começa
+        visível.
         -------------------------------------------------
         */
 
@@ -884,12 +931,6 @@ const Cabecalho = {
             );
 
 
-        /*
-        -------------------------------------------------
-        Encerra o Realtime antes de limpar o estado.
-        -------------------------------------------------
-        */
-
         this.pararRealtimeMensagens();
 
 
@@ -991,12 +1032,6 @@ const Cabecalho = {
             dados?.tipoPerfil;
 
 
-        /*
-        -------------------------------------------------
-        PROTEÇÃO
-        -------------------------------------------------
-        */
-
         if (!usuario) {
 
             this.mostrarDeslogado();
@@ -1005,12 +1040,6 @@ const Cabecalho = {
 
         }
 
-
-        /*
-        -------------------------------------------------
-        GUARDA E VALIDA O ID DO USUÁRIO.
-        -------------------------------------------------
-        */
 
         this.usuarioAtualId =
             typeof usuario.id === 'string' &&
@@ -1065,12 +1094,6 @@ const Cabecalho = {
 
         }
 
-
-        /*
-        -------------------------------------------------
-        DADOS DO USUÁRIO
-        -------------------------------------------------
-        */
 
         const nome =
             usuario.nome ||
@@ -1178,12 +1201,6 @@ const Cabecalho = {
         }
 
 
-        /*
-        -------------------------------------------------
-        Garante que o menu da conta esteja fechado.
-        -------------------------------------------------
-        */
-
         this.fecharMenuConta();
 
 
@@ -1205,7 +1222,6 @@ const Cabecalho = {
         */
 
         this.atualizarContadorNotificacoes();
-
 
         this.verificarNotificacaoInicialBanco();
 
@@ -1653,7 +1669,7 @@ const Cabecalho = {
 
     /*
     =====================================================
-    VERIFICAR NOTIFICAÇÕES INICIAIS DE MENSAGENS
+    VERIFICAR NOTIFICAÇÃO INICIAL DE MENSAGENS
     =====================================================
     */
 
@@ -1735,10 +1751,6 @@ const Cabecalho = {
                 conversas.length === 0
             ) {
 
-                console.log(
-                    'Cabeçalho: nenhuma conversa encontrada para verificar mensagens pendentes.'
-                );
-
                 return;
 
             }
@@ -1816,10 +1828,6 @@ const Cabecalho = {
                 mensagens.length === 0
             ) {
 
-                console.log(
-                    'Cabeçalho: nenhuma mensagem não lida pendente de notificação.'
-                );
-
                 return;
 
             }
@@ -1864,19 +1872,9 @@ const Cabecalho = {
 
             if (!mensagemParaExibir) {
 
-                console.log(
-                    'Cabeçalho: mensagens não lidas encontradas, mas os avisos já foram exibidos anteriormente.'
-                );
-
                 return;
 
             }
-
-
-            console.log(
-                'Cabeçalho: mensagem não lida encontrada ao entrar na sessão.',
-                mensagemParaExibir
-            );
 
 
             await this.processarNovaMensagem(
@@ -2012,10 +2010,6 @@ const Cabecalho = {
                 notificacoes.length === 0
             ) {
 
-                console.log(
-                    'Cabeçalho: nenhuma notificação não lida pendente.'
-                );
-
                 return;
 
             }
@@ -2060,19 +2054,9 @@ const Cabecalho = {
 
             if (!notificacaoParaExibir) {
 
-                console.log(
-                    'Cabeçalho: notificações não lidas encontradas, mas todas já foram exibidas anteriormente.'
-                );
-
                 return;
 
             }
-
-
-            console.log(
-                'Cabeçalho: exibindo notificação pendente encontrada no banco.',
-                notificacaoParaExibir
-            );
 
 
             await this.processarNovaNotificacao(
@@ -2123,11 +2107,6 @@ const Cabecalho = {
 
         if (!notificacao.id) {
 
-            console.warn(
-                'Cabeçalho: notificação sem ID.',
-                notificacao
-            );
-
             return;
 
         }
@@ -2149,10 +2128,6 @@ const Cabecalho = {
             typeof window.ModalNotificacao.mostrar !==
             'function'
         ) {
-
-            console.warn(
-                'Cabeçalho: ModalNotificacao não está disponível.'
-            );
 
             return;
 
@@ -2201,21 +2176,6 @@ const Cabecalho = {
                     referenciaId
                 )}`;
 
-
-            console.log(
-                'Cabeçalho: notificação de contratação vinculada à página de acompanhamento.',
-                {
-                    notificacaoId:
-                        notificacao.id,
-
-                    contratacaoId:
-                        referenciaId,
-
-                    acaoUrl:
-                        acaoUrl
-                }
-            );
-
         } else {
 
             acaoUrl =
@@ -2251,32 +2211,6 @@ const Cabecalho = {
                 acaoUrl
 
         });
-
-
-        console.log(
-            'Cabeçalho: prévia da nova notificação enviada ao ModalNotificacao.',
-            {
-                notificacaoId:
-                    notificacao.id,
-
-                tipo:
-                    notificacao.tipo,
-
-                titulo:
-                    titulo,
-
-                referenciaId:
-                    notificacao.referencia_id ||
-                    null,
-
-                referenciaTipo:
-                    notificacao.referencia_tipo ||
-                    null,
-
-                acaoUrl:
-                    acaoUrl
-            }
-        );
 
     },
 
@@ -2373,10 +2307,6 @@ const Cabecalho = {
 
 
         if (!contador) {
-
-            console.warn(
-                'Cabeçalho: #badge-mensagens não encontrado no HTML.'
-            );
 
             return;
 
@@ -2516,23 +2446,11 @@ const Cabecalho = {
         }
 
 
-        console.log(
-            'Cabeçalho: iniciando Realtime das mensagens e notificações...'
-        );
-
-
         this.canalMensagensRealtime =
             supabaseClient
                 .channel(
                     `cabecalho-${this.usuarioAtualId}-${Date.now()}`
                 )
-
-
-                /*
-                -------------------------------------------------
-                NOVA MENSAGEM
-                -------------------------------------------------
-                */
 
                 .on(
                     'postgres_changes',
@@ -2564,12 +2482,6 @@ const Cabecalho = {
                         }
 
 
-                        console.log(
-                            'Cabeçalho: nova mensagem recebida.',
-                            mensagem
-                        );
-
-
                         this.atualizarContadorMensagens();
 
 
@@ -2580,13 +2492,6 @@ const Cabecalho = {
                     }
                 )
 
-
-                /*
-                -------------------------------------------------
-                MENSAGEM ATUALIZADA
-                -------------------------------------------------
-                */
-
                 .on(
                     'postgres_changes',
                     {
@@ -2594,25 +2499,12 @@ const Cabecalho = {
                         schema: 'public',
                         table: 'mensagens'
                     },
-                    (payload) => {
-
-                        console.log(
-                            'Cabeçalho: mensagem atualizada.',
-                            payload
-                        );
-
+                    () => {
 
                         this.atualizarContadorMensagens();
 
                     }
                 )
-
-
-                /*
-                -------------------------------------------------
-                NOVA NOTIFICAÇÃO
-                -------------------------------------------------
-                */
 
                 .on(
                     'postgres_changes',
@@ -2644,12 +2536,6 @@ const Cabecalho = {
                         }
 
 
-                        console.log(
-                            'Cabeçalho: nova notificação recebida.',
-                            notificacao
-                        );
-
-
                         this.atualizarContadorNotificacoes();
 
 
@@ -2659,13 +2545,6 @@ const Cabecalho = {
 
                     }
                 )
-
-
-                /*
-                -------------------------------------------------
-                NOTIFICAÇÃO ATUALIZADA
-                -------------------------------------------------
-                */
 
                 .on(
                     'postgres_changes',
@@ -2697,23 +2576,10 @@ const Cabecalho = {
                         }
 
 
-                        console.log(
-                            'Cabeçalho: notificação atualizada.',
-                            notificacao
-                        );
-
-
                         this.atualizarContadorNotificacoes();
 
                     }
                 )
-
-
-                /*
-                -------------------------------------------------
-                INSCRIÇÃO
-                -------------------------------------------------
-                */
 
                 .subscribe(
                     (status) => {
@@ -2758,11 +2624,6 @@ const Cabecalho = {
             !mensagem.conversa_id
         ) {
 
-            console.warn(
-                'Cabeçalho: nova mensagem sem ID ou conversa_id.',
-                mensagem
-            );
-
             return;
 
         }
@@ -2775,22 +2636,12 @@ const Cabecalho = {
             'function'
         ) {
 
-            console.warn(
-                'Cabeçalho: ModalNotificacao ainda não está disponível.'
-            );
-
             return;
 
         }
 
 
         try {
-
-            /*
-            -------------------------------------------------
-            VERIFICAR A CONVERSA
-            -------------------------------------------------
-            */
 
             const {
                 data: conversa,
@@ -2817,10 +2668,6 @@ const Cabecalho = {
 
             if (!conversa) {
 
-                console.log(
-                    'Cabeçalho: conversa da nova mensagem não encontrada.'
-                );
-
                 return;
 
             }
@@ -2835,21 +2682,10 @@ const Cabecalho = {
 
             if (!usuarioParticipa) {
 
-                console.log(
-                    'Cabeçalho: mensagem ignorada porque a conversa não pertence ao usuário atual.'
-                );
-
                 return;
 
             }
 
-
-            /*
-            -------------------------------------------------
-            GARANTIR QUE NÃO É UMA MENSAGEM DO PRÓPRIO
-            USUÁRIO
-            -------------------------------------------------
-            */
 
             if (
                 mensagem.remetente_id ===
@@ -2860,12 +2696,6 @@ const Cabecalho = {
 
             }
 
-
-            /*
-            -------------------------------------------------
-            BUSCAR REMETENTE
-            -------------------------------------------------
-            */
 
             const {
                 data: remetente,
@@ -2932,21 +2762,6 @@ const Cabecalho = {
                     acaoUrl
 
             });
-
-
-            console.log(
-                'Cabeçalho: prévia de nova mensagem enviada ao ModalNotificacao.',
-                {
-                    mensagemId:
-                        mensagem.id,
-
-                    conversaId:
-                        mensagem.conversa_id,
-
-                    remetenteId:
-                        mensagem.remetente_id
-                }
-            );
 
 
         } catch (erro) {
@@ -3135,10 +2950,6 @@ const Cabecalho = {
 
         if (!menu || !botao) {
 
-            console.warn(
-                'Cabeçalho: elementos do menu da conta não encontrados.'
-            );
-
             return;
 
         }
@@ -3305,26 +3116,9 @@ const Cabecalho = {
     =====================================================
     ABRIR PÁGINA DE SALVOS E CURTIDOS
     =====================================================
-
-    Responsabilidade:
-
-    - Fechar o menu da conta.
-    - Abrir a página onde o usuário visualiza os
-      perfis que salvou e curtiu.
-
-    URL:
-
-        salvos-curtidos.html
-
-    =====================================================
     */
 
     abrirSalvosCurtidos() {
-
-        console.log(
-            'Cabeçalho: abrindo página de perfis salvos e curtidos.'
-        );
-
 
         this.fecharMenuConta();
 
@@ -3342,11 +3136,6 @@ const Cabecalho = {
     */
 
     trocarConta() {
-
-        console.log(
-            'Usuário solicitou troca de conta.'
-        );
-
 
         this.fecharMenuConta();
 
@@ -3378,11 +3167,6 @@ const Cabecalho = {
     */
 
     async sair() {
-
-        console.log(
-            'Usuário solicitou logout pelo cabeçalho.'
-        );
-
 
         this.fecharMenuConta();
 

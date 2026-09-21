@@ -5,38 +5,38 @@
 
    Responsabilidade:
    - Estilizar o cabeçalho superior do MusicalWorld.
-   - Manter o logo à esquerda.
+   - Manter o cabeçalho preso à viewport.
+   - Alinhar a logo com o menu lateral no desktop.
    - Exibir a seta de acesso ao menu da conta.
-   - Estilizar o menu "Trocar de usuário" / "Sair".
-   - Manter Anunciar, Notificações e Mensagens à direita.
-   - Os três botões de ação possuem círculos individuais
-     com efeito de vidro/espelho.
-   - O cabeçalho não possui fundo próprio.
-   - O botão Anunciar é somente um ícone, sem texto.
-   - O perfil do usuário permanece no menu inferior.
+   - Estilizar o menu da conta.
+   - Integrar Anunciar, Notificações e Mensagens
+     visualmente ao menu lateral no desktop.
+   - Manter os três botões como botões de vidro
+     independentes no celular.
+   - No celular, exibir SOMENTE os ícones:
+       • Anunciar
+       • Notificações
+       • Mensagens
+   - Manter badges de mensagens e notificações.
+   - Controlar somente a apresentação visual do cabeçalho.
+
+   IMPORTANTE:
+   A lógica de sessão, mensagens, notificações,
+   Realtime e logout continua em Cabecalho.js.
+
+   O comportamento de mostrar/ocultar o cabeçalho
+   durante o scroll continua sendo controlado
+   pelo JavaScript.
    ========================================================= */
 
 
 /* =========================================================
-   CABEÇALHO
-
-   O cabeçalho é transparente.
-
-   Não existe:
-   - fundo branco;
-   - efeito de vidro na barra inteira;
-   - linha inferior;
-   - sombra da barra inteira.
-
-   O efeito visual de vidro fica somente nos três
-   botões individuais de ação.
-
-   O pseudo-elemento ::before cria apenas um gradiente
-   muito suave de preto para transparente atrás do topo.
+   CABEÇALHO PRINCIPAL
    ========================================================= */
 
 .navbar {
-    position: absolute;
+
+    position: fixed;
 
     top: 0;
     left: 0;
@@ -46,16 +46,20 @@
     height: 64px;
 
     display: flex;
+
     align-items: center;
     justify-content: space-between;
 
     padding: 0 24px;
+
+    margin: 0;
 
     background: transparent;
 
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
 
+    border: 0;
     border-bottom: none;
 
     box-shadow: none;
@@ -63,49 +67,37 @@
     z-index: 1000;
 
     box-sizing: border-box;
+
+    flex: 0 0 auto;
+
+    isolation: isolate;
+
+    transition:
+        transform 0.25s ease,
+        background-color 0.28s ease,
+        backdrop-filter 0.28s ease,
+        -webkit-backdrop-filter 0.28s ease,
+        box-shadow 0.28s ease;
 }
 
 
 /* =========================================================
-   GRADIENTE SUAVE ATRÁS DO CABEÇALHO
-
-   O cabeçalho continua transparente.
-
-   Este efeito não cria uma barra preta sólida.
-
-   O preto começa muito suave na parte superior e vai
-   desaparecendo gradualmente até ficar completamente
-   transparente.
-
-   O conteúdo da página continua visível por baixo.
-
-   pointer-events: none impede que o pseudo-elemento
-   interfira nos cliques dos elementos do cabeçalho.
+   CABEÇALHO DURANTE A SUBIDA DO SCROLL
    ========================================================= */
 
-.navbar::before {
-    content: "";
-
-    position: absolute;
-
-    top: 0;
-    left: 0;
-    right: 0;
-
-    height: 92px;
+.navbar.cabecalho-em-subida {
 
     background:
-        linear-gradient(
-            to bottom,
-            rgba(0, 0, 0, 0.28) 0%,
-            rgba(0, 0, 0, 0.16) 30%,
-            rgba(0, 0, 0, 0.06) 65%,
-            rgba(0, 0, 0, 0) 100%
-        );
+        rgba(255, 255, 255, 0.10);
 
-    pointer-events: none;
+    backdrop-filter:
+        blur(4px);
 
-    z-index: -1;
+    -webkit-backdrop-filter:
+        blur(6px);
+
+    box-shadow:
+        0 3px 14px rgba(15, 20, 31, 0.035);
 }
 
 
@@ -114,31 +106,40 @@
    ========================================================= */
 
 .navbar-brand-area {
+
     position: relative;
 
     display: flex;
+
     align-items: center;
 
     min-width: 0;
+
+    height: 100%;
+
+    margin: 0;
+
+    padding: 0;
 }
 
 
 /* =========================================================
    CONTAINER DA CONTA
-
-   Agrupa:
-   - Logo
-   - Seta
-   - Menu dropdown
    ========================================================= */
 
 .cabecalho-conta {
+
     position: relative;
 
     display: flex;
+
     align-items: center;
 
     min-width: 0;
+
+    height: auto;
+
+    margin: 0;
 }
 
 
@@ -147,17 +148,24 @@
    ========================================================= */
 
 .cabecalho-conta-toggle {
+
     display: inline-flex;
+
     align-items: center;
     justify-content: flex-start;
 
     gap: 5px;
+
+    width: auto;
+    min-width: 0;
+    height: auto;
 
     padding: 4px 6px;
 
     margin: 0;
 
     border: 0;
+
     border-radius: 10px;
 
     background: transparent;
@@ -167,6 +175,9 @@
     cursor: pointer;
 
     box-sizing: border-box;
+
+    appearance: none;
+    -webkit-appearance: none;
 
     transition:
         background-color 0.2s ease,
@@ -180,7 +191,9 @@
    ========================================================= */
 
 .cabecalho-conta-toggle:hover {
-    background: rgba(23, 32, 51, 0.045);
+
+    background:
+        rgba(23, 32, 51, 0.045);
 }
 
 
@@ -189,7 +202,9 @@
    ========================================================= */
 
 .cabecalho-conta-toggle:active {
-    transform: scale(0.98);
+
+    transform:
+        scale(0.98);
 }
 
 
@@ -198,9 +213,12 @@
    ========================================================= */
 
 .cabecalho-conta-toggle:focus-visible {
-    outline: 2px solid rgba(22, 119, 210, 0.35);
 
-    outline-offset: 2px;
+    outline:
+        2px solid rgba(22, 119, 210, 0.35);
+
+    outline-offset:
+        2px;
 }
 
 
@@ -209,48 +227,65 @@
    ========================================================= */
 
 .logo {
+
     display: inline-flex;
+
     align-items: center;
+
+    width: auto;
+    min-width: 0;
+
+    height: auto;
 
     text-decoration: none;
 
     color: #172033;
 
     font-size: 20px;
+
     font-weight: 700;
+
     line-height: 1;
 
     white-space: nowrap;
 
     cursor: pointer;
 
-    transition: color 0.2s ease;
+    box-sizing: border-box;
+
+    transition:
+        color 0.2s ease;
 }
 
 
 .logo:hover {
+
     color: #172033;
 }
 
 
 /* =========================================================
    SETA DO MENU DA CONTA
-
-   A seta indica que existe um menu associado à logo.
-
-   Quando o menu é aberto, o JavaScript adiciona
-   a classe .aberto no botão e a seta gira suavemente.
    ========================================================= */
 
 .cabecalho-conta-seta {
+
     width: 17px;
     height: 17px;
 
-    flex: 0 0 17px;
+    min-width: 17px;
+    min-height: 17px;
+
+    flex:
+        0 0 17px;
+
+    display: block;
 
     color: #6b7280;
 
     pointer-events: none;
+
+    box-sizing: border-box;
 
     transition:
         transform 0.22s ease,
@@ -258,45 +293,50 @@
 }
 
 
-/* =========================================================
-   HOVER DA SETA
-   ========================================================= */
-
 .cabecalho-conta-toggle:hover .cabecalho-conta-seta {
-    color: #1677d2;
+
+    color:
+        #1677d2;
 }
 
 
-/* =========================================================
-   SETA — MENU ABERTO
-   ========================================================= */
-
 .cabecalho-conta-toggle.aberto .cabecalho-conta-seta {
-    transform: rotate(180deg);
 
-    color: #1677d2;
+    transform:
+        rotate(180deg);
+
+    color:
+        #1677d2;
 }
 
 
 /* =========================================================
    MENU DA CONTA
-
-   Dropdown exibido abaixo da logo.
    ========================================================= */
 
 .cabecalho-menu-conta {
+
     position: absolute;
 
-    top: calc(100% + 10px);
+    top:
+        calc(100% + 10px);
+
     left: 0;
 
     width: 218px;
 
+    max-width:
+        calc(100vw - 24px);
+
     padding: 7px;
 
-    background: rgba(255, 255, 255, 0.98);
+    margin: 0;
 
-    border: 1px solid rgba(23, 32, 51, 0.09);
+    background:
+        rgba(255, 255, 255, 0.98);
+
+    border:
+        1px solid rgba(23, 32, 51, 0.09);
 
     border-radius: 14px;
 
@@ -305,13 +345,15 @@
         0 4px 12px rgba(23, 32, 51, 0.06);
 
     opacity: 0;
+
     visibility: hidden;
 
     transform:
         translateY(-7px)
         scale(0.98);
 
-    transform-origin: top left;
+    transform-origin:
+        top left;
 
     pointer-events: none;
 
@@ -331,6 +373,7 @@
    ========================================================= */
 
 .cabecalho-menu-conta.aberto {
+
     opacity: 1;
 
     visibility: visible;
@@ -348,11 +391,13 @@
    ========================================================= */
 
 .cabecalho-menu-conta-item {
+
     width: 100%;
 
     min-height: 42px;
 
     display: flex;
+
     align-items: center;
 
     gap: 11px;
@@ -362,6 +407,7 @@
     margin: 0;
 
     border: 0;
+
     border-radius: 9px;
 
     background: transparent;
@@ -371,7 +417,10 @@
     font-family: inherit;
 
     font-size: 13px;
+
     font-weight: 600;
+
+    line-height: 1.2;
 
     text-align: left;
 
@@ -379,21 +428,25 @@
 
     box-sizing: border-box;
 
+    appearance: none;
+    -webkit-appearance: none;
+
     transition:
         background-color 0.18s ease,
         color 0.18s ease;
 }
 
 
-/* =========================================================
-   ÍCONES DOS ITENS
-   ========================================================= */
-
 .cabecalho-menu-conta-item svg {
+
     width: 18px;
     height: 18px;
 
-    flex: 0 0 18px;
+    min-width: 18px;
+    min-height: 18px;
+
+    flex:
+        0 0 18px;
 
     color: #526071;
 
@@ -403,32 +456,35 @@
 }
 
 
-/* =========================================================
-   TEXTO DOS ITENS
-   ========================================================= */
-
 .cabecalho-menu-conta-item span {
+
     min-width: 0;
 
+    overflow: hidden;
+
     white-space: nowrap;
+
+    text-overflow: ellipsis;
 }
 
 
-/* =========================================================
-   HOVER DOS ITENS
-   ========================================================= */
-
 .cabecalho-menu-conta-item:hover {
-    background: rgba(22, 119, 210, 0.07);
 
-    color: #1677d2;
+    background:
+        rgba(22, 119, 210, 0.07);
+
+    color:
+        #1677d2;
 }
 
 
 .cabecalho-menu-conta-item:hover svg {
-    color: #1677d2;
 
-    transform: translateX(1px);
+    color:
+        #1677d2;
+
+    transform:
+        translateX(1px);
 }
 
 
@@ -437,90 +493,90 @@
    ========================================================= */
 
 .cabecalho-menu-conta-sair {
-    color: #4b5563;
+
+    color:
+        #4b5563;
 }
 
-
-/* =========================================================
-   ÍCONE DO ITEM SAIR
-   ========================================================= */
 
 .cabecalho-menu-conta-sair svg {
-    color: #6b7280;
+
+    color:
+        #6b7280;
 }
 
 
-/* =========================================================
-   HOVER DO ITEM SAIR
-   ========================================================= */
-
 .cabecalho-menu-conta-sair:hover {
-    background: rgba(220, 38, 38, 0.07);
 
-    color: #dc2626;
+    background:
+        rgba(220, 38, 38, 0.07);
+
+    color:
+        #dc2626;
 }
 
 
 .cabecalho-menu-conta-sair:hover svg {
-    color: #dc2626;
+
+    color:
+        #dc2626;
 }
 
 
 /* =========================================================
-   DIVISOR DO MENU
+   DIVISOR DO MENU DA CONTA
    ========================================================= */
 
 .cabecalho-menu-conta-divisor {
-    width: calc(100% - 12px);
+
+    width:
+        calc(100% - 12px);
 
     height: 1px;
 
-    margin: 4px 6px;
+    margin:
+        4px 6px;
 
-    background: rgba(23, 32, 51, 0.08);
+    padding: 0;
+
+    background:
+        rgba(23, 32, 51, 0.08);
 }
 
 
 /* =========================================================
    ÁREA DAS AÇÕES DO CABEÇALHO
-
-   Os três botões ficam separados.
-
-   Cada botão possui:
-   - sua própria bolha;
-   - transparência;
-   - efeito de vidro;
-   - desfoque do fundo;
-   - sombra individual.
-
-   Não existe um container branco envolvendo os três.
    ========================================================= */
 
 .navbar-actions {
+
     display: flex;
+
     align-items: center;
+
     justify-content: flex-end;
 
     gap: 16px;
 
+    min-width: 0;
+
+    height: auto;
+
     margin-left: auto;
+
+    padding: 0;
+
+    box-sizing: border-box;
 }
 
 
 /* =========================================================
-   BOTÕES SUPERIORES — EFEITO VIDRO / ESPELHO
-
-   Cada botão possui sua própria superfície translúcida.
-
-   A transparência permite perceber discretamente
-   o conteúdo que estiver atrás da bolha.
-
-   O backdrop-filter cria o efeito de vidro ao desfocar
-   o fundo imediatamente atrás do botão.
+   BOTÕES SUPERIORES
    ========================================================= */
 
 .nav-icon-btn,
 .cabecalho-btn-anunciar {
+
     position: relative;
 
     width: 40px;
@@ -529,20 +585,32 @@
     min-width: 40px;
     min-height: 40px;
 
+    max-width: 40px;
+    max-height: 40px;
+
+    flex:
+        0 0 40px;
+
     display: inline-flex;
+
     align-items: center;
+
     justify-content: center;
 
     padding: 0;
+
     margin: 0;
 
-    border: 1px solid rgba(255, 255, 255, 0.82);
+    border:
+        1px solid rgba(255, 255, 255, 0.82);
 
     border-radius: 50%;
 
-    background: rgba(255, 255, 255, 0.72);
+    background:
+        rgba(255, 255, 255, 0.72);
 
-    color: #172033;
+    color:
+        #172033;
 
     cursor: pointer;
 
@@ -550,8 +618,11 @@
         0 4px 14px rgba(15, 20, 31, 0.10),
         inset 0 1px 0 rgba(255, 255, 255, 0.78);
 
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter:
+        blur(10px);
+
+    -webkit-backdrop-filter:
+        blur(10px);
 
     transition:
         background-color 0.2s ease,
@@ -561,22 +632,23 @@
         transform 0.2s ease;
 
     box-sizing: border-box;
+
+    appearance: none;
+    -webkit-appearance: none;
 }
 
 
-/* =========================================================
-   HOVER DOS BOTÕES
-
-   O hover acontece somente na própria bolinha.
-   ========================================================= */
-
 .nav-icon-btn:hover,
 .cabecalho-btn-anunciar:hover {
-    background: rgba(255, 255, 255, 0.82);
 
-    border-color: rgba(255, 255, 255, 0.92);
+    background:
+        rgba(255, 255, 255, 0.82);
 
-    color: #1677d2;
+    border-color:
+        rgba(255, 255, 255, 0.92);
+
+    color:
+        #1677d2;
 
     box-shadow:
         0 6px 18px rgba(15, 20, 31, 0.14),
@@ -584,25 +656,22 @@
 }
 
 
-/* =========================================================
-   ACTIVE / CLIQUE
-   ========================================================= */
-
 .nav-icon-btn:active,
 .cabecalho-btn-anunciar:active {
-    transform: scale(0.94);
+
+    transform:
+        scale(0.94);
 }
 
 
-/* =========================================================
-   FOCO ACESSÍVEL
-   ========================================================= */
-
 .nav-icon-btn:focus-visible,
 .cabecalho-btn-anunciar:focus-visible {
-    outline: 2px solid rgba(22, 119, 210, 0.35);
 
-    outline-offset: 3px;
+    outline:
+        2px solid rgba(22, 119, 210, 0.35);
+
+    outline-offset:
+        3px;
 }
 
 
@@ -611,33 +680,36 @@
    ========================================================= */
 
 .top-icon-svg {
+
     width: 21px;
     height: 21px;
 
-    flex-shrink: 0;
+    min-width: 21px;
+    min-height: 21px;
 
-    stroke-width: 1.9;
+    max-width: 21px;
+    max-height: 21px;
+
+    display: block;
+
+    flex:
+        0 0 21px;
+
+    stroke-width:
+        1.9;
 
     pointer-events: none;
-}
 
-
-/* =========================================================
-   BOTÃO ANUNCIAR
-   ========================================================= */
-
-.cabecalho-btn-anunciar {
-    display: inline-flex;
+    box-sizing: border-box;
 }
 
 
 /* =========================================================
    ÍCONE DO ANUNCIAR
-
-   Esta regra afeta SOMENTE o Anunciar.
    ========================================================= */
 
 .cabecalho-btn-anunciar .cabecalho-anunciar-icon {
+
     width: 19px;
     height: 19px;
 
@@ -649,156 +721,813 @@
 
     display: block;
 
-    flex: 0 0 19px;
+    flex:
+        0 0 19px;
 
     pointer-events: none;
-}
-
-
-/* =========================================================
-   TEXTO INTERNO DO ANUNCIAR
-
-   Mantido no HTML, mas oculto visualmente.
-   ========================================================= */
-
-.cabecalho-btn-anunciar > span {
-    display: none;
-}
-
-
-/* =========================================================
-   BADGE DE NOTIFICAÇÕES / MENSAGENS
-   ========================================================= */
-
-.notification-badge {
-    position: absolute;
-
-    top: 3px;
-    right: 3px;
-
-    min-width: 17px;
-    height: 17px;
-
-    padding: 0 4px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 999px;
-
-    background: #e53935;
-
-    color: #ffffff;
-
-    font-size: 10px;
-    font-weight: 700;
-    line-height: 1;
-
-    border: 2px solid rgba(255, 255, 255, 0.92);
 
     box-sizing: border-box;
 }
 
 
 /* =========================================================
-   ESTADOS ANTIGOS DO CABEÇALHO
+   TEXTOS DAS AÇÕES
+   ========================================================= */
 
-   Mantidos apenas por compatibilidade com o
-   Cabecalho.js atual.
+.cabecalho-action-label {
+
+    min-width: 0;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+
+/* =========================================================
+   BADGES
+   ========================================================= */
+
+.notification-badge {
+
+    position: absolute;
+
+    top: 3px;
+    right: 3px;
+
+    min-width: 17px;
+
+    height: 17px;
+
+    padding: 0 4px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 999px;
+
+    background:
+        #e53935;
+
+    color:
+        #ffffff;
+
+    font-size: 10px;
+
+    font-weight: 700;
+
+    line-height: 1;
+
+    border:
+        2px solid rgba(255, 255, 255, 0.92);
+
+    box-sizing: border-box;
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   ESTADOS ANTIGOS DO CABEÇALHO
    ========================================================= */
 
 #cabecalho-carregando,
 #cabecalho-deslogado,
 #cabecalho-logado {
+
+    display: none !important;
+}
+
+
+.cabecalho-menu-usuario,
+.cabecalho-usuario-btn,
+.cabecalho-avatar,
+.cabecalho-info-usuario,
+.cabecalho-chevron,
+.cabecalho-usuario-estado,
+.cabecalho-btn-entrar {
+
     display: none !important;
 }
 
 
 /* =========================================================
-   MENU DE USUÁRIO ANTIGO
-
-   O antigo menu associado ao avatar não é mais utilizado.
-
-   O novo menu está em .cabecalho-menu-conta.
+   DESKTOP
    ========================================================= */
 
-.cabecalho-menu-usuario {
-    display: none !important;
-}
+@media (min-width: 769px) {
+
+    .navbar {
+
+        height: 64px;
+
+        padding:
+            0 24px 0 0;
+    }
 
 
-.cabecalho-usuario-btn {
-    display: none !important;
-}
+    /* -----------------------------------------------------
+       LOGO
+       ----------------------------------------------------- */
+
+    .navbar-brand-area {
+
+        position: fixed;
+
+        left:
+            max(20px, calc(50% - 610px));
+
+        top: 0;
+
+        width: auto;
+
+        height: 64px;
+
+        display: flex;
+
+        align-items: center;
+
+        margin: 0;
+
+        padding: 0;
+
+        z-index: 1001;
+    }
 
 
-.cabecalho-avatar {
-    display: none !important;
-}
+    /* -----------------------------------------------------
+       AÇÕES
+       ----------------------------------------------------- */
+
+    .navbar-actions {
+
+        position: fixed;
+
+        left:
+            max(20px, calc(50% - 610px));
+
+        top: 348px;
+
+        width: 180px;
+
+        height: auto;
+
+        display: flex;
+
+        flex-direction: column;
+
+        align-items: stretch;
+
+        justify-content: flex-start;
+
+        gap: 4px;
+
+        margin: 0;
+
+        padding:
+            12px 0 0 0;
+
+        box-sizing: border-box;
+
+        z-index: 1001;
+    }
 
 
-.cabecalho-info-usuario {
-    display: none !important;
-}
+    /* -----------------------------------------------------
+       DIVISOR
+       ----------------------------------------------------- */
+
+    .navbar-actions::before {
+
+        content: "";
+
+        display: block;
+
+        width:
+            calc(100% - 12px);
+
+        height: 1px;
+
+        margin:
+            0 6px 8px;
+
+        background:
+            rgba(23, 32, 51, 0.08);
+
+        box-sizing: border-box;
+    }
 
 
-.cabecalho-chevron {
-    display: none !important;
-}
+    /* -----------------------------------------------------
+       BOTÕES DESKTOP
+       ----------------------------------------------------- */
+
+    .navbar-actions .nav-icon-btn,
+    .navbar-actions .cabecalho-btn-anunciar {
+
+        position: relative;
+
+        width: 100%;
+        height: 48px;
+
+        min-width: 0;
+        min-height: 48px;
+
+        max-width: none;
+        max-height: 48px;
+
+        flex:
+            0 0 48px;
+
+        display: flex;
+
+        flex-direction: row;
+
+        align-items: center;
+
+        justify-content: flex-start;
+
+        gap: 11px;
+
+        padding:
+            0 10px;
+
+        margin: 0;
+
+        border: 0;
+
+        border-radius: 12px;
+
+        background:
+            transparent;
+
+        color:
+            #172033;
+
+        box-shadow: none;
+
+        backdrop-filter: none;
+
+        -webkit-backdrop-filter: none;
+
+        font-family: inherit;
+
+        font-size: 13px;
+
+        font-weight: 700;
+
+        line-height: 1;
+
+        text-align: left;
+
+        box-sizing: border-box;
+    }
 
 
-.cabecalho-usuario-estado {
-    display: none !important;
-}
+    /* -----------------------------------------------------
+       HOVER DESKTOP
+       ----------------------------------------------------- */
+
+    .navbar-actions .nav-icon-btn:hover,
+    .navbar-actions .cabecalho-btn-anunciar:hover {
+
+        background:
+            rgba(22, 119, 210, 0.055);
+
+        border: 0;
+
+        color:
+            #1677d2;
+
+        box-shadow: none;
+    }
 
 
-.cabecalho-btn-entrar {
-    display: none !important;
+    /* -----------------------------------------------------
+       ACTIVE DESKTOP
+       ----------------------------------------------------- */
+
+    .navbar-actions .nav-icon-btn:active,
+    .navbar-actions .cabecalho-btn-anunciar:active {
+
+        transform:
+            scale(0.98);
+    }
+
+
+    /* -----------------------------------------------------
+       FOCO DESKTOP
+       ----------------------------------------------------- */
+
+    .navbar-actions .nav-icon-btn:focus-visible,
+    .navbar-actions .cabecalho-btn-anunciar:focus-visible {
+
+        outline:
+            2px solid rgba(22, 119, 210, 0.35);
+
+        outline-offset:
+            -2px;
+    }
+
+
+    /* -----------------------------------------------------
+       ÍCONES DESKTOP
+       ----------------------------------------------------- */
+
+    .navbar-actions .top-icon-svg,
+    .navbar-actions .cabecalho-anunciar-icon {
+
+        width: 24px;
+        height: 24px;
+
+        min-width: 24px;
+        min-height: 24px;
+
+        max-width: 24px;
+        max-height: 24px;
+
+        flex:
+            0 0 24px;
+
+        display: block;
+
+        color:
+            #526071;
+
+        box-sizing: border-box;
+
+        transition:
+            color 0.18s ease,
+            transform 0.18s ease;
+    }
+
+
+    /* -----------------------------------------------------
+       ÍCONE NO HOVER
+       ----------------------------------------------------- */
+
+    .navbar-actions .nav-icon-btn:hover .top-icon-svg,
+    .navbar-actions .cabecalho-btn-anunciar:hover .cabecalho-anunciar-icon {
+
+        color:
+            #1677d2;
+
+        transform:
+            translateX(1px);
+    }
+
+
+    /* -----------------------------------------------------
+       TEXTOS DESKTOP
+       ----------------------------------------------------- */
+
+    .navbar-actions .cabecalho-action-label {
+
+        display: block;
+
+        min-width: 0;
+
+        color:
+            inherit;
+
+        white-space: nowrap;
+
+        overflow: hidden;
+
+        text-overflow: ellipsis;
+
+        line-height: 1;
+    }
+
+
+    /* -----------------------------------------------------
+       BADGES DESKTOP
+       ----------------------------------------------------- */
+
+    .navbar-actions .notification-badge {
+
+        position: static;
+
+        flex:
+            0 0 auto;
+
+        min-width: 17px;
+
+        height: 17px;
+
+        margin-left: auto;
+
+        padding:
+            0 4px;
+
+        border: 0;
+
+        border-radius: 999px;
+
+        background:
+            #e53935;
+
+        color:
+            #ffffff;
+
+        font-size: 10px;
+
+        font-weight: 700;
+
+        box-sizing: border-box;
+    }
+
 }
 
 
 /* =========================================================
-   RESPONSIVIDADE — TABLET / CELULAR
+   DESKTOP GRANDE
+   ========================================================= */
+
+@media (min-width: 1200px) {
+
+    .navbar-brand-area {
+
+        left:
+            max(20px, calc(50% - 610px));
+    }
+
+
+    .navbar-actions {
+
+        left:
+            max(20px, calc(50% - 610px));
+    }
+
+}
+
+
+/* =========================================================
+   TABLET / CELULAR
    ========================================================= */
 
 @media (max-width: 768px) {
 
     .navbar {
+
+        position: fixed;
+
+        top: 0;
+        left: 0;
+        right: 0;
+
+        width: 100%;
+
         height: 60px;
 
-        padding: 0 16px;
+        padding:
+            0 16px;
+
+        margin: 0;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-between;
+
+        box-sizing: border-box;
+
+        z-index: 1000;
     }
 
 
-    /* =====================================================
-       GRADIENTE — TABLET / CELULAR
-    ===================================================== */
+    /* -----------------------------------------------------
+       ÁREA DA LOGO
+       ----------------------------------------------------- */
 
-    .navbar::before {
-        height: 82px;
+    .navbar-brand-area {
+
+        position: relative;
+
+        left: auto;
+        top: auto;
+
+        width: auto;
+
+        height: 100%;
+
+        min-width: 0;
+
+        display: flex;
+
+        align-items: center;
+
+        margin: 0;
+
+        padding: 0;
+
+        flex:
+            1 1 auto;
     }
 
+
+    /* -----------------------------------------------------
+       CONTA
+       ----------------------------------------------------- */
+
+    .cabecalho-conta {
+
+        height: 100%;
+
+        min-width: 0;
+
+        display: flex;
+
+        align-items: center;
+    }
+
+
+    /* -----------------------------------------------------
+       LOGO MOBILE
+       ----------------------------------------------------- */
+
+    .logo {
+
+        max-width:
+            calc(100vw - 190px);
+
+        overflow: hidden;
+
+        text-overflow: ellipsis;
+    }
+
+
+    /* -----------------------------------------------------
+       AÇÕES MOBILE
+       ----------------------------------------------------- */
 
     .navbar-actions {
+
+        position: static;
+
+        left: auto;
+        top: auto;
+
+        width: auto;
+
+        height: auto;
+
+        min-width: 0;
+
+        display: flex;
+
+        flex:
+            0 0 auto;
+
+        flex-direction: row;
+
+        align-items: center;
+
+        justify-content: flex-end;
+
         gap: 12px;
+
+        margin:
+            0 0 0 auto;
+
+        padding: 0;
+
+        box-sizing: border-box;
+
+        z-index: auto;
     }
 
 
-    .nav-icon-btn,
-    .cabecalho-btn-anunciar {
+    /* -----------------------------------------------------
+       REMOVE DIVISOR DESKTOP
+       ----------------------------------------------------- */
+
+    .navbar-actions::before {
+
+        display: none;
+
+        content: none;
+    }
+
+
+    /* -----------------------------------------------------
+       BOTÕES MOBILE
+       ----------------------------------------------------- */
+
+    .navbar-actions .nav-icon-btn,
+    .navbar-actions .cabecalho-btn-anunciar {
+
+        position: relative;
+
         width: 38px;
         height: 38px;
 
         min-width: 38px;
         min-height: 38px;
+
+        max-width: 38px;
+        max-height: 38px;
+
+        flex:
+            0 0 38px;
+
+        display: inline-flex;
+
+        flex-direction: row;
+
+        align-items: center;
+
+        justify-content: center;
+
+        gap: 0;
+
+        padding: 0;
+
+        margin: 0;
+
+        border:
+            1px solid rgba(255, 255, 255, 0.82);
+
+        border-radius: 50%;
+
+        background:
+            rgba(255, 255, 255, 0.72);
+
+        color:
+            #172033;
+
+        box-shadow:
+            0 4px 14px rgba(15, 20, 31, 0.10),
+            inset 0 1px 0 rgba(255, 255, 255, 0.78);
+
+        backdrop-filter:
+            blur(10px);
+
+        -webkit-backdrop-filter:
+            blur(10px);
+
+        box-sizing: border-box;
     }
 
 
+    /* -----------------------------------------------------
+       SOMENTE ÍCONES NO CELULAR
+       -----------------------------------------------------
+
+       O HTML possui:
+
+       <span class="cabecalho-action-label">
+           Anunciar
+       </span>
+
+       <span class="cabecalho-action-label">
+           Notificações
+       </span>
+
+       <span class="cabecalho-action-label">
+           Mensagens
+       </span>
+
+       Esses textos devem desaparecer SOMENTE
+       no celular.
+
+       Não usamos regras genéricas para spans,
+       porque os badges também são spans.
+       ----------------------------------------------------- */
+
+    .navbar-actions .cabecalho-action-label {
+
+        display: none !important;
+
+        width: 0;
+        min-width: 0;
+
+        max-width: 0;
+
+        margin: 0;
+        padding: 0;
+
+        overflow: hidden;
+
+        white-space: nowrap;
+    }
+
+
+    /* -----------------------------------------------------
+       GARANTE CENTRALIZAÇÃO DOS ÍCONES
+       ----------------------------------------------------- */
+
+    .navbar-actions .top-icon-svg,
+    .navbar-actions .cabecalho-anunciar-icon {
+
+        position: relative;
+
+        display: block;
+
+        flex:
+            0 0 auto;
+
+        margin: 0;
+
+        padding: 0;
+
+        pointer-events: none;
+    }
+
+
+    /* -----------------------------------------------------
+       ÍCONE DE NOTIFICAÇÕES / MENSAGENS
+       ----------------------------------------------------- */
+
+    .navbar-actions .top-icon-svg {
+
+        width: 21px;
+        height: 21px;
+
+        min-width: 21px;
+        min-height: 21px;
+
+        max-width: 21px;
+        max-height: 21px;
+    }
+
+
+    /* -----------------------------------------------------
+       ÍCONE DE ANUNCIAR
+       ----------------------------------------------------- */
+
+    .navbar-actions .cabecalho-anunciar-icon {
+
+        width: 19px;
+        height: 19px;
+
+        min-width: 19px;
+        min-height: 19px;
+
+        max-width: 19px;
+        max-height: 19px;
+    }
+
+
+    /* -----------------------------------------------------
+       BADGES MOBILE
+       -----------------------------------------------------
+
+       Os badges continuam visíveis.
+
+       Eles não usam .cabecalho-action-label,
+       portanto não são afetados pela regra acima.
+       ----------------------------------------------------- */
+
+    .navbar-actions .notification-badge {
+
+        position: absolute;
+
+        top: 2px;
+        right: 2px;
+
+        display: flex;
+
+        min-width: 17px;
+        height: 17px;
+
+        margin: 0;
+
+        padding: 0 4px;
+
+        border:
+            2px solid rgba(255, 255, 255, 0.92);
+
+        border-radius: 999px;
+
+        box-sizing: border-box;
+    }
+
+
+    /* -----------------------------------------------------
+       MENU DA CONTA MOBILE
+       ----------------------------------------------------- */
+
     .cabecalho-menu-conta {
-        top: calc(100% + 8px);
+
+        position: absolute;
+
+        top:
+            calc(100% + 8px);
+
+        left: 0;
 
         width: 210px;
+
+        max-width:
+            calc(100vw - 24px);
+
+        z-index: 1100;
     }
 
 }
@@ -811,64 +1540,113 @@
 @media (max-width: 480px) {
 
     .navbar {
+
         height: 58px;
 
-        padding: 0 12px;
-    }
-
-
-    /* =====================================================
-       GRADIENTE — CELULAR
-    ===================================================== */
-
-    .navbar::before {
-        height: 80px;
+        padding:
+            0 12px;
     }
 
 
     .logo {
+
+        max-width:
+            calc(100vw - 178px);
+
         font-size: 18px;
     }
 
 
     .cabecalho-conta-toggle {
+
         gap: 4px;
 
-        padding: 4px;
+        padding:
+            4px;
     }
 
 
     .cabecalho-conta-seta {
+
         width: 16px;
         height: 16px;
 
-        flex-basis: 16px;
+        min-width: 16px;
+        min-height: 16px;
+
+        flex:
+            0 0 16px;
     }
 
 
     .navbar-actions {
+
         gap: 10px;
     }
 
 
-    .nav-icon-btn,
-    .cabecalho-btn-anunciar {
+    .navbar-actions .nav-icon-btn,
+    .navbar-actions .cabecalho-btn-anunciar {
+
         width: 36px;
         height: 36px;
 
         min-width: 36px;
         min-height: 36px;
+
+        max-width: 36px;
+        max-height: 36px;
+
+        flex:
+            0 0 36px;
+    }
+
+
+    .navbar-actions .top-icon-svg {
+
+        width: 20px;
+        height: 20px;
+
+        min-width: 20px;
+        min-height: 20px;
+
+        max-width: 20px;
+        max-height: 20px;
+
+        flex:
+            0 0 20px;
+    }
+
+
+    .navbar-actions .cabecalho-anunciar-icon {
+
+        width: 18px;
+        height: 18px;
+
+        min-width: 18px;
+        min-height: 18px;
+
+        max-width: 18px;
+        max-height: 18px;
+
+        flex:
+            0 0 18px;
     }
 
 
     .cabecalho-menu-conta {
+
         width: 204px;
+
+        max-width:
+            calc(100vw - 20px);
 
         padding: 6px;
     }
 
 
     .cabecalho-menu-conta-item {
+
         min-height: 40px;
 
         font-size: 12.5px;
@@ -884,55 +1662,104 @@
 @media (max-width: 360px) {
 
     .navbar {
-        padding: 0 8px;
+
+        height: 56px;
+
+        padding:
+            0 8px;
     }
 
 
-    /* =====================================================
-       GRADIENTE — CELULAR MUITO PEQUENO
-    ===================================================== */
+    .logo {
 
-    .navbar::before {
-        height: 78px;
+        max-width:
+            calc(100vw - 164px);
+
+        font-size: 17px;
     }
 
 
     .navbar-actions {
+
         gap: 8px;
     }
 
 
-    .nav-icon-btn,
-    .cabecalho-btn-anunciar {
+    .navbar-actions .nav-icon-btn,
+    .navbar-actions .cabecalho-btn-anunciar {
+
         width: 34px;
         height: 34px;
 
         min-width: 34px;
         min-height: 34px;
+
+        max-width: 34px;
+        max-height: 34px;
+
+        flex:
+            0 0 34px;
+    }
+
+
+    .navbar-actions .top-icon-svg {
+
+        width: 19px;
+        height: 19px;
+
+        min-width: 19px;
+        min-height: 19px;
+
+        max-width: 19px;
+        max-height: 19px;
+
+        flex:
+            0 0 19px;
+    }
+
+
+    .navbar-actions .cabecalho-anunciar-icon {
+
+        width: 17px;
+        height: 17px;
+
+        min-width: 17px;
+        min-height: 17px;
+
+        max-width: 17px;
+        max-height: 17px;
+
+        flex:
+            0 0 17px;
     }
 
 
     .cabecalho-conta-toggle {
+
         padding-left: 2px;
         padding-right: 2px;
     }
 
 
-    .logo {
-        font-size: 17px;
-    }
-
-
     .cabecalho-conta-seta {
+
         width: 15px;
         height: 15px;
 
-        flex-basis: 15px;
+        min-width: 15px;
+        min-height: 15px;
+
+        flex:
+            0 0 15px;
     }
 
 
     .cabecalho-menu-conta {
+
         width: 196px;
+
+        max-width:
+            calc(100vw - 16px);
     }
 
 }
@@ -944,6 +1771,7 @@
 
 @media (prefers-reduced-motion: reduce) {
 
+    .navbar,
     .nav-icon-btn,
     .cabecalho-btn-anunciar,
     .cabecalho-conta-toggle,

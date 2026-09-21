@@ -10,9 +10,10 @@
    - Controlar o comportamento mobile.
    - Controlar o comportamento desktop.
    - Mobile: menu horizontal fixado na parte inferior.
-   - Desktop: menu vertical fixado à esquerda da área
-     principal de conteúdo.
-   - Evitar sobreposição do menu sobre o conteúdo.
+   - Desktop: menu vertical fixado no topo/lateral.
+   - Desktop: exibir ícone + texto.
+   - Manter o menu limpo e sem fundo no desktop.
+   - Manter distância visual entre menu e conteúdo.
    - Estilizar o indicador do item ativo.
    - Estilizar os ícones.
    - Estilizar a foto do usuário.
@@ -26,17 +27,32 @@
    4. Contratações
    5. Perfil
 
+   RESPONSIVIDADE:
+
+   Mobile:
+   - Menu horizontal inferior.
+   - Fundo translúcido.
+   - Apenas os ícones são exibidos.
+
+   Desktop:
+   - Menu vertical lateral.
+   - Posicionado no topo da página.
+   - Abaixo da logo.
+   - Sem fundo.
+   - Sem borda.
+   - Sem sombra.
+   - Ícone e texto são exibidos lado a lado.
+
    IMPORTANTE:
 
-   No desktop o menu é FIXO e fica fora da coluna
-   principal do conteúdo.
-
-   O menu não participa do fluxo normal da página.
+   O menu utiliza position: fixed.
+   Portanto, ele não participa do fluxo normal
+   do conteúdo principal.
 ========================================================= */
 
 
 /* =========================================================
-   MENU PRINCIPAL — BASE
+   MENU PRINCIPAL — BASE / MOBILE
 ========================================================= */
 
 .bottom-nav {
@@ -91,7 +107,7 @@
 
 
 /* =========================================================
-   INDICADOR DO ITEM ATIVO
+   INDICADOR DO ITEM ATIVO — MOBILE
 ========================================================= */
 
 .nav-active-indicator {
@@ -167,6 +183,8 @@
 
     appearance: none;
 
+    -webkit-appearance: none;
+
     -webkit-tap-highlight-color: transparent;
 
     z-index: 1;
@@ -175,6 +193,22 @@
         color 0.2s ease,
         transform 0.2s ease,
         background 0.2s ease;
+
+}
+
+
+/* =========================================================
+   TEXTO DO ITEM
+
+   No mobile o texto não aparece.
+
+   Ele existe no HTML para acessibilidade e para
+   utilização do layout desktop.
+========================================================= */
+
+.nav-item-label {
+
+    display: none;
 
 }
 
@@ -388,61 +422,95 @@
 /* =========================================================
    DESKTOP
    A PARTIR DE 768px
+
+   NO DESKTOP:
+
+   O menu deixa de ficar centralizado verticalmente.
+
+   Ele passa a ficar no topo da página, imediatamente
+   abaixo da área ocupada visualmente pela logo.
+
+   Estrutura:
+
+       LOGO
+        ↓
+       MENU
+        ↓
+                         20px
+                              FEED
+
+   O menu continua fixado na lateral e não participa
+   do fluxo do conteúdo.
 ========================================================= */
 
 @media (min-width: 768px) {
 
     /* =====================================================
-       MENU VERTICAL — DESKTOP
-
-       O menu fica à esquerda da área principal.
-
-       IMPORTANTE:
-
-       Não usamos mais:
-
-           left: calc(50% - 400px);
-
-       porque esse valor pode colocar o menu em cima
-       do conteúdo dependendo da largura real do feed.
-
-       Agora usamos uma estrutura baseada em uma área
-       central conhecida.
+       MENU LATERAL — DESKTOP
     ===================================================== */
 
     .bottom-nav {
 
         position: fixed;
 
-        top: 50%;
+        /*
+         * O cabeçalho possui 64px de altura.
+         *
+         * O menu começa logo abaixo dele, com um pequeno
+         * respiro visual de 12px.
+         *
+         * Resultado:
+         *
+         * 64px cabeçalho
+         * 12px respiro
+         * -----------
+         * 76px início do menu
+         */
+
+        top: 76px;
+
         bottom: auto;
 
         /*
-         * O conteúdo principal é considerado centralizado
-         * na viewport.
+         * Alinhamento horizontal:
          *
-         * A coluna do menu fica antes da área principal.
+         * O menu utiliza o mesmo eixo horizontal
+         * utilizado pela logo no cabeçalho.
+         *
+         * Isso cria uma coluna visual única:
+         *
+         * LOGO
+         * MENU
          */
-        left: max(
-            24px,
-            calc(50% - 560px)
-        );
+
+        left:
+            max(
+                20px,
+                calc(50% - 610px)
+            );
 
         right: auto;
 
-        transform:
-            translateY(-50%);
+        /*
+         * IMPORTANTE:
+         *
+         * Não usamos translateY(-50%).
+         *
+         * O menu agora começa exatamente no topo
+         * definido acima.
+         */
 
-        width: 78px;
+        transform: none;
 
-        max-width: none;
+        width: 180px;
+
+        max-width: 180px;
 
         height: auto;
 
-        min-height: 330px;
+        min-height: 0;
 
-        padding:
-            12px 8px;
+        padding: 0;
 
         display: flex;
 
@@ -450,28 +518,25 @@
 
         align-items: stretch;
 
-        justify-content: center;
+        justify-content: flex-start;
 
         gap: 4px;
 
-        background:
-            rgba(255, 255, 255, 0.72);
+        /*
+         * MENU DESKTOP COMPLETAMENTE LIMPO
+         */
 
-        border:
-            1px solid
-            rgba(226, 232, 240, 0.95);
+        background: transparent;
 
-        border-radius: 22px;
+        border: none;
 
-        box-shadow:
-            0 12px 30px
-            rgba(15, 23, 42, 0.10);
+        border-radius: 0;
 
-        backdrop-filter:
-            blur(20px);
+        box-shadow: none;
 
-        -webkit-backdrop-filter:
-            blur(20px);
+        backdrop-filter: none;
+
+        -webkit-backdrop-filter: none;
 
         z-index: 9999;
 
@@ -487,15 +552,23 @@
     .nav-active-indicator {
 
         top: 0;
+
         left: 50%;
 
-        width: 54px;
-        height: 54px;
+        width: 100%;
 
-        border-radius: 16px;
+        height: 48px;
+
+        border-radius: 14px;
+
+        /*
+         * Indicador extremamente discreto.
+         *
+         * O botão continua sem fundo.
+         */
 
         background:
-            rgba(37, 99, 235, 0.10);
+            rgba(37, 99, 235, 0.055);
 
         transform:
             translate3d(-50%, 0, 0);
@@ -519,24 +592,67 @@
 
         width: 100%;
 
-        height: 58px;
+        height: 48px;
 
-        min-height: 58px;
+        min-height: 48px;
 
         flex:
-            0 0 58px;
+            0 0 48px;
 
         display: flex;
 
-        flex-direction: column;
+        flex-direction: row;
 
         align-items: center;
 
-        justify-content: center;
+        justify-content: flex-start;
 
-        gap: 2px;
+        gap: 11px;
 
-        border-radius: 16px;
+        padding:
+            0
+            10px;
+
+        margin: 0;
+
+        /*
+         * Botão completamente limpo.
+         */
+
+        background: transparent;
+
+        border: none;
+
+        border-radius: 14px;
+
+        text-align: left;
+
+    }
+
+
+    /* =====================================================
+       TEXTO — DESKTOP
+    ===================================================== */
+
+    .nav-item-label {
+
+        display: block;
+
+        min-width: 0;
+
+        color: currentColor;
+
+        font-size: 13px;
+
+        font-weight: 700;
+
+        line-height: 1.2;
+
+        white-space: nowrap;
+
+        overflow: hidden;
+
+        text-overflow: ellipsis;
 
     }
 
@@ -547,16 +663,18 @@
 
     .nav-icon-wrapper {
 
-        width: 30px;
-        height: 30px;
+        width: 28px;
+        height: 28px;
+
+        min-width: 28px;
 
     }
 
 
     .nav-icon-svg {
 
-        width: 25px;
-        height: 25px;
+        width: 24px;
+        height: 24px;
 
     }
 
@@ -567,8 +685,20 @@
 
     .nav-profile-image {
 
-        width: 30px;
-        height: 30px;
+        width: 28px;
+        height: 28px;
+
+    }
+
+
+    /* =====================================================
+       PERFIL — TEXTO
+    ===================================================== */
+
+    .profile-icon-wrapper {
+
+        flex:
+            0 0 28px;
 
     }
 
@@ -601,8 +731,8 @@
     .bottom-nav-item[data-aba="financeiro"]
     .nav-icon-wrapper {
 
-        width: 30px;
-        height: 30px;
+        width: 28px;
+        height: 28px;
 
         background: transparent;
 
@@ -612,14 +742,16 @@
 
         transform: none;
 
+        border-radius: 0;
+
     }
 
 
     .bottom-nav-item[data-aba="financeiro"]
     .nav-icon-svg {
 
-        width: 25px;
-        height: 25px;
+        width: 24px;
+        height: 24px;
 
         color: currentColor;
 
@@ -630,12 +762,35 @@
 
     /* =====================================================
        HOVER — DESKTOP
+
+       O botão continua sem fundo.
+
+       Apenas o texto e o ícone mudam de cor.
     ===================================================== */
 
     .bottom-nav-item:hover {
 
-        background:
-            rgba(37, 99, 235, 0.04);
+        background: transparent;
+
+        color: #1677d2;
+
+    }
+
+
+    /* =====================================================
+       ITEM ATIVO — DESKTOP
+
+       O botão permanece transparente.
+
+       O indicador suave fica responsável pela
+       identificação do item selecionado.
+    ===================================================== */
+
+    .bottom-nav-item.ativo {
+
+        background: transparent;
+
+        color: #1677d2;
 
     }
 
@@ -643,7 +798,103 @@
     .bottom-nav-item:active {
 
         transform:
-            scale(0.96);
+            scale(0.98);
+
+    }
+
+}
+
+
+/* =========================================================
+   DESKTOP — TELAS INTERMEDIÁRIAS
+   768px até 1199px
+
+   O menu mantém o mesmo eixo da logo.
+
+   Como a fórmula possui limite mínimo de 20px,
+   ele nunca ficará colado na borda.
+========================================================= */
+
+@media (min-width: 768px) and (max-width: 1199px) {
+
+    .bottom-nav {
+
+        top: 76px;
+
+        left:
+            max(
+                20px,
+                calc(50% - 610px)
+            );
+
+        width: 170px;
+
+        max-width: 170px;
+
+        min-height: 0;
+
+        padding: 0;
+
+    }
+
+
+    .nav-active-indicator {
+
+        width: 100%;
+
+        height: 46px;
+
+        border-radius: 13px;
+
+    }
+
+
+    .bottom-nav-item {
+
+        height: 46px;
+
+        min-height: 46px;
+
+        flex-basis: 46px;
+
+        padding:
+            0
+            10px;
+
+        gap: 9px;
+
+    }
+
+
+    .nav-item-label {
+
+        font-size: 12px;
+
+    }
+
+
+    .nav-icon-wrapper {
+
+        width: 27px;
+        height: 27px;
+
+        min-width: 27px;
+
+    }
+
+
+    .nav-icon-svg {
+
+        width: 23px;
+        height: 23px;
+
+    }
+
+
+    .nav-profile-image {
+
+        width: 27px;
+        height: 27px;
 
     }
 
@@ -653,22 +904,39 @@
 /* =========================================================
    DESKTOP GRANDE
    A PARTIR DE 1200px
+
+   Mantém o mesmo eixo horizontal utilizado pela logo.
+
+   Conteúdo:
+   820px
+
+   Metade:
+   410px
+
+   Menu:
+   180px
+
+   Espaçamento:
+   20px
+
+   410 + 180 + 20 = 610px
 ========================================================= */
 
 @media (min-width: 1200px) {
 
     .bottom-nav {
 
-        /*
-         * Em telas grandes deixamos uma distância maior
-         * entre o menu e o centro da página.
-         *
-         * O menu permanece fora da coluna principal.
-         */
-        left: max(
-            32px,
-            calc(50% - 700px)
-        );
+        top: 76px;
+
+        left:
+            max(
+                20px,
+                calc(50% - 610px)
+            );
+
+        width: 180px;
+
+        max-width: 180px;
 
     }
 

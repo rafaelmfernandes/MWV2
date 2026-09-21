@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 
 <html lang="pt-BR">
@@ -17,6 +18,7 @@
 
 <title>MusicalWorld - Conectando a Cena</title>
 
+
 <!-- =====================================================
      CSS PRINCIPAL
      ===================================================== -->
@@ -25,6 +27,7 @@
     rel="stylesheet"
     href="css/main.css"
 >
+
 
 <!-- =====================================================
      CSS DO MENU INFERIOR
@@ -35,6 +38,7 @@
     href="css/menu-inferior.css"
 >
 
+
 <!-- =====================================================
      CSS DO MODAL DE FILTROS
      ===================================================== -->
@@ -43,6 +47,7 @@
     rel="stylesheet"
     href="css/modal-filtro.css"
 >
+
 
 <!-- =====================================================
      CSS DO MODAL DE NOTIFICAÇÃO
@@ -53,6 +58,7 @@
     href="css/components/modal-notificacao.css"
 >
 
+
 <!-- =====================================================
      CSS DO MODAL ANUNCIAR
      ===================================================== -->
@@ -61,6 +67,7 @@
     rel="stylesheet"
     href="css/modal-anunciar.css"
 >
+
 
 <!-- =====================================================
      CSS DO ONBOARDING
@@ -71,6 +78,7 @@
     href="css/components/onboarding.css"
 >
 
+
 <!-- =====================================================
      CSS DAS INTERAÇÕES DE PERFIL
      ===================================================== -->
@@ -79,6 +87,7 @@
     rel="stylesheet"
     href="css/components/interacoes-perfil.css"
 >
+
 
 <!-- =====================================================
      FONTES
@@ -102,7 +111,9 @@
 
 </head>
 
+
 <body>
+
 
 <!-- =====================================================
      CONTAINER PRINCIPAL DO APLICATIVO
@@ -110,11 +121,13 @@
 
 <div class="app-container">
 
+
 <!-- =====================================================
      CABEÇALHO PRINCIPAL
      ===================================================== -->
 
 <header class="navbar">
+
 
 <!-- =================================================
      ÁREA DA MARCA
@@ -122,11 +135,13 @@
 
 <div class="navbar-brand-area">
 
+
 <!-- =============================================
      CONTAINER DA CONTA
      ============================================= -->
 
 <div class="cabecalho-conta">
+
 
     <!-- =========================================
          LOGO + SETA
@@ -143,6 +158,7 @@
         onclick="window.Cabecalho && typeof window.Cabecalho.alternarMenuConta === 'function' && window.Cabecalho.alternarMenuConta()"
     >
 
+
         <!-- =====================================
              LOGO MUSICALWORLD
              ===================================== -->
@@ -153,6 +169,7 @@
         >
             Musical<span>World</span>
         </span>
+
 
         <!-- =====================================
              SETA DO MENU DA CONTA
@@ -179,6 +196,7 @@
 
     </button>
 
+
     <!-- =============================================
          MENU DA CONTA
          ============================================= -->
@@ -190,6 +208,7 @@
         aria-hidden="true"
     >
 
+
         <!-- =========================================
              TROCAR DE USUÁRIO
              ========================================= -->
@@ -200,10 +219,6 @@
             role="menuitem"
             onclick="window.Cabecalho && typeof window.Cabecalho.trocarConta === 'function' && window.Cabecalho.trocarConta()"
         >
-
-            <!-- =====================================
-                 ÍCONE TROCAR USUÁRIO
-                 ===================================== -->
 
             <svg
                 viewBox="0 0 24 24"
@@ -250,6 +265,7 @@
 
         </button>
 
+
         <!-- =========================================
              SALVOS E CURTIDOS
              ========================================= -->
@@ -260,10 +276,6 @@
             role="menuitem"
             onclick="window.Cabecalho && typeof window.Cabecalho.abrirSalvosCurtidos === 'function' && window.Cabecalho.abrirSalvosCurtidos()"
         >
-
-            <!-- =====================================
-                 ÍCONE SALVOS E CURTIDOS
-                 ===================================== -->
 
             <svg
                 viewBox="0 0 24 24"
@@ -296,6 +308,7 @@
 
         </button>
 
+
         <!-- =========================================
              DIVISOR
              ========================================= -->
@@ -304,6 +317,7 @@
             class="cabecalho-menu-conta-divisor"
             aria-hidden="true"
         ></div>
+
 
         <!-- =========================================
              SAIR
@@ -315,10 +329,6 @@
             role="menuitem"
             onclick="window.Cabecalho && typeof window.Cabecalho.sair === 'function' && window.Cabecalho.sair()"
         >
-
-            <!-- =====================================
-                 ÍCONE SAIR
-                 ===================================== -->
 
             <svg
                 viewBox="0 0 24 24"
@@ -363,11 +373,13 @@
 
 </div>
 
+
 <!-- =================================================
      ÁREA DE AÇÕES DO CABEÇALHO
      ================================================= -->
 
 <div class="navbar-actions">
+
 
 <!-- =============================================
      ANUNCIAR
@@ -405,11 +417,12 @@
 
     </svg>
 
-    <span>
+    <span class="cabecalho-action-label">
         Anunciar
     </span>
 
 </button>
+
 
 <!-- =============================================
      NOTIFICAÇÕES
@@ -448,6 +461,10 @@
 
     </svg>
 
+    <span class="cabecalho-action-label">
+        Notificações
+    </span>
+
     <span
         id="badge-notificacoes"
         class="notification-badge"
@@ -458,6 +475,7 @@
     </span>
 
 </button>
+
 
 <!-- =============================================
      MENSAGENS
@@ -489,6 +507,10 @@
 
     </svg>
 
+    <span class="cabecalho-action-label">
+        Mensagens
+    </span>
+
     <span
         id="badge-mensagens"
         class="notification-badge"
@@ -499,6 +521,7 @@
     </span>
 
 </button>
+
 
 <!-- =============================================
      CARREGAMENTO DO CABEÇALHO
@@ -515,6 +538,7 @@
 
 </div>
 
+
 <!-- =============================================
      ESTADO DESLOGADO
      ============================================= -->
@@ -525,6 +549,7 @@
     style="display: none;"
     aria-hidden="true"
 ></div>
+
 
 <!-- =============================================
      ESTADO LOGADO
@@ -537,9 +562,11 @@
     aria-hidden="true"
 ></div>
 
+
 </div>
 
 </header>
+
 
 <!-- =================================================
      MODAL DE PRÉ-VISUALIZAÇÃO DE NOTIFICAÇÃO
@@ -549,190 +576,222 @@
     id="modal-notificacao-container"
 ></div>
 
+
 <!-- =================================================
      CONTEÚDO PRINCIPAL
      ================================================= -->
 
 <main class="main-content">
 
-<!-- =================================================
-     AVISO DO FEED
-     ================================================= -->
 
-<section
-    id="feedAviso"
-    class="feed-aviso"
->
+    <!-- =================================================
+         LAYOUT PRINCIPAL DO FEED
+         ================================================= -->
 
-<div class="feed-aviso-icone">
+    <div class="feed-layout">
 
-    <svg
-        viewBox="0 0 24 24"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-        aria-hidden="true"
-    >
 
-        <path
-            d="M12 3L21 8V16L12 21L3 16V8L12 3Z"
-            stroke="currentColor"
-            stroke-width="1.8"
-            stroke-linejoin="round"
-        />
+        <!-- =============================================
+             COLUNA PRINCIPAL DO FEED
+             ============================================= -->
 
-        <path
-            d="M12 8V13"
-            stroke="currentColor"
-            stroke-width="1.8"
-            stroke-linecap="round"
-        />
+        <section class="feed-main-column">
 
-        <circle
-            cx="12"
-            cy="16.5"
-            r="0.8"
-            fill="currentColor"
-        />
 
-    </svg>
+            <!-- =========================================
+                 CONTADOR DE PROFISSIONAIS
+                 ========================================= -->
 
-</div>
+            <div
+                id="contador-profissionais"
+                class="contador-profissionais"
+            ></div>
 
-<div class="feed-aviso-conteudo">
 
-    <strong>
-        Encontre seu próximo talento
-    </strong>
+            <!-- =========================================
+                 FEED
+                 ========================================= -->
 
-    <span>
-        Descubra artistas e profissionais para seu próximo projeto.
-    </span>
+            <div
+                id="feed-profissionais"
+                class="feed-profissionais"
+            >
 
-</div>
+                <div
+                    class="carregando-profissionais"
+                >
 
-<button
-    type="button"
-    id="btnFecharFeedAviso"
-    class="feed-aviso-fechar"
-    aria-label="Fechar aviso"
-    title="Fechar aviso"
->
+                    <div class="feed-spinner"></div>
 
-    <svg
-        viewBox="0 0 24 24"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-        aria-hidden="true"
-    >
+                    <span>
+                        Carregando profissionais...
+                    </span>
 
-        <path
-            d="M6 6L18 18"
-            stroke="currentColor"
-            stroke-width="1.8"
-            stroke-linecap="round"
-        />
+                </div>
 
-        <path
-            d="M18 6L6 18"
-            stroke="currentColor"
-            stroke-width="1.8"
-            stroke-linecap="round"
-        />
+            </div>
 
-    </svg>
 
-</button>
+            <!-- =========================================
+                 CARREGAMENTO DE MAIS PROFISSIONAIS
+                 ========================================= -->
 
-</section>
+            <div
+                id="feed-carregando-mais"
+                class="feed-carregando-mais"
+                style="display: none;"
+            >
 
-<!-- =================================================
-     SEÇÃO DE PROFISSIONAIS
-     ================================================= -->
+                <div class="feed-spinner"></div>
 
-<section class="profissionais-section">
+                <span>
+                    Carregando mais profissionais...
+                </span>
 
-<!-- =============================================
-     CONTADOR DE PROFISSIONAIS
-     ============================================= -->
+            </div>
 
-<div
-    id="contador-profissionais"
-    class="contador-profissionais"
-></div>
 
-<!-- =============================================
-     FEED
-     ============================================= -->
+            <!-- =========================================
+                 FEED VAZIO
+                 ========================================= -->
 
-<div
-    id="feed-profissionais"
-    class="feed-profissionais"
->
+            <div
+                id="feed-vazio"
+                class="feed-vazio"
+                style="display: none;"
+            >
 
-    <div
-        class="carregando-profissionais"
-    >
+                <strong>
+                    Nenhum profissional encontrado
+                </strong>
 
-        <div class="feed-spinner"></div>
+                <span>
+                    Tente alterar os filtros para encontrar novos talentos.
+                </span>
 
-        <span>
-            Carregando profissionais...
-        </span>
+            </div>
+
+
+            <!-- =========================================
+                 SENTINELA DO SCROLL INFINITO
+                 ========================================= -->
+
+            <div
+                id="feed-sentinela"
+                aria-hidden="true"
+            ></div>
+
+
+        </section>
+
+
+        <!-- =============================================
+             COLUNA LATERAL
+             ============================================= -->
+
+        <aside class="feed-sidebar">
+
+
+            <!-- =========================================
+                 AVISO DO FEED
+                 ========================================= -->
+
+            <section
+                id="feedAviso"
+                class="feed-aviso"
+            >
+
+                <div class="feed-aviso-icone">
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                        aria-hidden="true"
+                    >
+
+                        <path
+                            d="M12 3L21 8V16L12 21L3 16V8L12 3Z"
+                            stroke="currentColor"
+                            stroke-width="1.8"
+                            stroke-linejoin="round"
+                        />
+
+                        <path
+                            d="M12 8V13"
+                            stroke="currentColor"
+                            stroke-width="1.8"
+                            stroke-linecap="round"
+                        />
+
+                        <circle
+                            cx="12"
+                            cy="16.5"
+                            r="0.8"
+                            fill="currentColor"
+                        />
+
+                    </svg>
+
+                </div>
+
+
+                <div class="feed-aviso-conteudo">
+
+                    <strong>
+                        Encontre seu próximo talento
+                    </strong>
+
+                    <span>
+                        Descubra artistas e profissionais para seu próximo projeto.
+                    </span>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    id="btnFecharFeedAviso"
+                    class="feed-aviso-fechar"
+                    aria-label="Fechar aviso"
+                    title="Fechar aviso"
+                >
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                        aria-hidden="true"
+                    >
+
+                        <path
+                            d="M6 6L18 18"
+                            stroke="currentColor"
+                            stroke-width="1.8"
+                            stroke-linecap="round"
+                        />
+
+                        <path
+                            d="M18 6L6 18"
+                            stroke="currentColor"
+                            stroke-width="1.8"
+                            stroke-linecap="round"
+                        />
+
+                    </svg>
+
+                </button>
+
+            </section>
+
+
+        </aside>
+
 
     </div>
 
-</div>
-
-<!-- =============================================
-     CARREGAMENTO DE MAIS PROFISSIONAIS
-     ============================================= -->
-
-<div
-    id="feed-carregando-mais"
-    class="feed-carregando-mais"
-    style="display: none;"
->
-
-    <div class="feed-spinner"></div>
-
-    <span>
-        Carregando mais profissionais...
-    </span>
-
-</div>
-
-<!-- =============================================
-     FEED VAZIO
-     ============================================= -->
-
-<div
-    id="feed-vazio"
-    class="feed-vazio"
-    style="display: none;"
->
-
-    <strong>
-        Nenhum profissional encontrado
-    </strong>
-
-    <span>
-        Tente alterar os filtros para encontrar novos talentos.
-    </span>
-
-</div>
-
-<!-- =============================================
-     SENTINELA DO SCROLL INFINITO
-     ============================================= -->
-
-<div
-    id="feed-sentinela"
-    aria-hidden="true"
-></div>
-
-</section>
-
 </main>
+
 
 <!-- =================================================
      MODAL DE FILTROS
@@ -742,6 +801,7 @@
     id="modal-filtro-container"
 ></div>
 
+
 <!-- =================================================
      MENU INFERIOR
      ================================================= -->
@@ -750,7 +810,9 @@
     id="menu-inferior-container"
 ></div>
 
+
 </div>
+
 
 <!-- =====================================================
      SUPABASE
@@ -759,6 +821,7 @@
 <script
     src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"
 ></script>
+
 
 <!-- =====================================================
      CORE
@@ -774,6 +837,7 @@
 
 <script src="js/core/RoteamentoPerfil.js"></script>
 
+
 <!-- =====================================================
      COMPONENTES
      ===================================================== -->
@@ -788,11 +852,13 @@
 
 <script src="js/components/modal-filtro.js"></script>
 
+
 <!-- =====================================================
      COMPONENTE UNIVERSAL DE INTERAÇÕES DE PERFIL
      ===================================================== -->
 
 <script src="js/components/interacoes-perfil.js"></script>
+
 
 <!-- =====================================================
      LÓGICA PRINCIPAL DO INDEX
@@ -806,17 +872,20 @@
 
 <script src="js/index/aviso-feed.js"></script>
 
+
 <!-- =====================================================
      MENU INFERIOR
      ===================================================== -->
 
 <script src="js/components/menu-inferior.js"></script>
 
+
 <!-- =====================================================
      ONBOARDING
      ===================================================== -->
 
 <script src="js/components/onboarding.js"></script>
+
 
 <!-- =====================================================
      INICIALIZAÇÃO DOS COMPONENTES
@@ -864,9 +933,9 @@ document.addEventListener(
         MODAL ANUNCIAR
         -------------------------------------------------
 
-        O componente agora é carregado diretamente pelo
-        index.html, pois o botão Anunciar foi transferido
-        para o cabeçalho.
+        O componente é carregado diretamente pelo
+        index.html, pois o botão Anunciar está no
+        cabeçalho.
 
         -------------------------------------------------
         */
@@ -963,6 +1032,8 @@ document.addEventListener(
 
 </script>
 
+
 </body>
 
 </html>
+
