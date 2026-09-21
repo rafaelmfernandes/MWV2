@@ -1,3 +1,4 @@
+
 /* =========================================================
    MUSICALWORLD — CABEÇALHO PRINCIPAL
    Arquivo: 03-cabecalho.css
@@ -8,7 +9,9 @@
    - Exibir a seta de acesso ao menu da conta.
    - Estilizar o menu "Trocar de usuário" / "Sair".
    - Manter Anunciar, Notificações e Mensagens à direita.
-   - Os três botões de ação usam o mesmo padrão visual.
+   - Os três botões de ação possuem círculos individuais
+     com efeito de vidro/espelho.
+   - O cabeçalho não possui fundo próprio.
    - O botão Anunciar é somente um ícone, sem texto.
    - O perfil do usuário permanece no menu inferior.
    ========================================================= */
@@ -16,6 +19,20 @@
 
 /* =========================================================
    CABEÇALHO
+
+   O cabeçalho é transparente.
+
+   Não existe:
+   - fundo branco;
+   - efeito de vidro na barra inteira;
+   - linha inferior;
+   - sombra da barra inteira.
+
+   O efeito visual de vidro fica somente nos três
+   botões individuais de ação.
+
+   O pseudo-elemento ::before cria apenas um gradiente
+   muito suave de preto para transparente atrás do topo.
    ========================================================= */
 
 .navbar {
@@ -34,18 +51,61 @@
 
     padding: 0 24px;
 
-    background: rgba(255, 255, 255, 0.88);
+    background: transparent;
 
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
 
-    border-bottom: 1px solid rgba(23, 32, 51, 0.08);
+    border-bottom: none;
 
-    box-shadow: 0 4px 18px rgba(23, 32, 51, 0.06);
+    box-shadow: none;
 
     z-index: 1000;
 
     box-sizing: border-box;
+}
+
+
+/* =========================================================
+   GRADIENTE SUAVE ATRÁS DO CABEÇALHO
+
+   O cabeçalho continua transparente.
+
+   Este efeito não cria uma barra preta sólida.
+
+   O preto começa muito suave na parte superior e vai
+   desaparecendo gradualmente até ficar completamente
+   transparente.
+
+   O conteúdo da página continua visível por baixo.
+
+   pointer-events: none impede que o pseudo-elemento
+   interfira nos cliques dos elementos do cabeçalho.
+   ========================================================= */
+
+.navbar::before {
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    left: 0;
+    right: 0;
+
+    height: 92px;
+
+    background:
+        linear-gradient(
+            to bottom,
+            rgba(0, 0, 0, 0.28) 0%,
+            rgba(0, 0, 0, 0.16) 30%,
+            rgba(0, 0, 0, 0.06) 65%,
+            rgba(0, 0, 0, 0) 100%
+        );
+
+    pointer-events: none;
+
+    z-index: -1;
 }
 
 
@@ -65,7 +125,7 @@
 
 /* =========================================================
    CONTAINER DA CONTA
-   ---------------------------------------------------------
+
    Agrupa:
    - Logo
    - Seta
@@ -175,7 +235,7 @@
 
 /* =========================================================
    SETA DO MENU DA CONTA
-   ---------------------------------------------------------
+
    A seta indica que existe um menu associado à logo.
 
    Quando o menu é aberto, o JavaScript adiciona
@@ -220,11 +280,8 @@
 
 /* =========================================================
    MENU DA CONTA
-   ---------------------------------------------------------
-   Dropdown exibido abaixo da logo.
 
-   O menu permanece no DOM e é controlado através
-   das classes .aberto / aria-hidden pelo JavaScript.
+   Dropdown exibido abaixo da logo.
    ========================================================= */
 
 .cabecalho-menu-conta {
@@ -426,6 +483,17 @@
 
 /* =========================================================
    ÁREA DAS AÇÕES DO CABEÇALHO
+
+   Os três botões ficam separados.
+
+   Cada botão possui:
+   - sua própria bolha;
+   - transparência;
+   - efeito de vidro;
+   - desfoque do fundo;
+   - sombra individual.
+
+   Não existe um container branco envolvendo os três.
    ========================================================= */
 
 .navbar-actions {
@@ -433,17 +501,22 @@
     align-items: center;
     justify-content: flex-end;
 
-    gap: 8px;
+    gap: 16px;
 
     margin-left: auto;
 }
 
 
 /* =========================================================
-   BOTÕES SUPERIORES
-   ---------------------------------------------------------
-   Os três botões possuem exatamente a mesma área
-   de clique.
+   BOTÕES SUPERIORES — EFEITO VIDRO / ESPELHO
+
+   Cada botão possui sua própria superfície translúcida.
+
+   A transparência permite perceber discretamente
+   o conteúdo que estiver atrás da bolha.
+
+   O backdrop-filter cria o efeito de vidro ao desfocar
+   o fundo imediatamente atrás do botão.
    ========================================================= */
 
 .nav-icon-btn,
@@ -463,18 +536,28 @@
     padding: 0;
     margin: 0;
 
-    border: 0;
+    border: 1px solid rgba(255, 255, 255, 0.82);
+
     border-radius: 50%;
 
-    background: transparent;
+    background: rgba(255, 255, 255, 0.72);
 
     color: #172033;
 
     cursor: pointer;
 
+    box-shadow:
+        0 4px 14px rgba(15, 20, 31, 0.10),
+        inset 0 1px 0 rgba(255, 255, 255, 0.78);
+
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+
     transition:
         background-color 0.2s ease,
         color 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
         transform 0.2s ease;
 
     box-sizing: border-box;
@@ -483,13 +566,21 @@
 
 /* =========================================================
    HOVER DOS BOTÕES
+
+   O hover acontece somente na própria bolinha.
    ========================================================= */
 
 .nav-icon-btn:hover,
 .cabecalho-btn-anunciar:hover {
-    background: rgba(23, 32, 51, 0.07);
+    background: rgba(255, 255, 255, 0.82);
+
+    border-color: rgba(255, 255, 255, 0.92);
 
     color: #1677d2;
+
+    box-shadow:
+        0 6px 18px rgba(15, 20, 31, 0.14),
+        inset 0 1px 0 rgba(255, 255, 255, 0.92);
 }
 
 
@@ -511,14 +602,12 @@
 .cabecalho-btn-anunciar:focus-visible {
     outline: 2px solid rgba(22, 119, 210, 0.35);
 
-    outline-offset: 2px;
+    outline-offset: 3px;
 }
 
 
 /* =========================================================
    ÍCONES DE NOTIFICAÇÃO E MENSAGENS
-   ---------------------------------------------------------
-   Estes permanecem no tamanho original aprovado.
    ========================================================= */
 
 .top-icon-svg {
@@ -544,7 +633,7 @@
 
 /* =========================================================
    ÍCONE DO ANUNCIAR
-   ---------------------------------------------------------
+
    Esta regra afeta SOMENTE o Anunciar.
    ========================================================= */
 
@@ -568,7 +657,7 @@
 
 /* =========================================================
    TEXTO INTERNO DO ANUNCIAR
-   ---------------------------------------------------------
+
    Mantido no HTML, mas oculto visualmente.
    ========================================================= */
 
@@ -606,7 +695,7 @@
     font-weight: 700;
     line-height: 1;
 
-    border: 2px solid #ffffff;
+    border: 2px solid rgba(255, 255, 255, 0.92);
 
     box-sizing: border-box;
 }
@@ -614,7 +703,7 @@
 
 /* =========================================================
    ESTADOS ANTIGOS DO CABEÇALHO
-   ---------------------------------------------------------
+
    Mantidos apenas por compatibilidade com o
    Cabecalho.js atual.
    ========================================================= */
@@ -628,7 +717,7 @@
 
 /* =========================================================
    MENU DE USUÁRIO ANTIGO
-   ---------------------------------------------------------
+
    O antigo menu associado ao avatar não é mais utilizado.
 
    O novo menu está em .cabecalho-menu-conta.
@@ -682,8 +771,17 @@
     }
 
 
+    /* =====================================================
+       GRADIENTE — TABLET / CELULAR
+    ===================================================== */
+
+    .navbar::before {
+        height: 82px;
+    }
+
+
     .navbar-actions {
-        gap: 4px;
+        gap: 12px;
     }
 
 
@@ -719,6 +817,15 @@
     }
 
 
+    /* =====================================================
+       GRADIENTE — CELULAR
+    ===================================================== */
+
+    .navbar::before {
+        height: 80px;
+    }
+
+
     .logo {
         font-size: 18px;
     }
@@ -740,7 +847,7 @@
 
 
     .navbar-actions {
-        gap: 2px;
+        gap: 10px;
     }
 
 
@@ -781,8 +888,17 @@
     }
 
 
+    /* =====================================================
+       GRADIENTE — CELULAR MUITO PEQUENO
+    ===================================================== */
+
+    .navbar::before {
+        height: 78px;
+    }
+
+
     .navbar-actions {
-        gap: 0;
+        gap: 8px;
     }
 
 
@@ -835,7 +951,9 @@
     .cabecalho-menu-conta,
     .cabecalho-menu-conta-item,
     .cabecalho-menu-conta-item svg {
+
         transition: none;
     }
 
 }
+

@@ -26,6 +26,8 @@ Responsabilidade deste módulo:
   for criada no banco.
 - Direcionar notificações de contratação para a página
   de acompanhamento da contratação.
+- Controlar o comportamento inteligente do cabeçalho
+  durante a rolagem em dispositivos móveis.
 
 IMPORTANTE:
 
@@ -76,6 +78,36 @@ const Cabecalho = {
 
     /*
     =====================================================
+    ESTADO DO CABEÇALHO DURANTE A ROLAGEM
+    =====================================================
+
+    O cabeçalho inteligente funciona somente em telas
+    de dispositivos móveis.
+
+    Ao rolar para baixo:
+        cabeçalho desaparece.
+
+    Ao rolar para cima:
+        cabeçalho reaparece.
+
+    =====================================================
+    */
+
+    cabecalhoScrollInicializado: false,
+
+    cabecalhoScrollElemento: null,
+
+    cabecalhoUltimoScroll: 0,
+
+    cabecalhoOculto: false,
+
+    cabecalhoScrollProcessando: false,
+
+    cabecalhoLarguraAnterior: null,
+
+
+    /*
+    =====================================================
     INICIALIZAÇÃO
     =====================================================
     */
@@ -95,6 +127,21 @@ const Cabecalho = {
 
 
         this.inicializado = true;
+
+
+        /*
+        -------------------------------------------------
+        Inicializa o comportamento do cabeçalho móvel.
+        -------------------------------------------------
+
+        Isso é independente da sessão do usuário.
+
+        O cabeçalho precisa responder à rolagem mesmo
+        quando o usuário ainda não estiver autenticado.
+        -------------------------------------------------
+        */
+
+        this.inicializarCabecalhoScroll();
 
 
         this.mostrarCarregando();
@@ -148,6 +195,597 @@ const Cabecalho = {
 
 
             this.mostrarDeslogado();
+
+        }
+
+    },
+
+
+    /*
+    =====================================================
+    CABEÇALHO INTELIGENTE — ROLAGEM MOBILE
+    =====================================================
+
+    Comportamento:
+
+    - Somente abaixo de 768px.
+    - Rolando para baixo:
+        esconde o cabeçalho.
+    - Rolando para cima:
+        mostra o cabeçalho.
+    - No topo:
+        cabeçalho sempre visível.
+
+    O código procura primeiro por:
+
+        .main-content
+
+    porque o MusicalWorld utiliza essa área como
+    container principal de rolagem.
+
+    Caso ela não exista, utiliza o window como
+    fallback.
+
+    =====================================================
+    */
+
+    inicializarCabecalhoScroll() {
+
+        if (
+            this.cabecalhoScrollInicializado
+        ) {
+
+            return;
+
+        }
+
+
+        const navbar =
+            document.querySelector(
+                '.navbar'
+            );
+
+
+        if (!navbar) {
+
+            console.warn(
+                'Cabeçalho: .navbar não encontrado para inicializar o comportamento de rolagem.'
+            );
+
+            return;
+
+        }
+
+
+        /*
+        -------------------------------------------------
+        Identifica o elemento responsável pela rolagem.
+        -------------------------------------------------
+        */
+
+        const elementoScroll =
+            document.querySelector(
+                '.main-content'
+            ) ||
+            window;
+
+
+        this.cabecalhoScrollElemento =
+            elementoScroll;
+
+
+        this.cabecalhoUltimoScroll =
+            this.obterPosicaoScroll(
+                elementoScroll
+            );
+
+
+        this.cabecalhoLarguraAnterior =
+            window.innerWidth;
+
+
+        /*
+        -------------------------------------------------
+        Configuração visual inicial.
+
+        A transição é aplicada diretamente pelo JS para
+        que não seja necessário alterar o HTML.
+
+        O cabeçalho continua ocupando seu espaço normal
+        no layout; apenas desliza visualmente para cima.
+        -------------------------------------------------
+        */
+
+        navbar.style.transition =
+            'transform 0.25s ease';
+
+
+        navbar.style.willChange =
+            'transform';
+
+
+        navbar.style.transform =
+            'translateY(0)';
+
+
+        /*
+        -------------------------------------------------
+        Listener de rolagem.
+
+        passive:true melhora a performance do scroll
+        em dispositivos móveis.
+        -------------------------------------------------
+        */
+
+        elementoScroll.addEventListener(
+            'scroll',
+            () => {
+
+                this.processarScrollCabecalho();
+
+            },
+            {
+                passive: true
+            }
+        );
+
+
+        /*
+        -------------------------------------------------
+        Quando a orientação/tamanho da tela mudar,
+        verificamos novamente se o comportamento deve
+        estar ativo.
+
+        Isso evita que o cabeçalho permaneça escondido
+        quando o usuário gira o aparelho ou passa para
+        uma largura de desktop.
+        -------------------------------------------------
+        */
+
+        window.addEventListener(
+            'resize',
+            () => {
+
+                this.verificarLarguraCabecalho();
+
+            },
+            {
+                passive: true
+            }
+        );
+
+
+        this.cabecalhoScrollInicializado =
+            true;
+
+
+        console.log(
+            'Cabeçalho: comportamento inteligente de rolagem inicializado.'
+        );
+
+    },
+
+
+    /*
+    =====================================================
+    OBTER POSIÇÃO ATUAL DO SCROLL
+    =====================================================
+    */
+
+    obterPosicaoScroll(
+        elemento
+    ) {
+
+        if (
+            elemento ===
+            window
+        ) {
+
+            return (
+                window.scrollY ||
+                window.pageYOffset ||
+                0
+            );
+
+        }
+
+
+        return (
+            elemento?.scrollTop ||
+            0
+        );
+
+    },
+
+
+    /*
+    =====================================================
+    PROCESSAR ROLAGEM DO CABEÇALHO
+    =====================================================
+    */
+
+    processarScrollCabecalho() {
+
+        /*
+        -------------------------------------------------
+        Proteção contra chamadas excessivas durante
+        o mesmo frame de animação.
+        -------------------------------------------------
+        */
+
+        if (
+            this.cabecalhoScrollProcessando
+        ) {
+
+            return;
+
+        }
+
+
+        this.cabecalhoScrollProcessando =
+            true;
+
+
+        requestAnimationFrame(
+            () => {
+
+                this.cabecalhoScrollProcessando =
+                    false;
+
+
+                const navbar =
+                    document.querySelector(
+                        '.navbar'
+                    );
+
+
+                if (!navbar) {
+
+                    return;
+
+                }
+
+
+                /*
+                -------------------------------------------------
+                O comportamento inteligente existe somente
+                em telas de celular/tablet pequeno.
+
+                A partir de 769px o cabeçalho volta ao
+                comportamento normal.
+                -------------------------------------------------
+                */
+
+                if (
+                    window.innerWidth >
+                    768
+                ) {
+
+                    this.mostrarCabecalhoScroll();
+
+                    this.cabecalhoUltimoScroll =
+                        this.obterPosicaoScroll(
+                            this.cabecalhoScrollElemento
+                        );
+
+                    return;
+
+                }
+
+
+                const posicaoAtual =
+                    this.obterPosicaoScroll(
+                        this.cabecalhoScrollElemento
+                    );
+
+
+                /*
+                -------------------------------------------------
+                Nunca deixamos a posição ficar negativa.
+                -------------------------------------------------
+                */
+
+                const posicaoNormalizada =
+                    Math.max(
+                        0,
+                        posicaoAtual
+                    );
+
+
+                /*
+                -------------------------------------------------
+                Se chegou ao topo, o cabeçalho sempre aparece.
+                -------------------------------------------------
+                */
+
+                if (
+                    posicaoNormalizada <=
+                    5
+                ) {
+
+                    this.mostrarCabecalhoScroll();
+
+
+                    this.cabecalhoUltimoScroll =
+                        posicaoNormalizada;
+
+
+                    return;
+
+                }
+
+
+                /*
+                -------------------------------------------------
+                Calcula a diferença entre a posição anterior
+                e a posição atual.
+                -------------------------------------------------
+                */
+
+                const diferenca =
+                    posicaoNormalizada -
+                    this.cabecalhoUltimoScroll;
+
+
+                /*
+                -------------------------------------------------
+                Ignora movimentos muito pequenos.
+
+                Isso evita que o cabeçalho fique piscando
+                durante pequenos movimentos do dedo.
+                -------------------------------------------------
+                */
+
+                const distanciaMinima =
+                    6;
+
+
+                if (
+                    Math.abs(diferenca) <
+                    distanciaMinima
+                ) {
+
+                    return;
+
+                }
+
+
+                /*
+                -------------------------------------------------
+                USUÁRIO DESCENDO
+                -------------------------------------------------
+
+                Scroll positivo significa que a posição
+                atual aumentou.
+
+                Portanto:
+
+                    página descendo
+                    = cabeçalho desaparece
+                -------------------------------------------------
+                */
+
+                if (
+                    diferenca >
+                    0
+                ) {
+
+                    this.esconderCabecalhoScroll();
+
+                }
+
+
+                /*
+                -------------------------------------------------
+                USUÁRIO SUBINDO
+                -------------------------------------------------
+
+                Scroll negativo significa que a posição
+                atual diminuiu.
+
+                Portanto:
+
+                    página subindo
+                    = cabeçalho reaparece
+                -------------------------------------------------
+                */
+
+                else if (
+                    diferenca <
+                    0
+                ) {
+
+                    this.mostrarCabecalhoScroll();
+
+                }
+
+
+                this.cabecalhoUltimoScroll =
+                    posicaoNormalizada;
+
+            }
+
+        );
+
+    },
+
+
+    /*
+    =====================================================
+    ESCONDER CABEÇALHO DURANTE SCROLL
+    =====================================================
+    */
+
+    esconderCabecalhoScroll() {
+
+        /*
+        -------------------------------------------------
+        Não executa em desktop.
+        -------------------------------------------------
+        */
+
+        if (
+            window.innerWidth >
+            768
+        ) {
+
+            return;
+
+        }
+
+
+        const navbar =
+            document.querySelector(
+                '.navbar'
+            );
+
+
+        if (!navbar) {
+
+            return;
+
+        }
+
+
+        if (
+            this.cabecalhoOculto
+        ) {
+
+            return;
+
+        }
+
+
+        this.cabecalhoOculto =
+            true;
+
+
+        navbar.style.transform =
+            'translateY(-100%)';
+
+    },
+
+
+    /*
+    =====================================================
+    MOSTRAR CABEÇALHO DURANTE SCROLL
+    =====================================================
+    */
+
+    mostrarCabecalhoScroll() {
+
+        const navbar =
+            document.querySelector(
+                '.navbar'
+            );
+
+
+        if (!navbar) {
+
+            return;
+
+        }
+
+
+        this.cabecalhoOculto =
+            false;
+
+
+        navbar.style.transform =
+            'translateY(0)';
+
+    },
+
+
+    /*
+    =====================================================
+    VERIFICAR LARGURA DO CABEÇALHO
+    =====================================================
+    */
+
+    verificarLarguraCabecalho() {
+
+        const larguraAtual =
+            window.innerWidth;
+
+
+        /*
+        -------------------------------------------------
+        Não precisamos executar novamente quando a largura
+        não mudou.
+        -------------------------------------------------
+        */
+
+        if (
+            larguraAtual ===
+            this.cabecalhoLarguraAnterior
+        ) {
+
+            return;
+
+        }
+
+
+        this.cabecalhoLarguraAnterior =
+            larguraAtual;
+
+
+        /*
+        -------------------------------------------------
+        Desktop:
+
+        O comportamento de esconder/mostrar pelo scroll
+        é desativado.
+        -------------------------------------------------
+        */
+
+        if (
+            larguraAtual >
+            768
+        ) {
+
+            this.mostrarCabecalhoScroll();
+
+
+            if (
+                this.cabecalhoScrollElemento
+            ) {
+
+                this.cabecalhoUltimoScroll =
+                    this.obterPosicaoScroll(
+                        this.cabecalhoScrollElemento
+                    );
+
+            }
+
+
+            return;
+
+        }
+
+
+        /*
+        -------------------------------------------------
+        Mobile:
+
+        Mantém o cabeçalho visível inicialmente.
+
+        A partir da próxima interação de scroll, o
+        comportamento inteligente assume o controle.
+        -------------------------------------------------
+        */
+
+        this.mostrarCabecalhoScroll();
+
+
+        if (
+            this.cabecalhoScrollElemento
+        ) {
+
+            this.cabecalhoUltimoScroll =
+                this.obterPosicaoScroll(
+                    this.cabecalhoScrollElemento
+                );
 
         }
 

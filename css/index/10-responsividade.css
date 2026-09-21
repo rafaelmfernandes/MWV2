@@ -1,3 +1,4 @@
+
 /* =========================================================
    MUSICALWORLD — INDEX
    Arquivo: 10-responsividade.css
@@ -9,7 +10,8 @@
    Este arquivo NÃO controla a aparência principal do
    cabeçalho.
 
-   A aparência visual do .navbar permanece exclusivamente no:
+   A aparência visual principal do .navbar permanece
+   exclusivamente no:
 
    css/index/03-cabecalho.css
 
@@ -17,82 +19,24 @@
 
    css/index/feed.css
 
-   Este arquivo controla apenas:
+   Este arquivo controla somente:
 
    * dimensões;
    * espaçamentos;
    * tamanhos;
    * posicionamentos específicos para telas menores.
-
-   ESTRUTURA ATUAL DO FEED:
-
-   * uma publicação abaixo da outra;
-   * uma publicação por linha;
-   * identidade primeiro;
-   * nome + tipo + localização;
-   * texto da publicação;
-   * mídia;
-   * ações sociais;
-   * informações complementares;
-   * ação para visualizar o perfil;
-   * sem altura fixa na publicação;
-   * mídia em fluxo normal.
-
-   NO CELULAR:
-
-   * o feed ocupa toda a largura disponível;
-   * o card não possui borda externa;
-   * o card não possui border-radius;
-   * o card não possui sombra;
-   * a mídia pode tocar diretamente as laterais da tela;
-   * a mídia permanece em fluxo normal;
-   * a identidade permanece acima da publicação;
-   * tipo e localização permanecem juntos;
-   * o texto permanece antes da mídia;
-   * as ações permanecem abaixo da mídia;
-   * informações complementares continuam disponíveis;
-   * o botão "Ver perfil" permanece disponível;
-   * o botão de tela cheia permanece disponível.
-
-   INTERAÇÕES:
-
-   * curtir;
-   * comentar;
-   * compartilhar;
-   * salvar/favoritar;
-   * contagens;
-   * lista de comentários;
-   * formulário de comentário;
-   * mensagens de estado.
-
-   A lógica das interações pertence ao:
-
-   js/components/interacoes-perfil.js
-
-   Este arquivo controla somente a apresentação responsiva
-   dessas interações.
-
-   IMPORTANTE:
-
-   A altura específica dos vídeos é definida aqui para
-   evitar que regras responsivas com height: 100% sobrescrevam
-   o tamanho definido no feed.css.
-
-   AJUSTE IMPORTANTE:
-
-   O tipo do artista NÃO possui mais limite percentual.
-
-   Exemplo:
-
-      Produtor(a) musical
-      Grupo de dança
-      Dançarino(a)
-
-   permanecem inteiros.
-
-   A localização ocupa o espaço restante e somente ela
-   poderá receber reticências quando faltar espaço.
 ========================================================= */
+
+
+/* =========================================================
+   FONTE DA LOGO
+
+   Sora foi escolhida para dar ao MusicalWorld uma aparência
+   mais moderna, marcante e tecnológica, sem perder a
+   sensação de uma marca musical contemporânea.
+========================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&display=swap');
 
 
 /* =========================================================
@@ -145,15 +89,7 @@
 
 
     /* =====================================================
-       AVISO DO FEED — ABAIXO DO CABEÇALHO
-    =====================================================
-
-       A navbar mobile possui 60px de altura.
-
-       O aviso não deve ficar escondido atrás dela.
-       Mantemos o aviso no fluxo normal da página e
-       adicionamos apenas o espaçamento necessário
-       para começar abaixo do cabeçalho.
+       AVISO DO FEED
     ===================================================== */
 
     .feed-aviso {
@@ -187,25 +123,46 @@
 
 
     /* =====================================================
-       LOGO
+       LOGO — SORA
+
+       A logo agora utiliza Sora para ter uma aparência
+       mais forte e contemporânea.
+
+       O peso 700 cria presença sem deixar a marca pesada.
     ===================================================== */
 
     .logo {
 
+        font-family:
+            "Sora",
+            "Manrope",
+            sans-serif;
+
         font-size: 19px;
 
-        letter-spacing: -0.6px;
+        font-weight: 700;
+
+        letter-spacing: -0.8px;
+
+        line-height: 1;
+
+        white-space: nowrap;
 
     }
 
 
     /* =====================================================
        AÇÕES DO CABEÇALHO
+
+       Os três botões permanecem separados.
+
+       O efeito visual de vidro/espelho pertence aos
+       próprios botões.
     ===================================================== */
 
     .navbar-actions {
 
-        gap: 3px;
+        gap: 12px;
 
         height: 100%;
 
@@ -215,25 +172,67 @@
 
 
     /* =====================================================
-       BOTÕES DE ÍCONE
+       BOTÕES DE ÍCONE — EFEITO ESPELHADO
     ===================================================== */
 
-    .nav-icon-btn {
+    .nav-icon-btn,
+    .cabecalho-btn-anunciar {
 
-        width: 42px;
+        width: 38px;
 
-        height: 42px;
+        height: 38px;
 
-        border-radius: 13px;
+        min-width: 38px;
+
+        min-height: 38px;
+
+        border-radius: 50%;
+
+        background: rgba(255, 255, 255, 0.72);
+
+        border: 1px solid rgba(255, 255, 255, 0.85);
+
+        box-shadow:
+            0 4px 14px rgba(15, 20, 31, 0.10),
+            inset 0 1px 0 rgba(255, 255, 255, 0.75);
+
+        backdrop-filter: blur(10px);
+
+        -webkit-backdrop-filter: blur(10px);
+
+        transition:
+            background-color 0.2s ease,
+            box-shadow 0.2s ease,
+            transform 0.2s ease;
 
     }
 
 
+    /* =====================================================
+       HOVER — EFEITO ESPELHADO
+    ===================================================== */
+
+    .nav-icon-btn:hover,
+    .cabecalho-btn-anunciar:hover {
+
+        background: rgba(255, 255, 255, 0.82);
+
+        box-shadow:
+            0 6px 18px rgba(15, 20, 31, 0.14),
+            inset 0 1px 0 rgba(255, 255, 255, 0.90);
+
+    }
+
+
+    /* =====================================================
+       ÍCONES
+    ===================================================== */
+
     .top-icon-svg {
 
-        width: 26px;
+        width: 24px;
 
-        height: 26px;
+        height: 24px;
 
     }
 
@@ -299,11 +298,6 @@
 
     }
 
-
-    /*
-     * O nome e o tipo do perfil permanecem presentes
-     * no DOM para compatibilidade com Cabecalho.js.
-     */
 
     .cabecalho-info-usuario {
 
@@ -513,14 +507,6 @@
 
     /* =====================================================
        TIPO + LOCALIZAÇÃO
-    =====================================================
-
-       O tipo não recebe mais max-width: 45%.
-
-       Ele ocupa somente o espaço necessário para
-       permanecer completamente visível.
-
-       A localização ocupa o espaço restante.
     ===================================================== */
 
     .ad-card-tipo-localizacao {
@@ -680,12 +666,6 @@
     }
 
 
-    /*
-     * Caso a identidade esteja dentro de
-     * .ad-card-conteudo em alguma versão do HTML,
-     * mantemos o espaçamento correto.
-     */
-
     .ad-card-conteudo .ad-card-identidade {
 
         margin-bottom: 8px;
@@ -801,13 +781,6 @@
     }
 
 
-    /*
-     * Não utilizar height: 100%.
-     *
-     * O vídeo recebe uma altura real para evitar
-     * comportamento incorreto em containers automáticos.
-     */
-
     .ad-video-container .ad-media-video {
 
         display: block;
@@ -837,10 +810,6 @@
 
     }
 
-
-    /* =====================================================
-       FALLBACK DE ERRO
-    ===================================================== */
 
     .ad-media-fallback {
 
@@ -903,16 +872,6 @@
 
     /* =====================================================
        INTERAÇÕES DO PERFIL
-    =====================================================
-
-       O componente universal:
-
-       js/components/interacoes-perfil.js
-
-       controla a lógica.
-
-       Aqui controlamos apenas a apresentação
-       responsiva da área.
     ===================================================== */
 
     .interacoes-perfil {
@@ -1185,14 +1144,6 @@
 
     /* =====================================================
        INFORMAÇÕES COMPLEMENTARES
-    =====================================================
-
-       A localização não pertence mais a esta área.
-
-       Ela foi movida para a identidade da publicação.
-
-       Mantemos somente estilos e outras informações
-       complementares que continuarem sendo utilizadas.
     ===================================================== */
 
     .ad-card-informacoes {
@@ -1471,7 +1422,6 @@
 
     }
 
-
 }
 
 
@@ -1505,9 +1455,16 @@
 
     .logo {
 
+        font-family:
+            "Sora",
+            "Manrope",
+            sans-serif;
+
         font-size: 18px;
 
-        letter-spacing: -0.5px;
+        font-weight: 700;
+
+        letter-spacing: -0.7px;
 
     }
 
@@ -1518,31 +1475,48 @@
 
     .navbar-actions {
 
-        gap: 2px;
+        gap: 8px;
 
     }
 
 
     /* =====================================================
-       BOTÕES DO CABEÇALHO
+       BOTÕES DO CABEÇALHO — TELA MUITO PEQUENA
     ===================================================== */
 
-    .nav-icon-btn {
+    .nav-icon-btn,
+    .cabecalho-btn-anunciar {
 
-        width: 39px;
+        width: 36px;
 
-        height: 39px;
+        height: 36px;
 
-        border-radius: 12px;
+        min-width: 36px;
+
+        min-height: 36px;
+
+        border-radius: 50%;
+
+        background: rgba(255, 255, 255, 0.72);
+
+        border: 1px solid rgba(255, 255, 255, 0.85);
+
+        box-shadow:
+            0 4px 12px rgba(15, 20, 31, 0.10),
+            inset 0 1px 0 rgba(255, 255, 255, 0.75);
+
+        backdrop-filter: blur(10px);
+
+        -webkit-backdrop-filter: blur(10px);
 
     }
 
 
     .top-icon-svg {
 
-        width: 26px;
+        width: 23px;
 
-        height: 26px;
+        height: 23px;
 
     }
 
@@ -1731,16 +1705,6 @@
     }
 
 
-    /*
-     * O tipo continua completamente visível.
-     *
-     * Não existe max-width: 45%.
-     *
-     * Não existe overflow hidden.
-     *
-     * Não existe text-overflow: ellipsis.
-     */
-
     .ad-card-tipo {
 
         display: inline-flex;
@@ -1769,10 +1733,6 @@
 
     }
 
-
-    /*
-     * A localização usa o espaço que restar.
-     */
 
     .ad-card-localizacao-inline {
 
@@ -2445,3 +2405,4 @@
 
 
 }
+
