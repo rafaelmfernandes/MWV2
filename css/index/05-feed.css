@@ -19,6 +19,20 @@
        ├── descrição
        └── ações
 
+   RESPONSIVIDADE:
+
+   - CELULAR:
+     Até 700px
+
+   - TABLET:
+     701px → 900px
+
+   - IPAD / TABLET GRANDE:
+     901px → 1199px
+
+   - DESKTOP:
+     1200px+
+
    REGRA IMPORTANTE:
 
    - A MÍDIA ocupa toda a largura do card.
@@ -43,9 +57,6 @@
 
     align-items: stretch;
 
-    /*
-     * Espaçamento entre as publicações.
-     */
     gap: 16px;
 
     margin: 0;
@@ -66,14 +77,6 @@
 
     margin: 0;
 
-    /*
-     * IMPORTANTE:
-     *
-     * Não existe padding lateral no card.
-     *
-     * Isso permite que a mídia ocupe toda a largura
-     * disponível e encoste nas bordas.
-     */
     padding:
         0 0 20px;
 
@@ -125,7 +128,6 @@
     background: #eef1f7;
 
     border-radius: 14px;
-    
 }
 
 
@@ -934,14 +936,6 @@
 
     width: 100%;
 
-    /*
-     * O espaçamento lateral pertence ao conteúdo,
-     * não ao card.
-     *
-     * Dessa forma:
-     * - a mídia toca as bordas;
-     * - os textos não ficam encostados.
-     */
     padding:
         0 16px;
 
@@ -1456,16 +1450,448 @@
 
 
 /* =========================================================
-   DESKTOP
+   TABLET
+   701px → 900px
+
+   IMPORTANTE:
+   Esta faixa NÃO altera a estrutura do celular.
+
+   O objetivo é criar uma versão ampliada do celular:
+
+   - uma coluna;
+   - card largo;
+   - mídia maior;
+   - identidade sobre a mídia;
+   - conteúdo abaixo;
+   - sem duas colunas;
+   - sem aparência de desktop estreito.
 ========================================================= */
 
-@media (min-width: 701px) {
+@media (min-width: 701px) and (max-width: 900px) {
 
     .feed-profissionais {
 
         width: 100%;
 
-        max-width: 580px;
+        max-width: 680px;
+
+        margin-left: auto;
+
+        margin-right: auto;
+
+        padding: 0;
+    }
+
+
+    .ad-card-novo {
+
+        width: 100%;
+
+        margin: 0;
+
+        padding:
+            0 0 18px;
+
+        border-radius: 14px;
+
+        overflow: hidden;
+    }
+
+
+    /* =====================================================
+       MÍDIA — TABLET
+
+       Aumentamos a mídia em relação ao celular,
+       mas mantemos a mesma proporção visual.
+    ===================================================== */
+
+    .ad-media-box {
+
+        width: 100%;
+
+        height: 360px;
+
+        border-radius: 14px;
+
+        overflow: hidden;
+    }
+
+
+    .ad-media-link {
+
+        width: 100%;
+
+        height: 100%;
+
+        border-radius: 14px;
+
+        overflow: hidden;
+    }
+
+
+    .ad-media-img {
+
+        width: 100%;
+
+        height: 100%;
+
+        min-width: 100%;
+
+        min-height: 100%;
+
+        object-fit: cover;
+
+        object-position: center;
+    }
+
+
+    /* =====================================================
+       VÍDEO — TABLET
+    ===================================================== */
+
+    .ad-video-container {
+
+        width: 100%;
+
+        height: 300px;
+
+        border-radius: 14px;
+
+        overflow: hidden;
+    }
+
+
+    .ad-video-link {
+
+        width: 100%;
+
+        height: 100%;
+
+        border-radius: 14px;
+
+        overflow: hidden;
+    }
+
+
+    .ad-video-container .ad-media-video {
+
+        width: 100%;
+
+        height: 300px;
+
+        min-width: 100%;
+
+        min-height: 100%;
+
+        object-fit: cover;
+
+        object-position: center;
+    }
+
+
+    /* =====================================================
+       IDENTIDADE
+    ===================================================== */
+
+    .ad-media-identidade {
+
+        padding:
+            50px 16px 16px;
+    }
+
+
+    .ad-identidade-com-midia {
+
+        padding:
+            50px 16px 16px;
+    }
+
+
+    /* =====================================================
+       CONTEÚDO
+    ===================================================== */
+
+    .ad-card-conteudo {
+
+        width: 100%;
+
+        padding:
+            0 14px;
+    }
+
+
+    .ad-card-tipo-publicacao {
+
+        margin-top: 13px;
+    }
+
+
+    .ad-card-descricao {
+
+        font-size: 14px;
+
+        line-height: 1.48;
+    }
+
+
+    /* =====================================================
+       IDENTIDADE SEM MÍDIA
+    ===================================================== */
+
+    .ad-card-identidade-sem-midia {
+
+        padding:
+            14px 54px 14px 14px;
+
+        border-radius: 14px;
+    }
+
+
+    /* =====================================================
+       BOTÃO DE TELA CHEIA
+    ===================================================== */
+
+    .ad-video-fullscreen {
+
+        opacity: 1;
+
+        visibility: visible;
+
+        right: 10px;
+
+        bottom: 10px;
+    }
+}
+
+
+/* =========================================================
+   IPAD / TABLET GRANDE
+   901px → 1199px
+
+   Mantemos a mesma linguagem do celular/tablet,
+   mas aproveitamos melhor a largura disponível.
+========================================================= */
+
+@media (min-width: 901px) and (max-width: 1199px) {
+
+    .feed-profissionais {
+
+        width: 100%;
+
+        max-width: 760px;
+
+        margin-left: auto;
+
+        margin-right: auto;
+
+        padding: 0;
+    }
+
+
+    .ad-card-novo {
+
+        width: 100%;
+
+        margin: 0;
+
+        padding:
+            0 0 20px;
+
+        border-radius: 14px;
+
+        overflow: hidden;
+    }
+
+
+    /* =====================================================
+       MÍDIA — IPAD
+    ===================================================== */
+
+    .ad-media-box {
+
+        width: 100%;
+
+        height: 400px;
+
+        border-radius: 14px;
+
+        overflow: hidden;
+    }
+
+
+    .ad-media-link {
+
+        width: 100%;
+
+        height: 100%;
+
+        border-radius: 14px;
+
+        overflow: hidden;
+    }
+
+
+    .ad-media-img {
+
+        width: 100%;
+
+        height: 100%;
+
+        min-width: 100%;
+
+        min-height: 100%;
+
+        object-fit: cover;
+
+        object-position: center;
+    }
+
+
+    /* =====================================================
+       VÍDEO — IPAD
+    ===================================================== */
+
+    .ad-video-container {
+
+        width: 100%;
+
+        height: 340px;
+
+        border-radius: 14px;
+
+        overflow: hidden;
+    }
+
+
+    .ad-video-link {
+
+        width: 100%;
+
+        height: 100%;
+
+        border-radius: 14px;
+
+        overflow: hidden;
+    }
+
+
+    .ad-video-container .ad-media-video {
+
+        width: 100%;
+
+        height: 340px;
+
+        min-width: 100%;
+
+        min-height: 100%;
+
+        object-fit: cover;
+
+        object-position: center;
+    }
+
+
+    /* =====================================================
+       IDENTIDADE
+    ===================================================== */
+
+    .ad-media-identidade {
+
+        padding:
+            54px 18px 17px;
+    }
+
+
+    .ad-identidade-com-midia {
+
+        padding:
+            54px 18px 17px;
+    }
+
+
+    /* =====================================================
+       CONTEÚDO
+    ===================================================== */
+
+    .ad-card-conteudo {
+
+        width: 100%;
+
+        padding:
+            0 16px;
+    }
+
+
+    .ad-card-tipo-publicacao {
+
+        margin-top: 14px;
+    }
+
+
+    .ad-card-estilos {
+
+        font-size: 13px;
+    }
+
+
+    .ad-card-estilo {
+
+        font-size: 13px;
+    }
+
+
+    .ad-card-descricao {
+
+        font-size: 15px;
+
+        line-height: 1.48;
+    }
+
+
+    /* =====================================================
+       IDENTIDADE SEM MÍDIA
+    ===================================================== */
+
+    .ad-card-identidade-sem-midia {
+
+        padding:
+            14px 56px 14px 16px;
+
+        border-radius: 14px;
+    }
+
+
+    /* =====================================================
+       BOTÃO DE TELA CHEIA
+    ===================================================== */
+
+    .ad-video-fullscreen {
+
+        opacity: 1;
+
+        visibility: visible;
+
+        right: 10px;
+
+        bottom: 10px;
+    }
+}
+
+
+/* =========================================================
+   DESKTOP
+   1200px+
+
+   A estrutura desktop existente é preservada.
+========================================================= */
+
+@media (min-width: 1200px) {
+
+    .feed-profissionais {
+
+        width: 100%;
+
+        max-width: 500px;
 
         margin: 0;
 
@@ -1475,11 +1901,6 @@
 
     /* =====================================================
        PUBLICAÇÃO — DESKTOP
-
-       A mídia ocupa toda a largura do card.
-
-       O espaçamento lateral dos textos é controlado
-       pelo .ad-card-conteudo.
     ===================================================== */
 
     .ad-card-novo {
@@ -1488,11 +1909,17 @@
 
         padding:
             0 0 20px;
+
+        border-radius: 10px;
+
+        overflow: visible;
     }
 
 
     /* =====================================================
-       MÍDIA DESKTOP
+       MÍDIA — DESKTOP
+
+       Mantemos o comportamento que já funcionava.
     ===================================================== */
 
     .ad-media-box {
@@ -1525,6 +1952,12 @@
     }
 
 
+    /* =====================================================
+       VÍDEO — DESKTOP
+
+       Mantemos os 300px que já estavam funcionando.
+    ===================================================== */
+
     .ad-video-container {
 
         height: 300px;
@@ -1555,6 +1988,10 @@
     }
 
 
+    /* =====================================================
+       CONTEÚDO
+    ===================================================== */
+
     .ad-card-conteudo {
 
         width: 100%;
@@ -1571,6 +2008,10 @@
     }
 
 
+    /* =====================================================
+       IDENTIDADE SEM MÍDIA
+    ===================================================== */
+
     .ad-card-identidade-sem-midia {
 
         border-radius: 14px;
@@ -1581,24 +2022,10 @@
 
 
 /* =========================================================
-   TELAS MUITO LARGAS
-========================================================= */
-
-@media (min-width: 1200px) {
-
-    .feed-profissionais {
-
-        max-width: 500px;
-
-        margin: 0;
-
-        padding: 0;
-    }
-}
-
-
-/* =========================================================
    MOBILE
+   Até 700px
+
+   ESTA SEÇÃO PRESERVA A ESTRUTURA MOBILE EXISTENTE.
 ========================================================= */
 
 @media (max-width: 700px) {
@@ -1617,11 +2044,6 @@
 
     /* =====================================================
        PUBLICAÇÃO — MOBILE
-
-       O card não possui padding lateral.
-
-       Isso permite que a mídia toque diretamente
-       as bordas laterais do card.
     ===================================================== */
 
     .ad-card-novo {
@@ -1648,9 +2070,6 @@
 
     /* =====================================================
        MÍDIA — MOBILE
-
-       Altura controlada para evitar mídia exageradamente
-       alta em telas pequenas.
     ===================================================== */
 
     .ad-media-box {
@@ -1791,10 +2210,6 @@
 
     /* =====================================================
        CONTEÚDO — MOBILE
-
-       A mídia continua encostando nas bordas.
-
-       O conteúdo textual possui espaçamento próprio.
     ===================================================== */
 
     .ad-card-conteudo {
@@ -1940,8 +2355,9 @@
 
         margin-top: 9px;
 
-        padding-left:6px;
-        padding-right:6px;
+        padding-left: 6px;
+
+        padding-right: 6px;
     }
 
 
@@ -1985,6 +2401,9 @@
 
 /* =========================================================
    TELAS MUITO PEQUENAS
+   Até 380px
+
+   Mantemos o comportamento existente.
 ========================================================= */
 
 @media (max-width: 380px) {
@@ -1993,10 +2412,6 @@
 
         margin: 0;
 
-        /*
-         * Continua sem padding lateral para que a mídia
-         * permaneça encostada nas bordas.
-         */
         padding:
             0 0 13px;
 

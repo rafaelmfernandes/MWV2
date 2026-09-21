@@ -7,14 +7,32 @@
    - Controlar dimensões e espaçamentos.
    - Ajustar cards, feed, pesquisa e conteúdo.
    - NÃO controlar cabeçalho/menu/scroll.
+
+   REGRA VISUAL:
+   - Celular mantém sua estrutura atual.
+   - Tablet e iPad seguem a mesma linguagem visual
+     do celular, porém com cards maiores.
+   - Tablet NÃO utiliza duas colunas.
+   - O feed permanece em uma única coluna.
 ========================================================= */
 
 @import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&display=swap');
 
 
 /* =========================================================
-   TABLET
+   TABLET / IPAD
    601px → 1199px
+
+   O tablet deve se comportar visualmente como uma
+   versão maior do celular.
+
+   Portanto:
+   - uma única coluna;
+   - feed centralizado;
+   - card largo;
+   - mídia ocupando toda a largura;
+   - conteúdo mantendo espaçamento interno;
+   - sem layout de desktop.
 ========================================================= */
 
 @media (min-width: 601px) and (max-width: 1199px) {
@@ -46,23 +64,41 @@
     }
 
 
+    /* =====================================================
+       CONTEÚDO PRINCIPAL
+    ===================================================== */
+
     .main-content {
 
         width: 100%;
 
         overflow-x: hidden;
 
-        padding-left: 20px;
+        /*
+         * Espaçamento lateral do tablet.
+         *
+         * O conteúdo continua respirando nas bordas,
+         * mas o card pode crescer bastante.
+         */
+        padding-left: 24px;
 
-        padding-right: 20px;
+        padding-right: 24px;
     }
 
+
+    /* =====================================================
+       CONTAINER DO FEED
+    ===================================================== */
 
     .feed-container {
 
         width: 100%;
 
-        max-width: 900px;
+        /*
+         * Evita que o feed fique exageradamente largo
+         * em iPads e tablets grandes.
+         */
+        max-width: 760px;
 
         margin-left: auto;
 
@@ -70,33 +106,69 @@
     }
 
 
+    /* =====================================================
+       GRID DO FEED
+
+       IMPORTANTE:
+       Tablet utiliza UMA ÚNICA COLUNA.
+
+       Isso aproxima a experiência do celular e evita
+       que os cards fiquem estreitos ou desorganizados.
+    ===================================================== */
+
     .feed-grid {
 
         width: 100%;
 
-        row-gap: 16px;
+        display: grid;
+
+        grid-template-columns: 1fr;
+
+        column-gap: 0;
+
+        row-gap: 18px;
     }
 
+
+    /* =====================================================
+       CARD
+    ===================================================== */
 
     .feed-card {
 
         width: 100%;
+
+        min-width: 0;
     }
 
+
+    /* =====================================================
+       MÍDIA DO CARD
+
+       A mídia acompanha a largura do card.
+       A altura visual é controlada principalmente pelo
+       feed.css, mas garantimos aqui que nada limite
+       horizontalmente a mídia.
+    ===================================================== */
 
     .feed-card-media {
 
         width: 100%;
-        
+
+        min-width: 0;
     }
 
+
+    /* =====================================================
+       PESQUISA
+    ===================================================== */
 
     .busca-container,
     .search-container {
 
         width: 100%;
 
-        max-width: 900px;
+        max-width: 760px;
 
         margin-left: auto;
 
@@ -115,45 +187,25 @@
 /* =========================================================
    TABLET MENOR
    601px → 900px
+
+   Aproxima ainda mais o comportamento do celular.
 ========================================================= */
 
 @media (min-width: 601px) and (max-width: 900px) {
 
     .main-content {
 
-        padding-left: 16px;
+        padding-left: 18px;
 
-        padding-right: 16px;
+        padding-right: 18px;
     }
 
 
     .feed-container {
 
-        max-width: 760px;
-    }
+        width: 100%;
 
-
-    .feed-grid {
-
-        column-gap: 16px;
-
-        row-gap: 16px;
-    }
-}
-
-
-/* =========================================================
-   TABLET PRÓXIMO DO MOBILE
-   601px → 760px
-========================================================= */
-
-@media (min-width: 601px) and (max-width: 760px) {
-
-    .main-content {
-
-        padding-left: 14px;
-
-        padding-right: 14px;
+        max-width: 680px;
     }
 
 
@@ -161,7 +213,72 @@
 
         grid-template-columns: 1fr;
 
+        column-gap: 0;
+
         row-gap: 16px;
+    }
+
+
+    .feed-card {
+
+        width: 100%;
+
+        min-width: 0;
+    }
+
+
+    .feed-card-media {
+
+        width: 100%;
+    }
+}
+
+
+/* =========================================================
+   IPAD / TABLET GRANDE
+   901px → 1199px
+
+   Mantém o mesmo conceito do celular, porém permite
+   que o card cresça mais horizontalmente.
+========================================================= */
+
+@media (min-width: 901px) and (max-width: 1199px) {
+
+    .main-content {
+
+        padding-left: 28px;
+
+        padding-right: 28px;
+    }
+
+
+    .feed-container {
+
+        width: 100%;
+
+        max-width: 760px;
+    }
+
+
+    .feed-grid {
+
+        grid-template-columns: 1fr;
+
+        column-gap: 0;
+
+        row-gap: 20px;
+    }
+
+
+    .feed-card {
+
+        width: 100%;
+    }
+
+
+    .feed-card-media {
+
+        width: 100%;
     }
 }
 
@@ -169,6 +286,8 @@
 /* =========================================================
    MOBILE
    Até 600px
+
+   A estrutura atual do celular é preservada.
 ========================================================= */
 
 @media (max-width: 600px) {
@@ -202,6 +321,10 @@
     }
 
 
+    /* =====================================================
+       CONTEÚDO PRINCIPAL
+    ===================================================== */
+
     .main-content {
 
         width: 100%;
@@ -213,9 +336,6 @@
         /*
          * O espaçamento lateral será definido
          * pelas faixas específicas abaixo.
-         *
-         * Isso permite controlar diretamente
-         * a largura visual dos cards do feed.
          */
         padding-bottom: 90px;
     }
@@ -223,8 +343,6 @@
 
     /* =====================================================
        FEED
-
-       O feed ocupa toda a largura disponível.
     ===================================================== */
 
     .feed-container {
@@ -360,9 +478,7 @@
          * Reduzimos a margem externa da tela.
          *
          * Como .ad-card-novo possui width: 100%,
-         * o card automaticamente fica um pouco mais largo.
-         *
-         * A mídia continua ocupando 100% do card.
+         * o card automaticamente fica mais largo.
          */
         padding-left: 10px;
 
@@ -382,11 +498,6 @@
 
     .main-content {
 
-        /*
-         * Mantemos um pouco mais de espaço externo
-         * em telas pequenas para evitar que o card
-         * fique visualmente apertado nas bordas.
-         */
         padding-left: 10px;
 
         padding-right: 10px;
