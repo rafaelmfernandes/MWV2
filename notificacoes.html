@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 
@@ -15,11 +14,21 @@
 
 
     <!-- =========================================================
-         FOLHA DE ESTILOS
+         MUSICALWORLD — PÁGINA DE NOTIFICAÇÕES
+
+         Arquivo:
+         notificacoes.html
 
          Responsabilidade:
-         - Definir toda a aparência da página de notificações.
-         - Controlar layout, estados, botões e responsividade.
+         - Estruturar a página de notificações.
+         - Disponibilizar o cabeçalho.
+         - Disponibilizar os estados da interface.
+         - Carregar os estilos e módulos necessários.
+         ========================================================= -->
+
+
+    <!-- =========================================================
+         CSS DA PÁGINA
          ========================================================= -->
 
     <link
@@ -30,10 +39,6 @@
 
     <!-- =========================================================
          LUCIDE
-
-         Responsabilidade:
-         - Disponibilizar os ícones utilizados pela interface.
-         - Nenhuma imagem externa é utilizada nesta página.
          ========================================================= -->
 
     <script
@@ -46,14 +51,9 @@
 
 <body>
 
+
     <!-- =========================================================
          CABEÇALHO
-
-         Responsabilidade:
-         - Permitir voltar para a página anterior.
-         - Exibir o título da página.
-         - Exibir a quantidade de notificações não lidas.
-         - Permitir marcar todas as notificações como lidas.
          ========================================================= -->
 
     <header class="notificacoes-header">
@@ -62,7 +62,7 @@
 
 
             <!-- =================================================
-                 BOTÃO VOLTAR
+                 VOLTAR
                  ================================================= -->
 
             <button
@@ -89,7 +89,7 @@
 
 
             <!-- =================================================
-                 TÍTULO E CONTADOR
+                 TÍTULO
                  ================================================= -->
 
             <div class="notificacoes-header-titulo">
@@ -110,7 +110,7 @@
 
 
             <!-- =================================================
-                 AÇÕES DO CABEÇALHO
+                 AÇÕES
                  ================================================= -->
 
             <div class="notificacoes-header-acoes">
@@ -132,10 +132,6 @@
 
     <!-- =========================================================
          CONTEÚDO PRINCIPAL
-
-         Responsabilidade:
-         - Exibir a lista de notificações.
-         - Controlar os estados de carregamento, vazio e erro.
          ========================================================= -->
 
     <main class="notificacoes-main">
@@ -147,7 +143,7 @@
 
 
             <!-- =================================================
-                 ESTADO DE CARREGAMENTO
+                 CARREGANDO
                  ================================================= -->
 
             <div
@@ -168,10 +164,7 @@
 
 
             <!-- =================================================
-                 LISTA DE NOTIFICAÇÕES
-
-                 As notificações serão inseridas pelo
-                 js/notificacoes.js.
+                 LISTA
                  ================================================= -->
 
             <div
@@ -182,7 +175,7 @@
 
 
             <!-- =================================================
-                 ESTADO VAZIO
+                 VAZIO
                  ================================================= -->
 
             <div
@@ -225,7 +218,7 @@
 
 
             <!-- =================================================
-                 ESTADO DE ERRO
+                 ERRO
                  ================================================= -->
 
             <div
@@ -293,10 +286,6 @@
 
     <!-- =========================================================
          SUPABASE
-
-         Responsabilidade:
-         - Disponibilizar o cliente Supabase para os módulos
-           do MusicalWorld.
          ========================================================= -->
 
     <script
@@ -305,13 +294,7 @@
 
 
     <!-- =========================================================
-         NÚCLEO DO MUSICALWORLD
-
-         Responsabilidade:
-         - SupabaseClient.js: disponibilizar o cliente Supabase.
-         - Sessao.js: controlar informações da sessão.
-         - UsuarioAtual.js: identificar o usuário atual.
-         - ControleSessao.js: controlar acesso e estado da sessão.
+         NÚCLEO MUSICALWORLD
          ========================================================= -->
 
     <script src="js/core/SupabaseClient.js"></script>
@@ -324,35 +307,25 @@
 
 
     <!-- =========================================================
-         MÓDULO DA PÁGINA
-
-         Responsabilidade:
-         - Carregar notificações.
-         - Renderizar notificações.
-         - Atualizar contador.
-         - Marcar notificações como lidas.
-         - Controlar estados da interface.
+         MÓDULO DE NOTIFICAÇÕES
          ========================================================= -->
 
     <script src="js/notificacoes.js"></script>
 
 
     <!-- =========================================================
-         INICIALIZAÇÃO DOS ÍCONES
-
-         Não utiliza imagens.
-         Os ícones da interface são SVG inline ou Lucide.
+         LUCIDE
          ========================================================= -->
 
     <script>
 
         document.addEventListener(
-            'DOMContentLoaded',
+            "DOMContentLoaded",
             function () {
 
                 if (
                     window.lucide &&
-                    typeof window.lucide.createIcons === 'function'
+                    typeof window.lucide.createIcons === "function"
                 ) {
 
                     window.lucide.createIcons();
@@ -364,7 +337,7 @@
 
     </script>
 
+
 </body>
 
 </html>
-

@@ -1,59 +1,41 @@
 
 /* =========================================================
-MUSICALWORLD — PÁGINA DE NOTIFICAÇÕES
+   MUSICALWORLD — PÁGINA DE NOTIFICAÇÕES
 
-Arquivo:
-css/notificacoes.css
+   Arquivo:
+   css/notificacoes.css
 
-Responsabilidade:
-
-* Estilizar a página de notificações.
-* Criar a lista cronológica.
-* Destacar notificações não lidas.
-* Exibir o avatar de quem originou a notificação.
-* Exibir o ícone do tipo de notificação no lado direito.
-* Controlar os estados de carregamento, vazio e erro.
-* Manter visual limpo e consistente com o MusicalWorld.
-* Adaptar a página para desktop e celular.
-
-Este arquivo NÃO controla a notificação flutuante.
-
-A notificação flutuante utiliza:
-
-css/components/modal-notificacao.css
-========================================================= */
+   Responsabilidade:
+   - Estilizar a página de notificações.
+   - Manter os cards compactos.
+   - Controlar os grupos de notificações.
+   - Manter o botão de expansão pequeno e alinhado.
+   - Evitar sobreposição de setas, botões e conteúdos.
+   - Controlar corretamente fotos e iniciais dos avatares.
+   - Garantir que fotos não sejam espremidas ou distorcidas.
+   - Garantir comportamento responsivo.
+   ========================================================= */
 
 
 /* =========================================================
-RESET LOCAL
-========================================================= */
+   RESET
+   ========================================================= */
 
 * {
     box-sizing: border-box;
 }
 
 html {
-    /* Impede que o navegador altere o tamanho da fonte por conta própria */
-        -webkit-text-size-adjust: 100%;
-        text-size-adjust: 100%;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 100%;
 }
-
-
-/* =========================================================
-CONTROLE DO ATRIBUTO HIDDEN
-========================================================= */
-
-[hidden] {
-    display: none !important;
-}
-
-
-/* =========================================================
-BODY
-========================================================= */
 
 body {
     margin: 0;
+    padding: 0;
+    width: 100%;
     min-height: 100vh;
 
     background: #f5f7fb;
@@ -61,21 +43,40 @@ body {
 
     font-family:
         Inter,
+        Manrope,
         -apple-system,
         BlinkMacSystemFont,
         "Segoe UI",
-        Roboto,
-        Helvetica,
-        Arial,
         sans-serif;
 
     -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
 }
 
 
 /* =========================================================
-CABEÇALHO
-========================================================= */
+   BOTÕES E ELEMENTOS
+   ========================================================= */
+
+button,
+input,
+textarea,
+select {
+    font: inherit;
+}
+
+button {
+    margin: 0;
+}
+
+svg {
+    display: block;
+}
+
+
+/* =========================================================
+   CABEÇALHO
+   ========================================================= */
 
 .notificacoes-header {
     position: sticky;
@@ -84,38 +85,50 @@ CABEÇALHO
 
     width: 100%;
 
-    background: #ffffff;
+    background: rgba(255, 255, 255, 0.96);
 
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: 1px solid #e7eaf0;
+
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
 }
 
-
 .notificacoes-header-inner {
-    width: min(100%, 920px);
+    width: min(100%, 1100px);
 
-    min-height: 68px;
+    min-height: 64px;
 
     margin: 0 auto;
-    padding: 0 20px;
+    padding: 10px 20px;
 
-    display: flex;
+    display: grid;
+
+    grid-template-columns:
+        42px
+        minmax(0, 1fr)
+        auto;
+
     align-items: center;
 
-    gap: 16px;
+    gap: 14px;
 }
 
 
 /* =========================================================
-BOTÃO VOLTAR
-========================================================= */
+   BOTÃO VOLTAR
+   ========================================================= */
 
 .btn-voltar {
     width: 40px;
     height: 40px;
 
-    flex: 0 0 40px;
+    min-width: 40px;
+    min-height: 40px;
 
-    display: flex;
+    padding: 0;
+
+    display: inline-flex;
+
     align-items: center;
     justify-content: center;
 
@@ -123,260 +136,750 @@ BOTÃO VOLTAR
     border-radius: 10px;
 
     background: transparent;
-    color: #475569;
+
+    color: #172033;
 
     cursor: pointer;
 
     transition:
-        background 0.2s ease,
-        color 0.2s ease,
-        transform 0.2s ease;
+        background-color 0.18s ease,
+        color 0.18s ease;
 }
-
 
 .btn-voltar:hover {
-    background: #f1f5f9;
-    color: #172033;
+    background: #f0f2f7;
 }
-
 
 .btn-voltar:active {
-    transform: scale(0.96);
+    transform: scale(0.97);
 }
-
 
 .btn-voltar svg {
     width: 21px;
     height: 21px;
 
     fill: none;
+
     stroke: currentColor;
     stroke-width: 2;
+
     stroke-linecap: round;
     stroke-linejoin: round;
 }
 
 
 /* =========================================================
-TÍTULO DO CABEÇALHO
-========================================================= */
+   TÍTULO DO CABEÇALHO
+   ========================================================= */
 
 .notificacoes-header-titulo {
     min-width: 0;
 
     display: flex;
+
     align-items: center;
 
     gap: 9px;
 }
 
-
 .notificacoes-header-titulo h1 {
     margin: 0;
 
-    color: #172033;
+    min-width: 0;
 
     font-size: 20px;
-    font-weight: 700;
     line-height: 1.2;
+
+    font-weight: 700;
+
+    color: #172033;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-
 .contador-notificacoes {
-    min-width: 23px;
-    height: 23px;
+    flex: 0 0 auto;
+
+    min-width: 24px;
+    height: 24px;
 
     padding: 0 7px;
 
     display: inline-flex;
+
     align-items: center;
     justify-content: center;
 
     border-radius: 999px;
 
-    background: #ede9fe;
-    color: #6d4aff;
+    background: #6d4aff;
+    color: #ffffff;
 
     font-size: 12px;
+    line-height: 1;
+
     font-weight: 700;
 }
 
 
 /* =========================================================
-AÇÕES DO CABEÇALHO
-========================================================= */
+   AÇÃO DO CABEÇALHO
+   ========================================================= */
 
 .notificacoes-header-acoes {
-    margin-left: auto;
-
     display: flex;
+
     align-items: center;
+    justify-content: flex-end;
+
+    min-width: 0;
 }
 
-
 .btn-marcar-todas {
-    border: 0;
+    height: 38px;
 
-    background: transparent;
-    color: #6d4aff;
+    padding: 0 14px;
+
+    border: 1px solid #ddd9ff;
+    border-radius: 9px;
+
+    background: #ffffff;
+
+    color: #5a3ee8;
 
     font-size: 13px;
     font-weight: 600;
 
+    white-space: nowrap;
+
     cursor: pointer;
 
-    padding: 8px 4px;
-
-    transition: opacity 0.2s ease;
+    transition:
+        background-color 0.18s ease,
+        border-color 0.18s ease,
+        color 0.18s ease;
 }
-
 
 .btn-marcar-todas:hover {
-    opacity: 0.75;
+    background: #f6f3ff;
+    border-color: #cfc7ff;
 }
 
-
 .btn-marcar-todas:disabled {
-    opacity: 0.45;
+    opacity: 0.55;
     cursor: default;
 }
 
 
 /* =========================================================
-CONTEÚDO PRINCIPAL
-========================================================= */
+   CONTEÚDO PRINCIPAL
+   ========================================================= */
 
 .notificacoes-main {
     width: 100%;
 
-    padding: 28px 20px 48px;
+    padding:
+        24px
+        20px
+        90px;
 }
 
-
 .notificacoes-container {
-    width: min(100%, 760px);
+    width: min(100%, 820px);
 
     margin: 0 auto;
 }
 
 
 /* =========================================================
-LISTA
-========================================================= */
+   FILTROS
+   ========================================================= */
 
-.lista-notificacoes {
+.filtros-notificacoes {
     width: 100%;
 
-    display: flex;
-    flex-direction: column;
+    margin-bottom: 18px;
 
-    gap: 10px;
+    padding: 4px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 4px;
+
+    border: 1px solid #e3e6ed;
+    border-radius: 12px;
+
+    background: #ffffff;
+
+    box-shadow:
+        0 2px 8px rgba(23, 32, 51, 0.04);
+}
+
+.filtro-notificacao {
+    flex: 1 1 0;
+
+    height: 36px;
+
+    min-width: 0;
+
+    padding: 0 12px;
+
+    border: 0;
+    border-radius: 8px;
+
+    background: transparent;
+
+    color: #687286;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.18s ease,
+        color 0.18s ease;
+}
+
+.filtro-notificacao:hover {
+    background: #f4f5f8;
+    color: #30394d;
+}
+
+.filtro-notificacao.ativo {
+    background: #6d4aff;
+    color: #ffffff;
 }
 
 
 /* =========================================================
-ITEM DE NOTIFICAÇÃO
+   LISTA
+   ========================================================= */
 
-Estrutura:
+.lista-notificacoes {
+    width: 100%;
+}
 
-[ AVATAR ] [ CONTEÚDO                         ] [ ÍCONE ]
 
-O avatar identifica a origem.
+/* =========================================================
+   GRUPOS DE DATA
+   ========================================================= */
 
-O conteúdo apresenta nome, tipo, data e mensagem.
+.notificacoes-grupo {
+    width: 100%;
 
-O ícone da direita identifica o tipo da notificação.
-========================================================= */
+    margin: 0 0 24px;
+}
+
+.notificacoes-grupo-titulo {
+    width: 100%;
+
+    margin: 0 0 9px;
+
+    padding: 0 3px;
+}
+
+.notificacoes-grupo-titulo h2 {
+    margin: 0;
+
+    color: #687286;
+
+    font-size: 12px;
+    line-height: 1.3;
+
+    font-weight: 700;
+
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.notificacoes-grupo-lista {
+    width: 100%;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 8px;
+}
+
+
+/* =========================================================
+   CARD INDIVIDUAL
+   ========================================================= */
 
 .notificacao-item {
     position: relative;
 
     width: 100%;
+    min-width: 0;
 
-    display: flex;
-    align-items: flex-start;
+    display: grid;
 
-    gap: 14px;
+    grid-template-columns:
+        44px
+        minmax(0, 1fr)
+        36px;
 
-    padding: 16px 18px;
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 13px 14px;
+
+    border: 1px solid #e4e7ed;
+    border-radius: 13px;
 
     background: #ffffff;
 
-    border: 1px solid #e5e7eb;
-    border-radius: 14px;
+    box-shadow:
+        0 2px 7px rgba(23, 32, 51, 0.035);
+
+    transition:
+        border-color 0.18s ease,
+        background-color 0.18s ease,
+        box-shadow 0.18s ease;
+}
+
+.notificacao-item:hover {
+    border-color: #d8dce5;
+
+    box-shadow:
+        0 4px 12px rgba(23, 32, 51, 0.06);
+}
+
+.notificacao-item.nao-lida {
+    border-left: 3px solid #6d4aff;
+
+    padding-left: 12px;
+
+    background: #fcfbff;
+}
+
+.notificacao-item.clicavel {
+    cursor: pointer;
+}
+
+
+/* =========================================================
+   AVATAR DAS NOTIFICAÇÕES INDIVIDUAIS
+   ========================================================= */
+
+.notificacao-avatar-wrapper {
+    width: 44px;
+    height: 44px;
+
+    min-width: 44px;
+    min-height: 44px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+}
+
+.notificacao-avatar-container {
+    position: relative;
+
+    width: 44px;
+    height: 44px;
+
+    min-width: 44px;
+    min-height: 44px;
+
+    max-width: 44px;
+    max-height: 44px;
+
+    overflow: hidden;
+
+    border-radius: 50%;
+
+    aspect-ratio: 1 / 1;
+}
+
+.notificacao-avatar {
+    width: 44px;
+    height: 44px;
+
+    min-width: 44px;
+    min-height: 44px;
+
+    max-width: 44px;
+    max-height: 44px;
+
+    border-radius: 50%;
+
+    overflow: hidden;
+
+    object-fit: cover;
+    object-position: center;
+
+    aspect-ratio: 1 / 1;
+}
+
+.notificacao-avatar-fallback {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    background: #eeeaff;
+
+    color: #5b3fd7;
+
+    font-size: 13px;
+    font-weight: 700;
+
+    border: 1px solid #e0d9ff;
+}
+
+.notificacao-avatar-sistema {
+    background: #6d4aff;
+    color: #ffffff;
+
+    border-color: #6d4aff;
+}
+
+.notificacao-avatar-sistema svg {
+    width: 21px;
+    height: 21px;
+
+    fill: none;
+
+    stroke: currentColor;
+    stroke-width: 1.8;
+
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.notificacao-avatar-iniciais {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+}
+
+.notificacao-avatar-foto {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    min-width: 0;
+    min-height: 0;
+
+    max-width: 100%;
+    max-height: 100%;
+
+    margin: 0;
+    padding: 0;
+
+    border: 0;
+
+    object-fit: cover;
+    object-position: center;
+
+    aspect-ratio: 1 / 1;
+}
+
+
+/* =========================================================
+   CONTROLE DO ATRIBUTO HIDDEN DOS AVATARES
+   ========================================================= */
+
+.notificacao-avatar-foto[hidden],
+.notificacao-avatar-iniciais[hidden] {
+    display: none !important;
+}
+
+
+/* =========================================================
+   CONTEÚDO DA NOTIFICAÇÃO
+   ========================================================= */
+
+.notificacao-conteudo {
+    position: relative;
+
+    min-width: 0;
+
+    overflow: hidden;
+}
+
+.notificacao-cabecalho {
+    min-width: 0;
+
+    display: flex;
+
+    align-items: baseline;
+
+    gap: 8px;
+}
+
+.notificacao-titulo {
+    min-width: 0;
+
+    color: #172033;
+
+    font-size: 14px;
+    line-height: 1.35;
+
+    font-weight: 700;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.notificacao-data {
+    flex: 0 0 auto;
+
+    color: #8a92a3;
+
+    font-size: 11px;
+    line-height: 1.3;
+
+    white-space: nowrap;
+}
+
+.notificacao-mensagem {
+    margin: 4px 0 0;
+
+    color: #687286;
+
+    font-size: 13px;
+    line-height: 1.45;
+
+    overflow-wrap: anywhere;
+}
+
+.notificacao-indicador {
+    display: inline-block;
+
+    width: 7px;
+    height: 7px;
+
+    margin-left: 6px;
+
+    border-radius: 50%;
+
+    background: #6d4aff;
+
+    vertical-align: middle;
+}
+
+
+/* =========================================================
+   AÇÕES DO CARD
+   ========================================================= */
+
+.notificacao-acoes {
+    width: 36px;
+    height: 44px;
+
+    min-width: 36px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 5px;
+}
+
+.notificacao-icone-tipo {
+    width: 26px;
+    height: 26px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    color: #7a8395;
+
+    flex: 0 0 auto;
+}
+
+.notificacao-icone-tipo svg {
+    width: 17px;
+    height: 17px;
+
+    fill: none;
+
+    stroke: currentColor;
+    stroke-width: 1.7;
+
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.btn-excluir-notificacao {
+    width: 28px;
+    height: 28px;
+
+    min-width: 28px;
+    min-height: 28px;
+
+    padding: 0;
+
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border: 0;
+    border-radius: 7px;
+
+    background: transparent;
+
+    color: #9aa1af;
 
     cursor: pointer;
 
+    flex: 0 0 auto;
+
     transition:
-        background 0.2s ease,
-        border-color 0.2s ease,
-        box-shadow 0.2s ease,
-        transform 0.2s ease;
+        background-color 0.18s ease,
+        color 0.18s ease;
+}
+
+.btn-excluir-notificacao:hover {
+    background: #fceff1;
+    color: #c73b52;
+}
+
+.btn-excluir-notificacao svg {
+    width: 15px;
+    height: 15px;
+
+    fill: none;
+
+    stroke: currentColor;
+    stroke-width: 1.8;
+
+    stroke-linecap: round;
+    stroke-linejoin: round;
 }
 
 
-.notificacao-item:hover {
-    border-color: #d8d0ff;
+/* =========================================================
+   GRUPO DE REMETENTE
+   ========================================================= */
+
+.notificacao-grupo-remetente {
+    width: 100%;
+    min-width: 0;
+
+    margin: 0;
+
+    border: 1px solid #e1e4eb;
+    border-radius: 13px;
+
+    background: #ffffff;
+
+    overflow: hidden;
 
     box-shadow:
-        0 5px 18px rgba(
-            23,
-            32,
-            51,
-            0.06
-        );
+        0 2px 7px rgba(23, 32, 51, 0.035);
 }
 
-
-.notificacao-item:active {
-    transform: translateY(1px);
+.notificacao-grupo-remetente.expandido {
+    border-color: #d9d4f7;
 }
 
 
 /* =========================================================
-NOTIFICAÇÃO NÃO LIDA
-========================================================= */
+   BOTÃO DO GRUPO
+   ========================================================= */
 
-.notificacao-item.nao-lida {
-    background:
-        linear-gradient(
-            90deg,
-            #faf9ff 0%,
-            #ffffff 100%
-        );
+.notificacao-grupo-remetente-cabecalho {
+    position: relative;
 
-    border-color: #ddd6fe;
+    width: 100%;
+    min-width: 0;
+
+    min-height: 66px;
+
+    margin: 0;
+    padding: 10px 12px;
+
+    display: grid;
+
+    grid-template-columns:
+        44px
+        minmax(0, 1fr)
+        auto;
+
+    align-items: center;
+
+    gap: 12px;
+
+    border: 0;
+
+    background: #ffffff;
+
+    color: #172033;
+
+    text-align: left;
+
+    cursor: pointer;
+
+    appearance: none;
+    -webkit-appearance: none;
+
+    outline: none;
 }
 
+.notificacao-grupo-remetente-cabecalho:hover {
+    background: #faf9ff;
+}
 
-.notificacao-item.nao-lida::before {
-    content: "";
-
-    position: absolute;
-
-    top: 14px;
-    left: 0;
-
-    width: 3px;
-    height: 38px;
-
-    border-radius: 0 4px 4px 0;
-
-    background: #6d4aff;
+.notificacao-grupo-remetente-cabecalho:focus-visible {
+    box-shadow:
+        inset 0 0 0 2px #6d4aff;
 }
 
 
 /* =========================================================
-AVATAR DO REMETENTE
-========================================================= */
+   AVATAR DO GRUPO
 
-.notificacao-avatar {
-    width: 48px;
-    height: 48px;
+   Correção específica:
 
-    flex: 0 0 48px;
+   A foto do agrupamento precisa permanecer:
+   - quadrada internamente;
+   - circular externamente;
+   - sem distorção;
+   - sem compressão;
+   - sem alteração de proporção.
+
+   O container limita fisicamente o espaço disponível.
+   A imagem ocupa exatamente esse espaço utilizando
+   object-fit: cover.
+   ========================================================= */
+
+.notificacao-grupo-remetente-avatar {
+    position: relative;
+
+    width: 44px;
+    height: 44px;
+
+    min-width: 44px;
+    min-height: 44px;
+
+    max-width: 44px;
+    max-height: 44px;
+
+    flex: 0 0 44px;
 
     display: flex;
+
     align-items: center;
     justify-content: center;
 
@@ -384,218 +887,227 @@ AVATAR DO REMETENTE
 
     border-radius: 50%;
 
-    background:
-        linear-gradient(
-            135deg,
-            #ede9fe 0%,
-            #ddd6fe 100%
-        );
-
-    color: #6d4aff;
-
-    border: 1px solid #e4defe;
-
-    position: relative;
+    aspect-ratio: 1 / 1;
 }
 
+.notificacao-grupo-remetente-avatar
+.notificacao-avatar-container {
+    position: relative;
 
-.notificacao-avatar-imagem {
-    width: 100%;
-    height: 100%;
+    width: 44px;
+    height: 44px;
 
-    display: block;
+    min-width: 44px;
+    min-height: 44px;
 
-    object-fit: cover;
+    max-width: 44px;
+    max-height: 44px;
 
-    object-position: center;
+    flex: 0 0 44px;
+
+    overflow: hidden;
 
     border-radius: 50%;
+
+    aspect-ratio: 1 / 1;
 }
 
+.notificacao-grupo-remetente-avatar
+.notificacao-avatar {
+    display: block;
 
+    width: 44px;
+    height: 44px;
+
+    min-width: 44px;
+    min-height: 44px;
+
+    max-width: 44px;
+    max-height: 44px;
+
+    margin: 0;
+    padding: 0;
+
+    border: 0;
+    border-radius: 50%;
+
+    object-fit: cover;
+    object-position: center;
+
+    aspect-ratio: 1 / 1;
+}
+
+.notificacao-grupo-remetente-avatar
+.notificacao-avatar-foto {
+    display: block;
+
+    width: 44px;
+    height: 44px;
+
+    min-width: 44px;
+    min-height: 44px;
+
+    max-width: 44px;
+    max-height: 44px;
+
+    margin: 0;
+    padding: 0;
+
+    border: 0;
+    border-radius: 50%;
+
+    object-fit: cover;
+    object-position: center;
+
+    aspect-ratio: 1 / 1;
+}
+
+.notificacao-grupo-remetente-avatar
 .notificacao-avatar-iniciais {
-    width: 100%;
-    height: 100%;
-
     display: flex;
+
+    width: 44px;
+    height: 44px;
+
+    min-width: 44px;
+    min-height: 44px;
+
+    max-width: 44px;
+    max-height: 44px;
+
+    margin: 0;
+    padding: 0;
+
     align-items: center;
     justify-content: center;
 
-    color: #6d4aff;
+    border-radius: 50%;
 
-    font-size: 13px;
-    font-weight: 700;
+    aspect-ratio: 1 / 1;
+}
 
-    line-height: 1;
+.notificacao-grupo-remetente-avatar
+.notificacao-avatar-foto[hidden],
+.notificacao-grupo-remetente-avatar
+.notificacao-avatar-iniciais[hidden] {
+    display: none !important;
 }
 
 
 /* =========================================================
-ÁREA PRINCIPAL
-========================================================= */
+   TEXTO DO GRUPO
+   ========================================================= */
 
-.notificacao-conteudo {
-    min-width: 0;
-
-    flex: 1 1 auto;
-
-    width: 0;
-}
-
-
-/* =========================================================
-LINHA SUPERIOR
-========================================================= */
-
-.notificacao-linha-superior {
+.notificacao-grupo-remetente-conteudo {
     min-width: 0;
 
     display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
 
-    gap: 12px;
+    flex-direction: column;
+
+    justify-content: center;
+
+    gap: 3px;
 }
 
+.notificacao-grupo-remetente-conteudo strong {
+    display: block;
 
-/* =========================================================
-IDENTIDADE DO REMETENTE
-
-Exemplo:
-
-Rafael Fernandes
-Nova mensagem
-========================================================= */
-
-.notificacao-identidade {
-    min-width: 0;
-
-    display: flex;
-    align-items: baseline;
-
-    flex-wrap: wrap;
-
-    gap: 5px 8px;
-}
-
-
-.notificacao-remetente-nome {
     min-width: 0;
 
     color: #172033;
 
     font-size: 14px;
+    line-height: 1.35;
+
     font-weight: 700;
 
-    line-height: 1.4;
-
-    overflow-wrap: anywhere;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
+.notificacao-grupo-remetente-conteudo > span {
+    display: flex;
 
-.notificacao-tipo-texto {
-    color: #64748b;
+    align-items: center;
+
+    gap: 7px;
+
+    min-width: 0;
+
+    color: #737c8e;
 
     font-size: 12px;
-    font-weight: 500;
-
-    line-height: 1.4;
+    line-height: 1.3;
 }
 
-
-.notificacao-item.nao-lida
-.notificacao-remetente-nome {
-    font-weight: 750;
-}
-
-
-.notificacao-item.nao-lida
-.notificacao-tipo-texto {
+.notificacao-grupo-nao-lidas {
     color: #6d4aff;
+
     font-weight: 600;
-}
-
-
-/* =========================================================
-DATA
-========================================================= */
-
-.notificacao-data {
-    flex: 0 0 auto;
-
-    color: #94a3b8;
-
-    font-size: 11px;
-    line-height: 1.5;
 
     white-space: nowrap;
 }
 
 
 /* =========================================================
-MENSAGEM
-========================================================= */
+   META DO GRUPO
+   ========================================================= */
 
-.notificacao-mensagem {
-    margin: 5px 0 0;
+.notificacao-grupo-remetente-meta {
+    min-width: 0;
 
-    color: #64748b;
+    display: flex;
 
-    font-size: 13px;
-    line-height: 1.5;
+    align-items: center;
 
-    overflow-wrap: anywhere;
+    justify-content: flex-end;
 
-    word-break: break-word;
+    gap: 9px;
 }
 
+.notificacao-grupo-remetente-meta time {
+    color: #8a92a3;
 
-.notificacao-item.nao-lida
-.notificacao-mensagem {
-    color: #475569;
+    font-size: 11px;
+    line-height: 1.3;
+
+    white-space: nowrap;
 }
 
 
 /* =========================================================
-ÍCONE DO TIPO DE NOTIFICAÇÃO
+   SETA DO GRUPO
+   ========================================================= */
 
-Fica sempre no lado DIREITO.
+.notificacao-grupo-remetente-seta {
+    width: 28px;
+    height: 28px;
 
-Tipos possíveis:
+    min-width: 28px;
+    min-height: 28px;
 
-* mensagem
-* contratação
-* avaliação
-* pagamento
-* outros
-========================================================= */
+    flex: 0 0 28px;
 
-.notificacao-icone {
-    width: 42px;
-    height: 42px;
+    display: inline-flex;
 
-    flex: 0 0 42px;
-
-    margin-top: 2px;
-
-    display: flex;
     align-items: center;
     justify-content: center;
 
-    border-radius: 11px;
+    border-radius: 7px;
 
-    background: #f1efff;
     color: #6d4aff;
 
-    border: 1px solid #e9e4ff;
-
-    position: relative;
+    pointer-events: none;
 }
 
+.notificacao-grupo-remetente-seta svg {
+    width: 17px;
+    height: 17px;
 
-.notificacao-icone svg {
-    width: 20px;
-    height: 20px;
+    min-width: 17px;
+    min-height: 17px;
 
     fill: none;
 
@@ -604,113 +1116,132 @@ Tipos possíveis:
 
     stroke-linecap: round;
     stroke-linejoin: round;
+
+    transform: rotate(0deg);
+
+    transition:
+        transform 0.2s ease;
 }
 
-
-.notificacao-item.nao-lida
-.notificacao-icone {
-    background: #ede9fe;
-
-    border-color: #ddd6fe;
-}
-
-
-/* =========================================================
-INDICADOR DE NÃO LIDA
-
-Fica associado ao ícone do lado direito.
-
-Não fica sobre o avatar.
-========================================================= */
-
-.notificacao-indicador {
-    position: absolute;
-
-    top: 10px;
-    right: 10px;
-
-    width: 7px;
-    height: 7px;
-
-    border-radius: 50%;
-
-    background: #6d4aff;
-
-    box-shadow:
-        0 0 0 3px #ffffff;
-
-    pointer-events: none;
-}
-
-
-.notificacao-item:not(.nao-lida)
-.notificacao-indicador {
-    display: none;
+.notificacao-grupo-remetente.expandido
+.notificacao-grupo-remetente-seta svg {
+    transform: rotate(180deg);
 }
 
 
 /* =========================================================
-ESTADOS
-========================================================= */
+   LISTA INTERNA DO GRUPO
+   ========================================================= */
 
-.estado-notificacoes {
-    min-height: 280px;
+.notificacao-grupo-remetente-lista {
+    width: 100%;
+
+    padding: 0 10px 10px;
 
     display: flex;
+
+    flex-direction: column;
+
+    gap: 7px;
+
+    border-top: 1px solid #eceef3;
+}
+
+.notificacao-grupo-remetente-lista[hidden] {
+    display: none !important;
+}
+
+
+/* =========================================================
+   AJUSTE DOS CARDS DENTRO DO GRUPO
+   ========================================================= */
+
+.notificacao-grupo-remetente-lista
+.notificacao-item {
+    box-shadow: none;
+
+    border-radius: 10px;
+
+    background: #fafbfc;
+}
+
+.notificacao-grupo-remetente-lista
+.notificacao-item:hover {
+    background: #f7f8fa;
+}
+
+
+/* =========================================================
+   ESTADOS
+   ========================================================= */
+
+.estado-notificacoes {
+    width: 100%;
+
+    padding: 52px 24px;
+
+    display: flex;
+
     flex-direction: column;
 
     align-items: center;
     justify-content: center;
 
     text-align: center;
-
-    padding: 40px 20px;
 }
 
-
-.estado-notificacoes h2 {
-    margin: 16px 0 6px;
-
-    color: #172033;
-
-    font-size: 17px;
-    font-weight: 700;
+.estado-notificacoes[hidden] {
+    display: none !important;
 }
-
 
 .estado-notificacoes p {
     max-width: 420px;
 
-    margin: 0;
+    margin: 8px 0 0;
 
-    color: #64748b;
+    color: #7b8495;
 
     font-size: 13px;
     line-height: 1.5;
 }
 
+.estado-notificacoes h2 {
+    margin: 14px 0 0;
+
+    color: #30394d;
+
+    font-size: 17px;
+    line-height: 1.3;
+
+    font-weight: 700;
+}
+
 
 /* =========================================================
-CARREGAMENTO
-========================================================= */
+   LOADING
+   ========================================================= */
 
 .spinner-notificacoes {
-    width: 28px;
-    height: 28px;
+    width: 30px;
+    height: 30px;
 
-    border: 3px solid #e5e7eb;
-
+    border: 3px solid #e7e4ff;
     border-top-color: #6d4aff;
 
     border-radius: 50%;
 
     animation:
-        notificacoesSpin
-        0.8s linear infinite;
+        notificacoes-spinner
+        0.8s
+        linear
+        infinite;
 }
 
+@keyframes notificacoes-spinner {
 
-@keyframes notificacoesSpin {
+    from {
+        transform: rotate(0deg);
+    }
 
     to {
         transform: rotate(360deg);
@@ -720,32 +1251,35 @@ CARREGAMENTO
 
 
 /* =========================================================
-ESTADO VAZIO
-========================================================= */
+   ESTADO VAZIO
+   ========================================================= */
 
-.estado-vazio-icone {
-    width: 58px;
-    height: 58px;
+.estado-vazio-icone,
+.estado-erro-icone {
+    width: 48px;
+    height: 48px;
 
     display: flex;
+
     align-items: center;
     justify-content: center;
 
-    border-radius: 16px;
+    border-radius: 14px;
 
-    background: #f1efff;
+    background: #eeeaff;
+
     color: #6d4aff;
 }
 
-
-.estado-vazio-icone svg {
-    width: 27px;
-    height: 27px;
+.estado-vazio-icone svg,
+.estado-erro-icone svg {
+    width: 23px;
+    height: 23px;
 
     fill: none;
 
     stroke: currentColor;
-    stroke-width: 1.8;
+    stroke-width: 1.7;
 
     stroke-linecap: round;
     stroke-linejoin: round;
@@ -753,44 +1287,20 @@ ESTADO VAZIO
 
 
 /* =========================================================
-ESTADO DE ERRO
-========================================================= */
+   ESTADO DE ERRO
+   ========================================================= */
 
 .estado-erro-icone {
-    width: 58px;
-    height: 58px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 16px;
-
-    background: #fef2f2;
-    color: #dc2626;
+    background: #fff0f2;
+    color: #c73b52;
 }
-
-
-.estado-erro-icone svg {
-    width: 27px;
-    height: 27px;
-
-    fill: none;
-
-    stroke: currentColor;
-    stroke-width: 1.8;
-
-    stroke-linecap: round;
-    stroke-linejoin: round;
-}
-
 
 .btn-tentar-novamente {
+    height: 38px;
+
     margin-top: 18px;
 
-    min-height: 40px;
-
-    padding: 0 18px;
+    padding: 0 15px;
 
     border: 0;
     border-radius: 9px;
@@ -804,41 +1314,106 @@ ESTADO DE ERRO
     cursor: pointer;
 
     transition:
-        background 0.2s ease,
-        transform 0.2s ease;
+        opacity 0.18s ease,
+        transform 0.18s ease;
 }
-
 
 .btn-tentar-novamente:hover {
-    background: #5b3fe0;
+    opacity: 0.92;
 }
-
 
 .btn-tentar-novamente:active {
     transform: scale(0.98);
 }
 
+.btn-tentar-novamente:disabled {
+    opacity: 0.55;
+    cursor: default;
+}
+
 
 /* =========================================================
-MOBILE
-========================================================= */
+   TABLET
+   ========================================================= */
 
-@media (max-width: 640px) {
+@media (max-width: 760px) {
 
     .notificacoes-header-inner {
-        min-height: 62px;
+        grid-template-columns:
+            40px
+            minmax(0, 1fr)
+            auto;
 
-        padding: 0 14px;
-
-        gap: 10px;
+        padding:
+            10px 16px;
     }
 
 
-    .btn-voltar {
-        width: 38px;
-        height: 38px;
+    .notificacoes-main {
+        padding:
+            20px 16px 80px;
+    }
 
-        flex-basis: 38px;
+
+    .btn-marcar-todas {
+        padding: 0 11px;
+
+        font-size: 12px;
+    }
+
+}
+
+
+/* =========================================================
+   CELULAR
+   ========================================================= */
+
+@media (max-width: 560px) {
+
+    .notificacoes-header-inner {
+        grid-template-columns:
+            40px
+            minmax(0, 1fr)
+            40px;
+
+        gap: 8px;
+    }
+
+
+    .notificacoes-header-acoes {
+        width: 40px;
+    }
+
+
+    .btn-marcar-todas {
+        width: 36px;
+        height: 36px;
+
+        padding: 0;
+
+        overflow: hidden;
+
+        font-size: 0;
+
+        border-radius: 9px;
+
+        position: relative;
+    }
+
+
+    .btn-marcar-todas::before {
+        content: "✓";
+
+        display: flex;
+
+        align-items: center;
+        justify-content: center;
+
+        width: 100%;
+        height: 100%;
+
+        font-size: 16px;
+        line-height: 1;
     }
 
 
@@ -847,66 +1422,105 @@ MOBILE
     }
 
 
-    .btn-marcar-todas {
+    .notificacoes-main {
+        padding:
+            16px 12px 75px;
+    }
+
+
+    .filtros-notificacoes {
+        margin-bottom: 14px;
+    }
+
+
+    .filtro-notificacao {
+        height: 34px;
+
+        padding: 0 7px;
+
         font-size: 12px;
     }
 
 
-    .notificacoes-main {
-        padding: 16px 10px 32px;
+    .notificacoes-grupo {
+        margin-bottom: 20px;
     }
 
 
-    .lista-notificacoes {
+    .notificacoes-grupo-lista {
         gap: 7px;
     }
 
 
     .notificacao-item {
-        gap: 10px;
+        grid-template-columns:
+            40px
+            minmax(0, 1fr)
+            32px;
 
-        padding: 13px 12px;
+        gap: 9px;
 
-        border-radius: 12px;
+        padding:
+            11px 10px;
     }
 
 
-    .notificacao-avatar {
-        width: 42px;
-        height: 42px;
+    .notificacao-item.nao-lida {
+        padding-left: 8px;
+    }
 
-        flex-basis: 42px;
+
+    .notificacao-avatar-wrapper,
+    .notificacao-avatar,
+    .notificacao-avatar-container {
+        width: 40px;
+        height: 40px;
+
+        min-width: 40px;
+        min-height: 40px;
+
+        max-width: 40px;
+        max-height: 40px;
+    }
+
+
+    .notificacao-avatar-foto {
+        width: 40px;
+        height: 40px;
+
+        max-width: 40px;
+        max-height: 40px;
     }
 
 
     .notificacao-avatar-iniciais {
-        font-size: 12px;
+        width: 40px;
+        height: 40px;
+
+        max-width: 40px;
+        max-height: 40px;
     }
 
 
-    .notificacao-icone {
-        width: 38px;
-        height: 38px;
-
-        flex-basis: 38px;
-
-        border-radius: 10px;
+    .notificacao-cabecalho {
+        display: block;
     }
 
 
-    .notificacao-icone svg {
-        width: 18px;
-        height: 18px;
+    .notificacao-titulo {
+        display: block;
+
+        white-space: normal;
+
+        overflow: visible;
+        text-overflow: clip;
     }
 
 
-    .notificacao-remetente-nome {
-        font-size: 13px;
-    }
+    .notificacao-data {
+        display: block;
 
-
-    .notificacao-tipo-texto {
-        font-size: 11px;
+        margin-top: 2px;
     }
 
 
@@ -915,126 +1529,321 @@ MOBILE
     }
 
 
-    .notificacao-data {
-        font-size: 10px;
+    .notificacao-acoes {
+        width: 32px;
+        min-width: 32px;
+        height: 40px;
     }
 
 
-    .notificacao-indicador {
-        top: 8px;
-        right: 7px;
-
-        width: 6px;
-        height: 6px;
-    }
-
-}
-
-
-/* =========================================================
-MOBILE PEQUENO
-========================================================= */
-
-@media (max-width: 400px) {
-
-    .notificacoes-header-acoes {
-        margin-left: auto;
+    .notificacao-icone-tipo {
+        width: 24px;
+        height: 24px;
     }
 
 
-    .btn-marcar-todas {
-        max-width: 105px;
+    .btn-excluir-notificacao {
+        width: 26px;
+        height: 26px;
 
-        padding: 6px 0;
-
-        text-align: right;
-
-        white-space: normal;
+        min-width: 26px;
+        min-height: 26px;
     }
 
 
-    .notificacao-item {
-        gap: 8px;
+    /* ---------------------------------------------
+       GRUPO NO CELULAR
+       --------------------------------------------- */
 
-        padding-left: 10px;
-        padding-right: 9px;
+    .notificacao-grupo-remetente-cabecalho {
+        min-height: 60px;
+
+        grid-template-columns:
+            40px
+            minmax(0, 1fr)
+            30px;
+
+        gap: 9px;
+
+        padding:
+            9px 10px;
     }
 
 
-    .notificacao-avatar {
+    .notificacao-grupo-remetente-avatar {
         width: 40px;
         height: 40px;
+
+        min-width: 40px;
+        min-height: 40px;
+
+        max-width: 40px;
+        max-height: 40px;
 
         flex-basis: 40px;
     }
 
 
-    .notificacao-icone {
-        width: 35px;
-        height: 35px;
+    .notificacao-grupo-remetente-avatar
+    .notificacao-avatar-container {
+        width: 40px;
+        height: 40px;
 
-        flex-basis: 35px;
+        min-width: 40px;
+        min-height: 40px;
+
+        max-width: 40px;
+        max-height: 40px;
+
+        flex-basis: 40px;
     }
 
 
-    .notificacao-icone svg {
-        width: 17px;
-        height: 17px;
+    .notificacao-grupo-remetente-avatar
+    .notificacao-avatar,
+    .notificacao-grupo-remetente-avatar
+    .notificacao-avatar-foto {
+        width: 40px;
+        height: 40px;
+
+        min-width: 40px;
+        min-height: 40px;
+
+        max-width: 40px;
+        max-height: 40px;
     }
 
 
-    .notificacao-linha-superior {
-        display: block;
+    .notificacao-grupo-remetente-avatar
+    .notificacao-avatar-iniciais {
+        width: 40px;
+        height: 40px;
+
+        min-width: 40px;
+        min-height: 40px;
+
+        max-width: 40px;
+        max-height: 40px;
     }
 
 
-    .notificacao-data {
-        display: block;
-
-        margin-top: 3px;
+    .notificacao-grupo-remetente-conteudo strong {
+        font-size: 13px;
     }
 
 
-    .notificacao-identidade {
-        gap: 3px 6px;
+    .notificacao-grupo-remetente-conteudo > span {
+        font-size: 11px;
+    }
+
+
+    .notificacao-grupo-remetente-meta {
+        width: 30px;
+
+        min-width: 30px;
+
+        justify-content: center;
+    }
+
+
+    .notificacao-grupo-remetente-meta time {
+        display: none;
+    }
+
+
+    .notificacao-grupo-remetente-seta {
+        width: 28px;
+        height: 28px;
+
+        min-width: 28px;
+        min-height: 28px;
+    }
+
+
+    .notificacao-grupo-remetente-seta svg {
+        width: 16px;
+        height: 16px;
+    }
+
+
+    .notificacao-grupo-remetente-lista {
+        padding:
+            7px;
+    }
+
+
+    .notificacao-grupo-remetente-lista
+    .notificacao-item {
+        background: #ffffff;
     }
 
 }
 
 
 /* =========================================================
-ACESSIBILIDADE
-========================================================= */
+   CELULARES MUITO PEQUENOS
+   ========================================================= */
 
-button:focus-visible,
-.notificacao-item:focus-visible {
-    outline:
-        3px solid rgba(
-            109,
-            74,
-            255,
-            0.25
-        );
+@media (max-width: 380px) {
 
-    outline-offset: 2px;
+    .notificacoes-main {
+        padding-left: 9px;
+        padding-right: 9px;
+    }
+
+
+    .notificacoes-header-inner {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+
+    .notificacao-item {
+        grid-template-columns:
+            36px
+            minmax(0, 1fr)
+            30px;
+
+        gap: 8px;
+
+        padding:
+            10px 8px;
+    }
+
+
+    .notificacao-avatar-wrapper,
+    .notificacao-avatar,
+    .notificacao-avatar-container {
+        width: 36px;
+        height: 36px;
+
+        min-width: 36px;
+        min-height: 36px;
+
+        max-width: 36px;
+        max-height: 36px;
+    }
+
+
+    .notificacao-avatar-foto {
+        width: 36px;
+        height: 36px;
+
+        max-width: 36px;
+        max-height: 36px;
+    }
+
+
+    .notificacao-avatar-iniciais {
+        width: 36px;
+        height: 36px;
+
+        max-width: 36px;
+        max-height: 36px;
+    }
+
+
+    .notificacao-item.nao-lida {
+        padding-left: 6px;
+    }
+
+
+    .notificacao-titulo {
+        font-size: 13px;
+    }
+
+
+    .notificacao-mensagem {
+        font-size: 11px;
+    }
+
+
+    /* ---------------------------------------------
+       GRUPO EM CELULARES MUITO PEQUENOS
+       --------------------------------------------- */
+
+    .notificacao-grupo-remetente-cabecalho {
+        grid-template-columns:
+            36px
+            minmax(0, 1fr)
+            30px;
+    }
+
+
+    .notificacao-grupo-remetente-avatar {
+        width: 36px;
+        height: 36px;
+
+        min-width: 36px;
+        min-height: 36px;
+
+        max-width: 36px;
+        max-height: 36px;
+
+        flex-basis: 36px;
+    }
+
+
+    .notificacao-grupo-remetente-avatar
+    .notificacao-avatar-container {
+        width: 36px;
+        height: 36px;
+
+        min-width: 36px;
+        min-height: 36px;
+
+        max-width: 36px;
+        max-height: 36px;
+
+        flex-basis: 36px;
+    }
+
+
+    .notificacao-grupo-remetente-avatar
+    .notificacao-avatar,
+    .notificacao-grupo-remetente-avatar
+    .notificacao-avatar-foto {
+        width: 36px;
+        height: 36px;
+
+        min-width: 36px;
+        min-height: 36px;
+
+        max-width: 36px;
+        max-height: 36px;
+    }
+
+
+    .notificacao-grupo-remetente-avatar
+    .notificacao-avatar-iniciais {
+        width: 36px;
+        height: 36px;
+
+        min-width: 36px;
+        min-height: 36px;
+
+        max-width: 36px;
+        max-height: 36px;
+    }
+
 }
 
 
 /* =========================================================
-REDUÇÃO DE MOVIMENTO
-========================================================= */
+   ACESSIBILIDADE — REDUZIR MOVIMENTO
+   ========================================================= */
 
 @media (prefers-reduced-motion: reduce) {
 
     *,
     *::before,
     *::after {
-
         scroll-behavior: auto !important;
 
-        transition: none !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
 
-        animation: none !important;
+        transition-duration: 0.01ms !important;
     }
 
 }
