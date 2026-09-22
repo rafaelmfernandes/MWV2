@@ -20,12 +20,16 @@
        index.html
        ou
        configurar-conta.html
+   - Abrir o modal de recuperação de senha.
 
    Regras de negócio de autenticação ficam em:
    js/auth/Login.js
 
    Regras de negócio de cadastro ficam em:
    js/auth/Cadastro.js
+
+   O modal de recuperação fica em:
+   js/components/modal-recuperar-senha.js
 
    Este arquivo é responsável pelo controle da interface
    e pelo fluxo de navegação da página de autenticação.
@@ -492,6 +496,7 @@ function alternarAba(tipo) {
 
                 </div>
 
+
                 <div class="form-group">
 
                     <label for="login-senha">
@@ -509,6 +514,7 @@ function alternarAba(tipo) {
                     >
 
                 </div>
+
 
                 <div
                     style="
@@ -528,6 +534,7 @@ function alternarAba(tipo) {
 
                 </div>
 
+
                 <button
                     type="submit"
                     class="btn-continuar-proximo"
@@ -536,6 +543,7 @@ function alternarAba(tipo) {
                     Entrar na Conta
                 </button>
 
+
                 <div class="auth-divider">
 
                     <span>
@@ -543,6 +551,7 @@ function alternarAba(tipo) {
                     </span>
 
                 </div>
+
 
                 <div class="social-buttons-container">
 
@@ -570,6 +579,7 @@ function alternarAba(tipo) {
                         Google
 
                     </button>
+
 
                     <button
                         type="button"
@@ -601,6 +611,7 @@ function alternarAba(tipo) {
             </form>
         `;
 
+
         const email =
             document.querySelector(
                 '#login-email'
@@ -611,8 +622,14 @@ function alternarAba(tipo) {
                 '#login-senha'
             );
 
-        prepararLimpezaErroCampo(email);
-        prepararLimpezaErroCampo(senha);
+
+        prepararLimpezaErroCampo(
+            email
+        );
+
+        prepararLimpezaErroCampo(
+            senha
+        );
 
         return;
     }
@@ -661,6 +678,7 @@ function alternarAba(tipo) {
 
             </div>
 
+
             <div class="form-group">
 
                 <label for="cadastro-email">
@@ -678,6 +696,7 @@ function alternarAba(tipo) {
                 >
 
             </div>
+
 
             <div class="form-group">
 
@@ -697,6 +716,7 @@ function alternarAba(tipo) {
                 >
 
             </div>
+
 
             <div class="cadastro-artista-opcao">
 
@@ -718,12 +738,14 @@ function alternarAba(tipo) {
 
                 </label>
 
+
                 <p class="cadastro-artista-descricao">
                     Quero criar um perfil para divulgar meu trabalho
                     e receber oportunidades.
                 </p>
 
             </div>
+
 
             <div
                 id="tipo-artista-container"
@@ -734,6 +756,7 @@ function alternarAba(tipo) {
                 <label for="tipo-artista">
                     Tipo de artista
                 </label>
+
 
                 <select
                     id="tipo-artista"
@@ -787,6 +810,7 @@ function alternarAba(tipo) {
 
                 </select>
 
+
                 <small
                     style="
                         display: block;
@@ -800,6 +824,7 @@ function alternarAba(tipo) {
 
             </div>
 
+
             <button
                 type="submit"
                 class="btn-continuar-proximo"
@@ -807,6 +832,7 @@ function alternarAba(tipo) {
             >
                 Criar Conta
             </button>
+
 
             <div class="auth-divider">
 
@@ -816,6 +842,7 @@ function alternarAba(tipo) {
 
             </div>
 
+
             <div class="social-buttons-container">
 
                 <button
@@ -823,19 +850,16 @@ function alternarAba(tipo) {
                     class="btn-social"
                     onclick="loginSocial('Google')"
                 >
-
                     Google
-
                 </button>
+
 
                 <button
                     type="button"
                     class="btn-social"
                     onclick="loginSocial('Apple')"
                 >
-
                     Apple
-
                 </button>
 
             </div>
@@ -966,6 +990,7 @@ async function realizarLogin(e) {
         return;
     }
 
+
     if (!campoEmail.checkValidity()) {
 
         mostrarErroCampo(
@@ -979,6 +1004,7 @@ async function realizarLogin(e) {
 
         return;
     }
+
 
     if (!senha) {
 
@@ -1012,6 +1038,7 @@ async function realizarLogin(e) {
                 email,
                 senha
             });
+
 
         if (!resultado?.sucesso) {
 
@@ -1059,10 +1086,12 @@ async function realizarLogin(e) {
             '➡️ Login tradicional realizado com sucesso.'
         );
 
+
         const destinoSalvo =
             sessionStorage.getItem(
                 'musicalworld_destino_login'
             );
+
 
         if (destinoSalvo) {
 
@@ -1071,9 +1100,11 @@ async function realizarLogin(e) {
                 destinoSalvo
             );
 
+
             sessionStorage.removeItem(
                 'musicalworld_destino_login'
             );
+
 
             window.location.href =
                 destinoSalvo;
@@ -1091,10 +1122,12 @@ async function realizarLogin(e) {
             erro
         );
 
+
         mostrarErroCampo(
             campoSenha,
             'Ocorreu um erro ao entrar. Tente novamente.'
         );
+
 
         focarCampoComErro(
             campoSenha
@@ -1155,28 +1188,35 @@ async function realizarCadastro(e) {
             'select[name="tipoArtista"]'
         );
 
+
     limparErrosFormulario(
         formulario
     );
 
+
     const nome =
         campoNome?.value
             .trim() || '';
+
 
     const email =
         campoEmail?.value
             .trim()
             .toLowerCase() || '';
 
+
     const senha =
         campoSenha?.value || '';
+
 
     const souArtista =
         campoArtista?.checked === true;
 
+
     const tipoArtista =
         campoTipoArtista?.value
             .trim() || '';
+
 
     const tipoPerfil =
         souArtista
@@ -1202,6 +1242,7 @@ async function realizarCadastro(e) {
         return;
     }
 
+
     if (!email) {
 
         mostrarErroCampo(
@@ -1215,6 +1256,7 @@ async function realizarCadastro(e) {
 
         return;
     }
+
 
     if (!campoEmail.checkValidity()) {
 
@@ -1230,6 +1272,7 @@ async function realizarCadastro(e) {
         return;
     }
 
+
     if (!senha || senha.length < 6) {
 
         mostrarErroCampo(
@@ -1243,6 +1286,7 @@ async function realizarCadastro(e) {
 
         return;
     }
+
 
     if (
         souArtista &&
@@ -1296,6 +1340,7 @@ async function realizarCadastro(e) {
         if (!resultado?.sucesso) {
 
             let campoErro;
+
 
             if (
                 resultado.campo === 'nome'
@@ -1371,6 +1416,7 @@ async function realizarCadastro(e) {
             'login'
         );
 
+
     } catch (erro) {
 
         console.error(
@@ -1378,9 +1424,11 @@ async function realizarCadastro(e) {
             erro
         );
 
+
         alert(
             'Não foi possível concluir o cadastro. Tente novamente.'
         );
+
 
     } finally {
 
@@ -1407,10 +1455,12 @@ async function loginSocial(provedor) {
         provedor
     );
 
+
     const resultado =
         await Login.social(
             provedor
         );
+
 
     if (
         !resultado?.sucesso
@@ -1423,6 +1473,7 @@ async function loginSocial(provedor) {
 
         return;
     }
+
 
     /*
        O Supabase redireciona automaticamente para o provedor.
@@ -1443,56 +1494,74 @@ async function loginSocial(provedor) {
 
 /* ============================================================
    RECUPERAÇÃO DE SENHA
+
+   IMPORTANTE:
+
+   Antes:
+       prompt()
+       alert()
+
+   Agora:
+
+       clique em "Esqueceu a senha?"
+                 ↓
+       abre modal
+                 ↓
+       usuário informa e-mail
+                 ↓
+       modal chama Login.recuperarSenha()
+                 ↓
+       Supabase envia o link
+                 ↓
+       resultado aparece dentro do modal
+
+   A regra de negócio continua em:
+       js/auth/Login.js
 ============================================================ */
 
-async function esqueciSenha(e) {
+function esqueciSenha(e) {
 
-    e.preventDefault();
+    if (e) {
 
-    const email =
-        prompt(
-            'Digite seu e-mail cadastrado para recuperar a senha:'
-        );
+        e.preventDefault();
 
-    if (!email) {
-        return;
-    }
-
-    const emailNormalizado =
-        email
-            .trim()
-            .toLowerCase();
-
-    if (!emailNormalizado) {
-
-        alert(
-            'Informe um e-mail válido.'
-        );
-
-        return;
     }
 
 
-    const resultado =
-        await Login.recuperarSenha(
-            emailNormalizado
-        );
-
-
-    if (!resultado?.sucesso) {
-
-        alert(
-            resultado?.mensagem ||
-            'Não foi possível solicitar a recuperação da senha.'
-        );
-
-        return;
-    }
-
-
-    alert(
-        resultado.mensagem
+    console.log(
+        '🔑 Abrindo modal de recuperação de senha...'
     );
+
+
+    /* ========================================================
+       GARANTIR QUE O COMPONENTE DO MODAL EXISTE
+    ======================================================== */
+
+    if (
+        !window.MusicalWorldModalRecuperarSenha
+    ) {
+
+        console.error(
+            '❌ Modal de recuperação de senha não encontrado.'
+        );
+
+        /*
+         * Não utilizamos alert() aqui.
+         *
+         * Se o componente não foi carregado, o problema é
+         * estrutural na página e deve aparecer no console.
+         */
+
+        return;
+    }
+
+
+    /* ========================================================
+       ABRIR MODAL
+    ======================================================== */
+
+    window.MusicalWorldModalRecuperarSenha.abrir();
+
 }
 
 
@@ -1522,10 +1591,12 @@ async function processarSessaoInicial() {
         '🔎 Verificando sessão existente...'
     );
 
+
     try {
 
         const sessao =
             await Login.verificarSessaoInicial();
+
 
         if (!sessao?.user) {
 
@@ -1541,6 +1612,7 @@ async function processarSessaoInicial() {
             '🔐 Sessão encontrada.'
         );
 
+
         console.log(
             '👤 Usuário:',
             sessao.user
@@ -1551,15 +1623,18 @@ async function processarSessaoInicial() {
            Se a URL contém parâmetros relacionados ao OAuth,
            marcamos o fluxo apenas para fins de diagnóstico.
         */
+
         const urlAtual =
             new URL(
                 window.location.href
             );
 
+
         const possuiOAuthNaURL =
             urlAtual.searchParams.has('code') ||
             urlAtual.hash.includes('access_token') ||
             urlAtual.hash.includes('refresh_token');
+
 
         if (possuiOAuthNaURL) {
 
@@ -1576,9 +1651,11 @@ async function processarSessaoInicial() {
            O usuário possui uma sessão.
            Agora precisamos verificar se ele já possui perfil.
         */
+
         await processarUsuarioAutenticado(
             sessao.user
         );
+
 
     } catch (erro) {
 
@@ -1604,6 +1681,7 @@ window.onload = function () {
     /*
        Monta a aba inicial.
     */
+
     alternarAba(
         'login'
     );
@@ -1614,6 +1692,7 @@ window.onload = function () {
 
        Isso cobre principalmente o retorno do Google/Apple.
     */
+
     processarSessaoInicial();
 
 
@@ -1624,6 +1703,7 @@ window.onload = function () {
        O redirecionamento principal é feito por
        processarSessaoInicial(), evitando chamadas duplicadas.
     */
+
     Login.observarAutenticacao();
 
 };

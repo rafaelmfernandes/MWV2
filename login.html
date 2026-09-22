@@ -1,26 +1,48 @@
+
 <!DOCTYPE html>
 
 <html lang="pt-BR">
 
 <head>
 
+    <!-- ==================================================
+         CONFIGURAÇÕES BÁSICAS
+    =================================================== -->
 
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
->
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-<title>MusicalWorld - Acesso</title>
+    <title>MusicalWorld - Acesso</title>
 
-<link
-    rel="stylesheet"
-    href="css/login.css"
->
 
+    <!-- ==================================================
+         CSS PRINCIPAL
+    =================================================== -->
+
+    <link
+        rel="stylesheet"
+        href="css/login.css"
+    >
+     <link
+        rel="stylesheet"
+        href="css/components/modal-recuperar-senha.css"
+    >
+
+    <!-- ==================================================
+         CSS — CONTROLE DE VISIBILIDADE DA SENHA
+    =================================================== -->
+
+    <link
+        rel="stylesheet"
+        href="css/components/password-toggle.css"
+    >
 
 </head>
+
 
 <body>
 
@@ -44,6 +66,7 @@
             </p>
 
         </div>
+
 
         <!-- ==================================================
              TOGGLE ENTRAR / CADASTRAR
@@ -76,26 +99,39 @@
 
         </div>
 
+
         <!-- ==================================================
              CONTEÚDO DINÂMICO
+             
+             O Login.js e Cadastro.js inserem os formulários
+             neste elemento.
         =================================================== -->
 
         <div
             id="auth-content-container"
             style="width: 100%;"
         >
-            <!-- O formulário será inserido pelo JavaScript -->
+
+            <!--
+                O formulário de login ou cadastro
+                será inserido pelo JavaScript.
+            -->
+
         </div>
 
     </div>
 
 </div>
 
+
 <!-- ========================================================
      SUPABASE
 ========================================================= -->
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script
+    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+></script>
+
 
 <!-- ========================================================
      MÓDULOS PRINCIPAIS
@@ -106,11 +142,29 @@
 <script src="js/core/Sessao.js"></script>
 
 <script src="js/auth/Perfil.js"></script>
+
 <script src="js/auth/Login.js"></script>
+
 <script src="js/auth/Cadastro.js"></script>
 
 
+<!-- ========================================================
+     CONTROLE PRINCIPAL DA PÁGINA DE LOGIN
+========================================================= -->
+
 <script src="js/login.js"></script>
+
+
+<!-- ========================================================
+     CONTROLE DE VISIBILIDADE DA SENHA
+     
+     Este módulo observa os formulários inseridos
+     dinamicamente por Login.js e Cadastro.js.
+========================================================= -->
+
+<script src="js/auth/MostrarSenha.js"></script>
+<script src="js/components/modal-recuperar-senha.js"></script>
+
 
 <!-- ========================================================
      OBSERVADOR DA SESSÃO
@@ -121,7 +175,7 @@
     Sessao.observar((evento, sessao) => {
 
         console.log(
-            '🔐 Sessão:',
+            'Sessão:',
             evento,
             sessao
         );
@@ -134,3 +188,4 @@
 </body>
 
 </html>
+

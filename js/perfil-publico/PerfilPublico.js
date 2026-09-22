@@ -2,7 +2,7 @@
    MUSICALWORLD — MEU PERFIL UNIVERSAL
 
    Arquivo:
-   js/PerfilPublico.js
+   js/perfil-publico/PerfilPublico.js
 
    Responsabilidade:
 
@@ -12,6 +12,9 @@
    - Controlar as abas.
    - Acionar os módulos de portfólio, serviços, agenda
      e avaliações.
+   - Inicializar as avaliações antecipadamente para que
+     a média e a quantidade apareçam imediatamente no
+     cabeçalho do perfil.
    - Controlar navegação.
    - Controlar WhatsApp.
    - Controlar QR Code.
@@ -20,11 +23,15 @@
 
    Renderização:
 
-   js/PerfilPublicoRender.js
+   js/perfil-publico/PerfilPublicoRender.js
 
    Dados:
 
    js/perfil-publico/PerfilPublicoDados.js
+
+   Avaliações:
+
+   js/perfil-publico/PerfilPublicoAvaliacoes.js
 
    IMPORTANTE:
 
@@ -32,7 +39,7 @@
    apresentação visual.
 
    A renderização básica do perfil pertence ao:
-   js/PerfilPublicoRender.js
+   js/perfil-publico/PerfilPublicoRender.js
 
    ========================================================= */
 
@@ -268,7 +275,20 @@
 
 
         avaliacoes:
-            []
+            [],
+
+
+        /*
+         * Indica se o módulo de avaliações já foi
+         * inicializado para o perfil atual.
+         *
+         * Isso evita que a primeira abertura da página
+         * carregue as avaliações novamente quando o
+         * usuário clicar na aba "Avaliações".
+         */
+
+        avaliacoesInicializadas:
+            false
 
     };
 
@@ -735,13 +755,53 @@
             configurarAbas();
 
 
+            /*
+             * PRIMEIRO PASSO:
+             *
+             * Carrega o perfil e descobre o perfilId.
+             */
+
             await carregarDados();
 
+
+            /*
+             * SEGUNDO PASSO:
+             *
+             * Agora que o perfilId já foi descoberto,
+             * carregamos as avaliações imediatamente.
+             *
+             * Isso é importante porque o cabeçalho do
+             * perfil possui a média e a quantidade de
+             * avaliações.
+             *
+             * Antes dessa correção, as avaliações só eram
+             * inicializadas quando o usuário entrava na
+             * aba "Avaliações".
+             */
+
+            await inicializarAvaliacoesAntecipadamente();
+
+
+            /*
+             * TERCEIRO PASSO:
+             *
+             * Só depois das avaliações estarem disponíveis
+             * fazemos a renderização inicial do perfil.
+             */
 
             aplicarRegrasDePerfil();
 
 
             preencherInformacoesPerfil();
+
+
+            /*
+             * Garante que a avaliação do cabeçalho seja
+             * preenchida novamente depois que o módulo
+             * de avaliações terminou sua leitura.
+             */
+
+            preencherAvaliacao();
 
 
             await carregarAba(
@@ -830,6 +890,15 @@
 
                     incluirAgenda:
                         true,
+
+                    /*
+                     * As avaliações são carregadas pelo
+                     * módulo especializado
+                     * PerfilPublicoAvaliacoes.
+                     *
+                     * Isso evita duas consultas diferentes
+                     * para a mesma informação.
+                     */
 
                     incluirAvaliacoes:
                         false
@@ -962,6 +1031,33 @@
         }
 
 
+        /*
+         * Segunda proteção:
+         *
+         * Alguns módulos podem devolver o ID como string
+         * dentro de outras propriedades do objeto do perfil.
+         */
+
+        if (
+            !estado.perfilId
+        ) {
+
+            estado.perfilId =
+                obterPrimeiroValor(
+
+                    estado.perfil?.perfil_id,
+
+                    estado.perfil?.perfilId,
+
+                    estado.perfilArtista?.perfil_id,
+
+                    estado.perfilArtista?.perfilId
+
+                ) || null;
+
+        }
+
+
         estado.portfolio =
             obterEstadoArray(
                 "obterPortfolio",
@@ -1056,6 +1152,188 @@
 
             }
         );
+
+
+        /*
+         * Diagnóstico importante.
+         *
+         * Se esse valor aparecer como null/undefined,
+         * o problema está no PerfilPublicoDados e não
+         * no módulo de avaliações.
+         */
+
+        if (
+            !estado.perfilId
+        ) {
+
+            aviso(
+                "Perfil carregado, porém nenhum perfilId foi identificado."
+            );
+
+        } else {
+
+            log(
+                "Perfil identificado para avaliações:",
+                estado.perfilId
+            );
+
+        }
+
+    }
+
+
+    /* =====================================================
+       INICIALIZAR AVALIAÇÕES ANTECIPADAMENTE
+       ===================================================== */
+
+    async function inicializarAvaliacoesAntecipadamente() {
+
+        /*
+         * O módulo pode não existir em alguma versão antiga
+         * da página. Nesse caso não interrompemos todo o
+         * carregamento do perfil.
+         */
+
+        if (!Avaliacoes) {
+
+            aviso(
+                "PerfilPublicoAvaliacoes.js não está disponível."
+            );
+
+
+            return;
+
+        }
+
+
+        if (
+            typeof Avaliacoes.inicializar !== "function"
+        ) {
+
+            aviso(
+                "PerfilPublicoAvaliacoes.inicializar() não está disponível."
+            );
+
+
+            return;
+
+        }
+
+
+        /*
+         * Sem perfilId não existe como consultar as
+         * avaliações do perfil correto.
+         */
+
+        if (!estado.perfilId) {
+
+            aviso(
+                "Avaliações não inicializadas porque o perfilId ainda não foi identificado."
+            );
+
+
+            return;
+
+        }
+
+
+        try {
+
+            log(
+                "Inicializando avaliações antecipadamente para o perfil:",
+                estado.perfilId
+            );
+
+
+            /*
+             * Passamos explicitamente o perfilId.
+             *
+             * Isso é especialmente importante na página
+             * "Meu Perfil", porque normalmente não existe
+             * ?id= na URL.
+             */
+
+            const resultado =
+                await Avaliacoes.inicializar({
+
+                    perfilId:
+                        estado.perfilId,
+
+                    perfil:
+                        estado.perfil,
+
+                    perfilArtista:
+                        estado.perfilArtista,
+
+                    usuario:
+                        estado.usuario
+
+                });
+
+
+            /*
+             * Algumas versões do módulo podem retornar
+             * diretamente os dados das avaliações.
+             *
+             * Se isso acontecer, aproveitamos o retorno.
+             */
+
+            if (
+                Array.isArray(
+                    resultado
+                )
+            ) {
+
+                estado.avaliacoes =
+                    resultado;
+
+            } else if (
+                Array.isArray(
+                    resultado?.avaliacoes
+                )
+            ) {
+
+                estado.avaliacoes =
+                    resultado.avaliacoes;
+
+            }
+
+
+            estado.avaliacoesInicializadas =
+                true;
+
+
+            log(
+                "Avaliações inicializadas com sucesso.",
+                {
+
+                    perfilId:
+                        estado.perfilId,
+
+                    quantidade:
+                        estado.avaliacoes.length
+
+                }
+            );
+
+
+        } catch (error) {
+
+            /*
+             * Uma falha nas avaliações não deve impedir
+             * que o restante do Meu Perfil seja carregado.
+             */
+
+            estado.avaliacoesInicializadas =
+                false;
+
+
+            erro(
+                "Erro ao inicializar avaliações antecipadamente:",
+                error
+            );
+
+        }
 
     }
 
@@ -1803,7 +2081,15 @@
 
     async function carregarAbaSobre() {
 
+        /*
+         * A avaliação já foi inicializada antes da
+         * primeira renderização da página.
+         */
+
         preencherInformacoesPerfil();
+
+
+        preencherAvaliacao();
 
 
         /*
@@ -2032,6 +2318,32 @@
         }
 
 
+        /*
+         * A inicialização principal acontece antes da
+         * primeira renderização do perfil.
+         *
+         * Porém mantemos esta proteção para casos em que:
+         *
+         * - o módulo ainda não foi inicializado;
+         * - o perfil foi recarregado;
+         * - houve alguma falha anterior.
+         */
+
+        if (
+            !estado.avaliacoesInicializadas
+        ) {
+
+            await inicializarAvaliacoesAntecipadamente();
+
+        }
+
+
+        /*
+         * Caso o módulo não tenha conseguido carregar,
+         * tentamos buscar através do módulo antigo de dados,
+         * preservando compatibilidade.
+         */
+
         if (
             !estado.avaliacoes.length &&
             Dados &&
@@ -2039,7 +2351,7 @@
         ) {
 
             log(
-                "Buscando avaliações do perfil..."
+                "Buscando avaliações do perfil através do módulo de dados..."
             );
 
 
@@ -2075,6 +2387,11 @@
             );
 
 
+        /*
+         * Se o módulo possuir renderizar(), utilizamos o
+         * método de renderização.
+         */
+
         if (
             typeof Avaliacoes.renderizar === "function"
         ) {
@@ -2085,24 +2402,15 @@
                 )
             );
 
-        } else if (
-            typeof Avaliacoes.inicializar === "function"
-        ) {
-
-            await Promise.resolve(
-                Avaliacoes.inicializar(
-                    dadosAvaliacoes
-                )
-            );
-
-        } else {
-
-            throw new Error(
-                "PerfilPublicoAvaliacoes.js não possui renderizar() nem inicializar()."
-            );
-
         }
 
+
+        /*
+         * Não chamamos inicializar() novamente aqui se ele
+         * já foi executado anteriormente.
+         *
+         * Isso evita uma segunda consulta desnecessária.
+         */
 
         preencherAvaliacao();
 
@@ -3062,6 +3370,19 @@
 
 
         /*
+         * Permite que as avaliações sejam inicializadas
+         * novamente para o perfil atualizado.
+         */
+
+        estado.avaliacoesInicializadas =
+            false;
+
+
+        estado.avaliacoes =
+            [];
+
+
+        /*
          * Evita que dados do perfil anterior permaneçam
          * durante uma nova leitura.
          */
@@ -3081,10 +3402,22 @@
         await carregarDados();
 
 
+        /*
+         * Depois de recarregar o perfil, precisamos
+         * obrigatoriamente reinicializar as avaliações
+         * com o novo perfilId.
+         */
+
+        await inicializarAvaliacoesAntecipadamente();
+
+
         aplicarRegrasDePerfil();
 
 
         preencherInformacoesPerfil();
+
+
+        preencherAvaliacao();
 
 
         ativarAba(

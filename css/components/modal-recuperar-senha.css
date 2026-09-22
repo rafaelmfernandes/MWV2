@@ -1,0 +1,693 @@
+/* =========================================================
+   MUSICALWORLD — MODAL DE RECUPERAÇÃO DE SENHA
+
+   Arquivo:
+   css/auth/modal-recuperar-senha.css
+
+   Responsabilidade:
+   - Estilizar o modal de recuperação de senha.
+   - Criar o fundo escurecido.
+   - Manter o modal responsivo para desktop, tablet e celular.
+   - Controlar estados visuais de carregamento, sucesso e erro.
+   - Garantir que os botões mantenham altura e proporções corretas.
+   - Não contém lógica JavaScript.
+   ========================================================= */
+
+
+/* =========================================================
+   CONTAINER PRINCIPAL
+   ========================================================= */
+
+.mw-recuperacao-modal-container {
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 9999;
+
+    display: none;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 24px;
+
+    background: rgba(15, 23, 42, 0.58);
+
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+
+    box-sizing: border-box;
+}
+
+
+.mw-recuperacao-modal-container.mw-modal-aberto {
+    display: flex;
+}
+
+
+/* =========================================================
+   CAIXA DO MODAL
+   ========================================================= */
+
+.mw-recuperacao-modal {
+    position: relative;
+
+    width: 100%;
+    max-width: 460px;
+
+    background: #ffffff;
+
+    border: 1px solid #e5e7eb;
+
+    border-radius: 24px;
+
+    padding: 30px;
+
+    box-sizing: border-box;
+
+    box-shadow:
+        0 24px 70px rgba(15, 23, 42, 0.22);
+
+    animation: mwRecuperacaoEntrada 0.22s ease-out;
+}
+
+
+@keyframes mwRecuperacaoEntrada {
+
+    from {
+        opacity: 0;
+        transform: translateY(12px) scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+
+/* =========================================================
+   BOTÃO FECHAR
+   ========================================================= */
+
+.mw-recuperacao-fechar {
+    position: absolute;
+
+    top: 18px;
+    right: 18px;
+
+    width: 38px;
+    min-width: 38px;
+
+    height: 38px;
+    min-height: 38px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    padding: 0;
+
+    border: 0;
+
+    border-radius: 50%;
+
+    background: #f5f7fb;
+
+    color: #64748b;
+
+    cursor: pointer;
+
+    transition:
+        background 0.18s ease,
+        color 0.18s ease,
+        transform 0.18s ease;
+
+    box-sizing: border-box;
+}
+
+
+.mw-recuperacao-fechar:hover {
+    background: #eef2f7;
+
+    color: #172033;
+
+    transform: scale(1.04);
+}
+
+
+.mw-recuperacao-fechar:focus-visible {
+    outline: 3px solid rgba(109, 74, 255, 0.22);
+
+    outline-offset: 2px;
+}
+
+
+/* =========================================================
+   ÍCONE SUPERIOR
+   ========================================================= */
+
+.mw-recuperacao-icone {
+    width: 52px;
+    min-width: 52px;
+
+    height: 52px;
+    min-height: 52px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    margin-bottom: 18px;
+
+    border-radius: 16px;
+
+    background: rgba(109, 74, 255, 0.10);
+
+    color: #6d4aff;
+}
+
+
+.mw-recuperacao-icone svg {
+    width: 25px;
+    height: 25px;
+}
+
+
+/* =========================================================
+   TÍTULO
+   ========================================================= */
+
+.mw-recuperacao-titulo {
+    margin: 0;
+
+    padding-right: 40px;
+
+    font-family:
+        Inter,
+        Manrope,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+    font-size: 24px;
+
+    line-height: 1.25;
+
+    font-weight: 700;
+
+    color: #172033;
+}
+
+
+/* =========================================================
+   DESCRIÇÃO
+   ========================================================= */
+
+.mw-recuperacao-descricao {
+    margin: 10px 0 24px;
+
+    font-family:
+        Inter,
+        Manrope,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+    font-size: 14px;
+
+    line-height: 1.6;
+
+    color: #64748b;
+}
+
+
+/* =========================================================
+   FORMULÁRIO
+   ========================================================= */
+
+.mw-recuperacao-form {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 16px;
+
+    width: 100%;
+}
+
+
+/* =========================================================
+   LABEL
+   ========================================================= */
+
+.mw-recuperacao-label {
+    display: block;
+
+    margin-bottom: 7px;
+
+    font-family:
+        Inter,
+        Manrope,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    color: #334155;
+}
+
+
+/* =========================================================
+   CAMPO
+   ========================================================= */
+
+.mw-recuperacao-input {
+    width: 100%;
+
+    height: 50px;
+    min-height: 50px;
+
+    padding: 0 15px;
+
+    box-sizing: border-box;
+
+    border: 1px solid #d9dee8;
+
+    border-radius: 12px;
+
+    background: #ffffff;
+
+    color: #172033;
+
+    font-family:
+        Inter,
+        Manrope,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+    font-size: 14px;
+
+    outline: none;
+
+    transition:
+        border-color 0.18s ease,
+        box-shadow 0.18s ease,
+        background 0.18s ease;
+}
+
+
+.mw-recuperacao-input::placeholder {
+    color: #94a3b8;
+}
+
+
+.mw-recuperacao-input:hover {
+    border-color: #cbd5e1;
+}
+
+
+.mw-recuperacao-input:focus {
+    border-color: #6d4aff;
+
+    box-shadow:
+        0 0 0 4px rgba(109, 74, 255, 0.10);
+}
+
+
+/* =========================================================
+   ÁREA DE MENSAGEM
+   ========================================================= */
+
+.mw-recuperacao-mensagem {
+    display: none;
+
+    width: 100%;
+
+    padding: 12px 14px;
+
+    border-radius: 11px;
+
+    box-sizing: border-box;
+
+    font-family:
+        Inter,
+        Manrope,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+    font-size: 13px;
+
+    line-height: 1.5;
+}
+
+
+.mw-recuperacao-mensagem.mw-mensagem-visivel {
+    display: block;
+}
+
+
+.mw-recuperacao-mensagem.mw-mensagem-erro {
+    background: #fff1f2;
+
+    border: 1px solid #fecdd3;
+
+    color: #be123c;
+}
+
+
+.mw-recuperacao-mensagem.mw-mensagem-sucesso {
+    background: #f0fdf4;
+
+    border: 1px solid #bbf7d0;
+
+    color: #15803d;
+}
+
+
+/* =========================================================
+   ÁREA DOS BOTÕES
+   ========================================================= */
+
+.mw-recuperacao-acoes {
+    display: flex;
+
+    align-items: stretch;
+
+    justify-content: stretch;
+
+    gap: 10px;
+
+    width: 100%;
+
+    margin-top: 4px;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   CONFIGURAÇÃO BASE DOS BOTÕES
+
+   IMPORTANTE:
+   - height e min-height impedem achatamento.
+   - flex-shrink: 0 impede redução vertical.
+   - display flex centraliza o texto.
+   - box-sizing evita alterações inesperadas de dimensão.
+   ========================================================= */
+
+.mw-recuperacao-btn-cancelar,
+.mw-recuperacao-btn-enviar {
+    flex: 1 1 0;
+
+    width: 0;
+
+    height: 48px;
+    min-height: 48px;
+
+    padding: 0 18px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    box-sizing: border-box;
+
+    border-radius: 12px;
+
+    font-family:
+        Inter,
+        Manrope,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+    font-size: 14px;
+
+    line-height: 1;
+
+    font-weight: 600;
+
+    white-space: nowrap;
+
+    cursor: pointer;
+}
+
+
+/* =========================================================
+   BOTÃO CANCELAR
+   ========================================================= */
+
+.mw-recuperacao-btn-cancelar {
+    border: 1px solid #d9dee8;
+
+    background: #ffffff;
+
+    color: #475569;
+
+    transition:
+        background 0.18s ease,
+        border-color 0.18s ease,
+        color 0.18s ease,
+        transform 0.18s ease;
+}
+
+
+.mw-recuperacao-btn-cancelar:hover {
+    background: #f8fafc;
+
+    border-color: #cbd5e1;
+
+    color: #172033;
+
+    transform: translateY(-1px);
+}
+
+
+.mw-recuperacao-btn-cancelar:focus-visible {
+    outline: 3px solid rgba(109, 74, 255, 0.16);
+
+    outline-offset: 2px;
+}
+
+
+/* =========================================================
+   BOTÃO ENVIAR LINK
+   ========================================================= */
+
+.mw-recuperacao-btn-enviar {
+    border: 0;
+
+    background: #6d4aff;
+
+    color: #ffffff;
+
+    font-weight: 700;
+
+    transition:
+        background 0.18s ease,
+        transform 0.18s ease,
+        box-shadow 0.18s ease;
+}
+
+
+.mw-recuperacao-btn-enviar:hover {
+    background: #5b3be0;
+
+    box-shadow:
+        0 8px 20px rgba(109, 74, 255, 0.22);
+
+    transform: translateY(-1px);
+}
+
+
+.mw-recuperacao-btn-enviar:focus-visible {
+    outline: 3px solid rgba(109, 74, 255, 0.20);
+
+    outline-offset: 2px;
+}
+
+
+/* =========================================================
+   ESTADO DESABILITADO
+   ========================================================= */
+
+.mw-recuperacao-btn-enviar:disabled,
+.mw-recuperacao-btn-cancelar:disabled {
+    cursor: not-allowed;
+
+    opacity: 0.65;
+
+    transform: none;
+
+    box-shadow: none;
+}
+
+
+/* =========================================================
+   ESTADO DE SUCESSO
+   ========================================================= */
+
+.mw-recuperacao-sucesso {
+    text-align: center;
+}
+
+
+.mw-recuperacao-sucesso .mw-recuperacao-icone {
+    margin-left: auto;
+    margin-right: auto;
+
+    background: rgba(22, 163, 74, 0.10);
+
+    color: #16a34a;
+}
+
+
+.mw-recuperacao-sucesso .mw-recuperacao-titulo {
+    padding-right: 0;
+}
+
+
+.mw-recuperacao-sucesso .mw-recuperacao-descricao {
+    margin-bottom: 22px;
+}
+
+
+/* =========================================================
+   RESPONSIVIDADE — TABLET
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    .mw-recuperacao-modal-container {
+        padding: 18px;
+    }
+
+
+    .mw-recuperacao-modal {
+        max-width: 500px;
+
+        padding: 26px;
+    }
+}
+
+
+/* =========================================================
+   RESPONSIVIDADE — CELULAR
+   ========================================================= */
+
+@media (max-width: 480px) {
+
+    .mw-recuperacao-modal-container {
+        align-items: flex-end;
+
+        padding: 0;
+    }
+
+
+    .mw-recuperacao-modal {
+        max-width: none;
+
+        border-radius: 24px 24px 0 0;
+
+        padding: 24px 20px 22px;
+
+        animation: mwRecuperacaoEntradaMobile 0.22s ease-out;
+    }
+
+
+    @keyframes mwRecuperacaoEntradaMobile {
+
+        from {
+            opacity: 0;
+
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+
+            transform: translateY(0);
+        }
+    }
+
+
+    .mw-recuperacao-titulo {
+        font-size: 21px;
+    }
+
+
+    .mw-recuperacao-descricao {
+        font-size: 13px;
+    }
+
+
+    /* -----------------------------------------------------
+       NO CELULAR OS BOTÕES FICAM UM ABAIXO DO OUTRO
+       ----------------------------------------------------- */
+
+    .mw-recuperacao-acoes {
+        flex-direction: column-reverse;
+
+        align-items: stretch;
+
+        gap: 9px;
+    }
+
+
+    .mw-recuperacao-btn-cancelar,
+    .mw-recuperacao-btn-enviar {
+        width: 100%;
+
+        height: 48px;
+        min-height: 48px;
+
+        flex: none;
+    }
+}
+
+
+/* =========================================================
+   ACESSIBILIDADE — REDUÇÃO DE MOVIMENTO
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .mw-recuperacao-modal {
+        animation: none;
+    }
+
+
+    .mw-recuperacao-btn-enviar,
+    .mw-recuperacao-btn-cancelar,
+    .mw-recuperacao-fechar {
+        transition: none;
+    }
+}

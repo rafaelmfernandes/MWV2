@@ -32,17 +32,18 @@
      - Servir como ambiente independente para testes.
      - Separar estrutura visual das regras de negócio.
 
-     Ações principais atuais:
-     - Voltar
-     - Mensagem
-     - Contratar
-
      Módulos utilizados:
      - ApresentarPerfilDados.js
      - ApresentarPerfilRender.js
      - ApresentarPerfilPortfolio.js
      - ApresentarPerfilServicos.js
+     - PerfilPublicoAvaliacoes.js
      - ApresentarPerfilAcoes.js
+
+     Ações principais:
+     - Voltar
+     - Mensagem
+     - Contratar
      ===================================================== -->
 
 
@@ -68,12 +69,28 @@
 
 
 <!-- =====================================================
-     CSS
+     CSS PRINCIPAL DA PÁGINA
      ===================================================== -->
 
 <link
     rel="stylesheet"
     href="css/apresentar-perfil/apresentar-perfil-teste.css"
+>
+
+
+<!-- =====================================================
+     CSS DAS AVALIAÇÕES
+
+     Responsabilidade:
+     - Estilizar resumo da avaliação.
+     - Estilizar distribuição de estrelas.
+     - Estilizar comentários.
+     - Manter o componente responsivo.
+     ===================================================== -->
+
+<link
+    rel="stylesheet"
+    href="css/apresentar-perfil/perfil-publico-avaliacoes.css"
 >
 
 
@@ -93,9 +110,6 @@
 
         <!-- =================================================
              VOLTAR
-
-             O ID é utilizado pelo módulo:
-             ApresentarPerfilAcoes.js
              ================================================= -->
 
         <button
@@ -120,19 +134,18 @@
         </button>
 
 
-        <!-- TÍTULO -->
+        <!-- =================================================
+             TÍTULO
+             ================================================= -->
 
         <div class="topbar-title">
             Perfil
         </div>
 
 
-        <!-- MENU
-
-             Mantido na estrutura, mas a implementação
-             desse menu não faz parte das ações principais
-             desta etapa.
-        -->
+        <!-- =================================================
+             MENU
+             ================================================= -->
 
         <button
             class="topbar-action"
@@ -187,7 +200,7 @@
 
 
         <!-- =================================================
-             PERFIL
+             PERFIL PRINCIPAL
              ================================================= -->
 
         <article
@@ -198,10 +211,6 @@
 
             <!-- =============================================
                  ÁREA DE MÍDIA
-
-                 O módulo ApresentarPerfilPortfolio.js
-                 será responsável por inserir a imagem
-                 ou vídeo do portfólio.
                  ============================================= -->
 
             <div
@@ -553,7 +562,7 @@
 
 
                 <!-- =========================================
-                     AVALIAÇÃO
+                     AVALIAÇÃO RESUMIDA
                      ========================================= -->
 
                 <div
@@ -567,7 +576,7 @@
                     >
 
                         <path
-                            d="m12 3 2.78 5.63 6.22.9-4.5 4.39 1.06 6.2L12 17.2l-5.56 2.92 1.06-6.2L12 3Z"
+                            d="m12 3 2.78 5.63 6.22.9 1.06 6.2L12 17.2l-5.56 2.92 1.06-6.2L3 9.53l6.22-.9L12 3Z"
                         ></path>
 
                     </svg>
@@ -706,18 +715,6 @@
 
             <!-- =============================================
                  AÇÕES PRINCIPAIS
-
-                 Nesta primeira etapa trabalharemos somente
-                 com as três ações principais:
-
-                 - Mensagem
-                 - Contratar
-
-                 O botão Voltar fica na topbar.
-
-                 Outras ações como curtir, comentar,
-                 compartilhar e conta serão implementadas
-                 posteriormente.
                  ============================================= -->
 
             <div
@@ -782,7 +779,7 @@
                         ></path>
 
                         <path
-                            d="m19 12-2 2"
+                            d="m19 12 2 2"
                         ></path>
 
                     </svg>
@@ -793,7 +790,6 @@
 
                 </button>
 
-
             </div>
 
 
@@ -802,13 +798,6 @@
 
         <!-- =================================================
              SERVIÇOS
-
-             Responsabilidade:
-             - Exibir os serviços cadastrados pelo artista.
-             - O conteúdo dos cards será criado pelo
-               ApresentarPerfilServicos.js.
-             - O módulo de dados já fornece os serviços
-               através de servicos_artistas.
              ================================================= -->
 
         <section
@@ -854,7 +843,7 @@
                         ></path>
 
                         <path
-                            d="m19 12-2 2"
+                            d="m19 12 2 2"
                         ></path>
 
                     </svg>
@@ -889,6 +878,386 @@
 
 
         <!-- =================================================
+             AVALIAÇÕES
+
+             Responsabilidade:
+             - Exibir a avaliação média do perfil.
+             - Exibir a quantidade de avaliações.
+             - Exibir a distribuição das notas.
+             - Exibir os comentários dos contratantes.
+             - Mostrar somente avaliações ativas.
+             - Utilizar dados reais da tabela
+               public.avaliacoes_musicos.
+
+             O módulo:
+             PerfilPublicoAvaliacoes.js
+
+             será responsável por consultar o Supabase
+             e preencher esta seção.
+             ================================================= -->
+
+        <section
+            class="profile-reviews"
+            id="profileReviews"
+            hidden
+        >
+
+
+            <!-- =============================================
+                 CABEÇALHO DA SEÇÃO
+                 ============================================= -->
+
+            <div class="section-heading">
+
+
+                <div
+                    class="section-heading-icon"
+                    aria-hidden="true"
+                >
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+
+                        <path
+                            d="m12 3 2.78 5.63 6.22.9-4.5 4.39 1.06 6.2L12 17.2l-5.56 2.92 1.06-6.2L3 9.53l6.22-.9L12 3Z"
+                        ></path>
+
+                    </svg>
+
+                </div>
+
+
+                <div>
+
+                    <span class="section-heading-eyebrow">
+                        Avaliações
+                    </span>
+
+                    <h2 class="section-heading-title">
+                        O que contratantes dizem
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <!-- =============================================
+                 RESUMO DAS AVALIAÇÕES
+                 ============================================= -->
+
+            <div
+                class="reviews-summary"
+                id="reviewsSummary"
+            >
+
+
+                <!-- NOTA MÉDIA -->
+
+                <div class="reviews-summary-score">
+
+
+                    <strong
+                        class="reviews-average"
+                        id="reviewsAverage"
+                    >
+                        —
+                    </strong>
+
+
+                    <div
+                        class="reviews-stars"
+                        id="reviewsAverageStars"
+                        aria-label="Média de avaliações"
+                    >
+
+                        <span data-star="1">★</span>
+                        <span data-star="2">★</span>
+                        <span data-star="3">★</span>
+                        <span data-star="4">★</span>
+                        <span data-star="5">★</span>
+
+                    </div>
+
+
+                    <span
+                        class="reviews-total"
+                        id="reviewsTotal"
+                    >
+                        0 avaliações
+                    </span>
+
+                </div>
+
+
+                <!-- =========================================
+                     DISTRIBUIÇÃO
+                     ========================================= -->
+
+                <div
+                    class="reviews-distribution"
+                    id="reviewsDistribution"
+                >
+
+
+                    <!-- 5 ESTRELAS -->
+
+                    <div
+                        class="review-distribution-row"
+                        data-rating="5"
+                    >
+
+                        <span>
+                            5
+                        </span>
+
+                        <span
+                            class="review-distribution-star"
+                            aria-hidden="true"
+                        >
+                            ★
+                        </span>
+
+                        <div class="review-distribution-track">
+
+                            <div
+                                class="review-distribution-fill"
+                                id="reviewDistribution5"
+                            ></div>
+
+                        </div>
+
+                        <span
+                            class="review-distribution-count"
+                            id="reviewCount5"
+                        >
+                            0
+                        </span>
+
+                    </div>
+
+
+                    <!-- 4 ESTRELAS -->
+
+                    <div
+                        class="review-distribution-row"
+                        data-rating="4"
+                    >
+
+                        <span>
+                            4
+                        </span>
+
+                        <span
+                            class="review-distribution-star"
+                            aria-hidden="true"
+                        >
+                            ★
+                        </span>
+
+                        <div class="review-distribution-track">
+
+                            <div
+                                class="review-distribution-fill"
+                                id="reviewDistribution4"
+                            ></div>
+
+                        </div>
+
+                        <span
+                            class="review-distribution-count"
+                            id="reviewCount4"
+                        >
+                            0
+                        </span>
+
+                    </div>
+
+
+                    <!-- 3 ESTRELAS -->
+
+                    <div
+                        class="review-distribution-row"
+                        data-rating="3"
+                    >
+
+                        <span>
+                            3
+                        </span>
+
+                        <span
+                            class="review-distribution-star"
+                            aria-hidden="true"
+                        >
+                            ★
+                        </span>
+
+                        <div class="review-distribution-track">
+
+                            <div
+                                class="review-distribution-fill"
+                                id="reviewDistribution3"
+                            ></div>
+
+                        </div>
+
+                        <span
+                            class="review-distribution-count"
+                            id="reviewCount3"
+                        >
+                            0
+                        </span>
+
+                    </div>
+
+
+                    <!-- 2 ESTRELAS -->
+
+                    <div
+                        class="review-distribution-row"
+                        data-rating="2"
+                    >
+
+                        <span>
+                            2
+                        </span>
+
+                        <span
+                            class="review-distribution-star"
+                            aria-hidden="true"
+                        >
+                            ★
+                        </span>
+
+                        <div class="review-distribution-track">
+
+                            <div
+                                class="review-distribution-fill"
+                                id="reviewDistribution2"
+                            ></div>
+
+                        </div>
+
+                        <span
+                            class="review-distribution-count"
+                            id="reviewCount2"
+                        >
+                            0
+                        </span>
+
+                    </div>
+
+
+                    <!-- 1 ESTRELA -->
+
+                    <div
+                        class="review-distribution-row"
+                        data-rating="1"
+                    >
+
+                        <span>
+                            1
+                        </span>
+
+                        <span
+                            class="review-distribution-star"
+                            aria-hidden="true"
+                        >
+                            ★
+                        </span>
+
+                        <div class="review-distribution-track">
+
+                            <div
+                                class="review-distribution-fill"
+                                id="reviewDistribution1"
+                            ></div>
+
+                        </div>
+
+                        <span
+                            class="review-distribution-count"
+                            id="reviewCount1"
+                        >
+                            0
+                        </span>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+
+            <!-- =============================================
+                 LISTA DE AVALIAÇÕES
+                 ============================================= -->
+
+            <div
+                class="reviews-list"
+                id="reviewsList"
+            ></div>
+
+
+            <!-- =============================================
+                 ESTADO SEM AVALIAÇÕES
+                 ============================================= -->
+
+            <div
+                class="reviews-empty"
+                id="reviewsEmpty"
+                hidden
+            >
+
+
+                <div
+                    class="reviews-empty-icon"
+                    aria-hidden="true"
+                >
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+
+                        <path
+                            d="m12 3 2.78 5.63 6.22.9-4.5 4.39 1.06 6.2L12 17.2l-5.56 2.92 1.06-6.2L3 9.53l6.22-.9L12 3Z"
+                        ></path>
+
+                    </svg>
+
+                </div>
+
+
+                <h3>
+                    Ainda não há avaliações
+                </h3>
+
+
+                <p>
+                    As avaliações aparecerão aqui depois que
+                    os contratantes concluírem serviços com
+                    este artista.
+                </p>
+
+            </div>
+
+
+        </section>
+
+
+        <!-- =================================================
              ESTADO DE ERRO
              ================================================= -->
 
@@ -897,6 +1266,7 @@
             id="profileError"
             hidden
         >
+
 
             <div class="profile-error-icon">
 
@@ -945,9 +1315,6 @@
 
 <!-- =====================================================
      MENU DE OPÇÕES
-
-     Mantido para implementação posterior das ações
-     secundárias.
      ===================================================== -->
 
 <div
@@ -1122,6 +1489,22 @@
 
 
 <!-- =====================================================
+     AVALIAÇÕES PÚBLICAS
+     
+     Responsabilidade:
+     - Consultar avaliações do artista.
+     - Calcular média.
+     - Calcular distribuição.
+     - Renderizar comentários.
+     - Atualizar o resumo da avaliação.
+     ===================================================== -->
+
+<script
+    src="js/apresentar-perfil-teste/PerfilPublicoAvaliacoes.js"
+></script>
+
+
+<!-- =====================================================
      AÇÕES
      ===================================================== -->
 
@@ -1138,6 +1521,7 @@
      - Renderizar informações gerais.
      - Inicializar portfólio.
      - Inicializar serviços.
+     - Inicializar avaliações.
      - Inicializar ações.
      - Exibir erros de carregamento.
      ===================================================== -->
@@ -1221,8 +1605,9 @@
                    Os serviços já foram carregados pelo
                    ApresentarPerfilDados.js.
 
-                   Portanto, este módulo NÃO precisa consultar
-                   o Supabase novamente.
+                   Portanto, este módulo recebe os dados
+                   já carregados em memória e não precisa
+                   fazer uma nova consulta ao Supabase.
                    ================================================= */
 
                 if (
@@ -1254,7 +1639,105 @@
 
 
                 /* =================================================
-                   6. INICIALIZAR AÇÕES
+                   6. INICIALIZAR AVALIAÇÕES
+
+                   O módulo será responsável por descobrir
+                   o perfil atualmente exibido e consultar:
+
+                       public.avaliacoes_musicos
+
+                   As avaliações são vinculadas ao perfil
+                   através de:
+
+                       avaliacoes_musicos.perfil_id
+                   ================================================= */
+
+                if (
+                    window.PerfilPublicoAvaliacoes
+                ) {
+
+                    const dados =
+                        window
+                            .ApresentarPerfilDadosTeste
+                            .obterDados();
+
+
+                    let perfilId = null;
+
+
+                    /* ---------------------------------------------
+                       Tentar obter o ID diretamente dos dados
+                       --------------------------------------------- */
+
+                    if (
+                        dados &&
+                        dados.perfilId !== undefined &&
+                        dados.perfilId !== null
+                    ) {
+
+                        perfilId =
+                            dados.perfilId;
+
+                    }
+
+
+                    /* ---------------------------------------------
+                       Compatibilidade com outras nomenclaturas
+                       --------------------------------------------- */
+
+                    if (
+                        !perfilId &&
+                        dados &&
+                        dados.perfil_id !== undefined &&
+                        dados.perfil_id !== null
+                    ) {
+
+                        perfilId =
+                            dados.perfil_id;
+
+                    }
+
+
+                    if (
+                        !perfilId &&
+                        dados &&
+                        dados.perfil &&
+                        dados.perfil.id !== undefined &&
+                        dados.perfil.id !== null
+                    ) {
+
+                        perfilId =
+                            dados.perfil.id;
+
+                    }
+
+
+                    /* ---------------------------------------------
+                       Inicializar módulo
+                       --------------------------------------------- */
+
+                    await window
+                        .PerfilPublicoAvaliacoes
+                        .inicializar(
+                            perfilId
+                        );
+
+
+                    console.log(
+                        "MusicalWorld — Avaliações públicas inicializadas."
+                    );
+
+                } else {
+
+                    console.warn(
+                        "MusicalWorld — Módulo de avaliações públicas não carregado."
+                    );
+
+                }
+
+
+                /* =================================================
+                   7. INICIALIZAR AÇÕES
                    ================================================= */
 
                 if (
@@ -1267,6 +1750,10 @@
 
                 }
 
+
+                /* =================================================
+                   8. FINALIZAÇÃO
+                   ================================================= */
 
                 console.log(
                     "MusicalWorld — Apresentação de perfil carregada com sucesso."
