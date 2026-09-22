@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Configurações da conta — MusicalWorld</title>
+
+    <!-- =========================================================
+         MUSICALWORLD — CONFIGURAÇÕES DA CONTA
+
+         Responsabilidade:
+         - Estrutura HTML da central de configurações da conta.
+         - Exibir identidade do usuário.
+         - Organizar configurações por categorias.
+         - Disponibilizar navegação para outras áreas do aplicativo.
+         ========================================================= -->
+
+    <!-- Tipografia -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <!-- Ícones -->
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/lucide-static@0.468.0/font/Lucide.css"
+    >
+
+    <!-- CSS da página -->
+    <link
+        rel="stylesheet"
+        href="css/configuracoes-conta/configuracoes-conta.css"
+    >
+</head>
+
+<body>
+
+    <!-- =========================================================
+         CABEÇALHO
+         ========================================================= -->
+
+    <header class="config-header">
+
+        <div class="config-header-inner">
+
+            <button
+                type="button"
+                class="config-voltar"
+                id="btnVoltar"
+                aria-label="Voltar"
+                title="Voltar"
+            >
+                <i data-lucide="arrow-left"></i>
+            </button>
+
+            <div class="config-header-title">
+                <h1>Configurações</h1>
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <!-- =========================================================
+         CONTEÚDO PRINCIPAL
+         ========================================================= -->
+
+    <main class="config-main">
+
+        <div class="config-container">
+
+
+            <!-- =====================================================
+                 IDENTIDADE DO USUÁRIO
+                 ===================================================== -->
+
+            <section class="perfil-conta">
+
+                <div class="perfil-conta-avatar">
+
+                    <img
+                        id="usuarioFoto"
+                        src=""
+                        alt="Foto do perfil"
+                    >
+
+                    <div
+                        class="perfil-conta-avatar-placeholder"
+                        id="usuarioFotoPlaceholder"
+                        aria-hidden="true"
+                    >
+                        <i data-lucide="user"></i>
+                    </div>
+
+                </div>
+
+
+                <div class="perfil-conta-dados">
+
+                    <h2 id="usuarioNome">
+                        Carregando...
+                    </h2>
+
+                    <p id="usuarioTipo">
+                        Conta MusicalWorld
+                    </p>
+
+                </div>
+
+
+                <a
+                    href="apresentar-perfil.html"
+                    class="perfil-conta-editar"
+                    id="linkEditarPerfil"
+                >
+                    <span>Ver perfil</span>
+                    <i data-lucide="chevron-right"></i>
+                </a>
+
+            </section>
+
+
+            <!-- =====================================================
+                 SUA ATIVIDADE
+                 ===================================================== -->
+
+            <section class="config-section">
+
+                <div class="config-section-heading">
+
+                    <h2>Sua atividade</h2>
+
+                </div>
+
+
+                <div class="config-list">
+
+
+                    <a
+                        href="salvos.html"
+                        class="config-item"
+                    >
+
+                        <span class="config-item-icon">
+                            <i data-lucide="bookmark"></i>
+                        </span>
+
+                        <span class="config-item-content">
+
+                            <strong>Salvos</strong>
+
+                            <small>
+                                Perfis e conteúdos que você salvou
+                            </small>
+
+                        </span>
+
+                        <i
+                            data-lucide="chevron-right"
+                            class="config-item-arrow"
+                        ></i>
+
+                    </a>
+
+
+                    <a
+                        href="curtidos.html"
+                        class="config-item"
+                    >
+
+                        <span class="config-item-icon">
+                            <i data-lucide="heart"></i>
+                        </span>
+
+                        <span class="config-item-content">
+
+                            <strong>Curtidos</strong>
+
+                            <small>
+                                Perfis e conteúdos que você curtiu
+                            </small>
+
+                        </span>
+
+                        <i
+                            data-lucide="chevron-right"
+                            class="config-item-arrow"
+                        ></i>
+
+                    </a>
+
+
+                    <a
+                        href="favoritos.html"
+                        class="config-item"
+                    >
+
+                        <span class="config-item-icon">
+                            <i data-lucide="star"></i>
+                        </span>
+
+                        <span class="config-item-content">
+
+                            <strong>Favoritos</strong>
+
+                            <small>
+                                Profissionais que você marcou como favoritos
+                            </small>
+
+                        </span>
+
+                        <i
+                            data-lucide="chevron-right"
+                            class="config-item-arrow"
+                        ></i>
+
+                    </a>
+
+
+                    <a
+                        href="contratacoes.html"
+                        class="config-item"
+                    >
+
+                        <span class="config-item-icon">
+                            <i data-lucide="calendar-check"></i>
+                        </span>
+
+                        <span class="config-item-content">
+
+                            <strong>Contratações</strong>
+
+                            <small>
+                                Seus trabalhos e contratações
+                            </small>
+
+                        </span>
+
+                        <i
+                            data-lucide="chevron-right"
+                            class="config-item-arrow"
+                        ></i>
+
+                    </a>
+
+                </div>
+
+            </section>
+
+
+            <!-- =====================================================
+                 CONTA
+                 ===================================================== -->
+
+            <section class="config-section">
+
+                <div class="config-section-heading">
+
+                    <h2>Conta</h2>
+
+                </div>
+
+
+                <div class="config-list">
+
+
+                    <a
+                        href="dados-conta.html"
+                        class="config-item"
+                    >
+
+                        <span class="config-item-icon">
+                            <i data-lucide="circle-user-round"></i>
+                        </span>
+
+                        <span class="config-item-content">
+
+                            <strong>Dados da conta</strong>
+
+                            <small>
+                                Nome, e-mail e informações da sua conta
+                            </small>
+
+                        </span>
+
+                        <i
+                            data-lucide="chevron-right"
+                            class="config-item-arrow"
+                        ></i>
+
+                    </a>
+
+
+                    <a
+                        href="notificacoes.html"
+                        class="config-item"
+                    >
+
+                        <span class="config-item-icon">
+                            <i data-lucide="bell"></i>
+                        </span>
+
+                        <span class="config-item-content">
+
+                            <strong>Notificações</strong>
+
+                            <small>
+                                Controle como você recebe notificações
+                            </small>
+
+                        </span>
+
+                        <i
+                            data-lucide="chevron-right"
+                            class="config-item-arrow"
+                        ></i>
+
+                    </a>
+
+
+                    <a
+                        href="privacidade-conta.html"
+                        class="config-item"
+                    >
+
+                        <span class="config-item-icon">
+                            <i data-lucide="shield"></i>
+                        </span>
+
+                        <span class="config-item-content">
+
+                            <strong>Privacidade da conta</strong>
+
+                            <small>
+                                Controle a visibilidade das suas informações
+                            </small>
+
+                        </span>
+
+                        <i
+                            data-lucide="chevron-right"
+                            class="config-item-arrow"
+                        ></i>
+
+                    </a>
+
+
+                    <a
+                        href="seguranca-conta.html"
+                        class="config-item"
+                    >
+
+                        <span class="config-item-icon">
+                            <i data-lucide="lock-keyhole"></i>
+                        </span>
+
+                        <span class="config-item-content">
+
+                            <strong>Segurança e acesso</strong>
+
+                            <small>
+                                Senha, sessões e segurança da conta
+                            </small>
+
+                        </span>
+
+                        <i
+                            data-lucide="chevron-right"
+                            class="config-item-arrow"
+                        ></i>
+
+                    </a>
+
+                </div>
+
+            </section>
+
+
+            <!-- =====================================================
+                 PAGAMENTOS E ANÚNCIOS
+                 ===================================================== -->
+
+            <section class="config-section">
+
+                <div class="config-section-heading">
+
+                    <h2>Pagamentos e anúncios</h2>
+
+                </div>
+
+
+                <div class="config-list">
+
+
+                    <a
+                        href="pagamentos.html"
+                        class="config-item"
+                    >
+
+                        <span class="config-item-icon">
+                            <i data-lucide="credit-card"></i>
+                        </span>
+
+                        <span class="config-item-content">
+
+                            <strong>Pagamentos</strong>
+
+                            <small>
+                                Pagamentos, métodos e histórico financeiro
+                            </small>
+
+                        </span>
+
+                        <i
+                            data-lucide="chevron-right"
+                            class="config-item-arrow"
+                        ></i>
+
+                    </a>
+
+
+                    <a
+                        href="meus-anuncios.html"
+                        class="config-item"
+                    >
+
+                        <span class="config-item-icon">
+                            <i data-lucide="megaphone"></i>
+                        </span>
+
+                        <span class="config-item-content">
+
+                            <strong>Meus anúncios</strong>
+
+                            <small>
+                                Gerencie os anúncios publicados por você
+                            </small>
+
+                        </span>
+
+                        <i
+                            data-lucide="chevron-right"
+                            class="config-item-arrow"
+                        ></i>
+
+                    </a>
+
+
+                    <a
+                        href="criar-anuncio.html"
+                        class="config-item"
+                    >
+
+                        <span class="config-item-icon">
+                            <i data-lucide="plus-circle"></i>
+                        </span>
+
+                        <span class="config-item-content">
+
+                            <strong>Criar anúncio</strong>
+
+                            <small>
+                                Divulgue um evento, apresentação ou serviço
+                            </small>
+
+                        </span>
+
+                        <i
+                            data-lucide="chevron-right"
+                            class="config-item-arrow"
+                        ></i>
+
+                    </a>
+
+                </div>
+
+            </section>
+
+
+            <!-- =====================================================
+                 PREFERÊNCIAS
+                 ===================================================== -->
+
+            <section class="config-section">
+
+                <div class="config-section-heading">
+
+                    <h2>Preferências</h2>
+
+                </div>
+
+
+                <div class="config-list">
+
+
+                    <a
+                        href="preferencias-conteudo.html"
+                        class="config-item"
+                    >
+
+                        <span class="config-item-icon">
+                            <i data-lucide="sliders-horizontal"></i>
+                        </span>
+
+                        <span class="config-item-content">
+
+                            <strong>Preferências de conteúdo</strong>
+
+                            <small>
+                                Personalize o que aparece para você
+                            </small>
+
+                        </span>
+
+                        <i
+                            data-lucide="chevron-right"
+                            class="config-item-arrow"
+                        ></i>
+
+                    </a>
+
+
+                    <a
+                        href="aparencia.html"
+                        class="config-item"
+                    >
+
+                        <span class="config-item-icon">
+                            <i data-lucide="palette"></i>
+                        </span>
+
+                        <span class="config-item-content">
+
+                            <strong>Aparência</strong>
+
+                            <small>
+                                Personalize a aparência do MusicalWorld
+                            </small>
+
+                        </span>
+
+                        <i
+                            data-lucide="chevron-right"
+                            class="config-item-arrow"
+                        ></i>
+
+                    </a>
+
+
+                    <a
+                        href="idioma.html"
+                        class="config-item"
+                    >
+
+                        <span class="config-item-icon">
+                            <i data-lucide="languages"></i>
+                        </span>
+
+                        <span class="config-item-content">
+
+                            <strong>Idioma</strong>
+
+                            <small>
+                                Português (Brasil)
+                            </small>
+
+                        </span>
+
+                        <i
+                            data-lucide="chevron-right"
+                            class="config-item-arrow"
+                        ></i>
+
+                    </a>
+
+                </div>
+
+            </section>
+
+
+            <!-- =====================================================
+                 AJUDA E INFORMAÇÕES
+                 ===================================================== -->
+
+            <section class="config-section">
+
+                <div class="config-section-heading">
+
+                    <h2>Ajuda e informações</h2>
+
+                </div>
+
+
+                <div class="config-list">
+
+
+                    <a
+                        href="central-ajuda.html"
+                        class="config-item"
+                    >
+
+                        <span class="config-item-icon">
+                            <i data-lucide="circle-help"></i>
+                        </span>
+
+                        <span class="config-item-content">
+
+                            <strong>Central de ajuda</strong>
+
+                            <small>
+                                Encontre respostas e orientações
+                            </small>
+
+                        </span>
+
+                        <i
+                            data-lucide="chevron-right"
+                            class="config-item-arrow"
+                        ></i>
+
+                    </a>
+
+
+                    <a
+                        href="central-privacidade.html"
+                        class="config-item"
+                    >
+
+                        <span class="config-item-icon">
+                            <i data-lucide="shield-check"></i>
+                        </span>
+
+                        <span class="config-item-content">
+
+                            <strong>Central de privacidade</strong>
+
+                            <small>
+                                Saiba como seus dados são utilizados
+                            </small>
+
+                        </span>
+
+                        <i
+                            data-lucide="chevron-right"
+                            class="config-item-arrow"
+                        ></i>
+
+                    </a>
+
+
+                    <a
+                        href="termos-de-uso.html"
+                        class="config-item"
+                    >
+
+                        <span class="config-item-icon">
+                            <i data-lucide="file-text"></i>
+                        </span>
+
+                        <span class="config-item-content">
+
+                            <strong>Termos de uso</strong>
+
+                            <small>
+                                Regras para utilização do MusicalWorld
+                            </small>
+
+                        </span>
+
+                        <i
+                            data-lucide="chevron-right"
+                            class="config-item-arrow"
+                        ></i>
+
+                    </a>
+
+
+                    <a
+                        href="politica-de-privacidade.html"
+                        class="config-item"
+                    >
+
+                        <span class="config-item-icon">
+                            <i data-lucide="file-lock-2"></i>
+                        </span>
+
+                        <span class="config-item-content">
+
+                            <strong>Política de privacidade</strong>
+
+                            <small>
+                                Informações sobre privacidade e dados
+                            </small>
+
+                        </span>
+
+                        <i
+                            data-lucide="chevron-right"
+                            class="config-item-arrow"
+                        ></i>
+
+                    </a>
+
+
+                    <a
+                        href="sobre.html"
+                        class="config-item"
+                    >
+
+                        <span class="config-item-icon">
+                            <i data-lucide="info"></i>
+                        </span>
+
+                        <span class="config-item-content">
+
+                            <strong>Sobre o MusicalWorld</strong>
+
+                            <small>
+                                Conheça o aplicativo e nossa proposta
+                            </small>
+
+                        </span>
+
+                        <i
+                            data-lucide="chevron-right"
+                            class="config-item-arrow"
+                        ></i>
+
+                    </a>
+
+                </div>
+
+            </section>
+
+
+            <!-- =====================================================
+                 SAIR
+                 ===================================================== -->
+
+            <section class="config-section config-section-sair">
+
+                <div class="config-list">
+
+                    <button
+                        type="button"
+                        class="config-item config-item-sair"
+                        id="btnSair"
+                    >
+
+                        <span class="config-item-icon">
+                            <i data-lucide="log-out"></i>
+                        </span>
+
+                        <span class="config-item-content">
+
+                            <strong>Sair da conta</strong>
+
+                            <small>
+                                Encerrar a sessão neste dispositivo
+                            </small>
+
+                        </span>
+
+                        <i
+                            data-lucide="chevron-right"
+                            class="config-item-arrow"
+                        ></i>
+
+                    </button>
+
+                </div>
+
+            </section>
+
+
+            <!-- =====================================================
+                 RODAPÉ DA PÁGINA
+                 ===================================================== -->
+
+            <footer class="config-footer">
+
+                <span>MusicalWorld</span>
+
+                <span class="config-footer-separador">•</span>
+
+                <span>Configurações da conta</span>
+
+            </footer>
+
+
+        </div>
+
+    </main>
+
+
+    <!-- =========================================================
+         JAVASCRIPT
+         ========================================================= -->
+
+    <script
+        src="https://unpkg.com/lucide@latest"
+    ></script>
+
+    <script
+        src="js/configuracoes-conta/configuracoes-conta.js"
+    ></script>
+
+</body>
+</html>

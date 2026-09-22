@@ -1,3 +1,4 @@
+
 /*
 =========================================================
 MUSICALWORLD — CABEÇALHO PRINCIPAL
@@ -12,6 +13,7 @@ Responsabilidade deste módulo:
 - Identificar o usuário autenticado.
 - Controlar o menu da conta através da logo.
 - Controlar acesso à página de perfis salvos e curtidos.
+- Controlar acesso à página de configurações da conta.
 - Controlar troca de usuário.
 - Controlar logout.
 - Manter compatibilidade com ControleSessao.js.
@@ -80,32 +82,6 @@ const Cabecalho = {
     =====================================================
     ESTADO DO CABEÇALHO DURANTE A ROLAGEM
     =====================================================
-
-    O comportamento inteligente existe SOMENTE no
-    mobile.
-
-    Desktop:
-        - cabeçalho permanece visível;
-        - menu lateral permanece fixo.
-
-    Mobile:
-        - descendo → cabeçalho desaparece;
-        - subindo → cabeçalho reaparece;
-        - topo → cabeçalho permanece visível.
-
-    IMPORTANTE:
-
-    A página inteira é o elemento de rolagem no mobile.
-
-    Portanto, o listener de scroll utiliza:
-
-        window
-
-    e não:
-
-        .main-content
-
-    =====================================================
     */
 
     cabecalhoScrollInicializado: false,
@@ -148,9 +124,6 @@ const Cabecalho = {
         -------------------------------------------------
         O comportamento do cabeçalho é independente da
         autenticação.
-
-        Mesmo deslogado, o cabeçalho precisa responder
-        ao scroll no mobile.
         -------------------------------------------------
         */
 
@@ -218,26 +191,6 @@ const Cabecalho = {
     =====================================================
     CABEÇALHO INTELIGENTE — ROLAGEM MOBILE
     =====================================================
-
-    Desktop:
-
-        O cabeçalho NÃO é escondido.
-
-    Mobile:
-
-        ↓ descendo:
-            esconde.
-
-        ↑ subindo:
-            mostra.
-
-        topo:
-            mostra.
-
-    O scroll é acompanhado pelo WINDOW porque a página
-    inteira é o elemento responsável pela rolagem.
-
-    =====================================================
     */
 
     inicializarCabecalhoScroll() {
@@ -268,17 +221,6 @@ const Cabecalho = {
         }
 
 
-        /*
-        -------------------------------------------------
-        IMPORTANTE:
-
-        O elemento real de rolagem é a janela.
-
-        Não utilizamos .main-content porque ele não é
-        atualmente um container de scroll independente.
-        -------------------------------------------------
-        */
-
         const elementoScroll =
             window;
 
@@ -297,12 +239,6 @@ const Cabecalho = {
             window.innerWidth;
 
 
-        /*
-        -------------------------------------------------
-        ESTADO VISUAL INICIAL
-        -------------------------------------------------
-        */
-
         navbar.style.transition =
             'transform 0.25s ease';
 
@@ -319,15 +255,6 @@ const Cabecalho = {
             false;
 
 
-        /*
-        -------------------------------------------------
-        LISTENER DE SCROLL
-
-        O listener pertence ao window porque é a página
-        que está realizando a rolagem.
-        -------------------------------------------------
-        */
-
         window.addEventListener(
             'scroll',
             () => {
@@ -340,16 +267,6 @@ const Cabecalho = {
             }
         );
 
-
-        /*
-        -------------------------------------------------
-        RESIZE
-
-        Necessário para manter o comportamento correto
-        quando o dispositivo muda de orientação ou
-        quando a largura passa de mobile para desktop.
-        -------------------------------------------------
-        */
 
         window.addEventListener(
             'resize',
@@ -385,15 +302,6 @@ const Cabecalho = {
         elemento
     ) {
 
-        /*
-        -------------------------------------------------
-        WINDOW
-
-        Esta é a situação utilizada atualmente pelo
-        MusicalWorld.
-        -------------------------------------------------
-        */
-
         if (
             elemento ===
             window
@@ -408,16 +316,6 @@ const Cabecalho = {
 
         }
 
-
-        /*
-        -------------------------------------------------
-        FALLBACK
-
-        Mantido para compatibilidade futura caso algum
-        container volte a ser utilizado como elemento
-        de rolagem.
-        -------------------------------------------------
-        */
 
         return Math.max(
             0,
@@ -435,13 +333,6 @@ const Cabecalho = {
     */
 
     processarScrollCabecalho() {
-
-        /*
-        -------------------------------------------------
-        Evita processar dezenas de eventos de scroll
-        dentro do mesmo frame.
-        -------------------------------------------------
-        */
 
         if (
             this.cabecalhoScrollProcessando
@@ -480,13 +371,6 @@ const Cabecalho = {
                 =================================================
                 DESKTOP
                 =================================================
-
-                Acima de 768px:
-
-                - cabeçalho permanece visível;
-                - nunca é escondido pelo scroll;
-                - menu lateral continua fixo;
-                - estado de scroll é apenas atualizado.
                 */
 
                 if (
@@ -535,11 +419,6 @@ const Cabecalho = {
                 /*
                 -------------------------------------------------
                 TOPO
-
-                Até 5px:
-
-                - cabeçalho sempre visível;
-                - remove o estado de subida.
                 -------------------------------------------------
                 */
 
@@ -575,13 +454,6 @@ const Cabecalho = {
                     posicaoNormalizada -
                     this.cabecalhoUltimoScroll;
 
-
-                /*
-                -------------------------------------------------
-                Pequenos movimentos são ignorados para evitar
-                oscilações.
-                -------------------------------------------------
-                */
 
                 const distanciaMinima =
                     6;
@@ -656,12 +528,6 @@ const Cabecalho = {
     */
 
     esconderCabecalhoScroll() {
-
-        /*
-        -------------------------------------------------
-        Nunca esconder no desktop.
-        -------------------------------------------------
-        */
 
         if (
             window.innerWidth >
@@ -816,9 +682,6 @@ const Cabecalho = {
         /*
         -------------------------------------------------
         MOBILE
-
-        Ao entrar no modo mobile, o cabeçalho começa
-        visível.
         -------------------------------------------------
         */
 
@@ -3131,6 +2994,23 @@ const Cabecalho = {
 
     /*
     =====================================================
+    ABRIR PÁGINA DE CONFIGURAÇÕES DA CONTA
+    =====================================================
+    */
+
+    abrirConfiguracoesConta() {
+
+        this.fecharMenuConta();
+
+
+        window.location.href =
+            'configuracoes-conta.html';
+
+    },
+
+
+    /*
+    =====================================================
     TROCAR DE USUÁRIO
     =====================================================
     */
@@ -3364,3 +3244,4 @@ document.addEventListener(
 
     }
 );
+

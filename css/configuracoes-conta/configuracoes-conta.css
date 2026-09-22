@@ -1,0 +1,953 @@
+/* =========================================================
+   MUSICALWORLD — CONFIGURAÇÕES DA CONTA
+
+   Arquivo:
+   css/configuracoes-conta/configuracoes-conta.css
+
+   Responsabilidade:
+   - Estilizar a central de configurações da conta.
+   - Adaptar a interface para desktop, tablet e celular.
+   - Manter o padrão visual claro do MusicalWorld.
+   - Organizar as opções em grupos.
+   - Garantir boa área de toque em dispositivos móveis.
+   ========================================================= */
+
+
+/* =========================================================
+   VARIÁVEIS
+   ========================================================= */
+
+:root {
+
+    --mw-bg: #f5f7fb;
+
+    --mw-surface: #ffffff;
+
+    --mw-text: #172033;
+
+    --mw-text-secondary: #687386;
+
+    --mw-text-muted: #8b95a7;
+
+    --mw-border: #e7eaf0;
+
+    --mw-border-hover: #dfe3eb;
+
+    --mw-primary: #6d4aff;
+
+    --mw-primary-soft: #f1edff;
+
+    --mw-danger: #d83a52;
+
+    --mw-danger-soft: #fff1f3;
+
+    --mw-shadow:
+        0 8px 30px rgba(23, 32, 51, 0.05);
+
+    --mw-radius-large: 24px;
+
+    --mw-radius-medium: 18px;
+
+    --mw-radius-small: 14px;
+
+}
+
+
+/* =========================================================
+   RESET
+   ========================================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+html {
+    min-height: 100%;
+}
+
+
+body {
+
+    min-height: 100%;
+
+    font-family:
+        "Manrope",
+        "Inter",
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+    color: var(--mw-text);
+
+    background: var(--mw-bg);
+
+    -webkit-font-smoothing: antialiased;
+
+    text-rendering: optimizeLegibility;
+}
+
+
+button,
+a,
+input,
+select,
+textarea {
+    font: inherit;
+}
+
+
+button {
+    border: 0;
+}
+
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+
+/* =========================================================
+   CABEÇALHO
+   ========================================================= */
+
+.config-header {
+
+    position: sticky;
+
+    top: 0;
+
+    z-index: 100;
+
+    width: 100%;
+
+    background: rgba(255, 255, 255, 0.96);
+
+    border-bottom: 1px solid var(--mw-border);
+
+    backdrop-filter: blur(14px);
+
+    -webkit-backdrop-filter: blur(14px);
+}
+
+
+.config-header-inner {
+
+    width: min(100%, 1180px);
+
+    min-height: 68px;
+
+    margin: 0 auto;
+
+    padding: 0 24px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 16px;
+}
+
+
+.config-voltar {
+
+    width: 42px;
+
+    height: 42px;
+
+    flex: 0 0 42px;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    color: var(--mw-text);
+
+    background: transparent;
+
+    border-radius: 50%;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.18s ease,
+        transform 0.18s ease;
+}
+
+
+.config-voltar:hover {
+    background: #f0f2f6;
+}
+
+
+.config-voltar:active {
+    transform: scale(0.95);
+}
+
+
+.config-voltar svg {
+    width: 21px;
+    height: 21px;
+}
+
+
+.config-header-title h1 {
+
+    font-size: 20px;
+
+    line-height: 1.2;
+
+    font-weight: 800;
+
+    letter-spacing: -0.02em;
+}
+
+
+/* =========================================================
+   CONTEÚDO PRINCIPAL
+   ========================================================= */
+
+.config-main {
+
+    width: 100%;
+
+    padding:
+        32px 24px 80px;
+}
+
+
+.config-container {
+
+    width: min(100%, 900px);
+
+    margin: 0 auto;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 28px;
+}
+
+
+/* =========================================================
+   PERFIL / IDENTIDADE
+   ========================================================= */
+
+.perfil-conta {
+
+    min-height: 104px;
+
+    padding: 18px 20px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 16px;
+
+    background: var(--mw-surface);
+
+    border: 1px solid var(--mw-border);
+
+    border-radius: var(--mw-radius-large);
+
+    box-shadow: var(--mw-shadow);
+}
+
+
+.perfil-conta-avatar {
+
+    position: relative;
+
+    width: 68px;
+
+    height: 68px;
+
+    flex: 0 0 68px;
+
+    overflow: hidden;
+
+    border-radius: 50%;
+
+    background: #eeeafc;
+}
+
+
+.perfil-conta-avatar img {
+
+    width: 100%;
+
+    height: 100%;
+
+    display: none;
+
+    object-fit: cover;
+}
+
+
+.perfil-conta-avatar-placeholder {
+
+    width: 100%;
+
+    height: 100%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    color: var(--mw-primary);
+}
+
+
+.perfil-conta-avatar-placeholder svg {
+
+    width: 30px;
+
+    height: 30px;
+}
+
+
+.perfil-conta-dados {
+
+    min-width: 0;
+
+    flex: 1;
+}
+
+
+.perfil-conta-dados h2 {
+
+    overflow: hidden;
+
+    margin-bottom: 4px;
+
+    font-size: 17px;
+
+    line-height: 1.3;
+
+    font-weight: 800;
+
+    white-space: nowrap;
+
+    text-overflow: ellipsis;
+}
+
+
+.perfil-conta-dados p {
+
+    overflow: hidden;
+
+    color: var(--mw-text-secondary);
+
+    font-size: 13px;
+
+    line-height: 1.4;
+
+    white-space: nowrap;
+
+    text-overflow: ellipsis;
+}
+
+
+.perfil-conta-editar {
+
+    min-height: 40px;
+
+    padding: 0 13px;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 4px;
+
+    flex: 0 0 auto;
+
+    color: var(--mw-primary);
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    border-radius: 12px;
+
+    transition:
+        background-color 0.18s ease;
+}
+
+
+.perfil-conta-editar:hover {
+    background: var(--mw-primary-soft);
+}
+
+
+.perfil-conta-editar svg {
+
+    width: 16px;
+
+    height: 16px;
+}
+
+
+/* =========================================================
+   SEÇÕES
+   ========================================================= */
+
+.config-section {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 10px;
+}
+
+
+.config-section-heading {
+
+    padding:
+        0 6px;
+}
+
+
+.config-section-heading h2 {
+
+    color: var(--mw-text-secondary);
+
+    font-size: 12px;
+
+    line-height: 1.4;
+
+    font-weight: 800;
+
+    letter-spacing: 0.08em;
+
+    text-transform: uppercase;
+}
+
+
+/* =========================================================
+   LISTA DE CONFIGURAÇÕES
+   ========================================================= */
+
+.config-list {
+
+    overflow: hidden;
+
+    background: var(--mw-surface);
+
+    border: 1px solid var(--mw-border);
+
+    border-radius: var(--mw-radius-medium);
+
+    box-shadow: var(--mw-shadow);
+}
+
+
+/* =========================================================
+   ITEM
+   ========================================================= */
+
+.config-item {
+
+    position: relative;
+
+    width: 100%;
+
+    min-height: 76px;
+
+    padding: 12px 18px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 14px;
+
+    color: var(--mw-text);
+
+    background: var(--mw-surface);
+
+    text-align: left;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.18s ease;
+}
+
+
+.config-item + .config-item {
+
+    border-top:
+        1px solid var(--mw-border);
+}
+
+
+.config-item:hover {
+    background: #fafbfe;
+}
+
+
+.config-item:focus-visible {
+
+    outline:
+        3px solid rgba(109, 74, 255, 0.18);
+
+    outline-offset: -3px;
+}
+
+
+/* =========================================================
+   ÍCONE
+   ========================================================= */
+
+.config-item-icon {
+
+    width: 42px;
+
+    height: 42px;
+
+    flex: 0 0 42px;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    color: var(--mw-primary);
+
+    background: var(--mw-primary-soft);
+
+    border-radius: 12px;
+}
+
+
+.config-item-icon svg {
+
+    width: 19px;
+
+    height: 19px;
+
+    stroke-width: 2;
+}
+
+
+/* =========================================================
+   TEXTO
+   ========================================================= */
+
+.config-item-content {
+
+    min-width: 0;
+
+    flex: 1;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 3px;
+}
+
+
+.config-item-content strong {
+
+    color: var(--mw-text);
+
+    font-size: 14px;
+
+    line-height: 1.35;
+
+    font-weight: 700;
+}
+
+
+.config-item-content small {
+
+    color: var(--mw-text-secondary);
+
+    font-size: 12px;
+
+    line-height: 1.4;
+
+    font-weight: 400;
+}
+
+
+/* =========================================================
+   SETA
+   ========================================================= */
+
+.config-item-arrow {
+
+    width: 18px;
+
+    height: 18px;
+
+    flex: 0 0 18px;
+
+    color: #9aa3b2;
+}
+
+
+/* =========================================================
+   SAIR
+   ========================================================= */
+
+.config-section-sair {
+
+    margin-top: -4px;
+}
+
+
+.config-item-sair {
+
+    color: var(--mw-danger);
+}
+
+
+.config-item-sair .config-item-icon {
+
+    color: var(--mw-danger);
+
+    background: var(--mw-danger-soft);
+}
+
+
+.config-item-sair .config-item-content strong {
+    color: var(--mw-danger);
+}
+
+
+/* =========================================================
+   RODAPÉ
+   ========================================================= */
+
+.config-footer {
+
+    padding: 4px 6px 0;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 8px;
+
+    color: var(--mw-text-muted);
+
+    font-size: 11px;
+
+    line-height: 1.4;
+
+    text-align: center;
+}
+
+
+.config-footer-separador {
+    opacity: 0.6;
+}
+
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .config-main {
+
+        padding:
+            26px 20px 70px;
+    }
+
+
+    .config-container {
+
+        width: min(100%, 760px);
+
+        gap: 24px;
+    }
+
+
+    .config-header-inner {
+
+        min-height: 64px;
+
+        padding: 0 20px;
+    }
+
+
+    .perfil-conta {
+
+        border-radius: 20px;
+    }
+
+}
+
+
+/* =========================================================
+   CELULAR
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    .config-header-inner {
+
+        min-height: 60px;
+
+        padding: 0 14px;
+
+        gap: 10px;
+    }
+
+
+    .config-voltar {
+
+        width: 40px;
+
+        height: 40px;
+
+        flex-basis: 40px;
+    }
+
+
+    .config-header-title h1 {
+
+        font-size: 18px;
+    }
+
+
+    .config-main {
+
+        padding:
+            18px 14px 60px;
+    }
+
+
+    .config-container {
+
+        gap: 22px;
+    }
+
+
+    .perfil-conta {
+
+        min-height: auto;
+
+        padding: 16px;
+
+        display: grid;
+
+        grid-template-columns: 54px minmax(0, 1fr);
+
+        grid-template-rows: auto auto;
+
+        column-gap: 13px;
+
+        row-gap: 12px;
+
+        border-radius: 18px;
+    }
+
+
+    .perfil-conta-avatar {
+
+        width: 54px;
+
+        height: 54px;
+
+        flex-basis: 54px;
+
+        grid-column: 1;
+
+        grid-row: 1;
+    }
+
+
+    .perfil-conta-avatar-placeholder svg {
+
+        width: 25px;
+
+        height: 25px;
+    }
+
+
+    .perfil-conta-dados {
+
+        grid-column: 2;
+
+        grid-row: 1;
+
+        align-self: center;
+    }
+
+
+    .perfil-conta-dados h2 {
+
+        font-size: 15px;
+    }
+
+
+    .perfil-conta-dados p {
+
+        font-size: 12px;
+    }
+
+
+    .perfil-conta-editar {
+
+        width: 100%;
+
+        min-height: 40px;
+
+        grid-column: 1 / -1;
+
+        grid-row: 2;
+
+        justify-content: center;
+
+        background: var(--mw-primary-soft);
+
+        border-radius: 11px;
+    }
+
+
+    .config-section {
+
+        gap: 8px;
+    }
+
+
+    .config-section-heading {
+
+        padding:
+            0 4px;
+    }
+
+
+    .config-section-heading h2 {
+
+        font-size: 11px;
+    }
+
+
+    .config-item {
+
+        min-height: 70px;
+
+        padding: 11px 13px;
+
+        gap: 12px;
+    }
+
+
+    .config-item-icon {
+
+        width: 40px;
+
+        height: 40px;
+
+        flex-basis: 40px;
+
+        border-radius: 11px;
+    }
+
+
+    .config-item-icon svg {
+
+        width: 18px;
+
+        height: 18px;
+    }
+
+
+    .config-item-content {
+
+        gap: 2px;
+    }
+
+
+    .config-item-content strong {
+
+        font-size: 13px;
+    }
+
+
+    .config-item-content small {
+
+        font-size: 11px;
+    }
+
+
+    .config-item-arrow {
+
+        width: 17px;
+
+        height: 17px;
+    }
+
+
+    .config-footer {
+
+        flex-wrap: wrap;
+
+        padding-bottom: 10px;
+
+        font-size: 10px;
+    }
+
+}
+
+
+/* =========================================================
+   CELULARES MUITO PEQUENOS
+   ========================================================= */
+
+@media (max-width: 380px) {
+
+    .config-main {
+
+        padding-left: 10px;
+
+        padding-right: 10px;
+    }
+
+
+    .config-header-inner {
+
+        padding-left: 10px;
+
+        padding-right: 10px;
+    }
+
+
+    .config-item {
+
+        padding-left: 11px;
+
+        padding-right: 11px;
+    }
+
+
+    .config-item-content small {
+
+        display: none;
+    }
+
+}
