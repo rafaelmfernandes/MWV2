@@ -1,0 +1,757 @@
+/* =========================================================
+   MUSICALWORLD — MODAL DE NOVA SENHA
+
+   Arquivo:
+   css/auth/modal-nova-senha.css
+
+   Responsabilidade:
+   - Estilizar o modal exibido após o usuário clicar
+     no link de recuperação recebido por e-mail.
+   - Permitir criação de uma nova senha.
+   - Exibir confirmação da nova senha.
+   - Controlar mensagens de erro e sucesso.
+   - Manter o modal responsivo.
+   - Não contém lógica JavaScript.
+   ========================================================= */
+
+
+/* =========================================================
+   CONTAINER
+   ========================================================= */
+
+.mw-nova-senha-modal-container {
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 10000;
+
+    display: none;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 24px;
+
+    box-sizing: border-box;
+
+    background: rgba(15, 23, 42, 0.58);
+
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+
+
+.mw-nova-senha-modal-container.mw-modal-aberto {
+    display: flex;
+}
+
+
+/* =========================================================
+   CAIXA
+   ========================================================= */
+
+.mw-nova-senha-modal {
+    position: relative;
+
+    width: 100%;
+
+    max-width: 460px;
+
+    padding: 30px;
+
+    box-sizing: border-box;
+
+    background: #ffffff;
+
+    border: 1px solid #e5e7eb;
+
+    border-radius: 24px;
+
+    box-shadow:
+        0 24px 70px rgba(15, 23, 42, 0.22);
+
+    animation:
+        mwNovaSenhaEntrada 0.22s ease-out;
+}
+
+
+@keyframes mwNovaSenhaEntrada {
+
+    from {
+        opacity: 0;
+
+        transform:
+            translateY(12px)
+            scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            translateY(0)
+            scale(1);
+    }
+}
+
+
+/* =========================================================
+   FECHAR
+   ========================================================= */
+
+.mw-nova-senha-fechar {
+    position: absolute;
+
+    top: 18px;
+    right: 18px;
+
+    width: 38px;
+    min-width: 38px;
+
+    height: 38px;
+    min-height: 38px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    border: 0;
+
+    border-radius: 50%;
+
+    background: #f5f7fb;
+
+    color: #64748b;
+
+    cursor: pointer;
+
+    box-sizing: border-box;
+
+    transition:
+        background 0.18s ease,
+        color 0.18s ease,
+        transform 0.18s ease;
+}
+
+
+.mw-nova-senha-fechar:hover {
+    background: #eef2f7;
+
+    color: #172033;
+
+    transform: scale(1.04);
+}
+
+
+.mw-nova-senha-fechar:focus-visible {
+    outline: 3px solid rgba(109, 74, 255, 0.22);
+
+    outline-offset: 2px;
+}
+
+
+/* =========================================================
+   ÍCONE
+   ========================================================= */
+
+.mw-nova-senha-icone {
+    width: 52px;
+    min-width: 52px;
+
+    height: 52px;
+    min-height: 52px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 18px;
+
+    border-radius: 16px;
+
+    background: rgba(109, 74, 255, 0.10);
+
+    color: #6d4aff;
+}
+
+
+.mw-nova-senha-icone svg {
+    width: 25px;
+    height: 25px;
+}
+
+
+/* =========================================================
+   TÍTULO
+   ========================================================= */
+
+.mw-nova-senha-titulo {
+    margin: 0;
+
+    padding-right: 40px;
+
+    font-family:
+        Inter,
+        Manrope,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+    font-size: 24px;
+
+    line-height: 1.25;
+
+    font-weight: 700;
+
+    color: #172033;
+}
+
+
+/* =========================================================
+   DESCRIÇÃO
+   ========================================================= */
+
+.mw-nova-senha-descricao {
+    margin: 10px 0 24px;
+
+    font-family:
+        Inter,
+        Manrope,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+    font-size: 14px;
+
+    line-height: 1.6;
+
+    color: #64748b;
+}
+
+
+/* =========================================================
+   FORMULÁRIO
+   ========================================================= */
+
+.mw-nova-senha-form {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 16px;
+
+    width: 100%;
+}
+
+
+/* =========================================================
+   CAMPO
+   ========================================================= */
+
+.mw-nova-senha-grupo {
+    width: 100%;
+}
+
+
+.mw-nova-senha-label {
+    display: block;
+
+    margin-bottom: 7px;
+
+    font-family:
+        Inter,
+        Manrope,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    color: #334155;
+}
+
+
+/* =========================================================
+   WRAPPER DO INPUT
+   ========================================================= */
+
+.mw-nova-senha-input-wrapper {
+    position: relative;
+
+    width: 100%;
+}
+
+
+.mw-nova-senha-input {
+    width: 100%;
+
+    height: 50px;
+    min-height: 50px;
+
+    padding:
+        0 52px 0 15px;
+
+    box-sizing: border-box;
+
+    border: 1px solid #d9dee8;
+
+    border-radius: 12px;
+
+    background: #ffffff;
+
+    color: #172033;
+
+    font-family:
+        Inter,
+        Manrope,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+    font-size: 14px;
+
+    outline: none;
+
+    transition:
+        border-color 0.18s ease,
+        box-shadow 0.18s ease;
+}
+
+
+.mw-nova-senha-input::placeholder {
+    color: #94a3b8;
+}
+
+
+.mw-nova-senha-input:hover {
+    border-color: #cbd5e1;
+}
+
+
+.mw-nova-senha-input:focus {
+    border-color: #6d4aff;
+
+    box-shadow:
+        0 0 0 4px rgba(109, 74, 255, 0.10);
+}
+
+
+/* =========================================================
+   BOTÃO MOSTRAR SENHA
+   ========================================================= */
+
+.mw-nova-senha-toggle {
+    position: absolute;
+
+    top: 50%;
+    right: 8px;
+
+    width: 38px;
+    height: 38px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    border: 0;
+
+    border-radius: 9px;
+
+    background: transparent;
+
+    color: #64748b;
+
+    cursor: pointer;
+
+    transform: translateY(-50%);
+
+    transition:
+        background 0.18s ease,
+        color 0.18s ease;
+}
+
+
+.mw-nova-senha-toggle:hover {
+    background: #f5f7fb;
+
+    color: #172033;
+}
+
+
+.mw-nova-senha-toggle:focus-visible {
+    outline: 3px solid rgba(109, 74, 255, 0.16);
+
+    outline-offset: 1px;
+}
+
+
+.mw-nova-senha-toggle svg {
+    width: 19px;
+    height: 19px;
+}
+
+
+/* =========================================================
+   REGRAS DE SENHA
+   ========================================================= */
+
+.mw-nova-senha-regras {
+    margin-top: 7px;
+
+    font-family:
+        Inter,
+        Manrope,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+    font-size: 12px;
+
+    line-height: 1.5;
+
+    color: #94a3b8;
+}
+
+
+/* =========================================================
+   MENSAGEM
+   ========================================================= */
+
+.mw-nova-senha-mensagem {
+    display: none;
+
+    width: 100%;
+
+    padding: 12px 14px;
+
+    box-sizing: border-box;
+
+    border-radius: 11px;
+
+    font-family:
+        Inter,
+        Manrope,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+    font-size: 13px;
+
+    line-height: 1.5;
+}
+
+
+.mw-nova-senha-mensagem.mw-mensagem-visivel {
+    display: block;
+}
+
+
+.mw-nova-senha-mensagem.mw-mensagem-erro {
+    background: #fff1f2;
+
+    border: 1px solid #fecdd3;
+
+    color: #be123c;
+}
+
+
+.mw-nova-senha-mensagem.mw-mensagem-sucesso {
+    background: #f0fdf4;
+
+    border: 1px solid #bbf7d0;
+
+    color: #15803d;
+}
+
+
+/* =========================================================
+   AÇÕES
+   ========================================================= */
+
+.mw-nova-senha-acoes {
+    display: flex;
+
+    align-items: stretch;
+
+    gap: 10px;
+
+    width: 100%;
+
+    margin-top: 4px;
+}
+
+
+.mw-nova-senha-btn {
+    flex: 1 1 0;
+
+    width: 0;
+
+    height: 48px;
+    min-height: 48px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    padding: 0 18px;
+
+    box-sizing: border-box;
+
+    border-radius: 12px;
+
+    font-family:
+        Inter,
+        Manrope,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+    font-size: 14px;
+
+    line-height: 1;
+
+    font-weight: 600;
+
+    white-space: nowrap;
+
+    cursor: pointer;
+}
+
+
+/* =========================================================
+   CANCELAR
+   ========================================================= */
+
+.mw-nova-senha-btn-cancelar {
+    border: 1px solid #d9dee8;
+
+    background: #ffffff;
+
+    color: #475569;
+
+    transition:
+        background 0.18s ease,
+        border-color 0.18s ease,
+        color 0.18s ease,
+        transform 0.18s ease;
+}
+
+
+.mw-nova-senha-btn-cancelar:hover {
+    background: #f8fafc;
+
+    border-color: #cbd5e1;
+
+    color: #172033;
+
+    transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   ALTERAR
+   ========================================================= */
+
+.mw-nova-senha-btn-alterar {
+    border: 0;
+
+    background: #6d4aff;
+
+    color: #ffffff;
+
+    font-weight: 700;
+
+    transition:
+        background 0.18s ease,
+        box-shadow 0.18s ease,
+        transform 0.18s ease;
+}
+
+
+.mw-nova-senha-btn-alterar:hover {
+    background: #5b3be0;
+
+    box-shadow:
+        0 8px 20px rgba(109, 74, 255, 0.22);
+
+    transform: translateY(-1px);
+}
+
+
+.mw-nova-senha-btn:disabled {
+    cursor: not-allowed;
+
+    opacity: 0.65;
+
+    transform: none;
+
+    box-shadow: none;
+}
+
+
+/* =========================================================
+   SUCESSO
+   ========================================================= */
+
+.mw-nova-senha-sucesso {
+    text-align: center;
+}
+
+
+.mw-nova-senha-sucesso
+.mw-nova-senha-icone {
+    margin-left: auto;
+    margin-right: auto;
+
+    background: rgba(22, 163, 74, 0.10);
+
+    color: #16a34a;
+}
+
+
+.mw-nova-senha-sucesso
+.mw-nova-senha-titulo {
+    padding-right: 0;
+}
+
+
+.mw-nova-senha-sucesso
+.mw-nova-senha-descricao {
+    margin-bottom: 22px;
+}
+
+
+/* =========================================================
+   RESPONSIVIDADE — TABLET
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    .mw-nova-senha-modal-container {
+        padding: 18px;
+    }
+
+
+    .mw-nova-senha-modal {
+        max-width: 500px;
+
+        padding: 26px;
+    }
+}
+
+
+/* =========================================================
+   RESPONSIVIDADE — CELULAR
+   ========================================================= */
+
+@media (max-width: 480px) {
+
+    .mw-nova-senha-modal-container {
+        align-items: flex-end;
+
+        padding: 0;
+    }
+
+
+    .mw-nova-senha-modal {
+        max-width: none;
+
+        padding: 24px 20px 22px;
+
+        border-radius: 24px 24px 0 0;
+
+        animation:
+            mwNovaSenhaEntradaMobile 0.22s ease-out;
+    }
+
+
+    @keyframes mwNovaSenhaEntradaMobile {
+
+        from {
+            opacity: 0;
+
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+
+            transform: translateY(0);
+        }
+    }
+
+
+    .mw-nova-senha-titulo {
+        font-size: 21px;
+    }
+
+
+    .mw-nova-senha-descricao {
+        font-size: 13px;
+    }
+
+
+    .mw-nova-senha-acoes {
+        flex-direction: column-reverse;
+
+        align-items: stretch;
+
+        gap: 9px;
+    }
+
+
+    .mw-nova-senha-btn {
+        width: 100%;
+
+        height: 48px;
+        min-height: 48px;
+
+        flex: none;
+    }
+}
+
+
+/* =========================================================
+   ACESSIBILIDADE
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .mw-nova-senha-modal {
+        animation: none;
+    }
+
+
+    .mw-nova-senha-btn,
+    .mw-nova-senha-fechar,
+    .mw-nova-senha-toggle {
+        transition: none;
+    }
+}

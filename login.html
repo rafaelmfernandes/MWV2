@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 
 <html lang="pt-BR">
@@ -20,20 +19,55 @@
 
 
     <!-- ==================================================
-         CSS PRINCIPAL
+         CSS PRINCIPAL DA PÁGINA
     =================================================== -->
 
     <link
         rel="stylesheet"
         href="css/login.css"
     >
-     <link
+
+
+    <!-- ==================================================
+         CSS — MODAL DE RECUPERAÇÃO DE SENHA
+
+         Responsabilidade:
+         - Modal para solicitar recuperação.
+         - Campo de e-mail.
+         - Estados de erro e sucesso.
+         - Responsividade.
+    =================================================== -->
+
+    <link
         rel="stylesheet"
         href="css/components/modal-recuperar-senha.css"
     >
 
+
+    <!-- ==================================================
+         CSS — MODAL DE REDEFINIÇÃO DE SENHA
+
+         Responsabilidade:
+         - Tela exibida depois que o usuário
+           clica no link recebido por e-mail.
+         - Campos para nova senha e confirmação.
+    =================================================== -->
+
+   <link
+    rel="stylesheet"
+    href="css/components/modal-nova-senha.css"
+>
+
+
     <!-- ==================================================
          CSS — CONTROLE DE VISIBILIDADE DA SENHA
+
+         Responsabilidade:
+         - Ícone de olho.
+         - Mostrar senha.
+         - Ocultar senha.
+         - Funciona também em campos
+           criados dinamicamente.
     =================================================== -->
 
     <link
@@ -47,12 +81,22 @@
 <body>
 
 
+<!-- ======================================================
+     CONTAINER PRINCIPAL DA PÁGINA
+======================================================= -->
+
 <div class="app-container">
+
+
+    <!-- ==================================================
+         CARD PRINCIPAL DE AUTENTICAÇÃO
+    =================================================== -->
 
     <div class="checkout-card">
 
+
         <!-- ==================================================
-             LOGO / TÍTULO
+             CABEÇALHO
         =================================================== -->
 
         <div class="auth-header">
@@ -79,6 +123,11 @@
                 class="auth-toggle-slider">
             </div>
 
+
+            <!-- ==================================================
+                 ABA — ENTRAR
+            =================================================== -->
+
             <button
                 type="button"
                 class="auth-tab-btn active"
@@ -87,6 +136,11 @@
             >
                 Entrar
             </button>
+
+
+            <!-- ==================================================
+                 ABA — CADASTRAR
+            =================================================== -->
 
             <button
                 type="button"
@@ -102,9 +156,9 @@
 
         <!-- ==================================================
              CONTEÚDO DINÂMICO
-             
-             O Login.js e Cadastro.js inserem os formulários
-             neste elemento.
+
+             Login.js e Cadastro.js inserem aqui
+             os respectivos formulários.
         =================================================== -->
 
         <div
@@ -113,8 +167,8 @@
         >
 
             <!--
-                O formulário de login ou cadastro
-                será inserido pelo JavaScript.
+                O formulário será criado
+                dinamicamente pelo JavaScript.
             -->
 
         </div>
@@ -124,63 +178,269 @@
 </div>
 
 
-<!-- ========================================================
+
+<!-- ======================================================
+     MODAL — RECUPERAÇÃO DE SENHA
+
+     Este container é utilizado pelo:
+
+     js/components/modal-recuperar-senha.js
+
+     O conteúdo é criado dinamicamente.
+======================================================= -->
+
+<div
+    id="modal-recuperar-senha-container"
+    class="mw-recuperacao-modal-container"
+    aria-hidden="true"
+>
+</div>
+
+
+
+<!-- ======================================================
+     MODAL — REDEFINIÇÃO DE SENHA
+
+     Este container é utilizado pelo:
+
+     js/components/modal-redefinir-senha.js
+
+     Ele será exibido quando o usuário clicar no
+     link recebido por e-mail.
+
+     Exemplo do fluxo:
+
+     Login
+        ↓
+     Esqueci minha senha
+        ↓
+     Digita e-mail
+        ↓
+     Supabase envia e-mail
+        ↓
+     Usuário clica no link
+        ↓
+     Supabase retorna para esta página
+        ↓
+     Modal de redefinição aparece
+        ↓
+     Nova senha
+        ↓
+     Confirmar nova senha
+        ↓
+     Supabase atualiza a senha
+        ↓
+     Usuário pode entrar novamente
+======================================================= -->
+
+<div
+    id="modal-redefinir-senha-container"
+    class="mw-redefinir-senha-modal-container"
+    aria-hidden="true"
+>
+</div>
+
+
+
+<!-- ======================================================
      SUPABASE
-========================================================= -->
+======================================================= -->
 
 <script
     src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
 ></script>
 
 
-<!-- ========================================================
-     MÓDULOS PRINCIPAIS
-========================================================= -->
 
-<script src="js/core/SupabaseClient.js"></script>
+<!-- ======================================================
+     CLIENTE SUPABASE
+======================================================= -->
 
-<script src="js/core/Sessao.js"></script>
-
-<script src="js/auth/Perfil.js"></script>
-
-<script src="js/auth/Login.js"></script>
-
-<script src="js/auth/Cadastro.js"></script>
+<script
+    src="js/core/SupabaseClient.js"
+></script>
 
 
-<!-- ========================================================
-     CONTROLE PRINCIPAL DA PÁGINA DE LOGIN
-========================================================= -->
 
-<script src="js/login.js"></script>
+<!-- ======================================================
+     CONTROLE DE SESSÃO
+======================================================= -->
+
+<script
+    src="js/core/Sessao.js"
+></script>
 
 
-<!-- ========================================================
+
+<!-- ======================================================
+     PERFIL DO USUÁRIO
+======================================================= -->
+
+<script
+    src="js/auth/Perfil.js"
+></script>
+
+
+
+<!-- ======================================================
+     AUTENTICAÇÃO — LOGIN
+======================================================= -->
+
+<script
+    src="js/auth/Login.js"
+></script>
+
+
+
+<!-- ======================================================
+     AUTENTICAÇÃO — CADASTRO
+======================================================= -->
+
+<script
+    src="js/auth/Cadastro.js"
+></script>
+
+
+
+<!-- ======================================================
+     CONTROLE PRINCIPAL DA PÁGINA
+
+     Responsabilidade:
+
+     - Alternar Entrar/Cadastrar.
+     - Criar os formulários.
+     - Processar login.
+     - Processar cadastro.
+     - Abrir recuperação de senha.
+     - Processar sessão inicial.
+======================================================= -->
+
+<script
+    src="js/login.js"
+></script>
+
+
+
+<!-- ======================================================
      CONTROLE DE VISIBILIDADE DA SENHA
-     
-     Este módulo observa os formulários inseridos
-     dinamicamente por Login.js e Cadastro.js.
-========================================================= -->
 
-<script src="js/auth/MostrarSenha.js"></script>
-<script src="js/components/modal-recuperar-senha.js"></script>
+     Observa os campos de senha criados dinamicamente
+     e adiciona os respectivos botões de mostrar/ocultar.
+======================================================= -->
+
+<script
+    src="js/auth/MostrarSenha.js"
+></script>
 
 
-<!-- ========================================================
-     OBSERVADOR DA SESSÃO
-========================================================= -->
+
+<!-- ======================================================
+     MODAL — RECUPERAÇÃO DE SENHA
+
+     Responsabilidade:
+
+     - Abrir modal.
+     - Receber e-mail.
+     - Validar e-mail.
+     - Solicitar link ao Supabase.
+     - Mostrar sucesso/erro.
+     - Não utiliza prompt().
+     - Não utiliza alert().
+======================================================= -->
+
+<script
+    src="js/components/modal-recuperar-senha.js"
+></script>
+
+
+
+<!-- ======================================================
+     MODAL — REDEFINIÇÃO DE SENHA
+
+     Responsabilidade:
+
+     - Detectar quando o Supabase retornou
+       através de um link de recuperação.
+     - Exibir o formulário de nova senha.
+     - Confirmar a nova senha.
+     - Atualizar a senha no Supabase.
+     - Encerrar o fluxo de recuperação.
+======================================================= -->
+
+<script
+    src="js/components/modal-nova-senha.js"
+></script>
+
+
+
+<!-- ======================================================
+     INICIALIZAÇÃO DO FLUXO DE REDEFINIÇÃO
+
+     Este bloco garante que, caso o usuário tenha
+     acabado de voltar do link enviado pelo Supabase,
+     o módulo de redefinição seja inicializado.
+======================================================= -->
 
 <script>
 
-    Sessao.observar((evento, sessao) => {
+    document.addEventListener(
+        'DOMContentLoaded',
+        async () => {
 
-        console.log(
-            'Sessão:',
-            evento,
-            sessao
+            try {
+
+                if (
+                    window.MusicalWorldModalRedefinirSenha &&
+                    typeof
+                    window.MusicalWorldModalRedefinirSenha.iniciar
+                    === 'function'
+                ) {
+
+                    await
+                    window.MusicalWorldModalRedefinirSenha.iniciar();
+
+                }
+
+            } catch (erro) {
+
+                console.error(
+                    'Erro ao inicializar redefinição de senha:',
+                    erro
+                );
+
+            }
+
+        }
+    );
+
+</script>
+
+
+
+<!-- ======================================================
+     OBSERVADOR DA SESSÃO
+======================================================= -->
+
+<script>
+
+    if (
+        window.Sessao &&
+        typeof window.Sessao.observar === 'function'
+    ) {
+
+        Sessao.observar(
+            (evento, sessao) => {
+
+                console.log(
+                    'Sessão:',
+                    evento,
+                    sessao
+                );
+
+            }
         );
 
-    });
+    }
 
 </script>
 
@@ -188,4 +448,3 @@
 </body>
 
 </html>
-
