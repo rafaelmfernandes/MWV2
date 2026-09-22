@@ -1,4 +1,4 @@
- /* =========================================================
+/* =========================================================
    MUSICALWORLD — FEED PRINCIPAL
 
    Arquivo:
@@ -44,11 +44,22 @@
     const FEED_CONFIG = {
 
         filtros: {
+
             estado: "",
             cidade: "",
             categoria: "",
             instrumento: "",
-            estilo: ""
+            estilo: "",
+
+            /*
+             * Filtros de valor dos serviços.
+             *
+             * null significa que o respectivo limite
+             * não foi informado.
+             */
+            valorMin: null,
+            valorMax: null
+
         },
 
         inicializado: false
@@ -96,17 +107,48 @@
 
     function normalizarFiltros(filtros = {}) {
 
+        const valorMin =
+            filtros.valorMin !== null &&
+            filtros.valorMin !== undefined &&
+            filtros.valorMin !== ""
+                ? Number(filtros.valorMin)
+                : null;
+
+
+        const valorMax =
+            filtros.valorMax !== null &&
+            filtros.valorMax !== undefined &&
+            filtros.valorMax !== ""
+                ? Number(filtros.valorMax)
+                : null;
+
+
         return {
 
-            estado: filtros.estado || "",
+            estado:
+                filtros.estado || "",
 
-            cidade: filtros.cidade || "",
+            cidade:
+                filtros.cidade || "",
 
-            categoria: filtros.categoria || "",
+            categoria:
+                filtros.categoria || "",
 
-            instrumento: filtros.instrumento || "",
+            instrumento:
+                filtros.instrumento || "",
 
-            estilo: filtros.estilo || ""
+            estilo:
+                filtros.estilo || "",
+
+            valorMin:
+                Number.isFinite(valorMin)
+                    ? valorMin
+                    : null,
+
+            valorMax:
+                Number.isFinite(valorMax)
+                    ? valorMax
+                    : null
 
         };
 
@@ -123,7 +165,23 @@
             FEED_CONFIG.filtros
         ).some(valor => {
 
-            return String(valor || "").trim() !== "";
+            /*
+             * Valores numéricos precisam ser considerados
+             * somente quando realmente foram informados.
+             */
+            if (
+                valor !== null &&
+                typeof valor === "number"
+            ) {
+
+                return true;
+
+            }
+
+
+            return String(
+                valor || ""
+            ).trim() !== "";
 
         });
 
@@ -132,7 +190,7 @@
 
     /* =====================================================
        OBTER CLIENTE SUPABASE
-       
+
        O projeto possui um núcleo compartilhado para isso.
        Não colocamos URL ou credenciais neste arquivo.
     ===================================================== */
@@ -156,7 +214,7 @@
 
     /* =====================================================
        CARREGAR UMA PÁGINA DE PROFISSIONAIS
-       
+
        Esta função é chamada pelo paginacao.js.
 
        O paginacao.js envia:
@@ -270,6 +328,19 @@
 
                     p_estilo:
                         filtros.estilo || null,
+
+                    /*
+                     * Filtros de valor dos serviços.
+                     *
+                     * O banco verifica se existe pelo menos
+                     * um serviço ativo do profissional dentro
+                     * da faixa informada.
+                     */
+                    p_valor_min:
+                        filtros.valorMin,
+
+                    p_valor_max:
+                        filtros.valorMax,
 
                     p_limite:
                         limite,
@@ -414,7 +485,6 @@
                 acabou: true
 
             };
-
 
         } finally {
 
@@ -776,6 +846,12 @@
                     normalizarFiltros(
                         filtros
                     );
+
+
+                console.log(
+                    "🔎 MusicalWorldFeed — filtros recebidos:",
+                    FEED_CONFIG.filtros
+                );
 
 
                 return carregarProfissionaisInicio();

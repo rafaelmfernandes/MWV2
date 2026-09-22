@@ -557,6 +557,55 @@ aria-label="Mensagens"
 </button>
 
 <!-- =============================================
+     FILTRO
+     ============================================= -->
+
+<button
+    type="button"
+    class="nav-icon-btn"
+    onclick="window.abrirModalFiltro && window.abrirModalFiltro()"
+    title="Filtros"
+    aria-label="Abrir filtros"
+>
+
+    <svg
+        class="top-icon-svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        aria-hidden="true"
+    >
+
+        <path
+            d="M4 7H20"
+            stroke="currentColor"
+            stroke-width="1.9"
+            stroke-linecap="round"
+        />
+
+        <path
+            d="M7 12H17"
+            stroke="currentColor"
+            stroke-width="1.9"
+            stroke-linecap="round"
+        />
+
+        <path
+            d="M10 17H14"
+            stroke="currentColor"
+            stroke-width="1.9"
+            stroke-linecap="round"
+        />
+
+    </svg>
+
+    <span class="cabecalho-action-label">
+        Filtro
+    </span>
+
+</button>
+
+<!-- =============================================
      CARREGAMENTO DO CABEÇALHO
      ============================================= -->
 
@@ -894,6 +943,59 @@ aria-label="Mensagens"
 <script src="js/index/paginacao.js"></script>
 
 <script src="js/index/aviso-feed.js"></script>
+
+
+<!-- =====================================================
+     FILTRO — ÚNICA ALTERAÇÃO DESTA ETAPA
+
+     O modal-filtro.js dispara o evento:
+
+     musicalworld:filtros-aplicados
+
+     Este listener recebe os filtros e entrega ao
+     MusicalWorldFeed.
+
+     NÃO ALTERA O main.js.
+     ===================================================== -->
+
+<script>
+
+window.addEventListener(
+    'musicalworld:filtros-aplicados',
+    function (event) {
+
+        const filtros =
+            event?.detail?.filtros || {};
+
+        console.log(
+            '🔎 Evento de filtros recebido pelo Index:',
+            filtros
+        );
+
+
+        if (
+            window.MusicalWorldFeed &&
+            typeof window.MusicalWorldFeed.definirFiltros === 'function'
+        ) {
+
+            window.MusicalWorldFeed.definirFiltros(
+                filtros
+            );
+
+            return;
+
+        }
+
+
+        console.warn(
+            '⚠️ MusicalWorldFeed ainda não está disponível para receber os filtros.'
+        );
+
+    }
+);
+
+</script>
+
 
 <!-- =====================================================
      MENU INFERIOR
