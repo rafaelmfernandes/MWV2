@@ -32,6 +32,12 @@ RESET LOCAL
     box-sizing: border-box;
 }
 
+html {
+    /* Impede que o navegador altere o tamanho da fonte por conta própria */
+        -webkit-text-size-adjust: 100%;
+        text-size-adjust: 100%;
+}
+
 
 /* =========================================================
 CONTROLE DO ATRIBUTO HIDDEN

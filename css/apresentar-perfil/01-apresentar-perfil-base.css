@@ -30,6 +30,9 @@
 
 html {
     scroll-behavior: smooth;
+    /* Impede que o navegador altere o tamanho da fonte por conta própria */
+        -webkit-text-size-adjust: 100%;
+        text-size-adjust: 100%;
 }
 
 
