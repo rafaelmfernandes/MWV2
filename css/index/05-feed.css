@@ -1332,15 +1332,142 @@
 .ad-social-label {
 
     display: inline-block;
+
+    color: currentColor;
 }
 
 
 .ad-social-btn.ativo {
 
-    color: #6d4aff;
+    background: transparent;
+}
 
-    background:
-        rgba(109, 74, 255, 0.08);
+
+/* =========================================================
+   CURTIR — ATIVO
+   Coração preenchido + contador rosa/vermelho
+========================================================= */
+
+.ad-social-btn[data-acao="curtir"].ativo {
+
+    background: transparent;
+
+    color: #ef6f8f;
+}
+
+
+.ad-social-btn[data-acao="curtir"].ativo svg {
+
+    fill: #ef6f8f;
+
+    stroke: #ef6f8f;
+
+    color: #ef6f8f;
+}
+
+
+.ad-social-btn[data-acao="curtir"].ativo .ad-social-label {
+
+    color: #ef6f8f;
+}
+
+
+.ad-social-btn[data-acao="curtir"].ativo
+.interacoes-contador {
+
+    color: #ef6f8f;
+}
+
+
+/* =========================================================
+   COMENTAR
+   ÍCONE AZUL + CONTADOR AZUL
+   O BALÃO CONTINUA SEM PREENCHIMENTO
+
+   O JS usa:
+   data-interacao="comentar"
+   data-contagem="quantidade"
+========================================================= */
+
+.ad-social-btn[data-interacao="comentar"]
+[data-contagem]:not([data-contagem="0"]) {
+
+    background: transparent;
+
+    color: #2f80ed;
+}
+
+
+.ad-social-btn[data-interacao="comentar"]
+[data-contagem]:not([data-contagem="0"]) svg {
+
+    fill: none;
+
+    stroke: #2f80ed;
+
+    color: #2f80ed;
+}
+
+
+.ad-social-btn[data-interacao="comentar"]
+[data-contagem]:not([data-contagem="0"])
+.ad-social-label {
+
+    color: #2f80ed;
+}
+
+
+.ad-social-btn[data-interacao="comentar"]
+[data-contagem]:not([data-contagem="0"])
+.interacoes-contador {
+
+    color: #2f80ed;
+}
+
+
+/* =========================================================
+   SALVAR — ATIVO
+   ÍCONE TOTALMENTE PREENCHIDO EM PRETO
+========================================================= */
+
+.ad-social-btn[data-acao="salvar"].ativo {
+
+    background: transparent;
+
+    color: #000000;
+}
+
+
+.ad-social-btn[data-acao="salvar"].ativo svg {
+
+    fill: #000000;
+
+    stroke: #000000;
+
+    color: #000000;
+}
+
+
+.ad-social-btn[data-acao="salvar"].ativo svg * {
+
+    fill: #000000;
+
+    stroke: #000000;
+
+    color: #000000;
+}
+
+
+.ad-social-btn[data-acao="salvar"].ativo .ad-social-label {
+
+    color: #000000;
+}
+
+
+.ad-social-btn[data-acao="salvar"].ativo
+.interacoes-contador {
+
+    color: #000000;
 }
 
 
@@ -1452,19 +1579,6 @@
 /* =========================================================
    TABLET
    701px → 900px
-
-   IMPORTANTE:
-   Esta faixa NÃO altera a estrutura do celular.
-
-   O objetivo é criar uma versão ampliada do celular:
-
-   - uma coluna;
-   - card largo;
-   - mídia maior;
-   - identidade sobre a mídia;
-   - conteúdo abaixo;
-   - sem duas colunas;
-   - sem aparência de desktop estreito.
 ========================================================= */
 
 @media (min-width: 701px) and (max-width: 900px) {
@@ -1497,13 +1611,6 @@
         overflow: hidden;
     }
 
-
-    /* =====================================================
-       MÍDIA — TABLET
-
-       Aumentamos a mídia em relação ao celular,
-       mas mantemos a mesma proporção visual.
-    ===================================================== */
 
     .ad-media-box {
 
@@ -1545,10 +1652,6 @@
     }
 
 
-    /* =====================================================
-       VÍDEO — TABLET
-    ===================================================== */
-
     .ad-video-container {
 
         width: 100%;
@@ -1589,10 +1692,6 @@
     }
 
 
-    /* =====================================================
-       IDENTIDADE
-    ===================================================== */
-
     .ad-media-identidade {
 
         padding:
@@ -1606,10 +1705,6 @@
             50px 16px 16px;
     }
 
-
-    /* =====================================================
-       CONTEÚDO
-    ===================================================== */
 
     .ad-card-conteudo {
 
@@ -1634,10 +1729,6 @@
     }
 
 
-    /* =====================================================
-       IDENTIDADE SEM MÍDIA
-    ===================================================== */
-
     .ad-card-identidade-sem-midia {
 
         padding:
@@ -1646,10 +1737,6 @@
         border-radius: 14px;
     }
 
-
-    /* =====================================================
-       BOTÃO DE TELA CHEIA
-    ===================================================== */
 
     .ad-video-fullscreen {
 
@@ -1667,9 +1754,6 @@
 /* =========================================================
    IPAD / TABLET GRANDE
    901px → 1199px
-
-   Mantemos a mesma linguagem do celular/tablet,
-   mas aproveitamos melhor a largura disponível.
 ========================================================= */
 
 @media (min-width: 901px) and (max-width: 1199px) {
@@ -1702,10 +1786,6 @@
         overflow: hidden;
     }
 
-
-    /* =====================================================
-       MÍDIA — IPAD
-    ===================================================== */
 
     .ad-media-box {
 
@@ -1747,10 +1827,6 @@
     }
 
 
-    /* =====================================================
-       VÍDEO — IPAD
-    ===================================================== */
-
     .ad-video-container {
 
         width: 100%;
@@ -1791,10 +1867,6 @@
     }
 
 
-    /* =====================================================
-       IDENTIDADE
-    ===================================================== */
-
     .ad-media-identidade {
 
         padding:
@@ -1808,10 +1880,6 @@
             54px 18px 17px;
     }
 
-
-    /* =====================================================
-       CONTEÚDO
-    ===================================================== */
 
     .ad-card-conteudo {
 
@@ -1848,10 +1916,6 @@
     }
 
 
-    /* =====================================================
-       IDENTIDADE SEM MÍDIA
-    ===================================================== */
-
     .ad-card-identidade-sem-midia {
 
         padding:
@@ -1860,10 +1924,6 @@
         border-radius: 14px;
     }
 
-
-    /* =====================================================
-       BOTÃO DE TELA CHEIA
-    ===================================================== */
 
     .ad-video-fullscreen {
 
@@ -1881,8 +1941,6 @@
 /* =========================================================
    DESKTOP
    1200px+
-
-   A estrutura desktop existente é preservada.
 ========================================================= */
 
 @media (min-width: 1200px) {
@@ -1899,10 +1957,6 @@
     }
 
 
-    /* =====================================================
-       PUBLICAÇÃO — DESKTOP
-    ===================================================== */
-
     .ad-card-novo {
 
         margin-top: 0;
@@ -1915,12 +1969,6 @@
         overflow: visible;
     }
 
-
-    /* =====================================================
-       MÍDIA — DESKTOP
-
-       Mantemos o comportamento que já funcionava.
-    ===================================================== */
 
     .ad-media-box {
 
@@ -1952,12 +2000,6 @@
     }
 
 
-    /* =====================================================
-       VÍDEO — DESKTOP
-
-       Mantemos os 300px que já estavam funcionando.
-    ===================================================== */
-
     .ad-video-container {
 
         height: 300px;
@@ -1988,10 +2030,6 @@
     }
 
 
-    /* =====================================================
-       CONTEÚDO
-    ===================================================== */
-
     .ad-card-conteudo {
 
         width: 100%;
@@ -2008,10 +2046,6 @@
     }
 
 
-    /* =====================================================
-       IDENTIDADE SEM MÍDIA
-    ===================================================== */
-
     .ad-card-identidade-sem-midia {
 
         border-radius: 14px;
@@ -2024,8 +2058,6 @@
 /* =========================================================
    MOBILE
    Até 700px
-
-   ESTA SEÇÃO PRESERVA A ESTRUTURA MOBILE EXISTENTE.
 ========================================================= */
 
 @media (max-width: 700px) {
@@ -2041,10 +2073,6 @@
         padding: 0;
     }
 
-
-    /* =====================================================
-       PUBLICAÇÃO — MOBILE
-    ===================================================== */
 
     .ad-card-novo {
 
@@ -2067,10 +2095,6 @@
         overflow: hidden;
     }
 
-
-    /* =====================================================
-       MÍDIA — MOBILE
-    ===================================================== */
 
     .ad-media-box {
 
@@ -2128,10 +2152,6 @@
     }
 
 
-    /* =====================================================
-       VÍDEO — MOBILE
-    ===================================================== */
-
     .ad-video-container {
 
         width: 100%;
@@ -2190,10 +2210,6 @@
     }
 
 
-    /* =====================================================
-       IDENTIDADE SOBRE MÍDIA — MOBILE
-    ===================================================== */
-
     .ad-media-identidade {
 
         padding:
@@ -2208,10 +2224,6 @@
     }
 
 
-    /* =====================================================
-       CONTEÚDO — MOBILE
-    ===================================================== */
-
     .ad-card-conteudo {
 
         width: 100%;
@@ -2220,10 +2232,6 @@
             0 12px;
     }
 
-
-    /* =====================================================
-       IDENTIDADE SEM MÍDIA — MOBILE
-    ===================================================== */
 
     .ad-card-identidade-sem-midia {
 
@@ -2402,8 +2410,6 @@
 /* =========================================================
    TELAS MUITO PEQUENAS
    Até 380px
-
-   Mantemos o comportamento existente.
 ========================================================= */
 
 @media (max-width: 380px) {

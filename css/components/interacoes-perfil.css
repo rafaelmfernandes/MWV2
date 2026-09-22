@@ -142,6 +142,16 @@
     height: 19px;
 
     flex: 0 0 19px;
+
+    fill: none;
+
+    stroke: currentColor;
+
+    stroke-width: 1.9;
+
+    stroke-linecap: round;
+
+    stroke-linejoin: round;
 }
 
 
@@ -151,15 +161,115 @@
 
 .interacao-perfil-botao.ativo {
 
-    color: #6d4aff;
+    color: inherit;
 
-    background: #f3efff;
+    background: transparent;
 }
 
 
-.interacao-perfil-botao.ativo svg {
+/* =========================================================
+   CURTIR — ATIVO
+========================================================= */
 
-    fill: currentColor;
+.interacao-perfil-botao[data-acao="curtir"].ativo,
+.interacao-perfil-botao[data-interacao="curtir"].ativo {
+
+    color: #ef6f8f;
+
+    background: transparent;
+}
+
+
+.interacao-perfil-botao[data-acao="curtir"].ativo svg,
+.interacao-perfil-botao[data-interacao="curtir"].ativo svg {
+
+    fill: #ef6f8f;
+
+    stroke: #ef6f8f;
+
+    color: #ef6f8f;
+}
+
+
+.interacao-perfil-botao[data-acao="curtir"].ativo .interacoes-contador,
+.interacao-perfil-botao[data-interacao="curtir"].ativo .interacoes-contador {
+
+    color: #ef6f8f;
+}
+
+
+/* =========================================================
+   COMENTAR — COM COMENTÁRIOS
+   O ícone continua sem preenchimento.
+========================================================= */
+
+.interacao-perfil-botao[data-acao="comentar"][data-contagem]:not([data-contagem="0"]),
+.interacao-perfil-botao[data-interacao="comentar"][data-contagem]:not([data-contagem="0"]) {
+
+    color: #2f80ed;
+
+    background: transparent;
+}
+
+
+.interacao-perfil-botao[data-acao="comentar"][data-contagem]:not([data-contagem="0"]) svg,
+.interacao-perfil-botao[data-interacao="comentar"][data-contagem]:not([data-contagem="0"]) svg {
+
+    fill: none;
+
+    stroke: #2f80ed;
+
+    color: #2f80ed;
+}
+
+
+.interacao-perfil-botao[data-acao="comentar"][data-contagem]:not([data-contagem="0"]) .interacoes-contador,
+.interacao-perfil-botao[data-interacao="comentar"][data-contagem]:not([data-contagem="0"]) .interacoes-contador {
+
+    color: #2f80ed;
+}
+
+
+/* =========================================================
+   SALVAR — ATIVO
+   Ícone completamente preenchido em preto.
+========================================================= */
+
+.interacao-perfil-botao[data-acao="salvar"].ativo,
+.interacao-perfil-botao[data-interacao="salvar"].ativo {
+
+    color: #000000;
+
+    background: transparent;
+}
+
+
+.interacao-perfil-botao[data-acao="salvar"].ativo svg,
+.interacao-perfil-botao[data-interacao="salvar"].ativo svg {
+
+    fill: #000000;
+
+    stroke: #000000;
+
+    color: #000000;
+}
+
+
+.interacao-perfil-botao[data-acao="salvar"].ativo svg *,
+.interacao-perfil-botao[data-interacao="salvar"].ativo svg * {
+
+    fill: #000000;
+
+    stroke: #000000;
+
+    color: #000000;
+}
+
+
+.interacao-perfil-botao[data-acao="salvar"].ativo .interacoes-contador,
+.interacao-perfil-botao[data-interacao="salvar"].ativo .interacoes-contador {
+
+    color: #000000;
 }
 
 
@@ -178,12 +288,6 @@
     color: #98a2b3;
 
     text-align: center;
-}
-
-
-.interacao-perfil-botao.ativo .interacoes-contador {
-
-    color: currentColor;
 }
 
 
