@@ -11,12 +11,12 @@
 <meta charset="UTF-8">
 
 <meta
-name="viewport"
-content="width=device-width, initial-scale=1.0"
-
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
 >
 
 <title>MusicalWorld - Conectando a Cena</title>
+
 
 <!-- =====================================================
      CSS PRINCIPAL
@@ -27,6 +27,17 @@ content="width=device-width, initial-scale=1.0"
     href="css/main.css"
 >
 
+
+<!-- =====================================================
+     CSS DO MODAL DE AVALIAÇÃO
+     ===================================================== -->
+
+<link
+    rel="stylesheet"
+    href="css/components/modal-avaliacao.css"
+>
+
+
 <!-- =====================================================
      CSS DO MENU INFERIOR
      ===================================================== -->
@@ -35,6 +46,7 @@ content="width=device-width, initial-scale=1.0"
     rel="stylesheet"
     href="css/menu-inferior.css"
 >
+
 
 <!-- =====================================================
      CSS DO MODAL DE FILTROS
@@ -45,6 +57,7 @@ content="width=device-width, initial-scale=1.0"
     href="css/modal-filtro.css"
 >
 
+
 <!-- =====================================================
      CSS DO MODAL DE NOTIFICAÇÃO
      ===================================================== -->
@@ -53,6 +66,7 @@ content="width=device-width, initial-scale=1.0"
     rel="stylesheet"
     href="css/components/modal-notificacao.css"
 >
+
 
 <!-- =====================================================
      CSS DO MODAL ANUNCIAR
@@ -63,6 +77,7 @@ content="width=device-width, initial-scale=1.0"
     href="css/modal-anunciar.css"
 >
 
+
 <!-- =====================================================
      CSS DO ONBOARDING
      ===================================================== -->
@@ -72,6 +87,7 @@ content="width=device-width, initial-scale=1.0"
     href="css/components/onboarding.css"
 >
 
+
 <!-- =====================================================
      CSS DAS INTERAÇÕES DE PERFIL
      ===================================================== -->
@@ -80,6 +96,7 @@ content="width=device-width, initial-scale=1.0"
     rel="stylesheet"
     href="css/components/interacoes-perfil.css"
 >
+
 
 <!-- =====================================================
      FONTES
@@ -103,7 +120,9 @@ content="width=device-width, initial-scale=1.0"
 
 </head>
 
+
 <body>
+
 
 <!-- =====================================================
      CONTAINER PRINCIPAL DO APLICATIVO
@@ -111,17 +130,20 @@ content="width=device-width, initial-scale=1.0"
 
 <div class="app-container">
 
+
 <!-- =====================================================
      CABEÇALHO PRINCIPAL
      ===================================================== -->
 
 <header class="navbar">
 
+
 <!-- =================================================
      ÁREA DA MARCA
      ================================================= -->
 
 <div class="navbar-brand-area">
+
 
 <!-- =============================================
      CONTAINER DA CONTA
@@ -402,159 +424,161 @@ content="width=device-width, initial-scale=1.0"
 
 </div>
 
+
 <!-- =================================================
      ÁREA DE AÇÕES DO CABEÇALHO
      ================================================= -->
 
 <div class="navbar-actions">
 
+
 <!-- =============================================
      ANUNCIAR
      ============================================= -->
 
 <button
-type="button"
-class="cabecalho-btn-anunciar"
-onclick="window.ModalAnunciar && window.ModalAnunciar.abrir()"
-title="Criar anúncio"
-aria-label="Criar anúncio"
-
+    type="button"
+    class="cabecalho-btn-anunciar"
+    onclick="window.ModalAnunciar && window.ModalAnunciar.abrir()"
+    title="Criar anúncio"
+    aria-label="Criar anúncio"
 >
 
 
-<svg
-    class="cabecalho-anunciar-icon"
-    viewBox="0 0 24 24"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    aria-hidden="true"
->
+    <svg
+        class="cabecalho-anunciar-icon"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        aria-hidden="true"
+    >
 
-    <path
-        d="M12 5V19"
-        stroke="currentColor"
-        stroke-width="1.9"
-        stroke-linecap="round"
-    />
+        <path
+            d="M12 5V19"
+            stroke="currentColor"
+            stroke-width="1.9"
+            stroke-linecap="round"
+        />
 
-    <path
-        d="M5 12H19"
-        stroke="currentColor"
-        stroke-width="1.9"
-        stroke-linecap="round"
-    />
+        <path
+            d="M5 12H19"
+            stroke="currentColor"
+            stroke-width="1.9"
+            stroke-linecap="round"
+        />
 
-</svg>
+    </svg>
 
-<span class="cabecalho-action-label">
-    Anunciar
-</span>
+    <span class="cabecalho-action-label">
+        Anunciar
+    </span>
 
 
 </button>
+
 
 <!-- =============================================
      NOTIFICAÇÕES
      ============================================= -->
 
 <button
-type="button"
-class="nav-icon-btn"
-onclick="window.location.href='notificacoes.html'"
-title="Notificações"
-aria-label="Notificações"
-
+    type="button"
+    class="nav-icon-btn"
+    onclick="window.location.href='notificacoes.html'"
+    title="Notificações"
+    aria-label="Notificações"
 >
 
 
-<svg
-    class="top-icon-svg"
-    viewBox="0 0 24 24"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    aria-hidden="true"
->
+    <svg
+        class="top-icon-svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        aria-hidden="true"
+    >
 
-    <path
-        d="M18 9.5C18 6.46 15.76 4 12 4C8.24 4 6 6.46 6 9.5V13.2C6 14.1 5.7 14.97 5.15 15.68L4.5 16.5H19.5L18.85 15.68C18.3 14.97 18 14.1 18 13.2V9.5Z"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-    />
+        <path
+            d="M18 9.5C18 6.46 15.76 4 12 4C8.24 4 6 6.46 6 9.5V13.2C6 14.1 5.7 14.97 5.15 15.68L4.5 16.5H19.5L18.85 15.68C18.3 14.97 18 14.1 18 13.2V9.5Z"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+        />
 
-    <path
-        d="M9.5 19C10.05 19.63 10.92 20 12 20C13.08 20 13.95 19.63 14.5 19"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-    />
+        <path
+            d="M9.5 19C10.05 19.63 10.92 20 12 20C13.08 20 13.95 19.63 14.5 19"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+        />
 
-</svg>
+    </svg>
 
-<span class="cabecalho-action-label">
-    Notificações
-</span>
+    <span class="cabecalho-action-label">
+        Notificações
+    </span>
 
-<span
-    id="badge-notificacoes"
-    class="notification-badge"
-    aria-label="Novas notificações"
-    style="display: none;"
->
-    0
-</span>
+    <span
+        id="badge-notificacoes"
+        class="notification-badge"
+        aria-label="Novas notificações"
+        style="display: none;"
+    >
+        0
+    </span>
 
 
 </button>
+
 
 <!-- =============================================
      MENSAGENS
      ============================================= -->
 
 <button
-type="button"
-class="nav-icon-btn"
-onclick="window.location.href='mensagens.html'"
-title="Mensagens"
-aria-label="Mensagens"
-
+    type="button"
+    class="nav-icon-btn"
+    onclick="window.location.href='mensagens.html'"
+    title="Mensagens"
+    aria-label="Mensagens"
 >
 
 
-<svg
-    class="top-icon-svg"
-    viewBox="0 0 24 24"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    aria-hidden="true"
->
+    <svg
+        class="top-icon-svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        aria-hidden="true"
+    >
 
-    <path
-        d="M12 4.5C7.86 4.5 4.5 7.63 4.5 11.5C4.5 13.35 5.3 15.03 6.63 16.25L6 19.5L9.2 17.85C10.08 18.12 11.02 18.25 12 18.25C16.14 18.25 19.5 15.12 19.5 11.5C19.5 7.63 16.14 4.5 12 4.5Z"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-    />
+        <path
+            d="M12 4.5C7.86 4.5 4.5 7.63 4.5 11.5C4.5 13.35 5.3 15.03 6.63 16.25L6 19.5L9.2 17.85C10.08 18.12 11.02 18.25 12 18.25C16.14 18.25 19.5 15.12 19.5 11.5C19.5 7.63 16.14 4.5 12 4.5Z"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+        />
 
-</svg>
+    </svg>
 
-<span class="cabecalho-action-label">
-    Mensagens
-</span>
+    <span class="cabecalho-action-label">
+        Mensagens
+    </span>
 
-<span
-    id="badge-mensagens"
-    class="notification-badge"
-    aria-label="Novas mensagens"
-    style="display: none;"
->
-    0
-</span>
+    <span
+        id="badge-mensagens"
+        class="notification-badge"
+        aria-label="Novas mensagens"
+        style="display: none;"
+    >
+        0
+    </span>
 
 
 </button>
+
 
 <!-- =============================================
      FILTRO
@@ -605,6 +629,7 @@ aria-label="Mensagens"
 
 </button>
 
+
 <!-- =============================================
      CARREGAMENTO DO CABEÇALHO
      ============================================= -->
@@ -616,11 +641,10 @@ aria-label="Mensagens"
     aria-hidden="true"
 >
 
-
-<span></span>
-
+    <span></span>
 
 </div>
+
 
 <!-- =============================================
      ESTADO DESLOGADO
@@ -633,6 +657,7 @@ aria-label="Mensagens"
     aria-hidden="true"
 ></div>
 
+
 <!-- =============================================
      ESTADO LOGADO
      ============================================= -->
@@ -644,9 +669,11 @@ aria-label="Mensagens"
     aria-hidden="true"
 ></div>
 
+
 </div>
 
 </header>
+
 
 <!-- =================================================
      MODAL DE PRÉ-VISUALIZAÇÃO DE NOTIFICAÇÃO
@@ -655,6 +682,23 @@ aria-label="Mensagens"
 <div
     id="modal-notificacao-container"
 ></div>
+
+
+<!-- =================================================
+     MODAL DE AVALIAÇÃO
+     
+     O componente modal-avaliacao.js utiliza este
+     container para montar o modal dinamicamente.
+     
+     O modal só será exibido quando existir uma
+     contratação concluída ainda não avaliada pelo
+     contratante.
+     ================================================= -->
+
+<div
+    id="modal-avaliacao-container"
+></div>
+
 
 <!-- =================================================
      CONTEÚDO PRINCIPAL
@@ -872,6 +916,7 @@ aria-label="Mensagens"
 
 </main>
 
+
 <!-- =================================================
      MODAL DE FILTROS
      ================================================= -->
@@ -879,6 +924,7 @@ aria-label="Mensagens"
 <div
     id="modal-filtro-container"
 ></div>
+
 
 <!-- =================================================
      MENU INFERIOR
@@ -888,7 +934,9 @@ aria-label="Mensagens"
     id="menu-inferior-container"
 ></div>
 
+
 </div>
+
 
 <!-- =====================================================
      SUPABASE
@@ -897,6 +945,7 @@ aria-label="Mensagens"
 <script
     src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"
 ></script>
+
 
 <!-- =====================================================
      CORE
@@ -912,6 +961,7 @@ aria-label="Mensagens"
 
 <script src="js/core/RoteamentoPerfil.js"></script>
 
+
 <!-- =====================================================
      COMPONENTES
      ===================================================== -->
@@ -922,15 +972,27 @@ aria-label="Mensagens"
 
 <script src="js/components/modal-anunciar.js"></script>
 
+<!--
+    Modal de avaliação.
+
+    Este componente precisa ser carregado depois do
+    SupabaseClient.js e antes da inicialização dos
+    componentes no DOMContentLoaded.
+-->
+
+<script src="js/components/modal-avaliacao.js"></script>
+
 <script src="js/dados/municipios-brasil.js"></script>
 
 <script src="js/components/modal-filtro.js"></script>
+
 
 <!-- =====================================================
      COMPONENTE UNIVERSAL DE INTERAÇÕES DE PERFIL
      ===================================================== -->
 
 <script src="js/components/interacoes-perfil.js"></script>
+
 
 <!-- =====================================================
      LÓGICA PRINCIPAL DO INDEX
@@ -946,16 +1008,14 @@ aria-label="Mensagens"
 
 
 <!-- =====================================================
-     FILTRO — ÚNICA ALTERAÇÃO DESTA ETAPA
+     FILTRO — EVENTO DE FILTROS APLICADOS
 
-     O modal-filtro.js dispara o evento:
+     O modal-filtro.js dispara:
 
      musicalworld:filtros-aplicados
 
-     Este listener recebe os filtros e entrega ao
-     MusicalWorldFeed.
-
-     NÃO ALTERA O main.js.
+     Este listener entrega os filtros ao
+     MusicalWorldFeed sem alterar o main.js.
      ===================================================== -->
 
 <script>
@@ -967,8 +1027,9 @@ window.addEventListener(
         const filtros =
             event?.detail?.filtros || {};
 
+
         console.log(
-            '🔎 Evento de filtros recebido pelo Index:',
+            'Evento de filtros recebido pelo Index:',
             filtros
         );
 
@@ -988,7 +1049,7 @@ window.addEventListener(
 
 
         console.warn(
-            '⚠️ MusicalWorldFeed ainda não está disponível para receber os filtros.'
+            'MusicalWorldFeed ainda não está disponível para receber os filtros.'
         );
 
     }
@@ -1003,11 +1064,13 @@ window.addEventListener(
 
 <script src="js/components/menu-inferior.js"></script>
 
+
 <!-- =====================================================
      ONBOARDING
      ===================================================== -->
 
 <script src="js/components/onboarding.js"></script>
+
 
 <!-- =====================================================
      INICIALIZAÇÃO DOS COMPONENTES
@@ -1041,8 +1104,7 @@ document.addEventListener(
 
         if (
             window.Cabecalho &&
-            typeof window.Cabecalho.iniciar ===
-            'function'
+            typeof window.Cabecalho.iniciar === 'function'
         ) {
 
             await window.Cabecalho.iniciar();
@@ -1064,8 +1126,7 @@ document.addEventListener(
 
         if (
             window.ModalAnunciar &&
-            typeof window.ModalAnunciar.iniciar ===
-            'function'
+            typeof window.ModalAnunciar.iniciar === 'function'
         ) {
 
             await window.ModalAnunciar.iniciar();
@@ -1100,8 +1161,7 @@ document.addEventListener(
 
         if (
             window.InteracoesPerfil &&
-            typeof window.InteracoesPerfil.inicializar ===
-            'function'
+            typeof window.InteracoesPerfil.inicializar === 'function'
         ) {
 
             await window.InteracoesPerfil.inicializar();
@@ -1126,6 +1186,7 @@ document.addEventListener(
         -------------------------------------------------
 
         Inicializa o componente responsável por:
+
         - fechar o aviso;
         - salvar o fechamento no localStorage;
         - remover o aviso ao recarregar a página.
@@ -1135,11 +1196,11 @@ document.addEventListener(
 
         if (
             window.MusicalWorldAviso &&
-            typeof window.MusicalWorldAviso.inicializar ===
-            'function'
+            typeof window.MusicalWorldAviso.inicializar === 'function'
         ) {
 
             window.MusicalWorldAviso.inicializar();
+
 
             console.log(
                 'Aviso do feed inicializado.'
@@ -1170,8 +1231,7 @@ document.addEventListener(
 
         if (
             window.MusicalWorldOnboarding &&
-            typeof window.MusicalWorldOnboarding.iniciar ===
-            'function'
+            typeof window.MusicalWorldOnboarding.iniciar === 'function'
         ) {
 
             await window.MusicalWorldOnboarding.iniciar();
@@ -1183,10 +1243,63 @@ document.addEventListener(
 
         }
 
+
+        /*
+        -------------------------------------------------
+        MODAL DE AVALIAÇÃO
+        -------------------------------------------------
+
+        O componente verifica se o usuário atualmente
+        autenticado possui alguma contratação concluída
+        em que ele foi o contratante e que ainda não
+        possui uma avaliação vinculada.
+
+        A verificação utiliza o banco como fonte de
+        verdade.
+
+        Portanto:
+
+        contratação concluída
+                 +
+        nenhuma avaliação para a contratação
+                 =
+        modal disponível para avaliação.
+
+        Depois que a avaliação é inserida em
+        avaliacoes_musicos, a mesma contratação deixa
+        automaticamente de aparecer como pendente.
+
+        O componente é universal para todos os tipos de
+        artistas e não depende de uma categoria específica.
+
+        -------------------------------------------------
+        */
+
+        if (
+            window.MusicalWorldModalAvaliacao &&
+            typeof window.MusicalWorldModalAvaliacao.iniciar === 'function'
+        ) {
+
+            await window.MusicalWorldModalAvaliacao.iniciar();
+
+
+            console.log(
+                'Modal de avaliação inicializado pelo Index.'
+            );
+
+        } else {
+
+            console.warn(
+                'Modal de avaliação ainda não está disponível.'
+            );
+
+        }
+
     }
 );
 
 </script>
+
 
 </body>
 

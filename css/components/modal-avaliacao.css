@@ -1,0 +1,1194 @@
+/* =========================================================
+   MUSICALWORLD — MODAL DE AVALIAÇÃO
+   Arquivo: css/components/modal-avaliacao.css
+
+   Responsabilidade:
+   - Estilizar o modal de avaliação de serviços concluídos.
+   - Criar a camada de fundo sobre o Index.
+   - Organizar artista, serviço, estrelas, comentário e ações.
+   - Manter experiência consistente em desktop, tablet e celular.
+   - Adaptar o modal para formato de bottom-sheet em telas menores.
+   ========================================================= */
+
+
+/* =========================================================
+   BLOQUEIO DE ROLAGEM DO BODY
+   ========================================================= */
+
+body.mw-avaliacao-modal-aberto {
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   CONTAINER PRINCIPAL
+   ========================================================= */
+
+#modal-avaliacao-container {
+    position: relative;
+    z-index: 9999;
+}
+
+
+/* =========================================================
+   OVERLAY
+   ========================================================= */
+
+.mw-avaliacao-overlay {
+    position: fixed;
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 24px;
+
+    background: rgba(15, 23, 42, 0.58);
+
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+
+    animation:
+        mw-avaliacao-overlay-entrada
+        220ms
+        ease
+        both;
+
+    overflow-y: auto;
+}
+
+
+/* =========================================================
+   MODAL
+   ========================================================= */
+
+.mw-avaliacao-modal {
+    position: relative;
+
+    width: min(100%, 540px);
+
+    max-height: calc(100vh - 48px);
+
+    display: flex;
+    flex-direction: column;
+
+    padding: 32px;
+
+    background: #ffffff;
+
+    border: 1px solid #e7eaf0;
+
+    border-radius: 24px;
+
+    box-shadow:
+        0 24px 70px rgba(15, 23, 42, 0.20),
+        0 8px 24px rgba(15, 23, 42, 0.10);
+
+    overflow-y: auto;
+
+    animation:
+        mw-avaliacao-modal-entrada
+        260ms
+        cubic-bezier(0.22, 1, 0.36, 1)
+        both;
+}
+
+
+/* =========================================================
+   BARRA DE ROLAGEM DO MODAL
+   ========================================================= */
+
+.mw-avaliacao-modal::-webkit-scrollbar {
+    width: 7px;
+}
+
+.mw-avaliacao-modal::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.mw-avaliacao-modal::-webkit-scrollbar-thumb {
+    background: #d9dce5;
+    border-radius: 999px;
+}
+
+.mw-avaliacao-modal::-webkit-scrollbar-thumb:hover {
+    background: #c3c7d2;
+}
+
+
+/* =========================================================
+   BOTÃO FECHAR
+   ========================================================= */
+
+.mw-avaliacao-fechar {
+    position: absolute;
+
+    top: 18px;
+    right: 18px;
+
+    width: 40px;
+    height: 40px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    border: 1px solid #e5e7eb;
+    border-radius: 50%;
+
+    background: #ffffff;
+
+    color: #667085;
+
+    cursor: pointer;
+
+    transition:
+        background 160ms ease,
+        color 160ms ease,
+        border-color 160ms ease,
+        transform 160ms ease;
+}
+
+.mw-avaliacao-fechar:hover {
+    background: #f5f3ff;
+
+    color: #6d4aff;
+
+    border-color: #dcd4ff;
+}
+
+.mw-avaliacao-fechar:active {
+    transform: scale(0.94);
+}
+
+.mw-avaliacao-fechar:focus-visible {
+    outline: 3px solid rgba(109, 74, 255, 0.22);
+    outline-offset: 2px;
+}
+
+
+/* =========================================================
+   CABEÇALHO
+   ========================================================= */
+
+.mw-avaliacao-cabecalho {
+    padding-right: 42px;
+}
+
+
+.mw-avaliacao-etiqueta {
+    display: inline-flex;
+    align-items: center;
+
+    min-height: 28px;
+
+    padding: 5px 10px;
+
+    border-radius: 999px;
+
+    background: #f1edff;
+
+    color: #6d4aff;
+
+    font-size: 12px;
+    font-weight: 700;
+
+    letter-spacing: 0.02em;
+}
+
+
+.mw-avaliacao-titulo {
+    margin: 12px 0 7px;
+
+    color: #172033;
+
+    font-size: 25px;
+    line-height: 1.2;
+    font-weight: 750;
+
+    letter-spacing: -0.025em;
+}
+
+
+.mw-avaliacao-subtitulo {
+    margin: 0;
+
+    color: #667085;
+
+    font-size: 14px;
+    line-height: 1.55;
+}
+
+
+/* =========================================================
+   ARTISTA
+   ========================================================= */
+
+.mw-avaliacao-artista {
+    display: flex;
+    align-items: center;
+
+    gap: 13px;
+
+    margin-top: 24px;
+
+    padding: 14px;
+
+    background: #faf9ff;
+
+    border: 1px solid #ebe7ff;
+
+    border-radius: 16px;
+}
+
+
+.mw-avaliacao-artista-avatar {
+    position: relative;
+
+    width: 52px;
+    height: 52px;
+
+    min-width: 52px;
+    min-height: 52px;
+
+    max-width: 52px;
+    max-height: 52px;
+
+    flex: 0 0 52px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    overflow: hidden;
+
+    border-radius: 50%;
+
+    background: #eeeaff;
+
+    color: #6d4aff;
+
+    aspect-ratio: 1 / 1;
+}
+
+
+.mw-avaliacao-artista-foto {
+    display: block;
+
+    width: 52px;
+    height: 52px;
+
+    min-width: 52px;
+    min-height: 52px;
+
+    max-width: 52px;
+    max-height: 52px;
+
+    object-fit: cover;
+
+    border-radius: 50%;
+}
+
+
+.mw-avaliacao-artista-iniciais {
+    width: 52px;
+    height: 52px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: #6d4aff;
+
+    font-size: 16px;
+    font-weight: 750;
+
+    letter-spacing: -0.02em;
+}
+
+
+.mw-avaliacao-artista-dados {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 3px;
+}
+
+
+.mw-avaliacao-artista-dados strong {
+    display: block;
+
+    overflow: hidden;
+
+    color: #172033;
+
+    font-size: 15px;
+    line-height: 1.3;
+    font-weight: 750;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+
+.mw-avaliacao-artista-dados span {
+    color: #737b8c;
+
+    font-size: 13px;
+    line-height: 1.35;
+}
+
+
+/* =========================================================
+   CARD DO SERVIÇO
+   ========================================================= */
+
+.mw-avaliacao-servico {
+    margin-top: 16px;
+
+    padding: 16px;
+
+    background: #ffffff;
+
+    border: 1px solid #e7eaf0;
+
+    border-radius: 16px;
+}
+
+
+.mw-avaliacao-servico-cabecalho {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+
+    gap: 12px;
+}
+
+
+.mw-avaliacao-servico-cabecalho > div {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 4px;
+}
+
+
+.mw-avaliacao-label {
+    display: flex;
+    align-items: center;
+
+    gap: 5px;
+
+    margin-bottom: 7px;
+
+    color: #737b8c;
+
+    font-size: 12px;
+    line-height: 1.3;
+    font-weight: 700;
+
+    letter-spacing: 0.01em;
+}
+
+
+.mw-avaliacao-servico-cabecalho strong {
+    color: #172033;
+
+    font-size: 15px;
+    line-height: 1.4;
+    font-weight: 750;
+
+    word-break: break-word;
+}
+
+
+/* =========================================================
+   INFORMAÇÕES DO SERVIÇO
+   ========================================================= */
+
+.mw-avaliacao-servico-info {
+    display: flex;
+    flex-wrap: wrap;
+
+    gap: 7px 12px;
+
+    margin-top: 12px;
+}
+
+
+.mw-avaliacao-servico-info span {
+    position: relative;
+
+    color: #667085;
+
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+
+.mw-avaliacao-servico-info span:not(:last-child)::after {
+    content: "•";
+
+    position: absolute;
+
+    right: -8px;
+
+    color: #c2c6d0;
+}
+
+
+.mw-avaliacao-servico-descricao {
+    margin: 12px 0 0;
+
+    padding-top: 12px;
+
+    border-top: 1px solid #eef0f4;
+
+    color: #667085;
+
+    font-size: 12px;
+    line-height: 1.55;
+}
+
+
+/* =========================================================
+   ÁREA DE AVALIAÇÃO
+   ========================================================= */
+
+.mw-avaliacao-pergunta {
+    margin-top: 24px;
+
+    text-align: center;
+}
+
+
+.mw-avaliacao-pergunta .mw-avaliacao-label {
+    justify-content: center;
+
+    margin-bottom: 11px;
+
+    color: #172033;
+
+    font-size: 13px;
+}
+
+
+/* =========================================================
+   ESTRELAS
+   ========================================================= */
+
+.mw-avaliacao-estrelas {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+}
+
+
+.mw-avaliacao-estrela {
+    width: 48px;
+    height: 48px;
+
+    min-width: 48px;
+    min-height: 48px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    border: 1px solid #e3e5eb;
+
+    border-radius: 14px;
+
+    background: #ffffff;
+
+    color: #c8ccd5;
+
+    cursor: pointer;
+
+    transition:
+        color 160ms ease,
+        background 160ms ease,
+        border-color 160ms ease,
+        transform 160ms ease,
+        box-shadow 160ms ease;
+}
+
+
+.mw-avaliacao-estrela svg {
+    width: 24px;
+    height: 24px;
+
+    display: block;
+
+    transition:
+        transform 160ms ease;
+}
+
+
+.mw-avaliacao-estrela:hover {
+    color: #8c70ff;
+
+    background: #f7f5ff;
+
+    border-color: #cfc5ff;
+
+    transform: translateY(-2px);
+}
+
+
+.mw-avaliacao-estrela:active {
+    transform: scale(0.96);
+}
+
+
+.mw-avaliacao-estrela.selecionada {
+    color: #6d4aff;
+
+    background: #f1edff;
+
+    border-color: #b9a8ff;
+
+    box-shadow:
+        0 4px 12px rgba(109, 74, 255, 0.10);
+}
+
+
+.mw-avaliacao-estrela.selecionada svg {
+    transform: scale(1.04);
+}
+
+
+.mw-avaliacao-estrela.selecionada:hover {
+    background: #e9e2ff;
+
+    border-color: #b9a8ff;
+}
+
+
+.mw-avaliacao-estrela:focus-visible {
+    outline: 3px solid rgba(109, 74, 255, 0.22);
+    outline-offset: 2px;
+}
+
+
+/* =========================================================
+   DESCRIÇÃO DA NOTA
+   ========================================================= */
+
+.mw-avaliacao-nota-descricao {
+    min-height: 20px;
+
+    margin: 10px 0 0;
+
+    color: #6d4aff;
+
+    font-size: 13px;
+    line-height: 1.4;
+    font-weight: 650;
+}
+
+
+/* =========================================================
+   COMENTÁRIO
+   ========================================================= */
+
+.mw-avaliacao-comentario {
+    margin-top: 20px;
+}
+
+
+.mw-avaliacao-comentario .mw-avaliacao-label {
+    justify-content: space-between;
+
+    margin-bottom: 8px;
+
+    color: #172033;
+
+    font-size: 13px;
+}
+
+
+.mw-avaliacao-comentario .mw-avaliacao-label span {
+    color: #98a0ae;
+
+    font-size: 11px;
+    font-weight: 500;
+}
+
+
+.mw-avaliacao-comentario textarea {
+    width: 100%;
+
+    min-height: 104px;
+
+    resize: vertical;
+
+    padding: 13px 14px;
+
+    border: 1px solid #dfe3ea;
+
+    border-radius: 13px;
+
+    background: #ffffff;
+
+    color: #172033;
+
+    font-family: inherit;
+
+    font-size: 13px;
+    line-height: 1.5;
+
+    outline: none;
+
+    transition:
+        border-color 160ms ease,
+        box-shadow 160ms ease,
+        background 160ms ease;
+
+    box-sizing: border-box;
+}
+
+
+.mw-avaliacao-comentario textarea::placeholder {
+    color: #a1a8b5;
+}
+
+
+.mw-avaliacao-comentario textarea:hover {
+    border-color: #cdd2dc;
+}
+
+
+.mw-avaliacao-comentario textarea:focus {
+    border-color: #8c70ff;
+
+    background: #ffffff;
+
+    box-shadow:
+        0 0 0 4px rgba(109, 74, 255, 0.10);
+}
+
+
+/* =========================================================
+   CONTADOR DO COMENTÁRIO
+   ========================================================= */
+
+.mw-avaliacao-contador {
+    display: flex;
+    justify-content: flex-end;
+
+    margin-top: 5px;
+}
+
+
+.mw-avaliacao-contador span {
+    color: #98a0ae;
+
+    font-size: 11px;
+    line-height: 1.3;
+}
+
+
+/* =========================================================
+   MENSAGEM
+   ========================================================= */
+
+.mw-avaliacao-mensagem {
+    margin-top: 14px;
+
+    padding: 10px 12px;
+
+    border-radius: 10px;
+
+    font-size: 12px;
+    line-height: 1.45;
+}
+
+
+.mw-avaliacao-mensagem.erro {
+    background: #fff2f2;
+
+    border: 1px solid #ffd7d7;
+
+    color: #b42318;
+}
+
+
+.mw-avaliacao-mensagem.sucesso {
+    background: #ecfdf3;
+
+    border: 1px solid #c9f2da;
+
+    color: #067647;
+}
+
+
+/* =========================================================
+   AÇÕES
+   ========================================================= */
+
+.mw-avaliacao-acoes {
+    display: grid;
+
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+
+    gap: 10px;
+
+    margin-top: 22px;
+}
+
+
+.mw-avaliacao-botao {
+    min-height: 46px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0 16px;
+
+    border-radius: 12px;
+
+    font-family: inherit;
+
+    font-size: 13px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        background 160ms ease,
+        color 160ms ease,
+        border-color 160ms ease,
+        box-shadow 160ms ease,
+        transform 160ms ease;
+}
+
+
+.mw-avaliacao-botao:active {
+    transform: scale(0.98);
+}
+
+
+.mw-avaliacao-botao.secundario {
+    border: 1px solid #dfe3ea;
+
+    background: #ffffff;
+
+    color: #667085;
+}
+
+
+.mw-avaliacao-botao.secundario:hover {
+    background: #f8f9fb;
+
+    border-color: #cdd2dc;
+
+    color: #172033;
+}
+
+
+.mw-avaliacao-botao.primario {
+    border: 1px solid #6d4aff;
+
+    background: #6d4aff;
+
+    color: #ffffff;
+
+    box-shadow:
+        0 6px 16px rgba(109, 74, 255, 0.18);
+}
+
+
+.mw-avaliacao-botao.primario:hover:not(:disabled) {
+    background: #5f3fe5;
+
+    border-color: #5f3fe5;
+
+    box-shadow:
+        0 8px 20px rgba(109, 74, 255, 0.24);
+}
+
+
+.mw-avaliacao-botao:focus-visible {
+    outline: 3px solid rgba(109, 74, 255, 0.20);
+    outline-offset: 2px;
+}
+
+
+.mw-avaliacao-botao:disabled {
+    cursor: not-allowed;
+
+    opacity: 0.48;
+
+    box-shadow: none;
+}
+
+
+/* =========================================================
+   CONTADOR DE AVALIAÇÕES PENDENTES
+   ========================================================= */
+
+.mw-avaliacao-pendencias {
+    display: flex;
+    justify-content: center;
+
+    margin-top: 14px;
+}
+
+
+.mw-avaliacao-pendencias span {
+    color: #98a0ae;
+
+    font-size: 11px;
+    line-height: 1.3;
+}
+
+
+/* =========================================================
+   ANIMAÇÕES
+   ========================================================= */
+
+@keyframes mw-avaliacao-overlay-entrada {
+
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+
+}
+
+
+@keyframes mw-avaliacao-modal-entrada {
+
+    from {
+        opacity: 0;
+
+        transform:
+            translateY(18px)
+            scale(0.985);
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            translateY(0)
+            scale(1);
+    }
+
+}
+
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 760px) {
+
+    .mw-avaliacao-overlay {
+        padding: 18px;
+    }
+
+
+    .mw-avaliacao-modal {
+        width: min(100%, 520px);
+
+        padding: 28px;
+
+        border-radius: 22px;
+    }
+
+}
+
+
+/* =========================================================
+   CELULAR
+   ========================================================= */
+
+@media (max-width: 560px) {
+
+    .mw-avaliacao-overlay {
+        align-items: flex-end;
+
+        padding: 0;
+    }
+
+
+    .mw-avaliacao-modal {
+        width: 100%;
+
+        max-width: none;
+
+        max-height: min(
+            calc(100vh - 16px),
+            760px
+        );
+
+        padding: 24px 20px 20px;
+
+        border-right: none;
+        border-bottom: none;
+        border-left: none;
+
+        border-radius:
+            24px
+            24px
+            0
+            0;
+
+        box-shadow:
+            0 -18px 60px rgba(15, 23, 42, 0.20);
+
+        animation-name:
+            mw-avaliacao-bottomsheet-entrada;
+    }
+
+
+    .mw-avaliacao-fechar {
+        top: 15px;
+        right: 15px;
+
+        width: 38px;
+        height: 38px;
+    }
+
+
+    .mw-avaliacao-titulo {
+        padding-right: 35px;
+
+        font-size: 22px;
+    }
+
+
+    .mw-avaliacao-subtitulo {
+        font-size: 13px;
+    }
+
+
+    .mw-avaliacao-artista {
+        margin-top: 20px;
+
+        padding: 12px;
+    }
+
+
+    .mw-avaliacao-artista-avatar,
+    .mw-avaliacao-artista-foto,
+    .mw-avaliacao-artista-iniciais {
+        width: 46px;
+        height: 46px;
+
+        min-width: 46px;
+        min-height: 46px;
+
+        max-width: 46px;
+        max-height: 46px;
+
+        flex-basis: 46px;
+    }
+
+
+    .mw-avaliacao-artista-iniciais {
+        font-size: 14px;
+    }
+
+
+    .mw-avaliacao-servico {
+        padding: 14px;
+    }
+
+
+    .mw-avaliacao-estrelas {
+        gap: 7px;
+    }
+
+
+    .mw-avaliacao-estrela {
+        width: 44px;
+        height: 44px;
+
+        min-width: 44px;
+        min-height: 44px;
+
+        border-radius: 12px;
+    }
+
+
+    .mw-avaliacao-estrela svg {
+        width: 22px;
+        height: 22px;
+    }
+
+
+    .mw-avaliacao-comentario textarea {
+        min-height: 96px;
+    }
+
+
+    .mw-avaliacao-acoes {
+        grid-template-columns: 1fr 1.25fr;
+    }
+
+}
+
+
+/* =========================================================
+   CELULARES PEQUENOS
+   ========================================================= */
+
+@media (max-width: 380px) {
+
+    .mw-avaliacao-modal {
+        padding: 22px 16px 16px;
+
+        border-radius:
+            20px
+            20px
+            0
+            0;
+    }
+
+
+    .mw-avaliacao-titulo {
+        font-size: 20px;
+    }
+
+
+    .mw-avaliacao-artista {
+        gap: 10px;
+    }
+
+
+    .mw-avaliacao-artista-avatar,
+    .mw-avaliacao-artista-foto,
+    .mw-avaliacao-artista-iniciais {
+        width: 42px;
+        height: 42px;
+
+        min-width: 42px;
+        min-height: 42px;
+
+        max-width: 42px;
+        max-height: 42px;
+
+        flex-basis: 42px;
+    }
+
+
+    .mw-avaliacao-artista-dados strong {
+        font-size: 14px;
+    }
+
+
+    .mw-avaliacao-artista-dados span {
+        font-size: 12px;
+    }
+
+
+    .mw-avaliacao-estrelas {
+        gap: 5px;
+    }
+
+
+    .mw-avaliacao-estrela {
+        width: 41px;
+        height: 41px;
+
+        min-width: 41px;
+        min-height: 41px;
+
+        border-radius: 11px;
+    }
+
+
+    .mw-avaliacao-estrela svg {
+        width: 20px;
+        height: 20px;
+    }
+
+
+    .mw-avaliacao-botao {
+        min-height: 44px;
+
+        padding: 0 12px;
+
+        font-size: 12px;
+    }
+
+}
+
+
+/* =========================================================
+   ACESSIBILIDADE — REDUÇÃO DE MOVIMENTO
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .mw-avaliacao-overlay,
+    .mw-avaliacao-modal {
+
+        animation: none;
+
+    }
+
+
+    .mw-avaliacao-fechar,
+    .mw-avaliacao-estrela,
+    .mw-avaliacao-estrela svg,
+    .mw-avaliacao-botao {
+
+        transition: none;
+
+    }
+
+}
+
+
+/* =========================================================
+   ACESSIBILIDADE — HIDDEN
+   ========================================================= */
+
+[hidden] {
+    display: none !important;
+}
+
+
+/* =========================================================
+   ANIMAÇÃO BOTTOM-SHEET
+   ========================================================= */
+
+@keyframes mw-avaliacao-bottomsheet-entrada {
+
+    from {
+        opacity: 0;
+
+        transform:
+            translateY(100%);
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            translateY(0);
+    }
+
+}
