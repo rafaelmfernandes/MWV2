@@ -40,7 +40,7 @@
 .section-heading h2 {
   color: var(--mw-text-dark);
 
-  font-size: 15px;
+  font-size: 17px;
   line-height: 20px;
   font-weight: 800;
 }
@@ -48,7 +48,7 @@
 .section-heading span {
   color: var(--mw-muted);
 
-  font-size: 11px;
+  font-size: 15px;
   line-height: 16px;
   font-weight: 500;
 }
