@@ -40,6 +40,7 @@ Portfólio:
   de uma mídia.
   ========================================================= */
 
+
 /* =========================================================
 VARIÁVEIS
 ========================================================= */
@@ -76,6 +77,7 @@ VARIÁVEIS
 
     --mw-radius: 22px;
 }
+
 
 /* =========================================================
 RESET
@@ -149,6 +151,7 @@ svg {
 
     display: block;
 }
+
 
 /* =========================================================
 TOPBAR
@@ -269,6 +272,7 @@ TOPBAR
     stroke-linejoin: round;
 }
 
+
 /* =========================================================
 PÁGINA
 ========================================================= */
@@ -291,6 +295,7 @@ PÁGINA
     margin:
         0 auto;
 }
+
 
 /* =========================================================
 CARD DE PERFIL
@@ -320,6 +325,7 @@ CARD DE PERFIL
     display: none;
 }
 
+
 /* =========================================================
 MÍDIA / CARROSSEL
 ========================================================= */
@@ -348,10 +354,6 @@ MÍDIA / CARROSSEL
         none;
 }
 
-/*
-Área utilizada pelo JavaScript para controlar a mídia.
-*/
-
 .profile-media-content {
 
     position: absolute;
@@ -364,6 +366,7 @@ MÍDIA / CARROSSEL
 
     overflow: hidden;
 }
+
 
 /* =========================================================
 IMAGEM DO PORTFÓLIO
@@ -384,6 +387,7 @@ IMAGEM DO PORTFÓLIO
     -webkit-user-drag: none;
 }
 
+
 /* =========================================================
 VÍDEO DO PORTFÓLIO
 ========================================================= */
@@ -403,6 +407,7 @@ VÍDEO DO PORTFÓLIO
 
     user-select: none;
 }
+
 
 /* =========================================================
 OVERLAY DA MÍDIA
@@ -426,11 +431,9 @@ OVERLAY DA MÍDIA
     pointer-events: none;
 }
 
+
 /* =========================================================
 INDICADORES DO CARROSSEL
-
-Os indicadores ficam na parte superior da mídia para
-não sobrepor as informações do artista.
 ========================================================= */
 
 .profile-portfolio-indicators {
@@ -541,6 +544,7 @@ não sobrepor as informações do artista.
     display: none;
 }
 
+
 /* =========================================================
 BOTÃO EXPANDIR
 ========================================================= */
@@ -621,6 +625,7 @@ BOTÃO EXPANDIR
     stroke-linejoin: round;
 }
 
+
 /* =========================================================
 INFORMAÇÕES SOBRE A MÍDIA
 ========================================================= */
@@ -656,6 +661,7 @@ INFORMAÇÕES SOBRE A MÍDIA
 
     gap: 12px;
 }
+
 
 /* =========================================================
 AVATAR
@@ -727,6 +733,7 @@ AVATAR
 
     height: 56px;
 }
+
 
 /* =========================================================
 CONTEÚDO DO CABEÇALHO
@@ -825,6 +832,7 @@ CONTEÚDO DO CABEÇALHO
     stroke-linejoin: round;
 }
 
+
 /* =========================================================
 MENU DO PERFIL
 ========================================================= */
@@ -905,6 +913,7 @@ MENU DO PERFIL
         rgba(0, 0, 0, 0.5);
 }
 
+
 /* =========================================================
 CABEÇALHO SEM MÍDIA
 ========================================================= */
@@ -940,6 +949,7 @@ CABEÇALHO SEM MÍDIA
     margin-left:
         auto;
 }
+
 
 /* =========================================================
 CONTEÚDO
@@ -986,6 +996,7 @@ CONTEÚDO
 
     stroke-linejoin: round;
 }
+
 
 /* =========================================================
 AVALIAÇÃO
@@ -1041,6 +1052,7 @@ AVALIAÇÃO
 
     font-weight: 500;
 }
+
 
 /* =========================================================
 GÊNEROS / ESTILOS
@@ -1114,6 +1126,7 @@ GÊNEROS / ESTILOS
         #b0b7c3;
 }
 
+
 /* =========================================================
 DESCRIÇÃO
 ========================================================= */
@@ -1131,6 +1144,7 @@ DESCRIÇÃO
 
     line-height: 1.65;
 }
+
 
 /* =========================================================
 INFORMAÇÕES PROFISSIONAIS
@@ -1214,17 +1228,9 @@ INFORMAÇÕES PROFISSIONAIS
     text-overflow: ellipsis;
 }
 
+
 /* =========================================================
 AÇÕES PRINCIPAIS DO PERFIL
-==========================
-
-Nesta primeira etapa:
-
-* Mensagem = ação secundária.
-* Contratar = ação principal.
-* Voltar = permanece na topbar.
-
-Outras ações serão implementadas posteriormente.
 ========================================================= */
 
 .profile-main-actions {
@@ -1244,6 +1250,7 @@ Outras ações serão implementadas posteriormente.
 
     gap: 10px;
 }
+
 
 /* =========================================================
 BOTÃO BASE
@@ -1309,6 +1316,7 @@ BOTÃO BASE
         scale(0.98);
 }
 
+
 /* =========================================================
 MENSAGEM — AÇÃO SECUNDÁRIA
 ========================================================= */
@@ -1336,6 +1344,7 @@ MENSAGEM — AÇÃO SECUNDÁRIA
     box-shadow:
         0 5px 16px rgba(109, 74, 255, 0.08);
 }
+
 
 /* =========================================================
 CONTRATAR — AÇÃO PRINCIPAL
@@ -1383,16 +1392,16 @@ CONTRATAR — AÇÃO PRINCIPAL
         none;
 }
 
+
 /* =========================================================
-SERVIÇOS — VERSÃO COMPACTA
+SERVIÇOS — CATÁLOGO PÚBLICO
 ========================================================= */
 
 .profile-services {
 
-    margin-top: 18px;
+    margin-top: 20px;
 
-    padding:
-        16px;
+    padding: 18px;
 
     background:
         linear-gradient(
@@ -1405,16 +1414,17 @@ SERVIÇOS — VERSÃO COMPACTA
         1px solid rgba(109, 74, 255, 0.16);
 
     border-radius:
-        18px;
+        20px;
 
     box-shadow:
-        0 7px 22px rgba(45, 35, 90, 0.05);
+        0 8px 24px rgba(45, 35, 90, 0.05);
 }
 
 .profile-services[hidden] {
 
     display: none;
 }
+
 
 /* =========================================================
 CABEÇALHO DA SEÇÃO
@@ -1426,16 +1436,16 @@ CABEÇALHO DA SEÇÃO
 
     align-items: center;
 
-    gap: 9px;
+    gap: 10px;
 
-    margin-bottom: 11px;
+    margin-bottom: 15px;
 }
 
 .section-heading-icon {
 
-    width: 32px;
+    width: 36px;
 
-    height: 32px;
+    height: 36px;
 
     flex:
         0 0 auto;
@@ -1447,24 +1457,39 @@ CABEÇALHO DA SEÇÃO
     justify-content: center;
 
     color:
-        #ffffff;
+        #172033;
 
     background:
-        var(--mw-primary);
+        #f1edff;
+
+    border:
+        1px solid rgba(109, 74, 255, 0.12);
 
     border-radius:
-        9px;
+        10px;
 
     box-shadow:
-        0 5px 12px rgba(109, 74, 255, 0.16);
+        none;
 }
 
 .section-heading-icon svg {
 
-    width: 16px;
+    width: 18px;
 
-    height: 16px;
+    height: 18px;
+
+    fill: none;
+
+    stroke:
+        currentColor;
+
+    stroke-width: 1.8;
+
+    stroke-linecap: round;
+
+    stroke-linejoin: round;
 }
+
 
 /* =========================================================
 TÍTULOS DA SEÇÃO
@@ -1474,12 +1499,12 @@ TÍTULOS DA SEÇÃO
 
     display: block;
 
-    margin-bottom: 1px;
+    margin-bottom: 2px;
 
     color:
         var(--mw-primary);
 
-    font-size: 8px;
+    font-size: 9px;
 
     font-weight: 800;
 
@@ -1498,12 +1523,13 @@ TÍTULOS DA SEÇÃO
     color:
         var(--mw-text);
 
-    font-size: 14px;
+    font-size: 16px;
 
     font-weight: 800;
 
-    line-height: 1.25;
+    line-height: 1.3;
 }
+
 
 /* =========================================================
 LISTA DE SERVIÇOS
@@ -1515,16 +1541,19 @@ LISTA DE SERVIÇOS
 
     flex-direction: column;
 
-    gap: 8px;
+    gap: 10px;
 }
 
+
 /* =========================================================
-CARD DE SERVIÇO
+CARD PÚBLICO DO SERVIÇO
 ========================================================= */
 
 .service-card {
 
     position: relative;
+
+    width: 100%;
 
     display: flex;
 
@@ -1536,13 +1565,13 @@ CARD DE SERVIÇO
         #ffffff;
 
     border:
-        1px solid rgba(109, 74, 255, 0.12);
+        1px solid rgba(109, 74, 255, 0.13);
 
     border-radius:
-        13px;
+        15px;
 
     box-shadow:
-        0 3px 12px rgba(45, 35, 90, 0.035);
+        0 4px 14px rgba(45, 35, 90, 0.045);
 
     transition:
         transform 0.2s ease,
@@ -1556,14 +1585,15 @@ CARD DE SERVIÇO
         translateY(-1px);
 
     border-color:
-        rgba(109, 74, 255, 0.22);
+        rgba(109, 74, 255, 0.24);
 
     box-shadow:
-        0 6px 18px rgba(45, 35, 90, 0.07);
+        0 7px 20px rgba(45, 35, 90, 0.07);
 }
 
+
 /* =========================================================
-FAIXA SUPERIOR
+FAIXA ROXA SUPERIOR
 ========================================================= */
 
 .service-card-accent {
@@ -1583,8 +1613,9 @@ FAIXA SUPERIOR
         );
 }
 
+
 /* =========================================================
-CABEÇALHO DO CARD
+CABEÇALHO DO SERVIÇO
 ========================================================= */
 
 .service-card-header {
@@ -1593,23 +1624,29 @@ CABEÇALHO DO CARD
 
     align-items: center;
 
-    gap: 9px;
+    gap: 10px;
 
     padding:
-        11px
-        12px
-        7px;
+        13px
+        14px
+        8px;
 }
 
+
 /* =========================================================
-ÍCONE
+ÍCONE DO SERVIÇO
+
+Ícone preto com box levemente roxo.
+O roxo fica somente no fundo do box.
 ========================================================= */
 
 .service-icon {
 
-    width: 32px;
+    width: 38px;
 
-    height: 32px;
+    height: 38px;
+
+    min-width: 38px;
 
     flex:
         0 0 auto;
@@ -1621,27 +1658,48 @@ CABEÇALHO DO CARD
     justify-content: center;
 
     color:
-        #ffffff;
+        #172033;
 
     background:
-        var(--mw-primary);
+        #f1edff;
+
+    border:
+        1px solid rgba(109, 74, 255, 0.12);
 
     border-radius:
-        8px;
+        11px;
 
     box-shadow:
-        0 4px 9px rgba(109, 74, 255, 0.14);
+        none;
 }
 
 .service-icon svg {
 
-    width: 15px;
+    width: 17px;
 
-    height: 15px;
+    height: 17px;
+
+    color:
+        #172033;
+
+    fill: none;
+
+    stroke:
+        currentColor;
+
+    stroke-width:
+        1.8;
+
+    stroke-linecap:
+        round;
+
+    stroke-linejoin:
+        round;
 }
 
+
 /* =========================================================
-TÍTULO
+ÁREA DO TÍTULO
 ========================================================= */
 
 .service-card-title-area {
@@ -1661,19 +1719,20 @@ TÍTULO
     color:
         var(--mw-text);
 
-    font-size: 13px;
+    font-size: 14px;
 
     font-weight: 800;
 
-    line-height: 1.3;
+    line-height: 1.35;
 
     text-overflow: ellipsis;
 
     white-space: nowrap;
 }
 
+
 /* =========================================================
-DESCRIÇÃO
+DESCRIÇÃO DO SERVIÇO
 ========================================================= */
 
 .service-description {
@@ -1682,17 +1741,17 @@ DESCRIÇÃO
 
     padding:
         0
-        12px
-        8px;
+        14px
+        10px;
 
     color:
         var(--mw-text-secondary);
 
-    font-size: 11px;
+    font-size: 11.5px;
 
     font-weight: 500;
 
-    line-height: 1.45;
+    line-height: 1.55;
 
     display:
         -webkit-box;
@@ -1701,14 +1760,15 @@ DESCRIÇÃO
         vertical;
 
     -webkit-line-clamp:
-        2;
+        3;
 
     overflow:
         hidden;
 }
 
+
 /* =========================================================
-METADADOS
+METADADOS DO SERVIÇO
 ========================================================= */
 
 .service-meta {
@@ -1717,12 +1777,12 @@ METADADOS
 
     flex-wrap: wrap;
 
-    gap: 5px;
+    gap: 6px;
 
     padding:
         0
-        12px
-        9px;
+        14px
+        11px;
 }
 
 .service-meta-item {
@@ -1731,13 +1791,13 @@ METADADOS
 
     align-items: center;
 
-    gap: 4px;
+    gap: 5px;
 
-    min-height: 24px;
+    min-height: 26px;
 
     padding:
-        4px
-        7px;
+        5px
+        8px;
 
     color:
         var(--mw-text-secondary);
@@ -1749,9 +1809,9 @@ METADADOS
         1px solid #eceaf2;
 
     border-radius:
-        7px;
+        8px;
 
-    font-size: 9px;
+    font-size: 9.5px;
 
     font-weight: 700;
 }
@@ -1767,10 +1827,25 @@ METADADOS
 
     color:
         var(--mw-primary);
+
+    fill: none;
+
+    stroke:
+        currentColor;
+
+    stroke-width:
+        1.8;
+
+    stroke-linecap:
+        round;
+
+    stroke-linejoin:
+        round;
 }
 
+
 /* =========================================================
-RODAPÉ
+RODAPÉ DO CARD
 ========================================================= */
 
 .service-card-footer {
@@ -1779,9 +1854,9 @@ RODAPÉ
         auto;
 
     padding:
-        8px
-        12px
-        11px;
+        10px
+        14px
+        12px;
 
     display: flex;
 
@@ -1794,6 +1869,7 @@ RODAPÉ
     border-top:
         1px solid #f0eff5;
 }
+
 
 /* =========================================================
 PREÇO
@@ -1809,7 +1885,7 @@ PREÇO
 
     flex-wrap: wrap;
 
-    gap: 4px;
+    gap: 5px;
 }
 
 .service-price-label {
@@ -1817,7 +1893,7 @@ PREÇO
     color:
         var(--mw-text-muted);
 
-    font-size: 8px;
+    font-size: 9px;
 
     font-weight: 700;
 
@@ -1831,11 +1907,11 @@ PREÇO
     color:
         var(--mw-primary);
 
-    font-size: 16px;
+    font-size: 18px;
 
     font-weight: 900;
 
-    line-height: 1.15;
+    line-height: 1.2;
 }
 
 .service-price-unit {
@@ -1850,6 +1926,7 @@ PREÇO
     line-height: 1.2;
 }
 
+
 /* =========================================================
 ESTADO VAZIO
 ========================================================= */
@@ -1860,10 +1937,10 @@ ESTADO VAZIO
 
     align-items: center;
 
-    gap: 9px;
+    gap: 10px;
 
     padding:
-        12px;
+        14px;
 
     color:
         var(--mw-text-secondary);
@@ -1875,14 +1952,14 @@ ESTADO VAZIO
         1px dashed rgba(109, 74, 255, 0.18);
 
     border-radius:
-        11px;
+        12px;
 }
 
 .services-empty-icon {
 
-    width: 30px;
+    width: 32px;
 
-    height: 30px;
+    height: 32px;
 
     flex:
         0 0 auto;
@@ -1894,21 +1971,39 @@ ESTADO VAZIO
     justify-content: center;
 
     color:
-        var(--mw-primary);
+        #172033;
 
     background:
-        var(--mw-primary-soft);
+        #f1edff;
+
+    border:
+        1px solid rgba(109, 74, 255, 0.12);
 
     border-radius:
-        8px;
+        9px;
 }
 
 .services-empty-icon svg {
 
-    width: 15px;
+    width: 16px;
 
-    height: 15px;
+    height: 16px;
+
+    fill: none;
+
+    stroke:
+        currentColor;
+
+    stroke-width:
+        1.8;
+
+    stroke-linecap:
+        round;
+
+    stroke-linejoin:
+        round;
 }
+
 
 /* =========================================================
 ESTADO DE ERRO
@@ -2008,6 +2103,7 @@ ESTADO DE ERRO
 
     line-height: 1.6;
 }
+
 
 /* =========================================================
 MENU
@@ -2161,6 +2257,7 @@ MENU
     stroke-linejoin: round;
 }
 
+
 /* =========================================================
 TABLET
 ========================================================= */
@@ -2197,6 +2294,7 @@ TABLET
         grid-template-columns:
             1fr;
     }
+
 
     /* -----------------------------------------------------
        AÇÕES PRINCIPAIS
@@ -2235,50 +2333,82 @@ TABLET
             17px;
     }
 
+
     /* -----------------------------------------------------
        SERVIÇOS
        ----------------------------------------------------- */
 
     .profile-services {
 
-        border-radius:
+        padding:
             16px;
 
-        padding:
+        border-radius:
+            18px;
+    }
+
+    .section-heading {
+
+        margin-bottom:
             14px;
     }
 
     .service-card-header {
 
         padding:
-            10px
-            11px
-            7px;
+            12px
+            13px
+            8px;
     }
 
     .service-description {
 
         padding:
             0
-            11px
-            8px;
+            13px
+            9px;
     }
 
     .service-meta {
 
         padding:
             0
-            11px
-            8px;
+            13px
+            10px;
     }
 
     .service-card-footer {
 
         padding:
-            8px
-            11px
-            10px;
+            9px
+            13px
+            11px;
     }
+
+    .service-icon {
+
+        width:
+            38px;
+
+        height:
+            38px;
+
+        min-width:
+            38px;
+
+        color:
+            #172033;
+
+        background:
+            #f1edff;
+    }
+
+    .service-icon svg {
+
+        color:
+            #172033;
+    }
+
 
     /* -----------------------------------------------------
        INDICADORES DO PORTFÓLIO
@@ -2312,6 +2442,7 @@ TABLET
             16px;
     }
 }
+
 
 /* =========================================================
 CELULAR
@@ -2397,6 +2528,7 @@ CELULAR
             14px;
     }
 
+
     /* -----------------------------------------------------
        AÇÕES PRINCIPAIS
        ----------------------------------------------------- */
@@ -2433,6 +2565,7 @@ CELULAR
             16px;
     }
 
+
     /* -----------------------------------------------------
        INDICADORES DO PORTFÓLIO
        ----------------------------------------------------- */
@@ -2465,6 +2598,7 @@ CELULAR
             15px;
     }
 
+
     /* -----------------------------------------------------
        SERVIÇOS
        ----------------------------------------------------- */
@@ -2472,40 +2606,43 @@ CELULAR
     .profile-services {
 
         margin-top:
-            14px;
+            16px;
 
         padding:
-            13px;
+            14px;
+
+        border-radius:
+            17px;
     }
 
     .section-heading {
 
         gap:
-            8px;
+            9px;
 
         margin-bottom:
-            10px;
+            12px;
     }
 
     .section-heading-icon {
 
         width:
-            30px;
+            33px;
 
         height:
-            30px;
+            33px;
 
         border-radius:
-            8px;
+            9px;
     }
 
     .section-heading-icon svg {
 
         width:
-            15px;
+            17px;
 
         height:
-            15px;
+            17px;
     }
 
     .section-heading-eyebrow {
@@ -2517,95 +2654,116 @@ CELULAR
     .section-heading-title {
 
         font-size:
-            13px;
+            14px;
     }
 
     .services-list {
 
         gap:
-            7px;
+            9px;
     }
 
     .service-card {
 
         border-radius:
-            12px;
+            14px;
     }
 
     .service-card-header {
 
         gap:
-            8px;
+            9px;
 
         padding:
-            9px
-            10px
-            6px;
+            11px
+            12px
+            7px;
     }
 
     .service-icon {
 
         width:
-            29px;
+            35px;
 
         height:
-            29px;
+            35px;
+
+        min-width:
+            35px;
+
+        color:
+            #172033;
+
+        background:
+            #f1edff;
+
+        border:
+            1px solid rgba(109, 74, 255, 0.12);
 
         border-radius:
-            7px;
+            10px;
+
+        box-shadow:
+            none;
     }
 
     .service-icon svg {
 
         width:
-            14px;
+            16px;
 
         height:
-            14px;
+            16px;
+
+        color:
+            #172033;
     }
 
     .service-card-title {
 
         font-size:
-            12px;
+            13px;
     }
 
     .service-description {
 
         padding:
             0
-            10px
-            7px;
+            12px
+            9px;
 
         font-size:
-            10px;
+            10.5px;
 
         line-height:
-            1.4;
+            1.5;
+
+        -webkit-line-clamp:
+            3;
     }
 
     .service-meta {
 
         gap:
-            4px;
+            5px;
 
         padding:
             0
-            10px
-            7px;
+            12px
+            9px;
     }
 
     .service-meta-item {
 
         min-height:
-            22px;
+            24px;
 
         padding:
-            3px
-            6px;
+            4px
+            7px;
 
         font-size:
-            8px;
+            8.5px;
     }
 
     .service-meta-item svg {
@@ -2620,33 +2778,33 @@ CELULAR
     .service-card-footer {
 
         padding:
-            7px
-            10px
-            9px;
+            9px
+            12px
+            10px;
     }
 
     .service-price {
 
         gap:
-            3px;
+            4px;
     }
 
     .service-price-label {
 
         font-size:
-            7px;
+            8px;
     }
 
     .service-price-value {
 
         font-size:
-            15px;
+            16px;
     }
 
     .service-price-unit {
 
         font-size:
-            8px;
+            8.5px;
     }
 
     .action-menu-panel {
@@ -2655,6 +2813,7 @@ CELULAR
             8px;
     }
 }
+
 
 /* =========================================================
 CELULAR PEQUENO
@@ -2737,6 +2896,7 @@ CELULAR PEQUENO
             10px;
     }
 
+
     /* -----------------------------------------------------
        AÇÕES PRINCIPAIS
        ----------------------------------------------------- */
@@ -2777,6 +2937,7 @@ CELULAR PEQUENO
             15px;
     }
 
+
     /* -----------------------------------------------------
        INDICADORES DO PORTFÓLIO
        ----------------------------------------------------- */
@@ -2809,6 +2970,7 @@ CELULAR PEQUENO
             13px;
     }
 
+
     /* -----------------------------------------------------
        SERVIÇOS
        ----------------------------------------------------- */
@@ -2816,30 +2978,216 @@ CELULAR PEQUENO
     .profile-services {
 
         padding:
+            13px;
+
+        border-radius:
+            16px;
+    }
+
+    .section-heading {
+
+        gap:
+            8px;
+
+        margin-bottom:
             11px;
+    }
+
+    .section-heading-icon {
+
+        width:
+            31px;
+
+        height:
+            31px;
+
+        color:
+            #172033;
+
+        background:
+            #f1edff;
+
+        border:
+            1px solid rgba(109, 74, 255, 0.12);
+
+        border-radius:
+            8px;
+    }
+
+    .section-heading-icon svg {
+
+        width:
+            16px;
+
+        height:
+            16px;
+
+        color:
+            #172033;
     }
 
     .section-heading-title {
 
         font-size:
-            12px;
+            13px;
+    }
+
+    .services-list {
+
+        gap:
+            8px;
+    }
+
+    .service-card {
+
+        border-radius:
+            13px;
+    }
+
+    .service-card-header {
+
+        gap:
+            8px;
+
+        padding:
+            10px
+            11px
+            7px;
+    }
+
+    .service-icon {
+
+        width:
+            33px;
+
+        height:
+            33px;
+
+        min-width:
+            33px;
+
+        color:
+            #172033;
+
+        background:
+            #f1edff;
+
+        border:
+            1px solid rgba(109, 74, 255, 0.12);
+
+        border-radius:
+            9px;
+
+        box-shadow:
+            none;
+    }
+
+    .service-icon svg {
+
+        width:
+            15px;
+
+        height:
+            15px;
+
+        color:
+            #172033;
     }
 
     .service-card-title {
 
         font-size:
-            11px;
+            12px;
+    }
+
+    .service-description {
+
+        padding:
+            0
+            11px
+            8px;
+
+        font-size:
+            10px;
+
+        line-height:
+            1.5;
+    }
+
+    .service-meta {
+
+        gap:
+            4px;
+
+        padding:
+            0
+            11px
+            8px;
+    }
+
+    .service-meta-item {
+
+        min-height:
+            23px;
+
+        padding:
+            4px
+            6px;
+
+        border-radius:
+            7px;
+
+        font-size:
+            8.5px;
+    }
+
+    .service-meta-item svg {
+
+        width:
+            10px;
+
+        height:
+            10px;
     }
 
     .service-card-footer {
 
-        align-items:
-            center;
+        padding:
+            8px
+            11px
+            9px;
+    }
 
-        flex-direction:
-            row;
+    .service-price-label {
+
+        font-size:
+            8px;
+    }
+
+    .service-price-value {
+
+        font-size:
+            15px;
+    }
+
+    .service-price-unit {
+
+        font-size:
+            8px;
+    }
+
+
+    /* -----------------------------------------------------
+       AÇÕES
+       ----------------------------------------------------- */
+
+    .profile-action-button {
+
+        min-height:
+            42px;
     }
 }
+
 
 /* =========================================================
 ACESSIBILIDADE
@@ -2853,6 +3201,7 @@ button:focus-visible {
     outline-offset:
         3px;
 }
+
 
 /* =========================================================
 MENOS MOVIMENTO

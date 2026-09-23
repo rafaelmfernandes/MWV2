@@ -1,1612 +1,1740 @@
-/* =========================================================
-MUSICALWORLD — APRESENTAR PERFIL
-11 — RESPONSIVO
-
-Responsabilidade:
-
-• Ajustar o layout para diferentes larguras de tela.
-• Ajustar espaçamentos e tamanhos dos componentes.
-• Ajustar o portfólio para telas menores.
-• Ajustar identidade, experiência, agenda e avaliações.
-• Ajustar serviços para telas menores.
-• Ajustar barra de ações.
-• Ajustar estados específicos que possuem comportamento
-responsivo próprio.
-
-IMPORTANTE:
-
-Este arquivo contém somente regras relacionadas
-à largura disponível da tela.
-
-As regras estruturais dos componentes permanecem
-nos respectivos arquivos:
-
-03 — Topbar
-04 — Portfólio
-05 — Identidade
-06 — Sobre
-07 — Experiência / Agenda / Avaliações
-08 — Serviços
-09 — Ações
-10 — Estados
-========================================================= */
 
 /* =========================================================
-TABLET — ATÉ 700PX
+MUSICALWORLD — APRESENTAR PERFIL 
+11 — RESPONSIVO 
+ 
+Responsabilidade: 
+ 
+• Ajustar o layout para diferentes larguras de tela. 
+• Ajustar espaçamentos e tamanhos dos componentes. 
+• Ajustar o portfólio para telas menores. 
+• Ajustar identidade, experiência, agenda e avaliações. 
+• Ajustar serviços para telas menores. 
+• Ajustar barra de ações. 
+• Ajustar estados específicos que possuem comportamento 
+responsivo próprio. 
+ 
+IMPORTANTE: 
+ 
+Este arquivo contém somente regras relacionadas 
+à largura disponível da tela. 
+ 
+As regras estruturais dos componentes permanecem 
+nos respectivos arquivos: 
+ 
+03 — Topbar 
+04 — Portfólio 
+05 — Identidade 
+06 — Sobre 
+07 — Experiência / Agenda / Avaliações 
+08 — Serviços 
+09 — Ações 
+10 — Estados 
+========================================================= */ 
+ 
+/* ========================================================= 
+TABLET — ATÉ 700PX 
+ 
+Ajustes gerais da página e do portfólio. 
+========================================================= */ 
+ 
+@media (max-width: 700px) { 
+ 
+ 
+.profile-page { 
+    max-width: 100%; 
+ 
+    padding: 
+        16px 
+        12px 
+        115px; 
+} 
+ 
+.profile-card, 
+.profile-section { 
+    border-radius: 20px; 
+} 
+ 
+.portfolio-grid { 
+    grid-template-columns: 
+        repeat(3, minmax(0, 1fr)); 
+} 
+ 
+.portfolio-video-wrapper { 
+    aspect-ratio: 16 / 9; 
+} 
+ 
+ 
+} 
+ 
+/* ========================================================= 
+MOBILE — ATÉ 600PX 
+ 
+Ajustes gerais da interface. 
+========================================================= */ 
+ 
+@media (max-width: 600px) { 
+ 
+ 
+/* ===================================================== 
+   TOPBAR 
+   ===================================================== */ 
+ 
+.topbar { 
+    height: 60px; 
+ 
+    padding: 
+        0 
+        12px; 
+} 
+ 
+.topbar-left { 
+    gap: 9px; 
+} 
+ 
+.topbar-button { 
+    width: 38px; 
+    height: 38px; 
+ 
+    border-radius: 11px; 
+} 
+ 
+.topbar-title { 
+    font-size: 14px; 
+} 
+ 
+ 
+/* ===================================================== 
+   PÁGINA 
+   ===================================================== */ 
+ 
+.profile-page { 
+    padding: 
+        13px 
+        9px 
+        110px; 
+} 
+ 
+ 
+/* ===================================================== 
+   ESTRUTURA LEGADA — COMPATIBILIDADE 
+   ===================================================== */ 
+ 
+.profile-card, 
+.profile-section { 
+    padding: 16px; 
+ 
+    border-radius: 18px; 
+} 
+ 
+ 
+/* ===================================================== 
+   IDENTIDADE 
+   ===================================================== */ 
+ 
+.profile-header { 
+    gap: 13px; 
+} 
+ 
+.profile-avatar { 
+    width: 76px; 
+    height: 76px; 
+ 
+    min-width: 76px; 
+ 
+    font-size: 21px; 
+} 
+ 
+.profile-name { 
+    font-size: 19px; 
+} 
+ 
+.profile-category { 
+    font-size: 12px; 
+} 
+ 
+.profile-location { 
+    font-size: 12px; 
+} 
+ 
+ 
+/* ===================================================== 
+   TÍTULOS DAS SEÇÕES 
+   ===================================================== */ 
+ 
+.section-title { 
+    font-size: 15px; 
+} 
+ 
+.section-title-row { 
+    gap: 7px; 
+} 
+ 
+.section-title-row > svg { 
+    width: 17px; 
+    height: 17px; 
+ 
+    min-width: 17px; 
+ 
+    display: block; 
+ 
+    margin-top: 2px; 
+} 
+ 
+.section-title-row .section-title { 
+    margin: 0; 
+} 
+ 
+ 
+/* ===================================================== 
+   INFORMAÇÕES — COMPATIBILIDADE GERAL 
+   ===================================================== */ 
+ 
+.info-card-heading { 
+    gap: 5px; 
+} 
+ 
+.info-card-heading svg { 
+    width: 13px; 
+    height: 13px; 
+ 
+    min-width: 13px; 
+} 
+ 
+.info-grid { 
+    grid-template-columns: 
+        1fr 1fr; 
+} 
+ 
+ 
+/* ===================================================== 
+   PORTFÓLIO — ESTRUTURA ATUAL 
+   ===================================================== */ 
+ 
+.portfolio-grid { 
+    grid-template-columns: 
+        repeat(3, minmax(0, 1fr)); 
+ 
+    gap: 7px; 
+} 
+ 
+ 
+/* ===================================================== 
+   PORTFÓLIO EM DECK 
+ 
+   Mantém o deck ocupando toda a largura disponível. 
+   O tamanho do card permanece compatível com a regra 
+   estrutural definida no arquivo 04 — Portfólio. 
+   ===================================================== */ 
+ 
+.portfolio-deck { 
+    width: 100%; 
+} 
+ 
+.portfolio-deck-card { 
+    width: 88%; 
+    max-width: 360px; 
+} 
+ 
+.portfolio-deck-caption { 
+    padding: 
+        14px 
+        15px 
+        24px; 
+} 
+ 
+.portfolio-deck-caption strong { 
+    font-size: 14px; 
+} 
+ 
+.portfolio-deck-caption span { 
+    font-size: 12px; 
+} 
+ 
+.portfolio-deck-indicadores { 
+    gap: 4px; 
+ 
+    margin-top: -18px; 
+} 
+ 
+.portfolio-deck-indicador { 
+    width: 8px; 
+    height: 5px; 
+} 
+ 
+.portfolio-deck-indicador[aria-current="true"] { 
+    width: 18px; 
+} 
+ 
+ 
+/* ===================================================== 
+   ÁUDIO DO PORTFÓLIO 
+   ===================================================== */ 
+ 
+.portfolio-audio-card { 
+    padding: 
+        12px 
+        14px; 
+ 
+    gap: 10px; 
+ 
+    border-radius: 16px; 
+} 
+ 
+.portfolio-audio-card-conteudo { 
+    gap: 11px; 
+} 
+ 
+.portfolio-audio-card-icone { 
+    width: 38px; 
+    height: 38px; 
+ 
+    min-width: 38px; 
+ 
+    border-radius: 11px; 
+} 
+ 
+.portfolio-audio-card-icone svg { 
+    width: 18px; 
+    height: 18px; 
+} 
+ 
+.portfolio-audio-card-info strong { 
+    font-size: 13px; 
+} 
+ 
+.portfolio-audio-card-info span { 
+    font-size: 11px; 
+} 
+ 
+.portfolio-audio-card audio { 
+    height: 36px; 
+} 
+ 
+ 
+/* ===================================================== 
+   SERVIÇOS — PÁGINA PÚBLICA 
+   ===================================================== */ 
+ 
+.profile-services-section { 
+    padding: 18px; 
+ 
+    border-radius: 21px; 
+ 
+    box-shadow: 
+        0 7px 22px rgba(15, 23, 42, 0.05); 
+} 
+ 
+.profile-services-section .section-header { 
+    margin-bottom: 17px; 
+} 
+ 
+.profile-services-section .section-title-icon { 
+    width: 37px; 
+    height: 37px; 
+ 
+    min-width: 37px; 
+    min-height: 37px; 
+ 
+    border-radius: 11px; 
+} 
+ 
+.profile-services-section .section-title-icon svg { 
+    width: 18px; 
+    height: 18px; 
+} 
+ 
+.profile-services-section .section-title { 
+    font-size: 17px; 
+ 
+    line-height: 22px; 
+} 
+ 
+.profile-services-section .section-subtitle { 
+    font-size: 11px; 
+ 
+    line-height: 16px; 
+} 
+ 
+.services-list { 
+    display: flex; 
+ 
+    flex-direction: column; 
+ 
+    gap: 10px; 
+} 
+ 
+.service-card { 
+    width: 100%; 
+ 
+    padding: 14px; 
+ 
+    border-radius: 15px; 
+} 
+ 
+.service-card::after { 
+    top: 13px; 
+    right: 13px; 
+ 
+    width: 6px; 
+    height: 6px; 
+} 
+ 
+.service-card-header { 
+    display: flex; 
+ 
+    align-items: center; 
+ 
+    gap: 10px; 
+} 
+ 
+.service-icon { 
+    width: 38px; 
+    height: 38px; 
+ 
+    min-width: 38px; 
+ 
+    border-radius: 11px; 
+} 
+ 
+.service-icon svg { 
+    width: 17px; 
+    height: 17px; 
+} 
+ 
+.service-card-title-area { 
+    min-width: 0; 
+} 
+ 
+.service-card-title-area h3 { 
+    font-size: 13.5px; 
+ 
+    line-height: 1.35; 
+} 
+ 
+.service-description { 
+    margin-top: 9px; 
+ 
+    font-size: 11.5px; 
+ 
+    line-height: 1.55; 
+} 
+ 
+.service-meta { 
+    display: flex; 
+ 
+    flex-wrap: wrap; 
+ 
+    gap: 6px; 
+ 
+    margin-top: 10px; 
+} 
+ 
+.service-meta-item { 
+    min-height: 26px; 
+ 
+    padding: 
+        5px 
+        8px; 
+ 
+    font-size: 9.5px; 
+} 
+ 
+.service-card-footer { 
+    margin-top: 12px; 
+ 
+    padding-top: 11px; 
+} 
+ 
+.service-price-label { 
+    font-size: 9px; 
+} 
+ 
+.service-price strong { 
+    font-size: 17px; 
+ 
+    line-height: 1.3; 
+} 
+ 
+ 
+/* ===================================================== 
+   AGENDA 
+   ===================================================== */ 
+ 
+#agendaList { 
+    gap: 10px; 
+} 
+ 
+.agenda-event-card { 
+    grid-template-columns: 
+        54px 
+        minmax(0, 1fr); 
+ 
+    gap: 12px; 
+ 
+    padding: 14px; 
+ 
+    border-radius: 15px; 
+} 
+ 
+.agenda-event-date { 
+    width: 54px; 
+    min-width: 54px; 
+    height: 62px; 
+ 
+    border-radius: 12px; 
+} 
+ 
+.agenda-event-date strong { 
+    font-size: 22px; 
+    line-height: 25px; 
+} 
+ 
+.agenda-event-date span { 
+    font-size: 10px; 
+    line-height: 14px; 
+} 
+ 
+.agenda-event-header { 
+    flex-direction: column; 
+ 
+    align-items: flex-start; 
+ 
+    gap: 7px; 
+} 
+ 
+.agenda-event-header h3 { 
+    font-size: 15px; 
+ 
+    line-height: 20px; 
+} 
+ 
+.agenda-event-full-date { 
+    font-size: 11px; 
+ 
+    line-height: 16px; 
+} 
+ 
+.agenda-event-status { 
+    min-height: 25px; 
+ 
+    padding: 
+        3px 
+        8px; 
+ 
+    font-size: 10px; 
+ 
+    line-height: 15px; 
+} 
+ 
+.agenda-event-info { 
+    gap: 6px; 
+ 
+    font-size: 12px; 
+ 
+    line-height: 18px; 
+} 
+ 
+.agenda-event-info svg { 
+    width: 14px; 
+    height: 14px; 
+ 
+    min-width: 14px; 
+} 
+ 
+.agenda-event-description { 
+    font-size: 12px; 
+ 
+    line-height: 19px; 
+} 
+ 
+.agenda-event-link { 
+    font-size: 11px; 
+ 
+    line-height: 15px; 
+} 
+ 
+#agendaList .empty-state { 
+    min-height: 135px; 
+ 
+    padding: 
+        20px 
+        16px; 
+ 
+    border-radius: 15px; 
+} 
+ 
+ 
+/* ===================================================== 
+   AVALIAÇÕES 
+   ===================================================== */ 
+ 
+.reviews-summary-main { 
+    align-items: flex-start; 
+ 
+    gap: 13px; 
+} 
+ 
+.reviews-summary-score { 
+    width: 68px; 
+    min-width: 68px; 
+} 
+ 
+.reviews-summary-score strong { 
+    font-size: 26px; 
+} 
+ 
+ 
+/* ===================================================== 
+   AÇÕES ATUAIS 
+   ===================================================== */ 
+ 
+.profile-action-bar { 
+    padding-left: 12px; 
+    padding-right: 12px; 
+} 
+ 
+.profile-action-container { 
+    gap: 8px; 
+} 
+ 
+.profile-action-message { 
+    flex: 
+        0 0 50px; 
+ 
+    width: 50px; 
+} 
+ 
+.profile-action-hire { 
+    height: 50px; 
+} 
+ 
+.profile-action-button { 
+    font-size: 13px; 
+} 
+ 
+ 
+} 
+ 
+/* ========================================================= 
+MOBILE PEQUENO — ATÉ 480PX 
+========================================================= */ 
+ 
+@media (max-width: 480px) { 
+ 
+ 
+/* ===================================================== 
+   EXPERIÊNCIA PROFISSIONAL 
+   ===================================================== */ 
+ 
+.profile-professional-section { 
+    padding: 18px; 
+} 
+ 
+.profile-professional-section .section-title-row { 
+    gap: 9px; 
+} 
+ 
+.profile-professional-section .section-title-icon { 
+    width: 31px; 
+    height: 31px; 
+ 
+    min-width: 31px; 
+    min-height: 31px; 
+ 
+    border-radius: 9px; 
+} 
+ 
+.profile-professional-section .section-title-icon svg { 
+    width: 16px; 
+    height: 16px; 
+} 
+ 
+.profile-professional-section .info-grid { 
+    grid-template-columns: 
+        repeat(2, minmax(0, 1fr)); 
+ 
+    column-gap: 20px; 
+    row-gap: 20px; 
+} 
+ 
+.profile-professional-section .info-card-icon { 
+    width: 24px; 
+    height: 24px; 
+ 
+    min-width: 24px; 
+    min-height: 24px; 
+ 
+    border-radius: 7px; 
+} 
+ 
+.profile-professional-section .info-card-icon svg { 
+    width: 13px; 
+    height: 13px; 
+} 
+ 
+.profile-professional-section .info-card-label { 
+    font-size: 10.5px; 
+} 
+ 
+.profile-professional-section .info-card-value { 
+    margin-left: 31px; 
+ 
+    font-size: 12.5px; 
+ 
+    line-height: 1.45; 
+} 
+ 
+ 
+/* ===================================================== 
+   SOBRE O ARTISTA 
+   ===================================================== */ 
+ 
+.profile-about { 
+    padding: 18px; 
+ 
+    border-radius: 10px; 
+} 
+ 
+.profile-about-header { 
+    gap: 10px; 
+ 
+    margin-bottom: 14px; 
+} 
+ 
+.profile-about-icon { 
+    width: 34px; 
+    height: 34px; 
+ 
+    min-width: 34px; 
+    min-height: 34px; 
+ 
+    border-radius: 9px; 
+} 
+ 
+.profile-about-icon svg { 
+    width: 17px; 
+    height: 17px; 
+} 
+ 
+.profile-about-title { 
+    font-size: 16px; 
+} 
+ 
+.profile-about-subtitle { 
+    font-size: 11px; 
+} 
+ 
+.profile-about-content { 
+    font-size: 14px; 
+ 
+    line-height: 1.65; 
+} 
+ 
+ 
+/* ===================================================== 
+   IDENTIDADE 
+   ===================================================== */ 
+ 
+.profile-card { 
+    padding: 20px; 
+} 
+ 
+.profile-avatar { 
+    width: 50px !important; 
+    height: 50px !important; 
+ 
+    min-width: 50px !important; 
+    min-height: 50px !important; 
+ 
+    max-width: 88px !important; 
+    max-height: 88px !important; 
+ 
+    margin-bottom: 14px; 
+ 
+    flex: 
+        0 0 88px !important; 
+ 
+    aspect-ratio: 1 / 1 !important; 
+} 
+ 
+.profile-avatar img { 
+    width: 100% !important; 
+    height: 100% !important; 
+ 
+    min-width: 100% !important; 
+    min-height: 100% !important; 
+ 
+    max-width: none !important; 
+    max-height: none !important; 
+ 
+    top: 50% !important; 
+    left: 50% !important; 
+ 
+    transform: 
+        translate(-50%, -50%) !important; 
+ 
+    object-fit: cover !important; 
+ 
+    object-position: center center !important; 
+} 
+ 
+.profile-name { 
+    font-size: 23px; 
+} 
+ 
+.profile-category { 
+    font-size: 13px; 
+} 
+ 
+.profile-location { 
+    font-size: 13px; 
+} 
+ 
+.rating-value { 
+    font-size: 13px; 
+} 
+ 
+.rating-reviews { 
+    font-size: 12px; 
+} 
+ 
+ 
+/* ===================================================== 
+   SERVIÇOS — CELULAR PEQUENO
+   ATÉ 480PX
+   ===================================================== */ 
+ 
+.profile-services-section { 
+    padding: 18px; 
+ 
+    border-radius: 21px; 
+ 
+    box-shadow: 
+        0 7px 22px rgba(15, 23, 42, 0.05); 
+} 
+ 
+.profile-services-section .section-header { 
+    margin-bottom: 17px; 
+} 
+ 
+.profile-services-section .section-title-icon { 
+    width: 37px; 
+    height: 37px; 
+ 
+    min-width: 37px; 
+    min-height: 37px; 
+ 
+    border-radius: 11px; 
+} 
+ 
+.profile-services-section .section-title-icon svg { 
+    width: 18px; 
+    height: 18px; 
+} 
+ 
+.profile-services-section .section-title { 
+    font-size: 17px; 
+ 
+    line-height: 22px; 
+} 
+ 
+.profile-services-section .section-subtitle { 
+    font-size: 11px; 
+ 
+    line-height: 15px; 
+} 
+ 
+.services-list { 
+    gap: 10px; 
+} 
+ 
+.service-card { 
+    width: 100%; 
+ 
+    padding: 12px; 
+ 
+    border-radius: 14px; 
+} 
+ 
+.service-card::after { 
+    top: 11px; 
+    right: 11px; 
+ 
+    width: 5px; 
+    height: 5px; 
+} 
+ 
+.service-card-header { 
+    gap: 9px; 
+} 
+ 
+.service-icon { 
+    width: 36px; 
+    height: 36px; 
+ 
+    min-width: 36px; 
+ 
+    border-radius: 10px; 
+} 
+ 
+.service-icon svg { 
+    width: 16px; 
+    height: 16px; 
+} 
+ 
+.service-card-title-area { 
+    min-width: 0; 
+} 
+ 
+.service-card-title-area h3 { 
+    font-size: 12.5px; 
+ 
+    line-height: 1.35; 
+} 
+ 
+.service-description { 
+    margin-top: 8px; 
+ 
+    font-size: 10.5px; 
+ 
+    line-height: 1.5; 
+} 
+ 
+.service-meta { 
+    gap: 5px; 
+ 
+    margin-top: 9px; 
+} 
+ 
+.service-meta-item { 
+    min-height: 24px; 
+ 
+    padding: 
+        4px 
+        7px; 
+ 
+    border-radius: 7px; 
+ 
+    font-size: 8.5px; 
+} 
+ 
+.service-meta-item svg { 
+    width: 11px; 
+    height: 11px; 
+} 
+ 
+.service-card-footer { 
+    margin-top: 10px; 
+ 
+    padding-top: 9px; 
+} 
+ 
+.service-price-label { 
+    font-size: 8.5px; 
+} 
+ 
+.service-price strong { 
+    font-size: 15px; 
+ 
+    line-height: 1.3; 
+} 
+ 
+ 
+} 
+ 
+/* ========================================================= 
+MOBILE PEQUENO — ATÉ 420PX 
+========================================================= */ 
+ 
+@media (max-width: 420px) { 
+ 
+ 
+/* ===================================================== 
+   IDENTIDADE 
+   ===================================================== */ 
+ 
+.profile-header { 
+    gap: 11px; 
+} 
+ 
+.profile-avatar { 
+    width: 68px; 
+    height: 68px; 
+ 
+    min-width: 68px; 
+} 
+ 
+.profile-name { 
+    font-size: 17px; 
+} 
+ 
+.verified-badge { 
+    width: 18px; 
+    height: 18px; 
+ 
+    min-width: 18px; 
+} 
+ 
+.verified-badge svg { 
+    width: 11px; 
+    height: 11px; 
+} 
+ 
+ 
+/* ===================================================== 
+   EXPERIÊNCIA — GRADE 
+   ===================================================== */ 
+ 
+.info-grid { 
+    grid-template-columns: 
+        repeat(2, minmax(0, 1fr)); 
+ 
+    column-gap: 14px; 
+    row-gap: 18px; 
+} 
+ 
+.info-card { 
+    min-height: 0; 
+ 
+    padding: 0; 
+ 
+    border-radius: 0; 
+ 
+    background: transparent; 
+ 
+    border: 0; 
+ 
+    gap: 4px; 
+} 
+ 
+.info-card-label { 
+    font-size: 9px; 
+} 
+ 
+.info-card-value { 
+    font-size: 11px; 
+ 
+    line-height: 1.35; 
+} 
+ 
+ 
+/* ===================================================== 
+   PORTFÓLIO 
+ 
+   Mantém o card proporcional à largura do deck. 
+   A redução mais agressiva fica reservada para 
+   telas realmente pequenas, no breakpoint de 360px. 
+   ===================================================== */ 
+ 
+.portfolio-grid { 
+    grid-template-columns: 
+        repeat(3, minmax(0, 1fr)); 
+ 
+    gap: 6px; 
+} 
+ 
+.portfolio-deck-card { 
+    width: 88%; 
+ 
+    max-width: 360px; 
+ 
+    border-radius: 13px; 
+} 
+ 
+.portfolio-deck-caption { 
+    padding: 
+        12px 
+        13px 
+        21px; 
+} 
+ 
+.portfolio-deck-caption strong { 
+    font-size: 13px; 
+} 
+ 
+.portfolio-deck-caption span { 
+    font-size: 11px; 
+} 
+ 
+.portfolio-deck-indicadores { 
+    gap: 3px; 
+ 
+    margin-top: -16px; 
+} 
+ 
+.portfolio-deck-indicador { 
+    width: 7px; 
+ 
+    min-width: 6px; 
+ 
+    height: 5px; 
+} 
+ 
+.portfolio-deck-indicador[aria-current="true"] { 
+    width: 16px; 
+} 
+ 
+ 
+/* ===================================================== 
+   AVALIAÇÕES 
+   ===================================================== */ 
+ 
+.reviews-summary-main { 
+    flex-direction: column; 
+} 
+ 
+.reviews-summary-score { 
+    width: 100%; 
+} 
+ 
+.reviews-summary-distribution { 
+    width: 100%; 
+} 
+ 
+.review-header { 
+    flex-direction: column; 
+} 
+ 
+.review-date { 
+    margin-left: 45px; 
+} 
+ 
+ 
+/* ===================================================== 
+   AGENDA 
+   ===================================================== */ 
+ 
+.agenda-event-header { 
+    flex-direction: column; 
+} 
+ 
+.agenda-event-status { 
+    align-self: flex-start; 
+} 
+ 
+ 
+/* ===================================================== 
+   ÁUDIO 
+   ===================================================== */ 
+ 
+.portfolio-audio-card { 
+    align-items: flex-start; 
+} 
+ 
+.portfolio-audio-card-conteudo { 
+    width: calc(100% - 46px); 
+} 
+ 
+ 
+/* ===================================================== 
+   SERVIÇOS — TELAS ATÉ 420PX
+   ===================================================== */ 
+ 
+.profile-services-section { 
+    padding: 16px; 
+} 
+ 
+.profile-services-section .section-title-icon { 
+    width: 35px; 
+    height: 35px; 
+ 
+    min-width: 35px; 
+    min-height: 35px; 
+ 
+    border-radius: 10px; 
+} 
+ 
+.profile-services-section .section-title-icon svg { 
+    width: 17px; 
+    height: 17px; 
+} 
+ 
+.profile-services-section .section-title { 
+    font-size: 16px; 
+ 
+    line-height: 21px; 
+} 
+ 
+.profile-services-section .section-subtitle { 
+    font-size: 10.5px; 
+ 
+    line-height: 15px; 
+} 
+ 
+.services-list { 
+    gap: 10px; 
+} 
+ 
+.service-card { 
+    padding: 11px; 
+ 
+    border-radius: 13px; 
+} 
+ 
+.service-card::after { 
+    top: 10px; 
+    right: 10px; 
+ 
+    width: 5px; 
+    height: 5px; 
+} 
+ 
+.service-card-header { 
+    gap: 8px; 
+} 
+ 
+.service-icon { 
+    width: 34px; 
+    height: 34px; 
+ 
+    min-width: 34px; 
+ 
+    border-radius: 9px; 
+} 
+ 
+.service-icon svg { 
+    width: 15px; 
+    height: 15px; 
+} 
+ 
+.service-card-title-area h3 { 
+    font-size: 12px; 
+ 
+    line-height: 1.35; 
+} 
+ 
+.service-description { 
+    margin-top: 7px; 
+ 
+    font-size: 10px; 
+ 
+    line-height: 1.5; 
+} 
+ 
+.service-meta { 
+    gap: 5px; 
+ 
+    margin-top: 8px; 
+} 
+ 
+.service-meta-item { 
+    min-height: 23px; 
+ 
+    padding: 
+        4px 
+        6px; 
+ 
+    border-radius: 7px; 
+ 
+    font-size: 8.5px; 
+} 
+ 
+.service-meta-item svg { 
+    width: 11px; 
+    height: 11px; 
+} 
+ 
+.service-card-footer { 
+    gap: 7px; 
+ 
+    margin-top: 9px; 
+ 
+    padding-top: 8px; 
+} 
+ 
+.service-price-label { 
+    font-size: 8.5px; 
+} 
+ 
+.service-price strong { 
+    font-size: 14px; 
+ 
+    line-height: 1.3; 
+} 
+ 
+ 
+} 
+ 
+/* ========================================================= 
+TELAS MUITO PEQUENAS — ATÉ 380PX 
+ 
+Responsividade específica da Agenda. 
+========================================================= */ 
+ 
+@media (max-width: 380px) { 
+ 
+ 
+.agenda-event-card { 
+    grid-template-columns: 
+        48px 
+        minmax(0, 1fr); 
+ 
+    gap: 10px; 
+ 
+    padding: 12px; 
+} 
+ 
+.agenda-event-date { 
+    width: 48px; 
+    min-width: 48px; 
+ 
+    height: 58px; 
+} 
+ 
+.agenda-event-date strong { 
+    font-size: 20px; 
+ 
+    line-height: 23px; 
+} 
+ 
+.agenda-event-date span { 
+    font-size: 9px; 
+} 
+ 
+ 
+} 
+ 
+/* ========================================================= 
+TELAS MUITO PEQUENAS — ATÉ 360PX 
+========================================================= */ 
+ 
+@media (max-width: 360px) { 
+ 
+ 
+/* ===================================================== 
+   PÁGINA 
+   ===================================================== */ 
+ 
+.profile-page { 
+    padding-left: 10px; 
+    padding-right: 10px; 
+} 
+ 
+ 
+/* ===================================================== 
+   ESTRUTURA LEGADA — COMPATIBILIDADE 
+   ===================================================== */ 
+ 
+.profile-card { 
+    padding: 18px; 
+} 
+ 
+ 
+/* ===================================================== 
+   IDENTIDADE 
+   ===================================================== */ 
+ 
+.profile-avatar { 
+    width: 96px !important; 
+    height: 96px !important; 
+ 
+    min-width: 96px !important; 
+    min-height: 96px !important; 
+ 
+    max-width: 96px !important; 
+    max-height: 96px !important; 
+ 
+    flex: 
+        0 0 96px !important; 
+ 
+    aspect-ratio: 1 / 1 !important; 
+} 
+ 
+.profile-avatar img { 
+    width: 100% !important; 
+    height: 100% !important; 
+ 
+    min-width: 100% !important; 
+    min-height: 100% !important; 
+ 
+    max-width: none !important; 
+    max-height: none !important; 
+ 
+    top: 50% !important; 
+    left: 50% !important; 
+ 
+    transform: 
+        translate(-50%, -50%) !important; 
+ 
+    object-fit: cover !important; 
+ 
+    object-position: center center !important; 
+} 
+ 
+.profile-name { 
+    font-size: 22px; 
+} 
+ 
+ 
+/* ===================================================== 
+   EXPERIÊNCIA PROFISSIONAL 
+   ===================================================== */ 
+ 
+.profile-professional-section { 
+    padding: 16px; 
+} 
+ 
+.profile-professional-section .section-title-row { 
+    gap: 8px; 
+} 
+ 
+.profile-professional-section .section-title-icon { 
+    width: 30px; 
+    height: 30px; 
+ 
+    min-width: 30px; 
+    min-height: 30px; 
+ 
+    border-radius: 8px; 
+} 
+ 
+.profile-professional-section .section-title-icon svg { 
+    width: 15px; 
+    height: 15px; 
+} 
+ 
+.profile-professional-section .info-grid { 
+    grid-template-columns: 1fr; 
+ 
+    column-gap: 0; 
+ 
+    row-gap: 18px; 
+} 
+ 
+.profile-professional-section .info-card-icon { 
+    width: 24px; 
+    height: 24px; 
+ 
+    min-width: 24px; 
+    min-height: 24px; 
+} 
+ 
+.profile-professional-section .info-card-icon svg { 
+    width: 13px; 
+    height: 13px; 
+} 
+ 
+.profile-professional-section .info-card-value { 
+    margin-left: 31px; 
+ 
+    font-size: 12.5px; 
+} 
+ 
+ 
+/* ===================================================== 
+   SOBRE O ARTISTA 
+   ===================================================== */ 
+ 
+.profile-about { 
+    padding: 16px; 
+ 
+    border-radius: 20px; 
+} 
+ 
+.profile-about-header { 
+    gap: 9px; 
+ 
+    margin-bottom: 13px; 
+} 
+ 
+.profile-about-icon { 
+    width: 32px; 
+    height: 32px; 
+ 
+    min-width: 32px; 
+    min-height: 32px; 
+ 
+    border-radius: 8px; 
+} 
+ 
+.profile-about-icon svg { 
+    width: 16px; 
+    height: 16px; 
+} 
+ 
+.profile-about-title { 
+    font-size: 15px; 
+} 
+ 
+.profile-about-subtitle { 
+    font-size: 10px; 
+} 
+ 
+.profile-about-content { 
+    font-size: 13px; 
+ 
+    line-height: 1.6; 
+} 
+ 
+ 
+/* ===================================================== 
+   PORTFÓLIO 
+   ===================================================== */ 
+ 
+.portfolio-deck-card { 
+    width: 88%; 
+ 
+    max-width: 280px; 
+ 
+    border-radius: 12px; 
+} 
+ 
+.portfolio-deck-caption { 
+    padding: 
+        10px 
+        11px 
+        18px; 
+} 
+ 
+.portfolio-deck-caption strong { 
+    font-size: 12px; 
+} 
+ 
+.portfolio-deck-caption span { 
+    font-size: 10px; 
+} 
+ 
+.portfolio-deck-indicadores { 
+    gap: 3px; 
+ 
+    margin-top: -14px; 
+} 
+ 
+.portfolio-deck-indicador { 
+    width: 6px; 
+ 
+    min-width: 5px; 
+ 
+    height: 4px; 
+} 
+ 
+.portfolio-deck-indicador[aria-current="true"] { 
+    width: 14px; 
+ 
+    min-width: 14px; 
+ 
+    height: 5px; 
+} 
+ 
+ 
+/* ===================================================== 
+   ÁUDIO 
+   ===================================================== */ 
+ 
+.portfolio-audio-card { 
+    gap: 8px; 
+ 
+    padding: 10px; 
+} 
+ 
+.portfolio-audio-card-icone { 
+    width: 34px; 
+    height: 34px; 
+ 
+    min-width: 34px; 
+} 
+ 
+ 
+/* ===================================================== 
+   GÊNEROS / TAGS 
+   ===================================================== */ 
+ 
+.genre-list { 
+    gap: 6px; 
+} 
+ 
+.profile-tag { 
+    min-height: 30px; 
+ 
+    padding: 
+        5px 
+        10px; 
+ 
+    font-size: 12px; 
+ 
+    line-height: 17px; 
+} 
+ 
+ 
+/* ===================================================== 
+   SERVIÇOS — TELAS MUITO PEQUENAS
+   ATÉ 360PX
+   ===================================================== */ 
+ 
+.profile-services-section { 
+    padding: 15px; 
+ 
+    border-radius: 19px; 
+} 
+ 
+.profile-services-section .section-title-icon { 
+    width: 34px; 
+    height: 34px; 
+ 
+    min-width: 34px; 
+    min-height: 34px; 
+ 
+    border-radius: 9px; 
+} 
+ 
+.profile-services-section .section-title-icon svg { 
+    width: 16px; 
+    height: 16px; 
+} 
+ 
+.profile-services-section .section-title { 
+    font-size: 15px; 
+ 
+    line-height: 20px; 
+} 
+ 
+.profile-services-section .section-subtitle { 
+    font-size: 10px; 
+ 
+    line-height: 14px; 
+} 
+ 
+.services-list { 
+    gap: 9px; 
+} 
+ 
+.service-card { 
+    padding: 11px; 
+ 
+    border-radius: 13px; 
+} 
+ 
+.service-card::after { 
+    top: 10px; 
+    right: 10px; 
+ 
+    width: 5px; 
+    height: 5px; 
+} 
+ 
+.service-card-header { 
+    gap: 7px; 
+} 
+ 
+.service-icon { 
+    width: 33px; 
+    height: 33px; 
+ 
+    min-width: 33px; 
+ 
+    border-radius: 9px; 
+} 
+ 
+.service-icon svg { 
+    width: 15px; 
+    height: 15px; 
+} 
+ 
+.service-card-title-area h3 { 
+    font-size: 12px; 
+ 
+    line-height: 1.35; 
+} 
+ 
+.service-description { 
+    margin-top: 6px; 
+ 
+    font-size: 10px; 
+ 
+    line-height: 1.5; 
+} 
+ 
+.service-meta { 
+    gap: 4px; 
+ 
+    margin-top: 7px; 
+} 
+ 
+.service-meta-item { 
+    min-height: 22px; 
+ 
+    padding: 
+        3px 
+        6px; 
+ 
+    border-radius: 6px; 
+ 
+    font-size: 8.5px; 
+} 
+ 
+.service-meta-item svg { 
+    width: 10px; 
+    height: 10px; 
+} 
+ 
+.service-card-footer { 
+    gap: 6px; 
+ 
+    margin-top: 8px; 
+ 
+    padding-top: 8px; 
+} 
+ 
+.service-price-label { 
+    font-size: 8px; 
+} 
+ 
+.service-price strong { 
+    font-size: 14px; 
+ 
+    line-height: 1.3; 
+} 
+ 
+ 
+/* ===================================================== 
+   AGENDA 
+   ===================================================== */ 
+ 
+.agenda-event-card { 
+    padding: 10px; 
+ 
+    gap: 8px; 
+} 
+ 
+.agenda-event-date { 
+    width: 46px; 
+    min-width: 46px; 
+} 
+ 
+.agenda-event-date strong { 
+    font-size: 17px; 
+} 
+ 
+ 
+/* ===================================================== 
+   AÇÕES 
+   ===================================================== */ 
+ 
+.profile-action-bar { 
+    padding-left: 12px; 
+    padding-right: 12px; 
+} 
+ 
+.profile-action-container { 
+    gap: 8px; 
+} 
+ 
+.profile-action-message { 
+    flex: 
+        0 0 50px; 
+ 
+    width: 50px; 
+} 
+ 
+.profile-action-hire { 
+    height: 50px; 
+} 
+ 
+.profile-action-button { 
+    font-size: 13px; 
+} 
+ 
+ 
+} 
 
-Ajustes gerais da página e do portfólio.
-========================================================= */
-
-@media (max-width: 700px) {
-
-
-.profile-page {
-    max-width: 100%;
-
-    padding:
-        16px
-        12px
-        115px;
-}
-
-.profile-card,
-.profile-section {
-    border-radius: 20px;
-}
-
-.portfolio-grid {
-    grid-template-columns:
-        repeat(3, minmax(0, 1fr));
-}
-
-.portfolio-video-wrapper {
-    aspect-ratio: 16 / 9;
-}
-
-
-}
-
-/* =========================================================
-MOBILE — ATÉ 600PX
-
-Ajustes gerais da interface.
-========================================================= */
-
-@media (max-width: 600px) {
-
-
-/* =====================================================
-   TOPBAR
-   ===================================================== */
-
-.topbar {
-    height: 60px;
-
-    padding:
-        0
-        12px;
-}
-
-.topbar-left {
-    gap: 9px;
-}
-
-.topbar-button {
-    width: 38px;
-    height: 38px;
-
-    border-radius: 11px;
-}
-
-.topbar-title {
-    font-size: 14px;
-}
-
-
-/* =====================================================
-   PÁGINA
-   ===================================================== */
-
-.profile-page {
-    padding:
-        13px
-        9px
-        110px;
-}
-
-
-/* =====================================================
-   ESTRUTURA LEGADA — COMPATIBILIDADE
-   ===================================================== */
-
-.profile-card,
-.profile-section {
-    padding: 16px;
-
-    border-radius: 18px;
-}
-
-
-/* =====================================================
-   IDENTIDADE
-   ===================================================== */
-
-.profile-header {
-    gap: 13px;
-}
-
-.profile-avatar {
-    width: 76px;
-    height: 76px;
-
-    min-width: 76px;
-
-    font-size: 21px;
-}
-
-.profile-name {
-    font-size: 19px;
-}
-
-.profile-category {
-    font-size: 12px;
-}
-
-.profile-location {
-    font-size: 12px;
-}
-
-
-/* =====================================================
-   TÍTULOS DAS SEÇÕES
-   ===================================================== */
-
-.section-title {
-    font-size: 15px;
-}
-
-.section-title-row {
-    gap: 7px;
-}
-
-.section-title-row > svg {
-    width: 17px;
-    height: 17px;
-
-    min-width: 17px;
-
-    display: block;
-
-    margin-top: 2px;
-}
-
-.section-title-row .section-title {
-    margin: 0;
-}
-
-
-/* =====================================================
-   INFORMAÇÕES — COMPATIBILIDADE GERAL
-   ===================================================== */
-
-.info-card-heading {
-    gap: 5px;
-}
-
-.info-card-heading svg {
-    width: 13px;
-    height: 13px;
-
-    min-width: 13px;
-}
-
-.info-grid {
-    grid-template-columns:
-        1fr 1fr;
-}
-
-
-/* =====================================================
-   PORTFÓLIO — ESTRUTURA ATUAL
-   ===================================================== */
-
-.portfolio-grid {
-    grid-template-columns:
-        repeat(3, minmax(0, 1fr));
-
-    gap: 7px;
-}
-
-
-/* =====================================================
-   PORTFÓLIO EM DECK
-
-   Mantém o deck ocupando toda a largura disponível.
-   O tamanho do card permanece compatível com a regra
-   estrutural definida no arquivo 04 — Portfólio.
-   ===================================================== */
-
-.portfolio-deck {
-    width: 100%;
-}
-
-.portfolio-deck-card {
-    width: 88%;
-    max-width: 360px;
-}
-
-.portfolio-deck-caption {
-    padding:
-        14px
-        15px
-        24px;
-}
-
-.portfolio-deck-caption strong {
-    font-size: 14px;
-}
-
-.portfolio-deck-caption span {
-    font-size: 12px;
-}
-
-.portfolio-deck-indicadores {
-    gap: 4px;
-
-    margin-top: -18px;
-}
-
-.portfolio-deck-indicador {
-    width: 8px;
-    height: 5px;
-}
-
-.portfolio-deck-indicador[aria-current="true"] {
-    width: 18px;
-}
-
-
-/* =====================================================
-   ÁUDIO DO PORTFÓLIO
-   ===================================================== */
-
-.portfolio-audio-card {
-    padding:
-        12px
-        14px;
-
-    gap: 10px;
-
-    border-radius: 16px;
-}
-
-.portfolio-audio-card-conteudo {
-    gap: 11px;
-}
-
-.portfolio-audio-card-icone {
-    width: 38px;
-    height: 38px;
-
-    min-width: 38px;
-
-    border-radius: 11px;
-}
-
-.portfolio-audio-card-icone svg {
-    width: 18px;
-    height: 18px;
-}
-
-.portfolio-audio-card-info strong {
-    font-size: 13px;
-}
-
-.portfolio-audio-card-info span {
-    font-size: 11px;
-}
-
-.portfolio-audio-card audio {
-    height: 36px;
-}
-
-
-/* =====================================================
-   SERVIÇOS
-   ===================================================== */
-
-.profile-services-section {
-    padding: 18px;
-
-    border-radius: 21px;
-}
-
-.profile-services-section .section-header {
-    margin-bottom: 17px;
-}
-
-.profile-services-section .section-title-icon {
-    width: 37px;
-    height: 37px;
-
-    min-width: 37px;
-    min-height: 37px;
-
-    border-radius: 11px;
-}
-
-.profile-services-section .section-title-icon svg {
-    width: 18px;
-    height: 18px;
-}
-
-.profile-services-section .section-title {
-    font-size: 17px;
-
-    line-height: 22px;
-}
-
-.profile-services-section .section-subtitle {
-    font-size: 11px;
-}
-
-.services-list {
-    gap: 10px;
-}
-
-.service-card {
-    padding: 14px;
-
-    border-radius: 15px;
-}
-
-.service-card::after {
-    top: 13px;
-    right: 13px;
-
-    width: 6px;
-    height: 6px;
-}
-
-.service-card-header {
-    gap: 10px;
-}
-
-.service-icon {
-    width: 38px;
-    height: 38px;
-
-    min-width: 38px;
-
-    border-radius: 11px;
-}
-
-.service-icon svg {
-    width: 17px;
-    height: 17px;
-}
-
-.service-card-title-area h3 {
-    font-size: 13.5px;
-}
-
-.service-description {
-    margin-top: 9px;
-
-    font-size: 11.5px;
-}
-
-.service-meta {
-    margin-top: 10px;
-
-    gap: 6px;
-}
-
-.service-meta-item {
-    min-height: 26px;
-
-    padding:
-        5px
-        8px;
-
-    font-size: 9.5px;
-}
-
-.service-card-footer {
-    margin-top: 12px;
-
-    padding-top: 11px;
-}
-
-.service-price strong {
-    font-size: 17px;
-}
-
-
-/* =====================================================
-   AGENDA
-   ===================================================== */
-
-#agendaList {
-    gap: 10px;
-}
-
-.agenda-event-card {
-    grid-template-columns:
-        54px
-        minmax(0, 1fr);
-
-    gap: 12px;
-
-    padding: 14px;
-
-    border-radius: 15px;
-}
-
-.agenda-event-date {
-    width: 54px;
-    min-width: 54px;
-    height: 62px;
-
-    border-radius: 12px;
-}
-
-.agenda-event-date strong {
-    font-size: 22px;
-    line-height: 25px;
-}
-
-.agenda-event-date span {
-    font-size: 10px;
-    line-height: 14px;
-}
-
-.agenda-event-header {
-    flex-direction: column;
-
-    align-items: flex-start;
-
-    gap: 7px;
-}
-
-.agenda-event-header h3 {
-    font-size: 15px;
-
-    line-height: 20px;
-}
-
-.agenda-event-full-date {
-    font-size: 11px;
-
-    line-height: 16px;
-}
-
-.agenda-event-status {
-    min-height: 25px;
-
-    padding:
-        3px
-        8px;
-
-    font-size: 10px;
-
-    line-height: 15px;
-}
-
-.agenda-event-info {
-    gap: 6px;
-
-    font-size: 12px;
-
-    line-height: 18px;
-}
-
-.agenda-event-info svg {
-    width: 14px;
-    height: 14px;
-
-    min-width: 14px;
-}
-
-.agenda-event-description {
-    font-size: 12px;
-
-    line-height: 19px;
-}
-
-.agenda-event-link {
-    font-size: 11px;
-
-    line-height: 15px;
-}
-
-#agendaList .empty-state {
-    min-height: 135px;
-
-    padding:
-        20px
-        16px;
-
-    border-radius: 15px;
-}
-
-
-/* =====================================================
-   AVALIAÇÕES
-   ===================================================== */
-
-.reviews-summary-main {
-    align-items: flex-start;
-
-    gap: 13px;
-}
-
-.reviews-summary-score {
-    width: 68px;
-    min-width: 68px;
-}
-
-.reviews-summary-score strong {
-    font-size: 26px;
-}
-
-
-/* =====================================================
-   AÇÕES ATUAIS
-   ===================================================== */
-
-.profile-action-bar {
-    padding-left: 12px;
-    padding-right: 12px;
-}
-
-.profile-action-container {
-    gap: 8px;
-}
-
-.profile-action-message {
-    flex:
-        0 0 50px;
-
-    width: 50px;
-}
-
-.profile-action-hire {
-    height: 50px;
-}
-
-.profile-action-button {
-    font-size: 13px;
-}
-
-
-}
-
-/* =========================================================
-MOBILE PEQUENO — ATÉ 480PX
-========================================================= */
-
-@media (max-width: 480px) {
-
-
-/* =====================================================
-   EXPERIÊNCIA PROFISSIONAL
-   ===================================================== */
-
-.profile-professional-section {
-    padding: 18px;
-}
-
-.profile-professional-section .section-title-row {
-    gap: 9px;
-}
-
-.profile-professional-section .section-title-icon {
-    width: 31px;
-    height: 31px;
-
-    min-width: 31px;
-    min-height: 31px;
-
-    border-radius: 9px;
-}
-
-.profile-professional-section .section-title-icon svg {
-    width: 16px;
-    height: 16px;
-}
-
-.profile-professional-section .info-grid {
-    grid-template-columns:
-        repeat(2, minmax(0, 1fr));
-
-    column-gap: 20px;
-    row-gap: 20px;
-}
-
-.profile-professional-section .info-card-icon {
-    width: 24px;
-    height: 24px;
-
-    min-width: 24px;
-    min-height: 24px;
-
-    border-radius: 7px;
-}
-
-.profile-professional-section .info-card-icon svg {
-    width: 13px;
-    height: 13px;
-}
-
-.profile-professional-section .info-card-label {
-    font-size: 10.5px;
-}
-
-.profile-professional-section .info-card-value {
-    margin-left: 31px;
-
-    font-size: 12.5px;
-
-    line-height: 1.45;
-}
-
-
-/* =====================================================
-   SOBRE O ARTISTA
-   ===================================================== */
-
-.profile-about {
-    padding: 18px;
-
-    border-radius: 10px;
-}
-
-.profile-about-header {
-    gap: 10px;
-
-    margin-bottom: 14px;
-}
-
-.profile-about-icon {
-    width: 34px;
-    height: 34px;
-
-    min-width: 34px;
-    min-height: 34px;
-
-    border-radius: 9px;
-}
-
-.profile-about-icon svg {
-    width: 17px;
-    height: 17px;
-}
-
-.profile-about-title {
-    font-size: 16px;
-}
-
-.profile-about-subtitle {
-    font-size: 11px;
-}
-
-.profile-about-content {
-    font-size: 14px;
-
-    line-height: 1.65;
-}
-
-
-/* =====================================================
-   IDENTIDADE
-   ===================================================== */
-
-.profile-card {
-    padding: 20px;
-}
-
-.profile-avatar {
-    width: 50px !important;
-    height: 50px !important;
-
-    min-width: 50px !important;
-    min-height: 50px !important;
-
-    max-width: 88px !important;
-    max-height: 88px !important;
-
-    margin-bottom: 14px;
-
-    flex:
-        0 0 88px !important;
-
-    aspect-ratio: 1 / 1 !important;
-}
-
-.profile-avatar img {
-    width: 100% !important;
-    height: 100% !important;
-
-    min-width: 100% !important;
-    min-height: 100% !important;
-
-    max-width: none !important;
-    max-height: none !important;
-
-    top: 50% !important;
-    left: 50% !important;
-
-    transform:
-        translate(-50%, -50%) !important;
-
-    object-fit: cover !important;
-
-    object-position: center center !important;
-}
-
-.profile-name {
-    font-size: 23px;
-}
-
-.profile-category {
-    font-size: 13px;
-}
-
-.profile-location {
-    font-size: 13px;
-}
-
-.rating-value {
-    font-size: 13px;
-}
-
-.rating-reviews {
-    font-size: 12px;
-}
-
-
-/* =====================================================
-   SERVIÇOS
-   ===================================================== */
-
-.profile-services-section {
-    padding: 18px;
-
-    border-radius: 21px;
-
-    box-shadow:
-        0 7px 22px rgba(15, 23, 42, 0.05);
-}
-
-.profile-services-section .section-header {
-    margin-bottom: 17px;
-}
-
-.profile-services-section .section-title-icon {
-    width: 37px;
-    height: 37px;
-
-    min-width: 37px;
-    min-height: 37px;
-
-    border-radius: 11px;
-}
-
-.profile-services-section .section-title-icon svg {
-    width: 18px;
-    height: 18px;
-}
-
-.profile-services-section .section-title {
-    font-size: 17px;
-
-    line-height: 22px;
-}
-
-.profile-services-section .section-subtitle {
-    font-size: 11px;
-}
-
-.services-list {
-    gap: 10px;
-}
-
-.service-card {
-    padding: 14px;
-
-    border-radius: 15px;
-}
-
-.service-card::after {
-    top: 13px;
-    right: 13px;
-
-    width: 6px;
-    height: 6px;
-}
-
-.service-card-header {
-    gap: 10px;
-}
-
-.service-icon {
-    width: 38px;
-    height: 38px;
-
-    min-width: 38px;
-
-    border-radius: 11px;
-}
-
-.service-icon svg {
-    width: 17px;
-    height: 17px;
-}
-
-.service-card-title-area h3 {
-    font-size: 13.5px;
-}
-
-.service-description {
-    margin-top: 9px;
-
-    font-size: 11.5px;
-}
-
-.service-meta {
-    margin-top: 10px;
-
-    gap: 6px;
-}
-
-.service-meta-item {
-    min-height: 26px;
-
-    padding:
-        5px
-        8px;
-
-    font-size: 9.5px;
-}
-
-.service-card-footer {
-    margin-top: 12px;
-
-    padding-top: 11px;
-}
-
-.service-price strong {
-    font-size: 17px;
-}
-
-
-}
-
-/* =========================================================
-MOBILE PEQUENO — ATÉ 420PX
-========================================================= */
-
-@media (max-width: 420px) {
-
-
-/* =====================================================
-   IDENTIDADE
-   ===================================================== */
-
-.profile-header {
-    gap: 11px;
-}
-
-.profile-avatar {
-    width: 68px;
-    height: 68px;
-
-    min-width: 68px;
-}
-
-.profile-name {
-    font-size: 17px;
-}
-
-.verified-badge {
-    width: 18px;
-    height: 18px;
-
-    min-width: 18px;
-}
-
-.verified-badge svg {
-    width: 11px;
-    height: 11px;
-}
-
-
-/* =====================================================
-   EXPERIÊNCIA — GRADE
-   ===================================================== */
-
-.info-grid {
-    grid-template-columns:
-        repeat(2, minmax(0, 1fr));
-
-    column-gap: 14px;
-    row-gap: 18px;
-}
-
-.info-card {
-    min-height: 0;
-
-    padding: 0;
-
-    border-radius: 0;
-
-    background: transparent;
-
-    border: 0;
-
-    gap: 4px;
-}
-
-.info-card-label {
-    font-size: 9px;
-}
-
-.info-card-value {
-    font-size: 11px;
-
-    line-height: 1.35;
-}
-
-
-/* =====================================================
-   PORTFÓLIO
-
-   Mantém o card proporcional à largura do deck.
-   A redução mais agressiva fica reservada para
-   telas realmente pequenas, no breakpoint de 360px.
-   ===================================================== */
-
-.portfolio-grid {
-    grid-template-columns:
-        repeat(3, minmax(0, 1fr));
-
-    gap: 6px;
-}
-
-.portfolio-deck-card {
-    width: 88%;
-
-    max-width: 360px;
-
-    border-radius: 13px;
-}
-
-.portfolio-deck-caption {
-    padding:
-        12px
-        13px
-        21px;
-}
-
-.portfolio-deck-caption strong {
-    font-size: 13px;
-}
-
-.portfolio-deck-caption span {
-    font-size: 11px;
-}
-
-.portfolio-deck-indicadores {
-    gap: 3px;
-
-    margin-top: -16px;
-}
-
-.portfolio-deck-indicador {
-    width: 7px;
-
-    min-width: 6px;
-
-    height: 5px;
-}
-
-.portfolio-deck-indicador[aria-current="true"] {
-    width: 16px;
-}
-
-
-/* =====================================================
-   AVALIAÇÕES
-   ===================================================== */
-
-.reviews-summary-main {
-    flex-direction: column;
-}
-
-.reviews-summary-score {
-    width: 100%;
-}
-
-.reviews-summary-distribution {
-    width: 100%;
-}
-
-.review-header {
-    flex-direction: column;
-}
-
-.review-date {
-    margin-left: 45px;
-}
-
-
-/* =====================================================
-   AGENDA
-   ===================================================== */
-
-.agenda-event-header {
-    flex-direction: column;
-}
-
-.agenda-event-status {
-    align-self: flex-start;
-}
-
-
-/* =====================================================
-   ÁUDIO
-   ===================================================== */
-
-.portfolio-audio-card {
-    align-items: flex-start;
-}
-
-.portfolio-audio-card-conteudo {
-    width: calc(100% - 46px);
-}
-
-
-/* =====================================================
-   SERVIÇOS
-   ===================================================== */
-
-.profile-services-section {
-    padding: 18px;
-}
-
-.service-card {
-    padding: 11px;
-}
-
-.service-card-header {
-    gap: 8px;
-}
-
-.service-icon {
-    width: 34px;
-    height: 34px;
-
-    min-width: 34px;
-
-    border-radius: 9px;
-}
-
-.service-icon svg {
-    width: 16px;
-    height: 16px;
-}
-
-.service-card-title-area h3 {
-    font-size: 12px;
-
-    line-height: 1.35;
-}
-
-.service-description {
-    margin-top: 6px;
-
-    font-size: 10px;
-
-    line-height: 1.5;
-}
-
-.service-meta {
-    gap: 5px;
-
-    margin-top: 7px;
-}
-
-.service-meta-item {
-    min-height: 23px;
-
-    padding:
-        4px
-        6px;
-
-    border-radius: 7px;
-
-    font-size: 8px;
-}
-
-.service-meta-item svg {
-    width: 11px;
-    height: 11px;
-}
-
-.service-card-footer {
-    gap: 7px;
-
-    margin-top: 9px;
-
-    padding-top: 8px;
-}
-
-.service-price-label {
-    font-size: 8px;
-}
-
-.service-price strong {
-    font-size: 12px;
-
-    line-height: 1.3;
-}
-
-
-}
-
-/* =========================================================
-TELAS MUITO PEQUENAS — ATÉ 380PX
-
-Responsividade específica da Agenda.
-========================================================= */
-
-@media (max-width: 380px) {
-
-
-.agenda-event-card {
-    grid-template-columns:
-        48px
-        minmax(0, 1fr);
-
-    gap: 10px;
-
-    padding: 12px;
-}
-
-.agenda-event-date {
-    width: 48px;
-    min-width: 48px;
-
-    height: 58px;
-}
-
-.agenda-event-date strong {
-    font-size: 20px;
-
-    line-height: 23px;
-}
-
-.agenda-event-date span {
-    font-size: 9px;
-}
-
-
-}
-
-/* =========================================================
-TELAS MUITO PEQUENAS — ATÉ 360PX
-========================================================= */
-
-@media (max-width: 360px) {
-
-
-/* =====================================================
-   PÁGINA
-   ===================================================== */
-
-.profile-page {
-    padding-left: 10px;
-    padding-right: 10px;
-}
-
-
-/* =====================================================
-   ESTRUTURA LEGADA — COMPATIBILIDADE
-   ===================================================== */
-
-.profile-card {
-    padding: 18px;
-}
-
-
-/* =====================================================
-   IDENTIDADE
-   ===================================================== */
-
-.profile-avatar {
-    width: 96px !important;
-    height: 96px !important;
-
-    min-width: 96px !important;
-    min-height: 96px !important;
-
-    max-width: 96px !important;
-    max-height: 96px !important;
-
-    flex:
-        0 0 96px !important;
-
-    aspect-ratio: 1 / 1 !important;
-}
-
-.profile-avatar img {
-    width: 100% !important;
-    height: 100% !important;
-
-    min-width: 100% !important;
-    min-height: 100% !important;
-
-    max-width: none !important;
-    max-height: none !important;
-
-    top: 50% !important;
-    left: 50% !important;
-
-    transform:
-        translate(-50%, -50%) !important;
-
-    object-fit: cover !important;
-
-    object-position: center center !important;
-}
-
-.profile-name {
-    font-size: 22px;
-}
-
-
-/* =====================================================
-   EXPERIÊNCIA PROFISSIONAL
-   ===================================================== */
-
-.profile-professional-section {
-    padding: 16px;
-}
-
-.profile-professional-section .section-title-row {
-    gap: 8px;
-}
-
-.profile-professional-section .section-title-icon {
-    width: 30px;
-    height: 30px;
-
-    min-width: 30px;
-    min-height: 30px;
-
-    border-radius: 8px;
-}
-
-.profile-professional-section .section-title-icon svg {
-    width: 15px;
-    height: 15px;
-}
-
-.profile-professional-section .info-grid {
-    grid-template-columns: 1fr;
-
-    column-gap: 0;
-
-    row-gap: 18px;
-}
-
-.profile-professional-section .info-card-icon {
-    width: 24px;
-    height: 24px;
-
-    min-width: 24px;
-    min-height: 24px;
-}
-
-.profile-professional-section .info-card-icon svg {
-    width: 13px;
-    height: 13px;
-}
-
-.profile-professional-section .info-card-value {
-    margin-left: 31px;
-
-    font-size: 12.5px;
-}
-
-
-/* =====================================================
-   SOBRE O ARTISTA
-   ===================================================== */
-
-.profile-about {
-    padding: 16px;
-
-    border-radius: 20px;
-}
-
-.profile-about-header {
-    gap: 9px;
-
-    margin-bottom: 13px;
-}
-
-.profile-about-icon {
-    width: 32px;
-    height: 32px;
-
-    min-width: 32px;
-    min-height: 32px;
-
-    border-radius: 8px;
-}
-
-.profile-about-icon svg {
-    width: 16px;
-    height: 16px;
-}
-
-.profile-about-title {
-    font-size: 15px;
-}
-
-.profile-about-subtitle {
-    font-size: 10px;
-}
-
-.profile-about-content {
-    font-size: 13px;
-
-    line-height: 1.6;
-}
-
-
-/* =====================================================
-   PORTFÓLIO
-   ===================================================== */
-
-.portfolio-deck-card {
-    width: 88%;
-
-    max-width: 280px;
-
-    border-radius: 12px;
-}
-
-.portfolio-deck-caption {
-    padding:
-        10px
-        11px
-        18px;
-}
-
-.portfolio-deck-caption strong {
-    font-size: 12px;
-}
-
-.portfolio-deck-caption span {
-    font-size: 10px;
-}
-
-.portfolio-deck-indicadores {
-    gap: 3px;
-
-    margin-top: -14px;
-}
-
-.portfolio-deck-indicador {
-    width: 6px;
-
-    min-width: 5px;
-
-    height: 4px;
-}
-
-.portfolio-deck-indicador[aria-current="true"] {
-    width: 14px;
-
-    min-width: 14px;
-
-    height: 5px;
-}
-
-
-/* =====================================================
-   ÁUDIO
-   ===================================================== */
-
-.portfolio-audio-card {
-    gap: 8px;
-
-    padding: 10px;
-}
-
-.portfolio-audio-card-icone {
-    width: 34px;
-    height: 34px;
-
-    min-width: 34px;
-}
-
-
-/* =====================================================
-   GÊNEROS / TAGS
-   ===================================================== */
-
-.genre-list {
-    gap: 6px;
-}
-
-.profile-tag {
-    min-height: 30px;
-
-    padding:
-        5px
-        10px;
-
-    font-size: 12px;
-
-    line-height: 17px;
-}
-
-
-/* =====================================================
-   SERVIÇOS
-   ===================================================== */
-
-.profile-services-section {
-    padding: 16px;
-
-    border-radius: 20px;
-}
-
-.profile-services-section .section-title-icon {
-    width: 35px;
-    height: 35px;
-
-    min-width: 35px;
-    min-height: 35px;
-}
-
-.profile-services-section .section-title {
-    font-size: 16px;
-}
-
-.profile-services-section .section-subtitle {
-    font-size: 10.5px;
-}
-
-.service-card {
-    padding: 10px;
-}
-
-.service-card-header {
-    gap: 7px;
-}
-
-.service-icon {
-    width: 32px;
-    height: 32px;
-
-    min-width: 32px;
-
-    border-radius: 9px;
-}
-
-.service-icon svg {
-    width: 15px;
-    height: 15px;
-}
-
-.service-card-title-area h3 {
-    font-size: 11px;
-
-    line-height: 1.35;
-}
-
-.service-description {
-    margin-top: 5px;
-
-    font-size: 9px;
-
-    line-height: 1.45;
-}
-
-.service-meta {
-    gap: 4px;
-
-    margin-top: 6px;
-}
-
-.service-meta-item {
-    min-height: 22px;
-
-    padding:
-        3px
-        5px;
-
-    border-radius: 6px;
-
-    font-size: 8px;
-}
-
-.service-meta-item svg {
-    width: 10px;
-    height: 10px;
-}
-
-.service-card-footer {
-    gap: 6px;
-
-    margin-top: 8px;
-
-    padding-top: 7px;
-}
-
-.service-price-label {
-    font-size: 8px;
-}
-
-.service-price strong {
-    font-size: 11px;
-
-    line-height: 1.3;
-}
-
-
-/* =====================================================
-   AGENDA
-   ===================================================== */
-
-.agenda-event-card {
-    padding: 10px;
-
-    gap: 8px;
-}
-
-.agenda-event-date {
-    width: 46px;
-    min-width: 46px;
-}
-
-.agenda-event-date strong {
-    font-size: 17px;
-}
-
-
-/* =====================================================
-   AÇÕES
-   ===================================================== */
-
-.profile-action-bar {
-    padding-left: 12px;
-    padding-right: 12px;
-}
-
-.profile-action-container {
-    gap: 8px;
-}
-
-.profile-action-message {
-    flex:
-        0 0 50px;
-
-    width: 50px;
-}
-
-.profile-action-hire {
-    height: 50px;
-}
-
-.profile-action-button {
-    font-size: 13px;
-}
-
-
-}
