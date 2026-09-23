@@ -16,8 +16,9 @@
    - Controlar compartilhamentos de perfis.
    - Carregar os contadores das interações.
    - Identificar o usuário autenticado.
-   - Trabalhar com os botões existentes nos cards.
-   - Funcionar também com cards criados dinamicamente.
+   - Trabalhar com os botões existentes nos cards do Index.
+   - Trabalhar também com a topbar da página pública de perfil.
+   - Funcionar com elementos criados dinamicamente.
    - Abrir o modal de comentários.
    - Exibir o campo de comentário no topo do modal.
    - Exibir os comentários existentes abaixo do campo.
@@ -38,6 +39,19 @@
    Cliente Supabase:
 
    - window.supabaseClient
+
+   IMPORTANTE:
+
+   Este módulo é universal.
+
+   Ele funciona tanto com:
+
+   - cards do Index;
+   - página pública de apresentação de perfil.
+
+   O perfil alvo é sempre obtido por perfil_id.
+
+   O usuário autenticado é sempre obtido por usuario_id.
 ========================================================= */
 
 (function (window) {
@@ -51,9 +65,14 @@
 
     const CONFIG = {
 
-        seletorCard: ".ad-card-novo",
+        seletorCard:
+            ".ad-card-novo",
 
-        seletorContainer: ".interacoes-perfil",
+        seletorContainer:
+            ".interacoes-perfil",
+
+        seletorContainerPerfil:
+            "[data-interacoes-perfil]",
 
         seletorBotao:
             ".ad-card-acoes .ad-social-btn",
@@ -70,13 +89,14 @@
         tabelaCompartilhamentos:
             "compartilhamentos_perfis",
 
-        limiteComentarios: 20
+        limiteComentarios:
+            20
 
     };
 
 
     /* =====================================================
-       ESTADO DOS CARDS
+       ESTADO DOS CARDS / PERFIS
     ===================================================== */
 
     const estado = new WeakMap();
@@ -103,14 +123,19 @@
             window.supabaseClient &&
             typeof window.supabaseClient.from === "function"
         ) {
+
             return window.supabaseClient;
+
         }
+
 
         console.error(
             "MusicalWorld Interações: cliente Supabase não encontrado."
         );
 
+
         return null;
+
     }
 
 
@@ -126,6 +151,7 @@
             .replace(/>/g, "&gt;")
             .replace(/"/g, "&quot;")
             .replace(/'/g, "&#039;");
+
     }
 
 
@@ -134,45 +160,60 @@
         const texto =
             String(nome || "Usuário").trim();
 
+
         if (!texto) {
+
             return "U";
+
         }
+
 
         const partes =
             texto
                 .split(/\s+/)
                 .filter(Boolean);
 
+
         if (partes.length === 1) {
 
             return partes[0]
                 .substring(0, 2)
                 .toUpperCase();
+
         }
+
 
         return (
             partes[0].charAt(0) +
             partes[partes.length - 1].charAt(0)
         ).toUpperCase();
+
     }
 
 
     function formatarData(data) {
 
         if (!data) {
+
             return "";
+
         }
+
 
         const dataObj =
             new Date(data);
+
 
         if (
             Number.isNaN(
                 dataObj.getTime()
             )
         ) {
+
             return "";
+
         }
+
 
         return dataObj.toLocaleDateString(
             "pt-BR",
@@ -182,6 +223,7 @@
                 year: "numeric"
             }
         );
+
     }
 
 
@@ -192,19 +234,28 @@
     function obterCard(elemento) {
 
         if (!elemento) {
+
             return null;
+
         }
+
 
         if (
             elemento.matches &&
-            elemento.matches(CONFIG.seletorCard)
+            elemento.matches(
+                CONFIG.seletorCard
+            )
         ) {
+
             return elemento;
+
         }
+
 
         return elemento.closest(
             CONFIG.seletorCard
         );
+
     }
 
 
@@ -215,8 +266,46 @@
     function obterContainer(elemento) {
 
         if (!elemento) {
+
             return null;
+
         }
+
+
+        /*
+         * Primeiro verifica o container universal
+         * utilizado pela página pública de perfil.
+         */
+
+        if (
+            elemento.matches &&
+            elemento.matches(
+                CONFIG.seletorContainerPerfil
+            )
+        ) {
+
+            return elemento;
+
+        }
+
+
+        const containerPerfil =
+            elemento.closest(
+                CONFIG.seletorContainerPerfil
+            );
+
+
+        if (containerPerfil) {
+
+            return containerPerfil;
+
+        }
+
+
+        /*
+         * Depois verifica o container tradicional
+         * utilizado pelos cards do Index.
+         */
 
         if (
             elemento.matches &&
@@ -224,7 +313,9 @@
                 CONFIG.seletorContainer
             )
         ) {
+
             return elemento;
+
         }
 
 
@@ -235,7 +326,9 @@
 
 
         if (container) {
+
             return container;
+
         }
 
 
@@ -247,12 +340,16 @@
         const card =
             obterCard(elemento);
 
+
         if (card) {
+
             return card;
+
         }
 
 
         return null;
+
     }
 
 
@@ -263,7 +360,9 @@
     function obterPerfilId(container) {
 
         if (!container) {
+
             return null;
+
         }
 
 
@@ -281,23 +380,36 @@
 
 
         if (!valor) {
+
             return null;
+
         }
 
 
+        /*
+         * IMPORTANTE:
+         *
+         * O perfil_id do MusicalWorld é um UUID.
+         *
+         * Portanto, não devemos converter para Number.
+         *
+         * A função aceita tanto UUID quanto qualquer
+         * identificador textual válido utilizado pelo banco.
+         */
+
         const perfilId =
-            Number(valor);
+            String(valor).trim();
 
 
-        if (
-            !Number.isFinite(perfilId) ||
-            perfilId <= 0
-        ) {
+        if (!perfilId) {
+
             return null;
+
         }
 
 
         return perfilId;
+
     }
 
 
@@ -310,86 +422,263 @@
         tipo
     ) {
 
+        if (!container) {
+
+            return null;
+
+        }
+
+
         const card =
             obterCard(container);
 
 
-        if (!card) {
-            return null;
+        /*
+         * -------------------------------------------------
+         * CARDS DO INDEX
+         * -------------------------------------------------
+         */
+
+        if (card) {
+
+            /*
+             * Primeiro procura pelo atributo
+             * data-interacao.
+             */
+
+            const botaoDireto =
+                card.querySelector(
+                    `[data-interacao="${tipo}"]`
+                );
+
+
+            if (botaoDireto) {
+
+                return botaoDireto;
+
+            }
+
+
+            /*
+             * Depois procura pelo data-acao usado
+             * pelo Index.
+             */
+
+            const botaoAcao =
+                card.querySelector(
+                    `[data-acao="${tipo}"]`
+                );
+
+
+            if (botaoAcao) {
+
+                return botaoAcao;
+
+            }
+
+
+            /*
+             * Compatibilidade com a ordem atual
+             * dos botões do card.
+             */
+
+            const botoes =
+                Array.from(
+                    card.querySelectorAll(
+                        CONFIG.seletorBotao
+                    )
+                );
+
+
+            const indices = {
+
+                comentar: 0,
+
+                curtir: 1,
+
+                compartilhar: 2,
+
+                salvar: 3
+
+            };
+
+
+            const indice =
+                indices[tipo];
+
+
+            if (
+                typeof indice === "number" &&
+                botoes[indice]
+            ) {
+
+                return botoes[indice];
+
+            }
+
         }
 
 
         /*
-         * Primeiro procura pelo atributo
-         * data-interacao.
+         * -------------------------------------------------
+         * PÁGINA PÚBLICA DE PERFIL
+         * -------------------------------------------------
+         *
+         * A topbar utiliza:
+         *
+         * #btnCurtir
+         * #btnSalvar
+         *
+         * e também possui:
+         *
+         * data-action="like"
+         * data-action="save"
+         *
+         * O módulo universal reconhece ambos.
          */
 
-        const botaoDireto =
-            card.querySelector(
-                `[data-interacao="${tipo}"]`
-            );
-
-
-        if (botaoDireto) {
-            return botaoDireto;
-        }
-
-
-        /*
-         * Depois procura pelo data-acao usado
-         * pelo Index.
-         */
-
-        const botaoAcao =
-            card.querySelector(
-                `[data-acao="${tipo}"]`
-            );
-
-
-        if (botaoAcao) {
-            return botaoAcao;
-        }
-
-
-        /*
-         * Compatibilidade com a ordem atual
-         * dos botões do card.
-         */
-
-        const botoes =
+        const botoesPerfil =
             Array.from(
-                card.querySelectorAll(
-                    CONFIG.seletorBotao
+                container.querySelectorAll(
+                    "button"
                 )
             );
 
 
-        const indices = {
-
-            comentar: 0,
-
-            curtir: 1,
-
-            compartilhar: 2,
-
-            salvar: 3
-
-        };
-
-
-        const indice =
-            indices[tipo];
-
-
-        if (
-            typeof indice === "number" &&
-            botoes[indice]
+        for (
+            const botao
+            of botoesPerfil
         ) {
-            return botoes[indice];
+
+            const interacao =
+                String(
+                    botao.dataset.interacao ||
+                    ""
+                )
+                    .trim()
+                    .toLowerCase();
+
+
+            if (
+                interacao === tipo
+            ) {
+
+                return botao;
+
+            }
+
+
+            const acao =
+                String(
+                    botao.dataset.acao ||
+                    botao.dataset.action ||
+                    ""
+                )
+                    .trim()
+                    .toLowerCase();
+
+
+            if (
+                tipo === "curtir" &&
+                (
+                    acao === "curtir" ||
+                    acao === "like"
+                )
+            ) {
+
+                return botao;
+
+            }
+
+
+            if (
+                tipo === "salvar" &&
+                (
+                    acao === "salvar" ||
+                    acao === "save"
+                )
+            ) {
+
+                return botao;
+
+            }
+
+
+            if (
+                tipo === "comentar" &&
+                (
+                    acao === "comentar" ||
+                    acao === "comment"
+                )
+            ) {
+
+                return botao;
+
+            }
+
+
+            if (
+                tipo === "compartilhar" &&
+                (
+                    acao === "compartilhar" ||
+                    acao === "share"
+                )
+            ) {
+
+                return botao;
+
+            }
+
+        }
+
+
+        /*
+         * Compatibilidade direta com a página pública
+         * de apresentação de perfil.
+         */
+
+        if (tipo === "curtir") {
+
+            const botao =
+                document.getElementById(
+                    "btnCurtir"
+                );
+
+
+            if (
+                botao &&
+                container.contains(botao)
+            ) {
+
+                return botao;
+
+            }
+
+        }
+
+
+        if (tipo === "salvar") {
+
+            const botao =
+                document.getElementById(
+                    "btnSalvar"
+                );
+
+
+            if (
+                botao &&
+                container.contains(botao)
+            ) {
+
+                return botao;
+
+            }
+
         }
 
 
         return null;
+
     }
 
 
@@ -399,6 +688,7 @@
             container,
             "curtir"
         );
+
     }
 
 
@@ -408,6 +698,7 @@
             container,
             "comentar"
         );
+
     }
 
 
@@ -417,6 +708,7 @@
             container,
             "compartilhar"
         );
+
     }
 
 
@@ -426,6 +718,7 @@
             container,
             "salvar"
         );
+
     }
 
 
@@ -440,7 +733,9 @@
 
 
         if (!supabase) {
+
             return null;
+
         }
 
 
@@ -455,7 +750,9 @@
                 !resultado.data ||
                 !resultado.data.user
             ) {
+
                 return null;
+
             }
 
 
@@ -468,8 +765,11 @@
                 erro
             );
 
+
             return null;
+
         }
+
     }
 
 
@@ -500,11 +800,14 @@
 
 
         if (resultado.error) {
+
             throw resultado.error;
+
         }
 
 
         return resultado.count || 0;
+
     }
 
 
@@ -519,7 +822,9 @@
 
 
         if (!supabase) {
+
             return;
+
         }
 
 
@@ -534,7 +839,9 @@
                 container
             );
 
+
             return;
+
         }
 
 
@@ -582,9 +889,12 @@
             ]);
 
 
-            let usuarioCurtiu = false;
+            let usuarioCurtiu =
+                false;
 
-            let usuarioSalvou = false;
+
+            let usuarioSalvou =
+                false;
 
 
             if (usuarioId) {
@@ -627,13 +937,21 @@
                 ]);
 
 
-                if (curtidaUsuario.error) {
+                if (
+                    curtidaUsuario.error
+                ) {
+
                     throw curtidaUsuario.error;
+
                 }
 
 
-                if (favoritoUsuario.error) {
+                if (
+                    favoritoUsuario.error
+                ) {
+
                     throw favoritoUsuario.error;
+
                 }
 
 
@@ -647,6 +965,7 @@
                     Boolean(
                         favoritoUsuario.data
                     );
+
             }
 
 
@@ -689,7 +1008,9 @@
                 "MusicalWorld Interações: erro ao carregar interações.",
                 erro
             );
+
         }
+
     }
 
 
@@ -703,7 +1024,9 @@
     ) {
 
         if (!botao) {
+
             return;
+
         }
 
 
@@ -724,11 +1047,13 @@
 
             contador.textContent =
                 String(quantidade);
+
         }
 
 
         botao.dataset.contagem =
             String(quantidade);
+
     }
 
 
@@ -743,7 +1068,9 @@
 
 
         if (!dados) {
+
             return;
+
         }
 
 
@@ -773,21 +1100,35 @@
 
         if (botaoCurtir) {
 
-            botaoCurtir.classList.toggle(
-                "ativo",
+            const curtido =
                 Boolean(
                     dados.usuarioCurtiu
-                )
+                );
+
+
+            /*
+             * "ativo" é utilizado pelo sistema
+             * universal de interações.
+             *
+             * "is-active" é mantido para compatibilidade
+             * visual com a topbar da página pública.
+             */
+
+            botaoCurtir.classList.toggle(
+                "ativo",
+                curtido
+            );
+
+
+            botaoCurtir.classList.toggle(
+                "is-active",
+                curtido
             );
 
 
             botaoCurtir.setAttribute(
                 "aria-pressed",
-                String(
-                    Boolean(
-                        dados.usuarioCurtiu
-                    )
-                )
+                String(curtido)
             );
 
 
@@ -799,6 +1140,7 @@
                 botaoCurtir,
                 dados.curtidas
             );
+
         }
 
 
@@ -812,6 +1154,7 @@
                 botaoComentar,
                 dados.comentarios
             );
+
         }
 
 
@@ -825,26 +1168,41 @@
                 botaoCompartilhar,
                 dados.compartilhamentos
             );
+
         }
 
 
         if (botaoSalvar) {
 
-            botaoSalvar.classList.toggle(
-                "ativo",
+            const salvo =
                 Boolean(
                     dados.usuarioSalvou
-                )
+                );
+
+
+            /*
+             * "ativo" é utilizado pelo sistema
+             * universal de interações.
+             *
+             * "is-active" é mantido para compatibilidade
+             * visual com a topbar da página pública.
+             */
+
+            botaoSalvar.classList.toggle(
+                "ativo",
+                salvo
+            );
+
+
+            botaoSalvar.classList.toggle(
+                "is-active",
+                salvo
             );
 
 
             botaoSalvar.setAttribute(
                 "aria-pressed",
-                String(
-                    Boolean(
-                        dados.usuarioSalvou
-                    )
-                )
+                String(salvo)
             );
 
 
@@ -856,7 +1214,9 @@
                 botaoSalvar,
                 dados.favoritos
             );
+
         }
+
     }
 
 
@@ -871,7 +1231,9 @@
 
 
         if (!supabase) {
+
             return;
+
         }
 
 
@@ -885,13 +1247,17 @@
                 container
             );
 
+
             dados =
                 estado.get(container);
+
         }
 
 
         if (!dados) {
+
             return;
+
         }
 
 
@@ -906,7 +1272,9 @@
                 "Você precisa estar conectado para curtir este perfil."
             );
 
+
             return;
+
         }
 
 
@@ -917,7 +1285,10 @@
 
 
         if (botao) {
-            botao.disabled = true;
+
+            botao.disabled =
+                true;
+
         }
 
 
@@ -942,7 +1313,9 @@
 
 
                 if (resultado.error) {
+
                     throw resultado.error;
+
                 }
 
 
@@ -975,7 +1348,9 @@
 
 
                 if (resultado.error) {
+
                     throw resultado.error;
+
                 }
 
 
@@ -983,7 +1358,9 @@
                     true;
 
 
-                dados.curtidas += 1;
+                dados.curtidas +=
+                    1;
+
             }
 
 
@@ -1025,9 +1402,14 @@
         } finally {
 
             if (botao) {
-                botao.disabled = false;
+
+                botao.disabled =
+                    false;
+
             }
+
         }
+
     }
 
 
@@ -1042,7 +1424,9 @@
 
 
         if (!supabase) {
+
             return;
+
         }
 
 
@@ -1056,13 +1440,17 @@
                 container
             );
 
+
             dados =
                 estado.get(container);
+
         }
 
 
         if (!dados) {
+
             return;
+
         }
 
 
@@ -1077,7 +1465,9 @@
                 "Você precisa estar conectado para salvar este perfil."
             );
 
+
             return;
+
         }
 
 
@@ -1088,7 +1478,10 @@
 
 
         if (botao) {
-            botao.disabled = true;
+
+            botao.disabled =
+                true;
+
         }
 
 
@@ -1113,7 +1506,9 @@
 
 
                 if (resultado.error) {
+
                     throw resultado.error;
+
                 }
 
 
@@ -1146,7 +1541,9 @@
 
 
                 if (resultado.error) {
+
                     throw resultado.error;
+
                 }
 
 
@@ -1154,7 +1551,9 @@
                     true;
 
 
-                dados.favoritos += 1;
+                dados.favoritos +=
+                    1;
+
             }
 
 
@@ -1196,9 +1595,14 @@
         } finally {
 
             if (botao) {
-                botao.disabled = false;
+
+                botao.disabled =
+                    false;
+
             }
+
         }
+
     }
 
 
@@ -1215,7 +1619,9 @@
 
 
         if (!supabase) {
+
             return false;
+
         }
 
 
@@ -1229,13 +1635,17 @@
                 container
             );
 
+
             dados =
                 estado.get(container);
+
         }
 
 
         if (!dados) {
+
             return false;
+
         }
 
 
@@ -1258,7 +1668,9 @@
                 "MusicalWorld Interações: compartilhamento não registrado porque não há usuário autenticado."
             );
 
+
             return false;
+
         }
 
 
@@ -1324,14 +1736,17 @@
                 if (duplicado) {
 
                     return false;
+
                 }
 
 
                 throw resultado.error;
+
             }
 
 
-            dados.compartilhamentos += 1;
+            dados.compartilhamentos +=
+                1;
 
 
             dados.usuario =
@@ -1363,18 +1778,15 @@
             );
 
 
-            /*
-             * Recarrega o estado para garantir que o
-             * contador visual não fique divergente.
-             */
-
             await carregarEstado(
                 container
             );
 
 
             return false;
+
         }
+
     }
 
 
@@ -1388,7 +1800,9 @@
             modalComentariosAtual &&
             containerComentariosAtual === container
         ) {
+
             return modalComentariosAtual;
+
         }
 
 
@@ -1399,12 +1813,16 @@
 
 
         if (modalAnterior) {
+
             modalAnterior.remove();
+
         }
 
 
         const modal =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
 
 
         modal.className =
@@ -1554,6 +1972,7 @@
 
 
         return modal;
+
     }
 
 
@@ -1604,6 +2023,7 @@
 
                 }
             );
+
         }
 
 
@@ -1621,6 +2041,7 @@
 
                 }
             );
+
         }
 
 
@@ -1640,6 +2061,7 @@
 
                 }
             );
+
         }
 
 
@@ -1651,8 +2073,10 @@
 
                     if (
                         evento.key === "Enter" &&
-                        (evento.ctrlKey ||
-                         evento.metaKey)
+                        (
+                            evento.ctrlKey ||
+                            evento.metaKey
+                        )
                     ) {
 
                         evento.preventDefault();
@@ -1660,9 +2084,12 @@
                         await enviarComentario(
                             container
                         );
+
                     }
+
                 }
             );
+
         }
 
 
@@ -1682,7 +2109,9 @@
 
                 }
             );
+
         }
+
     }
 
 
@@ -1690,10 +2119,14 @@
        ABRIR MODAL
     ===================================================== */
 
-    async function abrirModalComentarios(container) {
+    async function abrirModalComentarios(
+        container
+    ) {
 
         if (!container) {
+
             return;
+
         }
 
 
@@ -1701,19 +2134,16 @@
             estado.get(container);
 
 
-        /*
-         * Se o card ainda não tiver sido inicializado,
-         * carregamos o estado agora.
-         */
-
         if (!dados) {
 
             await carregarEstado(
                 container
             );
 
+
             dados =
                 estado.get(container);
+
         }
 
 
@@ -1723,7 +2153,9 @@
                 "MusicalWorld Interações: não foi possível obter o estado do perfil."
             );
 
+
             return;
+
         }
 
 
@@ -1739,7 +2171,9 @@
 
 
         if (!modal) {
+
             return;
+
         }
 
 
@@ -1778,7 +2212,9 @@
 
                 campo.placeholder =
                     "Escreva um comentário...";
+
             }
+
         }
 
 
@@ -1799,12 +2235,15 @@
                     ) {
 
                         campo.focus();
+
                     }
 
                 },
                 80
             );
+
         }
+
     }
 
 
@@ -1822,7 +2261,9 @@
 
 
         if (!modal) {
+
             return;
+
         }
 
 
@@ -1848,6 +2289,7 @@
                 ) {
 
                     modal.remove();
+
                 }
 
 
@@ -1859,13 +2301,16 @@
                     modalComentariosAtual =
                         null;
 
+
                     containerComentariosAtual =
                         null;
+
                 }
 
             },
             180
         );
+
     }
 
 
@@ -1873,14 +2318,18 @@
        CARREGAR COMENTÁRIOS
     ===================================================== */
 
-    async function carregarComentarios(container) {
+    async function carregarComentarios(
+        container
+    ) {
 
         const supabase =
             obterSupabase();
 
 
         if (!supabase) {
+
             return;
+
         }
 
 
@@ -1889,7 +2338,9 @@
 
 
         if (!dados) {
+
             return;
+
         }
 
 
@@ -1904,7 +2355,9 @@
             !modal ||
             containerComentariosAtual !== container
         ) {
+
             return;
+
         }
 
 
@@ -1915,7 +2368,9 @@
 
 
         if (!lista) {
+
             return;
+
         }
 
 
@@ -1964,7 +2419,9 @@
 
 
             if (resultado.error) {
+
                 throw resultado.error;
+
             }
 
 
@@ -1990,7 +2447,9 @@
                 </div>
 
             `;
+
         }
+
     }
 
 
@@ -2011,7 +2470,9 @@
             !modal ||
             containerComentariosAtual !== container
         ) {
+
             return;
+
         }
 
 
@@ -2022,7 +2483,9 @@
 
 
         if (!lista) {
+
             return;
+
         }
 
 
@@ -2038,7 +2501,9 @@
 
             `;
 
+
             return;
+
         }
 
 
@@ -2105,15 +2570,6 @@
 
                                 `;
 
-
-                        /*
-                         * Só o próprio autor pode receber
-                         * visualmente o botão de exclusão.
-                         *
-                         * A proteção real também é feita
-                         * novamente em excluirComentario()
-                         * antes do DELETE.
-                         */
 
                         const ehDoUsuarioAtual =
                             Boolean(
@@ -2198,24 +2654,18 @@
                                     </p>
 
 
-                                    ${
-                                        botaoExcluir
-                                    }
+                                    ${botaoExcluir}
 
                                 </div>
 
                             </article>
 
                         `;
+
                     }
                 )
                 .join("");
 
-
-        /*
-         * Trata falhas no carregamento da imagem
-         * do avatar.
-         */
 
         lista
             .querySelectorAll(
@@ -2268,17 +2718,10 @@
                             once: true
                         }
                     );
+
                 }
             );
 
-
-        /*
-         * Eventos dos botões de exclusão.
-         *
-         * Como a lista é reconstruída depois de cada
-         * carregamento, os eventos são adicionados
-         * novamente aos botões existentes.
-         */
 
         lista
             .querySelectorAll(
@@ -2301,7 +2744,9 @@
 
 
                             if (!comentarioId) {
+
                                 return;
+
                             }
 
 
@@ -2313,8 +2758,10 @@
 
                         }
                     );
+
                 }
             );
+
     }
 
 
@@ -2333,12 +2780,19 @@
 
 
         if (!supabase) {
+
             return;
+
         }
 
 
-        if (!container || !comentarioId) {
+        if (
+            !container ||
+            !comentarioId
+        ) {
+
             return;
+
         }
 
 
@@ -2352,20 +2806,19 @@
                 container
             );
 
+
             dados =
                 estado.get(container);
+
         }
 
 
         if (!dados) {
+
             return;
+
         }
 
-
-        /*
-         * Precisamos obrigatoriamente de um usuário
-         * autenticado para permitir a exclusão.
-         */
 
         const usuario =
             dados.usuario ||
@@ -2378,13 +2831,11 @@
                 "Você precisa estar conectado para excluir um comentário."
             );
 
+
             return;
+
         }
 
-
-        /*
-         * Primeiro localizamos o comentário no DOM.
-         */
 
         const artigo =
             containerComentariosAtual === container
@@ -2396,16 +2847,6 @@
                     )
                 : null;
 
-
-        /*
-         * Proteção adicional:
-         *
-         * Antes de excluir, buscamos novamente o comentário
-         * no banco e verificamos quem é o proprietário.
-         *
-         * Dessa forma, não confiamos apenas no botão
-         * exibido no navegador.
-         */
 
         try {
 
@@ -2429,17 +2870,15 @@
 
 
             if (consulta.error) {
+
                 throw consulta.error;
+
             }
 
 
             const comentarioBanco =
                 consulta.data;
 
-
-            /*
-             * Comentário inexistente.
-             */
 
             if (!comentarioBanco) {
 
@@ -2459,15 +2898,9 @@
 
 
                 return;
+
             }
 
-
-            /*
-             * PROTEÇÃO PRINCIPAL NO JAVASCRIPT:
-             *
-             * O usuário atual precisa ser exatamente
-             * o mesmo usuário que criou o comentário.
-             */
 
             if (
                 !comentarioBanco.usuario_id ||
@@ -2489,12 +2922,9 @@
 
 
                 return;
+
             }
 
-
-            /*
-             * Confirmação antes da exclusão.
-             */
 
             const confirmar =
                 window.confirm(
@@ -2503,7 +2933,9 @@
 
 
             if (!confirmar) {
+
                 return;
+
             }
 
 
@@ -2512,22 +2944,12 @@
                 botao.disabled =
                     true;
 
+
                 botao.textContent =
                     "Excluindo...";
+
             }
 
-
-            /*
-             * O DELETE utiliza três filtros:
-             *
-             * 1. id do comentário;
-             * 2. perfil ao qual pertence;
-             * 3. usuário proprietário.
-             *
-             * Mesmo que alguém tente alterar o DOM,
-             * não será possível excluir outro comentário
-             * por esta função.
-             */
 
             const resultado =
                 await supabase
@@ -2550,14 +2972,11 @@
 
 
             if (resultado.error) {
+
                 throw resultado.error;
+
             }
 
-
-            /*
-             * Atualiza o estado local somente depois
-             * que o DELETE foi confirmado pelo Supabase.
-             */
 
             dados.comentarios =
                 Math.max(
@@ -2582,45 +3001,25 @@
             );
 
 
-            /*
-             * Atualiza imediatamente o contador
-             * no card.
-             */
-
             atualizarInterface(
                 container
             );
 
 
-            /*
-             * Remove imediatamente o elemento da lista
-             * para dar resposta visual rápida ao usuário.
-             */
-
-            if (artigo && artigo.parentNode) {
+            if (
+                artigo &&
+                artigo.parentNode
+            ) {
 
                 artigo.remove();
+
             }
 
-
-            /*
-             * Recarrega os comentários para garantir que
-             * a interface esteja exatamente sincronizada
-             * com o banco.
-             */
 
             await carregarComentarios(
                 container
             );
 
-
-            /*
-             * Recarrega o contador real do banco.
-             *
-             * Isso evita divergência caso outra pessoa tenha
-             * publicado/excluído comentários enquanto o modal
-             * estava aberto.
-             */
 
             await carregarEstado(
                 container
@@ -2633,12 +3032,6 @@
                 erro
             );
 
-
-            /*
-             * Se a exclusão falhar, recuperamos o estado
-             * real do banco e não alteramos o contador
-             * permanentemente.
-             */
 
             await carregarEstado(
                 container
@@ -2656,10 +3049,14 @@
                 botao.disabled =
                     false;
 
+
                 botao.textContent =
                     "Excluir";
+
             }
+
         }
+
     }
 
 
@@ -2667,14 +3064,18 @@
        ENVIAR COMENTÁRIO
     ===================================================== */
 
-    async function enviarComentario(container) {
+    async function enviarComentario(
+        container
+    ) {
 
         const supabase =
             obterSupabase();
 
 
         if (!supabase) {
+
             return;
+
         }
 
 
@@ -2688,13 +3089,17 @@
                 container
             );
 
+
             dados =
                 estado.get(container);
+
         }
 
 
         if (!dados) {
+
             return;
+
         }
 
 
@@ -2709,7 +3114,9 @@
                 "Você precisa estar conectado para comentar."
             );
 
+
             return;
+
         }
 
 
@@ -2721,7 +3128,9 @@
             !modal ||
             containerComentariosAtual !== container
         ) {
+
             return;
+
         }
 
 
@@ -2738,7 +3147,9 @@
 
 
         if (!campo) {
+
             return;
+
         }
 
 
@@ -2753,6 +3164,7 @@
             campo.focus();
 
             return;
+
         }
 
 
@@ -2761,8 +3173,10 @@
             botao.disabled =
                 true;
 
+
             botao.textContent =
                 "Publicando...";
+
         }
 
 
@@ -2787,14 +3201,18 @@
 
 
             if (resultado.error) {
+
                 throw resultado.error;
+
             }
 
 
-            campo.value = "";
+            campo.value =
+                "";
 
 
-            dados.comentarios += 1;
+            dados.comentarios +=
+                1;
 
 
             dados.usuario =
@@ -2839,10 +3257,14 @@
                 botao.disabled =
                     false;
 
+
                 botao.textContent =
                     "Publicar";
+
             }
+
         }
+
     }
 
 
@@ -2850,22 +3272,29 @@
        ALTERNAR COMENTÁRIOS
     ===================================================== */
 
-    async function alternarComentarios(container) {
+    async function alternarComentarios(
+        container
+    ) {
 
         await abrirModalComentarios(
             container
         );
+
     }
 
 
     /* =====================================================
-       INICIALIZAR CARD
+       INICIALIZAR ELEMENTO
     ===================================================== */
 
-    async function inicializarElemento(container) {
+    async function inicializarElemento(
+        container
+    ) {
 
         if (!container) {
+
             return;
+
         }
 
 
@@ -2880,21 +3309,25 @@
                 container
             );
 
+
             return;
+
         }
 
 
         /*
-         * Apenas garante que o estado inicial
-         * seja carregado.
+         * Garante que o estado inicial seja carregado.
          *
-         * O clique agora é controlado por delegação
-         * global, portanto não depende deste método.
+         * Isso vale tanto para:
+         *
+         * - cards do Index;
+         * - topbar da página pública.
          */
 
         await carregarEstado(
             container
         );
+
     }
 
 
@@ -2911,7 +3344,9 @@
 
 
         if (!cards.length) {
+
             return;
+
         }
 
 
@@ -2923,21 +3358,29 @@
                     )
             )
         );
+
     }
 
 
     /* =====================================================
        DELEGAÇÃO GLOBAL DE CLIQUES
 
+       Funciona com:
+
+       - cards dinâmicos do Index;
+       - topbar da página pública.
+
        IMPORTANTE:
 
-       Os cards do Index são criados dinamicamente.
+       A página pública não possui .ad-card-novo.
+       Por isso a delegação também procura por
+       [data-interacao-perfil-botao="true"].
 
-       Por isso não dependemos exclusivamente de
-       addEventListener diretamente no botão.
+       IMPORTANTE:
 
-       O document captura o clique e identifica
-       qual interação foi acionada.
+       O listener utiliza a fase de propagação normal
+       para não bloquear os eventos próprios dos cards
+       do Index durante a fase de captura.
     ===================================================== */
 
     document.addEventListener(
@@ -2951,90 +3394,333 @@
 
 
             if (!alvo) {
+
                 return;
+
             }
 
 
-            const botao =
+            /*
+             * -------------------------------------------------
+             * IDENTIFICAR BOTÃO DO INDEX
+             * -------------------------------------------------
+             */
+
+            const botaoCard =
                 alvo.closest(
                     CONFIG.seletorBotao
                 );
 
 
-            if (!botao) {
-                return;
-            }
+            /*
+             * -------------------------------------------------
+             * IDENTIFICAR BOTÃO DA PÁGINA DE PERFIL
+             * -------------------------------------------------
+             */
 
-
-            const card =
-                botao.closest(
-                    CONFIG.seletorCard
+            const botaoPerfil =
+                alvo.closest(
+                    '[data-interacao-perfil-botao="true"]'
                 );
 
 
-            if (!card) {
-                return;
-            }
-
-
             /*
-             * Primeiro verifica explicitamente
-             * data-acao.
-             */
-
-            let tipo =
-                botao.dataset.acao ||
-                botao.dataset.interacao;
-
-
-            /*
-             * Se não houver atributo, identifica
-             * pela posição dos botões.
-             */
-
-            if (!tipo) {
-
-                const botoes =
-                    Array.from(
-                        card.querySelectorAll(
-                            CONFIG.seletorBotao
-                        )
-                    );
-
-
-                const indice =
-                    botoes.indexOf(
-                        botao
-                    );
-
-
-                const tipos = [
-
-                    "comentar",
-
-                    "curtir",
-
-                    "compartilhar",
-
-                    "salvar"
-
-                ];
-
-
-                tipo =
-                    tipos[indice];
-            }
-
-
-            /*
-             * Compartilhar continua sendo tratado
-             * pelo sistema próprio do Index.
+             * Nenhum dos dois tipos foi acionado.
              */
 
             if (
-                tipo === "compartilhar"
+                !botaoCard &&
+                !botaoPerfil
             ) {
+
                 return;
+
+            }
+
+
+            const botao =
+                botaoCard ||
+                botaoPerfil;
+
+
+            /*
+             * -------------------------------------------------
+             * INDEX
+             * -------------------------------------------------
+             */
+
+            if (botaoCard) {
+
+                const card =
+                    botao.closest(
+                        CONFIG.seletorCard
+                    );
+
+
+                if (!card) {
+
+                    return;
+
+                }
+
+
+                let tipo =
+                    botao.dataset.acao ||
+                    botao.dataset.interacao;
+
+
+                /*
+                 * Se não houver atributo, identifica
+                 * pela posição dos botões.
+                 */
+
+                if (!tipo) {
+
+                    const botoes =
+                        Array.from(
+                            card.querySelectorAll(
+                                CONFIG.seletorBotao
+                            )
+                        );
+
+
+                    const indice =
+                        botoes.indexOf(
+                            botao
+                        );
+
+
+                    const tipos = [
+
+                        "comentar",
+
+                        "curtir",
+
+                        "compartilhar",
+
+                        "salvar"
+
+                    ];
+
+
+                    tipo =
+                        tipos[indice];
+
+                }
+
+
+                /*
+                 * Compartilhar continua sendo tratado
+                 * pelo sistema próprio do Index.
+                 */
+
+                if (
+                    tipo === "compartilhar"
+                ) {
+
+                    return;
+
+                }
+
+
+                if (
+                    tipo !== "comentar" &&
+                    tipo !== "curtir" &&
+                    tipo !== "salvar"
+                ) {
+
+                    return;
+
+                }
+
+
+                evento.preventDefault();
+
+                evento.stopPropagation();
+
+
+                const container =
+                    obterContainer(card);
+
+
+                if (!container) {
+
+                    console.error(
+                        "MusicalWorld Interações: não foi possível identificar o container do perfil."
+                    );
+
+
+                    return;
+
+                }
+
+
+                const perfilId =
+                    obterPerfilId(container);
+
+
+                if (!perfilId) {
+
+                    console.error(
+                        "MusicalWorld Interações: botão acionado sem perfil_id.",
+                        card
+                    );
+
+
+                    return;
+
+                }
+
+
+                if (!estado.has(container)) {
+
+                    await carregarEstado(
+                        container
+                    );
+
+                }
+
+
+                if (
+                    tipo === "comentar"
+                ) {
+
+                    await alternarComentarios(
+                        container
+                    );
+
+
+                    return;
+
+                }
+
+
+                if (
+                    tipo === "curtir"
+                ) {
+
+                    await alternarCurtida(
+                        container
+                    );
+
+
+                    return;
+
+                }
+
+
+                if (
+                    tipo === "salvar"
+                ) {
+
+                    await alternarFavorito(
+                        container
+                    );
+
+
+                    return;
+
+                }
+
+
+                return;
+
+            }
+
+
+            /*
+             * -------------------------------------------------
+             * PÁGINA PÚBLICA DE PERFIL
+             * -------------------------------------------------
+             */
+
+            const container =
+                obterContainer(
+                    botaoPerfil
+                );
+
+
+            if (!container) {
+
+                console.error(
+                    "MusicalWorld Interações: container da página pública não encontrado."
+                );
+
+
+                return;
+
+            }
+
+
+            const perfilId =
+                obterPerfilId(
+                    container
+                );
+
+
+            if (!perfilId) {
+
+                console.error(
+                    "MusicalWorld Interações: botão da página pública acionado sem perfil_id.",
+                    container
+                );
+
+
+                return;
+
+            }
+
+
+            let tipo =
+                botao.dataset.interacao ||
+                botao.dataset.acao ||
+                botao.dataset.action ||
+                "";
+
+
+            tipo =
+                String(tipo)
+                    .trim()
+                    .toLowerCase();
+
+
+            if (
+                tipo === "like"
+            ) {
+
+                tipo =
+                    "curtir";
+
+            }
+
+
+            if (
+                tipo === "save"
+            ) {
+
+                tipo =
+                    "salvar";
+
+            }
+
+
+            if (
+                tipo === "comment"
+            ) {
+
+                tipo =
+                    "comentar";
+
+            }
+
+
+            if (
+                tipo === "share"
+            ) {
+
+                tipo =
+                    "compartilhar";
+
             }
 
 
@@ -3043,7 +3729,9 @@
                 tipo !== "curtir" &&
                 tipo !== "salvar"
             ) {
+
                 return;
+
             }
 
 
@@ -3052,45 +3740,12 @@
             evento.stopPropagation();
 
 
-            const container =
-                obterContainer(card);
-
-
-            if (!container) {
-
-                console.error(
-                    "MusicalWorld Interações: não foi possível identificar o container do perfil."
-                );
-
-                return;
-            }
-
-
-            const perfilId =
-                obterPerfilId(container);
-
-
-            if (!perfilId) {
-
-                console.error(
-                    "MusicalWorld Interações: botão acionado sem perfil_id.",
-                    card
-                );
-
-                return;
-            }
-
-
-            /*
-             * Garante que o estado exista antes
-             * de executar a ação.
-             */
-
             if (!estado.has(container)) {
 
                 await carregarEstado(
                     container
                 );
+
             }
 
 
@@ -3102,7 +3757,9 @@
                     container
                 );
 
+
                 return;
+
             }
 
 
@@ -3114,7 +3771,9 @@
                     container
                 );
 
+
                 return;
+
             }
 
 
@@ -3125,10 +3784,11 @@
                 await alternarFavorito(
                     container
                 );
+
             }
 
         },
-        true
+        false
     );
 
 
@@ -3143,14 +3803,18 @@
             if (
                 evento.key !== "Escape"
             ) {
+
                 return;
+
             }
 
 
             if (
                 !modalComentariosAtual
             ) {
+
                 return;
+
             }
 
 

@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 
 <html lang="pt-BR">
@@ -22,7 +23,7 @@
      MUSICALWORLD — APRESENTAÇÃO DE PERFIL — TESTE
 
      Arquivo:
-     apresentar-perfil-teste.html
+     apresentar-perfil.html
 
      Responsabilidades:
      - Estruturar a nova página de apresentação de perfil.
@@ -37,6 +38,7 @@
      - ApresentarPerfilServicos.js
      - ApresentarPerfilAvaliacoes.js
      - ApresentarPerfilAcoes.js
+     - interacoes-perfil.js
      ===================================================== -->
 
 <!-- =====================================================
@@ -65,7 +67,7 @@
 
 <link
     rel="stylesheet"
-    href="css/apresentar-perfil/apresentar-perfil-teste.css"
+    href="css/apresentar-perfil/apresentar-perfil.css"
 >
 
 <!-- =====================================================
@@ -88,9 +90,32 @@
 
      A identidade será preenchida posteriormente pelo
      módulo ApresentarPerfilRenderTeste.js.
+
+     INTERAÇÕES:
+
+     Este elemento também funciona como container das
+     interações do perfil público.
+
+     O atributo data-perfil-id será preenchido
+     dinamicamente pelo módulo
+     ApresentarPerfilAcoesTeste.js.
+
+     O módulo interacoes-perfil.js utiliza este
+     container para consultar:
+
+     - curtidas_perfis
+     - favoritos_perfis
+
+     utilizando:
+
+     - usuario_id = usuário autenticado
+     - perfil_id = perfil visualizado
      ===================================================== -->
 
-<header class="topbar">
+<header
+    class="topbar"
+    data-interacoes-perfil
+>
 
 <div class="topbar-inner">
 
@@ -215,6 +240,7 @@
     type="button"
     aria-label="Curtir perfil"
     data-action="like"
+    data-interacao-perfil-botao="true"
 >
 
     <svg
@@ -240,6 +266,7 @@
     type="button"
     aria-label="Salvar perfil"
     data-action="save"
+    data-interacao-perfil-botao="true"
 >
 
     <svg
@@ -373,25 +400,6 @@
 
 <!-- =================================================
      INFORMAÇÕES DO ITEM DO PORTFÓLIO
-
-     Nesta região aparecem SOMENTE:
-
-     - título do item atualmente selecionado;
-     - descrição do item, quando existir.
-
-     Nenhuma informação geral do perfil é exibida
-     nesta região.
-
-     O conteúdo é atualizado dinamicamente pelo:
-
-     ApresentarPerfilPortfolio.js
-
-     Ao trocar de mídia, o título e a descrição
-     acompanham o item ativo.
-
-     A descrição possui limite visual de linhas.
-     Quando ultrapassar esse limite, o botão
-     "Ler descrição completa" será exibido.
      ================================================= -->
 
 <div
@@ -411,15 +419,6 @@
         id="profilePortfolioDescription"
         hidden
     ></p>
-
-    <!-- =================================================
-         BOTÃO PARA EXPANDIR A DESCRIÇÃO
-
-         O botão permanece oculto quando a descrição
-         cabe completamente dentro do limite visual.
-
-         O JavaScript controla sua exibição.
-         ================================================= -->
 
     <button
         class="profile-portfolio-read-more"
@@ -701,10 +700,6 @@
     hidden
 >
 
-<!-- =================================================
-     CABEÇALHO DA SEÇÃO
-     ================================================= -->
-
 <div class="section-heading">
 
     <div
@@ -742,10 +737,6 @@
     </div>
 
 </div>
-
-<!-- =================================================
-     CONTAINER DO MÓDULO DE AVALIAÇÕES
-     ================================================= -->
 
 <div
     class="reviews-render"
@@ -920,6 +911,29 @@
 
 <script
     src="js/core/RoteamentoPerfil.js"
+></script>
+
+<!-- =====================================================
+     INTERAÇÕES UNIVERSAIS
+
+     Este módulo precisa estar carregado antes da
+     inicialização da página pública.
+
+     Ele é responsável por:
+
+     - Curtir
+     - Descurtir
+     - Salvar
+     - Remover dos salvos
+
+     utilizando o mesmo Supabase utilizado pelo Index.
+
+     A inicialização do container da topbar é feita
+     pelo ApresentarPerfilAcoesTeste.js.
+     ===================================================== -->
+
+<script
+    src="js/components/interacoes-perfil.js"
 ></script>
 
 <script
@@ -1139,6 +1153,23 @@ document.addEventListener(
 
             /* =================================================
                7. INICIALIZAR AÇÕES
+
+               O ApresentarPerfilAcoesTeste é responsável
+               por preparar a topbar para o módulo universal
+               de interações.
+
+               Ele define:
+
+               - data-perfil-id
+               - data-interacao-perfil-botao
+               - data-interacao
+
+               e chama:
+
+               InteracoesPerfil.inicializarElemento()
+
+               Portanto, NÃO existe uma segunda inicialização
+               das interações neste HTML.
                ================================================= */
 
             if (
@@ -1208,3 +1239,4 @@ document.addEventListener(
 </body>
 
 </html>
+

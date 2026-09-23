@@ -1,4 +1,3 @@
-
 (function (window) {
 
 
@@ -17,6 +16,8 @@
    - Identificar nome, tipo e localização.
    - Renderizar avatar e iniciais.
    - Renderizar identidade na nova topbar.
+   - Permitir acesso ao perfil público da pessoa através
+     da foto, das iniciais ou do nome exibido na topbar.
    - Manter funções de avaliação, gêneros, descrição e
      informações profissionais disponíveis para uso futuro.
    - Atualizar somente a interface do perfil.
@@ -1371,6 +1372,191 @@ function renderizarAvatar() {
 
 
 /* =========================================================
+   NAVEGAÇÃO PARA O PERFIL
+   =========================================================
+
+   A foto, as iniciais e o nome exibidos na topbar pertencem
+   ao perfil que está sendo visualizado nesta página.
+
+   Ao clicar em qualquer um desses elementos, o usuário é
+   levado para:
+
+   meu-perfil.html?id=ID_DO_PERFIL
+
+   O ID é obtido diretamente do módulo:
+
+   ApresentarPerfilDadosTeste.obterPerfilId()
+
+   Não utilizamos o ID do usuário logado, pois o perfil
+   visualizado pode pertencer a outra pessoa.
+   ========================================================= */
+
+function configurarNavegacaoPerfil() {
+
+    const dados =
+        window.ApresentarPerfilDadosTeste;
+
+
+    if (
+        !dados ||
+        typeof dados.obterPerfilId !== "function"
+    ) {
+
+        console.warn(
+            "ApresentarPerfilRenderTeste: ID do perfil não disponível para navegação."
+        );
+
+
+        return;
+
+    }
+
+
+    const perfilId =
+        dados.obterPerfilId();
+
+
+    if (!valorValido(perfilId)) {
+
+        console.warn(
+            "ApresentarPerfilRenderTeste: perfilId inválido para navegação."
+        );
+
+
+        return;
+
+    }
+
+
+    const urlPerfil =
+        `meu-perfil.html?id=${encodeURIComponent(
+            String(perfilId).trim()
+        )}`;
+
+
+    const elementos = [
+
+        obterElemento(
+            "profileTopbarAvatar"
+        ),
+
+        obterElemento(
+            "profileTopbarInitials"
+        ),
+
+        obterElemento(
+            "profileTopbarName"
+        )
+
+    ];
+
+
+    elementos.forEach(
+        function (elemento) {
+
+            if (!elemento) {
+
+                return;
+
+            }
+
+
+            /*
+             * Evitamos adicionar o mesmo evento mais de uma
+             * vez caso renderizar() seja executado novamente.
+             */
+
+            if (
+                elemento.dataset.perfilNavegacaoConfigurada ===
+                "true"
+            ) {
+
+                return;
+
+            }
+
+
+            elemento.dataset.perfilNavegacaoConfigurada =
+                "true";
+
+
+            /*
+             * Indica visualmente que o elemento pode ser
+             * utilizado como navegação.
+             */
+
+            elemento.style.cursor =
+                "pointer";
+
+
+            /*
+             * Clique com o mouse ou toque.
+             */
+
+            elemento.addEventListener(
+                "click",
+                function () {
+
+                    window.location.href =
+                        urlPerfil;
+
+                }
+            );
+
+
+            /*
+             * Permite navegação pelo teclado.
+             *
+             * Usamos Enter e Espaço para os elementos que
+             * originalmente não são links ou botões.
+             */
+
+            if (
+                elemento.tagName !== "A" &&
+                elemento.tagName !== "BUTTON"
+            ) {
+
+                elemento.setAttribute(
+                    "role",
+                    "link"
+                );
+
+
+                elemento.setAttribute(
+                    "tabindex",
+                    "0"
+                );
+
+
+                elemento.addEventListener(
+                    "keydown",
+                    function (evento) {
+
+                        if (
+                            evento.key === "Enter" ||
+                            evento.key === " "
+                        ) {
+
+                            evento.preventDefault();
+
+
+                            window.location.href =
+                                urlPerfil;
+
+                        }
+
+                    }
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =========================================================
    RENDERIZAR DESCRIÇÃO
 
    Mantida para compatibilidade.
@@ -1642,6 +1828,18 @@ function renderizar() {
 
     /*
      * =====================================================
+     * NAVEGAÇÃO DO PERFIL
+     * =====================================================
+     *
+     * Foto, iniciais e nome da topbar levam para o perfil
+     * correspondente à pessoa atualmente visualizada.
+     */
+
+    configurarNavegacaoPerfil();
+
+
+    /*
+     * =====================================================
      * CONTEÚDO ABAIXO DA MÍDIA
      * =====================================================
      *
@@ -1716,6 +1914,8 @@ window.ApresentarPerfilRenderTeste = {
 
     renderizarAvatar,
 
+    configurarNavegacaoPerfil,
+
     renderizarDescricao,
 
     renderizarGeneros,
@@ -1765,4 +1965,3 @@ console.log(
 
 
 })(window);
-

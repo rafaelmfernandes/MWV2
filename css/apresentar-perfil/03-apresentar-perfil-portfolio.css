@@ -1,1084 +1,683 @@
 /* =========================================================
-   MUSICALWORLD / ARTISTASHOW
-   PERFIL PÚBLICO — PORTFÓLIO
+   MUSICALWORLD — APRESENTAÇÃO DE PERFIL — PORTFÓLIO
 
    Arquivo:
-   04-apresentar-perfil-portfolio.css
+   css/apresentar-perfil/03-apresentar-perfil-portfolio.css
 
-   Responsabilidade:
-
-   • Controlar toda a apresentação visual do portfólio.
-   • Manter o deck centralizado.
-   • Manter os cards em proporção 9:16.
-   • Controlar escala visual dos cards.
-   • Controlar sombras, bordas e arredondamentos.
-   • Controlar a profundidade visual dos cards.
-   • Controlar a legenda sobre a mídia.
-   • Controlar os indicadores da galeria.
-   • Controlar estados de erro específicos da mídia.
-   • Controlar os cards de áudio.
-   • Controlar a navegação interna da galeria.
-
-   O JavaScript controla somente:
-
-   • comportamento;
-   • posição;
-   • transformações;
-   • swipe;
-   • navegação;
-   • estado;
-   • cores dinâmicas através de variáveis CSS.
-
-   Variáveis fornecidas pelo JavaScript:
-
-   --portfolio-cor-1
-   --portfolio-cor-2
-   --portfolio-cor-3
-
-   Responsividade:
-   As regras @media de tamanho de tela ficam no arquivo:
-
-   11-apresentar-perfil-responsivo.css
-
-   Estados gerais:
-   Os estados vazios ficam no arquivo:
-
-   10-apresentar-perfil-estados.css
-
-   Acessibilidade global:
-   prefers-reduced-motion fica no arquivo:
-
-   01-apresentar-perfil-base.css
+   Responsabilidades:
+   - Área de mídia.
+   - Imagens.
+   - Vídeos.
+   - Carrossel.
+   - Indicadores.
+   - Botão de expansão.
+   - Identidade sobre a mídia.
+   - Avatar.
+   - Nome.
+   - Localização.
+   - Menu sobre a mídia.
+   - Título do portfólio.
+   - Descrição do portfólio.
+   - Expansão/recolhimento da descrição.
+   - Responsividade do portfólio.
    ========================================================= */
-
 
 /* =========================================================
-   CONTAINER PRINCIPAL DO PORTFÓLIO
-
-   O portfólio utiliza toda a largura disponível.
-
-   Não existe painel visual envolvendo toda a área.
-
-   Bordas, sombras e arredondamentos ficam restritos
-   aos elementos internos do portfólio.
-
-   As cores dinâmicas podem ser fornecidas pelo JavaScript
-   através das variáveis CSS.
+   MÍDIA / CARROSSEL
    ========================================================= */
 
-.portfolio-grid {
-
+.profile-media {
     position: relative;
-
     width: 100%;
-
-    display: block;
-
-    margin: 0;
-
-    padding:
-        18px
-        14px
-        12px;
-
-    box-sizing: border-box;
-
-    overflow: visible;
-
-    touch-action: pan-y;
-
-    border: 0;
-
-    border-radius: 0;
-
-    background: transparent;
-
-    isolation: isolate;
-}
-
-
-/* =========================================================
-   DECK
-
-   Área responsável por posicionar os cards do portfólio.
-
-   O JavaScript controla a posição e as transformações
-   dos cards.
-
-   O CSS controla a estrutura e aparência visual.
-   ========================================================= */
-
-.portfolio-deck {
-
-    position: relative;
-
-    z-index: 2;
-
-    width: 100%;
-
-    display: block;
-
-    margin: 0 auto;
-
-    padding: 0;
-
-    overflow: visible;
-
-    box-sizing: border-box;
-
-    touch-action: pan-y;
-
-    user-select: none;
-
-    -webkit-user-select: none;
-
-    -webkit-touch-callout: none;
-
-    cursor: grab;
-}
-
-
-/* =========================================================
-   CAMADA DE SOMBRA DO DECK
-
-   Cria uma pequena iluminação/sombra difusa atrás
-   da região central dos cards.
-
-   Esta camada é específica do portfólio.
-   ========================================================= */
-
-.portfolio-deck::before {
-
-    content: "";
-
-    position: absolute;
-
-    top: 42%;
-
-    left: 50%;
-
-    width: 48%;
-
-    height: 48%;
-
-    transform:
-        translate(
-            -50%,
-            -50%
-        );
-
-    border-radius: 50%;
-
-    background:
-        radial-gradient(
-            ellipse,
-            rgba(23, 32, 51, 0.10) 0%,
-            rgba(23, 32, 51, 0.045) 38%,
-            rgba(23, 32, 51, 0) 72%
-        );
-
-    filter: blur(18px);
-
-    pointer-events: none;
-
-    z-index: -1;
-}
-
-/* =========================================================
-   BOTÕES DE NAVEGAÇÃO DA GALERIA
-
-   Responsabilidade:
-
-   • Permitir avançar e voltar no portfólio.
-   • Reproduzir visualmente a navegação por swipe.
-   • Manter os controles discretos.
-   • Permanecer fora da mídia principal.
-
-   Os controles foram reduzidos visualmente para que
-   não disputem atenção com o conteúdo do portfólio.
-
-   O JavaScript controla somente:
-   • clique;
-   • navegação;
-   • estado.
-
-   O CSS controla somente:
-   • aparência;
-   • tamanho;
-   • posição;
-   • estados visuais.
-   ========================================================= */
-
-.portfolio-deck-nav {
-
-    display: none !important;
-
-    position: absolute;
-
-    top: 50%;
-
-    z-index: 60;
-
-    width: 32px;
-
-    height: 32px;
-
-    box-sizing: border-box;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    margin: 0;
-
-    padding: 0;
-
-    border:
-        1px solid rgba(255, 255, 255, 0.42);
-
-    border-radius: 50%;
-
-    background:
-        rgba(255, 255, 255, 0.62);
-
-    color: #475467;
-
-    box-shadow:
-        0 3px 10px rgba(23, 32, 51, 0.10);
-
-    backdrop-filter: blur(6px);
-
-    -webkit-backdrop-filter: blur(6px);
-
-    transform:
-        translateY(-50%);
-
-    cursor: pointer;
-
-    appearance: none;
-
-    -webkit-appearance: none;
-
-    outline: none;
-
-    opacity: 0.72;
-
-    transition:
-        transform 180ms ease,
-        background 180ms ease,
-        border-color 180ms ease,
-        box-shadow 180ms ease,
-        opacity 180ms ease;
-}
-
-
-/* =========================================================
-   POSIÇÃO — BOTÃO ANTERIOR
-   ========================================================= */
-
-.portfolio-deck-nav-prev {
-
-    left: 1%;
-}
-
-
-/* =========================================================
-   POSIÇÃO — BOTÃO PRÓXIMO
-   ========================================================= */
-
-.portfolio-deck-nav-next {
-
-    right: 1%;
-}
-
-
-/* =========================================================
-   ÍCONES DA NAVEGAÇÃO
-   ========================================================= */
-
-.portfolio-deck-nav svg {
-
-    width: 15px;
-
-    height: 15px;
-
-    display: block;
-
-    stroke-width: 2;
-}
-
-
-/* =========================================================
-   HOVER DOS BOTÕES DE NAVEGAÇÃO
-
-   No desktop, o controle ganha um pouco de presença
-   somente quando o usuário interage diretamente com ele.
-
-   Dessa forma, parado, o botão fica discreto.
-   Ao passar o mouse, ele fica claramente utilizável.
-   ========================================================= */
-
-@media (hover: hover) and (pointer: fine) {
-
-    .portfolio-deck-nav:hover {
-
-        opacity: 1;
-
-        background:
-            rgba(255, 255, 255, 0.88);
-
-        border-color:
-            rgba(23, 32, 51, 0.12);
-
-        color: #172033;
-
-        box-shadow:
-            0 5px 14px rgba(23, 32, 51, 0.14);
-    }
-
-
-    .portfolio-deck-nav-prev:hover {
-
-        transform:
-            translateY(-50%)
-            translateX(-2px);
-    }
-
-
-    .portfolio-deck-nav-next:hover {
-
-        transform:
-            translateY(-50%)
-            translateX(2px);
-    }
-}
-
-
-/* =========================================================
-   CLIQUE NOS BOTÕES
-   ========================================================= */
-
-.portfolio-deck-nav:active {
-
-    opacity: 1;
-
-    transform:
-        translateY(-50%)
-        scale(0.92);
-}
-
-
-/* =========================================================
-   FOCO DOS BOTÕES
-
-   Mantém acessibilidade sem deixar o estado normal
-   visualmente pesado.
-   ========================================================= */
-
-.portfolio-deck-nav:focus-visible {
-
-    opacity: 1;
-
-    outline:
-        2px solid rgba(22, 119, 210, 0.35);
-
-    outline-offset: 3px;
-}
-
-/* =========================================================
-   CARDS DO DECK
-
-   Configuração estrutural principal.
-
-   Proporção:
-   9:16
-
-   Limite máximo:
-   270px
-
-   O JavaScript controla:
-
-   • transform;
-   • scale;
-   • rotate;
-   • translate;
-   • opacity;
-   • z-index;
-   • filter.
-
-   O CSS controla a aparência estrutural.
-   ========================================================= */
-
-.portfolio-deck-card {
-
-    position: absolute;
-
-    top: 0;
-
-    left: 50%;
-
-    width: 86%;
-
-    max-width: 360px;
-
-    aspect-ratio: 9 / 16;
-
-    border-radius: 15px;
-
+    aspect-ratio: 16 / 10;
     overflow: hidden;
-
-    background: #ffffff;
-
-   border: 1px solid f1f1f1;
-
-    box-shadow:
-        0 18px 30px rgba(23, 32, 51, 0.22),
-        0 8px 14px rgba(23, 32, 51, 0.14),
-        0 2px 5px rgba(23, 32, 51, 0.10);
-
-    transition:
-        transform 360ms ease,
-        opacity 360ms ease,
-        filter 360ms ease;
-
-    transform-origin: center center;
-
-    will-change:
-        transform,
-        opacity,
-        filter;
-}
-
-
-/* =========================================================
-   IDENTIFICAÇÃO DOS CARDS
-
-   Mantém o ponto de origem das transformações.
-
-   O índice/data-atributo é utilizado pelo JavaScript
-   para controlar a posição de cada card.
-   ========================================================= */
-
-.portfolio-deck-card[data-indice] {
-
-    transform-origin: center center;
-}
-
-
-/* =========================================================
-   MÍDIA DO DECK
-   ========================================================= */
-
-.portfolio-deck-media {
-
-    display: block;
-
-    width: 100%;
-
-    height: 100%;
-
-    max-width: none;
-
-    max-height: none;
-
-    margin: 0;
-
-    padding: 0;
-
-    object-fit: cover;
-
-    object-position: center;
-
+    background: #111827;
+    touch-action: pan-y;
     user-select: none;
-
     -webkit-user-select: none;
-
-    -webkit-touch-callout: none;
 }
 
-
-/* =========================================================
-   IMAGENS
-   ========================================================= */
-
-.portfolio-deck-card img {
-
-    display: block;
-
+.profile-media-content {
+    position: absolute;
+    inset: 0;
     width: 100%;
-
     height: 100%;
+    overflow: hidden;
+}
 
-    max-width: none;
-
-    max-height: none;
-
-    margin: 0;
-
-    padding: 0;
-
+.profile-media-image {
+    width: 100%;
+    height: 100%;
     object-fit: cover;
-
-    object-position: center;
-
     pointer-events: none;
-
     user-select: none;
-
-    -webkit-user-select: none;
-
     -webkit-user-drag: none;
 }
 
-
-/* =========================================================
-   VÍDEOS
-   ========================================================= */
-
-.portfolio-deck-card video {
-
-    display: block;
-
+.profile-media-video {
     width: 100%;
-
     height: 100%;
-
-    max-width: none;
-
-    max-height: none;
-
-    margin: 0;
-
-    padding: 0;
-
     object-fit: cover;
-
-    object-position: center;
-
-    background: #000000;
-
-    pointer-events: auto;
-
+    background: #111827;
     user-select: none;
-
-    -webkit-user-select: none;
-
-    -webkit-touch-callout: none;
 }
 
-
-/* =========================================================
-   LEGENDA DO PORTFÓLIO
-
-   A legenda fica no topo da mídia.
-
-   O JavaScript cria o elemento.
-   Toda a apresentação visual pertence ao CSS.
-   ========================================================= */
-
-.portfolio-deck-caption {
-
+.profile-media-overlay {
     position: absolute;
-
-    top: 0;
-
-    left: 0;
-
-    right: 0;
-
-    z-index: 5;
-
-    box-sizing: border-box;
-
-    width: 100%;
-
-    padding:
-        18px
-        20px
-        28px;
-
-    background:
-        linear-gradient(
-            to bottom,
-            rgba(0, 0, 0, 0.72),
-            rgba(0, 0, 0, 0.38),
-            rgba(0, 0, 0, 0)
-        );
-
-    color: #ffffff;
-
+    inset: 0;
+    z-index: 1;
+    background: transparent;
     pointer-events: none;
-
-    user-select: none;
-
-    -webkit-user-select: none;
-
-    overflow: hidden;
 }
 
-
 /* =========================================================
-   TÍTULO DA LEGENDA
+   INDICADORES
    ========================================================= */
 
-.portfolio-deck-caption strong {
-
-    display: block;
-
-    margin: 0;
-
-    padding: 0;
-
-    color: #ffffff;
-
-    font-size: 15px;
-
-    font-weight: 700;
-
-    line-height: 1.35;
-
-    letter-spacing: 0;
-
-    overflow: hidden;
-
-    text-overflow: ellipsis;
-
-    white-space: normal;
-
-    word-break: break-word;
-}
-
-
-/* =========================================================
-   DESCRIÇÃO DA LEGENDA
-   ========================================================= */
-
-.portfolio-deck-caption span {
-
-    display: block;
-
-    margin:
-        4px
-        0
-        0;
-
-    padding: 0;
-
-    color:
-        rgba(255, 255, 255, 0.88);
-
-    font-size: 13px;
-
-    font-weight: 400;
-
-    line-height: 1.4;
-
-    overflow: hidden;
-
-    text-overflow: ellipsis;
-
-    white-space: normal;
-
-    word-break: break-word;
-}
-
-
-/* =========================================================
-   INDICADORES / BOLINHAS
-
-   O deck reserva espaço abaixo dos cards para os
-   indicadores da galeria.
-
-   A margem negativa aproxima os indicadores
-   visualmente dos cards.
-   ========================================================= */
-
-.portfolio-deck-indicadores {
-
-    position: relative;
-
-    z-index: 50;
-
-    width: 100%;
-
-    min-width: 100%;
-
-    height: auto;
-
-    min-height: 8px;
-
-    box-sizing: border-box;
-
+.profile-portfolio-indicators {
+    position: absolute;
+    top: 14px;
+    left: 50%;
+    z-index: 4;
     display: flex;
-
-    flex-direction: row;
-
     align-items: center;
-
     justify-content: center;
-
-    flex-wrap: nowrap;
-
-    gap: 5px;
-
-    margin:
-        -22px
-        auto
-        0;
-
-    padding: 0;
-
-    overflow: visible;
-
-    clear: both;
-
-    float: none;
-
-    touch-action: manipulation;
-}
-
-
-/* =========================================================
-   INDICADORES INDIVIDUAIS
-   ========================================================= */
-
-.portfolio-deck-indicador {
-
-    display: block;
-
-    flex:
-        0
-        0
-        auto;
-
-    width: 7px;
-
-    height: 7px;
-
-    min-width: 7px;
-
-    min-height: 7px;
-
-    margin: 0;
-
-    padding: 0;
-
-    border: 0;
-
+    gap: 6px;
+    padding: 5px 8px;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.24);
+    border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: 999px;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    pointer-events: auto;
+}
 
-    background: rgba(23, 32, 51, 0.28);
-
-    opacity: 0.65;
-
-    cursor: pointer;
-
-    box-sizing: border-box;
-
-    appearance: none;
-
-    -webkit-appearance: none;
-
-    outline: none;
-
+.profile-portfolio-indicator {
+    width: 6px;
+    height: 6px;
+    flex: 0 0 auto;
+    padding: 0;
+    background: rgba(255, 255, 255, 0.48);
+    border: 0;
+    border-radius: 50%;
+    opacity: 0.85;
     transition:
-        width 220ms ease,
-        height 220ms ease,
-        background 220ms ease,
-        opacity 220ms ease,
-        transform 220ms ease,
-        box-shadow 220ms ease;
+        width 0.2s ease,
+        background 0.2s ease,
+        opacity 0.2s ease,
+        transform 0.2s ease;
 }
 
-
-/* =========================================================
-   INDICADOR ATIVO
-   ========================================================= */
-
-.portfolio-deck-indicador[aria-current="true"] {
-
-    width: 22px;
-
-    height: 7px;
-
-    min-width: 22px;
-
-    min-height: 7px;
-
-    background: #172033;
-
-    opacity: 1;
-
-    transform: scale(1);
-
-    box-shadow:
-        0 2px 6px rgba(23, 32, 51, 0.18);
-}
-
-
-/* =========================================================
-   FOCO DOS INDICADORES
-   ========================================================= */
-
-.portfolio-deck-indicador:focus-visible {
-
-    outline:
-        2px solid rgba(22, 119, 210, 0.35);
-
-    outline-offset: 3px;
-}
-
-
-/* =========================================================
-   HOVER DOS INDICADORES
-   ========================================================= */
-
-@media (hover: hover) and (pointer: fine) {
-
-    .portfolio-deck-indicador:hover {
-
-        opacity: 1;
-
-        background: #64748b;
-
-        transform: scale(1.15);
-    }
-
-
-    .portfolio-deck-indicador[aria-current="true"]:hover {
-
-        background: #172033;
-
-        transform: scale(1);
-    }
-}
-
-
-/* =========================================================
-   ESTADO DE ERRO DA MÍDIA
-
-   Este estado permanece neste arquivo porque é
-   específico do conteúdo do portfólio.
-   ========================================================= */
-
-.portfolio-media-erro {
-
-    position: relative;
-
-    background: #f8fafc;
-
-    color: #64748b;
-
-    overflow: hidden;
-}
-
-
-/* =========================================================
-   MENSAGEM DE ERRO DA MÍDIA
-   ========================================================= */
-
-.portfolio-media-erro-mensagem {
-
-    width: 100%;
-
-    height: 100%;
-
-    min-height: 220px;
-
-    box-sizing: border-box;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    padding:
-        24px;
-
-    text-align: center;
-
-    color: #64748b;
-
-    font-size: 13px;
-
-    line-height: 1.5;
-}
-
-
-/* =========================================================
-   CARDS DE ÁUDIO
-   ========================================================= */
-
-.portfolio-audio-card {
-
-    width: 100%;
-
-    box-sizing: border-box;
-
-    display: flex;
-
-    flex-direction: column;
-
-    align-items: stretch;
-
-    gap: 12px;
-
-    padding:
-        14px
-        16px;
-
-    border-radius: 18px;
-
+.profile-portfolio-indicator.is-active {
+    width: 18px;
     background: #ffffff;
-
-    border:
-        1px solid rgba(23, 32, 51, 0.08);
-
-    box-shadow:
-        0 8px 24px rgba(23, 32, 51, 0.07);
+    border-radius: 999px;
+    opacity: 1;
 }
 
-
-/* =========================================================
-   CONTEÚDO SUPERIOR DO ÁUDIO
-   ========================================================= */
-
-.portfolio-audio-card-conteudo {
-
-    width: 100%;
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 14px;
-
-    min-width: 0;
+.profile-portfolio-indicator:hover {
+    opacity: 1;
+    transform: scale(1.12);
 }
 
+.profile-portfolio-indicator:active {
+    transform: scale(0.94);
+}
+
+.profile-portfolio-indicators[hidden] {
+    display: none;
+}
 
 /* =========================================================
-   ÍCONE DO ÁUDIO
+   EXPANDIR MÍDIA
    ========================================================= */
 
-.portfolio-audio-card-icone {
-
+.media-expand {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    z-index: 5;
     width: 42px;
-
     height: 42px;
-
-    min-width: 42px;
-
     display: flex;
-
     align-items: center;
-
     justify-content: center;
-
+    color: #ffffff;
+    background: rgba(0, 0, 0, 0.32);
+    border: 1px solid rgba(255, 255, 255, 0.18);
     border-radius: 13px;
-
-    background: #eef6ff;
-
-    color: #1677d2;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: background 0.2s ease, transform 0.2s ease;
 }
 
-
-.portfolio-audio-card-icone svg {
-
-    width: 19px;
-
-    height: 19px;
+.media-expand:hover {
+    background: rgba(0, 0, 0, 0.52);
+    transform: scale(1.04);
 }
 
+.media-expand:active {
+    transform: scale(0.96);
+}
+
+.media-expand svg {
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
 
 /* =========================================================
-   INFORMAÇÕES DO ÁUDIO
+   INFORMAÇÕES SOBRE A MÍDIA
    ========================================================= */
 
-.portfolio-audio-card-info {
-
-    min-width: 0;
-
-    flex: 1;
-
+.media-profile-info {
+    position: absolute;
+    left: 20px;
+    right: 20px;
+    bottom: 18px;
+    z-index: 3;
     display: flex;
-
-    flex-direction: column;
-
-    gap: 4px;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 14px;
 }
 
+.profile-heading {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
 
-/* =========================================================
-   TÍTULO DO ÁUDIO
-   ========================================================= */
-
-.portfolio-audio-card-info strong {
-
-    display: block;
-
-    margin: 0;
-
-    padding: 0;
-
-    color: #172033;
-
-    font-size: 14px;
-
-    font-weight: 700;
-
-    line-height: 1.35;
-
+.profile-avatar {
+    flex: 0 0 auto;
+    width: 54px;
+    height: 54px;
     overflow: hidden;
-
-    white-space: nowrap;
-
-    text-overflow: ellipsis;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #ece8ff, #dcd4ff);
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+    color: var(--mw-primary);
+    font-size: 15px;
+    font-weight: 800;
 }
 
-
-/* =========================================================
-   DESCRIÇÃO DO ÁUDIO
-   ========================================================= */
-
-.portfolio-audio-card-info span {
-
-    display: block;
-
-    margin: 0;
-
-    padding: 0;
-
-    color: #667085;
-
-    font-size: 12px;
-
-    line-height: 1.4;
-
-    overflow: hidden;
-
-    text-overflow: ellipsis;
-
-    white-space: nowrap;
-}
-
-
-/* =========================================================
-   PLAYER DE ÁUDIO
-   ========================================================= */
-
-.portfolio-audio-card audio {
-
-    display: block;
-
+.profile-avatar img {
     width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
 
+.profile-avatar span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+.profile-avatar--media {
+    width: 56px;
+    height: 56px;
+}
+
+.profile-heading-content {
+    min-width: 0;
+}
+
+.profile-name {
+    overflow: hidden;
+    color: var(--mw-text);
+    font-size: 16px;
+    font-weight: 800;
+    line-height: 1.3;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.media-profile-info .profile-name {
+    color: #ffffff;
+}
+
+.profile-meta {
+    margin-top: 3px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 5px;
+    color: var(--mw-text-secondary);
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+.media-profile-info .profile-meta {
+    color: rgba(255, 255, 255, 0.82);
+}
+
+.meta-separator {
+    opacity: 0.7;
+}
+
+.location {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+}
+
+.location svg {
+    width: 13px;
+    height: 13px;
+    flex: 0 0 auto;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+/* =========================================================
+   MENU SOBRE A MÍDIA
+   ========================================================= */
+
+.profile-more {
+    flex: 0 0 auto;
+    width: 38px;
     height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--mw-text-secondary);
+    border-radius: 12px;
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+}
 
+.profile-more:hover {
+    background: #f1f3f7;
+    color: var(--mw-text);
+}
+
+.profile-more:active {
+    transform: scale(0.95);
+}
+
+.profile-more svg {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+}
+
+.profile-more--media {
+    color: #ffffff;
+    background: rgba(0, 0, 0, 0.28);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+.profile-more--media:hover {
+    color: #ffffff;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+/* =========================================================
+   CONTEÚDO DO PORTFÓLIO
+   ========================================================= */
+
+.profile-portfolio-content {
+    width: 100%;
+    padding: 16px 20px 18px;
+    background: #ffffff;
+    border-top: 1px solid var(--mw-border);
+}
+
+.profile-portfolio-title {
     margin: 0;
+    max-width: 100%;
+    overflow: hidden;
+    color: var(--mw-text);
+    font-size: 17px;
+    font-weight: 800;
+    line-height: 1.35;
+    letter-spacing: -0.01em;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    text-overflow: ellipsis;
+    word-break: break-word;
+}
 
+.profile-portfolio-title:empty {
+    display: none;
+}
+
+.profile-portfolio-description {
+    width: 100%;
+    max-width: 100%;
+    margin: 7px 0 0;
+    color: var(--mw-text-secondary);
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.6;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    max-height: calc(1.6em * 3);
+    overflow: hidden;
+    word-break: break-word;
+    transition: max-height 0.25s ease;
+}
+
+.profile-portfolio-description:empty {
+    display: none;
+}
+
+/* =========================================================
+   DESCRIÇÃO EXPANDIDA
+   ========================================================= */
+
+.profile-portfolio-content.is-expanded .profile-portfolio-description {
+    display: block;
+    -webkit-line-clamp: unset;
+    max-height: none;
+    overflow: hidden;
+}
+
+/* =========================================================
+   BOTÃO ATUAL — LER MAIS / LER MENOS
+   ========================================================= */
+
+.profile-portfolio-read-more {
+    display: inline-flex;
+    align-items: center;
+    margin-top: 10px;
     padding: 0;
+    border: 0;
+    background: transparent;
+    color: #6d4aff;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 800;
+    line-height: 1.4;
+    text-align: left;
+    cursor: pointer;
+    transition: color 0.2s ease, opacity 0.2s ease;
+}
+
+.profile-portfolio-read-more:hover {
+    color: #5635e8;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.profile-portfolio-read-more:active {
+    opacity: 0.75;
+}
+
+.profile-portfolio-read-more:focus-visible {
+    outline: 2px solid #6d4aff;
+    outline-offset: 4px;
+    border-radius: 4px;
+}
+
+/*
+ * IMPORTANTE:
+ * Como o botão possui display:inline-flex, a regra [hidden]
+ * precisa declarar display:none explicitamente.
+ */
+.profile-portfolio-read-more[hidden] {
+    display: none;
+}
+
+/* =========================================================
+   COMPATIBILIDADE COM BOTÃO ANTERIOR
+   ========================================================= */
+
+.portfolio-description-toggle {
+    margin: 8px 0 0;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 5px;
+    color: var(--mw-primary);
+    background: transparent;
+    font-size: 12px;
+    font-weight: 800;
+    line-height: 1.4;
+    cursor: pointer;
+    transition: color 0.2s ease, opacity 0.2s ease;
+}
+
+.portfolio-description-toggle:hover {
+    color: var(--mw-primary-dark);
+}
+
+.portfolio-description-toggle:active {
+    opacity: 0.7;
+}
+
+.portfolio-description-toggle svg {
+    width: 15px;
+    height: 15px;
+    flex: 0 0 auto;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: transform 0.25s ease;
+}
+
+.profile-portfolio-content.is-expanded .portfolio-description-toggle svg {
+    transform: rotate(180deg);
+}
+
+.portfolio-description-toggle[hidden] {
+    display: none;
+}
+
+/* =========================================================
+   RESPONSIVIDADE — 700px
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    .profile-media {
+        aspect-ratio: 4 / 3;
+    }
+
+    .profile-portfolio-content {
+        padding: 15px 16px 17px;
+    }
+
+    .profile-portfolio-title {
+        font-size: 16px;
+        line-height: 1.35;
+    }
+
+    .profile-portfolio-description {
+        margin-top: 6px;
+        font-size: 12.5px;
+        line-height: 1.6;
+        -webkit-line-clamp: 3;
+        max-height: calc(1.6em * 3);
+    }
+
+    .profile-portfolio-content.is-expanded .profile-portfolio-description {
+        max-height: 1000px;
+        -webkit-line-clamp: unset;
+    }
+
+    .portfolio-description-toggle {
+        margin-top: 7px;
+        font-size: 11.5px;
+    }
+
+    .profile-portfolio-indicators {
+        top: 12px;
+        gap: 5px;
+        padding: 4px 7px;
+    }
+
+    .profile-portfolio-indicator {
+        width: 6px;
+        height: 6px;
+    }
+
+    .profile-portfolio-indicator.is-active {
+        width: 16px;
+    }
+}
+
+/* =========================================================
+   RESPONSIVIDADE — 520px
+   ========================================================= */
+
+@media (max-width: 520px) {
+
+    .profile-media {
+        aspect-ratio: 4 / 5.3;
+    }
+
+    .media-profile-info {
+        left: 14px;
+        right: 14px;
+        bottom: 14px;
+    }
+
+    .profile-avatar--media {
+        width: 48px;
+        height: 48px;
+    }
+
+    .profile-name {
+        font-size: 14px;
+    }
+
+    .profile-meta {
+        font-size: 11px;
+    }
+
+    .profile-portfolio-content {
+        padding: 14px 14px 16px;
+    }
+
+    .profile-portfolio-title {
+        font-size: 15px;
+        line-height: 1.35;
+    }
+
+    .profile-portfolio-description {
+        margin-top: 6px;
+        font-size: 12px;
+        line-height: 1.6;
+        -webkit-line-clamp: 3;
+        max-height: calc(1.6em * 3);
+    }
+
+    .profile-portfolio-content.is-expanded .profile-portfolio-description {
+        max-height: 1000px;
+        -webkit-line-clamp: unset;
+    }
+
+    .portfolio-description-toggle {
+        margin-top: 7px;
+        font-size: 11px;
+    }
+
+    .profile-portfolio-indicators {
+        top: 10px;
+        gap: 5px;
+        padding: 4px 7px;
+    }
+
+    .profile-portfolio-indicator {
+        width: 5px;
+        height: 5px;
+    }
+
+    .profile-portfolio-indicator.is-active {
+        width: 15px;
+    }
+}
+
+/* =========================================================
+   RESPONSIVIDADE — 360px
+   ========================================================= */
+
+@media (max-width: 360px) {
+
+    .profile-avatar {
+        width: 48px;
+        height: 48px;
+    }
+
+    .profile-heading {
+        gap: 9px;
+    }
+
+    .media-expand {
+        top: 12px;
+        right: 12px;
+        width: 38px;
+        height: 38px;
+    }
+
+    .profile-more--media {
+        width: 34px;
+        height: 34px;
+    }
+
+    .profile-portfolio-content {
+        padding: 14px 12px 16px;
+    }
+
+    .profile-portfolio-title {
+        font-size: 15px;
+        line-height: 1.35;
+    }
+
+    .profile-portfolio-description {
+        margin-top: 6px;
+        font-size: 11.5px;
+        line-height: 1.6;
+        -webkit-line-clamp: 3;
+        max-height: calc(1.6em * 3);
+    }
+
+    .profile-portfolio-content.is-expanded .profile-portfolio-description {
+        max-height: 1000px;
+        -webkit-line-clamp: unset;
+    }
+
+    .portfolio-description-toggle {
+        margin-top: 7px;
+        font-size: 10.5px;
+    }
+
+    .profile-portfolio-indicators {
+        top: 8px;
+        gap: 4px;
+        padding: 3px 6px;
+    }
+
+    .profile-portfolio-indicator {
+        width: 5px;
+        height: 5px;
+    }
+
+    .profile-portfolio-indicator.is-active {
+        width: 13px;
+    }
 }

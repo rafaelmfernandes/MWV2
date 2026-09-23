@@ -1,4 +1,3 @@
-
 (function (window) {
 
     "use strict";
@@ -19,7 +18,8 @@
        - Criar conversa quando necessário.
        - Abrir o Chat diretamente.
        - Iniciar contratação.
-       - Controlar Curtir e Comentar.
+       - Inicializar as interações universais do perfil.
+       - Controlar a topbar durante o scroll.
        - Abrir/fechar menu de ações.
        - Expandir mídia.
        - Entrar na conta.
@@ -27,21 +27,16 @@
 
        IMPORTANTE:
 
-       Este arquivo pertence exclusivamente à nova página:
+       Curtidas e favoritos NÃO são armazenados neste módulo.
 
-       apresentar-perfil-teste.html
+       Eles são controlados exclusivamente por:
 
-       Ele NÃO altera nem substitui:
+       js/components/interacoes-perfil.js
 
-       js/apresentar-perfil/ApresentarPerfilAcoes.js
+       Isso garante que o estado seja compartilhado entre:
 
-       O fluxo de contratação continua utilizando:
-
-       contratacao.html
-
-       O fluxo de mensagens continua utilizando:
-
-       chat.html
+       - Index;
+       - apresentação pública do perfil.
 
        ========================================================= */
 
@@ -67,6 +62,8 @@
             curtir: "btnCurtir",
 
             comentar: "btnComentar",
+
+            salvar: "btnSalvar",
 
             conta: "btnConta",
 
@@ -242,14 +239,6 @@
 
     /* =========================================================
        OBTENÇÃO DO ID DO PERFIL
-
-       Ordem:
-
-       1. módulo de dados
-       2. estado local
-       3. perfil.id
-       4. perfilArtista.perfil_id
-       5. URL
        ========================================================= */
 
     function obterPerfilId() {
@@ -347,16 +336,6 @@
 
     /* =========================================================
        OBTENÇÃO DO ID DO USUÁRIO DONO DO PERFIL
-
-       Esse ID é necessário para o sistema de mensagens.
-
-       Prioridade:
-
-       1. usuario.id
-       2. perfil.usuario_id
-       3. perfilArtista.usuario_id
-       4. perfil.user_id
-       5. perfilArtista.user_id
        ========================================================= */
 
     function obterUsuarioIdPerfil() {
@@ -412,13 +391,6 @@
 
     /* =========================================================
        OBTENÇÃO DO TIPO DE PERFIL
-
-       O fluxo de contratação recebe o tipo pela URL.
-
-       Exemplo:
-
-       contratacao.html?perfil_id=UUID&tipo=cantor
-
        ========================================================= */
 
     function obterTipoPerfil() {
@@ -651,6 +623,143 @@
 
 
     /* =========================================================
+       INICIALIZAR INTERAÇÕES UNIVERSAIS
+       ========================================================= */
+
+    async function inicializarInteracoesPerfil() {
+
+        const perfilId =
+            obterPerfilId();
+
+
+        const btnCurtir =
+            obterElemento(
+                CONFIG.elementos.curtir
+            );
+
+
+        const btnSalvar =
+            obterElemento(
+                CONFIG.elementos.salvar
+            );
+
+
+        /*
+         * A topbar é o container universal da página pública.
+         *
+         * O perfil_id é gravado diretamente no elemento para
+         * que o módulo InteracoesPerfil consiga trabalhar sem
+         * depender do módulo de dados.
+         */
+
+        const topbar =
+            btnCurtir?.closest(".topbar") ||
+            btnSalvar?.closest(".topbar") ||
+            document.querySelector(".topbar");
+
+
+        if (!topbar) {
+
+            console.warn(
+                "ApresentarPerfilAcoesTeste: topbar das interações não encontrada."
+            );
+
+
+            return;
+
+        }
+
+
+        if (!perfilId) {
+
+            console.warn(
+                "ApresentarPerfilAcoesTeste: perfil_id não encontrado para as interações."
+            );
+
+
+            return;
+
+        }
+
+
+        topbar.dataset.interacoesPerfil =
+            "true";
+
+
+        topbar.dataset.perfilId =
+            perfilId;
+
+
+        /*
+         * Marca especificamente os botões que pertencem
+         * ao sistema universal de interações.
+         */
+
+        if (btnCurtir) {
+
+            btnCurtir.dataset.interacaoPerfilBotao =
+                "true";
+
+            btnCurtir.dataset.interacao =
+                "curtir";
+
+        }
+
+
+        if (btnSalvar) {
+
+            btnSalvar.dataset.interacaoPerfilBotao =
+                "true";
+
+            btnSalvar.dataset.interacao =
+                "salvar";
+
+        }
+
+
+        /*
+         * O módulo universal consulta o Supabase e atualiza
+         * imediatamente o estado visual:
+         *
+         * - curtido;
+         * - não curtido;
+         * - salvo;
+         * - não salvo.
+         */
+
+        if (
+            window.InteracoesPerfil &&
+            typeof window.InteracoesPerfil.inicializarElemento === "function"
+        ) {
+
+            await window
+                .InteracoesPerfil
+                .inicializarElemento(
+                    topbar
+                );
+
+
+            console.log(
+                "ApresentarPerfilAcoesTeste: interações universais inicializadas.",
+                {
+                    perfilId
+                }
+            );
+
+
+            return;
+
+        }
+
+
+        console.warn(
+            "ApresentarPerfilAcoesTeste: módulo InteracoesPerfil não foi carregado."
+        );
+
+    }
+
+
+    /* =========================================================
        VOLTAR
        ========================================================= */
 
@@ -816,14 +925,16 @@
 
                 await navigator.share({
 
-                    title: nome,
+                    title:
+                        nome,
 
                     text:
                         "Confira o perfil de " +
                         nome +
                         " no MusicalWorld.",
 
-                    url: link
+                    url:
+                        link
 
                 });
 
@@ -859,11 +970,6 @@
 
     /* =========================================================
        SUPABASE
-
-       A conexão continua centralizada em
-       js/core/SupabaseClient.js.
-
-       Este módulo apenas reutiliza o cliente já criado.
        ========================================================= */
 
     function obterSupabase() {
@@ -1011,12 +1117,6 @@
         );
 
 
-        /*
-         * -----------------------------------------------------
-         * CONVERSA DIRETA
-         * -----------------------------------------------------
-         */
-
         const resultadoDireto =
             await supabase
                 .from("conversas")
@@ -1064,12 +1164,6 @@
 
         }
 
-
-        /*
-         * -----------------------------------------------------
-         * CONVERSA INVERSA
-         * -----------------------------------------------------
-         */
 
         const resultadoInverso =
             await supabase
@@ -1191,22 +1285,6 @@
 
     /* =========================================================
        ABRIR MENSAGENS
-
-       Fluxo:
-
-       perfil
-          ↓
-       login
-          ↓
-       identifica dono do perfil
-          ↓
-       impede conversa consigo mesmo
-          ↓
-       procura conversa
-          ↓
-       cria se necessário
-          ↓
-       chat.html?id=...
        ========================================================= */
 
     async function abrirMensagens() {
@@ -1462,18 +1540,6 @@
 
     /* =========================================================
        CONTRATAR
-
-       IMPORTANTE:
-
-       Nenhuma contratação é criada aqui.
-
-       Apenas encaminhamos o usuário para o mesmo fluxo
-       que já funciona na página original.
-
-       URL:
-
-       contratacao.html?perfil_id=UUID&tipo=...
-
        ========================================================= */
 
     function contratarPerfil() {
@@ -1582,68 +1648,199 @@
     /* =========================================================
        CURTIR
 
-       Nesta primeira versão deixamos a ação preparada sem
-       inventar uma tabela ou estrutura de banco que não foi
-       confirmada para o novo perfil.
+       A persistência NÃO é feita aqui.
 
-       A interface pode chamar esta função agora.
-       A persistência será adicionada quando definirmos
-       a estrutura de curtidas.
+       O estado é controlado exclusivamente pelo:
+
+       window.InteracoesPerfil
+
+       Esta função permanece na API por compatibilidade
+       com chamadas externas existentes.
        ========================================================= */
 
-    function curtirPerfil() {
+    async function curtirPerfil() {
 
-        console.log(
-            "ApresentarPerfilAcoesTeste: Curtir acionado."
-        );
-
-
-        const botao =
+        const btnCurtir =
             obterElemento(
                 CONFIG.elementos.curtir
             );
 
 
-        if (!botao) {
+        if (!btnCurtir) {
 
             return false;
 
         }
 
 
-        const ativo =
-            botao.classList.toggle(
-                "is-active"
+        const topbar =
+            btnCurtir.closest(
+                ".topbar"
             );
 
 
-        botao.setAttribute(
-            "aria-pressed",
-            ativo
-                ? "true"
-                : "false"
+        if (!topbar) {
+
+            return false;
+
+        }
+
+
+        const perfilId =
+            obterPerfilId();
+
+
+        if (!perfilId) {
+
+            mostrarToast(
+                "Não foi possível identificar este perfil."
+            );
+
+
+            return false;
+
+        }
+
+
+        topbar.dataset.interacoesPerfil =
+            "true";
+
+
+        topbar.dataset.perfilId =
+            perfilId;
+
+
+        btnCurtir.dataset.interacaoPerfilBotao =
+            "true";
+
+
+        btnCurtir.dataset.interacao =
+            "curtir";
+
+
+        if (
+            window.InteracoesPerfil &&
+            typeof window.InteracoesPerfil.alternarCurtida === "function"
+        ) {
+
+            await window
+                .InteracoesPerfil
+                .alternarCurtida(
+                    topbar
+                );
+
+
+            return true;
+
+        }
+
+
+        console.warn(
+            "ApresentarPerfilAcoesTeste: InteracoesPerfil não disponível para Curtir."
         );
 
 
-        mostrarToast(
-            ativo
-                ? "Perfil curtido."
-                : "Curtida removida."
+        return false;
+
+    }
+
+
+    /* =========================================================
+       SALVAR
+
+       Assim como a curtida, a persistência é feita pelo
+       módulo universal.
+       ========================================================= */
+
+    async function salvarPerfil() {
+
+        const btnSalvar =
+            obterElemento(
+                CONFIG.elementos.salvar
+            );
+
+
+        if (!btnSalvar) {
+
+            return false;
+
+        }
+
+
+        const topbar =
+            btnSalvar.closest(
+                ".topbar"
+            );
+
+
+        if (!topbar) {
+
+            return false;
+
+        }
+
+
+        const perfilId =
+            obterPerfilId();
+
+
+        if (!perfilId) {
+
+            mostrarToast(
+                "Não foi possível identificar este perfil."
+            );
+
+
+            return false;
+
+        }
+
+
+        topbar.dataset.interacoesPerfil =
+            "true";
+
+
+        topbar.dataset.perfilId =
+            perfilId;
+
+
+        btnSalvar.dataset.interacaoPerfilBotao =
+            "true";
+
+
+        btnSalvar.dataset.interacao =
+            "salvar";
+
+
+        if (
+            window.InteracoesPerfil &&
+            typeof window.InteracoesPerfil.alternarFavorito === "function"
+        ) {
+
+            await window
+                .InteracoesPerfil
+                .alternarFavorito(
+                    topbar
+                );
+
+
+            return true;
+
+        }
+
+
+        console.warn(
+            "ApresentarPerfilAcoesTeste: InteracoesPerfil não disponível para Salvar."
         );
 
 
-        return ativo;
+        return false;
 
     }
 
 
     /* =========================================================
        COMENTAR
-
-       A estrutura do botão fica preparada.
-
-       A implementação do armazenamento de comentários será
-       feita quando a tabela/fluxo de comentários for definida.
        ========================================================= */
 
     function comentarPerfil() {
@@ -1665,14 +1862,6 @@
 
     /* =========================================================
        CONTA / LOGIN
-
-       Se existir sessão:
-
-       conta.html
-
-       Caso contrário:
-
-       login.html
        ========================================================= */
 
     async function entrarNaConta() {
@@ -1809,7 +1998,10 @@
             typeof window.ApresentarPerfilPortfolioTeste.expandirAtual === "function"
         ) {
 
-            window.ApresentarPerfilPortfolioTeste.expandirAtual();
+            window
+                .ApresentarPerfilPortfolioTeste
+                .expandirAtual();
+
 
             return true;
 
@@ -1857,6 +2049,156 @@
 
 
     /* =========================================================
+       CONTROLE DA TOPBAR DURANTE O SCROLL
+       =========================================================
+
+       Comportamento:
+
+       - No topo da página:
+         a topbar permanece sempre visível.
+
+       - Ao rolar para baixo:
+         a topbar desaparece.
+
+       - Ao rolar para cima:
+         a topbar reaparece.
+
+       - Movimentos menores que 6px:
+         são ignorados para evitar oscilações.
+
+       A topbar continua sendo controlada somente nesta página.
+       ========================================================= */
+
+    function inicializarTopbarScroll() {
+
+        const topbar =
+            document.querySelector(
+                ".topbar"
+            );
+
+
+        if (!topbar) {
+
+            console.warn(
+                "ApresentarPerfilAcoesTeste: topbar não encontrada para controle de scroll."
+            );
+
+
+            return;
+
+        }
+
+
+        let ultimaPosicao =
+            window.scrollY;
+
+
+        const tolerancia =
+            6;
+
+
+        topbar.style.transition =
+            "transform 0.25s ease";
+
+
+        topbar.style.willChange =
+            "transform";
+
+
+        function controlarScroll() {
+
+            const posicaoAtual =
+                window.scrollY;
+
+
+            const diferenca =
+                posicaoAtual -
+                ultimaPosicao;
+
+
+            /*
+             * No topo da página a topbar permanece
+             * sempre visível.
+             */
+
+            if (
+                posicaoAtual <= 5
+            ) {
+
+                topbar.style.transform =
+                    "translateY(0)";
+
+
+                ultimaPosicao =
+                    posicaoAtual;
+
+
+                return;
+
+            }
+
+
+            /*
+             * Ignora movimentos menores que a
+             * tolerância definida.
+             */
+
+            if (
+                Math.abs(diferenca) <
+                tolerancia
+            ) {
+
+                return;
+
+            }
+
+
+            /*
+             * Rolando para baixo:
+             * esconde a topbar.
+             */
+
+            if (
+                diferenca > 0
+            ) {
+
+                topbar.style.transform =
+                    "translateY(-100%)";
+
+            }
+
+
+            /*
+             * Rolando para cima:
+             * mostra a topbar.
+             */
+
+            else {
+
+                topbar.style.transform =
+                    "translateY(0)";
+
+            }
+
+
+            ultimaPosicao =
+                posicaoAtual;
+
+        }
+
+
+        window.addEventListener(
+            "scroll",
+            controlarScroll,
+            {
+                passive: true
+            }
+        );
+
+    }
+
+
+    /* =========================================================
        CONFIGURAÇÃO DOS EVENTOS
        ========================================================= */
 
@@ -1895,18 +2237,6 @@
             ) ||
             obterElemento(
                 CONFIG.elementos.mensagemFallback
-            );
-
-
-        const btnCurtir =
-            obterElemento(
-                CONFIG.elementos.curtir
-            );
-
-
-        const btnComentar =
-            obterElemento(
-                CONFIG.elementos.comentar
             );
 
 
@@ -2014,44 +2344,17 @@
         }
 
 
-        /* -----------------------------------------------------
-           CURTIR
-           ----------------------------------------------------- */
-
-        if (btnCurtir) {
-
-            btnCurtir.addEventListener(
-                "click",
-                function (evento) {
-
-                    evento.preventDefault();
-
-                    curtirPerfil();
-
-                }
-            );
-
-        }
-
-
-        /* -----------------------------------------------------
-           COMENTAR
-           ----------------------------------------------------- */
-
-        if (btnComentar) {
-
-            btnComentar.addEventListener(
-                "click",
-                function (evento) {
-
-                    evento.preventDefault();
-
-                    comentarPerfil();
-
-                }
-            );
-
-        }
+        /*
+         * -----------------------------------------------------
+         * CURTIR E SALVAR
+         * -----------------------------------------------------
+         *
+         * Não adicionamos listeners diretamente aqui.
+         *
+         * O módulo InteracoesPerfil utiliza delegação global
+         * para funcionar tanto com os cards dinâmicos do Index
+         * quanto com a topbar desta página.
+         */
 
 
         /* -----------------------------------------------------
@@ -2241,7 +2544,7 @@
        INICIALIZAÇÃO
        ========================================================= */
 
-    function inicializar() {
+    async function inicializar() {
 
         if (
             document.readyState === "loading"
@@ -2249,7 +2552,15 @@
 
             document.addEventListener(
                 "DOMContentLoaded",
-                configurarEventos,
+                async function () {
+
+                    configurarEventos();
+
+                    inicializarTopbarScroll();
+
+                    await inicializarInteracoesPerfil();
+
+                },
                 {
                     once: true
                 }
@@ -2263,6 +2574,10 @@
 
         configurarEventos();
 
+        inicializarTopbarScroll();
+
+        await inicializarInteracoesPerfil();
+
     }
 
 
@@ -2275,8 +2590,10 @@
         estadoAtual =
             null;
 
+
         abrindoConversa =
             false;
+
 
         configurado =
             false;
@@ -2310,6 +2627,8 @@
 
         curtirPerfil,
 
+        salvarPerfil,
+
         comentarPerfil,
 
         entrarNaConta,
@@ -2332,7 +2651,9 @@
 
         obterPerfilId,
 
-        obterUsuarioIdPerfil
+        obterUsuarioIdPerfil,
+
+        inicializarInteracoesPerfil
 
     };
 
@@ -2350,4 +2671,3 @@
 
 
 })(window);
-

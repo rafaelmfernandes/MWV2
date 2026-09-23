@@ -1,0 +1,615 @@
+/* =========================================================
+   MUSICALWORLD — APRESENTAÇÃO DE PERFIL — TOPBAR
+
+   Arquivo:
+   css/apresentar-perfil/02-apresentar-perfil-topbar.css
+
+   Responsabilidades:
+   - Topbar.
+   - Botão voltar.
+   - Identidade do perfil.
+   - Avatar.
+   - Nome.
+   - Tipo.
+   - Localização.
+   - Ações de curtir, salvar e menu.
+   - Estados visuais das interações.
+   - Efeito visual translúcido / glass.
+   - Responsividade da topbar.
+   ========================================================= */
+
+
+/* =========================================================
+   TOPBAR
+   ========================================================= */
+
+.topbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    width: 100%;
+    height: 72px;
+    background: transparent;
+    border: 0;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+}
+
+.topbar-inner {
+    width: min(100%, 1180px);
+    height: 100%;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.topbar-back {
+    width: 42px;
+    height: 42px;
+    flex: 0 0 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: var(--mw-text);
+
+    /*
+     * Efeito glass:
+     * levemente translúcido, sem deixar o botão
+     * completamente transparente.
+     */
+    background: rgba(255, 255, 255, 0.72);
+    border: 1px solid rgba(255, 255, 255, 0.70);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+
+    border-radius: 13px;
+
+    box-shadow:
+        0 4px 14px rgba(23, 32, 51, 0.06);
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.topbar-back:hover {
+    background: rgba(255, 255, 255, 0.88);
+    border-color: rgba(255, 255, 255, 0.90);
+
+    box-shadow:
+        0 6px 18px rgba(23, 32, 51, 0.09);
+}
+
+.topbar-back:active {
+    transform: scale(0.96);
+}
+
+
+/* =========================================================
+   IDENTIDADE DO PERFIL
+   ========================================================= */
+
+.topbar-profile {
+    min-width: 0;
+    flex: 1 1 auto;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.topbar-profile-avatar {
+    width: 42px;
+    height: 42px;
+    min-width: 42px;
+    flex: 0 0 42px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: var(--mw-primary);
+
+    background:
+        linear-gradient(
+            135deg,
+            #ece8ff,
+            #dcd4ff
+        );
+
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+
+    box-shadow:
+        0 3px 12px rgba(23, 32, 51, 0.10);
+
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.topbar-profile-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.topbar-profile-avatar span {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.topbar-profile-info {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.topbar-profile-name {
+    display: block;
+    max-width: 100%;
+    overflow: hidden;
+
+    color: var(--mw-text);
+
+    font-size: 14px;
+    font-weight: 800;
+    line-height: 1.25;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.topbar-profile-meta {
+    min-width: 0;
+    margin-top: 3px;
+
+    display: flex;
+    align-items: center;
+    gap: 5px;
+
+    overflow: hidden;
+
+    color: var(--mw-text-secondary);
+
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.3;
+}
+
+.topbar-profile-type {
+    min-width: 0;
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.topbar-profile-separator {
+    flex: 0 0 auto;
+    color: var(--mw-text-muted);
+}
+
+.topbar-profile-location {
+    min-width: 0;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.topbar-profile-location svg {
+    width: 12px;
+    height: 12px;
+    flex: 0 0 auto;
+
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+
+/* =========================================================
+   AÇÕES DA TOPBAR
+   ========================================================= */
+
+.topbar-actions {
+    flex: 0 0 auto;
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.topbar-action {
+    width: 42px;
+    height: 42px;
+    flex: 0 0 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: var(--mw-text);
+
+    /*
+     * Vidro translúcido.
+     */
+    background: rgba(255, 255, 255, 0.72);
+
+    /*
+     * Borda muito suave para separar o botão
+     * do conteúdo atrás dele.
+     */
+    border: 1px solid rgba(255, 255, 255, 0.70);
+
+    /*
+     * Blur do conteúdo que estiver atrás.
+     */
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+
+    border-radius: 13px;
+
+    box-shadow:
+        0 4px 14px rgba(23, 32, 51, 0.06);
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.topbar-action:hover {
+    background: rgba(255, 255, 255, 0.88);
+    border-color: rgba(255, 255, 255, 0.90);
+
+    box-shadow:
+        0 6px 18px rgba(23, 32, 51, 0.09);
+}
+
+.topbar-action:active {
+    transform: scale(0.96);
+}
+
+.topbar-back svg,
+.topbar-action svg {
+    width: 20px;
+    height: 20px;
+
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+
+/* =========================================================
+   AÇÃO — CURTIR
+   ========================================================= */
+
+#btnCurtir {
+    color: var(--mw-text);
+}
+
+#btnCurtir:hover {
+    color: #e25568;
+}
+
+
+/* =========================================================
+   AÇÃO — SALVAR
+   ========================================================= */
+
+#btnSalvar {
+    color: var(--mw-text);
+}
+
+#btnSalvar:hover {
+    color: #000000;
+}
+
+
+/* =========================================================
+   AÇÃO — MENU
+   ========================================================= */
+
+#btnMenu {
+    color: var(--mw-text-secondary);
+}
+
+#btnMenu:hover {
+    color: var(--mw-text);
+}
+
+
+/* =========================================================
+   ESTADO ATIVO — INTERAÇÕES UNIVERSAIS
+   =========================================================
+
+   O módulo:
+
+       js/components/interacoes-perfil.js
+
+   utiliza:
+
+       .ativo
+       .is-active
+
+   Estas classes continuam sendo controladas pelo
+   JavaScript.
+
+   O CSS apenas representa visualmente o estado.
+   ========================================================= */
+
+.topbar-action.is-active,
+.topbar-action.ativo {
+    /*
+     * Mantemos o vidro.
+     *
+     * Não colocamos uma cor de fundo específica aqui,
+     * pois o estado deve aparecer principalmente
+     * através do ícone.
+     */
+    background: rgba(255, 255, 255, 0.72);
+
+    border-color: rgba(255, 255, 255, 0.70);
+
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+}
+
+
+/* =========================================================
+   ESTADO — CURTIDO
+   =========================================================
+
+   Compatibilidade com .is-liked.
+
+   O coração fica preenchido e vermelho.
+   ========================================================= */
+
+.topbar-action.is-liked {
+    color: #e25568;
+
+    background: rgba(255, 255, 255, 0.72);
+    border-color: rgba(255, 255, 255, 0.70);
+
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+}
+
+.topbar-action.is-liked svg {
+    fill: currentColor;
+    stroke: currentColor;
+}
+
+
+/* =========================================================
+   ESTADO — SALVO
+   =========================================================
+
+   Compatibilidade com .is-saved.
+
+   O marcador fica preenchido e preto.
+   ========================================================= */
+
+.topbar-action.is-saved {
+    color: #000000;
+
+    background: rgba(255, 255, 255, 0.72);
+    border-color: rgba(255, 255, 255, 0.70);
+
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+}
+
+.topbar-action.is-saved svg {
+    fill: currentColor;
+    stroke: currentColor;
+}
+
+
+/* =========================================================
+   ESTADO ATIVO — CURTIDA
+   =========================================================
+
+   Quando o perfil está curtido:
+
+   - somente o coração recebe a cor vermelha;
+   - o coração fica totalmente preenchido;
+   - o box continua com efeito glass;
+   - não existe fundo vermelho.
+   ========================================================= */
+
+#btnCurtir.is-active,
+#btnCurtir.ativo {
+    color: #e25568;
+
+    background: rgba(255, 255, 255, 0.72);
+    border-color: rgba(255, 255, 255, 0.70);
+
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+}
+
+#btnCurtir.is-active svg,
+#btnCurtir.ativo svg {
+    fill: currentColor;
+    stroke: currentColor;
+}
+
+
+/* =========================================================
+   ESTADO ATIVO — SALVAMENTO
+   =========================================================
+
+   Quando o perfil está salvo:
+
+   - somente o ícone recebe a cor preta;
+   - o marcador fica totalmente preenchido;
+   - o box continua com efeito glass;
+   - não existe fundo preto ou cinza.
+   ========================================================= */
+
+#btnSalvar.is-active,
+#btnSalvar.ativo {
+    color: #000000;
+
+    background: rgba(255, 255, 255, 0.72);
+    border-color: rgba(255, 255, 255, 0.70);
+
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+}
+
+#btnSalvar.is-active svg,
+#btnSalvar.ativo svg {
+    fill: currentColor;
+    stroke: currentColor;
+}
+
+
+/* =========================================================
+   RESPONSIVIDADE — 520px
+   ========================================================= */
+
+@media (max-width: 520px) {
+
+    .topbar {
+        height: 64px;
+    }
+
+    .topbar-inner {
+        padding: 0 12px;
+        gap: 7px;
+    }
+
+    .topbar-back {
+        width: 40px;
+        height: 40px;
+        flex-basis: 40px;
+        border-radius: 12px;
+    }
+
+    .topbar-profile {
+        gap: 8px;
+    }
+
+    .topbar-profile-avatar {
+        width: 38px;
+        height: 38px;
+        min-width: 38px;
+        flex-basis: 38px;
+        font-size: 11px;
+    }
+
+    .topbar-profile-name {
+        font-size: 13px;
+    }
+
+    .topbar-profile-meta {
+        font-size: 10px;
+        gap: 4px;
+    }
+
+    .topbar-profile-location svg {
+        width: 11px;
+        height: 11px;
+    }
+
+    .topbar-actions {
+        gap: 6px;
+    }
+
+    .topbar-action {
+        width: 40px;
+        height: 40px;
+        flex-basis: 40px;
+        border-radius: 12px;
+    }
+
+    .topbar-back svg,
+    .topbar-action svg {
+        width: 19px;
+        height: 19px;
+    }
+}
+
+
+/* =========================================================
+   RESPONSIVIDADE — 360px
+   ========================================================= */
+
+@media (max-width: 360px) {
+
+    .topbar-inner {
+        padding: 0 9px;
+        gap: 5px;
+    }
+
+    .topbar-back {
+        width: 38px;
+        height: 38px;
+        flex-basis: 38px;
+        border-radius: 11px;
+    }
+
+    .topbar-profile {
+        gap: 6px;
+    }
+
+    .topbar-profile-avatar {
+        width: 36px;
+        height: 36px;
+        min-width: 36px;
+        flex-basis: 36px;
+    }
+
+    .topbar-profile-name {
+        font-size: 12px;
+    }
+
+    .topbar-profile-meta {
+        font-size: 9px;
+    }
+
+    .topbar-profile-location {
+        max-width: 90px;
+    }
+
+    .topbar-actions {
+        gap: 4px;
+    }
+
+    .topbar-action {
+        width: 36px;
+        height: 36px;
+        flex-basis: 36px;
+        border-radius: 10px;
+    }
+
+    .topbar-back svg,
+    .topbar-action svg {
+        width: 18px;
+        height: 18px;
+    }
+}
