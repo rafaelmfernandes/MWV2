@@ -14,6 +14,9 @@ Responsabilidades:
 * Estilizar a área de avaliações e comentários.
 * Estilizar as ações principais do perfil.
 * Estilizar o carrossel de portfólio.
+* Estilizar título e descrição do item do portfólio.
+* Controlar a altura da descrição do portfólio.
+* Preparar o estado expandido da descrição.
 * Preparar estados de carregamento e erro.
 * Garantir responsividade.
 * Manter o visual independente da página original.
@@ -39,6 +42,9 @@ Portfólio:
 * Navegação por swipe/arraste.
 * Indicadores aparecem somente quando existe mais
   de uma mídia.
+* Título e descrição aparecem abaixo da mídia.
+* Descrição possui altura visual controlada.
+* Descrição longa pode ser expandida pelo usuário.
   ========================================================= */
 
 
@@ -158,6 +164,20 @@ svg {
 TOPBAR
 ========================================================= */
 
+/*
+   Estrutura atual:
+
+   [ Voltar ] [ Avatar + Nome + Tipo + Localização ]
+   [ Curtir ] [ Salvar ] [ Mais ]
+
+   Responsabilidade:
+
+   - Manter o topo visualmente limpo.
+   - Exibir a identidade do perfil diretamente no topbar.
+   - Separar cada ação em seu próprio botão.
+   - Funcionar em desktop, tablet e celular.
+*/
+
 .topbar {
 
     position: sticky;
@@ -168,19 +188,18 @@ TOPBAR
 
     width: 100%;
 
-    height: 64px;
+    height: 72px;
 
     background:
-        rgba(255, 255, 255, 0.94);
+        transparent;
 
-    border-bottom:
-        1px solid var(--mw-border);
+    border: 0;
 
     backdrop-filter:
-        blur(14px);
+        none;
 
     -webkit-backdrop-filter:
-        blur(14px);
+        none;
 }
 
 .topbar-inner {
@@ -196,32 +215,28 @@ TOPBAR
     padding:
         0 20px;
 
-    display: grid;
-
-    grid-template-columns:
-        40px 1fr 40px;
+    display: flex;
 
     align-items: center;
+
+    gap: 10px;
 }
 
-.topbar-title {
 
-    text-align: center;
+/* =========================================================
+BOTÃO VOLTAR
+========================================================= */
 
-    font-size: 16px;
+.topbar-back {
 
-    font-weight: 700;
+    width:
+        42px;
 
-    color:
-        var(--mw-text);
-}
+    height:
+        42px;
 
-.topbar-back,
-.topbar-action {
-
-    width: 40px;
-
-    height: 40px;
+    flex:
+        0 0 42px;
 
     display: flex;
 
@@ -232,45 +247,538 @@ TOPBAR
     color:
         var(--mw-text);
 
-    border-radius: 12px;
+    background:
+        var(--mw-surface);
+
+    border:
+        1px solid var(--mw-border);
+
+    border-radius:
+        13px;
+
+    box-shadow:
+        0 4px 14px rgba(23, 32, 51, 0.06);
 
     transition:
         background 0.2s ease,
         color 0.2s ease,
-        transform 0.2s ease;
+        border-color 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
 }
 
-.topbar-back:hover,
+.topbar-back:hover {
+
+    background:
+        #f8f9fc;
+
+    border-color:
+        #dfe3eb;
+
+    box-shadow:
+        0 6px 18px rgba(23, 32, 51, 0.09);
+}
+
+.topbar-back:active {
+
+    transform:
+        scale(0.96);
+}
+
+
+/* =========================================================
+IDENTIDADE DO PERFIL
+========================================================= */
+
+.topbar-profile {
+
+    min-width:
+        0;
+
+    flex:
+        1 1 auto;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        10px;
+}
+
+
+/* =========================================================
+AVATAR DO TOPBAR
+========================================================= */
+
+.topbar-profile-avatar {
+
+    width:
+        42px;
+
+    height:
+        42px;
+
+    min-width:
+        42px;
+
+    flex:
+        0 0 42px;
+
+    overflow:
+        hidden;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    color:
+        var(--mw-primary);
+
+    background:
+        linear-gradient(
+            135deg,
+            #ece8ff,
+            #dcd4ff
+        );
+
+    border:
+        2px solid #ffffff;
+
+    border-radius:
+        50%;
+
+    box-shadow:
+        0 3px 12px rgba(23, 32, 51, 0.10);
+
+    font-size:
+        12px;
+
+    font-weight:
+        800;
+}
+
+.topbar-profile-avatar img {
+
+    width:
+        100%;
+
+    height:
+        100%;
+
+    object-fit:
+        cover;
+}
+
+.topbar-profile-avatar span {
+
+    width:
+        100%;
+
+    height:
+        100%;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+}
+
+
+/* =========================================================
+INFORMAÇÕES DO PERFIL
+========================================================= */
+
+.topbar-profile-info {
+
+    min-width:
+        0;
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    justify-content:
+        center;
+}
+
+.topbar-profile-name {
+
+    display:
+        block;
+
+    max-width:
+        100%;
+
+    overflow:
+        hidden;
+
+    color:
+        var(--mw-text);
+
+    font-size:
+        14px;
+
+    font-weight:
+        800;
+
+    line-height:
+        1.25;
+
+    text-overflow:
+        ellipsis;
+
+    white-space:
+        nowrap;
+}
+
+
+/* =========================================================
+TIPO + LOCALIZAÇÃO
+========================================================= */
+
+.topbar-profile-meta {
+
+    min-width:
+        0;
+
+    margin-top:
+        3px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        5px;
+
+    overflow:
+        hidden;
+
+    color:
+        var(--mw-text-secondary);
+
+    font-size:
+        11px;
+
+    font-weight:
+        600;
+
+    line-height:
+        1.3;
+}
+
+.topbar-profile-type {
+
+    min-width:
+        0;
+
+    overflow:
+        hidden;
+
+    text-overflow:
+        ellipsis;
+
+    white-space:
+        nowrap;
+}
+
+.topbar-profile-separator {
+
+    flex:
+        0 0 auto;
+
+    color:
+        var(--mw-text-muted);
+}
+
+.topbar-profile-location {
+
+    min-width:
+        0;
+
+    display:
+        inline-flex;
+
+    align-items:
+        center;
+
+    gap:
+        3px;
+
+    overflow:
+        hidden;
+
+    text-overflow:
+        ellipsis;
+
+    white-space:
+        nowrap;
+}
+
+.topbar-profile-location svg {
+
+    width:
+        12px;
+
+    height:
+        12px;
+
+    flex:
+        0 0 auto;
+
+    fill:
+        none;
+
+    stroke:
+        currentColor;
+
+    stroke-width:
+        1.8;
+
+    stroke-linecap:
+        round;
+
+    stroke-linejoin:
+        round;
+}
+
+
+/* =========================================================
+AÇÕES DO TOPBAR
+========================================================= */
+
+.topbar-actions {
+
+    flex:
+        0 0 auto;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        8px;
+}
+
+
+/* =========================================================
+BOTÕES DE AÇÃO
+========================================================= */
+
+.topbar-action {
+
+    width:
+        42px;
+
+    height:
+        42px;
+
+    flex:
+        0 0 42px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    color:
+        var(--mw-text);
+
+    background:
+        var(--mw-surface);
+
+    border:
+        1px solid var(--mw-border);
+
+    border-radius:
+        13px;
+
+    box-shadow:
+        0 4px 14px rgba(23, 32, 51, 0.06);
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
 .topbar-action:hover {
 
     background:
-        #f1f3f7;
+        #f8f9fc;
+
+    border-color:
+        #dfe3eb;
+
+    box-shadow:
+        0 6px 18px rgba(23, 32, 51, 0.09);
 }
 
-.topbar-back:active,
 .topbar-action:active {
 
     transform:
         scale(0.96);
 }
 
+
+/* =========================================================
+ÍCONE DAS AÇÕES
+========================================================= */
+
 .topbar-back svg,
 .topbar-action svg {
 
-    width: 21px;
+    width:
+        20px;
 
-    height: 21px;
+    height:
+        20px;
 
-    fill: none;
+    fill:
+        none;
 
     stroke:
         currentColor;
 
-    stroke-width: 1.8;
+    stroke-width:
+        1.8;
 
-    stroke-linecap: round;
+    stroke-linecap:
+        round;
 
-    stroke-linejoin: round;
+    stroke-linejoin:
+        round;
+}
+
+
+/* =========================================================
+CURTIR
+========================================================= */
+
+#btnCurtir {
+
+    color:
+        var(--mw-text);
+}
+
+#btnCurtir:hover {
+
+    color:
+        #e25568;
+
+    border-color:
+        rgba(226, 85, 104, 0.25);
+
+    background:
+        #fff6f7;
+}
+
+
+/* =========================================================
+SALVAR
+========================================================= */
+
+#btnSalvar {
+
+    color:
+        var(--mw-text);
+}
+
+#btnSalvar:hover {
+
+    color:
+        var(--mw-primary);
+
+    border-color:
+        rgba(109, 74, 255, 0.25);
+
+    background:
+        var(--mw-primary-soft);
+}
+
+
+/* =========================================================
+MAIS OPÇÕES
+========================================================= */
+
+#btnMenu {
+
+    color:
+        var(--mw-text-secondary);
+}
+
+#btnMenu:hover {
+
+    color:
+        var(--mw-text);
+
+    background:
+        #f1f3f7;
+}
+
+
+/* =========================================================
+ESTADOS ATIVOS
+========================================================= */
+
+.topbar-action.is-active {
+
+    color:
+        var(--mw-primary);
+
+    background:
+        var(--mw-primary-soft);
+
+    border-color:
+        rgba(109, 74, 255, 0.25);
+}
+
+.topbar-action.is-liked {
+
+    color:
+        #e25568;
+
+    background:
+        #fff3f5;
+
+    border-color:
+        rgba(226, 85, 104, 0.25);
+}
+
+.topbar-action.is-saved {
+
+    color:
+        var(--mw-primary);
+
+    background:
+        var(--mw-primary-soft);
+
+    border-color:
+        rgba(109, 74, 255, 0.25);
 }
 
 
@@ -404,8 +912,6 @@ VÍDEO DO PORTFÓLIO
     background:
         #111827;
 
-    pointer-events: none;
-
     user-select: none;
 }
 
@@ -423,11 +929,7 @@ OVERLAY DA MÍDIA
     z-index: 1;
 
     background:
-        linear-gradient(
-            to bottom,
-            rgba(0, 0, 0, 0.04) 35%,
-            rgba(0, 0, 0, 0.72) 100%
-        );
+        transparent;
 
     pointer-events: none;
 }
@@ -547,7 +1049,7 @@ INDICADORES DO CARROSSEL
 
 
 /* =========================================================
-BOTÃO EXPANDIR
+BOTÃO EXPANDIR MÍDIA
 ========================================================= */
 
 .media-expand {
@@ -953,7 +1455,16 @@ CABEÇALHO SEM MÍDIA
 
 
 /* =========================================================
-CONTEÚDO
+CONTEÚDO ANTIGO DO PERFIL
+
+Mantido para compatibilidade com módulos antigos.
+
+A apresentação atual do perfil não utiliza mais esta
+área para mostrar tipo, avaliação, gêneros ou biografia
+imediatamente abaixo da mídia.
+
+O conteúdo atual do portfólio utiliza as regras específicas
+da seção "CONTEÚDO DO ITEM DO PORTFÓLIO".
 ========================================================= */
 
 .profile-content {
@@ -1129,7 +1640,14 @@ GÊNEROS / ESTILOS
 
 
 /* =========================================================
-DESCRIÇÃO
+DESCRIÇÃO ANTIGA DO PERFIL
+
+Mantida para compatibilidade.
+
+Não confundir com:
+.profile-portfolio-description
+
+A descrição do portfólio possui regras próprias abaixo.
 ========================================================= */
 
 .profile-description {
@@ -1227,6 +1745,318 @@ INFORMAÇÕES PROFISSIONAIS
     line-height: 1.4;
 
     text-overflow: ellipsis;
+}
+
+
+/* =========================================================
+CONTEÚDO DO ITEM DO PORTFÓLIO
+
+Responsabilidade:
+
+* Exibir o título do item selecionado.
+* Exibir a descrição do item selecionado.
+* Manter uma área visual padronizada.
+* Impedir que uma descrição longa aumente
+  indefinidamente o card.
+* Permitir expansão controlada pelo JavaScript.
+========================================================= */
+
+.profile-portfolio-content {
+
+    width:
+        100%;
+
+    padding:
+        16px
+        20px
+        18px;
+
+    background:
+        #ffffff;
+
+    border-top:
+        1px solid var(--mw-border);
+}
+
+
+/* =========================================================
+TÍTULO DO ITEM DO PORTFÓLIO
+========================================================= */
+
+.profile-portfolio-title {
+
+    margin:
+        0;
+
+    max-width:
+        100%;
+
+    overflow:
+        hidden;
+
+    color:
+        var(--mw-text);
+
+    font-size:
+        17px;
+
+    font-weight:
+        800;
+
+    line-height:
+        1.35;
+
+    letter-spacing:
+        -0.01em;
+
+    display:
+        -webkit-box;
+
+    -webkit-box-orient:
+        vertical;
+
+    -webkit-line-clamp:
+        2;
+
+    text-overflow:
+        ellipsis;
+
+    word-break:
+        break-word;
+}
+
+.profile-portfolio-title:empty {
+
+    display:
+        none;
+}
+
+
+/* =========================================================
+DESCRIÇÃO DO ITEM DO PORTFÓLIO
+
+ESTADO FECHADO:
+
+* Limite visual de aproximadamente 3 linhas.
+* A descrição não consegue aumentar
+  indefinidamente a altura do card.
+* Textos maiores são cortados.
+========================================================= */
+
+.profile-portfolio-description {
+
+    width:
+        100%;
+
+    max-width:
+        100%;
+
+    margin:
+        7px 0 0;
+
+    color:
+        var(--mw-text-secondary);
+
+    font-size:
+        13px;
+
+    font-weight:
+        500;
+
+    line-height:
+        1.6;
+
+    display:
+        -webkit-box;
+
+    -webkit-box-orient:
+        vertical;
+
+    -webkit-line-clamp:
+        3;
+
+    max-height:
+        calc(1.6em * 3);
+
+    overflow:
+        hidden;
+
+    word-break:
+        break-word;
+
+    transition:
+        max-height 0.25s ease;
+}
+
+
+/* =========================================================
+DESCRIÇÃO VAZIA
+========================================================= */
+
+.profile-portfolio-description:empty {
+
+    display:
+        none;
+}
+
+
+/* =========================================================
+DESCRIÇÃO EXPANDIDA
+
+O JavaScript adicionará:
+
+.profile-portfolio-content.is-expanded
+
+Quando isso acontecer:
+
+* O limite de 3 linhas é removido.
+* A descrição pode ocupar a altura
+  necessária para mostrar o texto completo.
+========================================================= */
+
+.profile-portfolio-content.is-expanded
+.profile-portfolio-description {
+
+    display:
+        block;
+
+    max-height:
+        1000px;
+
+    -webkit-line-clamp:
+        unset;
+
+    overflow:
+        hidden;
+}
+
+
+/* =========================================================
+BOTÃO DE EXPANSÃO DA DESCRIÇÃO
+
+Este elemento será criado/controlado pelo JavaScript.
+
+Exemplo visual:
+
+Ver descrição completa  ˅
+
+Depois de expandido:
+
+Ver menos  ˄
+========================================================= */
+
+.portfolio-description-toggle {
+
+    margin:
+        8px 0 0;
+
+    padding:
+        0;
+
+    display:
+        inline-flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        flex-start;
+
+    gap:
+        5px;
+
+    color:
+        var(--mw-primary);
+
+    background:
+        transparent;
+
+    font-size:
+        12px;
+
+    font-weight:
+        800;
+
+    line-height:
+        1.4;
+
+    cursor:
+        pointer;
+
+    transition:
+        color 0.2s ease,
+        opacity 0.2s ease;
+}
+
+.portfolio-description-toggle:hover {
+
+    color:
+        var(--mw-primary-dark);
+}
+
+.portfolio-description-toggle:active {
+
+    opacity:
+        0.7;
+}
+
+.portfolio-description-toggle svg {
+
+    width:
+        15px;
+
+    height:
+        15px;
+
+    flex:
+        0 0 auto;
+
+    fill:
+        none;
+
+    stroke:
+        currentColor;
+
+    stroke-width:
+        1.8;
+
+    stroke-linecap:
+        round;
+
+    stroke-linejoin:
+        round;
+
+    transition:
+        transform 0.25s ease;
+}
+
+
+/* =========================================================
+ÍCONE DO BOTÃO QUANDO EXPANDIDO
+========================================================= */
+
+.profile-portfolio-content.is-expanded
+.portfolio-description-toggle svg {
+
+    transform:
+        rotate(180deg);
+}
+
+
+/* =========================================================
+BOTÃO DE EXPANSÃO OCULTO
+
+Quando o JavaScript determinar que a descrição
+é curta o suficiente para caber completamente,
+o botão pode receber hidden.
+
+Este seletor garante que ele não ocupe espaço.
+========================================================= */
+
+.portfolio-description-toggle[hidden] {
+
+    display:
+        none;
 }
 
 
@@ -1992,56 +2822,16 @@ ESTADO VAZIO — SERVIÇOS
     stroke:
         currentColor;
 
-    stroke-width:
-        1.8;
+    stroke-width: 1.8;
 
-    stroke-linecap:
-        round;
+    stroke-linecap: round;
 
-    stroke-linejoin:
-        round;
+    stroke-linejoin: round;
 }
 
 
 /* =========================================================
 AVALIAÇÕES — SEÇÃO PÚBLICA
-
-IMPORTANTE:
-
-O módulo ApresentarPerfilAvaliacoesTeste renderiza
-dinamicamente dentro de #reviewsRender.
-
-Por isso, esta seção não depende mais dos elementos
-estáticos antigos como:
-
-* .reviews-summary-score
-* .reviews-average
-* .reviews-total
-* .reviews-distribution
-* #reviewDistribution5
-* #reviewCount5
-
-O módulo atual utiliza:
-
-* .reviews-summary
-* .reviews-score
-* .reviews-score-value
-* .reviews-score-label
-* .reviews-summary-content
-* .reviews-stars
-* .reviews-summary-count
-* .reviews-list
-* .review-card
-* .review-header
-* .review-avatar
-* .review-author
-* .review-author-name
-* .review-date
-* .review-rating
-* .review-rating-value
-* .review-comment
-* .review-without-comment
-* .reviews-empty
 ========================================================= */
 
 .profile-reviews {
@@ -2078,9 +2868,6 @@ O módulo atual utiliza:
 
 /* =========================================================
 CONTAINER DE RENDERIZAÇÃO
-
-O JavaScript injeta o resumo, a lista de avaliações
-ou o estado vazio dentro deste elemento.
 ========================================================= */
 
 .reviews-render {
@@ -2644,11 +3431,9 @@ ESTADO VAZIO — AVALIAÇÕES
 
 .reviews-empty-icon {
 
-    width:
-        40px;
+    width: 40px;
 
-    height:
-        40px;
+    height: 40px;
 
     margin:
         0 0 9px;
@@ -2677,11 +3462,9 @@ ESTADO VAZIO — AVALIAÇÕES
 
 .reviews-empty-icon svg {
 
-    width:
-        19px;
+    width: 19px;
 
-    height:
-        19px;
+    height: 19px;
 
     fill:
         none;
@@ -2746,7 +3529,8 @@ ESTADO DE ERRO
         36px
         24px;
 
-    text-align: center;
+    text-align:
+        center;
 
     background:
         var(--mw-surface);
@@ -2830,9 +3614,11 @@ ESTADO DE ERRO
     color:
         var(--mw-text-secondary);
 
-    font-size: 13px;
+    font-size:
+        13px;
 
-    line-height: 1.6;
+    line-height:
+        1.6;
 }
 
 
@@ -2937,16 +3723,20 @@ MENU
 
     align-items: center;
 
-    gap: 11px;
+    gap:
+        11px;
 
-    text-align: left;
+    text-align:
+        left;
 
     color:
         var(--mw-text);
 
-    font-size: 14px;
+    font-size:
+        14px;
 
-    font-weight: 700;
+    font-weight:
+        700;
 
     border-radius:
         12px;
@@ -2981,11 +3771,14 @@ MENU
     stroke:
         currentColor;
 
-    stroke-width: 1.8;
+    stroke-width:
+        1.8;
 
-    stroke-linecap: round;
+    stroke-linecap:
+        round;
 
-    stroke-linejoin: round;
+    stroke-linejoin:
+        round;
 }
 
 
@@ -3024,6 +3817,65 @@ TABLET / MOBILE
 
         grid-template-columns:
             1fr;
+    }
+
+
+    /* -----------------------------------------------------
+       CONTEÚDO DO PORTFÓLIO
+       ----------------------------------------------------- */
+
+    .profile-portfolio-content {
+
+        padding:
+            15px
+            16px
+            17px;
+    }
+
+    .profile-portfolio-title {
+
+        font-size:
+            16px;
+
+        line-height:
+            1.35;
+    }
+
+    .profile-portfolio-description {
+
+        margin-top:
+            6px;
+
+        font-size:
+            12.5px;
+
+        line-height:
+            1.6;
+
+        -webkit-line-clamp:
+            3;
+
+        max-height:
+            calc(1.6em * 3);
+    }
+
+    .profile-portfolio-content.is-expanded
+    .profile-portfolio-description {
+
+        max-height:
+            1000px;
+
+        -webkit-line-clamp:
+            unset;
+    }
+
+    .portfolio-description-toggle {
+
+        margin-top:
+            7px;
+
+        font-size:
+            11.5px;
     }
 
 
@@ -3267,16 +4119,124 @@ CELULAR
 
 @media (max-width: 520px) {
 
+    /* -----------------------------------------------------
+       TOPBAR
+       ----------------------------------------------------- */
+
+    .topbar {
+
+        height:
+            64px;
+    }
+
     .topbar-inner {
 
         padding:
             0 12px;
+
+        gap:
+            7px;
     }
+
+    .topbar-back {
+
+        width:
+            40px;
+
+        height:
+            40px;
+
+        flex-basis:
+            40px;
+
+        border-radius:
+            12px;
+    }
+
+    .topbar-profile {
+
+        gap:
+            8px;
+    }
+
+    .topbar-profile-avatar {
+
+        width:
+            38px;
+
+        height:
+            38px;
+
+        min-width:
+            38px;
+
+        flex-basis:
+            38px;
+
+        font-size:
+            11px;
+    }
+
+    .topbar-profile-name {
+
+        font-size:
+            13px;
+    }
+
+    .topbar-profile-meta {
+
+        font-size:
+            10px;
+
+        gap:
+            4px;
+    }
+
+    .topbar-profile-location svg {
+
+        width:
+            11px;
+
+        height:
+            11px;
+    }
+
+    .topbar-actions {
+
+        gap:
+            6px;
+    }
+
+    .topbar-action {
+
+        width:
+            40px;
+
+        height:
+            40px;
+
+        flex-basis:
+            40px;
+
+        border-radius:
+            12px;
+    }
+
+    .topbar-back svg,
+    .topbar-action svg {
+
+        width:
+            19px;
+
+        height:
+            19px;
+    }
+
 
     .profile-media {
 
         aspect-ratio:
-            1 / 1;
+            4 / 5.3;
     }
 
     .media-profile-info {
@@ -3343,6 +4303,65 @@ CELULAR
 
         padding-top:
             14px;
+    }
+
+
+    /* -----------------------------------------------------
+       CONTEÚDO DO PORTFÓLIO
+       ----------------------------------------------------- */
+
+    .profile-portfolio-content {
+
+        padding:
+            14px
+            14px
+            16px;
+    }
+
+    .profile-portfolio-title {
+
+        font-size:
+            15px;
+
+        line-height:
+            1.35;
+    }
+
+    .profile-portfolio-description {
+
+        margin-top:
+            6px;
+
+        font-size:
+            12px;
+
+        line-height:
+            1.6;
+
+        -webkit-line-clamp:
+            3;
+
+        max-height:
+            calc(1.6em * 3);
+    }
+
+    .profile-portfolio-content.is-expanded
+    .profile-portfolio-description {
+
+        max-height:
+            1000px;
+
+        -webkit-line-clamp:
+            unset;
+    }
+
+    .portfolio-description-toggle {
+
+        margin-top:
+            7px;
+
+        font-size:
+            11px;
     }
 
 
@@ -3794,6 +4813,105 @@ CELULAR PEQUENO
 
 @media (max-width: 360px) {
 
+    /* -----------------------------------------------------
+       TOPBAR
+       ----------------------------------------------------- */
+
+    .topbar-inner {
+
+        padding:
+            0 9px;
+
+        gap:
+            5px;
+    }
+
+    .topbar-back {
+
+        width:
+            38px;
+
+        height:
+            38px;
+
+        flex-basis:
+            38px;
+
+        border-radius:
+            11px;
+    }
+
+    .topbar-profile {
+
+        gap:
+            6px;
+    }
+
+    .topbar-profile-avatar {
+
+        width:
+            36px;
+
+        height:
+            36px;
+
+        min-width:
+            36px;
+
+        flex-basis:
+            36px;
+    }
+
+    .topbar-profile-name {
+
+        font-size:
+            12px;
+    }
+
+    .topbar-profile-meta {
+
+        font-size:
+            9px;
+    }
+
+    .topbar-profile-location {
+
+        max-width:
+            90px;
+    }
+
+    .topbar-actions {
+
+        gap:
+            4px;
+    }
+
+    .topbar-action {
+
+        width:
+            36px;
+
+        height:
+            36px;
+
+        flex-basis:
+            36px;
+
+        border-radius:
+            10px;
+    }
+
+    .topbar-back svg,
+    .topbar-action svg {
+
+        width:
+            18px;
+
+        height:
+            18px;
+    }
+
+
     .profile-content {
 
         padding-left:
@@ -3867,6 +4985,65 @@ CELULAR PEQUENO
 
         padding:
             10px;
+    }
+
+
+    /* -----------------------------------------------------
+       CONTEÚDO DO PORTFÓLIO
+       ----------------------------------------------------- */
+
+    .profile-portfolio-content {
+
+        padding:
+            14px
+            12px
+            16px;
+    }
+
+    .profile-portfolio-title {
+
+        font-size:
+            15px;
+
+        line-height:
+            1.35;
+    }
+
+    .profile-portfolio-description {
+
+        margin-top:
+            6px;
+
+        font-size:
+            11.5px;
+
+        line-height:
+            1.6;
+
+        -webkit-line-clamp:
+            3;
+
+        max-height:
+            calc(1.6em * 3);
+    }
+
+    .profile-portfolio-content.is-expanded
+    .profile-portfolio-description {
+
+        max-height:
+            1000px;
+
+        -webkit-line-clamp:
+            unset;
+    }
+
+    .portfolio-description-toggle {
+
+        margin-top:
+            7px;
+
+        font-size:
+            10.5px;
     }
 
 
