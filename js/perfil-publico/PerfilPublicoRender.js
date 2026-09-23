@@ -1138,8 +1138,15 @@
         estado
     ) {
 
+        /*
+         * O nome do perfil visualizado deve priorizar
+         * usuarioPerfil, pois usuario representa o usuário
+         * autenticado que está visualizando a página.
+         */
         const usuario =
-            estado?.usuario || {};
+            estado?.usuarioPerfil ||
+            estado?.usuario ||
+            {};
 
 
         const perfil =
@@ -1192,7 +1199,9 @@
 
 
         const usuario =
-            estado?.usuario || {};
+            estado?.usuarioPerfil ||
+            estado?.usuario ||
+            {};
 
 
         return obterPrimeiroValor(
@@ -1834,8 +1843,25 @@
             estado?.perfil || {};
 
 
+        /*
+         * IMPORTANTE:
+         *
+         * estado.usuario representa o usuário autenticado.
+         *
+         * estado.usuarioPerfil representa o proprietário
+         * do perfil que está sendo visualizado.
+         *
+         * Quando o usuário abre o próprio perfil, os dois
+         * normalmente representam a mesma pessoa.
+         *
+         * Quando o usuário abre o perfil de outra pessoa,
+         * precisamos priorizar usuarioPerfil para que a foto
+         * exibida pertença ao perfil visualizado.
+         */
         const usuario =
-            estado?.usuario || {};
+            estado?.usuarioPerfil ||
+            estado?.usuario ||
+            {};
 
 
         if (

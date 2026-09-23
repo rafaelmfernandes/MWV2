@@ -805,9 +805,11 @@
        como ativo, fazemos uma segunda consulta somente
        pelo usuario_id.
 
-       Isso mantém o comportamento compatível com o
-       Perfil Público, que consegue carregar perfis sem
-       depender exclusivamente de ativo = true.
+       A foto também pertence exclusivamente à pessoa
+       carregada nesta função.
+
+       Nunca utilizamos a foto do usuário autenticado
+       como fallback do participante.
     ===================================================== */
 
     async function carregarPessoa(
@@ -946,11 +948,44 @@
         }
 
 
+        /* =================================================
+           IDENTIFICAR O TIPO REAL DO PERFIL
+
+           O participante deve ser tratado de acordo com
+           o tipo armazenado em tipos_perfil.
+
+           Não usamos o usuário autenticado para decidir
+           o tipo ou a foto da pessoa.
+        ================================================= */
+
+        const tipoPerfil =
+            String(
+                perfil?.tipos_perfil?.nome ||
+                ""
+            )
+                .trim();
+
+
+        const ehPerfilArtista =
+            tipoPerfil.toLowerCase() ===
+            "artista";
+
+
         let perfilArtista =
             null;
 
 
-        if (perfil?.id) {
+        /* =================================================
+           CARREGAR DADOS ARTÍSTICOS SOMENTE PARA ARTISTAS
+
+           Contratantes não devem receber dados de
+           perfis_artistas por engano.
+        ================================================= */
+
+        if (
+            perfil?.id &&
+            ehPerfilArtista
+        ) {
 
             const respostaArtista =
                 await supabase
@@ -970,15 +1005,6 @@
             if (
                 respostaArtista.error
             ) {
-
-                /*
-                 * Um contratante normalmente não possui
-                 * registro em perfis_artistas.
-
-                 * Portanto, se a consulta não encontrar
-                 * dados artísticos, não interrompemos o
-                 * carregamento da pessoa.
-                 */
 
                 console.warn(
                     "MusicalWorldContratacaoAcompanhamento: perfil artístico não disponível para o participante.",
@@ -1009,12 +1035,30 @@
             );
 
 
+        /*
+         * IMPORTANTE:
+         *
+         * A foto é obtida exclusivamente a partir dos
+         * dados da pessoa que está sendo carregada.
+         *
+         * Para artista:
+         * - perfis_artistas.foto_url
+         * - perfis_artistas.avatar_url
+         *
+         * Para contratante:
+         * - não utilizamos perfis_artistas.
+         *
+         * Isso impede que a foto de outro usuário seja
+         * associada ao participante por engano.
+         */
         const fotoUrl =
-            (
-                perfilArtista?.foto_url ||
-                perfilArtista?.avatar_url ||
-                null
-            );
+            ehPerfilArtista
+                ? (
+                    perfilArtista?.foto_url ||
+                    perfilArtista?.avatar_url ||
+                    null
+                )
+                : null;
 
 
         return {
@@ -1897,4 +1941,5 @@
 
 
 })(window);
+
 
