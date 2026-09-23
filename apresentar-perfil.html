@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 
 <html lang="pt-BR">
@@ -8,13 +7,13 @@
 <meta charset="UTF-8">
 
 <meta
-name="viewport"
-content="width=device-width, initial-scale=1.0"
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
 >
 
 <meta
-name="description"
-content="Página de apresentação de perfil — MusicalWorld"
+    name="description"
+    content="Página de apresentação de perfil — MusicalWorld"
 >
 
 <title>Perfil | MusicalWorld</title>
@@ -100,11 +99,11 @@ content="Página de apresentação de perfil — MusicalWorld"
      ================================================= -->
 
 <button
-class="topbar-back"
-id="btnVoltar"
-type="button"
-aria-label="Voltar"
-data-action="back"
+    class="topbar-back"
+    id="btnVoltar"
+    type="button"
+    aria-label="Voltar"
+    data-action="back"
 >
 
 <svg
@@ -389,6 +388,10 @@ data-action="back"
 
      Ao trocar de mídia, o título e a descrição
      acompanham o item ativo.
+
+     A descrição possui limite visual de linhas.
+     Quando ultrapassar esse limite, o botão
+     "Ler descrição completa" será exibido.
      ================================================= -->
 
 <div
@@ -408,6 +411,25 @@ data-action="back"
         id="profilePortfolioDescription"
         hidden
     ></p>
+
+    <!-- =================================================
+         BOTÃO PARA EXPANDIR A DESCRIÇÃO
+
+         O botão permanece oculto quando a descrição
+         cabe completamente dentro do limite visual.
+
+         O JavaScript controla sua exibição.
+         ================================================= -->
+
+    <button
+        class="profile-portfolio-read-more"
+        id="btnExpandirDescricao"
+        type="button"
+        hidden
+        aria-expanded="false"
+    >
+        Ler descrição completa
+    </button>
 
 </div>
 
@@ -605,9 +627,9 @@ data-action="back"
 
 </article>
 
-<!-- =================================================
+<!-- =====================================================
      SERVIÇOS
-     ================================================= -->
+     ===================================================== -->
 
 <section
     class="profile-services"
@@ -669,9 +691,9 @@ data-action="back"
 
 </section>
 
-<!-- =================================================
+<!-- =====================================================
      AVALIAÇÕES
-     ================================================= -->
+     ===================================================== -->
 
 <section
     class="profile-reviews"
@@ -733,9 +755,9 @@ data-action="back"
 
 </section>
 
-<!-- =================================================
+<!-- =====================================================
      ERRO
-     ================================================= -->
+     ===================================================== -->
 
 <section
     class="profile-error"
@@ -802,8 +824,8 @@ data-action="back"
 <div class="action-menu-panel">
 
 <button
-type="button"
-data-menu-action="report"
+    type="button"
+    data-menu-action="report"
 >
 
 <svg
@@ -828,8 +850,8 @@ data-menu-action="report"
 </button>
 
 <button
-type="button"
-data-menu-action="copy"
+    type="button"
+    data-menu-action="copy"
 >
 
 <svg
@@ -858,8 +880,8 @@ data-menu-action="copy"
 </button>
 
 <button
-type="button"
-data-menu-action="cancel"
+    type="button"
+    data-menu-action="cancel"
 >
 
 <span>
@@ -1186,4 +1208,3 @@ document.addEventListener(
 </body>
 
 </html>
-

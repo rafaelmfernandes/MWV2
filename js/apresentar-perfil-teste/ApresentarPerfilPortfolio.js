@@ -21,6 +21,10 @@ Responsabilidades:
 * Controlar a expansão da mídia.
 * Não criar botões de anterior/próximo.
 * Atualizar título e descrição do item atual.
+* Permitir expandir e recolher descrições longas.
+* Exibir o botão de descrição somente quando
+  realmente existir uma descrição que ultrapasse
+  o limite visual definido pelo CSS.
 * Não carregar dados de usuário, perfil ou serviços.
 
 Regra importante:
@@ -36,7 +40,6 @@ Dependências:
   ========================================================= */
 
 (function (window) {
-
 
 "use strict";
 
@@ -96,7 +99,18 @@ const CONFIG = {
             "profilePortfolioTitle",
 
         portfolioItemDescription:
-            "profilePortfolioDescription"
+            "profilePortfolioDescription",
+
+        /*
+         * Botão utilizado para expandir e recolher
+         * descrições longas do item atual.
+         *
+         * Este ID corresponde ao botão existente
+         * no HTML da página.
+         */
+
+        portfolioDescriptionToggle:
+            "btnExpandirDescricao"
 
     },
 
@@ -1815,6 +1829,595 @@ function criarVideo(
 
 
 /* =====================================================
+   CONTROLA VISIBILIDADE DO BOTÃO DE DESCRIÇÃO
+
+   Esta função centraliza a exibição do botão.
+
+   O atributo hidden sozinho pode ser sobrescrito por
+   regras CSS que definam display para a classe do botão.
+
+   Por isso o JavaScript também controla diretamente
+   o display.
+
+   Estados:
+
+   - oculto:
+     hidden = true
+     display = none
+
+   - visível:
+     hidden = false
+     display = inline-flex
+
+   ===================================================== */
+
+function definirVisibilidadeBotaoDescricao(
+    botao,
+    visivel
+) {
+
+    if (!botao) {
+        return;
+    }
+
+
+    if (visivel) {
+
+        botao.hidden = false;
+
+        botao.style.display =
+            "inline-flex";
+
+    } else {
+
+        botao.hidden = true;
+
+        botao.style.display =
+            "none";
+
+    }
+
+}
+
+
+/* =====================================================
+   RESETA DESCRIÇÃO
+   ===================================================== */
+
+function resetarDescricaoPortfolio() {
+
+    const descricao =
+        obterElemento(
+            CONFIG.elementos.portfolioItemDescription
+        );
+
+
+    const botao =
+        obterElemento(
+            CONFIG.elementos.portfolioDescriptionToggle
+        );
+
+
+    const container =
+        obterElemento(
+            CONFIG.elementos.portfolioContent
+        );
+
+
+    /*
+     * A descrição sempre começa recolhida
+     * quando o usuário troca de item.
+     */
+
+    if (descricao) {
+
+        descricao.classList.remove(
+            "is-expanded"
+        );
+
+    }
+
+
+    if (container) {
+
+        container.classList.remove(
+            "is-expanded"
+        );
+
+    }
+
+
+    if (botao) {
+
+        botao.textContent =
+            "Ler descrição completa";
+
+
+        botao.setAttribute(
+            "aria-expanded",
+            "false"
+        );
+
+
+        definirVisibilidadeBotaoDescricao(
+            botao,
+            false
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   VERIFICA SE A DESCRIÇÃO PRECISA SER EXPANDIDA
+
+   A descrição continua limitada pelo CSS.
+
+   Depois que o navegador calcula o layout,
+   comparamos:
+
+   scrollHeight = altura real do texto
+
+   clientHeight = altura atualmente visível
+
+   Se scrollHeight for maior que clientHeight,
+   significa que o texto foi cortado pelo CSS.
+
+   Nesse caso o botão "Ler descrição completa"
+   é exibido.
+
+   Se não houver descrição, o botão permanece
+   obrigatoriamente oculto.
+
+   ===================================================== */
+
+function verificarDescricaoLonga() {
+
+    const descricao =
+        obterElemento(
+            CONFIG.elementos.portfolioItemDescription
+        );
+
+
+    const botao =
+        obterElemento(
+            CONFIG.elementos.portfolioDescriptionToggle
+        );
+
+
+    const container =
+        obterElemento(
+            CONFIG.elementos.portfolioContent
+        );
+
+
+    /*
+     * Sem descrição ou sem botão:
+     *
+     * não existe nada para expandir.
+     */
+
+    if (
+        !descricao ||
+        !botao ||
+        descricao.hidden ||
+        !descricao.textContent.trim()
+    ) {
+
+        if (botao) {
+
+            botao.textContent =
+                "Ler descrição completa";
+
+            botao.setAttribute(
+                "aria-expanded",
+                "false"
+            );
+
+            definirVisibilidadeBotaoDescricao(
+                botao,
+                false
+            );
+
+        }
+
+
+        if (descricao) {
+
+            descricao.classList.remove(
+                "is-expanded"
+            );
+
+        }
+
+
+        if (container) {
+
+            container.classList.remove(
+                "is-expanded"
+            );
+
+        }
+
+
+        return;
+
+    }
+
+
+    /*
+     * Primeiro garantimos que o estado esteja
+     * recolhido antes de medir.
+     */
+
+    descricao.classList.remove(
+        "is-expanded"
+    );
+
+
+    if (container) {
+
+        container.classList.remove(
+            "is-expanded"
+        );
+
+    }
+
+
+    botao.textContent =
+        "Ler descrição completa";
+
+
+    botao.setAttribute(
+        "aria-expanded",
+        "false"
+    );
+
+
+    definirVisibilidadeBotaoDescricao(
+        botao,
+        false
+    );
+
+
+    /*
+     * Dois frames garantem que o navegador tenha
+     * aplicado o conteúdo e o CSS antes da medição.
+     */
+
+    window.requestAnimationFrame(
+        function () {
+
+            window.requestAnimationFrame(
+                function () {
+
+                    /*
+                     * O conteúdo pode ter mudado enquanto
+                     * aguardávamos o layout.
+                     */
+
+                    if (
+                        !descricao.isConnected ||
+                        descricao.hidden ||
+                        !descricao.textContent.trim()
+                    ) {
+
+                        definirVisibilidadeBotaoDescricao(
+                            botao,
+                            false
+                        );
+
+                        return;
+
+                    }
+
+
+                    /*
+                     * Verifica novamente se o item atual
+                     * ainda possui descrição.
+                     *
+                     * Isso evita que uma medição atrasada
+                     * de um item anterior libere o botão
+                     * para um item que não possui descrição.
+                     */
+
+                    const itemAtual =
+                        estado.itemAtual;
+
+
+                    const possuiDescricaoAtual =
+                        Boolean(
+                            itemAtual &&
+                            itemAtual.descricao &&
+                            String(
+                                itemAtual.descricao
+                            ).trim()
+                        );
+
+
+                    if (!possuiDescricaoAtual) {
+
+                        definirVisibilidadeBotaoDescricao(
+                            botao,
+                            false
+                        );
+
+                        return;
+
+                    }
+
+
+                    const precisaExpandir =
+                        descricao.scrollHeight >
+                        descricao.clientHeight + 1;
+
+
+                    /*
+                     * O botão só aparece quando:
+                     *
+                     * 1. Existe descrição.
+                     * 2. A descrição ultrapassa o limite
+                     *    visual definido pelo CSS.
+                     */
+
+                    definirVisibilidadeBotaoDescricao(
+                        botao,
+                        precisaExpandir
+                    );
+
+                }
+            );
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   ALTERNAR DESCRIÇÃO COMPLETA
+   ===================================================== */
+
+function alternarDescricaoPortfolio() {
+
+    const descricao =
+        obterElemento(
+            CONFIG.elementos.portfolioItemDescription
+        );
+
+
+    const botao =
+        obterElemento(
+            CONFIG.elementos.portfolioDescriptionToggle
+        );
+
+
+    const container =
+        obterElemento(
+            CONFIG.elementos.portfolioContent
+        );
+
+
+    /*
+     * Sem descrição, não existe ação.
+     */
+
+    if (
+        !descricao ||
+        !botao ||
+        descricao.hidden ||
+        !descricao.textContent.trim() ||
+        botao.hidden ||
+        botao.style.display === "none"
+    ) {
+
+        return;
+
+    }
+
+
+    /*
+     * Confirma também que o item atualmente
+     * selecionado possui uma descrição real.
+     */
+
+    const itemAtual =
+        estado.itemAtual;
+
+
+    const possuiDescricaoAtual =
+        Boolean(
+            itemAtual &&
+            itemAtual.descricao &&
+            String(
+                itemAtual.descricao
+            ).trim()
+        );
+
+
+    if (!possuiDescricaoAtual) {
+
+        definirVisibilidadeBotaoDescricao(
+            botao,
+            false
+        );
+
+        return;
+
+    }
+
+
+    const expandida =
+        descricao.classList.contains(
+            "is-expanded"
+        );
+
+
+    if (expandida) {
+
+        /*
+         * Volta para a descrição resumida.
+         */
+
+        descricao.classList.remove(
+            "is-expanded"
+        );
+
+
+        if (container) {
+
+            container.classList.remove(
+                "is-expanded"
+            );
+
+        }
+
+
+        botao.textContent =
+            "Ler descrição completa";
+
+
+        botao.setAttribute(
+            "aria-expanded",
+            "false"
+        );
+
+
+        /*
+         * Continua visível porque esta descrição
+         * já foi identificada como longa.
+         */
+
+        definirVisibilidadeBotaoDescricao(
+            botao,
+            true
+        );
+
+
+        /*
+         * Retorna visualmente para a região
+         * da descrição.
+         */
+
+        descricao.scrollIntoView({
+            behavior: "smooth",
+            block: "nearest"
+        });
+
+
+    } else {
+
+        /*
+         * Expande a descrição inteira.
+         */
+
+        descricao.classList.add(
+            "is-expanded"
+        );
+
+
+        if (container) {
+
+            container.classList.add(
+                "is-expanded"
+            );
+
+        }
+
+
+        botao.textContent =
+            "Mostrar menos";
+
+
+        botao.setAttribute(
+            "aria-expanded",
+            "true"
+        );
+
+
+        definirVisibilidadeBotaoDescricao(
+            botao,
+            true
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   CONFIGURA BOTÃO DA DESCRIÇÃO
+   ===================================================== */
+
+function configurarBotaoDescricao() {
+
+    const botao =
+        obterElemento(
+            CONFIG.elementos.portfolioDescriptionToggle
+        );
+
+
+    if (!botao) {
+        return;
+    }
+
+
+    if (
+        botao.dataset.descricaoConfigurada ===
+        "true"
+    ) {
+        return;
+    }
+
+
+    botao.dataset.descricaoConfigurada =
+        "true";
+
+
+    /*
+     * O botão começa sempre oculto.
+     *
+     * Ele só será exibido por
+     * verificarDescricaoLonga()
+     * quando realmente houver uma descrição
+     * que ultrapasse o limite visual.
+     */
+
+    botao.textContent =
+        "Ler descrição completa";
+
+
+    botao.setAttribute(
+        "aria-expanded",
+        "false"
+    );
+
+
+    definirVisibilidadeBotaoDescricao(
+        botao,
+        false
+    );
+
+
+    botao.addEventListener(
+        "click",
+        function (evento) {
+
+            evento.preventDefault();
+
+            evento.stopPropagation();
+
+
+            alternarDescricaoPortfolio();
+
+        }
+    );
+
+}
+
+
+/* =====================================================
    ATUALIZA INFORMAÇÕES DO ITEM DO PORTFÓLIO
 
    Esta função atualiza exclusivamente os dados
@@ -1834,6 +2437,10 @@ function criarVideo(
 
    Quando o usuário muda de mídia, esta função é
    executada novamente para atualizar o conteúdo.
+
+   A descrição longa é medida depois que o navegador
+   calcula o layout para decidir se o botão de expansão
+   precisa aparecer.
    ===================================================== */
 
 function atualizarInformacoesMidia() {
@@ -1860,6 +2467,20 @@ function atualizarInformacoesMidia() {
         );
 
 
+    const botaoDescricao =
+        obterElemento(
+            CONFIG.elementos.portfolioDescriptionToggle
+        );
+
+
+    /*
+     * Toda troca de mídia começa com a descrição
+     * recolhida e o botão oculto.
+     */
+
+    resetarDescricaoPortfolio();
+
+
     /*
      * Sem item de portfólio:
      *
@@ -1880,6 +2501,23 @@ function atualizarInformacoesMidia() {
         if (descricao) {
             descricao.textContent = "";
             descricao.hidden = true;
+        }
+
+        if (botaoDescricao) {
+
+            botaoDescricao.textContent =
+                "Ler descrição completa";
+
+            botaoDescricao.setAttribute(
+                "aria-expanded",
+                "false"
+            );
+
+            definirVisibilidadeBotaoDescricao(
+                botaoDescricao,
+                false
+            );
+
         }
 
         return;
@@ -1918,7 +2556,9 @@ function atualizarInformacoesMidia() {
     const possuiDescricao =
         Boolean(
             item.descricao &&
-            item.descricao.trim()
+            String(
+                item.descricao
+            ).trim()
         );
 
 
@@ -1926,7 +2566,9 @@ function atualizarInformacoesMidia() {
 
         descricao.textContent =
             possuiDescricao
-                ? item.descricao
+                ? String(
+                    item.descricao
+                ).trim()
                 : "";
 
         descricao.hidden =
@@ -1947,6 +2589,50 @@ function atualizarInformacoesMidia() {
             !possuiDescricao;
 
     }
+
+
+    /*
+     * Se NÃO existe descrição:
+     *
+     * o botão permanece completamente oculto.
+     *
+     * Isso cobre, por exemplo, um portfólio
+     * que possui somente título.
+     */
+
+    if (!possuiDescricao) {
+
+        if (botaoDescricao) {
+
+            botaoDescricao.textContent =
+                "Ler descrição completa";
+
+            botaoDescricao.setAttribute(
+                "aria-expanded",
+                "false"
+            );
+
+            definirVisibilidadeBotaoDescricao(
+                botaoDescricao,
+                false
+            );
+
+        }
+
+
+        return;
+
+    }
+
+
+    /*
+     * Existe descrição.
+     *
+     * Agora verificamos se ela realmente ultrapassa
+     * o limite visual definido no CSS.
+     */
+
+    verificarDescricaoLonga();
 
 }
 
@@ -2823,6 +3509,8 @@ async function inicializar() {
 
     configurarBotaoExpandir();
 
+    configurarBotaoDescricao();
+
     configurarTeclado();
 
     configurarSwipe();
@@ -2892,6 +3580,8 @@ window.ApresentarPerfilPortfolioTeste = {
     irParaMidia,
 
     expandirMidia,
+
+    alternarDescricaoPortfolio,
 
     obterItens: function () {
 

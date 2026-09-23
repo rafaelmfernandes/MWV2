@@ -1,54 +1,54 @@
 /* =========================================================
-MUSICALWORLD — MEU PERFIL UNIVERSAL
+   MUSICALWORLD — MEU PERFIL UNIVERSAL
 
-Arquivo:
-js/perfil-publico/PerfilPublico.js
+   Arquivo:
+   js/perfil-publico/PerfilPublico.js
 
-Responsabilidade:
+   Responsabilidade:
 
-* Controlar a página "Meu Perfil".
-* Inicializar o perfil.
-* Carregar os dados através do PerfilPublicoDados.
-* Controlar as abas.
-* Acionar os módulos de portfólio, serviços, agenda
-  e avaliações.
-* Inicializar as avaliações antecipadamente para que
-  a média e a quantidade apareçam imediatamente no
-  cabeçalho do perfil.
-* Controlar navegação.
-* Controlar QR Code.
-* Construir links públicos.
-* Identificar se o perfil visualizado pertence ao
-  usuário autenticado.
-* Coordenar o módulo de interações do perfil.
-* Manter o estado geral da página.
+   - Controlar a página "Meu Perfil".
+   - Inicializar o perfil.
+   - Carregar os dados através do PerfilPublicoDados.
+   - Controlar as abas.
+   - Acionar os módulos de portfólio, serviços, agenda
+     e avaliações.
+   - Inicializar as avaliações antecipadamente para que
+     a média e a quantidade apareçam imediatamente no
+     cabeçalho do perfil.
+   - Controlar navegação.
+   - Controlar QR Code.
+   - Construir links públicos.
+   - Identificar se o perfil visualizado pertence ao
+     usuário autenticado.
+   - Coordenar o módulo de interações do perfil.
+   - Manter o estado geral da página.
 
-Interações:
+   Interações:
 
-js/perfil-publico/PerfilPublicoInteracoes.js
+   js/perfil-publico/PerfilPublicoInteracoes.js
 
-Renderização:
+   Renderização:
 
-js/perfil-publico/PerfilPublicoRender.js
+   js/perfil-publico/PerfilPublicoRender.js
 
-Dados:
+   Dados:
 
-js/perfil-publico/PerfilPublicoDados.js
+   js/perfil-publico/PerfilPublicoDados.js
 
-Avaliações:
+   Avaliações:
 
-js/perfil-publico/PerfilPublicoAvaliacoes.js
+   js/perfil-publico/PerfilPublicoAvaliacoes.js
 
-IMPORTANTE:
+   IMPORTANTE:
 
-Este arquivo NÃO deve conter regras extensas de
-apresentação visual.
+   Este arquivo NÃO deve conter regras extensas de
+   apresentação visual.
 
-A renderização básica do perfil pertence ao:
-js/perfil-publico/PerfilPublicoRender.js
+   A renderização básica do perfil pertence ao:
+   js/perfil-publico/PerfilPublicoRender.js
 
-As interações do usuário com o perfil pertencem ao:
-js/perfil-publico/PerfilPublicoInteracoes.js
+   As interações do usuário com o perfil pertencem ao:
+   js/perfil-publico/PerfilPublicoInteracoes.js
 
 ========================================================= */
 
@@ -173,6 +173,9 @@ const CONFIG = {
         voltar:
             "btnVoltar",
 
+        editar:
+            "btnEditarPerfil",
+
         qrCode:
             "btnQRCode",
 
@@ -241,10 +244,6 @@ const estado = {
     },
 
 
-    /*
-     * Perfil que está sendo visualizado.
-     */
-
     perfil:
         null,
 
@@ -253,11 +252,6 @@ const estado = {
         null,
 
 
-    /*
-     * Usuário autenticado que está navegando
-     * pela página.
-     */
-
     usuario:
         null,
 
@@ -265,18 +259,6 @@ const estado = {
     usuarioId:
         null,
 
-
-    /*
-     * Usuário proprietário do perfil visualizado.
-     *
-     * Para o próprio perfil:
-     *
-     * usuarioPerfil.id === usuarioId
-     *
-     * Para perfil de outra pessoa:
-     *
-     * usuarioPerfil.id !== usuarioId
-     */
 
     usuarioPerfil:
         null,
@@ -290,19 +272,9 @@ const estado = {
         null,
 
 
-    /*
-     * Indica se o perfil atualmente exibido
-     * pertence ao usuário autenticado.
-     */
-
     ehMeuPerfil:
         false,
 
-
-    /*
-     * Indica se a página foi aberta explicitamente
-     * com ?id=.
-     */
 
     perfilSolicitado:
         false,
@@ -323,11 +295,6 @@ const estado = {
     avaliacoes:
         [],
 
-
-    /*
-     * Indica se o módulo de avaliações já foi
-     * inicializado para o perfil atual.
-     */
 
     avaliacoesInicializadas:
         false
@@ -747,16 +714,6 @@ function obterIdUsuarioDoPerfil() {
 
 function atualizarRegraMeuPerfil() {
 
-    /*
-     * IMPORTANTE:
-     *
-     * estado.usuarioId representa SEMPRE o usuário
-     * autenticado que está navegando.
-     *
-     * estado.usuarioPerfil representa o proprietário
-     * do perfil atualmente aberto.
-     */
-
     const usuarioId =
         String(
             estado.usuarioId || ""
@@ -767,17 +724,6 @@ function atualizarRegraMeuPerfil() {
         obterIdUsuarioDoPerfil();
 
 
-    /*
-     * REGRA PRINCIPAL:
-     *
-     * Quando a página NÃO possui ?id=, ela está
-     * carregando o perfil do usuário autenticado.
-     *
-     * Portanto, se o carregamento do perfil próprio
-     * foi concluído e temos um usuário autenticado,
-     * esse perfil é necessariamente "Meu Perfil".
-     */
-
     if (
         !estado.perfilSolicitado &&
         usuarioId &&
@@ -787,12 +733,6 @@ function atualizarRegraMeuPerfil() {
         estado.ehMeuPerfil =
             true;
 
-
-        /*
-         * Para o próprio perfil, garantimos também
-         * que usuarioPerfil seja o próprio usuário
-         * autenticado.
-         */
 
         if (
             !estado.usuarioPerfil
@@ -825,12 +765,6 @@ function atualizarRegraMeuPerfil() {
 
     }
 
-
-    /*
-     * Quando existe ?id=, precisamos comparar
-     * efetivamente o proprietário do perfil com o
-     * usuário autenticado.
-     */
 
     estado.ehMeuPerfil =
         Boolean(
@@ -1037,19 +971,6 @@ async function inicializar() {
             obterAbaInicial();
 
 
-        /*
-         * Identifica se a página foi aberta com
-         * ?id=perfil.
-         *
-         * Sem ?id=:
-         *
-         * → perfil do usuário logado.
-         *
-         * Com ?id=:
-         *
-         * → perfil solicitado.
-         */
-
         const perfilIdUrl =
             obterPerfilSolicitado();
 
@@ -1063,36 +984,19 @@ async function inicializar() {
         configurarAbas();
 
 
+        configurarEventosNavegacao();
+
+
         configurarEventosQRCode();
 
-
-        /*
-         * PRIMEIRO PASSO:
-         *
-         * Carrega o perfil correto.
-         */
 
         await carregarDados(
             perfilIdUrl
         );
 
 
-        /*
-         * SEGUNDO PASSO:
-         *
-         * Identifica se o perfil pertence ao usuário
-         * autenticado.
-         */
-
         atualizarRegraMeuPerfil();
 
-
-        /*
-         * TERCEIRO PASSO:
-         *
-         * Inicializa o módulo responsável pelas
-         * interações do perfil.
-         */
 
         if (Interacoes) {
 
@@ -1109,20 +1013,8 @@ async function inicializar() {
         }
 
 
-        /*
-         * QUARTO PASSO:
-         *
-         * Carregamos as avaliações imediatamente.
-         */
-
         await inicializarAvaliacoesAntecipadamente();
 
-
-        /*
-         * QUINTO PASSO:
-         *
-         * Renderização inicial.
-         */
 
         aplicarRegrasDePerfil();
 
@@ -1217,14 +1109,6 @@ async function carregarDados(
         resultado =
             await Dados.carregarTudo({
 
-                /*
-                 * Quando existe ?id=, carregamos
-                 * exatamente aquele perfil.
-                 *
-                 * Quando não existe, o Dados usa
-                 * o usuário autenticado.
-                 */
-
                 perfilId:
                     perfilIdSolicitado || null,
 
@@ -1237,22 +1121,12 @@ async function carregarDados(
                 incluirAgenda:
                     true,
 
-                /*
-                 * As avaliações são carregadas pelo
-                 * módulo especializado.
-                 */
-
                 incluirAvaliacoes:
                     false
 
             });
 
     } else {
-
-        /*
-         * Compatibilidade com versões anteriores
-         * do módulo de dados.
-         */
 
         if (
             typeof Dados.carregarUsuario === "function"
@@ -1331,13 +1205,6 @@ async function carregarDados(
         );
 
 
-    /*
-     * IMPORTANTE:
-     *
-     * O usuarioId precisa ser obtido ANTES de qualquer
-     * tentativa de identificar o proprietário.
-     */
-
     estado.usuarioId =
         obterEstadoDados(
             "obterUsuarioId",
@@ -1367,15 +1234,6 @@ async function carregarDados(
         );
 
 
-    /*
-     * Quando estamos carregando o próprio perfil,
-     * o PerfilPublicoDados normalmente já devolve
-     * usuarioPerfil.
-     *
-     * Esta proteção garante o vínculo mesmo se o módulo
-     * não retornar esse valor explicitamente.
-     */
-
     if (
         !estado.perfilSolicitado &&
         estado.usuario
@@ -1386,14 +1244,6 @@ async function carregarDados(
 
     }
 
-
-    /*
-     * Para perfil de outra pessoa, tentamos usar o
-     * usuário retornado pelo PerfilPublicoDados.
-     *
-     * Caso não exista, o próprio perfil ainda poderá
-     * fornecer usuario_id.
-     */
 
     if (
         !estado.usuarioPerfil &&
@@ -1449,11 +1299,6 @@ async function carregarDados(
         ) || null;
 
 
-    /*
-     * Garante que o ID do perfil seja obtido mesmo
-     * quando a versão do Dados não o devolve diretamente.
-     */
-
     if (
         !estado.perfilId &&
         estado.perfil?.id
@@ -1464,13 +1309,6 @@ async function carregarDados(
 
     }
 
-
-    /*
-     * Segunda proteção:
-     *
-     * Alguns módulos podem devolver o ID como string
-     * dentro de outras propriedades.
-     */
 
     if (
         !estado.perfilId
@@ -1547,11 +1385,6 @@ async function carregarDados(
         );
 
 
-    /*
-     * Se o tipo for contratante, não mantemos
-     * dados de artista na memória do controlador.
-     */
-
     if (
         !ehArtista()
     ) {
@@ -1566,19 +1399,8 @@ async function carregarDados(
     }
 
 
-    /*
-     * Agora que TODOS os dados necessários já foram
-     * carregados, identificamos definitivamente se
-     * este é o próprio perfil.
-     */
-
     atualizarRegraMeuPerfil();
 
-
-    /*
-     * Atualiza o módulo de interações sempre que
-     * novos dados do perfil forem carregados.
-     */
 
     if (Interacoes) {
 
@@ -1713,14 +1535,6 @@ async function inicializarAvaliacoesAntecipadamente() {
 
                 perfilArtista:
                     estado.perfilArtista,
-
-                /*
-                 * Para perfil de outra pessoa, usamos
-                 * o dono do perfil.
-                 *
-                 * Para o próprio perfil, usuarioPerfil
-                 * é o usuário autenticado.
-                 */
 
                 usuario:
                     estado.usuarioPerfil ||
@@ -1926,10 +1740,6 @@ async function carregarServicos() {
     }
 
 
-    /*
-     * Contratantes não possuem serviços de artista.
-     */
-
     if (
         !ehArtista()
     ) {
@@ -1980,6 +1790,173 @@ async function carregarServicos() {
         Render.renderizarIcones();
 
     }
+
+}
+
+
+/* =====================================================
+   CONFIGURAR EVENTOS DE NAVEGAÇÃO
+   ===================================================== */
+
+function configurarEventosNavegacao() {
+
+    const voltar =
+        obterElemento(
+            CONFIG.botoes.voltar
+        );
+
+
+    const editar =
+        obterElemento(
+            CONFIG.botoes.editar
+        );
+
+
+    /*
+     * -----------------------------------------------------
+     * VOLTAR
+     * -----------------------------------------------------
+     */
+
+    if (voltar) {
+
+        voltar.addEventListener(
+            "click",
+            voltarPagina
+        );
+
+    }
+
+
+    /*
+     * -----------------------------------------------------
+     * EDITAR PERFIL
+     * -----------------------------------------------------
+     *
+     * O botão só deve abrir a edição quando o perfil
+     * atualmente exibido pertence ao usuário autenticado.
+     *
+     * A página de destino já está definida em:
+     *
+     * CONFIG.pagina.edicao
+     *
+     * Não passamos o ID pela URL porque a página
+     * editar-perfil.html trabalha com o usuário
+     * autenticado.
+     */
+
+    if (editar) {
+
+        editar.addEventListener(
+            "click",
+            abrirEdicaoPerfil
+        );
+
+    }
+
+
+    log(
+        "Eventos de navegação configurados.",
+        {
+
+            voltar:
+                Boolean(
+                    voltar
+                ),
+
+            editar:
+                Boolean(
+                    editar
+                )
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   EDITAR PERFIL
+   ===================================================== */
+
+function abrirEdicaoPerfil() {
+
+    /*
+     * Segurança adicional:
+     *
+     * Mesmo que o botão seja exibido por algum motivo
+     * enquanto o estado ainda estiver sendo atualizado,
+     * não permitimos abrir a edição de outro perfil.
+     */
+
+    if (
+        !estado.ehMeuPerfil
+    ) {
+
+        aviso(
+            "A edição está disponível somente para o próprio perfil."
+        );
+
+
+        return;
+
+    }
+
+
+    const pagina =
+        obterPaginaEdicao();
+
+
+    if (!pagina) {
+
+        erro(
+            "Página de edição não configurada."
+        );
+
+
+        mostrarToast(
+            "Página de edição não encontrada.",
+            "erro"
+        );
+
+
+        return;
+
+    }
+
+
+    const url =
+        construirLinkPagina(
+            pagina
+        );
+
+
+    if (!url) {
+
+        erro(
+            "Não foi possível construir o endereço da página de edição."
+        );
+
+
+        mostrarToast(
+            "Não foi possível abrir a edição do perfil.",
+            "erro"
+        );
+
+
+        return;
+
+    }
+
+
+    log(
+        "Abrindo página de edição do perfil:",
+        url
+    );
+
+
+    window.location.href =
+        url;
 
 }
 
@@ -2473,10 +2450,6 @@ async function carregarAbaSobre() {
 
     preencherAvaliacao();
 
-
-    /*
-     * Serviços existem somente para artistas.
-     */
 
     if (
         ehArtista()
@@ -3502,11 +3475,6 @@ async function recarregar() {
         [];
 
 
-    /*
-     * Recalcula o perfil solicitado porque a página
-     * pode continuar sendo usada com ?id=.
-     */
-
     const perfilIdUrl =
         obterPerfilIdDaUrl();
 
@@ -3670,10 +3638,6 @@ const PerfilPublico = {
     construirLinkPerfil,
 
     construirLinkPagina,
-
-    /*
-     * Funções relacionadas ao perfil universal.
-     */
 
     obterPerfilIdDaUrl,
 

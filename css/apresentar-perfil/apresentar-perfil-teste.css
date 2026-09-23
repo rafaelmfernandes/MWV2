@@ -5484,3 +5484,61 @@ MENOS MOVIMENTO
             0.01ms !important;
     }
 }
+
+/* =====================================================
+   BOTÃO — LER DESCRIÇÃO COMPLETA
+
+   Responsabilidades:
+   - Exibir o botão abaixo da descrição do portfólio.
+   - Manter aparência discreta e integrada ao card.
+   - Destacar a ação com o roxo principal do perfil.
+   ===================================================== */
+
+.profile-portfolio-read-more {
+    display: inline-flex;
+    align-items: center;
+    margin-top: 10px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: #6d4aff;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 800;
+    line-height: 1.4;
+    text-align: left;
+    cursor: pointer;
+    transition:
+        color 0.2s ease,
+        opacity 0.2s ease;
+}
+
+.profile-portfolio-read-more:hover {
+    color: #5635e8;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.profile-portfolio-read-more:active {
+    opacity: 0.75;
+}
+
+.profile-portfolio-read-more:focus-visible {
+    outline: 2px solid #6d4aff;
+    outline-offset: 4px;
+    border-radius: 4px;
+}
+
+/* =====================================================
+   DESCRIÇÃO EXPANDIDA
+
+   Remove o limite de linhas quando o usuário
+   solicita a leitura completa.
+   ===================================================== */
+
+.profile-portfolio-content.is-expanded
+.profile-portfolio-description {
+    display: block;
+    -webkit-line-clamp: unset;
+    max-height: none;
+}
