@@ -16,14 +16,16 @@ Responsabilidade:
   a média e a quantidade apareçam imediatamente no
   cabeçalho do perfil.
 * Controlar navegação.
-* Controlar WhatsApp.
 * Controlar QR Code.
 * Construir links públicos.
 * Identificar se o perfil visualizado pertence ao
   usuário autenticado.
-* Controlar os elementos exclusivos do proprietário
-  do perfil.
+* Coordenar o módulo de interações do perfil.
 * Manter o estado geral da página.
+
+Interações:
+
+js/perfil-publico/PerfilPublicoInteracoes.js
 
 Renderização:
 
@@ -44,6 +46,9 @@ apresentação visual.
 
 A renderização básica do perfil pertence ao:
 js/perfil-publico/PerfilPublicoRender.js
+
+As interações do usuário com o perfil pertencem ao:
+js/perfil-publico/PerfilPublicoInteracoes.js
 
 ========================================================= */
 
@@ -82,6 +87,10 @@ const Agenda =
 
 const Avaliacoes =
     window.PerfilPublicoAvaliacoes;
+
+
+const Interacoes =
+    window.PerfilPublicoInteracoes;
 
 
 /* =====================================================
@@ -163,15 +172,6 @@ const CONFIG = {
 
         voltar:
             "btnVoltar",
-
-        visualizar:
-            "btnVisualizarPerfil",
-
-        editar:
-            "btnEditarPerfil",
-
-        whatsapp:
-            "btnWhatsApp",
 
         qrCode:
             "btnQRCode",
@@ -645,17 +645,11 @@ function obterTipoPerfilAtual() {
 
     const tipo =
         normalizarTipoPerfil(
-
             relacionamento
-
         ) || normalizarTipoPerfil(
-
             perfil.tipoPerfil ||
-
             perfil.tipo_perfil ||
-
             perfil.tipo
-
         );
 
 
@@ -762,7 +756,6 @@ function atualizarRegraMeuPerfil() {
      * estado.usuarioPerfil representa o proprietário
      * do perfil atualmente aberto.
      */
-
 
     const usuarioId =
         String(
@@ -878,83 +871,6 @@ function atualizarRegraMeuPerfil() {
 
 
 /* =====================================================
-   CONTROLES EXCLUSIVOS DO PROPRIETÁRIO
-   ===================================================== */
-
-function aplicarRegrasDeProprietario() {
-
-    const visualizar =
-        obterElemento(
-            CONFIG.botoes.visualizar
-        );
-
-
-    const editar =
-        obterElemento(
-            CONFIG.botoes.editar
-        );
-
-
-    /*
-     * "Ver meu perfil" e "Editar perfil" pertencem
-     * somente ao proprietário do perfil.
-     *
-     * Se estivermos vendo o perfil de outra pessoa,
-     * esses controles não devem aparecer.
-     */
-
-    if (visualizar) {
-
-        visualizar.hidden =
-            !estado.ehMeuPerfil;
-
-
-        visualizar.style.display =
-            estado.ehMeuPerfil
-                ? ""
-                : "none";
-
-    }
-
-
-    if (editar) {
-
-        editar.hidden =
-            !estado.ehMeuPerfil;
-
-
-        editar.style.display =
-            estado.ehMeuPerfil
-                ? ""
-                : "none";
-
-    }
-
-
-    log(
-        "Controles do proprietário aplicados:",
-        {
-
-            ehMeuPerfil:
-                estado.ehMeuPerfil,
-
-            visualizar:
-                Boolean(
-                    visualizar
-                ),
-
-            editar:
-                Boolean(
-                    editar
-                )
-
-        }
-    );
-
-}
-
-
-/* =====================================================
    TIPO DE ARTISTA
    ===================================================== */
 
@@ -980,6 +896,10 @@ function normalizarTipoArtista(
 
 }
 
+
+/* =====================================================
+   OBTER TIPO DE ARTISTA ATUAL
+   ===================================================== */
 
 function obterTipoArtistaAtual() {
 
@@ -1140,9 +1060,10 @@ async function inicializar() {
         );
 
 
-        configurarEventos();
-
         configurarAbas();
+
+
+        configurarEventosQRCode();
 
 
         /*
@@ -1166,11 +1087,30 @@ async function inicializar() {
         atualizarRegraMeuPerfil();
 
 
-        aplicarRegrasDeProprietario();
+        /*
+         * TERCEIRO PASSO:
+         *
+         * Inicializa o módulo responsável pelas
+         * interações do perfil.
+         */
+
+        if (Interacoes) {
+
+            Interacoes.inicializar(
+                estado
+            );
+
+        } else {
+
+            aviso(
+                "PerfilPublicoInteracoes.js não foi carregado."
+            );
+
+        }
 
 
         /*
-         * TERCEIRO PASSO:
+         * QUARTO PASSO:
          *
          * Carregamos as avaliações imediatamente.
          */
@@ -1179,7 +1119,7 @@ async function inicializar() {
 
 
         /*
-         * QUARTO PASSO:
+         * QUINTO PASSO:
          *
          * Renderização inicial.
          */
@@ -1635,6 +1575,20 @@ async function carregarDados(
     atualizarRegraMeuPerfil();
 
 
+    /*
+     * Atualiza o módulo de interações sempre que
+     * novos dados do perfil forem carregados.
+     */
+
+    if (Interacoes) {
+
+        Interacoes.atualizar(
+            estado
+        );
+
+    }
+
+
     log(
         "Dados carregados:",
         {
@@ -2031,34 +1985,10 @@ async function carregarServicos() {
 
 
 /* =====================================================
-   CONFIGURAR EVENTOS
+   CONFIGURAR EVENTOS DO QR CODE
    ===================================================== */
 
-function configurarEventos() {
-
-    const voltar =
-        obterElemento(
-            CONFIG.botoes.voltar
-        );
-
-
-    const visualizar =
-        obterElemento(
-            CONFIG.botoes.visualizar
-        );
-
-
-    const editar =
-        obterElemento(
-            CONFIG.botoes.editar
-        );
-
-
-    const whatsapp =
-        obterElemento(
-            CONFIG.botoes.whatsapp
-        );
-
+function configurarEventosQRCode() {
 
     const qrCode =
         obterElemento(
@@ -2076,46 +2006,6 @@ function configurarEventos() {
         obterElemento(
             CONFIG.botoes.compartilharQR
         );
-
-
-    if (voltar) {
-
-        voltar.addEventListener(
-            "click",
-            voltarPagina
-        );
-
-    }
-
-
-    if (visualizar) {
-
-        visualizar.addEventListener(
-            "click",
-            visualizarPerfil
-        );
-
-    }
-
-
-    if (editar) {
-
-        editar.addEventListener(
-            "click",
-            editarPerfil
-        );
-
-    }
-
-
-    if (whatsapp) {
-
-        whatsapp.addEventListener(
-            "click",
-            compartilharWhatsApp
-        );
-
-    }
 
 
     if (qrCode) {
@@ -2188,6 +2078,11 @@ function configurarEventos() {
         );
 
     }
+
+
+    log(
+        "Eventos do QR Code configurados."
+    );
 
 }
 
@@ -3077,298 +2972,6 @@ function voltarPagina() {
 
 
 /* =====================================================
-   VISUALIZAR PERFIL
-   ===================================================== */
-
-function visualizarPerfil() {
-
-    /*
-     * Este botão é exclusivo do proprietário.
-     */
-
-    if (
-        !estado.ehMeuPerfil
-    ) {
-
-        aviso(
-            "Tentativa de visualizar o próprio perfil enquanto outro perfil está aberto."
-        );
-
-
-        return;
-
-    }
-
-
-    const id =
-        estado.perfilId;
-
-
-    if (!id) {
-
-        mostrarToast(
-            "Perfil ainda não identificado.",
-            "erro"
-        );
-
-
-        return;
-
-    }
-
-
-    const url =
-        construirLinkPerfil();
-
-
-    if (!url) {
-
-        mostrarToast(
-            "Não foi possível construir o endereço do perfil.",
-            "erro"
-        );
-
-
-        return;
-
-    }
-
-
-    log(
-        "Visualizando perfil público universal:",
-        {
-
-            tipoPerfil:
-                obterTipoPerfilAtual(),
-
-            tipoArtista:
-                obterTipoArtistaAtual(),
-
-            perfilId:
-                id,
-
-            url
-
-        }
-    );
-
-
-    window.location.href =
-        url;
-
-}
-
-
-/* =====================================================
-   EDITAR PERFIL
-   ===================================================== */
-
-function editarPerfil() {
-
-    /*
-     * A edição só pode ser realizada pelo proprietário
-     * do perfil atualmente carregado.
-     */
-
-    if (
-        !estado.ehMeuPerfil
-    ) {
-
-        aviso(
-            "Tentativa de editar perfil de outro usuário bloqueada."
-        );
-
-
-        return;
-
-    }
-
-
-    const id =
-        estado.perfilId;
-
-
-    if (!id) {
-
-        mostrarToast(
-            "Perfil ainda não identificado.",
-            "erro"
-        );
-
-
-        return;
-
-    }
-
-
-    const pagina =
-        CONFIG.pagina.edicao;
-
-
-    if (!pagina) {
-
-        mostrarToast(
-            "A página de edição não está disponível.",
-            "erro"
-        );
-
-
-        return;
-
-    }
-
-
-    const url =
-        construirLinkPagina(
-            pagina
-        );
-
-
-    log(
-        "Abrindo editor universal:",
-        {
-
-            tipoPerfil:
-                obterTipoPerfilAtual(),
-
-            tipoArtista:
-                obterTipoArtistaAtual(),
-
-            perfilId:
-                id,
-
-            url
-
-        }
-    );
-
-
-    window.location.href =
-        url;
-
-}
-
-
-/* =====================================================
-   WHATSAPP
-   ===================================================== */
-
-function compartilharWhatsApp() {
-
-    const usuarioPerfil =
-        estado.usuarioPerfil ||
-        {};
-
-
-    const nome =
-        obterPrimeiroValor(
-
-            ehArtista()
-                ? estado.perfilArtista?.nome_artistico
-                : "",
-
-            ehArtista()
-                ? estado.perfilArtista?.nome
-                : "",
-
-            estado.perfil?.nome_exibicao,
-
-            estado.perfil?.nome,
-
-            usuarioPerfil.nome,
-
-            usuarioPerfil.nome_completo,
-
-            estado.usuario?.nome,
-
-            estado.usuario?.nome_completo,
-
-            "usuário"
-
-        );
-
-
-    const mensagem =
-        "Olá! Vi seu perfil no MusicalWorld e gostaria de conversar com você sobre um possível trabalho.";
-
-
-    const telefone =
-        obterPrimeiroValor(
-
-            ehArtista()
-                ? estado.perfilArtista?.telefone
-                : "",
-
-            ehArtista()
-                ? estado.perfilArtista?.whatsapp
-                : "",
-
-            estado.perfil?.telefone,
-
-            estado.perfil?.whatsapp,
-
-            usuarioPerfil.telefone,
-
-            usuarioPerfil.whatsapp,
-
-            estado.usuario?.telefone,
-
-            estado.usuario?.whatsapp
-
-        );
-
-
-    if (!telefone) {
-
-        mostrarToast(
-            `O WhatsApp de ${nome} não está informado.`,
-            "erro"
-        );
-
-
-        return;
-
-    }
-
-
-    const numero =
-        String(
-            telefone
-        ).replace(
-            /\D/g,
-            ""
-        );
-
-
-    if (!numero) {
-
-        mostrarToast(
-            "Número de WhatsApp inválido.",
-            "erro"
-        );
-
-
-        return;
-
-    }
-
-
-    const url =
-        `https://wa.me/${numero}?text=${encodeURIComponent(
-            mensagem
-        )}`;
-
-
-    window.open(
-        url,
-        "_blank",
-        "noopener,noreferrer"
-    );
-
-}
-
-
-/* =====================================================
    QR CODE
    ===================================================== */
 
@@ -3914,6 +3517,13 @@ async function recarregar() {
         );
 
 
+    if (Interacoes) {
+
+        Interacoes.resetar();
+
+    }
+
+
     await carregarDados(
         perfilIdUrl || null
     );
@@ -3922,7 +3532,13 @@ async function recarregar() {
     atualizarRegraMeuPerfil();
 
 
-    aplicarRegrasDeProprietario();
+    if (Interacoes) {
+
+        Interacoes.atualizar(
+            estado
+        );
+
+    }
 
 
     await inicializarAvaliacoesAntecipadamente();
@@ -4055,19 +3671,13 @@ const PerfilPublico = {
 
     construirLinkPagina,
 
-    visualizarPerfil,
-
-    editarPerfil,
-
     /*
      * Funções relacionadas ao perfil universal.
      */
 
     obterPerfilIdDaUrl,
 
-    atualizarRegraMeuPerfil,
-
-    aplicarRegrasDeProprietario
+    atualizarRegraMeuPerfil
 
 };
 
