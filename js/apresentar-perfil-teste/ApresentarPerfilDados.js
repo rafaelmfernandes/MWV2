@@ -15,6 +15,7 @@
        - Buscar os dados do usuário.
        - Buscar os dados específicos do artista.
        - Buscar avaliações.
+       - Buscar os usuários que fizeram as avaliações.
        - Buscar serviços do artista.
        - Disponibilizar todos os dados para os demais módulos.
 
@@ -23,6 +24,7 @@
        - Manipular o visual da página.
        - Renderizar portfólio.
        - Renderizar serviços.
+       - Renderizar avaliações.
        - Controlar botões ou ações.
 
        A conexão com o Supabase continua centralizada em:
@@ -498,6 +500,170 @@
 
 
     /* =========================================================
+       CARREGAR USUÁRIOS DAS AVALIAÇÕES
+    ========================================================= */
+
+    async function carregarUsuariosAvaliadores(
+        avaliacoes
+    ) {
+
+        const supabase =
+            obterClienteSupabase();
+
+
+        if (!supabase) {
+
+            throw new Error(
+                "Cliente Supabase não disponível."
+            );
+
+        }
+
+
+        if (
+            !Array.isArray(avaliacoes) ||
+            !avaliacoes.length
+        ) {
+
+            return avaliacoes;
+
+        }
+
+
+        /*
+         * Obtém somente os IDs existentes nas avaliações.
+         */
+        const ids = [
+
+            ...new Set(
+
+                avaliacoes
+
+                    .map(
+                        avaliacao =>
+                            normalizarId(
+                                avaliacao.usuario_avaliador_id
+                            )
+                    )
+
+                    .filter(
+                        Boolean
+                    )
+
+            )
+
+        ];
+
+
+        if (!ids.length) {
+
+            return avaliacoes;
+
+        }
+
+
+        /*
+         * Buscamos somente os campos necessários
+         * para a identificação visual do avaliador.
+         *
+         * O campo nome existe na tabela usuarios.
+         */
+        const {
+
+            data,
+
+            error
+
+        } = await supabase
+
+            .from(
+                CONFIG.tabelas.usuarios
+            )
+
+            .select(`
+                id,
+                nome
+            `)
+
+            .in(
+                "id",
+                ids
+            );
+
+
+        if (error) {
+
+            /*
+             * A avaliação continua válida mesmo se
+             * não conseguirmos carregar o nome.
+             */
+            console.warn(
+                "MusicalWorld — Não foi possível carregar os usuários avaliadores:",
+                error
+            );
+
+
+            return avaliacoes;
+
+        }
+
+
+        const usuarios =
+            Array.isArray(data)
+                ? data
+                : [];
+
+
+        const mapaUsuarios =
+            new Map();
+
+
+        usuarios.forEach(
+            usuario => {
+
+                mapaUsuarios.set(
+                    normalizarId(
+                        usuario.id
+                    ),
+                    usuario
+                );
+
+            }
+        );
+
+
+        /*
+         * Associamos o usuário à avaliação.
+         *
+         * Não alteramos os campos originais da avaliação.
+         */
+        return avaliacoes.map(
+            avaliacao => {
+
+                const usuario =
+                    mapaUsuarios.get(
+                        normalizarId(
+                            avaliacao.usuario_avaliador_id
+                        )
+                    ) || null;
+
+
+                return {
+
+                    ...avaliacao,
+
+                    usuario_avaliador:
+                        usuario
+
+                };
+
+            }
+        );
+
+    }
+
+
+    /* =========================================================
        CARREGAR AVALIAÇÕES
     ========================================================= */
 
@@ -522,6 +688,9 @@
             );
 
 
+        /*
+         * Buscamos somente avaliações ativas.
+         */
         let resultado =
             await supabase
 
@@ -529,11 +698,26 @@
                     CONFIG.tabelas.avaliacoes
                 )
 
-                .select("*")
+                .select(`
+                    id,
+                    perfil_id,
+                    usuario_avaliador_id,
+                    nota,
+                    comentario,
+                    ativo,
+                    created_at,
+                    updated_at,
+                    contratacao_id
+                `)
 
                 .eq(
                     "perfil_id",
                     id
+                )
+
+                .eq(
+                    "ativo",
+                    true
                 )
 
                 .order(
@@ -546,7 +730,7 @@
 
         /*
          * Algumas instalações podem não possuir
-         * created_at na tabela.
+         * created_at.
          *
          * Nesse caso fazemos uma segunda consulta
          * sem a ordenação.
@@ -566,11 +750,24 @@
                         CONFIG.tabelas.avaliacoes
                     )
 
-                    .select("*")
+                    .select(`
+                        id,
+                        perfil_id,
+                        usuario_avaliador_id,
+                        nota,
+                        comentario,
+                        ativo,
+                        contratacao_id
+                    `)
 
                     .eq(
                         "perfil_id",
                         id
+                    )
+
+                    .eq(
+                        "ativo",
+                        true
                     );
 
         }
@@ -597,7 +794,7 @@
         }
 
 
-        estado.dados.avaliacoes =
+        let avaliacoes =
 
             Array.isArray(
                 resultado.data
@@ -606,6 +803,26 @@
                 ? resultado.data
 
                 : [];
+
+
+        /*
+         * Depois de carregar as avaliações,
+         * buscamos os usuários que fizeram cada uma.
+         */
+        avaliacoes =
+            await carregarUsuariosAvaliadores(
+                avaliacoes
+            );
+
+
+        estado.dados.avaliacoes =
+            avaliacoes;
+
+
+        console.log(
+            "MusicalWorld — Avaliações carregadas:",
+            avaliacoes.length
+        );
 
 
         return estado.dados.avaliacoes;
@@ -722,6 +939,7 @@
                             "perfil_id",
                             id
                         );
+
             }
 
         }
@@ -944,7 +1162,9 @@
     function obterAvaliacoes() {
 
         return [
+
             ...estado.dados.avaliacoes
+
         ];
 
     }
@@ -953,7 +1173,9 @@
     function obterServicos() {
 
         return [
+
             ...estado.dados.servicos
+
         ];
 
     }
@@ -1002,6 +1224,8 @@
         carregarPerfilArtista,
 
         carregarAvaliacoes,
+
+        carregarUsuariosAvaliadores,
 
         carregarServicos,
 
