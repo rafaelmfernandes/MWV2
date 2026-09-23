@@ -40,7 +40,7 @@
 
     /* =====================================================
        CONFIGURAÇÃO
-       ===================================================== */
+    ===================================================== */
 
     const CONFIG = {
 
@@ -201,7 +201,7 @@
 
     /* =====================================================
        ESTADO INTERNO
-       ===================================================== */
+    ===================================================== */
 
     const estado = {
 
@@ -242,7 +242,7 @@
 
     /* =====================================================
        OBTER ELEMENTO PELO ID
-       ===================================================== */
+    ===================================================== */
 
     function obterElemento(nome) {
 
@@ -262,7 +262,7 @@
 
     /* =====================================================
        OBTER CLIENTE SUPABASE
-       ===================================================== */
+    ===================================================== */
 
     function obterSupabase() {
 
@@ -283,7 +283,7 @@
 
     /* =====================================================
        FORMATAR MOEDA
-       ===================================================== */
+    ===================================================== */
 
     function formatarMoeda(valor) {
 
@@ -309,7 +309,7 @@
 
     /* =====================================================
        FORMATAR DATA
-       ===================================================== */
+    ===================================================== */
 
     function formatarData(data) {
 
@@ -373,7 +373,7 @@
 
     /* =====================================================
        NORMALIZAR HORÁRIO
-       ===================================================== */
+    ===================================================== */
 
     function normalizarHorario(valor) {
 
@@ -406,7 +406,7 @@
 
     /* =====================================================
        FORMATAR HORÁRIO
-       ===================================================== */
+    ===================================================== */
 
     function formatarHorario(dados) {
 
@@ -472,7 +472,7 @@
 
     /* =====================================================
        FORMATAR LOCAL
-       ===================================================== */
+    ===================================================== */
 
     function formatarLocal(local) {
 
@@ -564,7 +564,7 @@
 
     /* =====================================================
        EXTRAIR CIDADE
-       ===================================================== */
+    ===================================================== */
 
     function extrairCidade(local) {
 
@@ -608,7 +608,7 @@
 
     /* =====================================================
        OBTER INICIAIS
-       ===================================================== */
+    ===================================================== */
 
     function obterIniciais(nome) {
 
@@ -655,7 +655,7 @@
 
     /* =====================================================
        OBTER ID DA CONTRATAÇÃO
-       ===================================================== */
+    ===================================================== */
 
     function obterIdDaContratacao() {
 
@@ -715,7 +715,7 @@
 
     /* =====================================================
        CARREGAR USUÁRIO ATUAL
-       ===================================================== */
+    ===================================================== */
 
     async function carregarUsuarioAtual() {
 
@@ -790,7 +790,25 @@
 
     /* =====================================================
        CARREGAR PESSOA
-       ===================================================== */
+
+       IMPORTANTE:
+
+       O participante pode ser artista ou contratante.
+
+       O ID utilizado para abrir o perfil público deve
+       sempre ser o ID da tabela "perfis", e NÃO o ID
+       da tabela "usuarios".
+
+       Primeiro tentamos localizar o perfil ativo.
+
+       Caso não exista um perfil marcado explicitamente
+       como ativo, fazemos uma segunda consulta somente
+       pelo usuario_id.
+
+       Isso mantém o comportamento compatível com o
+       Perfil Público, que consegue carregar perfis sem
+       depender exclusivamente de ativo = true.
+    ===================================================== */
 
     async function carregarPessoa(
         supabase,
@@ -828,7 +846,12 @@
             respostaUsuario.data;
 
 
-        const respostaPerfil =
+        /* =================================================
+           PRIMEIRA TENTATIVA:
+           PERFIL ATIVO
+        ================================================= */
+
+        let respostaPerfil =
             await supabase
                 .from(
                     CONFIG.tabelas.perfis
@@ -865,8 +888,62 @@
         }
 
 
-        const perfil =
+        let perfil =
             respostaPerfil.data;
+
+
+        /* =================================================
+           SEGUNDA TENTATIVA:
+           PERFIL DO USUÁRIO SEM EXIGIR ATIVO = TRUE
+
+           Essa segunda consulta é importante para
+           contratantes que possuem um perfil válido, mas
+           que não estejam marcados com ativo = true.
+
+           O perfilId continua sendo o ID real da tabela
+           perfis.
+        ================================================= */
+
+        if (!perfil) {
+
+            const respostaPerfilFallback =
+                await supabase
+                    .from(
+                        CONFIG.tabelas.perfis
+                    )
+                    .select(
+                        `
+                        id,
+                        usuario_id,
+                        nome_exibicao,
+                        descricao,
+                        ativo,
+                        tipo_perfil_id,
+                        tipos_perfil (
+                            id,
+                            nome,
+                            descricao
+                        )
+                        `
+                    )
+                    .eq(
+                        "usuario_id",
+                        usuarioId
+                    )
+                    .maybeSingle();
+
+
+            if (
+                respostaPerfilFallback.error
+            ) {
+
+                throw respostaPerfilFallback.error;
+            }
+
+
+            perfil =
+                respostaPerfilFallback.data;
+        }
 
 
         let perfilArtista =
@@ -894,12 +971,25 @@
                 respostaArtista.error
             ) {
 
-                throw respostaArtista.error;
+                /*
+                 * Um contratante normalmente não possui
+                 * registro em perfis_artistas.
+
+                 * Portanto, se a consulta não encontrar
+                 * dados artísticos, não interrompemos o
+                 * carregamento da pessoa.
+                 */
+
+                console.warn(
+                    "MusicalWorldContratacaoAcompanhamento: perfil artístico não disponível para o participante.",
+                    respostaArtista.error
+                );
+
+            } else {
+
+                perfilArtista =
+                    respostaArtista.data;
             }
-
-
-            perfilArtista =
-                respostaArtista.data;
         }
 
 
@@ -955,6 +1045,15 @@
                 perfil?.descricao ||
                 null,
 
+            /*
+             * IMPORTANTE:
+             *
+             * Este é o ID da tabela perfis.
+             *
+             * É este ID que deve ser enviado para:
+             *
+             * meu-perfil.html?id=<perfilId>
+             */
             perfilId:
                 perfil?.id ||
                 null
@@ -964,7 +1063,7 @@
 
     /* =====================================================
        CARREGAR SERVIÇO
-       ===================================================== */
+    ===================================================== */
 
     async function carregarServico(
         supabase,
@@ -1146,7 +1245,7 @@
 
     /* =====================================================
        CARREGAR CONTRATAÇÃO
-       ===================================================== */
+    ===================================================== */
 
     async function carregarContratacao() {
 
@@ -1371,7 +1470,7 @@
 
     /* =====================================================
        DETERMINAR STATUS
-       ===================================================== */
+    ===================================================== */
 
     function determinarStatus(dados) {
 
@@ -1454,7 +1553,7 @@
 
     /* =====================================================
        CRIAR NOTIFICAÇÃO
-       ===================================================== */
+    ===================================================== */
 
     async function criarNotificacaoResultado(
         novoStatus
@@ -1700,7 +1799,7 @@
 
     /* =====================================================
        SALVAR CONTRATAÇÃO LOCALMENTE
-       ===================================================== */
+    ===================================================== */
 
     function salvarContratacaoLocal() {
 
@@ -1731,7 +1830,7 @@
 
     /* =====================================================
        EXPOR API DE DADOS
-       ===================================================== */
+    ===================================================== */
 
     modulo.CONFIG =
         CONFIG;
