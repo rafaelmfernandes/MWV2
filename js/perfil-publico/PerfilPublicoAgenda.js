@@ -9,6 +9,10 @@ Responsabilidade:
 * Exibir data, horário, local e informações do evento.
 * Utilizar os dados fornecidos pelo PerfilPublicoDados.js.
 * Não executar consultas diretamente no Supabase.
+* Identificar compromissos originados de contratações.
+* Exibir a foto e o nome da pessoa envolvida na contratação.
+* Permitir abrir o acompanhamento da contratação ao clicar
+  em um compromisso automático.
 
 ========================================================= */
 
@@ -39,6 +43,13 @@ const CONFIG = {
 
         listaAgenda:
             "agendaList"
+
+    },
+
+    paginas: {
+
+        acompanhamentoContratacao:
+            "contratacao-acompanhamento.html"
 
     }
 
@@ -563,6 +574,96 @@ function normalizarEvento(evento) {
         );
 
 
+    /*
+     * contratacao_id identifica que este compromisso
+     * foi criado automaticamente a partir de uma
+     * contratação confirmada.
+     *
+     * Eventos manuais não possuem esse valor.
+     */
+
+    const contratacaoId =
+        obterPrimeiroValor(
+
+            evento.contratacao_id,
+
+            evento.contratacaoId,
+
+            evento.id_contratacao,
+
+            evento.idContratacao
+
+        );
+
+
+    /*
+     * O PerfilPublicoDados.js já realiza a consulta
+     * do participante da contratação e adiciona os
+     * dados em participanteAgenda.
+     *
+     * Aqui apenas normalizamos esses dados para que
+     * o renderizador possa utilizá-los com segurança.
+     */
+
+    const participanteOriginal =
+        evento.participanteAgenda &&
+        typeof evento.participanteAgenda === "object"
+            ? evento.participanteAgenda
+            : null;
+
+
+    const participanteAgenda =
+        participanteOriginal
+            ? {
+
+                perfilId:
+                    obterPrimeiroValor(
+
+                        participanteOriginal.perfilId,
+
+                        participanteOriginal.perfil_id
+
+                    ) || "",
+
+                usuarioId:
+                    obterPrimeiroValor(
+
+                        participanteOriginal.usuarioId,
+
+                        participanteOriginal.usuario_id
+
+                    ) || "",
+
+                nome:
+                    obterPrimeiroValor(
+
+                        participanteOriginal.nome,
+
+                        participanteOriginal.nome_usuario,
+
+                        participanteOriginal.nomeUsuario,
+
+                        "Usuário"
+
+                    ),
+
+                fotoUrl:
+                    obterPrimeiroValor(
+
+                        participanteOriginal.fotoUrl,
+
+                        participanteOriginal.foto_url,
+
+                        participanteOriginal.foto,
+
+                        participanteOriginal.avatar
+
+                    ) || ""
+
+            }
+            : null;
+
+
     return {
 
         original:
@@ -572,6 +673,9 @@ function normalizarEvento(evento) {
             obterPrimeiroValor(
                 evento.id
             ),
+
+        contratacaoId:
+            contratacaoId || "",
 
         titulo:
             titulo,
@@ -607,9 +711,251 @@ function normalizarEvento(evento) {
             tipo || "",
 
         url:
-            url || ""
+            url || "",
+
+        participanteAgenda:
+            participanteAgenda
 
     };
+
+}
+
+
+/* =====================================================
+   VERIFICAR SE É UMA AGENDA DE CONTRATAÇÃO
+   ===================================================== */
+
+function possuiContratacao(
+    evento
+) {
+
+    return Boolean(
+        evento &&
+        evento.contratacaoId &&
+        String(
+            evento.contratacaoId
+        ).trim()
+    );
+
+}
+
+
+/* =====================================================
+   VERIFICAR SE POSSUI PARTICIPANTE
+   ===================================================== */
+
+function possuiParticipante(
+    evento
+) {
+
+    return Boolean(
+
+        possuiContratacao(
+            evento
+        ) &&
+
+        evento.participanteAgenda &&
+
+        typeof evento.participanteAgenda === "object"
+
+    );
+
+}
+
+
+/* =====================================================
+   OBTER URL DO ACOMPANHAMENTO
+   ===================================================== */
+
+function obterUrlContratacao(
+    contratacaoId
+) {
+
+    if (!contratacaoId) {
+
+        return "";
+
+    }
+
+
+    return (
+        `${CONFIG.paginas.acompanhamentoContratacao}` +
+        `?id=${encodeURIComponent(
+            contratacaoId
+        )}`
+    );
+
+}
+
+
+/* =====================================================
+   OBTER INICIAIS DO PARTICIPANTE
+   ===================================================== */
+
+function obterIniciais(
+    nome
+) {
+
+    const texto =
+        String(
+            nome || ""
+        )
+        .trim();
+
+
+    if (!texto) {
+
+        return "U";
+
+    }
+
+
+    const partes =
+        texto
+            .split(/\s+/)
+            .filter(Boolean);
+
+
+    if (
+        partes.length === 1
+    ) {
+
+        return partes[0]
+            .substring(
+                0,
+                2
+            )
+            .toUpperCase();
+
+    }
+
+
+    return (
+
+        partes[0].charAt(0) +
+
+        partes[
+            partes.length - 1
+        ].charAt(0)
+
+    ).toUpperCase();
+
+}
+
+
+/* =====================================================
+   RENDERIZAR PARTICIPANTE
+   ===================================================== */
+
+function renderizarParticipante(
+    evento
+) {
+
+    if (
+        !possuiParticipante(
+            evento
+        )
+    ) {
+
+        return "";
+
+    }
+
+
+    const participante =
+        evento.participanteAgenda;
+
+
+    const nome =
+        obterPrimeiroValor(
+
+            participante.nome,
+
+            "Usuário"
+
+        );
+
+
+    const fotoUrl =
+        obterPrimeiroValor(
+
+            participante.fotoUrl,
+
+            participante.foto_url,
+
+            participante.foto,
+
+            participante.avatar
+
+        );
+
+
+    const iniciais =
+        obterIniciais(
+            nome
+        );
+
+
+    const avatar =
+        fotoUrl
+            ? `
+
+                <div class="agenda-participante-avatar">
+
+                    <img
+                        src="${escaparAtributo(
+                            fotoUrl
+                        )}"
+                        alt="${escaparAtributo(
+                            nome
+                        )}"
+                        loading="lazy"
+                    >
+
+                </div>
+
+            `
+            : `
+
+                <div
+                    class="agenda-participante-avatar agenda-participante-avatar-fallback"
+                    aria-hidden="true"
+                >
+
+                    <span>
+                        ${escaparHtml(
+                            iniciais
+                        )}
+                    </span>
+
+                </div>
+
+            `;
+
+
+    return `
+
+        <div class="agenda-participante">
+
+            ${avatar}
+
+            <div class="agenda-participante-info">
+
+                <span class="agenda-participante-label">
+                    Compromisso com
+                </span>
+
+                <strong class="agenda-participante-nome">
+                    ${escaparHtml(
+                        nome
+                    )}
+                </strong>
+
+            </div>
+
+        </div>
+
+    `;
 
 }
 
@@ -868,11 +1214,58 @@ function renderizarEvento(
             : "";
 
 
+    /*
+     * Participante da contratação.
+     *
+     * Eventos manuais não possuem contratacaoId
+     * e, portanto, não exibem esta área.
+     */
+
+    const participante =
+        renderizarParticipante(
+            evento
+        );
+
+
+    /*
+     * Compromissos criados automaticamente a partir de
+     * uma contratação recebem uma identificação própria.
+     *
+     * O clique será configurado posteriormente em
+     * configurarEventos().
+     */
+
+    const eContratacao =
+        possuiContratacao(
+            evento
+        );
+
+
+    const classeContratacao =
+        eContratacao
+            ? " agenda-item-contratacao"
+            : "";
+
+
+    const atributosContratacao =
+        eContratacao
+            ? `
+                data-contratacao-id="${escaparAtributo(
+                    evento.contratacaoId
+                )}"
+                role="link"
+                tabindex="0"
+                aria-label="Abrir acompanhamento da contratação"
+            `
+            : "";
+
+
     return `
 
         <article
-            class="agenda-item"
+            class="agenda-item${classeContratacao}"
             data-agenda-index="${indice}"
+            ${atributosContratacao}
         >
 
             <div class="agenda-date">
@@ -901,6 +1294,9 @@ function renderizarEvento(
                     ${tipo}
 
                 </div>
+
+
+                ${participante}
 
 
                 ${
@@ -1573,6 +1969,12 @@ function renderizarVazio(
 
 function configurarEventos() {
 
+    /*
+     * Links externos da agenda continuam funcionando
+     * normalmente e não devem acionar o clique do
+     * compromisso de contratação.
+     */
+
     const links =
         document.querySelectorAll(
             ".agenda-link"
@@ -1587,6 +1989,115 @@ function configurarEventos() {
                 function (evento) {
 
                     evento.stopPropagation();
+
+                }
+            );
+
+        }
+    );
+
+
+    /*
+     * Compromissos originados de contratação.
+     *
+     * O próprio item da agenda funciona como acesso ao
+     * acompanhamento da contratação.
+     */
+
+    const itensContratacao =
+        document.querySelectorAll(
+            ".agenda-item[data-contratacao-id]"
+        );
+
+
+    itensContratacao.forEach(
+        item => {
+
+            const contratacaoId =
+                item.getAttribute(
+                    "data-contratacao-id"
+                );
+
+
+            if (!contratacaoId) {
+
+                return;
+
+            }
+
+
+            const abrirAcompanhamento =
+                function () {
+
+                    const url =
+                        obterUrlContratacao(
+                            contratacaoId
+                        );
+
+
+                    if (!url) {
+
+                        erro(
+                            "Não foi possível montar a URL do acompanhamento da contratação."
+                        );
+
+
+                        return;
+
+                    }
+
+
+                    window.location.href =
+                        url;
+
+                };
+
+
+            item.addEventListener(
+                "click",
+                function (evento) {
+
+                    /*
+                     * Se o clique aconteceu em um link interno
+                     * ou externo já existente dentro do item,
+                     * não substituímos o comportamento dele.
+                     */
+
+                    if (
+                        evento.target.closest(
+                            "a"
+                        )
+                    ) {
+
+                        return;
+
+                    }
+
+
+                    abrirAcompanhamento();
+
+                }
+            );
+
+
+            item.addEventListener(
+                "keydown",
+                function (evento) {
+
+                    if (
+                        evento.key ===
+                            "Enter" ||
+
+                        evento.key ===
+                            " "
+                    ) {
+
+                        evento.preventDefault();
+
+
+                        abrirAcompanhamento();
+
+                    }
 
                 }
             );
@@ -1640,6 +2151,7 @@ function limpar() {
 
     estado.agenda =
         [];
+
 
     estado.inicializado =
         false;

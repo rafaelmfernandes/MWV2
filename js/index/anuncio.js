@@ -265,7 +265,35 @@
     }
 
 
+    /* =========================================================
+       PÁGINA DO PERFIL
+
+       Foto e nome do artista:
+
+           meu-perfil.html?id=<perfilId>
+
+       A página Meu Perfil interpreta esse ID como
+       o perfil que está sendo visualizado.
+    ========================================================= */
+
     function obterPaginaPerfil() {
+
+        return "meu-perfil.html";
+    }
+
+
+    /* =========================================================
+       PÁGINA DE APRESENTAÇÃO DO PERFIL
+
+       A mídia do anúncio:
+
+           apresentar-perfil.html?id=<perfilId>
+
+       A mídia representa o conteúdo do anúncio e,
+       portanto, abre a apresentação pública do perfil.
+    ========================================================= */
+
+    function obterPaginaApresentarPerfil() {
 
         return "apresentar-perfil.html";
     }
@@ -1326,6 +1354,14 @@
 
         /* =====================================================
            MÍDIA DE DESTAQUE
+
+           IMPORTANTE:
+
+           A mídia abre:
+
+               apresentar-perfil.html?id=<perfilId>
+
+           Ela NÃO abre mais meu-perfil.html.
         ===================================================== */
 
         let mediaHtml = "";
@@ -1383,12 +1419,12 @@
 
                     <a
                         href="${escaparHtml(
-                            obterPaginaPerfil()
+                            obterPaginaApresentarPerfil()
                         )}?id=${encodeURIComponent(
                             perfil.id || ""
                         )}"
                         class="ad-media-link ad-video-link"
-                        aria-label="Ver perfil de ${escaparHtml(nome)}"
+                        aria-label="Ver apresentação de ${escaparHtml(nome)}"
                     >
 
                         <video
@@ -1457,12 +1493,12 @@
             mediaHtml = `
                 <a
                     href="${escaparHtml(
-                        obterPaginaPerfil()
+                        obterPaginaApresentarPerfil()
                     )}?id=${encodeURIComponent(
                         perfil.id || ""
                     )}"
                     class="ad-media-link"
-                    aria-label="Ver perfil de ${escaparHtml(nome)}"
+                    aria-label="Ver apresentação de ${escaparHtml(nome)}"
                 >
 
                     <img
@@ -1481,6 +1517,10 @@
 
         /* =====================================================
            IDENTIDADE DO ARTISTA
+
+           Foto e nome continuam abrindo:
+
+               meu-perfil.html?id=<perfilId>
         ===================================================== */
 
         const identidadeClasse =
@@ -1838,40 +1878,22 @@
 
         /* =====================================================
            CLIQUE NO CARD
+
+           IMPORTANTE:
+
+           O card inteiro NÃO é mais clicável.
+
+           A navegação acontece somente nos elementos
+           que possuem seus próprios links:
+
+           * Foto/nome:
+             meu-perfil.html
+
+           * Mídia:
+             apresentar-perfil.html
+
+           O restante do card permanece sem navegação.
         ===================================================== */
-
-        card.addEventListener(
-            "click",
-            evento => {
-
-                const elementoInterativo =
-                    evento.target.closest(
-                        "button, a, input, textarea, select"
-                    );
-
-
-                if (elementoInterativo) {
-
-                    return;
-                }
-
-
-                const perfilId =
-                    card.dataset.perfilId;
-
-
-                if (!perfilId) {
-
-                    return;
-                }
-
-
-                window.location.href =
-                    `${obterPaginaPerfil()}?id=${encodeURIComponent(
-                        perfilId
-                    )}`;
-            }
-        );
 
 
         /* =====================================================

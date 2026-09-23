@@ -1,3415 +1,1188 @@
 /* =========================================================
-   MUSICALWORLD — MEU PERFIL UNIVERSAL
+MUSICALWORLD — MEU PERFIL UNIVERSAL
 
-   Arquivo:
-   js/perfil-publico/PerfilPublico.js
+Arquivo:
+js/perfil-publico/PerfilPublico.js
 
-   Responsabilidade:
+Responsabilidade:
 
-   - Controlar a página "Meu Perfil".
-   - Inicializar o perfil.
-   - Carregar os dados através do PerfilPublicoDados.
-   - Controlar as abas.
-   - Acionar os módulos de portfólio, serviços, agenda
-     e avaliações.
-   - Inicializar as avaliações antecipadamente para que
-     a média e a quantidade apareçam imediatamente no
-     cabeçalho do perfil.
-   - Controlar navegação.
-   - Controlar WhatsApp.
-   - Controlar QR Code.
-   - Construir links públicos.
-   - Manter o estado geral da página.
+* Controlar a página "Meu Perfil".
+* Inicializar o perfil.
+* Carregar os dados através do PerfilPublicoDados.
+* Controlar as abas.
+* Acionar os módulos de portfólio, serviços, agenda
+  e avaliações.
+* Inicializar as avaliações antecipadamente para que
+  a média e a quantidade apareçam imediatamente no
+  cabeçalho do perfil.
+* Controlar navegação.
+* Controlar WhatsApp.
+* Controlar QR Code.
+* Construir links públicos.
+* Identificar se o perfil visualizado pertence ao
+  usuário autenticado.
+* Controlar os elementos exclusivos do proprietário
+  do perfil.
+* Manter o estado geral da página.
 
-   Renderização:
+Renderização:
 
-   js/perfil-publico/PerfilPublicoRender.js
+js/perfil-publico/PerfilPublicoRender.js
 
-   Dados:
+Dados:
 
-   js/perfil-publico/PerfilPublicoDados.js
+js/perfil-publico/PerfilPublicoDados.js
 
-   Avaliações:
+Avaliações:
 
-   js/perfil-publico/PerfilPublicoAvaliacoes.js
+js/perfil-publico/PerfilPublicoAvaliacoes.js
 
-   IMPORTANTE:
+IMPORTANTE:
 
-   Este arquivo NÃO deve conter regras extensas de
-   apresentação visual.
+Este arquivo NÃO deve conter regras extensas de
+apresentação visual.
 
-   A renderização básica do perfil pertence ao:
-   js/perfil-publico/PerfilPublicoRender.js
+A renderização básica do perfil pertence ao:
+js/perfil-publico/PerfilPublicoRender.js
 
-   ========================================================= */
-
+========================================================= */
 
 (function (window) {
 
-    "use strict";
+"use strict";
 
 
-    /* =====================================================
-       DEPENDÊNCIAS
-       ===================================================== */
+/* =====================================================
+   DEPENDÊNCIAS
+   ===================================================== */
 
-    const Utils =
-        window.PerfilPublicoUtils;
-
-
-    const Dados =
-        window.PerfilPublicoDados;
+const Utils =
+    window.PerfilPublicoUtils;
 
 
-    const Render =
-        window.PerfilPublicoRender;
+const Dados =
+    window.PerfilPublicoDados;
 
 
-    const Portfolio =
-        window.PerfilPublicoPortfolio;
+const Render =
+    window.PerfilPublicoRender;
 
 
-    const Servicos =
-        window.PerfilPublicoServicos;
+const Portfolio =
+    window.PerfilPublicoPortfolio;
 
 
-    const Agenda =
-        window.PerfilPublicoAgenda;
+const Servicos =
+    window.PerfilPublicoServicos;
 
 
-    const Avaliacoes =
-        window.PerfilPublicoAvaliacoes;
+const Agenda =
+    window.PerfilPublicoAgenda;
 
 
-    /* =====================================================
-       CONFIGURAÇÃO
-       ===================================================== */
-
-    const CONFIG = {
-
-        pagina: {
-
-            apresentacao:
-                "apresentar-perfil.html",
-
-            edicao:
-                "editar-perfil.html"
-
-        },
+const Avaliacoes =
+    window.PerfilPublicoAvaliacoes;
 
 
-        tiposPerfil: {
+/* =====================================================
+   CONFIGURAÇÃO
+   ===================================================== */
 
-            artista:
-                "artista",
+const CONFIG = {
 
-            contratante:
-                "contratante"
+    pagina: {
 
-        },
+        apresentacao:
+            "apresentar-perfil.html",
 
+        edicao:
+            "editar-perfil.html"
 
-        abas: {
-
-            sobre: {
-
-                id:
-                    "tab-sobre"
-
-            },
+    },
 
 
-            portfolio: {
+    tiposPerfil: {
 
-                id:
-                    "tab-portfolio"
+        artista:
+            "artista",
 
-            },
+        contratante:
+            "contratante"
 
-
-            agenda: {
-
-                id:
-                    "tab-agenda"
-
-            },
+    },
 
 
-            avaliacoes: {
+    abas: {
 
-                id:
-                    "tab-avaliacoes"
+        sobre: {
 
-            }
+            id:
+                "tab-sobre"
 
         },
 
 
-        elementos: {
+        portfolio: {
 
-            linkPerfil:
-                "profileLink",
-
-            qrImagem:
-                "qrImage"
+            id:
+                "tab-portfolio"
 
         },
 
 
-        botoes: {
+        agenda: {
 
-            voltar:
-                "btnVoltar",
-
-            visualizar:
-                "btnVisualizarPerfil",
-
-            editar:
-                "btnEditarPerfil",
-
-            whatsapp:
-                "btnWhatsApp",
-
-            qrCode:
-                "btnQRCode",
-
-            fecharQR:
-                "btnFecharQR",
-
-            compartilharQR:
-                "btnCompartilharQR"
+            id:
+                "tab-agenda"
 
         },
 
 
-        modais: {
+        avaliacoes: {
 
-            qr:
-                "qrOverlay"
-
-        },
-
-
-        toast: {
-
-            elemento:
-                "toast",
-
-            mensagem:
-                "toastMessage"
+            id:
+                "tab-avaliacoes"
 
         }
 
-    };
+    },
 
 
-    /* =====================================================
-       ESTADO
-       ===================================================== */
+    elementos: {
 
-    const estado = {
+        linkPerfil:
+            "profileLink",
 
-        inicializado:
+        qrImagem:
+            "qrImage"
+
+    },
+
+
+    botoes: {
+
+        voltar:
+            "btnVoltar",
+
+        visualizar:
+            "btnVisualizarPerfil",
+
+        editar:
+            "btnEditarPerfil",
+
+        whatsapp:
+            "btnWhatsApp",
+
+        qrCode:
+            "btnQRCode",
+
+        fecharQR:
+            "btnFecharQR",
+
+        compartilharQR:
+            "btnCompartilharQR"
+
+    },
+
+
+    modais: {
+
+        qr:
+            "qrOverlay"
+
+    },
+
+
+    toast: {
+
+        elemento:
+            "toast",
+
+        mensagem:
+            "toastMessage"
+
+    }
+
+};
+
+
+/* =====================================================
+   ESTADO
+   ===================================================== */
+
+const estado = {
+
+    inicializado:
+        false,
+
+
+    carregando:
+        false,
+
+
+    abaAtual:
+        "sobre",
+
+
+    abasCarregadas: {
+
+        sobre:
             false,
-
-
-        carregando:
-            false,
-
-
-        abaAtual:
-            "sobre",
-
-
-        abasCarregadas: {
-
-            sobre:
-                false,
-
-            portfolio:
-                false,
-
-            agenda:
-                false,
-
-            avaliacoes:
-                false
-
-        },
-
-
-        perfil:
-            null,
-
-
-        perfilArtista:
-            null,
-
-
-        usuario:
-            null,
-
-
-        usuarioId:
-            null,
-
-
-        perfilId:
-            null,
-
-
-        tipoPerfil:
-            null,
-
 
         portfolio:
-            [],
-
-
-        servicos:
-            [],
-
+            false,
 
         agenda:
-            [],
-
+            false,
 
         avaliacoes:
-            [],
-
-
-        /*
-         * Indica se o módulo de avaliações já foi
-         * inicializado para o perfil atual.
-         *
-         * Isso evita que a primeira abertura da página
-         * carregue as avaliações novamente quando o
-         * usuário clicar na aba "Avaliações".
-         */
-
-        avaliacoesInicializadas:
             false
 
-    };
+    },
 
 
-    /* =====================================================
-       LOG
-       ===================================================== */
+    /*
+     * Perfil que está sendo visualizado.
+     */
 
-    function log(...mensagens) {
+    perfil:
+        null,
 
-        console.log(
-            "[PerfilPublico]",
-            ...mensagens
-        );
 
+    perfilArtista:
+        null,
+
+
+    /*
+     * Usuário autenticado que está navegando
+     * pela página.
+     */
+
+    usuario:
+        null,
+
+
+    usuarioId:
+        null,
+
+
+    /*
+     * Usuário proprietário do perfil visualizado.
+     *
+     * Para o próprio perfil:
+     *
+     * usuarioPerfil.id === usuarioId
+     *
+     * Para perfil de outra pessoa:
+     *
+     * usuarioPerfil.id !== usuarioId
+     */
+
+    usuarioPerfil:
+        null,
+
+
+    perfilId:
+        null,
+
+
+    tipoPerfil:
+        null,
+
+
+    /*
+     * Indica se o perfil atualmente exibido
+     * pertence ao usuário autenticado.
+     */
+
+    ehMeuPerfil:
+        false,
+
+
+    /*
+     * Indica se a página foi aberta explicitamente
+     * com ?id=.
+     */
+
+    perfilSolicitado:
+        false,
+
+
+    portfolio:
+        [],
+
+
+    servicos:
+        [],
+
+
+    agenda:
+        [],
+
+
+    avaliacoes:
+        [],
+
+
+    /*
+     * Indica se o módulo de avaliações já foi
+     * inicializado para o perfil atual.
+     */
+
+    avaliacoesInicializadas:
+        false
+
+};
+
+
+/* =====================================================
+   LOG
+   ===================================================== */
+
+function log(...mensagens) {
+
+    console.log(
+        "[PerfilPublico]",
+        ...mensagens
+    );
+
+}
+
+
+function aviso(...mensagens) {
+
+    console.warn(
+        "[PerfilPublico]",
+        ...mensagens
+    );
+
+}
+
+
+function erro(...mensagens) {
+
+    console.error(
+        "[PerfilPublico]",
+        ...mensagens
+    );
+
+}
+
+
+/* =====================================================
+   ELEMENTOS
+   ===================================================== */
+
+function obterElemento(
+    id
+) {
+
+    if (!id) {
+        return null;
     }
 
 
-    function aviso(...mensagens) {
-
-        console.warn(
-            "[PerfilPublico]",
-            ...mensagens
-        );
-
-    }
-
-
-    function erro(...mensagens) {
-
-        console.error(
-            "[PerfilPublico]",
-            ...mensagens
-        );
-
-    }
-
-
-    /* =====================================================
-       ELEMENTOS
-       ===================================================== */
-
-    function obterElemento(
+    return document.getElementById(
         id
+    );
+
+}
+
+
+/* =====================================================
+   PRIMEIRO VALOR
+   ===================================================== */
+
+function obterPrimeiroValor(
+    ...valores
+) {
+
+    if (
+        Utils &&
+        typeof Utils.obterPrimeiroValor === "function"
     ) {
 
-        if (!id) {
-            return null;
-        }
-
-
-        return document.getElementById(
-            id
+        return Utils.obterPrimeiroValor(
+            ...valores
         );
 
     }
 
 
-    /* =====================================================
-       PRIMEIRO VALOR
-       ===================================================== */
-
-    function obterPrimeiroValor(
-        ...valores
+    for (
+        const valor of valores
     ) {
 
         if (
-            Utils &&
-            typeof Utils.obterPrimeiroValor === "function"
-        ) {
-
-            return Utils.obterPrimeiroValor(
-                ...valores
-            );
-
-        }
-
-
-        for (
-            const valor of valores
-        ) {
-
-            if (
-                valor !== null &&
-                valor !== undefined &&
-                String(
-                    valor
-                ).trim() !== ""
-            ) {
-
-                return valor;
-
-            }
-
-        }
-
-
-        return "";
-
-    }
-
-
-    /* =====================================================
-       NORMALIZAR TIPO DE PERFIL
-       ===================================================== */
-
-    function normalizarTipoPerfil(
-        valor
-    ) {
-
-        if (
-            Dados &&
-            typeof Dados.normalizarTipoPerfil === "function"
-        ) {
-
-            return Dados.normalizarTipoPerfil(
-                valor
-            );
-
-        }
-
-
-        if (
-            typeof valor === "object" &&
-            valor !== null
-        ) {
-
-            valor =
-                obterPrimeiroValor(
-
-                    valor.nome,
-
-                    valor.tipo,
-
-                    valor.valor
-
-                );
-
-        }
-
-
-        const texto =
+            valor !== null &&
+            valor !== undefined &&
             String(
-                valor || ""
-            )
-                .normalize("NFD")
-                .replace(
-                    /[\u0300-\u036f]/g,
-                    ""
-                )
-                .trim()
-                .toLowerCase();
-
-
-        if (
-            texto === "artista" ||
-            texto === "artistas"
-        ) {
-
-            return CONFIG.tiposPerfil.artista;
-
-        }
-
-
-        if (
-            texto === "contratante" ||
-            texto === "contratantes" ||
-            texto === "cliente" ||
-            texto === "clientes"
-        ) {
-
-            return CONFIG.tiposPerfil.contratante;
-
-        }
-
-
-        return "";
-
-    }
-
-
-    /* =====================================================
-       OBTER TIPO DO PERFIL
-       ===================================================== */
-
-    function obterTipoPerfilAtual() {
-
-        if (
-            Dados &&
-            typeof Dados.obterTipoPerfil === "function"
-        ) {
-
-            const tipo =
-                normalizarTipoPerfil(
-                    Dados.obterTipoPerfil()
-                );
-
-
-            if (tipo) {
-
-                estado.tipoPerfil =
-                    tipo;
-
-
-                return tipo;
-
-            }
-
-        }
-
-
-        const perfil =
-            estado.perfil || {};
-
-
-        let relacionamento =
-            perfil.tipos_perfil;
-
-
-        if (
-            Array.isArray(
-                relacionamento
-            )
-        ) {
-
-            relacionamento =
-                relacionamento[0];
-
-        }
-
-
-        const tipo =
-            normalizarTipoPerfil(
-
-                relacionamento,
-
-                perfil.tipoPerfil,
-
-                perfil.tipo_perfil,
-
-                perfil.tipo
-
-            );
-
-
-        estado.tipoPerfil =
-            tipo || null;
-
-
-        return tipo;
-
-    }
-
-
-    /* =====================================================
-       VERIFICAR PERFIL
-       ===================================================== */
-
-    function ehArtista() {
-
-        if (
-            Dados &&
-            typeof Dados.ehArtista === "function"
-        ) {
-
-            return Dados.ehArtista();
-
-        }
-
-
-        return (
-            obterTipoPerfilAtual() ===
-            CONFIG.tiposPerfil.artista
-        );
-
-    }
-
-
-    function ehContratante() {
-
-        if (
-            Dados &&
-            typeof Dados.ehContratante === "function"
-        ) {
-
-            return Dados.ehContratante();
-
-        }
-
-
-        return (
-            obterTipoPerfilAtual() ===
-            CONFIG.tiposPerfil.contratante
-        );
-
-    }
-
-
-    /* =====================================================
-       TIPO DE ARTISTA
-       ===================================================== */
-
-    function normalizarTipoArtista(
-        valor
-    ) {
-
-        if (
-            Render &&
-            typeof Render.normalizarTipoArtista === "function"
-        ) {
-
-            return Render.normalizarTipoArtista(
                 valor
-            );
+            ).trim() !== ""
+        ) {
+
+            return valor;
 
         }
+
+    }
+
+
+    return "";
+
+}
+
+
+/* =====================================================
+   OBTER PERFIL ID DA URL
+   ===================================================== */
+
+function obterPerfilIdDaUrl() {
+
+    try {
+
+        const parametros =
+            new URLSearchParams(
+                window.location.search
+            );
+
+
+        const id =
+            obterPrimeiroValor(
+
+                parametros.get(
+                    "id"
+                ),
+
+                parametros.get(
+                    "perfil_id"
+                ),
+
+                parametros.get(
+                    "perfilId"
+                )
+
+            );
 
 
         return String(
-            valor || ""
+            id || ""
         ).trim();
+
+    } catch (error) {
+
+        aviso(
+            "Não foi possível ler o ID do perfil pela URL.",
+            error
+        );
+
+
+        return "";
+
+    }
+
+}
+
+
+/* =====================================================
+   PERFIL DA URL
+   ===================================================== */
+
+function obterPerfilSolicitado() {
+
+    const id =
+        obterPerfilIdDaUrl();
+
+
+    if (!id) {
+
+        estado.perfilSolicitado =
+            false;
+
+
+        return null;
 
     }
 
 
-    function obterTipoArtistaAtual() {
-
-        if (
-            !ehArtista()
-        ) {
-
-            return "";
-
-        }
+    estado.perfilSolicitado =
+        true;
 
 
-        if (
-            Dados &&
-            typeof Dados.obterPerfilArtista === "function"
-        ) {
+    return id;
 
-            const artista =
-                Dados.obterPerfilArtista();
+}
 
 
-            const tipo =
-                obterPrimeiroValor(
+/* =====================================================
+   NORMALIZAR TIPO DE PERFIL
+   ===================================================== */
 
-                    artista?.tipo_artista,
+function normalizarTipoPerfil(
+    valor
+) {
 
-                    artista?.tipoArtista,
+    if (
+        Dados &&
+        typeof Dados.normalizarTipoPerfil === "function"
+    ) {
 
-                    artista?.tipo
-
-                );
-
-
-            if (tipo) {
-
-                return normalizarTipoArtista(
-                    tipo
-                );
-
-            }
-
-        }
-
-
-        return normalizarTipoArtista(
-
-            obterPrimeiroValor(
-
-                estado.perfilArtista?.tipo_artista,
-
-                estado.perfilArtista?.tipoArtista,
-
-                estado.perfilArtista?.tipo
-
-            )
-
+        return Dados.normalizarTipoPerfil(
+            valor
         );
 
     }
 
 
-    /* =====================================================
-       ABA INICIAL
-       ===================================================== */
+    if (
+        typeof valor === "object" &&
+        valor !== null
+    ) {
 
-    function obterAbaInicial() {
+        valor =
+            obterPrimeiroValor(
 
-        const hash =
-            String(
-                window.location.hash || ""
-            )
-                .replace(
-                    "#",
-                    ""
-                )
-                .trim()
-                .toLowerCase();
+                valor.nome,
 
+                valor.tipo,
 
-        if (
-            CONFIG.abas[hash]
-        ) {
+                valor.valor
 
-            return hash;
-
-        }
-
-
-        return "sobre";
+            );
 
     }
 
 
-    /* =====================================================
-       INICIALIZAR
-       ===================================================== */
+    const texto =
+        String(
+            valor || ""
+        )
+            .normalize("NFD")
+            .replace(
+                /[\u0300-\u036f]/g,
+                ""
+            )
+            .trim()
+            .toLowerCase();
 
-    async function inicializar() {
 
-        if (
-            estado.carregando
-        ) {
+    if (
+        texto === "artista" ||
+        texto === "artistas"
+    ) {
 
-            aviso(
-                "A página já está sendo inicializada."
+        return CONFIG.tiposPerfil.artista;
+
+    }
+
+
+    if (
+        texto === "contratante" ||
+        texto === "contratantes" ||
+        texto === "cliente" ||
+        texto === "clientes"
+    ) {
+
+        return CONFIG.tiposPerfil.contratante;
+
+    }
+
+
+    return "";
+
+}
+
+
+/* =====================================================
+   OBTER TIPO DO PERFIL
+   ===================================================== */
+
+function obterTipoPerfilAtual() {
+
+    if (
+        Dados &&
+        typeof Dados.obterTipoPerfil === "function"
+    ) {
+
+        const tipo =
+            normalizarTipoPerfil(
+                Dados.obterTipoPerfil()
             );
 
 
-            return;
+        if (tipo) {
+
+            estado.tipoPerfil =
+                tipo;
+
+
+            return tipo;
 
         }
 
+    }
 
-        estado.carregando =
+
+    const perfil =
+        estado.perfil || {};
+
+
+    let relacionamento =
+        perfil.tipos_perfil;
+
+
+    if (
+        Array.isArray(
+            relacionamento
+        )
+    ) {
+
+        relacionamento =
+            relacionamento[0];
+
+    }
+
+
+    const tipo =
+        normalizarTipoPerfil(
+
+            relacionamento
+
+        ) || normalizarTipoPerfil(
+
+            perfil.tipoPerfil ||
+
+            perfil.tipo_perfil ||
+
+            perfil.tipo
+
+        );
+
+
+    estado.tipoPerfil =
+        tipo || null;
+
+
+    return tipo;
+
+}
+
+
+/* =====================================================
+   VERIFICAR PERFIL
+   ===================================================== */
+
+function ehArtista() {
+
+    if (
+        Dados &&
+        typeof Dados.ehArtista === "function"
+    ) {
+
+        return Dados.ehArtista();
+
+    }
+
+
+    return (
+        obterTipoPerfilAtual() ===
+        CONFIG.tiposPerfil.artista
+    );
+
+}
+
+
+function ehContratante() {
+
+    if (
+        Dados &&
+        typeof Dados.ehContratante === "function"
+    ) {
+
+        return Dados.ehContratante();
+
+    }
+
+
+    return (
+        obterTipoPerfilAtual() ===
+        CONFIG.tiposPerfil.contratante
+    );
+
+}
+
+
+/* =====================================================
+   IDENTIFICAR PROPRIETÁRIO DO PERFIL
+   ===================================================== */
+
+function obterIdUsuarioDoPerfil() {
+
+    const perfil =
+        estado.perfil || {};
+
+
+    const usuarioPerfil =
+        estado.usuarioPerfil || {};
+
+
+    return String(
+
+        obterPrimeiroValor(
+
+            usuarioPerfil.id,
+
+            perfil.usuario_id,
+
+            perfil.usuarioId,
+
+            perfil.user_id,
+
+            perfil.userId
+
+        ) || ""
+
+    ).trim();
+
+}
+
+
+/* =====================================================
+   ATUALIZAR REGRA DE MEU PERFIL
+   ===================================================== */
+
+function atualizarRegraMeuPerfil() {
+
+    /*
+     * IMPORTANTE:
+     *
+     * estado.usuarioId representa SEMPRE o usuário
+     * autenticado que está navegando.
+     *
+     * estado.usuarioPerfil representa o proprietário
+     * do perfil atualmente aberto.
+     */
+
+
+    const usuarioId =
+        String(
+            estado.usuarioId || ""
+        ).trim();
+
+
+    const usuarioPerfilId =
+        obterIdUsuarioDoPerfil();
+
+
+    /*
+     * REGRA PRINCIPAL:
+     *
+     * Quando a página NÃO possui ?id=, ela está
+     * carregando o perfil do usuário autenticado.
+     *
+     * Portanto, se o carregamento do perfil próprio
+     * foi concluído e temos um usuário autenticado,
+     * esse perfil é necessariamente "Meu Perfil".
+     */
+
+    if (
+        !estado.perfilSolicitado &&
+        usuarioId &&
+        estado.perfil
+    ) {
+
+        estado.ehMeuPerfil =
             true;
 
 
-        try {
+        /*
+         * Para o próprio perfil, garantimos também
+         * que usuarioPerfil seja o próprio usuário
+         * autenticado.
+         */
 
-            log(
-                "Inicializando Meu Perfil universal..."
-            );
+        if (
+            !estado.usuarioPerfil
+        ) {
 
-
-            if (!Render) {
-
-                throw new Error(
-                    "PerfilPublicoRender.js não foi carregado."
-                );
-
-            }
-
-
-            estado.abaAtual =
-                obterAbaInicial();
-
-
-            configurarEventos();
-
-            configurarAbas();
-
-
-            /*
-             * PRIMEIRO PASSO:
-             *
-             * Carrega o perfil e descobre o perfilId.
-             */
-
-            await carregarDados();
-
-
-            /*
-             * SEGUNDO PASSO:
-             *
-             * Agora que o perfilId já foi descoberto,
-             * carregamos as avaliações imediatamente.
-             *
-             * Isso é importante porque o cabeçalho do
-             * perfil possui a média e a quantidade de
-             * avaliações.
-             *
-             * Antes dessa correção, as avaliações só eram
-             * inicializadas quando o usuário entrava na
-             * aba "Avaliações".
-             */
-
-            await inicializarAvaliacoesAntecipadamente();
-
-
-            /*
-             * TERCEIRO PASSO:
-             *
-             * Só depois das avaliações estarem disponíveis
-             * fazemos a renderização inicial do perfil.
-             */
-
-            aplicarRegrasDePerfil();
-
-
-            preencherInformacoesPerfil();
-
-
-            /*
-             * Garante que a avaliação do cabeçalho seja
-             * preenchida novamente depois que o módulo
-             * de avaliações terminou sua leitura.
-             */
-
-            preencherAvaliacao();
-
-
-            await carregarAba(
-                estado.abaAtual
-            );
-
-
-            ativarAba(
-                estado.abaAtual,
-                false
-            );
-
-
-            Render.renderizarIcones();
-
-
-            estado.inicializado =
-                true;
-
-
-            log(
-                "Meu Perfil universal inicializado com sucesso."
-            );
-
-
-        } catch (error) {
-
-            erro(
-                "Erro ao inicializar perfil:",
-                error
-            );
-
-
-            mostrarToast(
-                "Não foi possível carregar o perfil.",
-                "erro"
-            );
-
-
-        } finally {
-
-            estado.carregando =
-                false;
-
-        }
-
-    }
-
-
-    /* =====================================================
-       CARREGAR DADOS
-       ===================================================== */
-
-    async function carregarDados() {
-
-        if (!Dados) {
-
-            throw new Error(
-                "PerfilPublicoDados.js não foi carregado."
-            );
+            estado.usuarioPerfil =
+                estado.usuario;
 
         }
 
 
         log(
-            "Carregando dados do perfil..."
-        );
-
-
-        let resultado =
-            null;
-
-
-        if (
-            typeof Dados.carregarTudo === "function"
-        ) {
-
-            resultado =
-                await Dados.carregarTudo({
-
-                    incluirPortfolio:
-                        true,
-
-                    incluirServicos:
-                        true,
-
-                    incluirAgenda:
-                        true,
-
-                    /*
-                     * As avaliações são carregadas pelo
-                     * módulo especializado
-                     * PerfilPublicoAvaliacoes.
-                     *
-                     * Isso evita duas consultas diferentes
-                     * para a mesma informação.
-                     */
-
-                    incluirAvaliacoes:
-                        false
-
-                });
-
-        } else {
-
-            /*
-             * Compatibilidade com versões anteriores
-             * do módulo de dados.
-             */
-
-            if (
-                typeof Dados.carregarUsuario === "function"
-            ) {
-
-                await Dados.carregarUsuario();
-
-            }
-
-
-            if (
-                typeof Dados.carregarPerfil === "function"
-            ) {
-
-                await Dados.carregarPerfil();
-
-            }
-
-
-            if (
-                typeof Dados.carregarPerfilArtista === "function"
-            ) {
-
-                await Dados.carregarPerfilArtista();
-
-            }
-
-
-            if (
-                typeof Dados.carregarPortfolio === "function"
-            ) {
-
-                await Dados.carregarPortfolio();
-
-            }
-
-
-            if (
-                typeof Dados.carregarServicos === "function" &&
-                ehArtista()
-            ) {
-
-                await Dados.carregarServicos();
-
-            }
-
-
-            if (
-                typeof Dados.carregarAgenda === "function"
-            ) {
-
-                await Dados.carregarAgenda();
-
-            }
-
-        }
-
-
-        estado.usuario =
-            obterEstadoDados(
-                "obterUsuario",
-                resultado?.usuario
-            );
-
-
-        estado.perfil =
-            obterEstadoDados(
-                "obterPerfil",
-                resultado?.perfil
-            );
-
-
-        estado.perfilArtista =
-            obterEstadoDados(
-                "obterPerfilArtista",
-                resultado?.perfilArtista
-            );
-
-
-        estado.usuarioId =
-            obterEstadoDados(
-                "obterUsuarioId",
-                resultado?.usuarioId
-            );
-
-
-        estado.perfilId =
-            obterEstadoDados(
-                "obterPerfilId",
-                resultado?.perfilId
-            );
-
-
-        estado.tipoPerfil =
-            normalizarTipoPerfil(
-
-                obterEstadoDados(
-                    "obterTipoPerfil",
-                    resultado?.tipoPerfil
-                )
-
-            ) || null;
-
-
-        /*
-         * Garante que o ID do perfil seja obtido mesmo
-         * quando a versão do Dados não o devolve diretamente.
-         */
-
-        if (
-            !estado.perfilId &&
-            estado.perfil?.id
-        ) {
-
-            estado.perfilId =
-                estado.perfil.id;
-
-        }
-
-
-        /*
-         * Segunda proteção:
-         *
-         * Alguns módulos podem devolver o ID como string
-         * dentro de outras propriedades do objeto do perfil.
-         */
-
-        if (
-            !estado.perfilId
-        ) {
-
-            estado.perfilId =
-                obterPrimeiroValor(
-
-                    estado.perfil?.perfil_id,
-
-                    estado.perfil?.perfilId,
-
-                    estado.perfilArtista?.perfil_id,
-
-                    estado.perfilArtista?.perfilId
-
-                ) || null;
-
-        }
-
-
-        estado.portfolio =
-            obterEstadoArray(
-                "obterPortfolio",
-                resultado?.portfolio
-            );
-
-
-        /*
-         * Serviços são exclusivos de artistas.
-         */
-
-        if (
-            ehArtista()
-        ) {
-
-            estado.servicos =
-                obterEstadoArray(
-                    "obterServicos",
-                    resultado?.servicos
-                );
-
-        } else {
-
-            estado.servicos =
-                [];
-
-        }
-
-
-        estado.agenda =
-            obterEstadoArray(
-                "obterAgenda",
-                resultado?.agenda
-            );
-
-
-        estado.avaliacoes =
-            obterEstadoArray(
-                "obterAvaliacoes",
-                resultado?.avaliacoes
-            );
-
-
-        /*
-         * Segunda proteção:
-         *
-         * Se o tipo for contratante, não mantemos
-         * dados de artista na memória do controlador.
-         */
-
-        if (
-            !ehArtista()
-        ) {
-
-            estado.perfilArtista =
-                null;
-
-
-            estado.servicos =
-                [];
-
-        }
-
-
-        log(
-            "Dados carregados:",
+            "Perfil próprio identificado pela ausência de ?id=.",
             {
 
-                usuarioId:
-                    estado.usuarioId,
+                usuarioAutenticado:
+                    usuarioId,
 
                 perfilId:
                     estado.perfilId,
 
-                tipoPerfil:
-                    obterTipoPerfilAtual(),
-
-                tipoArtista:
-                    obterTipoArtistaAtual(),
-
-                portfolio:
-                    estado.portfolio.length,
-
-                servicos:
-                    estado.servicos.length,
-
-                agenda:
-                    estado.agenda.length,
-
-                avaliacoes:
-                    estado.avaliacoes.length
+                ehMeuPerfil:
+                    true
 
             }
         );
 
 
-        /*
-         * Diagnóstico importante.
-         *
-         * Se esse valor aparecer como null/undefined,
-         * o problema está no PerfilPublicoDados e não
-         * no módulo de avaliações.
-         */
-
-        if (
-            !estado.perfilId
-        ) {
-
-            aviso(
-                "Perfil carregado, porém nenhum perfilId foi identificado."
-            );
-
-        } else {
-
-            log(
-                "Perfil identificado para avaliações:",
-                estado.perfilId
-            );
-
-        }
+        return true;
 
     }
 
 
-    /* =====================================================
-       INICIALIZAR AVALIAÇÕES ANTECIPADAMENTE
-       ===================================================== */
+    /*
+     * Quando existe ?id=, precisamos comparar
+     * efetivamente o proprietário do perfil com o
+     * usuário autenticado.
+     */
 
-    async function inicializarAvaliacoesAntecipadamente() {
+    estado.ehMeuPerfil =
+        Boolean(
 
-        /*
-         * O módulo pode não existir em alguma versão antiga
-         * da página. Nesse caso não interrompemos todo o
-         * carregamento do perfil.
-         */
+            usuarioId &&
 
-        if (!Avaliacoes) {
+            usuarioPerfilId &&
 
-            aviso(
-                "PerfilPublicoAvaliacoes.js não está disponível."
-            );
+            usuarioId ===
+            usuarioPerfilId
 
-
-            return;
-
-        }
+        );
 
 
-        if (
-            typeof Avaliacoes.inicializar !== "function"
-        ) {
+    log(
+        "Proprietário do perfil identificado:",
+        {
 
-            aviso(
-                "PerfilPublicoAvaliacoes.inicializar() não está disponível."
-            );
+            usuarioAutenticado:
+                usuarioId || null,
 
+            usuarioProprietario:
+                usuarioPerfilId || null,
 
-            return;
+            ehMeuPerfil:
+                estado.ehMeuPerfil,
 
-        }
-
-
-        /*
-         * Sem perfilId não existe como consultar as
-         * avaliações do perfil correto.
-         */
-
-        if (!estado.perfilId) {
-
-            aviso(
-                "Avaliações não inicializadas porque o perfilId ainda não foi identificado."
-            );
-
-
-            return;
+            perfilSolicitado:
+                estado.perfilSolicitado
 
         }
+    );
 
 
-        try {
+    return estado.ehMeuPerfil;
 
-            log(
-                "Inicializando avaliações antecipadamente para o perfil:",
-                estado.perfilId
-            );
+}
 
 
-            /*
-             * Passamos explicitamente o perfilId.
-             *
-             * Isso é especialmente importante na página
-             * "Meu Perfil", porque normalmente não existe
-             * ?id= na URL.
-             */
+/* =====================================================
+   CONTROLES EXCLUSIVOS DO PROPRIETÁRIO
+   ===================================================== */
 
-            const resultado =
-                await Avaliacoes.inicializar({
+function aplicarRegrasDeProprietario() {
 
-                    perfilId:
-                        estado.perfilId,
-
-                    perfil:
-                        estado.perfil,
-
-                    perfilArtista:
-                        estado.perfilArtista,
-
-                    usuario:
-                        estado.usuario
-
-                });
+    const visualizar =
+        obterElemento(
+            CONFIG.botoes.visualizar
+        );
 
 
-            /*
-             * Algumas versões do módulo podem retornar
-             * diretamente os dados das avaliações.
-             *
-             * Se isso acontecer, aproveitamos o retorno.
-             */
-
-            if (
-                Array.isArray(
-                    resultado
-                )
-            ) {
-
-                estado.avaliacoes =
-                    resultado;
-
-            } else if (
-                Array.isArray(
-                    resultado?.avaliacoes
-                )
-            ) {
-
-                estado.avaliacoes =
-                    resultado.avaliacoes;
-
-            }
+    const editar =
+        obterElemento(
+            CONFIG.botoes.editar
+        );
 
 
-            estado.avaliacoesInicializadas =
-                true;
+    /*
+     * "Ver meu perfil" e "Editar perfil" pertencem
+     * somente ao proprietário do perfil.
+     *
+     * Se estivermos vendo o perfil de outra pessoa,
+     * esses controles não devem aparecer.
+     */
+
+    if (visualizar) {
+
+        visualizar.hidden =
+            !estado.ehMeuPerfil;
 
 
-            log(
-                "Avaliações inicializadas com sucesso.",
-                {
-
-                    perfilId:
-                        estado.perfilId,
-
-                    quantidade:
-                        estado.avaliacoes.length
-
-                }
-            );
-
-
-        } catch (error) {
-
-            /*
-             * Uma falha nas avaliações não deve impedir
-             * que o restante do Meu Perfil seja carregado.
-             */
-
-            estado.avaliacoesInicializadas =
-                false;
-
-
-            erro(
-                "Erro ao inicializar avaliações antecipadamente:",
-                error
-            );
-
-        }
+        visualizar.style.display =
+            estado.ehMeuPerfil
+                ? ""
+                : "none";
 
     }
 
 
-    /* =====================================================
-       OBTER ESTADO DOS DADOS
-       ===================================================== */
+    if (editar) {
 
-    function obterEstadoDados(
-        metodo,
-        fallback = null
+        editar.hidden =
+            !estado.ehMeuPerfil;
+
+
+        editar.style.display =
+            estado.ehMeuPerfil
+                ? ""
+                : "none";
+
+    }
+
+
+    log(
+        "Controles do proprietário aplicados:",
+        {
+
+            ehMeuPerfil:
+                estado.ehMeuPerfil,
+
+            visualizar:
+                Boolean(
+                    visualizar
+                ),
+
+            editar:
+                Boolean(
+                    editar
+                )
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   TIPO DE ARTISTA
+   ===================================================== */
+
+function normalizarTipoArtista(
+    valor
+) {
+
+    if (
+        Render &&
+        typeof Render.normalizarTipoArtista === "function"
     ) {
 
-        if (
-            Dados &&
-            typeof Dados[metodo] === "function"
-        ) {
-
-            const valor =
-                Dados[metodo]();
-
-
-            if (
-                valor !== undefined &&
-                valor !== null
-            ) {
-
-                return valor;
-
-            }
-
-        }
-
-
-        return fallback;
-
-    }
-
-
-    function obterEstadoArray(
-        metodo,
-        fallback = []
-    ) {
-
-        const valor =
-            obterEstadoDados(
-                metodo,
-                fallback
-            );
-
-
-        return Array.isArray(
+        return Render.normalizarTipoArtista(
             valor
-        )
-            ? valor
-            : [];
-
-    }
-
-
-    /* =====================================================
-       REGRAS DE PERFIL
-       ===================================================== */
-
-    function aplicarRegrasDePerfil() {
-
-        if (!Render) {
-            return;
-        }
-
-
-        Render.aplicarRegrasDePerfil(
-            estado
         );
 
     }
 
 
-    /* =====================================================
-       PREENCHER INFORMAÇÕES
-       ===================================================== */
+    return String(
+        valor || ""
+    ).trim();
 
-    function preencherInformacoesPerfil() {
+}
 
-        if (!Render) {
 
-            erro(
-                "PerfilPublicoRender.js não está disponível."
-            );
+function obterTipoArtistaAtual() {
 
-
-            return;
-
-        }
-
-
-        Render.preencherInformacoes(
-            estado
-        );
-
-    }
-
-
-    /* =====================================================
-       AVALIAÇÃO
-       ===================================================== */
-
-    function preencherAvaliacao() {
-
-        if (!Render) {
-            return;
-        }
-
-
-        Render.preencherAvaliacao(
-            estado
-        );
-
-    }
-
-
-    /* =====================================================
-       SERVIÇOS
-       ===================================================== */
-
-    function preencherServicos() {
-
-        if (!Render) {
-            return;
-        }
-
-
-        Render.preencherServicos(
-            estado
-        );
-
-    }
-
-
-    async function carregarServicos() {
-
-        if (!Dados) {
-            return;
-        }
-
-
-        /*
-         * Contratantes não possuem serviços de artista.
-         */
-
-        if (
-            !ehArtista()
-        ) {
-
-            estado.servicos =
-                [];
-
-
-            if (Render) {
-
-                Render.limparServicos();
-
-            }
-
-
-            return;
-
-        }
-
-
-        if (
-            typeof Dados.carregarSomenteServicos === "function"
-        ) {
-
-            await Dados.carregarSomenteServicos();
-
-        } else if (
-            typeof Dados.carregarServicos === "function"
-        ) {
-
-            await Dados.carregarServicos();
-
-        }
-
-
-        estado.servicos =
-            obterEstadoArray(
-                "obterServicos",
-                estado.servicos
-            );
-
-
-        preencherServicos();
-
-
-        if (Render) {
-
-            Render.renderizarIcones();
-
-        }
-
-    }
-
-
-    /* =====================================================
-       CONFIGURAR EVENTOS
-       ===================================================== */
-
-    function configurarEventos() {
-
-        const voltar =
-            obterElemento(
-                CONFIG.botoes.voltar
-            );
-
-
-        const visualizar =
-            obterElemento(
-                CONFIG.botoes.visualizar
-            );
-
-
-        const editar =
-            obterElemento(
-                CONFIG.botoes.editar
-            );
-
-
-        const whatsapp =
-            obterElemento(
-                CONFIG.botoes.whatsapp
-            );
-
-
-        const qrCode =
-            obterElemento(
-                CONFIG.botoes.qrCode
-            );
-
-
-        const fecharQR =
-            obterElemento(
-                CONFIG.botoes.fecharQR
-            );
-
-
-        const compartilharQR =
-            obterElemento(
-                CONFIG.botoes.compartilharQR
-            );
-
-
-        if (voltar) {
-
-            voltar.addEventListener(
-                "click",
-                voltarPagina
-            );
-
-        }
-
-
-        if (visualizar) {
-
-            visualizar.addEventListener(
-                "click",
-                visualizarPerfil
-            );
-
-        }
-
-
-        if (editar) {
-
-            editar.addEventListener(
-                "click",
-                editarPerfil
-            );
-
-        }
-
-
-        if (whatsapp) {
-
-            whatsapp.addEventListener(
-                "click",
-                compartilharWhatsApp
-            );
-
-        }
-
-
-        if (qrCode) {
-
-            qrCode.addEventListener(
-                "click",
-                abrirQR
-            );
-
-        }
-
-
-        if (fecharQR) {
-
-            fecharQR.addEventListener(
-                "click",
-                fecharQRModal
-            );
-
-        }
-
-
-        if (compartilharQR) {
-
-            compartilharQR.addEventListener(
-                "click",
-                compartilharQRPerfil
-            );
-
-        }
-
-
-        document.addEventListener(
-            "keydown",
-            function (evento) {
-
-                if (
-                    evento.key === "Escape"
-                ) {
-
-                    fecharQRModal();
-
-                }
-
-            }
-        );
-
-
-        const overlay =
-            obterElemento(
-                CONFIG.modais.qr
-            );
-
-
-        if (overlay) {
-
-            overlay.addEventListener(
-                "click",
-                function (evento) {
-
-                    if (
-                        evento.target === overlay
-                    ) {
-
-                        fecharQRModal();
-
-                    }
-
-                }
-            );
-
-        }
-
-    }
-
-
-    /* =====================================================
-       CONFIGURAR ABAS
-       ===================================================== */
-
-    function configurarAbas() {
-
-        const botoes =
-            document.querySelectorAll(
-                ".tab-button"
-            );
-
-
-        if (!botoes.length) {
-
-            aviso(
-                "Nenhum .tab-button encontrado."
-            );
-
-
-            return;
-
-        }
-
-
-        botoes.forEach(
-            botao => {
-
-                botao.type =
-                    "button";
-
-
-                botao.addEventListener(
-                    "click",
-                    async function (evento) {
-
-                        evento.preventDefault();
-
-                        evento.stopPropagation();
-
-
-                        const nomeAba =
-                            botao.dataset.tab;
-
-
-                        if (!nomeAba) {
-
-                            aviso(
-                                "Botão de aba sem data-tab:",
-                                botao
-                            );
-
-
-                            return;
-
-                        }
-
-
-                        if (
-                            !CONFIG.abas[nomeAba]
-                        ) {
-
-                            aviso(
-                                "Aba não configurada:",
-                                nomeAba
-                            );
-
-
-                            return;
-
-                        }
-
-
-                        ativarAba(
-                            nomeAba
-                        );
-
-
-                        await carregarAba(
-                            nomeAba
-                        );
-
-
-                        ativarAba(
-                            nomeAba,
-                            false
-                        );
-
-                    }
-                );
-
-            }
-        );
-
-
-        log(
-            `${botoes.length} abas configuradas.`
-        );
-
-    }
-
-
-    /* =====================================================
-       ATIVAR ABA
-       ===================================================== */
-
-    function ativarAba(
-        nomeAba,
-        atualizarHash = true
+    if (
+        !ehArtista()
     ) {
 
-        if (
-            !CONFIG.abas[nomeAba]
-        ) {
-
-            aviso(
-                "Tentativa de ativar aba inexistente:",
-                nomeAba
-            );
-
-
-            return;
-
-        }
-
-
-        const botoes =
-            document.querySelectorAll(
-                ".tab-button"
-            );
-
-
-        const conteudos =
-            document.querySelectorAll(
-                ".tab-content"
-            );
-
-
-        botoes.forEach(
-            botao => {
-
-                const ativa =
-                    botao.dataset.tab ===
-                    nomeAba;
-
-
-                botao.classList.toggle(
-                    "active",
-                    ativa
-                );
-
-
-                botao.setAttribute(
-                    "aria-selected",
-                    ativa
-                        ? "true"
-                        : "false"
-                );
-
-            }
-        );
-
-
-        conteudos.forEach(
-            conteudo => {
-
-                const ativa =
-                    conteudo.id ===
-                    obterIdAba(
-                        nomeAba
-                    );
-
-
-                conteudo.classList.toggle(
-                    "active",
-                    ativa
-                );
-
-
-                conteudo.hidden =
-                    !ativa;
-
-
-                conteudo.setAttribute(
-                    "aria-hidden",
-                    ativa
-                        ? "false"
-                        : "true"
-                );
-
-            }
-        );
-
-
-        estado.abaAtual =
-            nomeAba;
-
-
-        if (atualizarHash) {
-
-            try {
-
-                history.replaceState(
-                    null,
-                    "",
-                    `#${nomeAba}`
-                );
-
-            } catch (error) {
-
-                aviso(
-                    "Não foi possível atualizar o hash da aba.",
-                    error
-                );
-
-            }
-
-        }
-
-
-        if (Render) {
-
-            Render.renderizarIcones();
-
-        }
+        return "";
 
     }
 
 
-    /* =====================================================
-       OBTER ID DA ABA
-       ===================================================== */
-
-    function obterIdAba(
-        nomeAba
+    if (
+        Dados &&
+        typeof Dados.obterPerfilArtista === "function"
     ) {
 
-        return (
+        const artista =
+            Dados.obterPerfilArtista();
 
-            CONFIG.abas[nomeAba]?.id ||
 
-            `tab-${nomeAba}`
-
-        );
-
-    }
-
-
-    /* =====================================================
-       CARREGAR ABA
-       ===================================================== */
-
-    async function carregarAba(
-        nomeAba,
-        forcar = false
-    ) {
-
-        if (
-            !CONFIG.abas[nomeAba]
-        ) {
-
-            aviso(
-                "Aba desconhecida:",
-                nomeAba
-            );
-
-
-            return false;
-
-        }
-
-
-        if (
-            estado.abasCarregadas[nomeAba] &&
-            !forcar
-        ) {
-
-            log(
-                `Aba "${nomeAba}" já foi carregada.`
-            );
-
-
-            return true;
-
-        }
-
-
-        try {
-
-            log(
-                `Carregando aba "${nomeAba}"...`
-            );
-
-
-            switch (
-                nomeAba
-            ) {
-
-                case "sobre":
-
-                    await carregarAbaSobre();
-
-                    break;
-
-
-                case "portfolio":
-
-                    await carregarAbaPortfolio();
-
-                    break;
-
-
-                case "agenda":
-
-                    await carregarAbaAgenda();
-
-                    break;
-
-
-                case "avaliacoes":
-
-                    await carregarAbaAvaliacoes();
-
-                    break;
-
-
-                default:
-
-                    throw new Error(
-                        `Nenhum carregador definido para "${nomeAba}".`
-                    );
-
-            }
-
-
-            estado.abasCarregadas[
-                nomeAba
-            ] =
-                true;
-
-
-            log(
-                `Aba "${nomeAba}" carregada com sucesso.`
-            );
-
-
-            return true;
-
-
-        } catch (error) {
-
-            estado.abasCarregadas[
-                nomeAba
-            ] =
-                false;
-
-
-            erro(
-                `Erro ao carregar aba "${nomeAba}":`,
-                error
-            );
-
-
-            mostrarToast(
-                `Não foi possível carregar a aba ${nomeAba}.`,
-                "erro"
-            );
-
-
-            return false;
-
-        }
-
-    }
-
-
-    /* =====================================================
-       ABA SOBRE
-       ===================================================== */
-
-    async function carregarAbaSobre() {
-
-        /*
-         * A avaliação já foi inicializada antes da
-         * primeira renderização da página.
-         */
-
-        preencherInformacoesPerfil();
-
-
-        preencherAvaliacao();
-
-
-        /*
-         * Serviços existem somente para artistas.
-         */
-
-        if (
-            ehArtista()
-        ) {
-
-            if (
-                Servicos &&
-                typeof Servicos.renderizar === "function"
-            ) {
-
-                Servicos.renderizar(
-                    estado.servicos
-                );
-
-            } else if (
-                !estado.servicos.length
-            ) {
-
-                await carregarServicos();
-
-            }
-
-        } else {
-
-            if (Render) {
-
-                Render.limparServicos();
-
-            }
-
-        }
-
-
-        if (Render) {
-
-            Render.renderizarIcones();
-
-        }
-
-    }
-
-
-    /* =====================================================
-       ABA PORTFÓLIO
-       ===================================================== */
-
-    async function carregarAbaPortfolio() {
-
-        if (!Portfolio) {
-
-            throw new Error(
-                "PerfilPublicoPortfolio.js não foi carregado."
-            );
-
-        }
-
-
-        let portfolio =
-            Array.isArray(
-                estado.portfolio
-            )
-                ? estado.portfolio
-                : [];
-
-
-        if (
-            !portfolio.length &&
-            Dados &&
-            typeof Dados.carregarSomentePortfolio === "function"
-        ) {
-
-            await Dados.carregarSomentePortfolio();
-
-
-            portfolio =
-                obterEstadoArray(
-                    "obterPortfolio",
-                    []
-                );
-
-
-            estado.portfolio =
-                portfolio;
-
-        }
-
-
-        if (
-            typeof Portfolio.renderizar === "function"
-        ) {
-
-            await Promise.resolve(
-                Portfolio.renderizar(
-                    portfolio
-                )
-            );
-
-        } else if (
-            typeof Portfolio.inicializar === "function"
-        ) {
-
-            await Promise.resolve(
-                Portfolio.inicializar(
-                    portfolio
-                )
-            );
-
-        } else {
-
-            throw new Error(
-                "PerfilPublicoPortfolio.js não possui renderizar() nem inicializar()."
-            );
-
-        }
-
-
-        if (Render) {
-
-            Render.renderizarIcones();
-
-        }
-
-    }
-
-
-    /* =====================================================
-       ABA AGENDA
-       ===================================================== */
-
-    async function carregarAbaAgenda() {
-
-        if (!Agenda) {
-
-            throw new Error(
-                "PerfilPublicoAgenda.js não foi carregado."
-            );
-
-        }
-
-
-        let agenda =
-            Array.isArray(
-                estado.agenda
-            )
-                ? estado.agenda
-                : [];
-
-
-        if (
-            !agenda.length &&
-            Dados &&
-            typeof Dados.carregarSomenteAgenda === "function"
-        ) {
-
-            await Dados.carregarSomenteAgenda();
-
-
-            agenda =
-                obterEstadoArray(
-                    "obterAgenda",
-                    []
-                );
-
-
-            estado.agenda =
-                agenda;
-
-        }
-
-
-        if (
-            typeof Agenda.renderizar === "function"
-        ) {
-
-            await Promise.resolve(
-                Agenda.renderizar(
-                    agenda
-                )
-            );
-
-        } else if (
-            typeof Agenda.inicializar === "function"
-        ) {
-
-            await Promise.resolve(
-                Agenda.inicializar(
-                    agenda
-                )
-            );
-
-        } else {
-
-            throw new Error(
-                "PerfilPublicoAgenda.js não possui renderizar() nem inicializar()."
-            );
-
-        }
-
-
-        if (Render) {
-
-            Render.renderizarIcones();
-
-        }
-
-    }
-
-
-    /* =====================================================
-       ABA AVALIAÇÕES
-       ===================================================== */
-
-    async function carregarAbaAvaliacoes() {
-
-        if (!Avaliacoes) {
-
-            throw new Error(
-                "PerfilPublicoAvaliacoes.js não foi carregado."
-            );
-
-        }
-
-
-        /*
-         * A inicialização principal acontece antes da
-         * primeira renderização do perfil.
-         *
-         * Porém mantemos esta proteção para casos em que:
-         *
-         * - o módulo ainda não foi inicializado;
-         * - o perfil foi recarregado;
-         * - houve alguma falha anterior.
-         */
-
-        if (
-            !estado.avaliacoesInicializadas
-        ) {
-
-            await inicializarAvaliacoesAntecipadamente();
-
-        }
-
-
-        /*
-         * Caso o módulo não tenha conseguido carregar,
-         * tentamos buscar através do módulo antigo de dados,
-         * preservando compatibilidade.
-         */
-
-        if (
-            !estado.avaliacoes.length &&
-            Dados &&
-            typeof Dados.carregarSomenteAvaliacoes === "function"
-        ) {
-
-            log(
-                "Buscando avaliações do perfil através do módulo de dados..."
-            );
-
-
-            await Dados.carregarSomenteAvaliacoes();
-
-
-            estado.avaliacoes =
-                obterEstadoArray(
-                    "obterAvaliacoes",
-                    []
-                );
-
-
-            log(
-                "Avaliações encontradas:",
-                estado.avaliacoes.length
-            );
-
-        }
-
-
-        const lista =
-            Array.isArray(
-                estado.avaliacoes
-            )
-                ? estado.avaliacoes
-                : [];
-
-
-        const dadosAvaliacoes =
-            construirDadosAvaliacoes(
-                lista
-            );
-
-
-        /*
-         * Se o módulo possuir renderizar(), utilizamos o
-         * método de renderização.
-         */
-
-        if (
-            typeof Avaliacoes.renderizar === "function"
-        ) {
-
-            await Promise.resolve(
-                Avaliacoes.renderizar(
-                    dadosAvaliacoes
-                )
-            );
-
-        }
-
-
-        /*
-         * Não chamamos inicializar() novamente aqui se ele
-         * já foi executado anteriormente.
-         *
-         * Isso evita uma segunda consulta desnecessária.
-         */
-
-        preencherAvaliacao();
-
-
-        if (Render) {
-
-            Render.renderizarIcones();
-
-        }
-
-    }
-
-
-    /* =====================================================
-       CONSTRUIR DADOS DAS AVALIAÇÕES
-       ===================================================== */
-
-    function construirDadosAvaliacoes(
-        avaliacoes
-    ) {
-
-        const lista =
-            Array.isArray(
-                avaliacoes
-            )
-                ? avaliacoes
-                : [];
-
-
-        const distribuicao = {
-
-            cinco:
-                0,
-
-            quatro:
-                0,
-
-            tres:
-                0,
-
-            dois:
-                0,
-
-            um:
-                0
-
-        };
-
-
-        const notas =
-            lista
-                .map(
-                    avaliacao => {
-
-                        const valor =
-                            obterPrimeiroValor(
-
-                                avaliacao?.nota,
-
-                                avaliacao?.rating,
-
-                                avaliacao?.avaliacao,
-
-                                avaliacao?.estrelas,
-
-                                0
-
-                            );
-
-
-                        return Number(
-                            valor
-                        );
-
-                    }
-                )
-                .filter(
-                    numero =>
-                        Number.isFinite(
-                            numero
-                        ) &&
-                        numero >= 1 &&
-                        numero <= 5
-                );
-
-
-        notas.forEach(
-            nota => {
-
-                if (nota >= 5) {
-
-                    distribuicao.cinco++;
-
-                } else if (nota >= 4) {
-
-                    distribuicao.quatro++;
-
-                } else if (nota >= 3) {
-
-                    distribuicao.tres++;
-
-                } else if (nota >= 2) {
-
-                    distribuicao.dois++;
-
-                } else {
-
-                    distribuicao.um++;
-
-                }
-
-            }
-        );
-
-
-        let media =
-            0;
-
-
-        if (notas.length) {
-
-            media =
-                notas.reduce(
-                    (
-                        total,
-                        nota
-                    ) =>
-                        total + nota,
-                    0
-                ) /
-                notas.length;
-
-        } else {
-
-            const mediaPerfil =
-                Number(
-                    obterPrimeiroValor(
-
-                        estado.perfilArtista?.avaliacao_media,
-
-                        estado.perfilArtista?.media_avaliacao,
-
-                        estado.perfil?.avaliacao_media,
-
-                        estado.perfil?.media_avaliacao,
-
-                        0
-
-                    )
-                );
-
-
-            if (
-                Number.isFinite(
-                    mediaPerfil
-                ) &&
-                mediaPerfil > 0
-            ) {
-
-                media =
-                    mediaPerfil;
-
-            }
-
-        }
-
-
-        return {
-
-            media,
-
-            quantidade:
-                lista.length,
-
-            distribuicao,
-
-            avaliacoes:
-                lista
-
-        };
-
-    }
-
-
-    /* =====================================================
-       VOLTAR
-       ===================================================== */
-
-    function voltarPagina() {
-
-        if (
-            window.history.length > 1
-        ) {
-
-            window.history.back();
-
-            return;
-
-        }
-
-
-        window.location.href =
-            "index.html";
-
-    }
-
-
-    /* =====================================================
-       VISUALIZAR PERFIL
-       ===================================================== */
-
-    function visualizarPerfil() {
-
-        const id =
-            estado.perfilId;
-
-
-        if (!id) {
-
-            mostrarToast(
-                "Perfil ainda não identificado.",
-                "erro"
-            );
-
-
-            return;
-
-        }
-
-
-        const url =
-            construirLinkPerfil();
-
-
-        if (!url) {
-
-            mostrarToast(
-                "Não foi possível construir o endereço do perfil.",
-                "erro"
-            );
-
-
-            return;
-
-        }
-
-
-        log(
-            "Visualizando perfil público universal:",
-            {
-
-                tipoPerfil:
-                    obterTipoPerfilAtual(),
-
-                tipoArtista:
-                    obterTipoArtistaAtual(),
-
-                perfilId:
-                    id,
-
-                url
-
-            }
-        );
-
-
-        window.location.href =
-            url;
-
-    }
-
-
-    /* =====================================================
-       EDITAR PERFIL
-       ===================================================== */
-
-    function editarPerfil() {
-
-        const id =
-            estado.perfilId;
-
-
-        if (!id) {
-
-            mostrarToast(
-                "Perfil ainda não identificado.",
-                "erro"
-            );
-
-
-            return;
-
-        }
-
-
-        const pagina =
-            CONFIG.pagina.edicao;
-
-
-        if (!pagina) {
-
-            mostrarToast(
-                "A página de edição não está disponível.",
-                "erro"
-            );
-
-
-            return;
-
-        }
-
-
-        const url =
-            construirLinkPagina(
-                pagina
-            );
-
-
-        log(
-            "Abrindo editor universal:",
-            {
-
-                tipoPerfil:
-                    obterTipoPerfilAtual(),
-
-                tipoArtista:
-                    obterTipoArtistaAtual(),
-
-                perfilId:
-                    id,
-
-                url
-
-            }
-        );
-
-
-        window.location.href =
-            url;
-
-    }
-
-
-    /* =====================================================
-       WHATSAPP
-       ===================================================== */
-
-    function compartilharWhatsApp() {
-
-        const nome =
+        const tipo =
             obterPrimeiroValor(
 
-                ehArtista()
-                    ? estado.perfilArtista?.nome_artistico
-                    : "",
+                artista?.tipo_artista,
 
-                ehArtista()
-                    ? estado.perfilArtista?.nome
-                    : "",
+                artista?.tipoArtista,
 
-                estado.perfil?.nome_exibicao,
-
-                estado.perfil?.nome,
-
-                estado.usuario?.nome,
-
-                "usuário"
+                artista?.tipo
 
             );
 
 
-        const mensagem =
-            "Olá! Vi seu perfil no MusicalWorld e gostaria de conversar com você sobre um possível trabalho.";
+        if (tipo) {
 
-
-        const telefone =
-            obterPrimeiroValor(
-
-                ehArtista()
-                    ? estado.perfilArtista?.telefone
-                    : "",
-
-                ehArtista()
-                    ? estado.perfilArtista?.whatsapp
-                    : "",
-
-                estado.perfil?.telefone,
-
-                estado.perfil?.whatsapp,
-
-                estado.usuario?.telefone,
-
-                estado.usuario?.whatsapp
-
-            );
-
-
-        if (!telefone) {
-
-            mostrarToast(
-                `O WhatsApp de ${nome} não está informado.`,
-                "erro"
-            );
-
-
-            return;
-
-        }
-
-
-        const numero =
-            String(
-                telefone
-            ).replace(
-                /\D/g,
-                ""
-            );
-
-
-        if (!numero) {
-
-            mostrarToast(
-                "Número de WhatsApp inválido.",
-                "erro"
-            );
-
-
-            return;
-
-        }
-
-
-        const url =
-            `https://wa.me/${numero}?text=${encodeURIComponent(
-                mensagem
-            )}`;
-
-
-        window.open(
-            url,
-            "_blank",
-            "noopener,noreferrer"
-        );
-
-    }
-
-
-    /* =====================================================
-       QR CODE
-       ===================================================== */
-
-    function abrirQR() {
-
-        const overlay =
-            obterElemento(
-                CONFIG.modais.qr
-            );
-
-
-        if (!overlay) {
-
-            aviso(
-                "Modal QR não encontrado."
-            );
-
-
-            return;
-
-        }
-
-
-        const link =
-            construirLinkPerfil();
-
-
-        if (!link) {
-
-            mostrarToast(
-                "Não foi possível gerar o link do perfil.",
-                "erro"
-            );
-
-
-            return;
-
-        }
-
-
-        const imagem =
-            obterElemento(
-                CONFIG.elementos.qrImagem
-            );
-
-
-        if (imagem) {
-
-            imagem.src =
-                `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(
-                    link
-                )}`;
-
-        }
-
-
-        const campoLink =
-            obterElemento(
-                CONFIG.elementos.linkPerfil
-            );
-
-
-        if (campoLink) {
-
-            campoLink.textContent =
-                link;
-
-
-            campoLink.dataset.url =
-                link;
-
-        }
-
-
-        overlay.classList.add(
-            "active"
-        );
-
-
-        overlay.removeAttribute(
-            "hidden"
-        );
-
-
-        overlay.setAttribute(
-            "aria-hidden",
-            "false"
-        );
-
-
-        document.body.classList.add(
-            "modal-open"
-        );
-
-
-        if (Render) {
-
-            Render.renderizarIcones();
-
-        }
-
-    }
-
-
-    /* =====================================================
-       PÁGINAS
-       ===================================================== */
-
-    function obterPaginaApresentacao() {
-
-        return CONFIG.pagina.apresentacao ||
-            "";
-
-    }
-
-
-    function obterPaginaPerfilPublico() {
-
-        return obterPaginaApresentacao();
-
-    }
-
-
-    function obterPaginaEdicao() {
-
-        return CONFIG.pagina.edicao ||
-            "";
-
-    }
-
-
-    /* =====================================================
-       CONSTRUIR LINK DA PÁGINA
-       ===================================================== */
-
-    function construirLinkPagina(
-        pagina
-    ) {
-
-        if (!pagina) {
-
-            return "";
-
-        }
-
-
-        const diretorio =
-            window.location.pathname.replace(
-                /[^/]*$/,
-                ""
-            );
-
-
-        return (
-            `${window.location.origin}` +
-            `${diretorio}` +
-            `${pagina}`
-        );
-
-    }
-
-
-    /* =====================================================
-       CONSTRUIR LINK DO PERFIL
-       ===================================================== */
-
-    function construirLinkPerfil() {
-
-        const id =
-            estado.perfilId ||
-            "";
-
-
-        const pagina =
-            obterPaginaApresentacao();
-
-
-        if (!id) {
-
-            aviso(
-                "Não foi possível construir o link: perfil sem ID."
-            );
-
-
-            return "";
-
-        }
-
-
-        if (!pagina) {
-
-            aviso(
-                "Página pública universal não encontrada."
-            );
-
-
-            return "";
-
-        }
-
-
-        const base =
-            construirLinkPagina(
-                pagina
-            );
-
-
-        if (!base) {
-
-            return "";
-
-        }
-
-
-        const separador =
-            base.includes("?")
-                ? "&"
-                : "?";
-
-
-        const url =
-            `${base}${separador}id=${encodeURIComponent(
-                id
-            )}`;
-
-
-        log(
-            "Link de perfil público universal:",
-            url
-        );
-
-
-        return url;
-
-    }
-
-
-    /* =====================================================
-       FECHAR QR
-       ===================================================== */
-
-    function fecharQRModal() {
-
-        const overlay =
-            obterElemento(
-                CONFIG.modais.qr
-            );
-
-
-        if (!overlay) {
-            return;
-        }
-
-
-        overlay.classList.remove(
-            "active"
-        );
-
-
-        overlay.setAttribute(
-            "hidden",
-            ""
-        );
-
-
-        overlay.setAttribute(
-            "aria-hidden",
-            "true"
-        );
-
-
-        document.body.classList.remove(
-            "modal-open"
-        );
-
-    }
-
-
-    /* =====================================================
-       COMPARTILHAR QR
-       ===================================================== */
-
-    async function compartilharQRPerfil() {
-
-        const link =
-            construirLinkPerfil();
-
-
-        if (!link) {
-
-            mostrarToast(
-                "Não foi possível compartilhar o perfil.",
-                "erro"
-            );
-
-
-            return;
-
-        }
-
-
-        try {
-
-            if (
-                navigator.share
-            ) {
-
-                await navigator.share({
-
-                    title:
-                        "Meu perfil no MusicalWorld",
-
-                    text:
-                        "Confira meu perfil no MusicalWorld.",
-
-                    url:
-                        link
-
-                });
-
-
-                return;
-
-            }
-
-
-            if (
-                navigator.clipboard
-            ) {
-
-                await navigator.clipboard.writeText(
-                    link
-                );
-
-
-                mostrarToast(
-                    "Link do perfil copiado.",
-                    "sucesso"
-                );
-
-
-                return;
-
-            }
-
-
-            mostrarToast(
-                "Não foi possível compartilhar o link.",
-                "erro"
-            );
-
-
-        } catch (error) {
-
-            if (
-                error?.name ===
-                "AbortError"
-            ) {
-
-                return;
-
-            }
-
-
-            erro(
-                "Erro ao compartilhar QR:",
-                error
-            );
-
-        }
-
-    }
-
-
-    /* =====================================================
-       TOAST
-       ===================================================== */
-
-    function mostrarToast(
-        mensagem,
-        tipo = "sucesso"
-    ) {
-
-        if (
-            Utils &&
-            typeof Utils.mostrarToast === "function"
-        ) {
-
-            Utils.mostrarToast(
-                mensagem,
+            return normalizarTipoArtista(
                 tipo
             );
 
-
-            return;
-
         }
-
-
-        const toast =
-            obterElemento(
-                CONFIG.toast.elemento
-            );
-
-
-        const toastMessage =
-            obterElemento(
-                CONFIG.toast.mensagem
-            );
-
-
-        if (!toast) {
-            return;
-        }
-
-
-        if (toastMessage) {
-
-            toastMessage.textContent =
-                mensagem;
-
-        }
-
-
-        toast.classList.remove(
-            "show",
-            "sucesso",
-            "erro"
-        );
-
-
-        toast.classList.add(
-            tipo,
-            "show"
-        );
-
-
-        setTimeout(
-            function () {
-
-                toast.classList.remove(
-                    "show"
-                );
-
-            },
-            3000
-        );
 
     }
 
 
-    /* =====================================================
-       RECARREGAR ABA ATUAL
-       ===================================================== */
+    return normalizarTipoArtista(
 
-    async function recarregarAbaAtual() {
+        obterPrimeiroValor(
 
-        const aba =
-            estado.abaAtual;
+            estado.perfilArtista?.tipo_artista,
 
+            estado.perfilArtista?.tipoArtista,
 
-        estado.abasCarregadas[
-            aba
-        ] =
-            false;
+            estado.perfilArtista?.tipo
 
+        )
 
-        ativarAba(
-            aba,
-            false
-        );
+    );
+
+}
 
 
-        await carregarAba(
-            aba,
-            true
-        );
+/* =====================================================
+   ABA INICIAL
+   ===================================================== */
+
+function obterAbaInicial() {
+
+    const hash =
+        String(
+            window.location.hash || ""
+        )
+            .replace(
+                "#",
+                ""
+            )
+            .trim()
+            .toLowerCase();
 
 
-        ativarAba(
-            aba,
-            false
-        );
+    if (
+        CONFIG.abas[hash]
+    ) {
+
+        return hash;
 
     }
 
 
-    /* =====================================================
-       RECARREGAR TUDO
-       ===================================================== */
+    return "sobre";
 
-    async function recarregar() {
+}
 
-        estado.abasCarregadas = {
 
-            sobre:
-                false,
+/* =====================================================
+   INICIALIZAR
+   ===================================================== */
 
-            portfolio:
-                false,
+async function inicializar() {
 
-            agenda:
-                false,
+    if (
+        estado.carregando
+    ) {
 
-            avaliacoes:
-                false
+        aviso(
+            "A página já está sendo inicializada."
+        );
 
-        };
+
+        return;
+
+    }
+
+
+    estado.carregando =
+        true;
+
+
+    try {
+
+        log(
+            "Inicializando Meu Perfil universal..."
+        );
+
+
+        if (!Render) {
+
+            throw new Error(
+                "PerfilPublicoRender.js não foi carregado."
+            );
+
+        }
+
+
+        estado.abaAtual =
+            obterAbaInicial();
 
 
         /*
-         * Permite que as avaliações sejam inicializadas
-         * novamente para o perfil atualizado.
+         * Identifica se a página foi aberta com
+         * ?id=perfil.
+         *
+         * Sem ?id=:
+         *
+         * → perfil do usuário logado.
+         *
+         * Com ?id=:
+         *
+         * → perfil solicitado.
          */
 
-        estado.avaliacoesInicializadas =
-            false;
+        const perfilIdUrl =
+            obterPerfilSolicitado();
 
 
-        estado.avaliacoes =
-            [];
+        log(
+            "Perfil solicitado pela URL:",
+            perfilIdUrl || "perfil do usuário autenticado"
+        );
+
+
+        configurarEventos();
+
+        configurarAbas();
 
 
         /*
-         * Evita que dados do perfil anterior permaneçam
-         * durante uma nova leitura.
+         * PRIMEIRO PASSO:
+         *
+         * Carrega o perfil correto.
          */
 
-        estado.tipoPerfil =
-            null;
-
-
-        estado.perfilArtista =
-            null;
-
-
-        estado.servicos =
-            [];
-
-
-        await carregarDados();
+        await carregarDados(
+            perfilIdUrl
+        );
 
 
         /*
-         * Depois de recarregar o perfil, precisamos
-         * obrigatoriamente reinicializar as avaliações
-         * com o novo perfilId.
+         * SEGUNDO PASSO:
+         *
+         * Identifica se o perfil pertence ao usuário
+         * autenticado.
+         */
+
+        atualizarRegraMeuPerfil();
+
+
+        aplicarRegrasDeProprietario();
+
+
+        /*
+         * TERCEIRO PASSO:
+         *
+         * Carregamos as avaliações imediatamente.
          */
 
         await inicializarAvaliacoesAntecipadamente();
 
+
+        /*
+         * QUARTO PASSO:
+         *
+         * Renderização inicial.
+         */
 
         aplicarRegrasDePerfil();
 
@@ -3420,15 +1193,8 @@
         preencherAvaliacao();
 
 
-        ativarAba(
-            estado.abaAtual,
-            false
-        );
-
-
         await carregarAba(
-            estado.abaAtual,
-            true
+            estado.abaAtual
         );
 
 
@@ -3438,9 +1204,176 @@
         );
 
 
-        if (Render) {
+        Render.renderizarIcones();
 
-            Render.renderizarIcones();
+
+        estado.inicializado =
+            true;
+
+
+        log(
+            "Meu Perfil universal inicializado com sucesso."
+        );
+
+
+    } catch (error) {
+
+        erro(
+            "Erro ao inicializar perfil:",
+            error
+        );
+
+
+        mostrarToast(
+            "Não foi possível carregar o perfil.",
+            "erro"
+        );
+
+
+    } finally {
+
+        estado.carregando =
+            false;
+
+    }
+
+}
+
+
+/* =====================================================
+   CARREGAR DADOS
+   ===================================================== */
+
+async function carregarDados(
+    perfilIdSolicitado = null
+) {
+
+    if (!Dados) {
+
+        throw new Error(
+            "PerfilPublicoDados.js não foi carregado."
+        );
+
+    }
+
+
+    log(
+        "Carregando dados do perfil...",
+        {
+            perfilId:
+                perfilIdSolicitado || "usuário autenticado"
+        }
+    );
+
+
+    let resultado =
+        null;
+
+
+    if (
+        typeof Dados.carregarTudo === "function"
+    ) {
+
+        resultado =
+            await Dados.carregarTudo({
+
+                /*
+                 * Quando existe ?id=, carregamos
+                 * exatamente aquele perfil.
+                 *
+                 * Quando não existe, o Dados usa
+                 * o usuário autenticado.
+                 */
+
+                perfilId:
+                    perfilIdSolicitado || null,
+
+                incluirPortfolio:
+                    true,
+
+                incluirServicos:
+                    true,
+
+                incluirAgenda:
+                    true,
+
+                /*
+                 * As avaliações são carregadas pelo
+                 * módulo especializado.
+                 */
+
+                incluirAvaliacoes:
+                    false
+
+            });
+
+    } else {
+
+        /*
+         * Compatibilidade com versões anteriores
+         * do módulo de dados.
+         */
+
+        if (
+            typeof Dados.carregarUsuario === "function"
+        ) {
+
+            await Dados.carregarUsuario();
+
+        }
+
+
+        if (
+            perfilIdSolicitado &&
+            typeof Dados.carregarPerfilPorId === "function"
+        ) {
+
+            await Dados.carregarPerfilPorId(
+                perfilIdSolicitado
+            );
+
+        } else if (
+            typeof Dados.carregarPerfil === "function"
+        ) {
+
+            await Dados.carregarPerfil();
+
+        }
+
+
+        if (
+            typeof Dados.carregarPerfilArtista === "function"
+        ) {
+
+            await Dados.carregarPerfilArtista();
+
+        }
+
+
+        if (
+            typeof Dados.carregarPortfolio === "function"
+        ) {
+
+            await Dados.carregarPortfolio();
+
+        }
+
+
+        if (
+            typeof Dados.carregarServicos === "function" &&
+            ehArtista()
+        ) {
+
+            await Dados.carregarServicos();
+
+        }
+
+
+        if (
+            typeof Dados.carregarAgenda === "function"
+        ) {
+
+            await Dados.carregarAgenda();
 
         }
 
@@ -3448,139 +1381,2733 @@
 
 
     /* =====================================================
-       OBTER ESTADO
+       USUÁRIO AUTENTICADO
        ===================================================== */
 
-    function obterEstado() {
+    estado.usuario =
+        obterEstadoDados(
+            "obterUsuario",
+            resultado?.usuario
+        );
 
-        return {
 
-            ...estado,
+    /*
+     * IMPORTANTE:
+     *
+     * O usuarioId precisa ser obtido ANTES de qualquer
+     * tentativa de identificar o proprietário.
+     */
 
-            portfolio:
-                [
-                    ...estado.portfolio
-                ],
+    estado.usuarioId =
+        obterEstadoDados(
+            "obterUsuarioId",
+            resultado?.usuarioId
+        );
 
-            servicos:
-                [
-                    ...estado.servicos
-                ],
 
-            agenda:
-                [
-                    ...estado.agenda
-                ],
+    /* =====================================================
+       PERFIL VISUALIZADO
+       ===================================================== */
 
-            avaliacoes:
-                [
-                    ...estado.avaliacoes
-                ]
+    estado.perfil =
+        obterEstadoDados(
+            "obterPerfil",
+            resultado?.perfil
+        );
 
-        };
+
+    /* =====================================================
+       USUÁRIO PROPRIETÁRIO DO PERFIL
+       ===================================================== */
+
+    estado.usuarioPerfil =
+        obterEstadoDados(
+            "obterUsuarioPerfil",
+            resultado?.usuarioPerfil
+        );
+
+
+    /*
+     * Quando estamos carregando o próprio perfil,
+     * o PerfilPublicoDados normalmente já devolve
+     * usuarioPerfil.
+     *
+     * Esta proteção garante o vínculo mesmo se o módulo
+     * não retornar esse valor explicitamente.
+     */
+
+    if (
+        !estado.perfilSolicitado &&
+        estado.usuario
+    ) {
+
+        estado.usuarioPerfil =
+            estado.usuario;
+
+    }
+
+
+    /*
+     * Para perfil de outra pessoa, tentamos usar o
+     * usuário retornado pelo PerfilPublicoDados.
+     *
+     * Caso não exista, o próprio perfil ainda poderá
+     * fornecer usuario_id.
+     */
+
+    if (
+        !estado.usuarioPerfil &&
+        estado.perfil &&
+        estado.usuarioId &&
+        String(
+            estado.perfil.usuario_id || ""
+        ) === String(
+            estado.usuarioId
+        )
+    ) {
+
+        estado.usuarioPerfil =
+            estado.usuario;
 
     }
 
 
     /* =====================================================
-       API PÚBLICA
+       PERFIL ARTISTA
        ===================================================== */
 
-    const PerfilPublico = {
-
-        CONFIG,
-
-        estado,
-
-        inicializar,
-
-        carregarDados,
-
-        carregarAba,
-
-        carregarServicos,
-
-        ativarAba,
-
-        recarregarAbaAtual,
-
-        recarregar,
-
-        obterEstado,
-
-        preencherInformacoesPerfil,
-
-        preencherAvaliacao,
-
-        preencherServicos,
-
-        obterTipoPerfilAtual,
-
-        obterTipoArtistaAtual,
-
-        normalizarTipoPerfil,
-
-        normalizarTipoArtista,
-
-        ehArtista,
-
-        ehContratante,
-
-        aplicarRegrasDePerfil,
-
-        obterPaginaApresentacao,
-
-        obterPaginaPerfilPublico,
-
-        obterPaginaEdicao,
-
-        construirLinkPerfil,
-
-        construirLinkPagina,
-
-        visualizarPerfil,
-
-        editarPerfil
-
-    };
+    estado.perfilArtista =
+        obterEstadoDados(
+            "obterPerfilArtista",
+            resultado?.perfilArtista
+        );
 
 
     /* =====================================================
-       DISPONIBILIZAR GLOBALMENTE
+       ID DO PERFIL
        ===================================================== */
 
-    window.PerfilPublico =
-        PerfilPublico;
+    estado.perfilId =
+        obterEstadoDados(
+            "obterPerfilId",
+            resultado?.perfilId
+        );
 
 
     /* =====================================================
-       INICIALIZAÇÃO AUTOMÁTICA
+       TIPO DO PERFIL
+       ===================================================== */
+
+    estado.tipoPerfil =
+        normalizarTipoPerfil(
+
+            obterEstadoDados(
+                "obterTipoPerfil",
+                resultado?.tipoPerfil
+            )
+
+        ) || null;
+
+
+    /*
+     * Garante que o ID do perfil seja obtido mesmo
+     * quando a versão do Dados não o devolve diretamente.
+     */
+
+    if (
+        !estado.perfilId &&
+        estado.perfil?.id
+    ) {
+
+        estado.perfilId =
+            estado.perfil.id;
+
+    }
+
+
+    /*
+     * Segunda proteção:
+     *
+     * Alguns módulos podem devolver o ID como string
+     * dentro de outras propriedades.
+     */
+
+    if (
+        !estado.perfilId
+    ) {
+
+        estado.perfilId =
+            obterPrimeiroValor(
+
+                estado.perfil?.perfil_id,
+
+                estado.perfil?.perfilId,
+
+                estado.perfilArtista?.perfil_id,
+
+                estado.perfilArtista?.perfilId
+
+            ) || null;
+
+    }
+
+
+    /* =====================================================
+       PORTFÓLIO
+       ===================================================== */
+
+    estado.portfolio =
+        obterEstadoArray(
+            "obterPortfolio",
+            resultado?.portfolio
+        );
+
+
+    /* =====================================================
+       SERVIÇOS
        ===================================================== */
 
     if (
-        document.readyState === "loading"
+        ehArtista()
     ) {
 
-        document.addEventListener(
-            "DOMContentLoaded",
-            inicializar,
+        estado.servicos =
+            obterEstadoArray(
+                "obterServicos",
+                resultado?.servicos
+            );
+
+    } else {
+
+        estado.servicos =
+            [];
+
+    }
+
+
+    /* =====================================================
+       AGENDA
+       ===================================================== */
+
+    estado.agenda =
+        obterEstadoArray(
+            "obterAgenda",
+            resultado?.agenda
+        );
+
+
+    /* =====================================================
+       AVALIAÇÕES
+       ===================================================== */
+
+    estado.avaliacoes =
+        obterEstadoArray(
+            "obterAvaliacoes",
+            resultado?.avaliacoes
+        );
+
+
+    /*
+     * Se o tipo for contratante, não mantemos
+     * dados de artista na memória do controlador.
+     */
+
+    if (
+        !ehArtista()
+    ) {
+
+        estado.perfilArtista =
+            null;
+
+
+        estado.servicos =
+            [];
+
+    }
+
+
+    /*
+     * Agora que TODOS os dados necessários já foram
+     * carregados, identificamos definitivamente se
+     * este é o próprio perfil.
+     */
+
+    atualizarRegraMeuPerfil();
+
+
+    log(
+        "Dados carregados:",
+        {
+
+            usuarioId:
+                estado.usuarioId,
+
+            usuarioPerfilId:
+                obterIdUsuarioDoPerfil(),
+
+            ehMeuPerfil:
+                estado.ehMeuPerfil,
+
+            perfilSolicitado:
+                estado.perfilSolicitado,
+
+            perfilId:
+                estado.perfilId,
+
+            tipoPerfil:
+                obterTipoPerfilAtual(),
+
+            tipoArtista:
+                obterTipoArtistaAtual(),
+
+            portfolio:
+                estado.portfolio.length,
+
+            servicos:
+                estado.servicos.length,
+
+            agenda:
+                estado.agenda.length,
+
+            avaliacoes:
+                estado.avaliacoes.length
+
+        }
+    );
+
+
+    if (
+        !estado.perfilId
+    ) {
+
+        aviso(
+            "Perfil carregado, porém nenhum perfilId foi identificado."
+        );
+
+    } else {
+
+        log(
+            "Perfil identificado para avaliações:",
+            estado.perfilId
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   INICIALIZAR AVALIAÇÕES ANTECIPADAMENTE
+   ===================================================== */
+
+async function inicializarAvaliacoesAntecipadamente() {
+
+    if (!Avaliacoes) {
+
+        aviso(
+            "PerfilPublicoAvaliacoes.js não está disponível."
+        );
+
+
+        return;
+
+    }
+
+
+    if (
+        typeof Avaliacoes.inicializar !== "function"
+    ) {
+
+        aviso(
+            "PerfilPublicoAvaliacoes.inicializar() não está disponível."
+        );
+
+
+        return;
+
+    }
+
+
+    if (!estado.perfilId) {
+
+        aviso(
+            "Avaliações não inicializadas porque o perfilId ainda não foi identificado."
+        );
+
+
+        return;
+
+    }
+
+
+    try {
+
+        log(
+            "Inicializando avaliações antecipadamente para o perfil:",
+            estado.perfilId
+        );
+
+
+        const resultado =
+            await Avaliacoes.inicializar({
+
+                perfilId:
+                    estado.perfilId,
+
+                perfil:
+                    estado.perfil,
+
+                perfilArtista:
+                    estado.perfilArtista,
+
+                /*
+                 * Para perfil de outra pessoa, usamos
+                 * o dono do perfil.
+                 *
+                 * Para o próprio perfil, usuarioPerfil
+                 * é o usuário autenticado.
+                 */
+
+                usuario:
+                    estado.usuarioPerfil ||
+                    estado.usuario
+
+            });
+
+
+        if (
+            Array.isArray(
+                resultado
+            )
+        ) {
+
+            estado.avaliacoes =
+                resultado;
+
+        } else if (
+            Array.isArray(
+                resultado?.avaliacoes
+            )
+        ) {
+
+            estado.avaliacoes =
+                resultado.avaliacoes;
+
+        }
+
+
+        estado.avaliacoesInicializadas =
+            true;
+
+
+        log(
+            "Avaliações inicializadas com sucesso.",
             {
-                once:
-                    true
+
+                perfilId:
+                    estado.perfilId,
+
+                quantidade:
+                    estado.avaliacoes.length
+
             }
         );
 
 
-    } else {
+    } catch (error) {
 
-        inicializar();
+        estado.avaliacoesInicializadas =
+            false;
+
+
+        erro(
+            "Erro ao inicializar avaliações antecipadamente:",
+            error
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   OBTER ESTADO DOS DADOS
+   ===================================================== */
+
+function obterEstadoDados(
+    metodo,
+    fallback = null
+) {
+
+    if (
+        Dados &&
+        typeof Dados[metodo] === "function"
+    ) {
+
+        const valor =
+            Dados[metodo]();
+
+
+        if (
+            valor !== undefined &&
+            valor !== null
+        ) {
+
+            return valor;
+
+        }
 
     }
 
 
-    console.log(
-        "PerfilPublico.js — Meu Perfil universal carregado."
+    return fallback;
+
+}
+
+
+function obterEstadoArray(
+    metodo,
+    fallback = []
+) {
+
+    const valor =
+        obterEstadoDados(
+            metodo,
+            fallback
+        );
+
+
+    return Array.isArray(
+        valor
+    )
+        ? valor
+        : [];
+
+}
+
+
+/* =====================================================
+   REGRAS DE PERFIL
+   ===================================================== */
+
+function aplicarRegrasDePerfil() {
+
+    if (!Render) {
+        return;
+    }
+
+
+    Render.aplicarRegrasDePerfil(
+        estado
     );
+
+}
+
+
+/* =====================================================
+   PREENCHER INFORMAÇÕES
+   ===================================================== */
+
+function preencherInformacoesPerfil() {
+
+    if (!Render) {
+
+        erro(
+            "PerfilPublicoRender.js não está disponível."
+        );
+
+
+        return;
+
+    }
+
+
+    Render.preencherInformacoes(
+        estado
+    );
+
+}
+
+
+/* =====================================================
+   AVALIAÇÃO
+   ===================================================== */
+
+function preencherAvaliacao() {
+
+    if (!Render) {
+        return;
+    }
+
+
+    Render.preencherAvaliacao(
+        estado
+    );
+
+}
+
+
+/* =====================================================
+   SERVIÇOS
+   ===================================================== */
+
+function preencherServicos() {
+
+    if (!Render) {
+        return;
+    }
+
+
+    Render.preencherServicos(
+        estado
+    );
+
+}
+
+
+async function carregarServicos() {
+
+    if (!Dados) {
+        return;
+    }
+
+
+    /*
+     * Contratantes não possuem serviços de artista.
+     */
+
+    if (
+        !ehArtista()
+    ) {
+
+        estado.servicos =
+            [];
+
+
+        if (Render) {
+
+            Render.limparServicos();
+
+        }
+
+
+        return;
+
+    }
+
+
+    if (
+        typeof Dados.carregarSomenteServicos === "function"
+    ) {
+
+        await Dados.carregarSomenteServicos();
+
+    } else if (
+        typeof Dados.carregarServicos === "function"
+    ) {
+
+        await Dados.carregarServicos();
+
+    }
+
+
+    estado.servicos =
+        obterEstadoArray(
+            "obterServicos",
+            estado.servicos
+        );
+
+
+    preencherServicos();
+
+
+    if (Render) {
+
+        Render.renderizarIcones();
+
+    }
+
+}
+
+
+/* =====================================================
+   CONFIGURAR EVENTOS
+   ===================================================== */
+
+function configurarEventos() {
+
+    const voltar =
+        obterElemento(
+            CONFIG.botoes.voltar
+        );
+
+
+    const visualizar =
+        obterElemento(
+            CONFIG.botoes.visualizar
+        );
+
+
+    const editar =
+        obterElemento(
+            CONFIG.botoes.editar
+        );
+
+
+    const whatsapp =
+        obterElemento(
+            CONFIG.botoes.whatsapp
+        );
+
+
+    const qrCode =
+        obterElemento(
+            CONFIG.botoes.qrCode
+        );
+
+
+    const fecharQR =
+        obterElemento(
+            CONFIG.botoes.fecharQR
+        );
+
+
+    const compartilharQR =
+        obterElemento(
+            CONFIG.botoes.compartilharQR
+        );
+
+
+    if (voltar) {
+
+        voltar.addEventListener(
+            "click",
+            voltarPagina
+        );
+
+    }
+
+
+    if (visualizar) {
+
+        visualizar.addEventListener(
+            "click",
+            visualizarPerfil
+        );
+
+    }
+
+
+    if (editar) {
+
+        editar.addEventListener(
+            "click",
+            editarPerfil
+        );
+
+    }
+
+
+    if (whatsapp) {
+
+        whatsapp.addEventListener(
+            "click",
+            compartilharWhatsApp
+        );
+
+    }
+
+
+    if (qrCode) {
+
+        qrCode.addEventListener(
+            "click",
+            abrirQR
+        );
+
+    }
+
+
+    if (fecharQR) {
+
+        fecharQR.addEventListener(
+            "click",
+            fecharQRModal
+        );
+
+    }
+
+
+    if (compartilharQR) {
+
+        compartilharQR.addEventListener(
+            "click",
+            compartilharQRPerfil
+        );
+
+    }
+
+
+    document.addEventListener(
+        "keydown",
+        function (evento) {
+
+            if (
+                evento.key === "Escape"
+            ) {
+
+                fecharQRModal();
+
+            }
+
+        }
+    );
+
+
+    const overlay =
+        obterElemento(
+            CONFIG.modais.qr
+        );
+
+
+    if (overlay) {
+
+        overlay.addEventListener(
+            "click",
+            function (evento) {
+
+                if (
+                    evento.target === overlay
+                ) {
+
+                    fecharQRModal();
+
+                }
+
+            }
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   CONFIGURAR ABAS
+   ===================================================== */
+
+function configurarAbas() {
+
+    const botoes =
+        document.querySelectorAll(
+            ".tab-button"
+        );
+
+
+    if (!botoes.length) {
+
+        aviso(
+            "Nenhum .tab-button encontrado."
+        );
+
+
+        return;
+
+    }
+
+
+    botoes.forEach(
+        botao => {
+
+            botao.type =
+                "button";
+
+
+            botao.addEventListener(
+                "click",
+                async function (evento) {
+
+                    evento.preventDefault();
+
+                    evento.stopPropagation();
+
+
+                    const nomeAba =
+                        botao.dataset.tab;
+
+
+                    if (!nomeAba) {
+
+                        aviso(
+                            "Botão de aba sem data-tab:",
+                            botao
+                        );
+
+
+                        return;
+
+                    }
+
+
+                    if (
+                        !CONFIG.abas[nomeAba]
+                    ) {
+
+                        aviso(
+                            "Aba não configurada:",
+                            nomeAba
+                        );
+
+
+                        return;
+
+                    }
+
+
+                    ativarAba(
+                        nomeAba
+                    );
+
+
+                    await carregarAba(
+                        nomeAba
+                    );
+
+
+                    ativarAba(
+                        nomeAba,
+                        false
+                    );
+
+                }
+            );
+
+        }
+    );
+
+
+    log(
+        `${botoes.length} abas configuradas.`
+    );
+
+}
+
+
+/* =====================================================
+   ATIVAR ABA
+   ===================================================== */
+
+function ativarAba(
+    nomeAba,
+    atualizarHash = true
+) {
+
+    if (
+        !CONFIG.abas[nomeAba]
+    ) {
+
+        aviso(
+            "Tentativa de ativar aba inexistente:",
+            nomeAba
+        );
+
+
+        return;
+
+    }
+
+
+    const botoes =
+        document.querySelectorAll(
+            ".tab-button"
+        );
+
+
+    const conteudos =
+        document.querySelectorAll(
+            ".tab-content"
+        );
+
+
+    botoes.forEach(
+        botao => {
+
+            const ativa =
+                botao.dataset.tab ===
+                nomeAba;
+
+
+            botao.classList.toggle(
+                "active",
+                ativa
+            );
+
+
+            botao.setAttribute(
+                "aria-selected",
+                ativa
+                    ? "true"
+                    : "false"
+            );
+
+        }
+    );
+
+
+    conteudos.forEach(
+        conteudo => {
+
+            const ativa =
+                conteudo.id ===
+                obterIdAba(
+                    nomeAba
+                );
+
+
+            conteudo.classList.toggle(
+                "active",
+                ativa
+            );
+
+
+            conteudo.hidden =
+                !ativa;
+
+
+            conteudo.setAttribute(
+                "aria-hidden",
+                ativa
+                    ? "false"
+                    : "true"
+            );
+
+        }
+    );
+
+
+    estado.abaAtual =
+        nomeAba;
+
+
+    if (atualizarHash) {
+
+        try {
+
+            history.replaceState(
+                null,
+                "",
+                `#${nomeAba}`
+            );
+
+        } catch (error) {
+
+            aviso(
+                "Não foi possível atualizar o hash da aba.",
+                error
+            );
+
+        }
+
+    }
+
+
+    if (Render) {
+
+        Render.renderizarIcones();
+
+    }
+
+}
+
+
+/* =====================================================
+   OBTER ID DA ABA
+   ===================================================== */
+
+function obterIdAba(
+    nomeAba
+) {
+
+    return (
+
+        CONFIG.abas[nomeAba]?.id ||
+
+        `tab-${nomeAba}`
+
+    );
+
+}
+
+
+/* =====================================================
+   CARREGAR ABA
+   ===================================================== */
+
+async function carregarAba(
+    nomeAba,
+    forcar = false
+) {
+
+    if (
+        !CONFIG.abas[nomeAba]
+    ) {
+
+        aviso(
+            "Aba desconhecida:",
+            nomeAba
+        );
+
+
+        return false;
+
+    }
+
+
+    if (
+        estado.abasCarregadas[nomeAba] &&
+        !forcar
+    ) {
+
+        log(
+            `Aba "${nomeAba}" já foi carregada.`
+        );
+
+
+        return true;
+
+    }
+
+
+    try {
+
+        log(
+            `Carregando aba "${nomeAba}"...`
+        );
+
+
+        switch (
+            nomeAba
+        ) {
+
+            case "sobre":
+
+                await carregarAbaSobre();
+
+                break;
+
+
+            case "portfolio":
+
+                await carregarAbaPortfolio();
+
+                break;
+
+
+            case "agenda":
+
+                await carregarAbaAgenda();
+
+                break;
+
+
+            case "avaliacoes":
+
+                await carregarAbaAvaliacoes();
+
+                break;
+
+
+            default:
+
+                throw new Error(
+                    `Nenhum carregador definido para "${nomeAba}".`
+                );
+
+        }
+
+
+        estado.abasCarregadas[
+            nomeAba
+        ] =
+            true;
+
+
+        log(
+            `Aba "${nomeAba}" carregada com sucesso.`
+        );
+
+
+        return true;
+
+
+    } catch (error) {
+
+        estado.abasCarregadas[
+            nomeAba
+        ] =
+            false;
+
+
+        erro(
+            `Erro ao carregar aba "${nomeAba}":`,
+            error
+        );
+
+
+        mostrarToast(
+            `Não foi possível carregar a aba ${nomeAba}.`,
+            "erro"
+        );
+
+
+        return false;
+
+    }
+
+}
+
+
+/* =====================================================
+   ABA SOBRE
+   ===================================================== */
+
+async function carregarAbaSobre() {
+
+    preencherInformacoesPerfil();
+
+
+    preencherAvaliacao();
+
+
+    /*
+     * Serviços existem somente para artistas.
+     */
+
+    if (
+        ehArtista()
+    ) {
+
+        if (
+            Servicos &&
+            typeof Servicos.renderizar === "function"
+        ) {
+
+            Servicos.renderizar(
+                estado.servicos
+            );
+
+        } else if (
+            !estado.servicos.length
+        ) {
+
+            await carregarServicos();
+
+        }
+
+    } else {
+
+        if (Render) {
+
+            Render.limparServicos();
+
+        }
+
+    }
+
+
+    if (Render) {
+
+        Render.renderizarIcones();
+
+    }
+
+}
+
+
+/* =====================================================
+   ABA PORTFÓLIO
+   ===================================================== */
+
+async function carregarAbaPortfolio() {
+
+    if (!Portfolio) {
+
+        throw new Error(
+            "PerfilPublicoPortfolio.js não foi carregado."
+        );
+
+    }
+
+
+    let portfolio =
+        Array.isArray(
+            estado.portfolio
+        )
+            ? estado.portfolio
+            : [];
+
+
+    if (
+        !portfolio.length &&
+        Dados &&
+        typeof Dados.carregarSomentePortfolio === "function"
+    ) {
+
+        await Dados.carregarSomentePortfolio();
+
+
+        portfolio =
+            obterEstadoArray(
+                "obterPortfolio",
+                []
+            );
+
+
+        estado.portfolio =
+            portfolio;
+
+    }
+
+
+    if (
+        typeof Portfolio.renderizar === "function"
+    ) {
+
+        await Promise.resolve(
+            Portfolio.renderizar(
+                portfolio
+            )
+        );
+
+    } else if (
+        typeof Portfolio.inicializar === "function"
+    ) {
+
+        await Promise.resolve(
+            Portfolio.inicializar(
+                portfolio
+            )
+        );
+
+    } else {
+
+        throw new Error(
+            "PerfilPublicoPortfolio.js não possui renderizar() nem inicializar()."
+        );
+
+    }
+
+
+    if (Render) {
+
+        Render.renderizarIcones();
+
+    }
+
+}
+
+
+/* =====================================================
+   ABA AGENDA
+   ===================================================== */
+
+async function carregarAbaAgenda() {
+
+    if (!Agenda) {
+
+        throw new Error(
+            "PerfilPublicoAgenda.js não foi carregado."
+        );
+
+    }
+
+
+    let agenda =
+        Array.isArray(
+            estado.agenda
+        )
+            ? estado.agenda
+            : [];
+
+
+    if (
+        !agenda.length &&
+        Dados &&
+        typeof Dados.carregarSomenteAgenda === "function"
+    ) {
+
+        await Dados.carregarSomenteAgenda();
+
+
+        agenda =
+            obterEstadoArray(
+                "obterAgenda",
+                []
+            );
+
+
+        estado.agenda =
+            agenda;
+
+    }
+
+
+    if (
+        typeof Agenda.renderizar === "function"
+    ) {
+
+        await Promise.resolve(
+            Agenda.renderizar(
+                agenda
+            )
+        );
+
+    } else if (
+        typeof Agenda.inicializar === "function"
+    ) {
+
+        await Promise.resolve(
+            Agenda.inicializar(
+                agenda
+            )
+        );
+
+    } else {
+
+        throw new Error(
+            "PerfilPublicoAgenda.js não possui renderizar() nem inicializar()."
+        );
+
+    }
+
+
+    if (Render) {
+
+        Render.renderizarIcones();
+
+    }
+
+}
+
+
+/* =====================================================
+   ABA AVALIAÇÕES
+   ===================================================== */
+
+async function carregarAbaAvaliacoes() {
+
+    if (!Avaliacoes) {
+
+        throw new Error(
+            "PerfilPublicoAvaliacoes.js não foi carregado."
+        );
+
+    }
+
+
+    if (
+        !estado.avaliacoesInicializadas
+    ) {
+
+        await inicializarAvaliacoesAntecipadamente();
+
+    }
+
+
+    if (
+        !estado.avaliacoes.length &&
+        Dados &&
+        typeof Dados.carregarSomenteAvaliacoes === "function"
+    ) {
+
+        log(
+            "Buscando avaliações do perfil através do módulo de dados..."
+        );
+
+
+        await Dados.carregarSomenteAvaliacoes();
+
+
+        estado.avaliacoes =
+            obterEstadoArray(
+                "obterAvaliacoes",
+                []
+            );
+
+
+        log(
+            "Avaliações encontradas:",
+            estado.avaliacoes.length
+        );
+
+    }
+
+
+    const lista =
+        Array.isArray(
+            estado.avaliacoes
+        )
+            ? estado.avaliacoes
+            : [];
+
+
+    const dadosAvaliacoes =
+        construirDadosAvaliacoes(
+            lista
+        );
+
+
+    if (
+        typeof Avaliacoes.renderizar === "function"
+    ) {
+
+        await Promise.resolve(
+            Avaliacoes.renderizar(
+                dadosAvaliacoes
+            )
+        );
+
+    }
+
+
+    preencherAvaliacao();
+
+
+    if (Render) {
+
+        Render.renderizarIcones();
+
+    }
+
+}
+
+
+/* =====================================================
+   CONSTRUIR DADOS DAS AVALIAÇÕES
+   ===================================================== */
+
+function construirDadosAvaliacoes(
+    avaliacoes
+) {
+
+    const lista =
+        Array.isArray(
+            avaliacoes
+        )
+            ? avaliacoes
+            : [];
+
+
+    const distribuicao = {
+
+        cinco:
+            0,
+
+        quatro:
+            0,
+
+        tres:
+            0,
+
+        dois:
+            0,
+
+        um:
+            0
+
+    };
+
+
+    const notas =
+        lista
+            .map(
+                avaliacao => {
+
+                    const valor =
+                        obterPrimeiroValor(
+
+                            avaliacao?.nota,
+
+                            avaliacao?.rating,
+
+                            avaliacao?.avaliacao,
+
+                            avaliacao?.estrelas,
+
+                            0
+
+                        );
+
+
+                    return Number(
+                        valor
+                    );
+
+                }
+            )
+            .filter(
+                numero =>
+                    Number.isFinite(
+                        numero
+                    ) &&
+                    numero >= 1 &&
+                    numero <= 5
+            );
+
+
+    notas.forEach(
+        nota => {
+
+            if (nota >= 5) {
+
+                distribuicao.cinco++;
+
+            } else if (nota >= 4) {
+
+                distribuicao.quatro++;
+
+            } else if (nota >= 3) {
+
+                distribuicao.tres++;
+
+            } else if (nota >= 2) {
+
+                distribuicao.dois++;
+
+            } else {
+
+                distribuicao.um++;
+
+            }
+
+        }
+    );
+
+
+    let media =
+        0;
+
+
+    if (notas.length) {
+
+        media =
+            notas.reduce(
+                (
+                    total,
+                    nota
+                ) =>
+                    total + nota,
+                0
+            ) /
+            notas.length;
+
+    } else {
+
+        const mediaPerfil =
+            Number(
+                obterPrimeiroValor(
+
+                    estado.perfilArtista?.avaliacao_media,
+
+                    estado.perfilArtista?.media_avaliacao,
+
+                    estado.perfil?.avaliacao_media,
+
+                    estado.perfil?.media_avaliacao,
+
+                    0
+
+                )
+            );
+
+
+        if (
+            Number.isFinite(
+                mediaPerfil
+            ) &&
+            mediaPerfil > 0
+        ) {
+
+            media =
+                mediaPerfil;
+
+        }
+
+    }
+
+
+    return {
+
+        media,
+
+        quantidade:
+            lista.length,
+
+        distribuicao,
+
+        avaliacoes:
+            lista
+
+    };
+
+}
+
+
+/* =====================================================
+   VOLTAR
+   ===================================================== */
+
+function voltarPagina() {
+
+    if (
+        window.history.length > 1
+    ) {
+
+        window.history.back();
+
+        return;
+
+    }
+
+
+    window.location.href =
+        "index.html";
+
+}
+
+
+/* =====================================================
+   VISUALIZAR PERFIL
+   ===================================================== */
+
+function visualizarPerfil() {
+
+    /*
+     * Este botão é exclusivo do proprietário.
+     */
+
+    if (
+        !estado.ehMeuPerfil
+    ) {
+
+        aviso(
+            "Tentativa de visualizar o próprio perfil enquanto outro perfil está aberto."
+        );
+
+
+        return;
+
+    }
+
+
+    const id =
+        estado.perfilId;
+
+
+    if (!id) {
+
+        mostrarToast(
+            "Perfil ainda não identificado.",
+            "erro"
+        );
+
+
+        return;
+
+    }
+
+
+    const url =
+        construirLinkPerfil();
+
+
+    if (!url) {
+
+        mostrarToast(
+            "Não foi possível construir o endereço do perfil.",
+            "erro"
+        );
+
+
+        return;
+
+    }
+
+
+    log(
+        "Visualizando perfil público universal:",
+        {
+
+            tipoPerfil:
+                obterTipoPerfilAtual(),
+
+            tipoArtista:
+                obterTipoArtistaAtual(),
+
+            perfilId:
+                id,
+
+            url
+
+        }
+    );
+
+
+    window.location.href =
+        url;
+
+}
+
+
+/* =====================================================
+   EDITAR PERFIL
+   ===================================================== */
+
+function editarPerfil() {
+
+    /*
+     * A edição só pode ser realizada pelo proprietário
+     * do perfil atualmente carregado.
+     */
+
+    if (
+        !estado.ehMeuPerfil
+    ) {
+
+        aviso(
+            "Tentativa de editar perfil de outro usuário bloqueada."
+        );
+
+
+        return;
+
+    }
+
+
+    const id =
+        estado.perfilId;
+
+
+    if (!id) {
+
+        mostrarToast(
+            "Perfil ainda não identificado.",
+            "erro"
+        );
+
+
+        return;
+
+    }
+
+
+    const pagina =
+        CONFIG.pagina.edicao;
+
+
+    if (!pagina) {
+
+        mostrarToast(
+            "A página de edição não está disponível.",
+            "erro"
+        );
+
+
+        return;
+
+    }
+
+
+    const url =
+        construirLinkPagina(
+            pagina
+        );
+
+
+    log(
+        "Abrindo editor universal:",
+        {
+
+            tipoPerfil:
+                obterTipoPerfilAtual(),
+
+            tipoArtista:
+                obterTipoArtistaAtual(),
+
+            perfilId:
+                id,
+
+            url
+
+        }
+    );
+
+
+    window.location.href =
+        url;
+
+}
+
+
+/* =====================================================
+   WHATSAPP
+   ===================================================== */
+
+function compartilharWhatsApp() {
+
+    const usuarioPerfil =
+        estado.usuarioPerfil ||
+        {};
+
+
+    const nome =
+        obterPrimeiroValor(
+
+            ehArtista()
+                ? estado.perfilArtista?.nome_artistico
+                : "",
+
+            ehArtista()
+                ? estado.perfilArtista?.nome
+                : "",
+
+            estado.perfil?.nome_exibicao,
+
+            estado.perfil?.nome,
+
+            usuarioPerfil.nome,
+
+            usuarioPerfil.nome_completo,
+
+            estado.usuario?.nome,
+
+            estado.usuario?.nome_completo,
+
+            "usuário"
+
+        );
+
+
+    const mensagem =
+        "Olá! Vi seu perfil no MusicalWorld e gostaria de conversar com você sobre um possível trabalho.";
+
+
+    const telefone =
+        obterPrimeiroValor(
+
+            ehArtista()
+                ? estado.perfilArtista?.telefone
+                : "",
+
+            ehArtista()
+                ? estado.perfilArtista?.whatsapp
+                : "",
+
+            estado.perfil?.telefone,
+
+            estado.perfil?.whatsapp,
+
+            usuarioPerfil.telefone,
+
+            usuarioPerfil.whatsapp,
+
+            estado.usuario?.telefone,
+
+            estado.usuario?.whatsapp
+
+        );
+
+
+    if (!telefone) {
+
+        mostrarToast(
+            `O WhatsApp de ${nome} não está informado.`,
+            "erro"
+        );
+
+
+        return;
+
+    }
+
+
+    const numero =
+        String(
+            telefone
+        ).replace(
+            /\D/g,
+            ""
+        );
+
+
+    if (!numero) {
+
+        mostrarToast(
+            "Número de WhatsApp inválido.",
+            "erro"
+        );
+
+
+        return;
+
+    }
+
+
+    const url =
+        `https://wa.me/${numero}?text=${encodeURIComponent(
+            mensagem
+        )}`;
+
+
+    window.open(
+        url,
+        "_blank",
+        "noopener,noreferrer"
+    );
+
+}
+
+
+/* =====================================================
+   QR CODE
+   ===================================================== */
+
+function abrirQR() {
+
+    const overlay =
+        obterElemento(
+            CONFIG.modais.qr
+        );
+
+
+    if (!overlay) {
+
+        aviso(
+            "Modal QR não encontrado."
+        );
+
+
+        return;
+
+    }
+
+
+    const link =
+        construirLinkPerfil();
+
+
+    if (!link) {
+
+        mostrarToast(
+            "Não foi possível gerar o link do perfil.",
+            "erro"
+        );
+
+
+        return;
+
+    }
+
+
+    const imagem =
+        obterElemento(
+            CONFIG.elementos.qrImagem
+        );
+
+
+    if (imagem) {
+
+        imagem.src =
+            `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(
+                link
+            )}`;
+
+    }
+
+
+    const campoLink =
+        obterElemento(
+            CONFIG.elementos.linkPerfil
+        );
+
+
+    if (campoLink) {
+
+        campoLink.textContent =
+            link;
+
+
+        campoLink.dataset.url =
+            link;
+
+    }
+
+
+    overlay.classList.add(
+        "active"
+    );
+
+
+    overlay.removeAttribute(
+        "hidden"
+    );
+
+
+    overlay.setAttribute(
+        "aria-hidden",
+        "false"
+    );
+
+
+    document.body.classList.add(
+        "modal-open"
+    );
+
+
+    if (Render) {
+
+        Render.renderizarIcones();
+
+    }
+
+}
+
+
+/* =====================================================
+   PÁGINAS
+   ===================================================== */
+
+function obterPaginaApresentacao() {
+
+    return CONFIG.pagina.apresentacao ||
+        "";
+
+}
+
+
+function obterPaginaPerfilPublico() {
+
+    return obterPaginaApresentacao();
+
+}
+
+
+function obterPaginaEdicao() {
+
+    return CONFIG.pagina.edicao ||
+        "";
+
+}
+
+
+/* =====================================================
+   CONSTRUIR LINK DA PÁGINA
+   ===================================================== */
+
+function construirLinkPagina(
+    pagina
+) {
+
+    if (!pagina) {
+
+        return "";
+
+    }
+
+
+    const diretorio =
+        window.location.pathname.replace(
+            /[^/]*$/,
+            ""
+        );
+
+
+    return (
+        `${window.location.origin}` +
+        `${diretorio}` +
+        `${pagina}`
+    );
+
+}
+
+
+/* =====================================================
+   CONSTRUIR LINK DO PERFIL
+   ===================================================== */
+
+function construirLinkPerfil() {
+
+    const id =
+        estado.perfilId ||
+        "";
+
+
+    const pagina =
+        obterPaginaApresentacao();
+
+
+    if (!id) {
+
+        aviso(
+            "Não foi possível construir o link: perfil sem ID."
+        );
+
+
+        return "";
+
+    }
+
+
+    if (!pagina) {
+
+        aviso(
+            "Página pública universal não encontrada."
+        );
+
+
+        return "";
+
+    }
+
+
+    const base =
+        construirLinkPagina(
+            pagina
+        );
+
+
+    if (!base) {
+
+        return "";
+
+    }
+
+
+    const separador =
+        base.includes("?")
+            ? "&"
+            : "?";
+
+
+    const url =
+        `${base}${separador}id=${encodeURIComponent(
+            id
+        )}`;
+
+
+    log(
+        "Link de perfil público universal:",
+        url
+    );
+
+
+    return url;
+
+}
+
+
+/* =====================================================
+   FECHAR QR
+   ===================================================== */
+
+function fecharQRModal() {
+
+    const overlay =
+        obterElemento(
+            CONFIG.modais.qr
+        );
+
+
+    if (!overlay) {
+        return;
+    }
+
+
+    overlay.classList.remove(
+        "active"
+    );
+
+
+    overlay.setAttribute(
+        "hidden",
+        ""
+    );
+
+
+    overlay.setAttribute(
+        "aria-hidden",
+        "true"
+    );
+
+
+    document.body.classList.remove(
+        "modal-open"
+    );
+
+}
+
+
+/* =====================================================
+   COMPARTILHAR QR
+   ===================================================== */
+
+async function compartilharQRPerfil() {
+
+    const link =
+        construirLinkPerfil();
+
+
+    if (!link) {
+
+        mostrarToast(
+            "Não foi possível compartilhar o perfil.",
+            "erro"
+        );
+
+
+        return;
+
+    }
+
+
+    try {
+
+        if (
+            navigator.share
+        ) {
+
+            await navigator.share({
+
+                title:
+                    "Perfil no MusicalWorld",
+
+                text:
+                    "Confira este perfil no MusicalWorld.",
+
+                url:
+                    link
+
+            });
+
+
+            return;
+
+        }
+
+
+        if (
+            navigator.clipboard
+        ) {
+
+            await navigator.clipboard.writeText(
+                link
+            );
+
+
+            mostrarToast(
+                "Link do perfil copiado.",
+                "sucesso"
+            );
+
+
+            return;
+
+        }
+
+
+        mostrarToast(
+            "Não foi possível compartilhar o link.",
+            "erro"
+        );
+
+
+    } catch (error) {
+
+        if (
+            error?.name ===
+            "AbortError"
+        ) {
+
+            return;
+
+        }
+
+
+        erro(
+            "Erro ao compartilhar QR:",
+            error
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   TOAST
+   ===================================================== */
+
+function mostrarToast(
+    mensagem,
+    tipo = "sucesso"
+) {
+
+    if (
+        Utils &&
+        typeof Utils.mostrarToast === "function"
+    ) {
+
+        Utils.mostrarToast(
+            mensagem,
+            tipo
+        );
+
+
+        return;
+
+    }
+
+
+    const toast =
+        obterElemento(
+            CONFIG.toast.elemento
+        );
+
+
+    const toastMessage =
+        obterElemento(
+            CONFIG.toast.mensagem
+        );
+
+
+    if (!toast) {
+        return;
+    }
+
+
+    if (toastMessage) {
+
+        toastMessage.textContent =
+            mensagem;
+
+    }
+
+
+    toast.classList.remove(
+        "show",
+        "sucesso",
+        "erro"
+    );
+
+
+    toast.classList.add(
+        tipo,
+        "show"
+    );
+
+
+    setTimeout(
+        function () {
+
+            toast.classList.remove(
+                "show"
+            );
+
+        },
+        3000
+    );
+
+}
+
+
+/* =====================================================
+   RECARREGAR ABA ATUAL
+   ===================================================== */
+
+async function recarregarAbaAtual() {
+
+    const aba =
+        estado.abaAtual;
+
+
+    estado.abasCarregadas[
+        aba
+    ] =
+        false;
+
+
+    ativarAba(
+        aba,
+        false
+    );
+
+
+    await carregarAba(
+        aba,
+        true
+    );
+
+
+    ativarAba(
+        aba,
+        false
+    );
+
+}
+
+
+/* =====================================================
+   RECARREGAR TUDO
+   ===================================================== */
+
+async function recarregar() {
+
+    estado.abasCarregadas = {
+
+        sobre:
+            false,
+
+        portfolio:
+            false,
+
+        agenda:
+            false,
+
+        avaliacoes:
+            false
+
+    };
+
+
+    estado.avaliacoesInicializadas =
+        false;
+
+
+    estado.avaliacoes =
+        [];
+
+
+    estado.tipoPerfil =
+        null;
+
+
+    estado.perfilArtista =
+        null;
+
+
+    estado.servicos =
+        [];
+
+
+    /*
+     * Recalcula o perfil solicitado porque a página
+     * pode continuar sendo usada com ?id=.
+     */
+
+    const perfilIdUrl =
+        obterPerfilIdDaUrl();
+
+
+    estado.perfilSolicitado =
+        Boolean(
+            perfilIdUrl
+        );
+
+
+    await carregarDados(
+        perfilIdUrl || null
+    );
+
+
+    atualizarRegraMeuPerfil();
+
+
+    aplicarRegrasDeProprietario();
+
+
+    await inicializarAvaliacoesAntecipadamente();
+
+
+    aplicarRegrasDePerfil();
+
+
+    preencherInformacoesPerfil();
+
+
+    preencherAvaliacao();
+
+
+    ativarAba(
+        estado.abaAtual,
+        false
+    );
+
+
+    await carregarAba(
+        estado.abaAtual,
+        true
+    );
+
+
+    ativarAba(
+        estado.abaAtual,
+        false
+    );
+
+
+    if (Render) {
+
+        Render.renderizarIcones();
+
+    }
+
+}
+
+
+/* =====================================================
+   OBTER ESTADO
+   ===================================================== */
+
+function obterEstado() {
+
+    return {
+
+        ...estado,
+
+        portfolio:
+            [
+                ...estado.portfolio
+            ],
+
+        servicos:
+            [
+                ...estado.servicos
+            ],
+
+        agenda:
+            [
+                ...estado.agenda
+            ],
+
+        avaliacoes:
+            [
+                ...estado.avaliacoes
+            ]
+
+    };
+
+}
+
+
+/* =====================================================
+   API PÚBLICA
+   ===================================================== */
+
+const PerfilPublico = {
+
+    CONFIG,
+
+    estado,
+
+    inicializar,
+
+    carregarDados,
+
+    carregarAba,
+
+    carregarServicos,
+
+    ativarAba,
+
+    recarregarAbaAtual,
+
+    recarregar,
+
+    obterEstado,
+
+    preencherInformacoesPerfil,
+
+    preencherAvaliacao,
+
+    preencherServicos,
+
+    obterTipoPerfilAtual,
+
+    obterTipoArtistaAtual,
+
+    normalizarTipoPerfil,
+
+    normalizarTipoArtista,
+
+    ehArtista,
+
+    ehContratante,
+
+    aplicarRegrasDePerfil,
+
+    obterPaginaApresentacao,
+
+    obterPaginaPerfilPublico,
+
+    obterPaginaEdicao,
+
+    construirLinkPerfil,
+
+    construirLinkPagina,
+
+    visualizarPerfil,
+
+    editarPerfil,
+
+    /*
+     * Funções relacionadas ao perfil universal.
+     */
+
+    obterPerfilIdDaUrl,
+
+    atualizarRegraMeuPerfil,
+
+    aplicarRegrasDeProprietario
+
+};
+
+
+/* =====================================================
+   DISPONIBILIZAR GLOBALMENTE
+   ===================================================== */
+
+window.PerfilPublico =
+    PerfilPublico;
+
+
+/* =====================================================
+   INICIALIZAÇÃO AUTOMÁTICA
+   ===================================================== */
+
+if (
+    document.readyState === "loading"
+) {
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        inicializar,
+        {
+            once:
+                true
+        }
+    );
+
+
+} else {
+
+    inicializar();
+
+}
+
+
+console.log(
+    "PerfilPublico.js — Meu Perfil universal carregado."
+);
 
 
 })(window);

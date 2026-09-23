@@ -44,7 +44,7 @@
 
     /* =====================================================
        DEPENDÊNCIAS
-       ===================================================== */
+    ===================================================== */
 
     const Utils =
         window.PerfilPublicoUtils;
@@ -60,7 +60,7 @@
 
     /* =====================================================
        CONFIGURAÇÃO
-       ===================================================== */
+    ===================================================== */
 
     const CONFIG = {
 
@@ -130,7 +130,7 @@
 
     /* =====================================================
        LOG
-       ===================================================== */
+    ===================================================== */
 
     function log(...mensagens) {
 
@@ -154,7 +154,7 @@
 
     /* =====================================================
        ELEMENTOS
-       ===================================================== */
+    ===================================================== */
 
     function obterElemento(id) {
 
@@ -172,7 +172,7 @@
 
     /* =====================================================
        TEXTO
-       ===================================================== */
+    ===================================================== */
 
     function definirTexto(
         id,
@@ -211,7 +211,7 @@
 
     /* =====================================================
        PRIMEIRO VALOR
-       ===================================================== */
+    ===================================================== */
 
     function obterPrimeiroValor(
         ...valores
@@ -255,7 +255,7 @@
 
     /* =====================================================
        ESCAPAR HTML
-       ===================================================== */
+    ===================================================== */
 
     function escaparHtml(
         valor
@@ -312,7 +312,7 @@
 
     /* =====================================================
        ÍCONES
-       ===================================================== */
+    ===================================================== */
 
     function renderizarIcones() {
 
@@ -342,7 +342,7 @@
 
     /* =====================================================
        VISIBILIDADE
-       ===================================================== */
+    ===================================================== */
 
     function definirVisibilidade(
         elemento,
@@ -366,6 +366,14 @@
     }
 
 
+    /*
+     * Esconde o elemento e, quando ele representa um
+     * campo individual, também controla seu container.
+     *
+     * NÃO procura genericamente por .profile-section,
+     * porque isso poderia esconder a seção "Sobre mim"
+     * ao tentar esconder apenas #profileBio.
+     */
     function definirVisibilidadeSecao(
         id,
         visivel
@@ -388,12 +396,6 @@
         );
 
 
-        /*
-         * Quando o elemento representa apenas um campo
-         * dentro de uma estrutura maior, também tentamos
-         * controlar seu container.
-         */
-
         if (!visivel) {
 
             const container =
@@ -407,11 +409,10 @@
                 container !== elemento
             ) {
 
-                container.hidden =
-                    true;
-
-                container.style.display =
-                    "none";
+                definirVisibilidade(
+                    container,
+                    false
+                );
 
             }
 
@@ -446,11 +447,10 @@
             container !== elemento
         ) {
 
-            container.hidden =
-                false;
-
-            container.style.display =
-                "";
+            definirVisibilidade(
+                container,
+                true
+            );
 
         }
 
@@ -458,8 +458,164 @@
 
 
     /* =====================================================
-       NORMALIZAÇÃO DE LISTA
+       SEÇÕES EXCLUSIVAS DE ARTISTA
        ===================================================== */
+
+    /*
+     * Localiza a seção visual que contém um elemento
+     * exclusivo de artista.
+     *
+     * O objetivo é esconder a seção inteira quando o
+     * perfil for contratante.
+     *
+     * Não fazemos isso dentro de definirVisibilidadeSecao(),
+     * pois elementos como #profileBio também estão dentro
+     * de .profile-section e não podem desaparecer.
+     */
+    function obterSecaoArtista(
+        id
+    ) {
+
+        const elemento =
+            obterElemento(
+                id
+            );
+
+
+        if (!elemento) {
+            return null;
+        }
+
+
+        /*
+         * Primeiro verifica estruturas explícitas de seção.
+         */
+        const secaoExplicita =
+            elemento.closest(
+                ".artist-only-section, [data-perfil-tipo='artista']"
+            );
+
+
+        if (secaoExplicita) {
+            return secaoExplicita;
+        }
+
+
+        /*
+         * Para os elementos conhecidos como exclusivos
+         * de artista, podemos subir até .profile-section.
+         *
+         * Isso é seguro porque esta função NÃO é usada
+         * para #profileBio, #profileName etc.
+         */
+        const idsQuePermitemProfileSection = [
+
+            CONFIG.elementos.experiencia,
+
+            CONFIG.elementos.area,
+
+            CONFIG.elementos.tipo,
+
+            CONFIG.elementos.generos,
+
+            CONFIG.elementos.instrumentosSection,
+
+            CONFIG.elementos.servicos
+
+        ];
+
+
+        if (
+            idsQuePermitemProfileSection.includes(
+                id
+            )
+        ) {
+
+            return elemento.closest(
+                ".profile-section"
+            );
+
+        }
+
+
+        return null;
+
+    }
+
+
+    /*
+     * Controla a seção inteira de um bloco exclusivo
+     * do artista.
+     */
+    function definirVisibilidadeSecaoArtista(
+        id,
+        visivel
+    ) {
+
+        const secao =
+            obterSecaoArtista(
+                id
+            );
+
+
+        if (secao) {
+
+            definirVisibilidade(
+                secao,
+                visivel
+            );
+
+            return;
+
+        }
+
+
+        /*
+         * Fallback:
+         *
+         * Se a seção não puder ser encontrada, controla
+         * pelo menos o elemento original.
+         */
+        definirVisibilidadeSecao(
+            id,
+            visivel
+        );
+
+    }
+
+
+    function restaurarSecaoArtista(
+        id
+    ) {
+
+        const secao =
+            obterSecaoArtista(
+                id
+            );
+
+
+        if (secao) {
+
+            definirVisibilidade(
+                secao,
+                true
+            );
+
+            return;
+
+        }
+
+
+        restaurarContainer(
+            id
+        );
+
+    }
+
+
+    /* =====================================================
+       NORMALIZAÇÃO DE LISTA
+    ===================================================== */
 
     function normalizarLista(
         valor
@@ -582,7 +738,7 @@
 
     /* =====================================================
        TIPO DE PERFIL
-       ===================================================== */
+    ===================================================== */
 
     function normalizarTipoPerfil(
         valor
@@ -770,7 +926,7 @@
 
     /* =====================================================
        TIPO DO ARTISTA
-       ===================================================== */
+    ===================================================== */
 
     function normalizarTipoArtista(
         valor
@@ -928,8 +1084,55 @@
 
 
     /* =====================================================
+       REGRA DE INSTRUMENTOS
+    ===================================================== */
+
+    /*
+     * Instrumentos são exibidos somente para os tipos
+     * de artista que possuem essa informação no perfil:
+     *
+     * - Músico(a)
+     * - Banda
+     * - Dupla musical
+     * - DJ
+     *
+     * Cantor(a), Dançarino(a), Grupo de dança, MC,
+     * Compositor(a) e Produtor(a) musical não exibem
+     * a seção de instrumentos.
+     */
+    function ehPerfilComInstrumentos(
+        estado
+    ) {
+
+        const tipoArtista =
+            obterTipoArtista(
+                estado
+            );
+
+
+        const tiposComInstrumentos = [
+
+            "Músico(a)",
+
+            "Banda",
+
+            "Dupla musical",
+
+            "DJ"
+
+        ];
+
+
+        return tiposComInstrumentos.includes(
+            tipoArtista
+        );
+
+    }
+
+
+    /* =====================================================
        NOME
-       ===================================================== */
+    ===================================================== */
 
     function obterNome(
         estado
@@ -974,7 +1177,7 @@
 
     /* =====================================================
        LOCALIZAÇÃO
-       ===================================================== */
+    ===================================================== */
 
     function obterLocalizacao(
         estado
@@ -1013,7 +1216,7 @@
 
     /* =====================================================
        PREENCHER NOME E CATEGORIA
-       ===================================================== */
+    ===================================================== */
 
     function preencherNome(
         estado
@@ -1114,7 +1317,7 @@
 
     /* =====================================================
        LOCALIZAÇÃO
-       ===================================================== */
+    ===================================================== */
 
     function preencherLocalizacao(
         estado
@@ -1157,7 +1360,7 @@
 
     /* =====================================================
        SOBRE / BIO
-       ===================================================== */
+    ===================================================== */
 
     function preencherBio(
         estado
@@ -1205,7 +1408,7 @@
 
     /* =====================================================
        EXPERIÊNCIA
-       ===================================================== */
+    ===================================================== */
 
     function preencherExperiencia(
         estado
@@ -1223,7 +1426,7 @@
             );
 
 
-            definirVisibilidadeSecao(
+            definirVisibilidadeSecaoArtista(
                 CONFIG.elementos.experiencia,
                 false
             );
@@ -1280,7 +1483,7 @@
 
     /* =====================================================
        ÁREA DE ATENDIMENTO
-       ===================================================== */
+    ===================================================== */
 
     function preencherArea(
         estado
@@ -1298,7 +1501,7 @@
             );
 
 
-            definirVisibilidadeSecao(
+            definirVisibilidadeSecaoArtista(
                 CONFIG.elementos.area,
                 false
             );
@@ -1353,7 +1556,7 @@
 
     /* =====================================================
        TIPO DE ARTISTA
-       ===================================================== */
+    ===================================================== */
 
     function preencherTipoArtista(
         estado
@@ -1371,7 +1574,7 @@
             );
 
 
-            definirVisibilidadeSecao(
+            definirVisibilidadeSecaoArtista(
                 CONFIG.elementos.tipo,
                 false
             );
@@ -1412,7 +1615,7 @@
 
     /* =====================================================
        DISPONIBILIDADE
-       ===================================================== */
+    ===================================================== */
 
     function obterTextoDisponibilidade(
         valor
@@ -1488,7 +1691,7 @@
             );
 
 
-            definirVisibilidadeSecao(
+            definirVisibilidadeSecaoArtista(
                 CONFIG.elementos.disponibilidade,
                 false
             );
@@ -1561,7 +1764,7 @@
 
     /* =====================================================
        AVATAR
-       ===================================================== */
+    ===================================================== */
 
     function obterIniciais(
         nome
@@ -1619,19 +1822,6 @@
     }
 
 
-    /*
-     * Obtém a URL da foto respeitando a diferença
-     * entre artista e contratante.
-     *
-     * Artista:
-     *   1. perfis_artistas
-     *   2. perfis
-     *   3. usuarios
-     *
-     * Contratante:
-     *   1. perfis
-     *   2. usuarios
-     */
     function obterUrlAvatar(
         estado
     ) {
@@ -1790,16 +1980,6 @@
         }
 
 
-        /*
-         * O elemento #profileAvatar é uma DIV.
-         *
-         * Portanto a foto não pode ser aplicada com:
-         *
-         * avatar.src = ...
-         *
-         * A imagem é aplicada como background.
-         */
-
         avatar.style.backgroundImage =
             `url("${urlNormalizada.replace(
                 /"/g,
@@ -1840,14 +2020,6 @@
             "has-photo"
         );
 
-
-        /*
-         * Testa a URL antes de esconder as iniciais.
-         *
-         * Se o arquivo não existir ou a URL estiver
-         * inválida, voltamos automaticamente para as
-         * iniciais.
-         */
 
         const imagemTeste =
             new Image();
@@ -1925,10 +2097,6 @@
             );
 
 
-        /*
-         * Inicialização das iniciais.
-         */
-
         if (iniciais) {
 
             iniciais.textContent =
@@ -1938,11 +2106,6 @@
 
         }
 
-
-        /*
-         * Obtém a URL correta conforme o tipo
-         * do perfil.
-         */
 
         const foto =
             obterUrlAvatar(
@@ -1964,11 +2127,6 @@
         );
 
 
-        /*
-         * Caso não exista uma foto,
-         * usamos as iniciais.
-         */
-
         if (!foto) {
 
             limparAvatar(
@@ -1983,10 +2141,6 @@
         }
 
 
-        /*
-         * Aplica a foto na DIV do avatar.
-         */
-
         aplicarAvatar(
             avatar,
             iniciais,
@@ -1999,7 +2153,7 @@
 
     /* =====================================================
        AVALIAÇÃO
-       ===================================================== */
+    ===================================================== */
 
     function preencherAvaliacao(
         estado
@@ -2191,8 +2345,8 @@
 
 
     /* =====================================================
-       GÊNEROS
-       ===================================================== */
+       GÊNEROS / ESTILOS / ESPECIALIDADES
+    ===================================================== */
 
     function limparGeneros() {
 
@@ -2202,16 +2356,15 @@
             );
 
 
-        if (!container) {
-            return;
+        if (container) {
+
+            container.innerHTML =
+                "";
+
         }
 
 
-        container.innerHTML =
-            "";
-
-
-        definirVisibilidadeSecao(
+        definirVisibilidadeSecaoArtista(
             CONFIG.elementos.generos,
             false
         );
@@ -2296,14 +2449,8 @@
             `;
 
 
-            restaurarContainer(
+            restaurarSecaoArtista(
                 CONFIG.elementos.generos
-            );
-
-
-            definirVisibilidadeSecao(
-                CONFIG.elementos.generos,
-                true
             );
 
 
@@ -2328,14 +2475,8 @@
                 .join("");
 
 
-        restaurarContainer(
+        restaurarSecaoArtista(
             CONFIG.elementos.generos
-        );
-
-
-        definirVisibilidadeSecao(
-            CONFIG.elementos.generos,
-            true
         );
 
 
@@ -2346,7 +2487,7 @@
 
     /* =====================================================
        INSTRUMENTOS
-       ===================================================== */
+    ===================================================== */
 
     function limparInstrumentos() {
 
@@ -2372,11 +2513,10 @@
 
         if (section) {
 
-            section.style.display =
-                "none";
-
-            section.hidden =
-                true;
+            definirVisibilidade(
+                section,
+                false
+            );
 
         }
 
@@ -2404,8 +2544,16 @@
         }
 
 
+        /*
+         * A seção de instrumentos não pertence a todos
+         * os tipos de artista.
+         *
+         * Somente Músico(a), Banda, Dupla musical
+         * e DJ podem exibir instrumentos.
+         */
+
         if (
-            !ehArtista(
+            !ehPerfilComInstrumentos(
                 estado
             )
         ) {
@@ -2490,11 +2638,10 @@
 
             if (section) {
 
-                section.style.display =
-                    "none";
-
-                section.hidden =
-                    true;
+                definirVisibilidade(
+                    section,
+                    false
+                );
 
             }
 
@@ -2506,11 +2653,10 @@
 
         if (section) {
 
-            section.style.display =
-                "";
-
-            section.hidden =
-                false;
+            definirVisibilidade(
+                section,
+                true
+            );
 
         }
 
@@ -2538,7 +2684,7 @@
 
     /* =====================================================
        SERVIÇOS
-       ===================================================== */
+    ===================================================== */
 
     function limparServicos() {
 
@@ -2548,16 +2694,15 @@
             );
 
 
-        if (!container) {
-            return;
+        if (container) {
+
+            container.innerHTML =
+                "";
+
         }
 
 
-        container.innerHTML =
-            "";
-
-
-        definirVisibilidadeSecao(
+        definirVisibilidadeSecaoArtista(
             CONFIG.elementos.servicos,
             false
         );
@@ -2600,6 +2745,16 @@
             );
 
 
+            /*
+             * O módulo de serviços pode controlar apenas
+             * o conteúdo interno. Garantimos aqui que a
+             * seção completa permaneça visível para artista.
+             */
+            restaurarSecaoArtista(
+                CONFIG.elementos.servicos
+            );
+
+
             return;
 
         }
@@ -2625,6 +2780,11 @@
                 </span>
 
             `;
+
+
+            restaurarSecaoArtista(
+                CONFIG.elementos.servicos
+            );
 
 
             return;
@@ -2670,6 +2830,11 @@
                 .join("");
 
 
+        restaurarSecaoArtista(
+            CONFIG.elementos.servicos
+        );
+
+
         renderizarIcones();
 
     }
@@ -2677,7 +2842,7 @@
 
     /* =====================================================
        APLICAR REGRAS DE PERFIL
-       ===================================================== */
+    ===================================================== */
 
     function aplicarRegrasDePerfil(
         estado
@@ -2697,6 +2862,10 @@
 
         /*
          * Elementos exclusivos do artista.
+         *
+         * Aqui controlamos as seções completas para que
+         * o contratante não veja apenas uma lista vazia:
+         * o título e o bloco inteiro também desaparecem.
          */
 
         const elementosArtista = [
@@ -2723,7 +2892,7 @@
         elementosArtista.forEach(
             id => {
 
-                definirVisibilidadeSecao(
+                definirVisibilidadeSecaoArtista(
                     id,
                     artista
                 );
@@ -2810,6 +2979,12 @@
          * Os containers são restaurados para que
          * os dados preenchidos possam controlar
          * a visibilidade individualmente.
+         *
+         * IMPORTANTE:
+         *
+         * Instrumentos possuem uma regra específica
+         * baseada no tipo de artista. Por isso eles NÃO
+         * são restaurados automaticamente aqui.
          */
 
         if (artista) {
@@ -2817,12 +2992,48 @@
             elementosArtista.forEach(
                 id => {
 
-                    restaurarContainer(
+                    if (
+                        id ===
+                        CONFIG.elementos.instrumentosSection
+                    ) {
+
+                        return;
+
+                    }
+
+
+                    restaurarSecaoArtista(
                         id
                     );
 
                 }
             );
+
+
+            /*
+             * Restaura instrumentos somente para:
+             *
+             * Músico(a)
+             * Banda
+             * Dupla musical
+             * DJ
+             */
+
+            if (
+                ehPerfilComInstrumentos(
+                    estado
+                )
+            ) {
+
+                restaurarSecaoArtista(
+                    CONFIG.elementos.instrumentosSection
+                );
+
+            } else {
+
+                limparInstrumentos();
+
+            }
 
         }
 
@@ -2837,7 +3048,17 @@
 
                 artista,
 
-                contratante
+                contratante,
+
+                tipoArtista:
+                    obterTipoArtista(
+                        estado
+                    ),
+
+                possuiInstrumentos:
+                    ehPerfilComInstrumentos(
+                        estado
+                    )
             }
         );
 
@@ -2846,7 +3067,7 @@
 
     /* =====================================================
        PREENCHER TODAS AS INFORMAÇÕES
-       ===================================================== */
+    ===================================================== */
 
     function preencherInformacoes(
         estado
@@ -2924,7 +3145,7 @@
 
     /* =====================================================
        API PÚBLICA
-       ===================================================== */
+    ===================================================== */
 
     const PerfilPublicoRender = {
 
@@ -2978,6 +3199,8 @@
 
         ehContratante,
 
+        ehPerfilComInstrumentos,
+
         renderizarIcones
 
     };
@@ -2985,7 +3208,7 @@
 
     /* =====================================================
        DISPONIBILIZAR GLOBALMENTE
-       ===================================================== */
+    ===================================================== */
 
     window.PerfilPublicoRender =
         PerfilPublicoRender;

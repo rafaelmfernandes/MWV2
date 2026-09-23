@@ -1,4 +1,3 @@
-
 /* =========================================================
    MUSICALWORLD — ACOMPANHAMENTO DA CONTRATAÇÃO — RENDER
 
@@ -378,6 +377,18 @@
 
     function renderizarParticipante(dados) {
 
+        /*
+         * Define qual pessoa deve ser exibida.
+         *
+         * RECEBIDA:
+         * - o usuário atual é o contratado;
+         * - exibimos o contratante.
+         *
+         * ENVIADA:
+         * - o usuário atual é o contratante;
+         * - exibimos o contratado.
+         */
+
         const pessoa =
             dados.direcao === "recebida"
                 ? dados.contratante
@@ -390,19 +401,60 @@
         }
 
 
+        /*
+         * O carregarPessoa() já fornece o ID do perfil
+         * da pessoa que está sendo exibida.
+         *
+         * Esse ID será utilizado para abrir:
+         *
+         * meu-perfil.html?id=<perfilId>
+         */
+
+        const urlPerfil =
+            pessoa.perfilId
+                ? `meu-perfil.html?id=${encodeURIComponent(
+                    pessoa.perfilId
+                )}`
+                : null;
+
+
+        /*
+         * Função centralizada para abrir o perfil.
+         */
+
+        function abrirPerfil() {
+
+            if (!urlPerfil) {
+
+                return;
+            }
+
+
+            window.location.href =
+                urlPerfil;
+        }
+
+
+        /* =================================================
+           AVATAR
+           ================================================= */
+
         const avatar =
             obterElemento("artistaAvatar");
 
 
         if (avatar) {
 
-            avatar.innerHTML = "";
+            avatar.innerHTML =
+                "";
 
 
             if (pessoa.fotoUrl) {
 
                 const imagem =
-                    document.createElement("img");
+                    document.createElement(
+                        "img"
+                    );
 
 
                 imagem.src =
@@ -428,6 +480,7 @@
                         avatar.innerHTML =
                             "";
 
+
                         avatar.textContent =
                             pessoa.iniciais ||
                             obterIniciais(
@@ -448,8 +501,71 @@
                         pessoa.nome
                     );
             }
+
+
+            /*
+             * Torna a foto clicável.
+             */
+
+            if (urlPerfil) {
+
+                avatar.style.cursor =
+                    "pointer";
+
+
+                avatar.setAttribute(
+                    "role",
+                    "link"
+                );
+
+
+                avatar.setAttribute(
+                    "tabindex",
+                    "0"
+                );
+
+
+                avatar.setAttribute(
+                    "aria-label",
+                    `Abrir perfil de ${
+                        pessoa.nome ||
+                        "usuário"
+                    }`
+                );
+
+
+                avatar.onclick =
+                    function () {
+
+                        abrirPerfil();
+                    };
+
+
+                /*
+                 * Permite abrir o perfil também
+                 * utilizando teclado.
+                 */
+
+                avatar.onkeydown =
+                    function (evento) {
+
+                        if (
+                            evento.key === "Enter" ||
+                            evento.key === " "
+                        ) {
+
+                            evento.preventDefault();
+
+                            abrirPerfil();
+                        }
+                    };
+            }
         }
 
+
+        /* =================================================
+           NOME
+           ================================================= */
 
         const nome =
             obterElemento("artistaNome");
@@ -460,8 +576,71 @@
             nome.textContent =
                 pessoa.nome ||
                 "Usuário";
+
+
+            /*
+             * Torna o nome clicável.
+             */
+
+            if (urlPerfil) {
+
+                nome.style.cursor =
+                    "pointer";
+
+
+                nome.setAttribute(
+                    "role",
+                    "link"
+                );
+
+
+                nome.setAttribute(
+                    "tabindex",
+                    "0"
+                );
+
+
+                nome.setAttribute(
+                    "aria-label",
+                    `Abrir perfil de ${
+                        pessoa.nome ||
+                        "usuário"
+                    }`
+                );
+
+
+                nome.onclick =
+                    function () {
+
+                        abrirPerfil();
+                    };
+
+
+                /*
+                 * Permite abrir o perfil também
+                 * utilizando teclado.
+                 */
+
+                nome.onkeydown =
+                    function (evento) {
+
+                        if (
+                            evento.key === "Enter" ||
+                            evento.key === " "
+                        ) {
+
+                            evento.preventDefault();
+
+                            abrirPerfil();
+                        }
+                    };
+            }
         }
 
+
+        /* =================================================
+           TIPO DO PERFIL
+           ================================================= */
 
         const tipo =
             obterElemento("artistaTipo");
@@ -474,6 +653,10 @@
                 "Usuário";
         }
 
+
+        /* =================================================
+           LOCALIZAÇÃO
+           ================================================= */
 
         const localizacao =
             obterElemento("artistaLocalizacao");
@@ -1517,4 +1700,3 @@
 
 
 })(window);
-

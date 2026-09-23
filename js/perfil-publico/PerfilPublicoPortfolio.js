@@ -1,25 +1,28 @@
 /* =========================================================
-MUSICALWORLD — PERFIL PÚBLICO
-Arquivo: PerfilPublicoPortfolio.js
+   MUSICALWORLD — PERFIL PÚBLICO
+   Arquivo: PerfilPublicoPortfolio.js
 
-Responsabilidade:
+   Responsabilidade:
 
-* Renderizar imagens do portfólio.
-* Renderizar vídeos.
-* Renderizar áudios.
-* Controlar estados vazios.
-* Trabalhar com os dados fornecidos pelo módulo
-  PerfilPublicoDados.js.
+   - Renderizar imagens do portfólio.
+   - Renderizar vídeos.
+   - Renderizar áudios.
+   - Manter imagens e vídeos no mesmo container de mídia.
+   - Preservar a ordem original dos itens do portfólio.
+   - Controlar estados vazios.
+   - Trabalhar com os dados fornecidos pelo módulo
+     PerfilPublicoDados.js.
 
-IMPORTANTE:
-Este módulo NÃO realiza consultas ao Supabase.
+   IMPORTANTE:
 
-Os dados devem ser fornecidos pelo:
+   Este módulo NÃO realiza consultas ao Supabase.
 
-PerfilPublicoDados.js
+   Os dados devem ser fornecidos pelo:
 
-Este arquivo também NÃO contém regras específicas
-de Cantor, Músico ou qualquer outro tipo de artista.
+   PerfilPublicoDados.js
+
+   Este arquivo também NÃO contém regras específicas
+   de Cantor, Músico ou qualquer outro tipo de artista.
 ========================================================= */
 
 (function (window) {
@@ -57,11 +60,14 @@ const CONFIG = {
 
     elementos: {
 
-        imagens: "portfolioGrid",
+        imagens:
+            "portfolioGrid",
 
-        videos: "videoList",
+        videos:
+            "portfolioGrid",
 
-        audios: "audioList"
+        audios:
+            "audioList"
 
     }
 
@@ -263,7 +269,10 @@ function obterUrlMedia(item) {
    OBTER TÍTULO
    ===================================================== */
 
-function obterTitulo(item, tituloPadrao = "Portfólio") {
+function obterTitulo(
+    item,
+    tituloPadrao = "Mídia"
+) {
 
     if (!item || typeof item !== "object") {
 
@@ -359,10 +368,10 @@ function obterElemento(id) {
 
 
 /* =====================================================
-   ESTADO VAZIO — IMAGENS
+   ESTADO VAZIO — MÍDIA
    ===================================================== */
 
-function renderizarEstadoVazioImagem() {
+function renderizarEstadoVazioMedia() {
 
     const container =
         obterElemento(
@@ -379,47 +388,10 @@ function renderizarEstadoVazioImagem() {
 
         <div class="empty-state">
 
-            <i data-lucide="image"></i>
+            <i data-lucide="images"></i>
 
             <p>
-                Nenhuma imagem adicionada ao portfólio.
-            </p>
-
-        </div>
-
-    `;
-
-
-    atualizarIcones();
-
-}
-
-
-/* =====================================================
-   ESTADO VAZIO — VÍDEOS
-   ===================================================== */
-
-function renderizarEstadoVazioVideo() {
-
-    const container =
-        obterElemento(
-            CONFIG.elementos.videos
-        );
-
-
-    if (!container) {
-        return;
-    }
-
-
-    container.innerHTML = `
-
-        <div class="empty-state">
-
-            <i data-lucide="video"></i>
-
-            <p>
-                Nenhum vídeo adicionado.
+                Nenhuma mídia adicionada.
             </p>
 
         </div>
@@ -470,10 +442,11 @@ function renderizarEstadoVazioAudio() {
 
 
 /* =====================================================
-   RENDERIZAR IMAGENS
+   RENDERIZAR MÍDIA
+   IMAGENS + VÍDEOS
    ===================================================== */
 
-function renderizarImagens(lista = null) {
+function renderizarMidia(lista = null) {
 
     const container =
         obterElemento(
@@ -492,15 +465,31 @@ function renderizarImagens(lista = null) {
     }
 
 
-    const imagens =
+    /*
+     * IMPORTANTE:
+     *
+     * Não separamos mais imagens e vídeos.
+     *
+     * A lista é filtrada mantendo exatamente a ordem
+     * recebida do banco de dados.
+     */
+    const midias =
         Array.isArray(lista)
-            ? lista.filter(ehImagem)
-            : estado.portfolio.filter(ehImagem);
+            ? lista.filter(
+                item =>
+                    ehImagem(item) ||
+                    ehVideo(item)
+            )
+            : estado.portfolio.filter(
+                item =>
+                    ehImagem(item) ||
+                    ehVideo(item)
+            );
 
 
-    if (!imagens.length) {
+    if (!midias.length) {
 
-        renderizarEstadoVazioImagem();
+        renderizarEstadoVazioMedia();
 
         return;
 
@@ -508,16 +497,26 @@ function renderizarImagens(lista = null) {
 
 
     container.innerHTML =
-        imagens.map((item, indice) => {
+        midias.map((item, indice) => {
 
             const url =
                 obterUrlMedia(item);
 
 
+            const imagem =
+                ehImagem(item);
+
+
+            const video =
+                ehVideo(item);
+
+
             const titulo =
                 obterTitulo(
                     item,
-                    `Imagem ${indice + 1}`
+                    imagem
+                        ? `Imagem ${indice + 1}`
+                        : `Vídeo ${indice + 1}`
                 );
 
 
@@ -525,10 +524,9 @@ function renderizarImagens(lista = null) {
                 obterDescricao(item);
 
 
-            /* =================================================
-               IMAGEM SEM URL
-               ================================================= */
-
+            /*
+             * MÍDIA SEM URL
+             */
             if (!url) {
 
                 return `
@@ -536,16 +534,31 @@ function renderizarImagens(lista = null) {
                     <article
                         class="portfolio-card"
                         data-portfolio-index="${indice}"
+                        data-media-type="${
+                            imagem
+                                ? "imagem"
+                                : "video"
+                        }"
                     >
 
                         <div class="portfolio-card-media">
 
                             <div class="portfolio-media-unavailable">
 
-                                <i data-lucide="image-off"></i>
+                                <i
+                                    data-lucide="${
+                                        imagem
+                                            ? "image-off"
+                                            : "video-off"
+                                    }"
+                                ></i>
 
                                 <span>
-                                    Imagem indisponível
+                                    ${
+                                        imagem
+                                            ? "Imagem indisponível"
+                                            : "Vídeo indisponível"
+                                    }
                                 </span>
 
                             </div>
@@ -577,56 +590,162 @@ function renderizarImagens(lista = null) {
             }
 
 
-            /* =================================================
-               IMAGEM NORMAL
-               ================================================= */
+            /*
+             * IMAGEM
+             */
+            if (imagem) {
 
-            return `
+                return `
 
-                <article
-                    class="portfolio-card"
-                    data-portfolio-index="${indice}"
-                >
+                    <article
+                        class="portfolio-card"
+                        data-portfolio-index="${indice}"
+                        data-media-type="imagem"
+                    >
 
-                    <div class="portfolio-card-media">
+                        <div class="portfolio-card-media">
 
-                        <img
-                            src="${escaparAtributo(url)}"
-                            alt="${escaparAtributo(titulo)}"
-                            loading="lazy"
-                            data-portfolio-image
-                        >
+                            <img
+                                src="${escaparAtributo(url)}"
+                                alt="${escaparAtributo(titulo)}"
+                                loading="lazy"
+                                data-portfolio-image
+                            >
 
-                    </div>
-
-                    <div class="portfolio-info">
-
-                        <div class="portfolio-title">
-                            ${escaparHtml(titulo)}
                         </div>
 
-                        ${
-                            descricao
-                                ? `
-                                    <div class="portfolio-description">
-                                        ${escaparHtml(descricao)}
-                                    </div>
-                                `
-                                : ""
-                        }
+                        <div class="portfolio-info">
 
-                    </div>
+                            <div class="portfolio-title">
+                                ${escaparHtml(titulo)}
+                            </div>
 
-                </article>
+                            ${
+                                descricao
+                                    ? `
+                                        <div class="portfolio-description">
+                                            ${escaparHtml(descricao)}
+                                        </div>
+                                    `
+                                    : ""
+                            }
 
-            `;
+                        </div>
+
+                    </article>
+
+                `;
+
+            }
+
+
+            /*
+             * VÍDEO
+             */
+            if (video) {
+
+                return `
+
+                    <article
+                        class="portfolio-card"
+                        data-portfolio-index="${indice}"
+                        data-media-type="video"
+                    >
+
+                        <div class="portfolio-card-media">
+
+                            <video
+                                controls
+                                preload="metadata"
+                                playsinline
+                                data-portfolio-video
+                            >
+
+                                <source
+                                    src="${escaparAtributo(url)}"
+                                >
+
+                                Seu navegador não suporta reprodução de vídeo.
+
+                            </video>
+
+                        </div>
+
+                        <div class="portfolio-info">
+
+                            <div class="portfolio-title">
+                                ${escaparHtml(titulo)}
+                            </div>
+
+                            ${
+                                descricao
+                                    ? `
+                                        <div class="portfolio-description">
+                                            ${escaparHtml(descricao)}
+                                        </div>
+                                    `
+                                    : ""
+                            }
+
+                        </div>
+
+                    </article>
+
+                `;
+
+            }
+
+
+            return "";
 
         }).join("");
 
 
     configurarErrosImagem();
 
+    configurarErrosVideo();
+
     atualizarIcones();
+
+}
+
+
+/* =====================================================
+   COMPATIBILIDADE
+   RENDERIZAR IMAGENS
+   ===================================================== */
+
+function renderizarImagens(lista = null) {
+
+    const midias =
+        Array.isArray(lista)
+            ? lista.filter(ehImagem)
+            : estado.portfolio.filter(ehImagem);
+
+
+    renderizarMidia(
+        midias
+    );
+
+}
+
+
+/* =====================================================
+   COMPATIBILIDADE
+   RENDERIZAR VÍDEOS
+   ===================================================== */
+
+function renderizarVideos(lista = null) {
+
+    const midias =
+        Array.isArray(lista)
+            ? lista.filter(ehVideo)
+            : estado.portfolio.filter(ehVideo);
+
+
+    renderizarMidia(
+        midias
+    );
 
 }
 
@@ -689,171 +808,6 @@ function configurarErrosImagem() {
 
 
 /* =====================================================
-   RENDERIZAR VÍDEOS
-   ===================================================== */
-
-function renderizarVideos(lista = null) {
-
-    const container =
-        obterElemento(
-            CONFIG.elementos.videos
-        );
-
-
-    if (!container) {
-
-        console.warn(
-            "PerfilPublicoPortfolio: #videoList não encontrado."
-        );
-
-        return;
-
-    }
-
-
-    const videos =
-        Array.isArray(lista)
-            ? lista.filter(ehVideo)
-            : estado.portfolio.filter(ehVideo);
-
-
-    if (!videos.length) {
-
-        renderizarEstadoVazioVideo();
-
-        return;
-
-    }
-
-
-    container.innerHTML =
-        videos.map((item, indice) => {
-
-            const url =
-                obterUrlMedia(item);
-
-
-            const titulo =
-                obterTitulo(
-                    item,
-                    `Vídeo ${indice + 1}`
-                );
-
-
-            const descricao =
-                obterDescricao(item);
-
-
-            /* =================================================
-               VÍDEO SEM URL
-               ================================================= */
-
-            if (!url) {
-
-                return `
-
-                    <article
-                        class="video-card"
-                        data-video-index="${indice}"
-                    >
-
-                        <div class="video-media-unavailable">
-
-                            <i data-lucide="video-off"></i>
-
-                            <span>
-                                Vídeo indisponível
-                            </span>
-
-                        </div>
-
-                        <div class="video-info">
-
-                            <div class="video-title">
-                                ${escaparHtml(titulo)}
-                            </div>
-
-                            ${
-                                descricao
-                                    ? `
-                                        <div class="video-description">
-                                            ${escaparHtml(descricao)}
-                                        </div>
-                                    `
-                                    : ""
-                            }
-
-                        </div>
-
-                    </article>
-
-                `;
-
-            }
-
-
-            /* =================================================
-               VÍDEO NORMAL
-               ================================================= */
-
-            return `
-
-                <article
-                    class="video-card"
-                    data-video-index="${indice}"
-                >
-
-                    <div class="video-wrapper">
-
-                        <video
-                            controls
-                            preload="metadata"
-                            playsinline
-                        >
-
-                            <source
-                                src="${escaparAtributo(url)}"
-                            >
-
-                            Seu navegador não suporta reprodução de vídeo.
-
-                        </video>
-
-                    </div>
-
-                    <div class="video-info">
-
-                        <div class="video-title">
-                            ${escaparHtml(titulo)}
-                        </div>
-
-                        ${
-                            descricao
-                                ? `
-                                    <div class="video-description">
-                                        ${escaparHtml(descricao)}
-                                    </div>
-                                `
-                                : ""
-                        }
-
-                    </div>
-
-                </article>
-
-            `;
-
-        }).join("");
-
-
-    configurarErrosVideo();
-
-    atualizarIcones();
-
-}
-
-
-/* =====================================================
    CONFIGURAR ERROS DE VÍDEO
    ===================================================== */
 
@@ -861,7 +815,7 @@ function configurarErrosVideo() {
 
     const videos =
         document.querySelectorAll(
-            "#videoList video"
+            "#portfolioGrid video[data-portfolio-video]"
         );
 
 
@@ -873,7 +827,7 @@ function configurarErrosVideo() {
 
                 const wrapper =
                     video.closest(
-                        ".video-wrapper"
+                        ".portfolio-card-media"
                     );
 
 
@@ -884,7 +838,7 @@ function configurarErrosVideo() {
 
                 wrapper.innerHTML = `
 
-                    <div class="video-media-unavailable">
+                    <div class="portfolio-media-unavailable">
 
                         <i data-lucide="video-off"></i>
 
@@ -1159,16 +1113,19 @@ function renderizar(portfolio = null) {
     }
 
 
-    renderizarImagens(
+    /*
+     * Imagens e vídeos são renderizados juntos.
+     *
+     * A ordem do array original é preservada.
+     */
+    renderizarMidia(
         estado.portfolio
     );
 
 
-    renderizarVideos(
-        estado.portfolio
-    );
-
-
+    /*
+     * Áudios continuam em seu próprio container.
+     */
     renderizarAudios(
         estado.portfolio
     );
@@ -1220,9 +1177,7 @@ function limpar() {
     estado.inicializado = false;
 
 
-    renderizarEstadoVazioImagem();
-
-    renderizarEstadoVazioVideo();
+    renderizarEstadoVazioMedia();
 
     renderizarEstadoVazioAudio();
 
@@ -1338,6 +1293,8 @@ const PerfilPublicoPortfolio = {
     renderizar,
 
     atualizar,
+
+    renderizarMidia,
 
     renderizarImagens,
 

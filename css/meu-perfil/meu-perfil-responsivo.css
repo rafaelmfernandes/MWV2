@@ -1,4 +1,4 @@
-/* =========================================================
+css/* =========================================================
    MUSICALWORLD
    MEU PERFIL
    RESPONSIVO
@@ -362,24 +362,49 @@ button:focus-visible {
   }
 
   /* =====================================================
-     PORTFÓLIO
+     PORTFÓLIO — MÍDIA
      ===================================================== */
 
   .portfolio-grid {
+
+    width: calc(100% + 12px);
+
+    margin-left: -6px;
+
     grid-template-columns:
       repeat(3, minmax(0, 1fr));
 
-    gap: 6px;
+    gap: 2px;
   }
 
   .portfolio-card {
     min-width: 0;
 
-    border-radius: 9px;
+    border-radius: 3px;
+
+    border: 0;
+
+    box-shadow: none;
+  }
+
+  .portfolio-card:hover {
+    transform: none;
+
+    border: 0;
+
+    box-shadow: none;
   }
 
   .portfolio-image {
-    aspect-ratio: 1 / 1;
+    aspect-ratio: 1 / 4.3;
+
+    border-radius: 3px;
+  }
+
+  .portfolio-card-media {
+    aspect-ratio: 1 / 1.08;
+
+    border-radius: 3px;
   }
 
   .portfolio-info {
@@ -1082,21 +1107,55 @@ button:focus-visible {
   }
 
   /* =====================================================
-     PORTFÓLIO
+     PORTFÓLIO — MÍDIA
      ===================================================== */
 
   .portfolio-grid {
+
+    width: calc(100% + 12px);
+
+    margin-left: -6px;
+
     grid-template-columns:
       repeat(3, minmax(0, 1fr));
 
-    gap: 5px;
+    gap: 2px;
   }
 
   .portfolio-card {
-    border-radius: 8px;
+
+    border-radius: 3px;
+
+    border: 0;
+
+    box-shadow: none;
+  }
+
+  .portfolio-card:hover {
+
+    transform: none;
+
+    border: 0;
+
+    box-shadow: none;
+  }
+
+  .portfolio-image {
+
+    aspect-ratio: 1 / 1;
+
+    border-radius: 3px;
+  }
+
+  .portfolio-card-media {
+
+    aspect-ratio: 1 / 1.08;
+
+    border-radius: 3px;
   }
 
   .portfolio-info {
+
     padding: 6px 7px 7px;
 
     min-height: 40px;
@@ -1105,6 +1164,7 @@ button:focus-visible {
   }
 
   .portfolio-title {
+
     font-size: 8px;
     line-height: 10px;
 
@@ -1114,6 +1174,7 @@ button:focus-visible {
   }
 
   .portfolio-description {
+
     font-size: 7px;
     line-height: 9px;
 
@@ -1464,3 +1525,4 @@ button:focus-visible {
 /* =========================================================
    FIM DO CSS RESPONSIVO
    ========================================================= */
+

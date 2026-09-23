@@ -15,6 +15,9 @@
    - Carregar agenda para qualquer tipo de perfil.
    - Carregar avaliações para qualquer tipo de perfil.
    - Centralizar os dados utilizados pelo Perfil Público.
+   - Identificar corretamente o dono do perfil visualizado.
+   - Identificar o participante relacionado a compromissos
+     originados de uma contratação.
 
    REGRAS:
 
@@ -79,7 +82,10 @@
                 "agenda_musicos",
 
             avaliacoes:
-                "avaliacoes_musicos"
+                "avaliacoes_musicos",
+
+            contratacoes:
+                "contratacoes"
 
         },
 
@@ -111,54 +117,30 @@
         usuario:
             null,
 
+        usuarioPerfil:
+            null,
+
         perfil:
             null,
 
-        /*
-         * Tipo geral do perfil.
-         *
-         * Valores possíveis:
-         *
-         * "artista"
-         * "contratante"
-         */
         tipoPerfil:
             null,
 
-        /*
-         * Dados específicos do artista.
-         *
-         * Para contratante permanece null.
-         */
         perfilArtista:
             null,
 
         perfilId:
             null,
 
-        /*
-         * Serviços existem somente para artistas.
-         *
-         * Para contratantes permanece [].
-         */
         servicos:
             [],
 
-        /*
-         * Portfólio é compartilhado entre os tipos.
-         */
         portfolio:
             [],
 
-        /*
-         * Agenda é compartilhada entre os tipos.
-         */
         agenda:
             [],
 
-        /*
-         * Avaliações são compartilhadas entre os tipos.
-         */
         avaliacoes:
             [],
 
@@ -235,11 +217,6 @@
 
     /* =====================================================
        OBTER ID DO USUÁRIO ATUAL
-
-       Primeiro tenta UsuarioAtual.
-
-       Caso não esteja disponível, utiliza o Auth
-       do Supabase.
     ===================================================== */
 
     async function obterUsuarioId() {
@@ -428,14 +405,90 @@
 
 
     /* =====================================================
+       CARREGAR USUÁRIO DO PERFIL VISUALIZADO
+    ===================================================== */
+
+    async function carregarUsuarioDoPerfil(
+        perfil = null
+    ) {
+
+        if (
+            !perfil ||
+            !perfil.usuario_id
+        ) {
+
+            estado.usuarioPerfil =
+                null;
+
+            return null;
+
+        }
+
+
+        const supabase =
+            obterClienteSupabase();
+
+
+        if (!supabase) {
+
+            throw new Error(
+                "Cliente Supabase não disponível."
+            );
+
+        }
+
+
+        try {
+
+            const {
+                data,
+                error
+            } = await supabase
+                .from(
+                    CONFIG.tabelas.usuarios
+                )
+                .select("*")
+                .eq(
+                    "id",
+                    perfil.usuario_id
+                )
+                .maybeSingle();
+
+
+            if (error) {
+
+                console.error(
+                    "PerfilPublicoDados: erro ao carregar proprietário do perfil.",
+                    error
+                );
+
+                throw error;
+
+            }
+
+
+            estado.usuarioPerfil =
+                data || null;
+
+
+            return estado.usuarioPerfil;
+
+        } catch (erro) {
+
+            console.error(
+                "PerfilPublicoDados: falha ao carregar proprietário do perfil.",
+                erro
+            );
+
+            throw erro;
+
+        }
+
+    }
+
+
+    /* =====================================================
        CARREGAR PERFIS DO USUÁRIO
-
-       A relação com tipos_perfil é carregada junto.
-
-       Isso permite identificar corretamente:
-
-       artista
-       contratante
     ===================================================== */
 
     async function carregarPerfis(
@@ -528,15 +581,6 @@
 
     /* =====================================================
        NORMALIZAR TIPO DE PERFIL
-
-       Esta função trabalha somente com o tipo GERAL:
-
-       artista
-       contratante
-
-       Ela NÃO trata "Cantor(a)", "DJ", "Banda" etc.
-
-       Esses valores pertencem ao tipo artístico.
     ===================================================== */
 
     function normalizarTipoPerfil(
@@ -552,10 +596,6 @@
 
         }
 
-
-        /*
-         * Caso seja um objeto vindo de relacionamento.
-         */
 
         if (
             typeof valor === "object"
@@ -599,10 +639,6 @@
         }
 
 
-        /*
-         * ARTISTA
-         */
-
         if (
             texto === "artista" ||
             texto === "artistas"
@@ -612,10 +648,6 @@
 
         }
 
-
-        /*
-         * CONTRATANTE
-         */
 
         if (
             texto === "contratante" ||
@@ -636,11 +668,6 @@
 
     /* =====================================================
        IDENTIFICAR TIPO DO PERFIL
-
-       Prioridade:
-
-       1. relacionamento tipos_perfil
-       2. campos antigos de compatibilidade
     ===================================================== */
 
     function identificarTipoPerfil(
@@ -656,19 +683,6 @@
 
         }
 
-
-        /*
-         * -------------------------------------------------
-         * FONTE PRINCIPAL
-         * -------------------------------------------------
-         *
-         * Resultado esperado da relação:
-         *
-         * tipos_perfil: {
-         *     id: "...",
-         *     nome: "artista"
-         * }
-         */
 
         const relacionamento =
             perfil.tipos_perfil;
@@ -695,10 +709,6 @@
         }
 
 
-        /*
-         * Alguns relacionamentos podem retornar array.
-         */
-
         if (
             Array.isArray(relacionamento) &&
             relacionamento.length > 0
@@ -718,15 +728,6 @@
 
         }
 
-
-        /*
-         * -------------------------------------------------
-         * FALLBACKS
-         * -------------------------------------------------
-         *
-         * Mantidos apenas para compatibilidade com
-         * estruturas antigas.
-         */
 
         const camposFallback = [
 
@@ -843,14 +844,13 @@
             estado.servicos =
                 [];
 
+            estado.usuarioPerfil =
+                null;
+
             return null;
 
         }
 
-
-        /*
-         * Prioriza perfil ativo.
-         */
 
         let perfilEncontrado =
             perfis.find(
@@ -864,11 +864,6 @@
                 }
             );
 
-
-        /*
-         * Caso não exista ativo,
-         * utiliza o primeiro perfil.
-         */
 
         if (!perfilEncontrado) {
 
@@ -888,6 +883,10 @@
 
 
         atualizarTipoPerfil();
+
+
+        estado.usuarioPerfil =
+            estado.usuario;
 
 
         return estado.perfil;
@@ -919,6 +918,9 @@
 
             estado.servicos =
                 [];
+
+            estado.usuarioPerfil =
+                null;
 
             return null;
 
@@ -984,10 +986,10 @@
             atualizarTipoPerfil();
 
 
-            /*
-             * Limpa dados artísticos sempre que o perfil
-             * carregado não for artista.
-             */
+            await carregarUsuarioDoPerfil(
+                estado.perfil
+            );
+
 
             if (!ehArtista()) {
 
@@ -1018,19 +1020,11 @@
 
     /* =====================================================
        CARREGAR PERFIL ARTÍSTICO
-
-       SOMENTE ARTISTAS.
     ===================================================== */
 
     async function carregarPerfilArtista(
         perfilId = null
     ) {
-
-        /*
-         * Regra absoluta:
-         *
-         * se não for artista, não existe consulta.
-         */
 
         if (!ehArtista()) {
 
@@ -1121,17 +1115,11 @@
 
     /* =====================================================
        CARREGAR SERVIÇOS
-
-       SOMENTE ARTISTAS.
     ===================================================== */
 
     async function carregarServicos(
         perfilId = null
     ) {
-
-        /*
-         * Contratante nunca consulta servicos_artistas.
-         */
 
         if (!ehArtista()) {
 
@@ -1235,8 +1223,6 @@
 
     /* =====================================================
        CARREGAR PORTFÓLIO
-
-       COMPARTILHADO ENTRE ARTISTA E CONTRATANTE.
     ===================================================== */
 
     async function carregarPortfolio(
@@ -1294,11 +1280,6 @@
                         }
                     );
 
-
-            /*
-             * Compatibilidade com versões antigas
-             * que eventualmente não possuam "ativo".
-             */
 
             if (
                 resultado.error
@@ -1368,9 +1349,465 @@
 
 
     /* =====================================================
-       CARREGAR AGENDA
+       CARREGAR PARTICIPANTE DE UMA CONTRATAÇÃO
 
-       COMPARTILHADA ENTRE ARTISTA E CONTRATANTE.
+       Esta função identifica o OUTRO participante da
+       contratação em relação ao perfil que está sendo
+       visualizado na agenda.
+
+       A foto do artista é obtida de:
+
+       perfis_artistas.foto_url
+
+       O perfil geral é utilizado somente para descobrir
+       o perfil e o usuario_id.
+
+       IMPORTANTE:
+
+       Não consultar foto_url em perfis.
+
+       A tabela perfis possui aqui somente:
+       id
+       usuario_id
+
+    ===================================================== */
+
+    async function carregarParticipanteContratacao(
+        contratacaoId,
+        perfilVisualizadoId
+    ) {
+
+        if (
+            !contratacaoId ||
+            !perfilVisualizadoId
+        ) {
+
+            return null;
+
+        }
+
+
+        const supabase =
+            obterClienteSupabase();
+
+
+        if (!supabase) {
+
+            return null;
+
+        }
+
+
+        try {
+
+            /* =================================================
+               CARREGAR CONTRATAÇÃO
+            ================================================= */
+
+            const {
+                data: contratacao,
+                error: erroContratacao
+            } = await supabase
+                .from(
+                    CONFIG.tabelas.contratacoes
+                )
+                .select(`
+                    id,
+                    contratante_id,
+                    contratado_id
+                `)
+                .eq(
+                    "id",
+                    contratacaoId
+                )
+                .maybeSingle();
+
+
+            if (erroContratacao) {
+
+                console.warn(
+                    "PerfilPublicoDados: não foi possível carregar a contratação da agenda.",
+                    erroContratacao
+                );
+
+                return null;
+
+            }
+
+
+            if (!contratacao) {
+
+                console.warn(
+                    "PerfilPublicoDados: contratação não encontrada:",
+                    contratacaoId
+                );
+
+                return null;
+
+            }
+
+
+            /* =================================================
+               IDENTIFICAR USUÁRIO DO PERFIL VISUALIZADO
+            ================================================= */
+
+            const {
+                data: perfilVisualizado,
+                error: erroPerfil
+            } = await supabase
+                .from(
+                    CONFIG.tabelas.perfis
+                )
+                .select(
+                    "id,usuario_id"
+                )
+                .eq(
+                    "id",
+                    perfilVisualizadoId
+                )
+                .maybeSingle();
+
+
+            if (erroPerfil) {
+
+                console.warn(
+                    "PerfilPublicoDados: não foi possível identificar o usuário do perfil da agenda.",
+                    erroPerfil
+                );
+
+                return null;
+
+            }
+
+
+            if (!perfilVisualizado?.usuario_id) {
+
+                return null;
+
+            }
+
+
+            /* =================================================
+               IDENTIFICAR O OUTRO PARTICIPANTE
+            ================================================= */
+
+            const usuarioVisualizado =
+                String(
+                    perfilVisualizado.usuario_id
+                );
+
+
+            const contratanteId =
+                String(
+                    contratacao.contratante_id || ""
+                );
+
+
+            const contratadoId =
+                String(
+                    contratacao.contratado_id || ""
+                );
+
+
+            let participanteUsuarioId =
+                null;
+
+
+            if (
+                usuarioVisualizado ===
+                contratanteId
+            ) {
+
+                participanteUsuarioId =
+                    contratacao.contratado_id;
+
+            } else if (
+                usuarioVisualizado ===
+                contratadoId
+            ) {
+
+                participanteUsuarioId =
+                    contratacao.contratante_id;
+
+            } else {
+
+                console.warn(
+                    "PerfilPublicoDados: o perfil visualizado não pertence aos participantes da contratação.",
+                    {
+                        perfilVisualizadoId,
+                        usuarioVisualizado,
+                        contratanteId,
+                        contratadoId,
+                        contratacaoId
+                    }
+                );
+
+                return null;
+
+            }
+
+
+            if (!participanteUsuarioId) {
+
+                return null;
+
+            }
+
+
+            /* =================================================
+               CARREGAR PERFIL DO PARTICIPANTE
+
+               IMPORTANTE:
+
+               NÃO buscamos foto_url em perfis.
+
+               Isso evita que a consulta falhe caso a tabela
+               perfis não possua essa coluna.
+
+            ================================================= */
+
+            const {
+                data: perfilParticipante,
+                error: erroPerfilParticipante
+            } = await supabase
+                .from(
+                    CONFIG.tabelas.perfis
+                )
+                .select(
+                    "id,usuario_id"
+                )
+                .eq(
+                    "usuario_id",
+                    participanteUsuarioId
+                )
+                .maybeSingle();
+
+
+            if (erroPerfilParticipante) {
+
+                console.warn(
+                    "PerfilPublicoDados: erro ao carregar perfil do participante.",
+                    erroPerfilParticipante
+                );
+
+                return null;
+
+            }
+
+
+            if (!perfilParticipante) {
+
+                console.warn(
+                    "PerfilPublicoDados: perfil do participante não encontrado.",
+                    participanteUsuarioId
+                );
+
+                return null;
+
+            }
+
+
+            /* =================================================
+               CARREGAR USUÁRIO DO PARTICIPANTE
+            ================================================= */
+
+            const {
+                data: usuarioParticipante,
+                error: erroUsuarioParticipante
+            } = await supabase
+                .from(
+                    CONFIG.tabelas.usuarios
+                )
+                .select(
+                    "id,nome,email"
+                )
+                .eq(
+                    "id",
+                    participanteUsuarioId
+                )
+                .maybeSingle();
+
+
+            if (erroUsuarioParticipante) {
+
+                console.warn(
+                    "PerfilPublicoDados: erro ao carregar usuário participante.",
+                    erroUsuarioParticipante
+                );
+
+            }
+
+
+            /* =================================================
+               FOTO DO PARTICIPANTE
+
+               Para artista:
+
+               perfis_artistas.foto_url
+
+               Se não existir registro artístico, mantemos
+               fotoUrl como null.
+            ================================================= */
+
+            let fotoUrl =
+                null;
+
+
+            const {
+                data: perfilArtistaParticipante,
+                error: erroArtistaParticipante
+            } = await supabase
+                .from(
+                    CONFIG.tabelas.perfisArtistas
+                )
+                .select(
+                    "foto_url"
+                )
+                .eq(
+                    "perfil_id",
+                    perfilParticipante.id
+                )
+                .maybeSingle();
+
+
+            if (
+                erroArtistaParticipante
+            ) {
+
+                /*
+                 * O participante pode ser contratante e,
+                 * nesse caso, não possuir registro em
+                 * perfis_artistas.
+                 *
+                 * Portanto isso não interrompe a agenda.
+                 */
+
+                console.warn(
+                    "PerfilPublicoDados: perfil artístico do participante não disponível. A foto poderá não existir.",
+                    erroArtistaParticipante
+                );
+
+            }
+
+
+            if (
+                perfilArtistaParticipante?.foto_url
+            ) {
+
+                fotoUrl =
+                    perfilArtistaParticipante.foto_url;
+
+            }
+
+
+            /* =================================================
+               RESULTADO NORMALIZADO
+            ================================================= */
+
+            const participante = {
+
+                perfilId:
+                    perfilParticipante.id || null,
+
+                usuarioId:
+                    participanteUsuarioId,
+
+                nome:
+                    usuarioParticipante?.nome ||
+                    "Usuário",
+
+                fotoUrl:
+                    fotoUrl || null
+
+            };
+
+
+            console.log(
+                "PerfilPublicoDados: participante da contratação carregado:",
+                participante
+            );
+
+
+            return participante;
+
+        } catch (erro) {
+
+            console.warn(
+                "PerfilPublicoDados: falha ao carregar participante da contratação.",
+                erro
+            );
+
+            return null;
+
+        }
+
+    }
+
+
+    /* =====================================================
+       CARREGAR DADOS DOS PARTICIPANTES DA AGENDA
+    ===================================================== */
+
+    async function carregarParticipantesDaAgenda(
+        agenda,
+        perfilId
+    ) {
+
+        if (
+            !Array.isArray(agenda) ||
+            !agenda.length ||
+            !perfilId
+        ) {
+
+            return agenda;
+
+        }
+
+
+        const agendaEnriquecida =
+            await Promise.all(
+
+                agenda.map(
+                    async evento => {
+
+                        if (
+                            !evento?.contratacao_id
+                        ) {
+
+                            return evento;
+
+                        }
+
+
+                        const participante =
+                            await carregarParticipanteContratacao(
+                                evento.contratacao_id,
+                                perfilId
+                            );
+
+
+                        return {
+
+                            ...evento,
+
+                            participanteAgenda:
+                                participante
+
+                        };
+
+                    }
+                )
+
+            );
+
+
+        return agendaEnriquecida;
+
+    }
+
+
+    /* =====================================================
+       CARREGAR AGENDA
     ===================================================== */
 
     async function carregarAgenda(
@@ -1439,10 +1876,17 @@
             }
 
 
-            estado.agenda =
+            const agendaBase =
                 Array.isArray(data)
                     ? data
                     : [];
+
+
+            estado.agenda =
+                await carregarParticipantesDaAgenda(
+                    agendaBase,
+                    id
+                );
 
 
             return estado.agenda;
@@ -1463,8 +1907,6 @@
 
     /* =====================================================
        CARREGAR AVALIAÇÕES
-
-       COMPARTILHADAS ENTRE ARTISTA E CONTRATANTE.
     ===================================================== */
 
     async function carregarAvaliacoes(
@@ -1557,19 +1999,6 @@
 
     /* =====================================================
        CARREGAR DADOS COMPLETOS
-
-       FLUXO:
-
-       1. Usuário
-       2. Perfil
-       3. Tipo do perfil
-       4. Perfil artístico somente se artista
-       5. Serviços somente se artista
-       6. Portfólio
-       7. Agenda
-       8. Avaliações
-
-       Carteira e transações NÃO são carregadas.
     ===================================================== */
 
     async function carregarTudo(
@@ -1612,12 +2041,8 @@
             idUsuario;
 
 
-        /*
-         * Limpa os dados dependentes do carregamento atual.
-         *
-         * Isso evita que dados de um artista anterior
-         * permaneçam ao carregar um contratante.
-         */
+        estado.usuarioPerfil =
+            null;
 
         estado.perfilArtista =
             null;
@@ -1639,7 +2064,7 @@
 
 
         /* =================================================
-           USUÁRIO
+           USUÁRIO AUTENTICADO
         ================================================= */
 
         await carregarUsuario(
@@ -1666,10 +2091,6 @@
         }
 
 
-        /*
-         * Sem perfil, não existem dados suficientes.
-         */
-
         if (!estado.perfilId) {
 
             estado.carregado =
@@ -1680,10 +2101,6 @@
         }
 
 
-        /*
-         * Garante que o tipo esteja atualizado.
-         */
-
         atualizarTipoPerfil();
 
 
@@ -1691,6 +2108,31 @@
             "PerfilPublicoDados: tipo do perfil:",
             estado.tipoPerfil
         );
+
+
+        /* =================================================
+           GARANTIR USUÁRIO PROPRIETÁRIO
+        ================================================= */
+
+        if (!estado.usuarioPerfil) {
+
+            if (
+                estado.perfil?.usuario_id ===
+                estado.usuarioId
+            ) {
+
+                estado.usuarioPerfil =
+                    estado.usuario;
+
+            } else {
+
+                await carregarUsuarioDoPerfil(
+                    estado.perfil
+                );
+
+            }
+
+        }
 
 
         /* =================================================
@@ -1706,11 +2148,6 @@
             );
 
         } else {
-
-            /*
-             * Garantia adicional:
-             * contratante nunca mantém dados artísticos.
-             */
 
             estado.perfilArtista =
                 null;
@@ -1729,12 +2166,6 @@
             [];
 
 
-        /*
-         * Serviços:
-         *
-         * Somente artista.
-         */
-
         if (
             incluirServicos &&
             ehArtista()
@@ -1749,12 +2180,6 @@
         }
 
 
-        /*
-         * Portfólio:
-         *
-         * Artista e contratante.
-         */
-
         if (
             incluirPortfolio
         ) {
@@ -1767,12 +2192,6 @@
 
         }
 
-
-        /*
-         * Agenda:
-         *
-         * Artista e contratante.
-         */
 
         if (
             incluirAgenda
@@ -1787,12 +2206,6 @@
         }
 
 
-        /*
-         * Avaliações:
-         *
-         * Artista e contratante.
-         */
-
         if (
             incluirAvaliacoes
         ) {
@@ -1805,10 +2218,6 @@
 
         }
 
-
-        /*
-         * Executa consultas independentes em paralelo.
-         */
 
         await Promise.all(
             promessas
@@ -1898,6 +2307,9 @@
             usuario:
                 estado.usuario,
 
+            usuarioPerfil:
+                estado.usuarioPerfil,
+
             perfil:
                 estado.perfil,
 
@@ -1953,6 +2365,17 @@
     function obterUsuario() {
 
         return estado.usuario;
+
+    }
+
+
+    /* =====================================================
+       OBTER USUÁRIO DO PERFIL
+    ===================================================== */
+
+    function obterUsuarioPerfil() {
+
+        return estado.usuarioPerfil;
 
     }
 
@@ -2084,6 +2507,9 @@
         estado.usuario =
             null;
 
+        estado.usuarioPerfil =
+            null;
+
         estado.perfil =
             null;
 
@@ -2130,6 +2556,8 @@
 
         carregarUsuario,
 
+        carregarUsuarioDoPerfil,
+
         carregarPerfis,
 
         carregarPerfil,
@@ -2154,6 +2582,10 @@
 
         carregarAgenda,
 
+        carregarParticipanteContratacao,
+
+        carregarParticipantesDaAgenda,
+
         carregarAvaliacoes,
 
         carregarTudo,
@@ -2169,6 +2601,8 @@
         obterEstado,
 
         obterUsuario,
+
+        obterUsuarioPerfil,
 
         obterPerfil,
 
