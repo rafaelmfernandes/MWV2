@@ -41,7 +41,8 @@
    O campo de título possui resolução por múltiplos IDs
    para evitar que uma alteração no HTML ou no contexto
    faça o valor ser interpretado como vazio.
-*/
+
+   ============================================================ */
 
 
 /* ============================================================
@@ -141,6 +142,21 @@ const estado = {
     editandoId:
         null,
 
+    /*
+     * Guarda o tipo original do item enquanto ele está
+     * sendo editado.
+     *
+     * Exemplo:
+     *
+     * imagem → vídeo
+     *
+     * permite identificar que o arquivo antigo não pode
+     * continuar sendo utilizado.
+     */
+
+    tipoMediaOriginal:
+        null,
+
     inicializado:
         false
 
@@ -150,16 +166,6 @@ const estado = {
 /* ============================================================
    ELEMENTOS
    ============================================================ */
-
-/*
- * Localiza elementos do formulário permanente do portfólio.
- *
- * O PerfilPortfolio pode receber um utilitário central
- * através de contexto.utils.el(), mas nunca depende
- * exclusivamente dele.
- *
- * Os valores recebidos são IDs.
- */
 
 function obterElemento(id) {
 
@@ -205,15 +211,6 @@ function obterElemento(id) {
 /* ============================================================
    RESOLUÇÃO DOS CAMPOS DO FORMULÁRIO
    ============================================================ */
-
-/*
- * Alguns arquivos do projeto podem fornecer os IDs através
- * de contexto.ids.
- *
- * Para evitar que uma alteração de ID no HTML faça o título
- * chegar vazio ao método adicionar(), utilizamos uma resolução
- * centralizada para os campos do formulário.
- */
 
 function obterElementoFormulario(
     nome,
@@ -274,13 +271,6 @@ function obterElementoFormulario(
 
 /*
  * Campo de título.
- *
- * O primeiro ID esperado continua sendo:
- *
- *     portfolioTitulo
- *
- * Os demais funcionam como fallback caso o HTML utilize
- * uma nomenclatura diferente.
  */
 
 function obterCampoTitulo() {
@@ -639,12 +629,33 @@ function atualizarBotoesTipo() {
 }
 
 
+/*
+ * Seleciona o tipo de mídia.
+ *
+ * Quando o usuário está editando:
+ *
+ * - mantendo o mesmo tipo:
+ *   mantém a URL atual;
+ *
+ * - trocando o tipo:
+ *   remove a URL anterior;
+ *   exige um novo arquivo.
+ */
+
 function selecionarTipo(tipo) {
 
-    estado.tipoMedia =
+    const novoTipo =
         normalizarTipo(
             tipo
         );
+
+
+    const tipoAnterior =
+        estado.tipoMedia;
+
+
+    estado.tipoMedia =
+        novoTipo;
 
 
     if (
@@ -664,10 +675,40 @@ function selecionarTipo(tipo) {
         obterCampoArquivo();
 
 
+    /*
+     * O input de arquivo sempre é limpo porque
+     * o navegador não permite atribuir programaticamente
+     * um arquivo diferente.
+     */
+
     if (arquivoInput) {
 
         arquivoInput.value =
             "";
+
+    }
+
+
+    /*
+     * Se o tipo mudou durante uma edição,
+     * a URL antiga não pode continuar no formulário.
+     */
+
+    if (
+        estado.editandoId &&
+        tipoAnterior !== novoTipo
+    ) {
+
+        const url =
+            obterCampoUrl();
+
+
+        if (url) {
+
+            url.value =
+                "";
+
+        }
 
     }
 
@@ -914,6 +955,22 @@ function arquivoSelecionado() {
         );
 
 
+        /*
+         * Um novo arquivo substitui a URL anterior.
+         */
+
+        const url =
+            obterCampoUrl();
+
+
+        if (url) {
+
+            url.value =
+                "";
+
+        }
+
+
         return arquivo;
 
     } catch (erro) {
@@ -1069,14 +1126,6 @@ async function fazerUpload(
 
 function obterDadosFormulario() {
 
-    /*
-     * IMPORTANTE:
-     * Todos os campos são resolvidos pelos helpers centrais.
-     *
-     * Isso evita que contexto.ids contenha um ID antigo
-     * enquanto o HTML utiliza outro ID.
-     */
-
     const titulo =
         obterCampoTitulo();
 
@@ -1098,12 +1147,6 @@ function obterDadosFormulario() {
             titulo?.value ?? ""
         ).trim();
 
-
-    /*
-     * Log temporário e seguro para diagnóstico.
-     *
-     * Não exibimos o conteúdo do título no console.
-     */
 
     console.log(
         "PerfilPortfolio: campo de título localizado:",
@@ -1262,17 +1305,10 @@ async function adicionar() {
 
 
         /*
-         * O título é obrigatório tanto para um novo item
-         * quanto para uma edição.
+         * O título é obrigatório.
          */
 
         if (!dados.titulo) {
-
-            /*
-             * Mostra no console exatamente quais campos
-             * foram localizados para facilitar diagnóstico
-             * caso o HTML seja alterado novamente.
-             */
 
             console.warn(
                 "PerfilPortfolio: título vazio.",
@@ -1297,6 +1333,29 @@ async function adicionar() {
             null;
 
 
+        /*
+         * Se o tipo foi alterado durante a edição,
+         * o usuário precisa escolher um novo arquivo.
+         */
+
+        if (
+            estado.editandoId &&
+            estado.tipoMediaOriginal &&
+            estado.tipoMediaOriginal !== dados.tipo &&
+            !dados.arquivo
+        ) {
+
+            throw new Error(
+                `Selecione um novo arquivo para alterar a mídia para ${obterLabelTipo(dados.tipo).toLowerCase()}.`
+            );
+
+        }
+
+
+        /*
+         * Se existe um novo arquivo, fazemos o upload.
+         */
+
         if (
             dados.arquivo
         ) {
@@ -1313,9 +1372,15 @@ async function adicionar() {
         }
 
 
+        /*
+         * Se estamos editando e o tipo não mudou,
+         * podemos manter o arquivo existente.
+         */
+
         if (
             !arquivoUrl &&
-            estado.editandoId
+            estado.editandoId &&
+            estado.tipoMediaOriginal === dados.tipo
         ) {
 
             const itemAtual =
@@ -1428,7 +1493,7 @@ async function adicionar() {
 
             /* ------------------------------------------------
                NOVO ITEM
-            ------------------------------------------------ */
+               ------------------------------------------------ */
 
             const dadosInsercao = {
 
@@ -1567,10 +1632,19 @@ async function editar(id) {
     }
 
 
-    estado.tipoMedia =
+    /*
+     * Guarda o tipo original para detectar uma troca
+     * durante a edição.
+     */
+
+    estado.tipoMediaOriginal =
         normalizarTipo(
             item.tipo
         );
+
+
+    estado.tipoMedia =
+        estado.tipoMediaOriginal;
 
 
     if (
@@ -2005,6 +2079,10 @@ function limparFormulario() {
 
     estado.tipoMedia =
         "imagem";
+
+
+    estado.tipoMediaOriginal =
+        null;
 
 
     if (
@@ -2649,6 +2727,10 @@ function configurar(
 
     estado.editandoId =
         contexto.estado.editandoPortfolioId ||
+        null;
+
+
+    estado.tipoMediaOriginal =
         null;
 
 

@@ -7,7 +7,7 @@
    Responsabilidades:
 
    * Criar e renderizar os anúncios do feed.
-   * Montar a identidade do artista.
+   * Montar a identidade do artista ou estabelecimento.
    * Renderizar imagem ou vídeo de destaque.
    * Controlar reprodução automática dos vídeos.
    * Controlar vídeo em tela cheia.
@@ -67,6 +67,17 @@
 
    A foto de perfil NUNCA é utilizada como mídia
    de destaque.
+
+   SUPORTE A PERFIS:
+
+   * Artista:
+     perfil.perfis_artistas
+
+   * Estabelecimento:
+     perfil.perfis_estabelecimentos
+
+   A estrutura visual do anúncio permanece a mesma
+   para os dois tipos de perfil.
 ========================================================= */
 
 (function (window) {
@@ -174,7 +185,7 @@
 
 
     /* =========================================================
-       DADOS DO ARTISTA
+       IDENTIFICAÇÃO DO PERFIL
     ========================================================= */
 
     function obterArtistaPerfil(perfil) {
@@ -191,6 +202,79 @@
             perfil.artista ||
             {}
         );
+    }
+
+
+    function obterEstabelecimentoPerfil(perfil) {
+
+        if (!perfil) {
+
+            return {};
+        }
+
+
+        return (
+            perfil.perfil_estabelecimento ||
+            perfil.perfis_estabelecimentos ||
+            perfil.estabelecimento ||
+            {}
+        );
+    }
+
+
+    function perfilEhEstabelecimento(perfil) {
+
+        const estabelecimento =
+            obterEstabelecimentoPerfil(perfil);
+
+
+        return Boolean(
+            estabelecimento &&
+            estabelecimento.id
+        );
+    }
+
+
+    /* =========================================================
+       NOMES DOS TIPOS DE PERFIL
+
+       Os tipos 3 a 11 correspondem aos estabelecimentos
+       atualmente cadastrados em tipos_perfil.
+
+       Esta função é utilizada somente quando a RPC
+       entrega o tipo_perfil_id, mas não entrega diretamente
+       o nome do tipo.
+    ========================================================= */
+
+    function obterNomeTipoPerfil(id) {
+
+        const tipos = {
+
+            1: "Artista",
+
+            2: "Contratante",
+
+            3: "Organizador de eventos",
+
+            4: "Casa de shows",
+
+            5: "Empresa / Agência",
+
+            6: "Restaurante",
+
+            7: "Hotel",
+
+            8: "Clube",
+
+            9: "Boate",
+
+            10: "Pousada",
+
+            11: "Bar"
+        };
+
+
+        return tipos[id] || "Perfil";
     }
 
 
@@ -268,7 +352,7 @@
     /* =========================================================
        PÁGINA DO PERFIL
 
-       Foto e nome do artista:
+       Foto e nome do perfil:
 
            meu-perfil.html?id=<perfilId>
 
@@ -888,7 +972,7 @@
        Esta função NÃO remove o anúncio.
 
        Ela remove somente a área grande de mídia
-       e mantém a identidade do artista.
+       e mantém a identidade do perfil.
     ========================================================= */
 
     function transformarCardSemMidia(card) {
@@ -1057,7 +1141,7 @@
         const dadosCompartilhamento = {
 
             title:
-                `Perfil de ${nome || "artista"} — MusicalWorld`,
+                `Perfil de ${nome || "perfil"} — MusicalWorld`,
 
             text:
                 `Confira este perfil no MusicalWorld.`,
@@ -1239,7 +1323,7 @@
 
 
     /* =========================================================
-       CRIAÇÃO DO CARD DO PROFISSIONAL
+       CRIAÇÃO DO CARD DO PROFISSIONAL / ESTABELECIMENTO
     ========================================================= */
 
     function criarCardProfissional(
@@ -1263,6 +1347,41 @@
 
 
         /* =====================================================
+           IDENTIFICAÇÃO DO TIPO DE PERFIL
+        ===================================================== */
+
+        const estabelecimento =
+            obterEstabelecimentoPerfil(
+                perfil
+            );
+
+
+        const ehEstabelecimento =
+            perfilEhEstabelecimento(
+                perfil
+            );
+
+
+        /*
+         * Quando o perfil é estabelecimento, utilizamos
+         * diretamente os dados retornados pela RPC:
+         *
+         *     perfil.perfis_estabelecimentos
+         *
+         * Para artista, preservamos exatamente a estrutura
+         * que o anúncio já utilizava.
+         */
+
+        const dadosPerfil =
+            ehEstabelecimento
+                ? estabelecimento
+                : (
+                    artista ||
+                    obterArtistaPerfil(perfil)
+                );
+
+
+        /* =====================================================
            IDENTIDADE
         ===================================================== */
 
@@ -1277,32 +1396,111 @@
             "Perfil profissional do MusicalWorld.";
 
 
-        const localizacao =
-            typeof artista?.localizacao === "string" &&
-            artista.localizacao.trim()
-                ? artista.localizacao.trim()
-                : "Localização não informada";
+        /* =====================================================
+           LOCALIZAÇÃO
+        ===================================================== */
+
+        let localizacao =
+            "Localização não informada";
 
 
-        const tipo =
-            obterNomeTipo(
-                artista?.tipo_artista
-            );
+        if (ehEstabelecimento) {
 
+            const cidade =
+                String(
+                    estabelecimento?.cidade ||
+                    ""
+                ).trim();
+
+
+            const estado =
+                String(
+                    estabelecimento?.estado ||
+                    ""
+                ).trim();
+
+
+            if (cidade && estado) {
+
+                localizacao =
+                    `${cidade} - ${estado}`;
+
+            } else if (cidade) {
+
+                localizacao =
+                    cidade;
+
+            } else if (estado) {
+
+                localizacao =
+                    estado;
+            }
+
+        } else if (
+            typeof dadosPerfil?.localizacao === "string" &&
+            dadosPerfil.localizacao.trim()
+        ) {
+
+            localizacao =
+                dadosPerfil.localizacao.trim();
+        }
+
+
+        /* =====================================================
+           TIPO DO PERFIL
+        ===================================================== */
+
+        let tipo =
+            "Artista";
+
+
+        if (ehEstabelecimento) {
+
+            tipo =
+                obterNomeTipoPerfil(
+                    perfil?.tipo_perfil_id
+                );
+
+        } else {
+
+            tipo =
+                obterNomeTipo(
+                    dadosPerfil?.tipo_artista
+                );
+        }
+
+
+        /* =====================================================
+           ESTILOS MUSICAIS
+        ===================================================== */
 
         const estilosLista =
-            normalizarLista(
-                artista?.estilos
-            );
+            ehEstabelecimento
+
+                ? normalizarLista(
+                    estabelecimento?.estilos_musicais
+                )
+
+                : normalizarLista(
+                    dadosPerfil?.estilos
+                );
 
 
         /*
          * A foto de perfil é utilizada SOMENTE
          * no pequeno avatar da identidade.
+         *
+         * Para artistas, mantemos exatamente as fontes
+         * existentes.
+         *
+         * Para estabelecimentos, a RPC atual não retorna
+         * foto_url no objeto de estabelecimento.
+         * Portanto, caso exista uma foto diretamente no
+         * perfil, ela ainda poderá ser utilizada.
          */
 
         const fotoUrl =
-            artista?.foto_url ||
+            dadosPerfil?.foto_url ||
             perfil?.foto_url ||
             perfil?.avatar_url ||
             perfil?.foto ||
@@ -1516,7 +1714,7 @@
 
 
         /* =====================================================
-           IDENTIDADE DO ARTISTA
+           IDENTIDADE DO PERFIL
 
            Foto e nome continuam abrindo:
 
@@ -1681,6 +1879,26 @@
 
            O componente interacoes-perfil.js carrega os
            valores reais no banco depois que o card é criado.
+
+           Os pequenos containers:
+
+               data-interacao-avatares="curtidas"
+               data-interacao-avatares="comentarios"
+               data-interacao-avatares="salvos"
+
+           pertencem EXCLUSIVAMENTE ao Index.
+
+           O módulo:
+
+               js/index/interacoes-avatares.js
+
+           utiliza esses containers para mostrar até
+           3 usuários por tipo de interação.
+
+           IMPORTANTE:
+
+           O componente universal de interações continua
+           controlando os botões e contadores normalmente.
         ===================================================== */
 
         const acoesHtml = `
@@ -1690,93 +1908,133 @@
                 aria-label="Ações da publicação"
             >
 
-                <button
-                    type="button"
-                    class="ad-social-btn"
-                    data-acao="comentar"
-                    data-interacao="comentar"
-                    aria-label="Comentar"
-                >
-                    ${obterIconeAnuncio("comentar")}
+                <div class="ad-social-action">
 
-                    <span class="ad-social-label">
-                        Comentar
-                    </span>
-
-                    <span
-                        class="interacoes-contador"
-                        aria-label="Quantidade de comentários"
+                    <button
+                        type="button"
+                        class="ad-social-btn"
+                        data-acao="comentar"
+                        data-interacao="comentar"
+                        aria-label="Comentar"
                     >
-                        0
-                    </span>
-                </button>
+                        ${obterIconeAnuncio("comentar")}
+
+                        <span class="ad-social-label">
+                            Comentar
+                        </span>
+
+                        <span
+                            class="interacoes-contador"
+                            aria-label="Quantidade de comentários"
+                        >
+                            0
+                        </span>
+                    </button>
 
 
-                <button
-                    type="button"
-                    class="ad-social-btn"
-                    data-acao="curtir"
-                    data-interacao="curtir"
-                    aria-label="Curtir"
-                    aria-pressed="false"
-                >
-                    ${obterIconeAnuncio("curtir")}
+                    <div
+                        class="ad-interacao-avatares"
+                        data-interacao-avatares="comentarios"
+                        hidden
+                        aria-hidden="true"
+                    ></div>
 
-                    <span class="ad-social-label">
-                        Curtir
-                    </span>
+                </div>
 
-                    <span
-                        class="interacoes-contador"
-                        aria-label="Quantidade de curtidas"
+
+                <div class="ad-social-action">
+
+                    <button
+                        type="button"
+                        class="ad-social-btn"
+                        data-acao="curtir"
+                        data-interacao="curtir"
+                        aria-label="Curtir"
+                        aria-pressed="false"
                     >
-                        0
-                    </span>
-                </button>
+                        ${obterIconeAnuncio("curtir")}
+
+                        <span class="ad-social-label">
+                            Curtir
+                        </span>
+
+                        <span
+                            class="interacoes-contador"
+                            aria-label="Quantidade de curtidas"
+                        >
+                            0
+                        </span>
+                    </button>
 
 
-                <button
-                    type="button"
-                    class="ad-social-btn"
-                    data-acao="compartilhar"
-                    aria-label="Compartilhar"
-                >
-                    ${obterIconeAnuncio("compartilhar")}
+                    <div
+                        class="ad-interacao-avatares"
+                        data-interacao-avatares="curtidas"
+                        hidden
+                        aria-hidden="true"
+                    ></div>
 
-                    <span class="ad-social-label">
-                        Compartilhar
-                    </span>
+                </div>
 
-                    <span
-                        class="interacoes-contador"
-                        aria-label="Quantidade de compartilhamentos"
+
+                <div class="ad-social-action">
+
+                    <button
+                        type="button"
+                        class="ad-social-btn"
+                        data-acao="compartilhar"
+                        aria-label="Compartilhar"
                     >
-                        0
-                    </span>
-                </button>
+                        ${obterIconeAnuncio("compartilhar")}
+
+                        <span class="ad-social-label">
+                            Compartilhar
+                        </span>
+
+                        <span
+                            class="interacoes-contador"
+                            aria-label="Quantidade de compartilhamentos"
+                        >
+                            0
+                        </span>
+                    </button>
+
+                </div>
 
 
-                <button
-                    type="button"
-                    class="ad-social-btn"
-                    data-acao="salvar"
-                    data-interacao="salvar"
-                    aria-label="Salvar"
-                    aria-pressed="false"
-                >
-                    ${obterIconeAnuncio("salvar")}
+                <div class="ad-social-action">
 
-                    <span class="ad-social-label">
-                        Salvar
-                    </span>
-
-                    <span
-                        class="interacoes-contador"
-                        aria-label="Quantidade de pessoas que salvaram"
+                    <button
+                        type="button"
+                        class="ad-social-btn"
+                        data-acao="salvar"
+                        data-interacao="salvar"
+                        aria-label="Salvar"
+                        aria-pressed="false"
                     >
-                        0
-                    </span>
-                </button>
+                        ${obterIconeAnuncio("salvar")}
+
+                        <span class="ad-social-label">
+                            Salvar
+                        </span>
+
+                        <span
+                            class="interacoes-contador"
+                            aria-label="Quantidade de pessoas que salvaram"
+                        >
+                            0
+                        </span>
+                    </button>
+
+
+                    <div
+                        class="ad-interacao-avatares"
+                        data-interacao-avatares="salvos"
+                        hidden
+                        aria-hidden="true"
+                    ></div>
+
+                </div>
 
             </div>
         `;
@@ -1868,12 +2126,32 @@
             perfil.id || "";
 
 
+        /*
+         * Mantemos o atributo antigo para não quebrar
+         * nenhuma lógica existente que eventualmente
+         * utilize data-tipo-artista.
+         *
+         * Para estabelecimentos, ele passa a receber
+         * a categoria do estabelecimento.
+         */
+
         card.dataset.tipoArtista =
             tipo;
 
 
         card.dataset.nomeArtista =
             nome;
+
+
+        /*
+         * Novo atributo específico para identificar
+         * o tipo geral do perfil no anúncio.
+         */
+
+        card.dataset.tipoPerfil =
+            ehEstabelecimento
+                ? "estabelecimento"
+                : "artista";
 
 
         /* =====================================================
@@ -2120,7 +2398,7 @@
 
                     const nomeArtista =
                         card.dataset.nomeArtista ||
-                        "artista";
+                        "perfil";
 
 
                     /*
@@ -2163,6 +2441,9 @@
            de interações.
 
            O componente não recria o card.
+
+           Os containers de avatares permanecem
+           independentes deste componente.
         ===================================================== */
 
         inicializarInteracoesCard(
@@ -2206,6 +2487,9 @@
 
         obterArtista:
             obterArtistaPerfil,
+
+        obterEstabelecimento:
+            obterEstabelecimentoPerfil,
 
         obterDestaque:
             obterDestaquePortfolio,

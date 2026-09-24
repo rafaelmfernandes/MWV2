@@ -7,9 +7,8 @@
 <meta charset="UTF-8">
 
 <meta
-name="viewport"
-content="width=device-width, initial-scale=1.0"
-
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
 >
 
 <title>Editar Perfil | MusicalWorld</title>
@@ -508,6 +507,296 @@ content="width=device-width, initial-scale=1.0"
             </div>
 
         </div>
+
+    </section>
+
+    <!-- =================================================
+         INFORMAÇÕES DO ESTABELECIMENTO
+         SOMENTE ESTABELECIMENTO
+    ================================================== -->
+
+    <section
+        class="perfil-card"
+        data-perfil-somente="estabelecimento"
+    >
+
+        <div class="secao-cabecalho">
+
+            <div class="secao-icone">
+
+                <i data-lucide="building-2"></i>
+
+            </div>
+
+            <div>
+
+                <h2>
+                    Informações do estabelecimento
+                </h2>
+
+                <p>
+                    Informe os dados comerciais e a estrutura do seu estabelecimento.
+                </p>
+
+            </div>
+
+        </div>
+
+        <!-- =============================================
+             ENDEREÇO
+        ============================================== -->
+
+        <div class="form-grid">
+
+            <div class="campo">
+
+                <label for="endereco">
+                    Endereço
+                </label>
+
+                <input
+                    type="text"
+                    id="endereco"
+                    name="endereco"
+                    placeholder="Ex.: Avenida Goiás"
+                    autocomplete="street-address"
+                >
+
+            </div>
+
+            <div class="campo">
+
+                <label for="numero">
+                    Número
+                </label>
+
+                <input
+                    type="text"
+                    id="numero"
+                    name="numero"
+                    placeholder="Ex.: 1200"
+                    autocomplete="address-line2"
+                >
+
+            </div>
+
+            <div class="campo">
+
+                <label for="bairro">
+                    Bairro
+                </label>
+
+                <input
+                    type="text"
+                    id="bairro"
+                    name="bairro"
+                    placeholder="Ex.: Centro"
+                    autocomplete="address-level3"
+                >
+
+            </div>
+
+            <div class="campo">
+
+                <label for="cidade">
+                    Cidade
+                </label>
+
+                <input
+                    type="text"
+                    id="cidade"
+                    name="cidade"
+                    placeholder="Ex.: Goiânia"
+                    autocomplete="address-level2"
+                >
+
+            </div>
+
+            <div class="campo">
+
+                <label for="estado">
+                    Estado
+                </label>
+
+                <input
+                    type="text"
+                    id="estado"
+                    name="estado"
+                    placeholder="Ex.: GO"
+                    maxlength="2"
+                    autocomplete="address-level1"
+                >
+
+            </div>
+
+            <div class="campo">
+
+                <label for="cep">
+                    CEP
+                </label>
+
+                <input
+                    type="text"
+                    id="cep"
+                    name="cep"
+                    placeholder="00000-000"
+                    autocomplete="postal-code"
+                >
+
+            </div>
+
+        </div>
+
+        <!-- =============================================
+             CONTATO COMERCIAL
+        ============================================== -->
+
+        <div class="form-grid">
+
+            <div class="campo">
+
+                <label for="telefoneComercial">
+                    Telefone comercial
+                </label>
+
+                <input
+                    type="tel"
+                    id="telefoneComercial"
+                    name="telefoneComercial"
+                    placeholder="(00) 0000-0000"
+                    autocomplete="tel"
+                >
+
+            </div>
+
+            <div class="campo">
+
+                <label for="instagram">
+                    Instagram
+                </label>
+
+                <input
+                    type="text"
+                    id="instagram"
+                    name="instagram"
+                    placeholder="@seuestabelecimento"
+                >
+
+            </div>
+
+            <div class="campo">
+
+                <label for="site">
+                    Site
+                </label>
+
+                <input
+                    type="url"
+                    id="site"
+                    name="site"
+                    placeholder="https://..."
+                    autocomplete="url"
+                >
+
+            </div>
+
+            <div class="campo">
+
+                <label for="capacidade">
+                    Capacidade
+                </label>
+
+                <input
+                    type="number"
+                    id="capacidade"
+                    name="capacidade"
+                    min="0"
+                    step="1"
+                    placeholder="Ex.: 200"
+                >
+
+                <span class="campo-ajuda">
+                    Quantidade aproximada de pessoas que o estabelecimento comporta.
+                </span>
+
+            </div>
+
+        </div>
+
+        <!-- =============================================
+             ESTRUTURA E MÚSICA
+        ============================================== -->
+
+        <div class="campo">
+
+            <label for="estrutura">
+                Estrutura
+            </label>
+
+            <span class="campo-ajuda">
+                Informe a estrutura disponível para artistas e apresentações.
+            </span>
+
+            <textarea
+                id="estrutura"
+                name="estrutura"
+                rows="4"
+                maxlength="1000"
+                placeholder="Ex.: palco, sistema de som, iluminação, camarim, espaço externo..."
+            ></textarea>
+
+        </div>
+
+        <div class="campo">
+
+            <label for="estilosMusicais">
+                Estilos musicais
+            </label>
+
+            <span class="campo-ajuda">
+                Informe os estilos musicais que costumam fazer parte da programação do estabelecimento.
+            </span>
+
+            <textarea
+                id="estilosMusicais"
+                name="estilosMusicais"
+                rows="3"
+                maxlength="500"
+                placeholder="Ex.: Sertanejo, MPB, Rock, Samba..."
+            ></textarea>
+
+        </div>
+
+        <!-- =============================================
+             MÚSICA AO VIVO
+        ============================================== -->
+
+        <label
+            class="switch-row"
+            for="aceitaMusicaAoVivo"
+        >
+
+            <span>
+
+                <strong>
+                    Aceita música ao vivo
+                </strong>
+
+                <small>
+                    Indique se o estabelecimento recebe apresentações musicais ao vivo.
+                </small>
+
+            </span>
+
+            <input
+                type="checkbox"
+                id="aceitaMusicaAoVivo"
+                name="aceitaMusicaAoVivo"
+            >
+
+            <span class="switch"></span>
+
+        </label>
 
     </section>
 

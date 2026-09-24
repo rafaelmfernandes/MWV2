@@ -1,0 +1,980 @@
+
+/* =========================================================
+   MUSICALWORLD — APRESENTAÇÃO DE PERFIL
+   AGENDA / PRÓXIMOS EVENTOS
+
+   Arquivo:
+   css/apresentar-perfil/05-apresentar-perfil-agenda.css
+
+   Responsabilidade:
+   - Estilizar a seção de agenda do perfil público.
+   - Estilizar os cards de eventos.
+   - Destacar visualmente a data no lado esquerdo.
+   - Estilizar tipo e status do evento.
+   - Estilizar horário e localização.
+   - Estilizar descrição do evento.
+   - Estilizar a atração confirmada vinculada à contratação.
+   - Manter a agenda responsiva para desktop, tablet e celular.
+
+   Compatibilidade:
+   - ApresentarPerfilRender.js
+   ========================================================= */
+
+
+/* =========================================================
+   1. SEÇÃO PRINCIPAL DA AGENDA
+   ========================================================= */
+
+.profile-agenda {
+    margin-top: 20px;
+    padding: 18px;
+
+    background: linear-gradient(
+        180deg,
+        #fbfaff 0%,
+        #ffffff 100%
+    );
+
+    border: 1px solid rgba(109, 74, 255, 0.16);
+    border-radius: 20px;
+
+    box-shadow:
+        0 8px 24px rgba(45, 35, 90, 0.05);
+}
+
+
+/* =========================================================
+   2. ESTADO OCULTO
+   ========================================================= */
+
+.profile-agenda[hidden] {
+    display: none;
+}
+
+
+/* =========================================================
+   3. LISTA DE EVENTOS
+   ========================================================= */
+
+.agenda-list {
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 10px;
+}
+
+
+/* =========================================================
+   4. CARD DO EVENTO
+   ========================================================= */
+
+.agenda-item {
+    width: 100%;
+
+    display: grid;
+
+    grid-template-columns: 78px minmax(0, 1fr);
+
+    gap: 16px;
+
+    padding: 14px;
+
+    background: #ffffff;
+
+    border: 1px solid rgba(109, 74, 255, 0.13);
+    border-radius: 15px;
+
+    box-shadow:
+        0 4px 14px rgba(45, 35, 90, 0.045);
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   5. BLOCO DA DATA — ESQUERDA
+   ========================================================= */
+
+.agenda-item-date {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+
+    padding: 5px 8px 8px;
+
+    text-align: center;
+
+    border-right: 1px solid rgba(109, 74, 255, 0.12);
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   6. NÚMERO DO DIA
+   ========================================================= */
+
+.agenda-date-day {
+    display: block;
+
+    color: var(--mw-primary);
+
+    font-size: 34px;
+    font-weight: 900;
+
+    line-height: 0.95;
+
+    letter-spacing: -1.5px;
+}
+
+
+/* =========================================================
+   7. MÊS
+   ========================================================= */
+
+.agenda-date-month {
+    display: block;
+
+    margin-top: 5px;
+
+    color: var(--mw-text);
+
+    font-size: 9px;
+    font-weight: 800;
+
+    line-height: 1.2;
+
+    letter-spacing: 0.6px;
+}
+
+
+/* =========================================================
+   8. DIA DA SEMANA
+   ========================================================= */
+
+.agenda-date-weekday {
+    display: block;
+
+    margin-top: 5px;
+
+    color: var(--mw-text-secondary);
+
+    font-size: 9px;
+    font-weight: 700;
+
+    line-height: 1.2;
+
+    text-transform: capitalize;
+}
+
+
+/* =========================================================
+   9. CONTEÚDO DO EVENTO — DIREITA
+   ========================================================= */
+
+.agenda-item-content {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   10. CABEÇALHO DO EVENTO
+   ========================================================= */
+
+.agenda-item-header {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+
+    gap: 7px;
+
+    margin-bottom: 10px;
+}
+
+
+/* =========================================================
+   11. TIPO E STATUS
+   ========================================================= */
+
+.agenda-item-type,
+.agenda-status {
+    display: inline-flex;
+    align-items: center;
+
+    min-height: 27px;
+
+    padding: 5px 9px;
+
+    border-radius: 8px;
+
+    font-size: 9px;
+    font-weight: 800;
+
+    line-height: 1.2;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   12. TIPO DO EVENTO
+   ========================================================= */
+
+.agenda-item-type {
+    color: var(--mw-primary);
+
+    background: var(--mw-primary-soft);
+
+    border: 1px solid rgba(109, 74, 255, 0.12);
+}
+
+
+/* =========================================================
+   13. STATUS DO EVENTO
+   ========================================================= */
+
+.agenda-status {
+    border: 1px solid transparent;
+}
+
+
+/* =========================================================
+   14. STATUS — CONFIRMADO
+   ========================================================= */
+
+.agenda-status--confirmado {
+    color: #137a50;
+
+    background: #edf9f3;
+
+    border-color: #c8eddc;
+}
+
+
+/* =========================================================
+   15. STATUS — AGENDADO
+   ========================================================= */
+
+.agenda-status--agendado {
+    color: #8a6200;
+
+    background: #fff8e8;
+
+    border-color: #f1dfad;
+}
+
+
+/* =========================================================
+   16. TÍTULO DO EVENTO
+   ========================================================= */
+
+.agenda-item-title {
+    margin: 0 0 11px;
+
+    color: var(--mw-text);
+
+    font-size: 14px;
+    font-weight: 800;
+
+    line-height: 1.4;
+
+    word-break: break-word;
+}
+
+
+/* =========================================================
+   17. BLOCO DE HORÁRIO
+   ========================================================= */
+
+.agenda-item-datetime {
+    display: flex;
+    flex-direction: column;
+
+    gap: 6px;
+
+    margin: 0;
+}
+
+
+/* =========================================================
+   18. INFORMAÇÕES DO EVENTO
+   ========================================================= */
+
+.agenda-item-detail {
+    min-width: 0;
+
+    display: flex;
+    align-items: flex-start;
+
+    gap: 7px;
+
+    color: var(--mw-text-secondary);
+
+    font-size: 11px;
+    font-weight: 600;
+
+    line-height: 1.5;
+
+    overflow-wrap: anywhere;
+}
+
+
+/* =========================================================
+   19. ÍCONES DAS INFORMAÇÕES
+   ========================================================= */
+
+.agenda-item-detail svg {
+    width: 15px;
+    height: 15px;
+
+    flex: 0 0 15px;
+
+    margin-top: 1px;
+
+    color: var(--mw-primary);
+
+    fill: none;
+
+    stroke: currentColor;
+    stroke-width: 1.8;
+
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+
+/* =========================================================
+   20. LOCALIZAÇÃO
+   ========================================================= */
+
+.agenda-item-location {
+    margin-top: 2px;
+}
+
+
+/* =========================================================
+   21. DESCRIÇÃO DO EVENTO
+   ========================================================= */
+
+.agenda-item-description {
+    margin: 11px 0 0;
+
+    padding-top: 11px;
+
+    color: var(--mw-text-secondary);
+
+    border-top: 1px solid #f0eff5;
+
+    font-size: 11px;
+    font-weight: 500;
+
+    line-height: 1.55;
+
+    word-break: break-word;
+}
+
+
+/* =========================================================
+   22. ATRAÇÃO CONFIRMADA
+   ========================================================= */
+
+.agenda-attraction {
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 8px;
+
+    margin: 0 0 11px;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   23. RÓTULO DA ATRAÇÃO
+   ========================================================= */
+
+.agenda-attraction-label {
+    display: block;
+
+    color: var(--mw-primary);
+
+    font-size: 11px;
+    font-weight: 800;
+
+    line-height: 1.3;
+}
+
+
+/* =========================================================
+   24. LINHA PRINCIPAL DA ATRAÇÃO
+   ========================================================= */
+
+.agenda-attraction-main {
+    min-width: 0;
+
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   25. FOTO / AVATAR DA ATRAÇÃO
+   ========================================================= */
+
+.agenda-attraction-photo {
+    width: 42px;
+    height: 42px;
+
+    flex: 0 0 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    overflow: hidden;
+
+    background: var(--mw-primary-soft);
+
+    border: 1px solid rgba(109, 74, 255, 0.16);
+    border-radius: 50%;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   26. INICIAIS DA ATRAÇÃO
+   ========================================================= */
+
+.agenda-attraction-initials {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: var(--mw-primary);
+
+    font-size: 13px;
+    font-weight: 900;
+
+    line-height: 1;
+}
+
+
+/* =========================================================
+   27. IMAGEM DA ATRAÇÃO
+   ========================================================= */
+
+.agenda-attraction-image {
+    width: 100%;
+    height: 100%;
+
+    display: block;
+
+    object-fit: cover;
+    object-position: center;
+
+    border-radius: 50%;
+}
+
+
+/* =========================================================
+   28. INFORMAÇÕES DA ATRAÇÃO
+   ========================================================= */
+
+.agenda-attraction-info {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 3px;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   29. NOME DA ATRAÇÃO
+   ========================================================= */
+
+.agenda-attraction-name {
+    display: block;
+
+    min-width: 0;
+
+    color: var(--mw-text);
+
+    font-size: 14px;
+    font-weight: 800;
+
+    line-height: 1.35;
+
+    word-break: break-word;
+}
+
+
+/* =========================================================
+   30. DETALHES DA ATRAÇÃO
+   ========================================================= */
+
+.agenda-attraction-details {
+    display: block;
+
+    color: var(--mw-text-secondary);
+
+    font-size: 10px;
+    font-weight: 600;
+
+    line-height: 1.4;
+
+    word-break: break-word;
+}
+
+
+/* =========================================================
+   31. TABLET / TELAS MENORES
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    .profile-agenda {
+        margin-top: 18px;
+        padding: 16px;
+
+        border-radius: 18px;
+    }
+
+
+    .agenda-item {
+        grid-template-columns: 72px minmax(0, 1fr);
+
+        gap: 14px;
+
+        padding: 13px;
+
+        border-radius: 14px;
+    }
+
+
+    .agenda-item-date {
+        padding-left: 6px;
+        padding-right: 8px;
+    }
+
+
+    .agenda-date-day {
+        font-size: 31px;
+    }
+
+
+    .agenda-date-month {
+        font-size: 8.5px;
+    }
+
+
+    .agenda-date-weekday {
+        font-size: 8.5px;
+    }
+
+
+    .agenda-item-title {
+        font-size: 13.5px;
+    }
+
+
+    .agenda-attraction-name {
+        font-size: 13.5px;
+    }
+
+
+    .agenda-attraction-photo {
+        width: 40px;
+        height: 40px;
+
+        flex-basis: 40px;
+    }
+
+}
+
+
+/* =========================================================
+   32. CELULARES
+   ========================================================= */
+
+@media (max-width: 520px) {
+
+    .profile-agenda {
+        margin-top: 16px;
+        padding: 14px;
+
+        border-radius: 17px;
+
+        box-shadow:
+            0 6px 18px rgba(45, 35, 90, 0.045);
+    }
+
+
+    .agenda-list {
+        gap: 8px;
+    }
+
+
+    .agenda-item {
+        grid-template-columns: 62px minmax(0, 1fr);
+
+        gap: 12px;
+
+        padding: 12px;
+
+        border-radius: 13px;
+    }
+
+
+    .agenda-item-date {
+        padding: 4px 7px 7px 4px;
+    }
+
+
+    .agenda-date-day {
+        font-size: 28px;
+
+        letter-spacing: -1px;
+    }
+
+
+    .agenda-date-month {
+        margin-top: 4px;
+
+        font-size: 8px;
+
+        letter-spacing: 0.4px;
+    }
+
+
+    .agenda-date-weekday {
+        margin-top: 4px;
+
+        font-size: 8px;
+    }
+
+
+    .agenda-item-header {
+        gap: 6px;
+
+        margin-bottom: 9px;
+    }
+
+
+    .agenda-item-type,
+    .agenda-status {
+        min-height: 25px;
+
+        padding: 4px 8px;
+
+        font-size: 8.5px;
+    }
+
+
+    .agenda-item-title {
+        margin-bottom: 9px;
+
+        font-size: 13px;
+    }
+
+
+    .agenda-item-detail {
+        font-size: 10.5px;
+    }
+
+
+    .agenda-item-detail svg {
+        width: 14px;
+        height: 14px;
+
+        flex-basis: 14px;
+    }
+
+
+    .agenda-item-description {
+        margin-top: 9px;
+        padding-top: 9px;
+
+        font-size: 10.5px;
+    }
+
+
+    .agenda-attraction {
+        gap: 7px;
+
+        margin-bottom: 9px;
+    }
+
+
+    .agenda-attraction-label {
+        font-size: 10px;
+    }
+
+
+    .agenda-attraction-main {
+        gap: 8px;
+    }
+
+
+    .agenda-attraction-photo {
+        width: 38px;
+        height: 38px;
+
+        flex-basis: 38px;
+    }
+
+
+    .agenda-attraction-name {
+        font-size: 13px;
+    }
+
+
+    .agenda-attraction-details {
+        font-size: 9.5px;
+    }
+
+}
+
+
+/* =========================================================
+   33. CELULARES PEQUENOS
+   ========================================================= */
+
+@media (max-width: 360px) {
+
+    .profile-agenda {
+        margin-top: 15px;
+        padding: 13px;
+
+        border-radius: 16px;
+    }
+
+
+    .agenda-list {
+        gap: 7px;
+    }
+
+
+    .agenda-item {
+        grid-template-columns: 55px minmax(0, 1fr);
+
+        gap: 10px;
+
+        padding: 11px;
+
+        border-radius: 12px;
+    }
+
+
+    .agenda-item-date {
+        padding: 4px 6px 6px 3px;
+    }
+
+
+    .agenda-date-day {
+        font-size: 25px;
+
+        letter-spacing: -0.8px;
+    }
+
+
+    .agenda-date-month {
+        margin-top: 3px;
+
+        font-size: 7.5px;
+
+        letter-spacing: 0.3px;
+    }
+
+
+    .agenda-date-weekday {
+        margin-top: 3px;
+
+        font-size: 7.5px;
+    }
+
+
+    .agenda-item-header {
+        gap: 5px;
+
+        margin-bottom: 8px;
+    }
+
+
+    .agenda-item-type,
+    .agenda-status {
+        min-height: 24px;
+
+        padding: 4px 7px;
+
+        border-radius: 7px;
+
+        font-size: 8px;
+    }
+
+
+    .agenda-item-title {
+        margin-bottom: 8px;
+
+        font-size: 12px;
+    }
+
+
+    .agenda-item-detail {
+        gap: 6px;
+
+        font-size: 10px;
+    }
+
+
+    .agenda-item-detail svg {
+        width: 13px;
+        height: 13px;
+
+        flex-basis: 13px;
+    }
+
+
+    .agenda-item-description {
+        margin-top: 8px;
+        padding-top: 8px;
+
+        font-size: 10px;
+
+        line-height: 1.5;
+    }
+
+
+    .agenda-attraction {
+        gap: 6px;
+
+        margin-bottom: 8px;
+    }
+
+
+    .agenda-attraction-label {
+        font-size: 9px;
+    }
+
+
+    .agenda-attraction-main {
+        gap: 7px;
+    }
+
+
+    .agenda-attraction-photo {
+        width: 34px;
+        height: 34px;
+
+        flex-basis: 34px;
+    }
+
+
+    .agenda-attraction-initials {
+        font-size: 11px;
+    }
+
+
+    .agenda-attraction-name {
+        font-size: 12px;
+    }
+
+
+    .agenda-attraction-details {
+        font-size: 9px;
+    }
+
+}
+
+
+/* =========================================================
+   34. TELAS MUITO PEQUENAS
+
+   Mantém a data à esquerda, mas reduz a coluna para
+   preservar espaço para o conteúdo do evento.
+   ========================================================= */
+
+@media (max-width: 320px) {
+
+    .agenda-item {
+        grid-template-columns: 50px minmax(0, 1fr);
+
+        gap: 9px;
+
+        padding: 10px;
+    }
+
+
+    .agenda-item-date {
+        padding-right: 5px;
+    }
+
+
+    .agenda-date-day {
+        font-size: 23px;
+    }
+
+
+    .agenda-date-month {
+        font-size: 7px;
+    }
+
+
+    .agenda-date-weekday {
+        font-size: 7px;
+    }
+
+
+    .agenda-attraction-photo {
+        width: 32px;
+        height: 32px;
+
+        flex-basis: 32px;
+    }
+
+
+    .agenda-attraction-main {
+        gap: 6px;
+    }
+
+
+    .agenda-attraction-label {
+        font-size: 8.5px;
+    }
+
+
+    .agenda-attraction-name {
+        font-size: 11.5px;
+    }
+
+
+    .agenda-attraction-details {
+        font-size: 8.5px;
+    }
+
+}
+

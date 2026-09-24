@@ -14,9 +14,13 @@
        - Buscar os dados principais do perfil.
        - Buscar os dados do usuário.
        - Buscar os dados específicos do artista.
+       - Buscar os dados específicos do estabelecimento.
        - Buscar avaliações.
        - Buscar os usuários que fizeram as avaliações.
        - Buscar serviços do artista.
+       - Buscar agenda/eventos do perfil.
+       - Buscar os dados do artista contratado quando
+         um evento estiver vinculado a uma contratação.
        - Disponibilizar todos os dados para os demais módulos.
 
        Este arquivo NÃO é responsável por:
@@ -25,6 +29,7 @@
        - Renderizar portfólio.
        - Renderizar serviços.
        - Renderizar avaliações.
+       - Renderizar agenda/eventos.
        - Controlar botões ou ações.
 
        A conexão com o Supabase continua centralizada em:
@@ -57,11 +62,20 @@
             perfisArtistas:
                 "perfis_artistas",
 
+            perfisEstabelecimentos:
+                "perfis_estabelecimentos",
+
             avaliacoes:
                 "avaliacoes_musicos",
 
             servicos:
-                "servicos_artistas"
+                "servicos_artistas",
+
+            agenda:
+                "agenda_musicos",
+
+            contratacoes:
+                "contratacoes"
 
         }
 
@@ -90,11 +104,15 @@
 
             perfilArtista: null,
 
+            perfilEstabelecimento: null,
+
             tipoPerfil: null,
 
             avaliacoes: [],
 
-            servicos: []
+            servicos: [],
+
+            agenda: []
 
         }
 
@@ -495,6 +513,1026 @@
 
 
         return estado.dados.perfilArtista;
+
+    }
+
+
+    /* =========================================================
+       CARREGAR PERFIL DO ESTABELECIMENTO
+    =========================================================
+
+       Busca os dados complementares existentes em:
+
+       public.perfis_estabelecimentos
+
+       O registro está relacionado diretamente ao:
+       perfis.id
+
+       Caso o perfil seja um artista e não exista registro
+       nesta tabela, o resultado será simplesmente null.
+
+       Isso permite que o mesmo módulo trabalhe com:
+
+       - artistas
+       - estabelecimentos
+       ========================================================= */
+
+    async function carregarPerfilEstabelecimento(perfilId) {
+
+        const supabase =
+            obterClienteSupabase();
+
+
+        if (!supabase) {
+
+            throw new Error(
+                "Cliente Supabase não disponível."
+            );
+
+        }
+
+
+        const id =
+            normalizarId(
+                perfilId
+            );
+
+
+        if (!id) {
+
+            estado.dados.perfilEstabelecimento =
+                null;
+
+
+            return null;
+
+        }
+
+
+        const {
+
+            data,
+
+            error
+
+        } = await supabase
+
+            .from(
+                CONFIG.tabelas.perfisEstabelecimentos
+            )
+
+            .select("*")
+
+            .eq(
+                "perfil_id",
+                id
+            )
+
+            .maybeSingle();
+
+
+        if (error) {
+
+            console.error(
+                "MusicalWorld — Erro ao carregar perfil do estabelecimento:",
+                error
+            );
+
+
+            throw error;
+
+        }
+
+
+        estado.dados.perfilEstabelecimento =
+            data || null;
+
+
+        console.log(
+            "MusicalWorld — Perfil do estabelecimento carregado:",
+            estado.dados.perfilEstabelecimento
+        );
+
+
+        return estado.dados.perfilEstabelecimento;
+
+    }
+
+
+    /* =========================================================
+       CARREGAR DADOS DOS ARTISTAS DAS CONTRATAÇÕES
+    =========================================================
+
+       Quando um item da agenda possui contratacao_id,
+       buscamos a contratação correspondente.
+
+       A contratação possui:
+
+       - contratante_id
+       - contratado_id
+
+       IMPORTANTE:
+
+       contratado_id referencia o:
+       usuarios.id
+
+       Portanto:
+
+       contratacoes.contratado_id
+                    ↓
+               usuarios.id
+                    ↓
+               perfis.usuario_id
+                    ↓
+                 perfis.id
+                    ↓
+             perfis_artistas
+
+       Não devemos tratar contratado_id diretamente
+       como perfis.id.
+
+       Depois buscamos:
+
+       - usuário do artista
+       - perfil do artista
+       - dados profissionais do artista
+
+       O resultado é associado ao item da agenda através
+       da propriedade:
+
+       evento.artista
+
+       Estrutura gerada:
+
+       artista: {
+           perfil_id,
+           usuario_id,
+           nome,
+           foto_url,
+           tipo_artista,
+           estilos,
+           instrumentos
+       }
+
+       Esta função não cria HTML.
+       ========================================================= */
+
+    async function carregarArtistasDasContratacoes(
+        agenda
+    ) {
+
+        const supabase =
+            obterClienteSupabase();
+
+
+        if (!supabase) {
+
+            throw new Error(
+                "Cliente Supabase não disponível."
+            );
+
+        }
+
+
+        if (
+            !Array.isArray(agenda) ||
+            !agenda.length
+        ) {
+
+            return agenda;
+
+        }
+
+
+        /*
+         * Somente eventos que possuem uma contratação
+         * precisam dessa consulta adicional.
+         */
+        const contratacaoIds = [
+
+            ...new Set(
+
+                agenda
+
+                    .map(
+                        evento =>
+                            normalizarId(
+                                evento.contratacao_id
+                            )
+                    )
+
+                    .filter(
+                        Boolean
+                    )
+
+            )
+
+        ];
+
+
+        if (!contratacaoIds.length) {
+
+            return agenda;
+
+        }
+
+
+        /* =====================================================
+           BUSCAR CONTRATAÇÕES
+        ===================================================== */
+
+        const {
+
+            data: contratacoes,
+
+            error: erroContratacoes
+
+        } = await supabase
+
+            .from(
+                CONFIG.tabelas.contratacoes
+            )
+
+            .select(`
+                id,
+                contratado_id
+            `)
+
+            .in(
+                "id",
+                contratacaoIds
+            );
+
+
+        if (erroContratacoes) {
+
+            console.warn(
+                "MusicalWorld — Não foi possível carregar as contratações da agenda:",
+                erroContratacoes
+            );
+
+
+            return agenda;
+
+        }
+
+
+        const listaContratacoes =
+
+            Array.isArray(
+                contratacoes
+            )
+
+                ? contratacoes
+
+                : [];
+
+
+        if (!listaContratacoes.length) {
+
+            return agenda;
+
+        }
+
+
+        /*
+         * Mapa:
+         *
+         * contratacao_id
+         * ->
+         * contratado_id
+         *
+         * IMPORTANTE:
+         * contratado_id é usuarios.id.
+         */
+        const mapaContratacoes =
+            new Map();
+
+
+        listaContratacoes.forEach(
+            contratacao => {
+
+                mapaContratacoes.set(
+
+                    normalizarId(
+                        contratacao.id
+                    ),
+
+                    normalizarId(
+                        contratacao.contratado_id
+                    )
+
+                );
+
+            }
+        );
+
+
+        /* =====================================================
+           BUSCAR USUÁRIOS DOS ARTISTAS CONTRATADOS
+        =====================================================
+
+           O contratado_id da contratação corresponde
+           diretamente ao usuarios.id.
+
+           Por isso a primeira consulta após a contratação
+           deve ser realizada na tabela usuarios.
+        */
+
+        const usuarioArtistaIds = [
+
+            ...new Set(
+
+                listaContratacoes
+
+                    .map(
+                        contratacao =>
+                            normalizarId(
+                                contratacao.contratado_id
+                            )
+                    )
+
+                    .filter(
+                        Boolean
+                    )
+
+            )
+
+        ];
+
+
+        if (!usuarioArtistaIds.length) {
+
+            return agenda;
+
+        }
+
+
+        let usuarios = [];
+
+
+        const {
+
+            data: usuariosContratados,
+
+            error: erroUsuarios
+
+        } = await supabase
+
+            .from(
+                CONFIG.tabelas.usuarios
+            )
+
+            .select(`
+                id,
+                nome,
+                foto_url
+            `)
+
+            .in(
+                "id",
+                usuarioArtistaIds
+            );
+
+
+        if (erroUsuarios) {
+
+            console.warn(
+                "MusicalWorld — Não foi possível carregar os usuários dos artistas contratados:",
+                erroUsuarios
+            );
+
+
+            return agenda;
+
+        }
+
+
+        usuarios =
+
+            Array.isArray(
+                usuariosContratados
+            )
+
+                ? usuariosContratados
+
+                : [];
+
+
+        if (!usuarios.length) {
+
+            return agenda;
+
+        }
+
+
+        /* =====================================================
+           BUSCAR PERFIS DOS ARTISTAS
+        =====================================================
+
+           Agora usamos usuarios.id para encontrar
+           o perfil correspondente através de:
+
+           perfis.usuario_id
+        */
+
+        const {
+
+            data: perfisArtistasContratados,
+
+            error: erroPerfis
+
+        } = await supabase
+
+            .from(
+                CONFIG.tabelas.perfis
+            )
+
+            .select(`
+                id,
+                usuario_id,
+                nome_exibicao
+            `)
+
+            .in(
+                "usuario_id",
+                usuarioArtistaIds
+            );
+
+
+        if (erroPerfis) {
+
+            console.warn(
+                "MusicalWorld — Não foi possível carregar os perfis dos artistas contratados:",
+                erroPerfis
+            );
+
+
+            return agenda;
+
+        }
+
+
+        const listaPerfis =
+
+            Array.isArray(
+                perfisArtistasContratados
+            )
+
+                ? perfisArtistasContratados
+
+                : [];
+
+
+        if (!listaPerfis.length) {
+
+            return agenda;
+
+        }
+
+
+        /*
+         * IDs dos perfis encontrados.
+         *
+         * Esses IDs agora são realmente perfis.id,
+         * portanto podem ser utilizados com segurança
+         * em perfis_artistas.perfil_id.
+         */
+        const perfilArtistaIds = [
+
+            ...new Set(
+
+                listaPerfis
+
+                    .map(
+                        perfil =>
+                            normalizarId(
+                                perfil.id
+                            )
+                    )
+
+                    .filter(
+                        Boolean
+                    )
+
+            )
+
+        ];
+
+
+        if (!perfilArtistaIds.length) {
+
+            return agenda;
+
+        }
+
+
+        /* =====================================================
+           BUSCAR DADOS PROFISSIONAIS DOS ARTISTAS
+        ===================================================== */
+
+        const {
+
+            data: dadosArtistas,
+
+            error: erroDadosArtistas
+
+        } = await supabase
+
+            .from(
+                CONFIG.tabelas.perfisArtistas
+            )
+
+            .select(`
+                perfil_id,
+                tipo_artista,
+                estilos,
+                instrumentos,
+                foto_url
+            `)
+
+            .in(
+                "perfil_id",
+                perfilArtistaIds
+            );
+
+
+        if (erroDadosArtistas) {
+
+            console.warn(
+                "MusicalWorld — Não foi possível carregar os dados profissionais dos artistas contratados:",
+                erroDadosArtistas
+            );
+
+        }
+
+
+        const listaDadosArtistas =
+
+            Array.isArray(
+                dadosArtistas
+            )
+
+                ? dadosArtistas
+
+                : [];
+
+
+        /* =====================================================
+           MAPAS PARA ASSOCIAÇÃO
+        ===================================================== */
+
+        const mapaPerfis =
+            new Map();
+
+        const mapaUsuarios =
+            new Map();
+
+        const mapaDadosArtistas =
+            new Map();
+
+
+        listaPerfis.forEach(
+            perfil => {
+
+                mapaPerfis.set(
+
+                    normalizarId(
+                        perfil.usuario_id
+                    ),
+
+                    perfil
+
+                );
+
+            }
+        );
+
+
+        usuarios.forEach(
+            usuario => {
+
+                mapaUsuarios.set(
+
+                    normalizarId(
+                        usuario.id
+                    ),
+
+                    usuario
+
+                );
+
+            }
+        );
+
+
+        listaDadosArtistas.forEach(
+            dadosArtista => {
+
+                mapaDadosArtistas.set(
+
+                    normalizarId(
+                        dadosArtista.perfil_id
+                    ),
+
+                    dadosArtista
+
+                );
+
+            }
+        );
+
+
+        /* =====================================================
+           ASSOCIAR ARTISTA À AGENDA
+        ===================================================== */
+
+        return agenda.map(
+            evento => {
+
+                const contratacaoId =
+                    normalizarId(
+                        evento.contratacao_id
+                    );
+
+
+                /*
+                 * Evento sem contratação:
+                 * permanece exatamente como estava.
+                 */
+                if (!contratacaoId) {
+
+                    return evento;
+
+                }
+
+
+                /*
+                 * Primeiro identificamos o usuário contratado.
+                 */
+                const contratadoId =
+                    mapaContratacoes.get(
+                        contratacaoId
+                    );
+
+
+                if (!contratadoId) {
+
+                    return evento;
+
+                }
+
+
+                /*
+                 * Agora encontramos o perfil através
+                 * de perfis.usuario_id.
+                 *
+                 * contratadoId NÃO é perfil.id.
+                 */
+                const perfilArtista =
+                    mapaPerfis.get(
+                        contratadoId
+                    ) || null;
+
+
+                if (!perfilArtista) {
+
+                    return evento;
+
+                }
+
+
+                /*
+                 * O usuário já foi carregado diretamente
+                 * através do contratado_id.
+                 */
+                const usuario =
+                    mapaUsuarios.get(
+                        contratadoId
+                    ) || null;
+
+
+                /*
+                 * Os dados profissionais utilizam
+                 * o verdadeiro perfil.id.
+                 */
+                const dadosArtista =
+                    mapaDadosArtistas.get(
+
+                        normalizarId(
+                            perfilArtista.id
+                        )
+
+                    ) || null;
+
+
+                /*
+                 * A foto pode estar em:
+                 *
+                 * 1. perfis_artistas.foto_url
+                 * 2. usuarios.foto_url
+                 *
+                 * Priorizamos a foto específica do perfil
+                 * artístico.
+                 */
+                const fotoUrl =
+
+                    (
+                        dadosArtista &&
+                        dadosArtista.foto_url
+                    )
+
+                        ?
+
+                        dadosArtista.foto_url
+
+                        :
+
+                        (
+                            usuario &&
+                            usuario.foto_url
+                        )
+
+                            ?
+
+                            usuario.foto_url
+
+                            :
+
+                            null;
+
+
+                /*
+                 * O nome público do artista vem primeiro
+                 * de nome_exibicao.
+                 *
+                 * Caso não exista, usamos o nome da conta.
+                 */
+                const nome =
+
+                    perfilArtista.nome_exibicao
+
+                        ?
+
+                        perfilArtista.nome_exibicao
+
+                        :
+
+                        (
+                            usuario &&
+                            usuario.nome
+                        )
+
+                            ?
+
+                            usuario.nome
+
+                            :
+
+                            "Artista";
+
+
+                return {
+
+                    ...evento,
+
+                    artista: {
+
+                        perfil_id:
+                            perfilArtista.id,
+
+                        usuario_id:
+                            perfilArtista.usuario_id,
+
+                        nome,
+
+                        foto_url:
+                            fotoUrl,
+
+                        tipo_artista:
+
+                            dadosArtista &&
+                            dadosArtista.tipo_artista
+
+                                ?
+
+                                dadosArtista.tipo_artista
+
+                                :
+
+                                null,
+
+                        estilos:
+
+                            dadosArtista &&
+                            dadosArtista.estilos
+
+                                ?
+
+                                dadosArtista.estilos
+
+                                :
+
+                                null,
+
+                        instrumentos:
+
+                            dadosArtista &&
+                            dadosArtista.instrumentos
+
+                                ?
+
+                                dadosArtista.instrumentos
+
+                                :
+
+                                null
+
+                    }
+
+                };
+
+            }
+        );
+
+    }
+
+
+    /* =========================================================
+       CARREGAR AGENDA / EVENTOS
+    =========================================================
+
+       Busca os eventos públicos vinculados ao perfil.
+
+       Tabela:
+       public.agenda_musicos
+
+       Valores atualmente existentes no banco:
+
+       tipo:
+       - evento
+       - show
+
+       status:
+       - agendado
+       - confirmado
+
+       O campo contratacao_id é carregado para permitir
+       identificar quando o evento veio de uma contratação.
+
+       Quando existe uma contratação, os dados do artista
+       contratado são adicionados ao evento através de:
+
+       evento.artista
+
+       A filtragem de eventos passados e a apresentação
+       visual ficam sob responsabilidade do módulo de
+       renderização.
+       ========================================================= */
+
+    async function carregarAgenda(perfilId) {
+
+        const supabase =
+            obterClienteSupabase();
+
+
+        if (!supabase) {
+
+            throw new Error(
+                "Cliente Supabase não disponível."
+            );
+
+        }
+
+
+        const id =
+            normalizarId(
+                perfilId
+            );
+
+
+        if (!id) {
+
+            estado.dados.agenda =
+                [];
+
+
+            return [];
+
+        }
+
+
+        const {
+
+            data,
+
+            error
+
+        } = await supabase
+
+            .from(
+                CONFIG.tabelas.agenda
+            )
+
+            .select(`
+                id,
+                perfil_id,
+                titulo,
+                descricao,
+                tipo,
+                data_inicio,
+                data_fim,
+                localizacao,
+                status,
+                contratacao_id,
+                created_at,
+                updated_at
+            `)
+
+            .eq(
+                "perfil_id",
+                id
+            )
+
+            .in(
+                "status",
+                [
+                    "agendado",
+                    "confirmado"
+                ]
+            )
+
+            .order(
+                "data_inicio",
+                {
+                    ascending: true
+                }
+            );
+
+
+        if (error) {
+
+            console.error(
+                "MusicalWorld — Erro ao carregar agenda:",
+                error
+            );
+
+
+            /*
+             * A agenda não deve impedir a abertura
+             * do perfil.
+             */
+            estado.dados.agenda =
+                [];
+
+
+            return [];
+
+        }
+
+
+        let agenda =
+
+            Array.isArray(
+                data
+            )
+
+                ? data
+
+                : [];
+
+
+        /*
+         * Agora enriquecemos somente os eventos que
+         * possuem uma contratação.
+         */
+        agenda =
+            await carregarArtistasDasContratacoes(
+                agenda
+            );
+
+
+        estado.dados.agenda =
+            agenda;
+
+
+        console.log(
+            "MusicalWorld — Agenda carregada:",
+            estado.dados.agenda.length
+        );
+
+
+        console.log(
+            "MusicalWorld — Artistas vinculados à agenda:",
+            estado.dados.agenda.filter(
+                evento =>
+                    evento &&
+                    evento.artista
+            ).length
+        );
+
+
+        return estado.dados.agenda;
 
     }
 
@@ -1060,6 +2098,11 @@
              *
              * Um problema em avaliações ou serviços não
              * impede o carregamento dos dados principais.
+             *
+             * O mesmo vale para os dados específicos:
+             *
+             * - perfilArtista
+             * - perfilEstabelecimento
              */
             await Promise.all([
 
@@ -1071,11 +2114,19 @@
                     perfilId
                 ),
 
+                carregarPerfilEstabelecimento(
+                    perfilId
+                ),
+
                 carregarAvaliacoes(
                     perfilId
                 ),
 
                 carregarServicos(
+                    perfilId
+                ),
+
+                carregarAgenda(
                     perfilId
                 )
 
@@ -1152,6 +2203,13 @@
     }
 
 
+    function obterPerfilEstabelecimento() {
+
+        return estado.dados.perfilEstabelecimento;
+
+    }
+
+
     function obterTipoPerfil() {
 
         return estado.dados.tipoPerfil;
@@ -1175,6 +2233,17 @@
         return [
 
             ...estado.dados.servicos
+
+        ];
+
+    }
+
+
+    function obterAgenda() {
+
+        return [
+
+            ...estado.dados.agenda
 
         ];
 
@@ -1223,11 +2292,17 @@
 
         carregarPerfilArtista,
 
+        carregarPerfilEstabelecimento,
+
         carregarAvaliacoes,
 
         carregarUsuariosAvaliadores,
 
         carregarServicos,
+
+        carregarAgenda,
+
+        carregarArtistasDasContratacoes,
 
         obterPerfilIdDaUrl,
 
@@ -1239,11 +2314,15 @@
 
         obterPerfilArtista,
 
+        obterPerfilEstabelecimento,
+
         obterTipoPerfil,
 
         obterAvaliacoes,
 
         obterServicos,
+
+        obterAgenda,
 
         obterPerfilId,
 

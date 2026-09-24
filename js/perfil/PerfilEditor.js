@@ -1,3 +1,4 @@
+
 /* ============================================================
 MUSICALWORLD — PERFIL EDITOR
 
@@ -62,6 +63,21 @@ CONTRATANTE:
 * Portfólio
 * Agenda
 
+ESTABELECIMENTO:
+
+* Foto
+* Nome
+* Nome de exibição
+* Telefone
+* E-mail
+* Localização
+* Sobre você
+* Conta
+* Publicação
+* Dados do estabelecimento
+* Portfólio
+* Agenda
+
 O contratante NÃO utiliza:
 
 * Tipo de artista
@@ -71,6 +87,16 @@ O contratante NÃO utiliza:
 * Instrumentos
 * Disponibilidade
 * Serviços
+
+O estabelecimento NÃO utiliza:
+
+* Tipo de artista
+* Área de atendimento
+* Experiência
+* Estilos de artista
+* Instrumentos
+* Disponibilidade
+* Serviços de artista
 
 ESTE MÓDULO NÃO É RESPONSÁVEL POR:
 
@@ -102,38 +128,44 @@ O PerfilEditor.js somente configura e solicita o
 carregamento do PerfilServicos quando o perfil atual
 for um artista.
 
+IMPORTANTE SOBRE ESTABELECIMENTOS:
+
+Os dados específicos do estabelecimento pertencem à
+tabela public.perfis_estabelecimentos.
+
+O PerfilEditor.js apenas coleta os valores da interface
+e os entrega ao PerfilEditorDados.js.
+
+O estabelecimento pode utilizar o módulo de portfólio
+para publicar conteúdos próprios do perfil.
+
 ============================================================ */
 
 const PerfilEditor = (() => {
 
-
 "use strict";
 
-
 /* ========================================================
-   CONTROLE DE INICIALIZAÇÃO
-   ======================================================== */
+CONTROLE DE INICIALIZAÇÃO
+======================================================== */
 
 let inicializado = false;
 
 let iniciando = false;
 
-
 /* ========================================================
-   PÁGINAS
-   ======================================================== */
+PÁGINAS
+======================================================== */
 
 const PAGINA_EDITOR =
-    "editar-perfil.html";
-
+"editar-perfil.html";
 
 const PAGINA_PERFIL =
-    "meu-perfil.html";
-
+"meu-perfil.html";
 
 /* ========================================================
-   UTILITÁRIO — PÁGINA ATUAL
-   ======================================================== */
+UTILITÁRIO — PÁGINA ATUAL
+======================================================== */
 
 function obterPaginaAtual() {
 
@@ -146,10 +178,9 @@ function obterPaginaAtual() {
 
 }
 
-
 /* ========================================================
-   CONFIGURAÇÃO CENTRAL
-   ======================================================== */
+CONFIGURAÇÃO CENTRAL
+======================================================== */
 
 const CONFIG = {
 
@@ -162,7 +193,6 @@ const CONFIG = {
     paginaPerfil:
         PAGINA_PERFIL,
 
-
     buckets: {
 
         foto:
@@ -172,7 +202,6 @@ const CONFIG = {
             "portfolio-musicos"
 
     },
-
 
     tabelas: {
 
@@ -186,16 +215,18 @@ const CONFIG = {
             "tipos_perfil",
 
         perfisArtistas:
-            "perfis_artistas"
+            "perfis_artistas",
+
+        perfisEstabelecimentos:
+            "perfis_estabelecimentos"
 
     }
 
 };
 
-
 /* ========================================================
-   ESTADO CENTRAL
-   ======================================================== */
+ESTADO CENTRAL
+======================================================== */
 
 const estado = {
 
@@ -211,6 +242,9 @@ const estado = {
     perfilArtista:
         null,
 
+    perfilEstabelecimento:
+        null,
+
     tipoPerfil:
         null,
 
@@ -220,18 +254,17 @@ const estado = {
     isContratante:
         false,
 
+    isEstabelecimento:
+        false,
 
     fotoArquivo:
         null,
 
-
     salvando:
         false,
 
-
     abaAtual:
         "sobre",
-
 
     portfolio:
         [],
@@ -239,32 +272,26 @@ const estado = {
     agenda:
         [],
 
-
     tipoMedia:
         "imagem",
-
 
     editandoPortfolioId:
         null,
 
-
     editandoAgendaId:
         null,
 
-
     servicosValores:
         [],
-
 
     editandoServicoId:
         null
 
 };
 
-
 /* ========================================================
-   IDs DOS ELEMENTOS DA INTERFACE
-   ======================================================== */
+IDs DOS ELEMENTOS DA INTERFACE
+======================================================== */
 
 const ids = {
 
@@ -298,6 +325,48 @@ const ids = {
     emailConta:
         "emailConta",
 
+    /* ====================================================
+       DADOS DO ESTABELECIMENTO
+       ==================================================== */
+
+    endereco:
+        "endereco",
+
+    numero:
+        "numero",
+
+    bairro:
+        "bairro",
+
+    cidade:
+        "cidade",
+
+    estado:
+        "estado",
+
+    cep:
+        "cep",
+
+    telefoneComercial:
+        "telefoneComercial",
+
+    instagram:
+        "instagram",
+
+    site:
+        "site",
+
+    capacidade:
+        "capacidade",
+
+    estrutura:
+        "estrutura",
+
+    estilosMusicais:
+        "estilosMusicais",
+
+    aceitaMusicaAoVivo:
+        "aceitaMusicaAoVivo",
 
     /* ====================================================
        FOTO DO PERFIL
@@ -315,7 +384,6 @@ const ids = {
     btnRemoverFoto:
         "btnRemoverFoto",
 
-
     /* ====================================================
        COMPATIBILIDADE COM OUTROS MÓDULOS
        ==================================================== */
@@ -325,7 +393,6 @@ const ids = {
 
     avatarInitials:
         "avatarInitials",
-
 
     form:
         "formPerfil",
@@ -342,10 +409,8 @@ const ids = {
     btnCancelar:
         "btnCancelar",
 
-
     contadorDescricao:
         "contadorDescricao",
-
 
     /* ====================================================
        PORTFÓLIO
@@ -371,7 +436,6 @@ const ids = {
 
     portfolioEditList:
         "portfolioEditList",
-
 
     /* ====================================================
        AGENDA
@@ -403,7 +467,6 @@ const ids = {
 
     agendaEditList:
         "agendaEditList",
-
 
     /* ====================================================
        SERVIÇOS
@@ -439,7 +502,6 @@ const ids = {
     servicosList:
         "servicosList",
 
-
     /* ====================================================
        INTERFACE GERAL
        ==================================================== */
@@ -458,10 +520,9 @@ const ids = {
 
 };
 
-
 /* ========================================================
-   CONTEXTO COMPARTILHADO
-   ======================================================== */
+CONTEXTO COMPARTILHADO
+======================================================== */
 
 const contexto = {
 
@@ -471,13 +532,11 @@ const contexto = {
 
     ids,
 
-
     get supabase() {
 
         return window.supabaseClient;
 
     },
-
 
     get el() {
 
@@ -494,7 +553,6 @@ const contexto = {
 
     },
 
-
     get utils() {
 
         return window.PerfilUtils || null;
@@ -503,10 +561,9 @@ const contexto = {
 
 };
 
-
 /* ========================================================
-   ELEMENTO HTML
-   ======================================================== */
+ELEMENTO HTML
+======================================================== */
 
 function el(id) {
 
@@ -516,15 +573,13 @@ function el(id) {
 
     }
 
-
     return document.getElementById(id);
 
 }
 
-
 /* ========================================================
-   TIPO DE PERFIL
-   ======================================================== */
+TIPO DE PERFIL
+======================================================== */
 
 function obterTipoPerfil() {
 
@@ -535,16 +590,15 @@ function obterTipoPerfil() {
             .trim()
             .toLowerCase();
 
-
     if (
         tipo === "artista" ||
-        tipo === "contratante"
+        tipo === "contratante" ||
+        tipo === "estabelecimento"
     ) {
 
         return tipo;
 
     }
-
 
     if (estado.isArtista === true) {
 
@@ -552,22 +606,25 @@ function obterTipoPerfil() {
 
     }
 
-
     if (estado.isContratante === true) {
 
         return "contratante";
 
     }
 
+    if (estado.isEstabelecimento === true) {
+
+        return "estabelecimento";
+
+    }
 
     return "";
 
 }
 
-
 /* ========================================================
-   VERIFICAR ARTISTA
-   ======================================================== */
+VERIFICAR ARTISTA
+======================================================== */
 
 function ehArtista() {
 
@@ -575,10 +632,9 @@ function ehArtista() {
 
 }
 
-
 /* ========================================================
-   VERIFICAR CONTRATANTE
-   ======================================================== */
+VERIFICAR CONTRATANTE
+======================================================== */
 
 function ehContratante() {
 
@@ -586,10 +642,19 @@ function ehContratante() {
 
 }
 
+/* ========================================================
+VERIFICAR ESTABELECIMENTO
+======================================================== */
+
+function ehEstabelecimento() {
+
+    return obterTipoPerfil() === "estabelecimento";
+
+}
 
 /* ========================================================
-   ATUALIZAR ESTADO DO TIPO DE PERFIL
-   ======================================================== */
+ATUALIZAR ESTADO DO TIPO DE PERFIL
+======================================================== */
 
 function atualizarEstadoTipoPerfil(
     resultado
@@ -600,7 +665,6 @@ function atualizarEstadoTipoPerfil(
         return;
 
     }
-
 
     if (
         resultado.tipoPerfil
@@ -615,7 +679,6 @@ function atualizarEstadoTipoPerfil(
 
     }
 
-
     if (
         typeof resultado.isArtista === "boolean"
     ) {
@@ -624,7 +687,6 @@ function atualizarEstadoTipoPerfil(
             resultado.isArtista;
 
     }
-
 
     if (
         typeof resultado.isContratante === "boolean"
@@ -635,6 +697,23 @@ function atualizarEstadoTipoPerfil(
 
     }
 
+    if (
+        typeof resultado.isEstabelecimento === "boolean"
+    ) {
+
+        estado.isEstabelecimento =
+            resultado.isEstabelecimento;
+
+    }
+
+    if (
+        resultado.perfilEstabelecimento
+    ) {
+
+        estado.perfilEstabelecimento =
+            resultado.perfilEstabelecimento;
+
+    }
 
     if (
         estado.tipoPerfil === "artista"
@@ -646,8 +725,10 @@ function atualizarEstadoTipoPerfil(
         estado.isContratante =
             false;
 
-    }
+        estado.isEstabelecimento =
+            false;
 
+    }
 
     if (
         estado.tipoPerfil === "contratante"
@@ -659,14 +740,31 @@ function atualizarEstadoTipoPerfil(
         estado.isContratante =
             true;
 
+        estado.isEstabelecimento =
+            false;
+
+    }
+
+    if (
+        estado.tipoPerfil === "estabelecimento"
+    ) {
+
+        estado.isArtista =
+            false;
+
+        estado.isContratante =
+            false;
+
+        estado.isEstabelecimento =
+            true;
+
     }
 
 }
 
-
 /* ========================================================
-   TIPO ARTÍSTICO
-   ======================================================== */
+TIPO ARTÍSTICO
+======================================================== */
 
 function preencherTipoArtista(
     campoTipo,
@@ -678,7 +776,6 @@ function preencherTipoArtista(
         return;
 
     }
-
 
     if (
         window.PerfilEditorUI &&
@@ -694,13 +791,11 @@ function preencherTipoArtista(
 
     }
 
-
     console.warn(
         "PerfilEditor: PerfilEditorUI.preencherTipoArtista não está disponível."
     );
 
 }
-
 
 function obterTipoConfigurado(
     valor
@@ -717,11 +812,9 @@ function obterTipoConfigurado(
 
     }
 
-
     return null;
 
 }
-
 
 function resolverTipo(
     valor
@@ -738,11 +831,9 @@ function resolverTipo(
 
     }
 
-
     return null;
 
 }
-
 
 function tipoPossuiRecurso(
     recurso,
@@ -761,11 +852,9 @@ function tipoPossuiRecurso(
 
     }
 
-
     return false;
 
 }
-
 
 function tipoPossuiInstrumentos(
     tipo
@@ -782,26 +871,24 @@ function tipoPossuiInstrumentos(
 
     }
 
-
     return false;
 
 }
 
-
 /* ========================================================
-   CONFIGURAR INSTRUMENTOS POR TIPO
-   ========================================================
+CONFIGURAR INSTRUMENTOS POR TIPO
+========================================================
 
-   Somente artistas possuem instrumentos.
+Somente artistas possuem instrumentos.
 
-   Para contratante:
+Para contratante e estabelecimento:
 
-   - não inicializa PerfilInstrumentos;
-   - não carrega instrumentos;
-   - oculta o campo;
-   - não acessa perfilArtista.
+* não inicializa PerfilInstrumentos;
+* não carrega instrumentos;
+* oculta o campo;
+* não acessa perfilArtista.
 
-   ======================================================== */
+======================================================== */
 
 function configurarInstrumentosPorTipo() {
 
@@ -816,10 +903,8 @@ function configurarInstrumentosPorTipo() {
 
         }
 
-
         const campoInstrumentos =
             el("campoInstrumentos");
-
 
         if (campoInstrumentos) {
 
@@ -828,32 +913,26 @@ function configurarInstrumentosPorTipo() {
 
         }
 
-
         return;
 
     }
 
-
     const tipoAtual =
         estado.perfilArtista?.tipo_artista;
-
 
     const tipoConfigurado =
         resolverTipo(
             tipoAtual
         );
 
-
     const campoInstrumentos =
         el("campoInstrumentos");
-
 
     const possuiInstrumentos =
         tipoPossuiInstrumentos(
             tipoConfigurado ||
             tipoAtual
         );
-
 
     if (!possuiInstrumentos) {
 
@@ -866,7 +945,6 @@ function configurarInstrumentosPorTipo() {
 
         }
 
-
         if (campoInstrumentos) {
 
             campoInstrumentos.style.display =
@@ -874,11 +952,9 @@ function configurarInstrumentosPorTipo() {
 
         }
 
-
         return;
 
     }
-
 
     if (campoInstrumentos) {
 
@@ -886,7 +962,6 @@ function configurarInstrumentosPorTipo() {
             "";
 
     }
-
 
     if (
         window.PerfilInstrumentos &&
@@ -896,7 +971,6 @@ function configurarInstrumentosPorTipo() {
         window.PerfilInstrumentos.inicializar();
 
     }
-
 
     if (
         window.PerfilInstrumentos &&
@@ -911,14 +985,18 @@ function configurarInstrumentosPorTipo() {
 
 }
 
-
 /* ========================================================
-   CONFIGURAR ESTILOS MUSICAIS
-   ========================================================
+CONFIGURAR ESTILOS MUSICAIS
+========================================================
 
-   Somente artistas possuem estilos.
+Somente artistas possuem os estilos administrados pelo
+módulo PerfilEstilos.
 
-   ======================================================== */
+Estabelecimentos possuem o campo próprio
+estilos_musicais em perfis_estabelecimentos, tratado
+separadamente pelo editor.
+
+======================================================== */
 
 function configurarEstilos() {
 
@@ -927,7 +1005,6 @@ function configurarEstilos() {
         return;
 
     }
-
 
     if (!window.PerfilEstilos) {
 
@@ -939,7 +1016,6 @@ function configurarEstilos() {
 
     }
 
-
     if (
         typeof window.PerfilEstilos.configurar === "function"
     ) {
@@ -949,7 +1025,6 @@ function configurarEstilos() {
         );
 
     }
-
 
     if (
         typeof window.PerfilEstilos.inicializar === "function"
@@ -961,10 +1036,9 @@ function configurarEstilos() {
 
 }
 
-
 /* ========================================================
-   CARREGAR ESTILOS MUSICAIS
-   ======================================================== */
+CARREGAR ESTILOS MUSICAIS
+======================================================== */
 
 function carregarEstilos() {
 
@@ -974,13 +1048,11 @@ function carregarEstilos() {
 
     }
 
-
     if (!window.PerfilEstilos) {
 
         return;
 
     }
-
 
     if (
         typeof window.PerfilEstilos.carregar !== "function"
@@ -990,28 +1062,45 @@ function carregarEstilos() {
 
     }
 
-
     window.PerfilEstilos.carregar(
         estado.perfilArtista?.estilos || []
     );
 
 }
 
-
 /* ========================================================
-   CONFIGURAR PORTFÓLIO
-   ========================================================
+CONFIGURAR PORTFÓLIO
+========================================================
 
-   Portfólio permanece disponível para:
+Portfólio permanece disponível para:
 
-   - artista;
-   - contratante.
+* artista;
+* contratante;
+* estabelecimento.
 
-   Por isso não existe bloqueio por tipo aqui.
+Cada tipo pode utilizar o mesmo módulo de portfólio
+para administrar os conteúdos vinculados ao próprio perfil.
 
-   ======================================================== */
+A inicialização do formulário acontece aqui porque o tipo
+do perfil somente está definido depois que PerfilEditorDados
+conclui o carregamento dos dados do perfil.
+
+======================================================== */
 
 async function configurarPortfolioPorTipo() {
+
+    if (
+        !ehArtista() &&
+        !ehContratante() &&
+        !ehEstabelecimento()
+    ) {
+
+        estado.portfolio =
+            [];
+
+        return [];
+
+    }
 
     if (!window.PerfilPortfolio) {
 
@@ -1023,6 +1112,9 @@ async function configurarPortfolioPorTipo() {
 
     }
 
+    /* ====================================================
+       CONFIGURAR CONTEXTO
+       ==================================================== */
 
     if (
         typeof window.PerfilPortfolio.configurar === "function"
@@ -1034,6 +1126,36 @@ async function configurarPortfolioPorTipo() {
 
     }
 
+    /* ====================================================
+       INICIALIZAR FORMULÁRIO
+       ====================================================
+
+       O PerfilPortfolio também precisa ser inicializado
+       depois que o tipo do perfil já estiver definido.
+
+       Isso registra os eventos do formulário, incluindo:
+
+       * seleção de Imagem;
+       * seleção de Vídeo;
+       * seleção de Áudio;
+       * botão de adicionar;
+       * edição;
+       * exclusão;
+       * destaque.
+
+       ==================================================== */
+
+    if (
+        typeof window.PerfilPortfolio.inicializar === "function"
+    ) {
+
+        window.PerfilPortfolio.inicializar();
+
+    }
+
+    /* ====================================================
+       CARREGAR ITENS EXISTENTES
+       ==================================================== */
 
     if (
         typeof window.PerfilPortfolio.carregar === "function"
@@ -1042,7 +1164,6 @@ async function configurarPortfolioPorTipo() {
         const resultado =
             await window.PerfilPortfolio.carregar();
 
-
         if (Array.isArray(resultado)) {
 
             estado.portfolio =
@@ -1050,106 +1171,85 @@ async function configurarPortfolioPorTipo() {
 
         }
 
-
         return resultado || [];
 
     }
-
 
     return [];
 
 }
 
-
 /* ========================================================
-   CONFIGURAÇÃO DOS MÓDULOS
-   ======================================================== */
+CONFIGURAÇÃO DOS MÓDULOS
+======================================================== */
 
 function configurarModulos() {
 
     contexto.PerfilEditorUI =
         window.PerfilEditorUI || null;
 
-
     contexto.PerfilEditorDados =
         window.PerfilEditorDados || null;
-
 
     contexto.PerfilEditorTipo =
         window.PerfilEditorTipo || null;
 
-
     contexto.PerfilEditorFoto =
         window.PerfilEditorFoto || null;
-
 
     contexto.PerfilAbas =
         window.PerfilAbas || null;
 
-
     contexto.PerfilPortfolio =
         window.PerfilPortfolio || null;
-
 
     contexto.PerfilAgenda =
         window.PerfilAgenda || null;
 
-
     contexto.PerfilServicos =
         window.PerfilServicos || null;
-
 
     contexto.PerfilInstrumentos =
         window.PerfilInstrumentos || null;
 
-
     contexto.PerfilEstilos =
         window.PerfilEstilos || null;
-
 
     contexto.preencherTipoArtista =
         preencherTipoArtista;
 
-
     contexto.obterTipoConfigurado =
         obterTipoConfigurado;
-
 
     contexto.resolverTipo =
         resolverTipo;
 
-
     contexto.tipoPossuiRecurso =
         tipoPossuiRecurso;
-
 
     contexto.tipoPossuiInstrumentos =
         tipoPossuiInstrumentos;
 
-
     contexto.configurarInstrumentosPorTipo =
         configurarInstrumentosPorTipo;
-
 
     contexto.configurarEstilos =
         configurarEstilos;
 
-
     contexto.carregarEstilos =
         carregarEstilos;
-
 
     contexto.configurarPortfolioPorTipo =
         configurarPortfolioPorTipo;
 
-
     contexto.ehArtista =
         ehArtista;
-
 
     contexto.ehContratante =
         ehContratante;
 
+    contexto.ehEstabelecimento =
+        ehEstabelecimento;
 
     /* ====================================================
        UI
@@ -1172,7 +1272,6 @@ function configurarModulos() {
 
     }
 
-
     /* ====================================================
        DADOS
        ==================================================== */
@@ -1193,7 +1292,6 @@ function configurarModulos() {
         );
 
     }
-
 
     /* ====================================================
        FOTO
@@ -1216,7 +1314,6 @@ function configurarModulos() {
 
     }
 
-
     /* ====================================================
        ABAS
        ==================================================== */
@@ -1231,7 +1328,6 @@ function configurarModulos() {
         );
 
     }
-
 
     /* ====================================================
        PORTFÓLIO
@@ -1248,7 +1344,6 @@ function configurarModulos() {
 
     }
 
-
     /* ====================================================
        AGENDA
        ==================================================== */
@@ -1264,17 +1359,8 @@ function configurarModulos() {
 
     }
 
-
     /* ====================================================
        SERVIÇOS
-       ====================================================
-
-       A configuração pode acontecer normalmente, mas o
-       módulo só será inicializado/carregado para artista.
-
-       Isso evita que o módulo de serviços execute lógica
-       artística para contratantes.
-
        ==================================================== */
 
     if (
@@ -1287,7 +1373,6 @@ function configurarModulos() {
         );
 
     }
-
 
     /* ====================================================
        INSTRUMENTOS
@@ -1303,7 +1388,6 @@ function configurarModulos() {
         );
 
     }
-
 
     /* ====================================================
        ESTILOS MUSICAIS
@@ -1322,10 +1406,9 @@ function configurarModulos() {
 
 }
 
-
 /* ========================================================
-   CARREGAR DADOS
-   ======================================================== */
+CARREGAR DADOS
+======================================================== */
 
 async function carregarDados() {
 
@@ -1340,17 +1423,14 @@ async function carregarDados() {
 
     }
 
-
     const resultado =
         await contexto.PerfilEditorDados.carregarDados();
-
 
     if (!resultado) {
 
         return null;
 
     }
-
 
     /* ====================================================
        ATUALIZAR TIPO DE PERFIL
@@ -1359,7 +1439,6 @@ async function carregarDados() {
     atualizarEstadoTipoPerfil(
         resultado
     );
-
 
     /* ====================================================
        ATUALIZAR UI POR TIPO
@@ -1374,7 +1453,6 @@ async function carregarDados() {
 
     }
 
-
     /* ====================================================
        CONFIGURAÇÕES EXCLUSIVAS DE ARTISTA
        ==================================================== */
@@ -1384,7 +1462,6 @@ async function carregarDados() {
         configurarEstilos();
 
     }
-
 
     /* ====================================================
        FORMULÁRIO
@@ -1399,7 +1476,6 @@ async function carregarDados() {
 
     }
 
-
     /* ====================================================
        ESTILOS
        ==================================================== */
@@ -1410,38 +1486,44 @@ async function carregarDados() {
 
     }
 
-
     /* ====================================================
        INSTRUMENTOS
        ==================================================== */
 
     configurarInstrumentosPorTipo();
 
-
     /* ====================================================
        PORTFÓLIO
        ==================================================== */
 
-    try {
+    if (
+        ehArtista() ||
+        ehContratante() ||
+        ehEstabelecimento()
+    ) {
 
-        await configurarPortfolioPorTipo();
+        try {
 
-    } catch (erroPortfolio) {
+            await configurarPortfolioPorTipo();
 
-        console.error(
-            "PerfilEditor: erro ao carregar portfólio:",
-            erroPortfolio
-        );
+        } catch (erroPortfolio) {
+
+            console.error(
+                "PerfilEditor: erro ao carregar portfólio:",
+                erroPortfolio
+            );
+
+        }
+
+    } else {
+
+        estado.portfolio =
+            [];
 
     }
 
-
     /* ====================================================
        SERVIÇOS
-       ====================================================
-
-       SOMENTE ARTISTA.
-
        ==================================================== */
 
     if (
@@ -1465,13 +1547,8 @@ async function carregarDados() {
 
     }
 
-
     /* ====================================================
        AGENDA
-       ====================================================
-
-       Artista e contratante.
-
        ==================================================== */
 
     if (
@@ -1483,7 +1560,6 @@ async function carregarDados() {
 
             const agenda =
                 await contexto.PerfilAgenda.carregar();
-
 
             if (Array.isArray(agenda)) {
 
@@ -1503,15 +1579,13 @@ async function carregarDados() {
 
     }
 
-
     return resultado;
 
 }
 
-
 /* ========================================================
-   PREENCHER FORMULÁRIO
-   ======================================================== */
+PREENCHER FORMULÁRIO
+======================================================== */
 
 function preencherFormulario() {
 
@@ -1524,17 +1598,15 @@ function preencherFormulario() {
 
     }
 
-
     console.warn(
         "PerfilEditor: PerfilEditorUI.preencherFormulario não está disponível."
     );
 
 }
 
-
 /* ========================================================
-   PREENCHER AVATAR
-   ======================================================== */
+PREENCHER AVATAR
+======================================================== */
 
 function preencherAvatar() {
 
@@ -1547,17 +1619,15 @@ function preencherAvatar() {
 
     }
 
-
     console.warn(
         "PerfilEditor: PerfilEditorUI.preencherAvatar não está disponível."
     );
 
 }
 
-
 /* ========================================================
-   ATUALIZAR CONTADOR
-   ======================================================== */
+ATUALIZAR CONTADOR
+======================================================== */
 
 function atualizarContador() {
 
@@ -1572,10 +1642,186 @@ function atualizarContador() {
 
 }
 
+/* ========================================================
+LER DADOS DO ESTABELECIMENTO
+======================================================== */
+
+function obterDadosEstabelecimento() {
+
+    if (!ehEstabelecimento()) {
+
+        return {
+
+            endereco:
+                "",
+
+            numero:
+                "",
+
+            bairro:
+                "",
+
+            cidade:
+                "",
+
+            estado:
+                "",
+
+            cep:
+                "",
+
+            telefoneComercial:
+                "",
+
+            instagram:
+                "",
+
+            site:
+                "",
+
+            capacidade:
+                null,
+
+            estrutura:
+                "",
+
+            estilosMusicais:
+                "",
+
+            aceitaMusicaAoVivo:
+                false
+
+        };
+
+    }
+
+    const campoEndereco =
+        el(ids.endereco);
+
+    const campoNumero =
+        el(ids.numero);
+
+    const campoBairro =
+        el(ids.bairro);
+
+    const campoCidade =
+        el(ids.cidade);
+
+    const campoEstado =
+        el(ids.estado);
+
+    const campoCep =
+        el(ids.cep);
+
+    const campoTelefoneComercial =
+        el(ids.telefoneComercial);
+
+    const campoInstagram =
+        el(ids.instagram);
+
+    const campoSite =
+        el(ids.site);
+
+    const campoCapacidade =
+        el(ids.capacidade);
+
+    const campoEstrutura =
+        el(ids.estrutura);
+
+    const campoEstilosMusicais =
+        el(ids.estilosMusicais);
+
+    const campoAceitaMusicaAoVivo =
+        el(ids.aceitaMusicaAoVivo);
+
+    const valorCapacidade =
+        campoCapacidade?.value !== undefined &&
+        campoCapacidade?.value !== ""
+            ? Number(
+                campoCapacidade.value
+            )
+            : null;
+
+    return {
+
+        endereco:
+            String(
+                campoEndereco?.value || ""
+            ).trim(),
+
+        numero:
+            String(
+                campoNumero?.value || ""
+            ).trim(),
+
+        bairro:
+            String(
+                campoBairro?.value || ""
+            ).trim(),
+
+        cidade:
+            String(
+                campoCidade?.value || ""
+            ).trim(),
+
+        estado:
+            String(
+                campoEstado?.value || ""
+            ).trim(),
+
+        cep:
+            String(
+                campoCep?.value || ""
+            ).trim(),
+
+        telefoneComercial:
+            String(
+                campoTelefoneComercial?.value || ""
+            ).trim(),
+
+        instagram:
+            String(
+                campoInstagram?.value || ""
+            ).trim(),
+
+        site:
+            String(
+                campoSite?.value || ""
+            ).trim(),
+
+        capacidade:
+            Number.isFinite(
+                valorCapacidade
+            )
+                ? valorCapacidade
+                : null,
+
+        estrutura:
+            String(
+                campoEstrutura?.value || ""
+            ).trim(),
+
+        estilosMusicais:
+            String(
+                campoEstilosMusicais?.value || ""
+            ).trim(),
+
+        aceitaMusicaAoVivo:
+            campoAceitaMusicaAoVivo
+                ? Boolean(
+                    campoAceitaMusicaAoVivo.checked
+                )
+                : Boolean(
+                    estado.perfilEstabelecimento?.aceita_musica_ao_vivo
+                )
+
+    };
+
+}
 
 /* ========================================================
-   SALVAR ABA SOBRE
-   ======================================================== */
+SALVAR ABA SOBRE
+======================================================== */
 
 async function salvarSobre() {
 
@@ -1585,80 +1831,66 @@ async function salvarSobre() {
 
     }
 
-
     const artista =
         ehArtista();
 
+    const estabelecimento =
+        ehEstabelecimento();
 
     const campoNome =
         el(ids.nome);
 
-
     const campoNomeExibicao =
         el(ids.nomeExibicao);
-
 
     const campoTelefone =
         el(ids.telefone);
 
-
     const campoLocalizacao =
         el(ids.localizacao);
-
 
     const campoDescricao =
         el(ids.descricao);
 
-
     const campoExperiencia =
         el(ids.experiencia);
-
 
     const campoArea =
         el(ids.areaAtendimento);
 
-
     const campoTipo =
         el(ids.tipoArtista);
-
 
     const campoDisponivel =
         el(ids.disponivel);
 
-
     const campoPerfilPublicado =
         el("perfilPublicado");
-
 
     const nome =
         String(
             campoNome?.value || ""
         ).trim();
 
-
     const nomeExibicao =
         String(
             campoNomeExibicao?.value || ""
         ).trim();
-
 
     const telefone =
         String(
             campoTelefone?.value || ""
         ).trim();
 
-
     const localizacao =
         String(
             campoLocalizacao?.value || ""
         ).trim();
 
-
     const descricao =
         String(
             campoDescricao?.value || ""
         ).trim();
-
 
     /* ====================================================
        CAMPOS EXCLUSIVOS DO ARTISTA
@@ -1667,18 +1899,14 @@ async function salvarSobre() {
     let experiencia =
         "";
 
-
     let areaAtendimento =
         "";
-
 
     let tipoSelecionado =
         "";
 
-
     let disponivel =
         true;
-
 
     if (artista) {
 
@@ -1687,18 +1915,15 @@ async function salvarSobre() {
                 campoExperiencia?.value || ""
             ).trim();
 
-
         areaAtendimento =
             String(
                 campoArea?.value || ""
             ).trim();
 
-
         tipoSelecionado =
             String(
                 campoTipo?.value || ""
             ).trim();
-
 
         disponivel =
             campoDisponivel
@@ -1709,6 +1934,12 @@ async function salvarSobre() {
 
     }
 
+    /* ====================================================
+       CAMPOS DO ESTABELECIMENTO
+       ==================================================== */
+
+    const dadosEstabelecimento =
+        obterDadosEstabelecimento();
 
     const perfilPublicado =
         campoPerfilPublicado
@@ -1716,7 +1947,6 @@ async function salvarSobre() {
                 campoPerfilPublicado.checked
             )
             : estado.perfil?.perfil_publicado === true;
-
 
     /* ====================================================
        VALIDAÇÕES BÁSICAS
@@ -1735,7 +1965,6 @@ async function salvarSobre() {
 
     }
 
-
     if (!nomeExibicao) {
 
         mostrarToast(
@@ -1748,7 +1977,6 @@ async function salvarSobre() {
         return;
 
     }
-
 
     if (
         descricao.length >
@@ -1766,7 +1994,6 @@ async function salvarSobre() {
 
     }
 
-
     /* ====================================================
        DADOS ARTÍSTICOS
        ==================================================== */
@@ -1774,18 +2001,14 @@ async function salvarSobre() {
     let tipoValidado =
         null;
 
-
     let instrumentos =
         [];
-
 
     let estilos =
         [];
 
-
     let servicos =
         [];
-
 
     if (artista) {
 
@@ -1798,7 +2021,6 @@ async function salvarSobre() {
                 tipoSelecionado
             );
 
-
         if (!tipoValidado) {
 
             const tipoDaPagina =
@@ -1809,13 +2031,11 @@ async function salvarSobre() {
 
                     : null;
 
-
             tipoValidado =
                 tipoDaPagina ||
                 null;
 
         }
-
 
         if (!tipoValidado) {
 
@@ -1830,7 +2050,6 @@ async function salvarSobre() {
 
         }
 
-
         /* ================================================
            VERIFICAR ALTERAÇÃO DO TIPO
            ================================================ */
@@ -1840,14 +2059,12 @@ async function salvarSobre() {
                 estado.perfilArtista?.tipo_artista
             );
 
-
         const tipoMudou =
             Boolean(
                 tipoAnterior?.nome &&
                 tipoValidado?.nome &&
                 tipoAnterior.nome !== tipoValidado.nome
             );
-
 
         if (tipoMudou) {
 
@@ -1856,7 +2073,6 @@ async function salvarSobre() {
                     `O tipo artístico será alterado de "${tipoAnterior.nome}" para "${tipoValidado.nome}". Deseja continuar?`
                 );
 
-
             if (!confirmar) {
 
                 return;
@@ -1864,7 +2080,6 @@ async function salvarSobre() {
             }
 
         }
-
 
         /* ================================================
            INSTRUMENTOS
@@ -1904,7 +2119,6 @@ async function salvarSobre() {
             }
 
         }
-
 
         /* ================================================
            ESTILOS MUSICAIS
@@ -1957,7 +2171,6 @@ async function salvarSobre() {
 
         }
 
-
         /* ================================================
            CHIPS DE SERVIÇOS DO PERFIL
            ================================================ */
@@ -1995,7 +2208,6 @@ async function salvarSobre() {
 
     }
 
-
     /* ====================================================
        INICIAR SALVAMENTO
        ==================================================== */
@@ -2003,17 +2215,14 @@ async function salvarSobre() {
     estado.salvando =
         true;
 
-
     bloquearBotoesSalvar(
         true
     );
-
 
     mostrarLoading(
         true,
         "Salvando perfil..."
     );
-
 
     try {
 
@@ -2035,10 +2244,8 @@ async function salvarSobre() {
                     null
                 );
 
-
         let resultadoFoto =
             null;
-
 
         if (
             contexto.PerfilEditorFoto &&
@@ -2047,7 +2254,6 @@ async function salvarSobre() {
 
             resultadoFoto =
                 await contexto.PerfilEditorFoto.fazerUpload();
-
 
             if (
                 resultadoFoto &&
@@ -2067,7 +2273,6 @@ async function salvarSobre() {
             }
 
         }
-
 
         /* =================================================
            DADOS PARA O MÓDULO DE PERSISTÊNCIA
@@ -2101,10 +2306,56 @@ async function salvarSobre() {
 
             fotoUrl,
 
-            perfilPublicado
+            perfilPublicado,
+
+            /* =============================================
+               DADOS DO ESTABELECIMENTO
+
+               O PerfilEditor apenas transporta os valores.
+               A persistência é responsabilidade exclusiva
+               do PerfilEditorDados.js.
+               ============================================= */
+
+            endereco:
+                dadosEstabelecimento.endereco,
+
+            numero:
+                dadosEstabelecimento.numero,
+
+            bairro:
+                dadosEstabelecimento.bairro,
+
+            cidade:
+                dadosEstabelecimento.cidade,
+
+            estado:
+                dadosEstabelecimento.estado,
+
+            cep:
+                dadosEstabelecimento.cep,
+
+            telefoneComercial:
+                dadosEstabelecimento.telefoneComercial,
+
+            instagram:
+                dadosEstabelecimento.instagram,
+
+            site:
+                dadosEstabelecimento.site,
+
+            capacidade:
+                dadosEstabelecimento.capacidade,
+
+            estrutura:
+                dadosEstabelecimento.estrutura,
+
+            estilosMusicais:
+                dadosEstabelecimento.estilosMusicais,
+
+            aceitaMusicaAoVivo:
+                dadosEstabelecimento.aceitaMusicaAoVivo
 
         };
-
 
         if (
             !contexto.PerfilEditorDados ||
@@ -2117,12 +2368,10 @@ async function salvarSobre() {
 
         }
 
-
         const resultado =
             await contexto.PerfilEditorDados.salvarPerfil(
                 dadosSalvar
             );
-
 
         /* =================================================
            FINALIZAR FOTO
@@ -2139,7 +2388,6 @@ async function salvarSobre() {
             );
 
         }
-
 
         /* =================================================
            REFLETIR PUBLICAÇÃO
@@ -2162,7 +2410,6 @@ async function salvarSobre() {
 
         }
 
-
         /* =================================================
            ATUALIZAR DADOS COMUNS LOCALMENTE
            ================================================= */
@@ -2177,7 +2424,6 @@ async function salvarSobre() {
 
         }
 
-
         if (estado.perfil) {
 
             estado.perfil.nome_exibicao =
@@ -2190,7 +2436,6 @@ async function salvarSobre() {
                 perfilPublicado;
 
         }
-
 
         /* =================================================
            ATUALIZAR DADOS ARTÍSTICOS LOCALMENTE
@@ -2210,7 +2455,6 @@ async function salvarSobre() {
 
             }
 
-
             if (
                 !estado.perfilArtista
             ) {
@@ -2219,7 +2463,6 @@ async function salvarSobre() {
                     {};
 
             }
-
 
             if (
                 tipoValidado?.nome
@@ -2230,7 +2473,6 @@ async function salvarSobre() {
 
             }
 
-
             if (
                 fotoUrl
             ) {
@@ -2240,30 +2482,24 @@ async function salvarSobre() {
 
             }
 
-
             estado.perfilArtista.experiencia =
                 experiencia;
-
 
             estado.perfilArtista.area_atendimento =
                 areaAtendimento;
 
-
             estado.perfilArtista.disponivel =
                 disponivel;
-
 
             estado.perfilArtista.instrumentos =
                 [
                     ...instrumentos
                 ];
 
-
             estado.perfilArtista.estilos =
                 [
                     ...estilos
                 ];
-
 
             estado.perfilArtista.servicos =
                 [
@@ -2272,6 +2508,73 @@ async function salvarSobre() {
 
         }
 
+        /* =================================================
+           ATUALIZAR DADOS DO ESTABELECIMENTO LOCALMENTE
+           ================================================= */
+
+        if (estabelecimento) {
+
+            if (
+                resultado?.perfilEstabelecimento
+            ) {
+
+                estado.perfilEstabelecimento =
+                    {
+                        ...estado.perfilEstabelecimento,
+                        ...resultado.perfilEstabelecimento
+                    };
+
+            }
+
+            if (
+                !estado.perfilEstabelecimento
+            ) {
+
+                estado.perfilEstabelecimento =
+                    {};
+
+            }
+
+            estado.perfilEstabelecimento.endereco =
+                dadosEstabelecimento.endereco;
+
+            estado.perfilEstabelecimento.numero =
+                dadosEstabelecimento.numero;
+
+            estado.perfilEstabelecimento.bairro =
+                dadosEstabelecimento.bairro;
+
+            estado.perfilEstabelecimento.cidade =
+                dadosEstabelecimento.cidade;
+
+            estado.perfilEstabelecimento.estado =
+                dadosEstabelecimento.estado;
+
+            estado.perfilEstabelecimento.cep =
+                dadosEstabelecimento.cep;
+
+            estado.perfilEstabelecimento.telefone_comercial =
+                dadosEstabelecimento.telefoneComercial;
+
+            estado.perfilEstabelecimento.instagram =
+                dadosEstabelecimento.instagram;
+
+            estado.perfilEstabelecimento.site =
+                dadosEstabelecimento.site;
+
+            estado.perfilEstabelecimento.capacidade =
+                dadosEstabelecimento.capacidade;
+
+            estado.perfilEstabelecimento.estrutura =
+                dadosEstabelecimento.estrutura;
+
+            estado.perfilEstabelecimento.estilos_musicais =
+                dadosEstabelecimento.estilosMusicais;
+
+            estado.perfilEstabelecimento.aceita_musica_ao_vivo =
+                dadosEstabelecimento.aceitaMusicaAoVivo;
+
+        }
 
         /* =================================================
            ATUALIZAR FOTO NO USUÁRIO
@@ -2286,7 +2589,6 @@ async function salvarSobre() {
                 fotoUrl;
 
         }
-
 
         /* =================================================
            ATUALIZAR TIPO VISUAL
@@ -2310,7 +2612,6 @@ async function salvarSobre() {
 
         }
 
-
         /* =================================================
            ATUALIZAR INSTRUMENTOS
            ================================================= */
@@ -2321,13 +2622,11 @@ async function salvarSobre() {
 
         }
 
-
         /* =================================================
            AVATAR / FOTO
            ================================================= */
 
         preencherAvatar();
-
 
         /* =================================================
            FINALIZAR ESTADO DA FOTO
@@ -2335,7 +2634,6 @@ async function salvarSobre() {
 
         estado.fotoArquivo =
             null;
-
 
         if (
             contexto.PerfilEditorFoto &&
@@ -2346,17 +2644,14 @@ async function salvarSobre() {
 
         }
 
-
         mostrarLoading(
             false
         );
-
 
         mostrarToast(
             "Perfil salvo com sucesso.",
             "sucesso"
         );
-
 
         return resultado;
 
@@ -2367,11 +2662,9 @@ async function salvarSobre() {
             erro
         );
 
-
         mostrarLoading(
             false
         );
-
 
         mostrarToast(
             erro?.message ||
@@ -2379,14 +2672,12 @@ async function salvarSobre() {
             "erro"
         );
 
-
         return null;
 
     } finally {
 
         estado.salvando =
             false;
-
 
         bloquearBotoesSalvar(
             false
@@ -2396,10 +2687,9 @@ async function salvarSobre() {
 
 }
 
-
 /* ========================================================
-   BLOQUEAR BOTÕES DE SALVAMENTO
-   ======================================================== */
+BLOQUEAR BOTÕES DE SALVAMENTO
+======================================================== */
 
 function bloquearBotoesSalvar(
     bloquear
@@ -2413,7 +2703,6 @@ function bloquearBotoesSalvar(
 
     ];
 
-
     botoes.forEach(
         (botao) => {
 
@@ -2423,12 +2712,10 @@ function bloquearBotoesSalvar(
 
             }
 
-
             botao.disabled =
                 Boolean(
                     bloquear
                 );
-
 
             botao.setAttribute(
                 "aria-busy",
@@ -2442,10 +2729,9 @@ function bloquearBotoesSalvar(
 
 }
 
-
 /* ========================================================
-   LOADING
-   ======================================================== */
+LOADING
+======================================================== */
 
 function mostrarLoading(
     mostrar,
@@ -2455,17 +2741,14 @@ function mostrarLoading(
     const overlay =
         el(ids.loadingOverlay);
 
-
     const loadingText =
         el(ids.loadingText);
-
 
     if (!overlay) {
 
         return;
 
     }
-
 
     if (
         loadingText &&
@@ -2477,7 +2760,6 @@ function mostrarLoading(
 
     }
 
-
     overlay.style.display =
         mostrar
             ? "grid"
@@ -2485,10 +2767,9 @@ function mostrarLoading(
 
 }
 
-
 /* ========================================================
-   TOAST
-   ======================================================== */
+TOAST
+======================================================== */
 
 function mostrarToast(
     mensagem,
@@ -2498,10 +2779,8 @@ function mostrarToast(
     const toast =
         el(ids.toast);
 
-
     const toastMessage =
         el(ids.toastMessage);
-
 
     if (toastMessage) {
 
@@ -2510,22 +2789,18 @@ function mostrarToast(
 
     }
 
-
     if (toast) {
 
         toast.dataset.tipo =
             tipo || "info";
 
-
         toast.classList.add(
             "show"
         );
 
-
         window.clearTimeout(
             toast._perfilEditorTimeout
         );
-
 
         toast._perfilEditorTimeout =
             window.setTimeout(
@@ -2551,16 +2826,14 @@ function mostrarToast(
 
 }
 
-
 /* ========================================================
-   EVENTOS
-   ======================================================== */
+EVENTOS
+======================================================== */
 
 function inicializarEventos() {
 
     const formulario =
         el(ids.form);
-
 
     if (
         formulario &&
@@ -2569,7 +2842,6 @@ function inicializarEventos() {
 
         formulario.dataset.perfilEditorInicializado =
             "true";
-
 
         formulario.addEventListener(
             "submit",
@@ -2584,10 +2856,8 @@ function inicializarEventos() {
 
     }
 
-
     const botaoSalvar =
         el(ids.btnSalvar);
-
 
     if (
         botaoSalvar &&
@@ -2596,7 +2866,6 @@ function inicializarEventos() {
 
         botaoSalvar.dataset.perfilEditorInicializado =
             "true";
-
 
         botaoSalvar.addEventListener(
             "click",
@@ -2611,10 +2880,8 @@ function inicializarEventos() {
 
     }
 
-
     const campoDescricao =
         el(ids.descricao);
-
 
     if (
         campoDescricao &&
@@ -2624,7 +2891,6 @@ function inicializarEventos() {
         campoDescricao.dataset.perfilEditorInicializado =
             "true";
 
-
         campoDescricao.addEventListener(
             "input",
             atualizarContador
@@ -2632,10 +2898,8 @@ function inicializarEventos() {
 
     }
 
-
     const botaoSalvarTopo =
         el(ids.btnSalvarTopo);
-
 
     if (
         botaoSalvarTopo &&
@@ -2645,13 +2909,11 @@ function inicializarEventos() {
         botaoSalvarTopo.dataset.perfilEditorInicializado =
             "true";
 
-
         botaoSalvarTopo.addEventListener(
             "click",
             (evento) => {
 
                 evento.preventDefault();
-
 
                 switch (
                     estado.abaAtual
@@ -2660,6 +2922,9 @@ function inicializarEventos() {
                     case "portfolio":
 
                         if (
+                            (ehArtista() ||
+                             ehContratante() ||
+                             ehEstabelecimento()) &&
                             contexto.PerfilPortfolio &&
                             typeof contexto.PerfilPortfolio.salvar === "function"
                         ) {
@@ -2669,7 +2934,6 @@ function inicializarEventos() {
                         }
 
                         break;
-
 
                     case "agenda":
 
@@ -2684,7 +2948,6 @@ function inicializarEventos() {
 
                         break;
 
-
                     case "servicos":
 
                         if (
@@ -2698,7 +2961,6 @@ function inicializarEventos() {
                         }
 
                         break;
-
 
                     case "sobre":
 
@@ -2715,10 +2977,8 @@ function inicializarEventos() {
 
     }
 
-
     const botaoVoltar =
         el(ids.btnVoltar);
-
 
     if (
         botaoVoltar &&
@@ -2727,7 +2987,6 @@ function inicializarEventos() {
 
         botaoVoltar.dataset.perfilEditorInicializado =
             "true";
-
 
         botaoVoltar.addEventListener(
             "click",
@@ -2742,10 +3001,8 @@ function inicializarEventos() {
 
     }
 
-
     const botaoCancelar =
         el(ids.btnCancelar);
-
 
     if (
         botaoCancelar &&
@@ -2754,7 +3011,6 @@ function inicializarEventos() {
 
         botaoCancelar.dataset.perfilEditorInicializado =
             "true";
-
 
         botaoCancelar.addEventListener(
             "click",
@@ -2771,10 +3027,9 @@ function inicializarEventos() {
 
 }
 
-
 /* ========================================================
-   VOLTAR PARA O PERFIL
-   ======================================================== */
+VOLTAR PARA O PERFIL
+======================================================== */
 
 function voltarPerfil() {
 
@@ -2783,10 +3038,9 @@ function voltarPerfil() {
 
 }
 
-
 /* ========================================================
-   INICIALIZAÇÃO
-   ======================================================== */
+INICIALIZAÇÃO
+======================================================== */
 
 async function iniciar() {
 
@@ -2799,10 +3053,8 @@ async function iniciar() {
 
     }
 
-
     iniciando =
         true;
-
 
     try {
 
@@ -2814,9 +3066,7 @@ async function iniciar() {
 
         }
 
-
         configurarModulos();
-
 
         /* =================================================
            ABAS
@@ -2831,13 +3081,11 @@ async function iniciar() {
 
         }
 
-
         /* =================================================
            EVENTOS GERAIS
            ================================================= */
 
         inicializarEventos();
-
 
         /* =================================================
            FOTO
@@ -2852,16 +3100,23 @@ async function iniciar() {
 
         }
 
-
         /* =================================================
            PORTFÓLIO
            =================================================
 
-           Disponível para artista e contratante.
+           Disponível para artista, contratante e
+           estabelecimento.
+
+           A inicialização definitiva também ocorre em
+           configurarPortfolioPorTipo(), depois que o tipo
+           do perfil já foi identificado.
 
            ================================================= */
 
         if (
+            (ehArtista() ||
+             ehContratante() ||
+             ehEstabelecimento()) &&
             contexto.PerfilPortfolio &&
             typeof contexto.PerfilPortfolio.inicializar === "function"
         ) {
@@ -2870,12 +3125,12 @@ async function iniciar() {
 
         }
 
-
         /* =================================================
            AGENDA
            =================================================
 
-           Disponível para artista e contratante.
+           Disponível para artista, contratante e
+           estabelecimento.
 
            ================================================= */
 
@@ -2888,23 +3143,14 @@ async function iniciar() {
 
         }
 
-
         /* =================================================
            SERVIÇOS
            =================================================
 
            Não inicializar a lógica de serviços para
-           contratante.
+           contratante ou estabelecimento.
 
            ================================================= */
-
-        /*
-
-           A inicialização será feita depois que os dados
-           forem carregados e o tipo de perfil for conhecido.
-
-        */
-
 
         /* =================================================
            ESTILOS MUSICAIS
@@ -2915,13 +3161,6 @@ async function iniciar() {
 
            ================================================= */
 
-        /*
-
-           A inicialização será feita em carregarDados().
-
-        */
-
-
         /* =================================================
            CHIPS
            =================================================
@@ -2931,21 +3170,11 @@ async function iniciar() {
 
            ================================================= */
 
-        /*
-
-           PerfilEstilos poderá inicializar seus próprios
-           chips quando o perfil for identificado como
-           artista.
-
-        */
-
-
         /* =================================================
            CARREGAR DADOS
            ================================================= */
 
         await carregarDados();
-
 
         /* =================================================
            SERVIÇOS — ARTISTA
@@ -2961,7 +3190,6 @@ async function iniciar() {
 
         }
 
-
         /* =================================================
            ESTILOS — ARTISTA
            ================================================= */
@@ -2975,7 +3203,6 @@ async function iniciar() {
             contexto.PerfilEstilos.inicializar();
 
         }
-
 
         /* =================================================
            CHIPS
@@ -2991,7 +3218,6 @@ async function iniciar() {
 
         }
 
-
         inicializado =
             true;
 
@@ -3001,7 +3227,6 @@ async function iniciar() {
             "PerfilEditor: erro durante inicialização:",
             erro
         );
-
 
         mostrarToast(
             erro?.message ||
@@ -3018,10 +3243,9 @@ async function iniciar() {
 
 }
 
-
 /* ========================================================
-   API PÚBLICA
-   ======================================================== */
+API PÚBLICA
+======================================================== */
 
 return {
 
@@ -3033,69 +3257,53 @@ return {
 
     contexto,
 
-
     iniciar,
 
     carregarDados,
-
 
     preencherFormulario,
 
     preencherAvatar,
 
-
     salvarSobre,
-
 
     inicializarEventos,
 
-
     atualizarContador,
-
 
     voltarPerfil,
 
-
     preencherTipoArtista,
-
 
     obterPaginaAtual,
 
-
     obterTipoConfigurado,
-
 
     resolverTipo,
 
-
     tipoPossuiRecurso,
-
 
     tipoPossuiInstrumentos,
 
-
     configurarInstrumentosPorTipo,
-
 
     configurarEstilos,
 
-
     carregarEstilos,
-
 
     configurarPortfolioPorTipo,
 
-
     obterTipoPerfil,
-
 
     ehArtista,
 
+    ehContratante,
 
-    ehContratante
+    ehEstabelecimento,
+
+    obterDadosEstabelecimento
 
 };
-
 
 })();
 
@@ -3111,27 +3319,24 @@ INICIALIZAÇÃO AUTOMÁTICA
 ============================================================ */
 
 if (
-document.readyState === "loading"
+    document.readyState === "loading"
 ) {
 
+    document.addEventListener(
+        "DOMContentLoaded",
+        () => {
 
-document.addEventListener(
-    "DOMContentLoaded",
-    () => {
+            PerfilEditor.iniciar();
 
-        PerfilEditor.iniciar();
-
-    },
-    {
-        once: true
-    }
-);
-
+        },
+        {
+            once: true
+        }
+    );
 
 } else {
 
-
-PerfilEditor.iniciar();
-
+    PerfilEditor.iniciar();
 
 }
+

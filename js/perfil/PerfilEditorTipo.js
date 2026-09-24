@@ -1,3 +1,4 @@
+
 const PerfilEditorTipo = (() => {
 "use strict";
 
@@ -17,7 +18,9 @@ const PerfilEditorTipo = (() => {
    - Informar recursos disponíveis de cada tipo
    - Evitar regras espalhadas pelo PerfilEditor.js
 
-   Tipos artísticos atuais:
+   Categorias:
+
+   ARTISTAS:
 
    1. Cantor(a)
    2. Músico(a)
@@ -30,9 +33,30 @@ const PerfilEditorTipo = (() => {
    9. Compositor(a)
    10. Produtor(a) musical
 
-   Tipo adicional:
+   CONTRATANTE:
 
    - Contratante
+
+   ESTABELECIMENTOS:
+
+   - Organizador de eventos
+   - Casa de shows
+   - Empresa/agência
+   - Restaurante
+   - Hotel
+   - Clube
+   - Boate
+   - Pousada
+   - Bar
+
+   IMPORTANTE:
+
+   Nesta etapa os estabelecimentos utilizam as páginas
+   genéricas do editor e da apresentação.
+
+   As páginas específicas poderão ser definidas em uma
+   etapa posterior, quando a interface de estabelecimento
+   estiver sendo construída.
 ========================================================= */
 
 
@@ -580,6 +604,447 @@ const CONFIG = {
                 estilos:
                     false
             }
+        },
+
+
+        /*
+         * =====================================================
+         * ORGANIZADOR DE EVENTOS
+         * =====================================================
+         */
+
+        organizador_eventos: {
+
+            id:
+                "organizador_eventos",
+
+            slug:
+                "organizador_eventos",
+
+            nome:
+                "Organizador de eventos",
+
+            categoria:
+                "estabelecimento",
+
+            editar:
+                "editar-perfil.html",
+
+            apresentar:
+                "apresentar-perfil.html",
+
+            recursos: {
+
+                foto:
+                    true,
+
+                portfolio:
+                    false,
+
+                agenda:
+                    true,
+
+                servicos:
+                    false,
+
+                instrumentos:
+                    false,
+
+                estilos:
+                    true
+            }
+        },
+
+
+        /*
+         * =====================================================
+         * CASA DE SHOWS
+         * =====================================================
+         */
+
+        casa_shows: {
+
+            id:
+                "casa_shows",
+
+            slug:
+                "casa_shows",
+
+            nome:
+                "Casa de shows",
+
+            categoria:
+                "estabelecimento",
+
+            editar:
+                "editar-perfil.html",
+
+            apresentar:
+                "apresentar-perfil.html",
+
+            recursos: {
+
+                foto:
+                    true,
+
+                portfolio:
+                    false,
+
+                agenda:
+                    true,
+
+                servicos:
+                    false,
+
+                instrumentos:
+                    false,
+
+                estilos:
+                    true
+            }
+        },
+
+
+        /*
+         * =====================================================
+         * EMPRESA / AGÊNCIA
+         * =====================================================
+         */
+
+        empresa_agencia: {
+
+            id:
+                "empresa_agencia",
+
+            slug:
+                "empresa_agencia",
+
+            nome:
+                "Empresa/agência",
+
+            categoria:
+                "estabelecimento",
+
+            editar:
+                "editar-perfil.html",
+
+            apresentar:
+                "apresentar-perfil.html",
+
+            recursos: {
+
+                foto:
+                    true,
+
+                portfolio:
+                    false,
+
+                agenda:
+                    true,
+
+                servicos:
+                    false,
+
+                instrumentos:
+                    false,
+
+                estilos:
+                    false
+            }
+        },
+
+
+        /*
+         * =====================================================
+         * RESTAURANTE
+         * =====================================================
+         */
+
+        restaurante: {
+
+            id:
+                "restaurante",
+
+            slug:
+                "restaurante",
+
+            nome:
+                "Restaurante",
+
+            categoria:
+                "estabelecimento",
+
+            editar:
+                "editar-perfil.html",
+
+            apresentar:
+                "apresentar-perfil.html",
+
+            recursos: {
+
+                foto:
+                    true,
+
+                portfolio:
+                    false,
+
+                agenda:
+                    true,
+
+                servicos:
+                    false,
+
+                instrumentos:
+                    false,
+
+                estilos:
+                    true
+            }
+        },
+
+
+        /*
+         * =====================================================
+         * HOTEL
+         * =====================================================
+         */
+
+        hotel: {
+
+            id:
+                "hotel",
+
+            slug:
+                "hotel",
+
+            nome:
+                "Hotel",
+
+            categoria:
+                "estabelecimento",
+
+            editar:
+                "editar-perfil.html",
+
+            apresentar:
+                "apresentar-perfil.html",
+
+            recursos: {
+
+                foto:
+                    true,
+
+                portfolio:
+                    false,
+
+                agenda:
+                    true,
+
+                servicos:
+                    false,
+
+                instrumentos:
+                    false,
+
+                estilos:
+                    true
+            }
+        },
+
+
+        /*
+         * =====================================================
+         * CLUBE
+         * =====================================================
+         */
+
+        clube: {
+
+            id:
+                "clube",
+
+            slug:
+                "clube",
+
+            nome:
+                "Clube",
+
+            categoria:
+                "estabelecimento",
+
+            editar:
+                "editar-perfil.html",
+
+            apresentar:
+                "apresentar-perfil.html",
+
+            recursos: {
+
+                foto:
+                    true,
+
+                portfolio:
+                    false,
+
+                agenda:
+                    true,
+
+                servicos:
+                    false,
+
+                instrumentos:
+                    false,
+
+                estilos:
+                    true
+            }
+        },
+
+
+        /*
+         * =====================================================
+         * BOATE
+         * =====================================================
+         */
+
+        boate: {
+
+            id:
+                "boate",
+
+            slug:
+                "boate",
+
+            nome:
+                "Boate",
+
+            categoria:
+                "estabelecimento",
+
+            editar:
+                "editar-perfil.html",
+
+            apresentar:
+                "apresentar-perfil.html",
+
+            recursos: {
+
+                foto:
+                    true,
+
+                portfolio:
+                    false,
+
+                agenda:
+                    true,
+
+                servicos:
+                    false,
+
+                instrumentos:
+                    false,
+
+                estilos:
+                    true
+            }
+        },
+
+
+        /*
+         * =====================================================
+         * POUSADA
+         * =====================================================
+         */
+
+        pousada: {
+
+            id:
+                "pousada",
+
+            slug:
+                "pousada",
+
+            nome:
+                "Pousada",
+
+            categoria:
+                "estabelecimento",
+
+            editar:
+                "editar-perfil.html",
+
+            apresentar:
+                "apresentar-perfil.html",
+
+            recursos: {
+
+                foto:
+                    true,
+
+                portfolio:
+                    false,
+
+                agenda:
+                    true,
+
+                servicos:
+                    false,
+
+                instrumentos:
+                    false,
+
+                estilos:
+                    true
+            }
+        },
+
+
+        /*
+         * =====================================================
+         * BAR
+         * =====================================================
+         */
+
+        bar: {
+
+            id:
+                "bar",
+
+            slug:
+                "bar",
+
+            nome:
+                "Bar",
+
+            categoria:
+                "estabelecimento",
+
+            editar:
+                "editar-perfil.html",
+
+            apresentar:
+                "apresentar-perfil.html",
+
+            recursos: {
+
+                foto:
+                    true,
+
+                portfolio:
+                    false,
+
+                agenda:
+                    true,
+
+                servicos:
+                    false,
+
+                instrumentos:
+                    false,
+
+                estilos:
+                    true
+            }
         }
     }
 };
@@ -652,6 +1117,19 @@ function obterTiposArtisticos() {
     return obterTodos().filter(
         tipo =>
             tipo.categoria === "artista"
+    );
+}
+
+
+/* =========================================================
+   OBTER TIPOS DE ESTABELECIMENTO
+========================================================= */
+
+function obterTiposEstabelecimentos() {
+
+    return obterTodos().filter(
+        tipo =>
+            tipo.categoria === "estabelecimento"
     );
 }
 
@@ -932,6 +1410,29 @@ function validarContratante(valor) {
 
 
 /* =========================================================
+   VALIDAR ESTABELECIMENTO
+========================================================= */
+
+function validarEstabelecimento(valor) {
+
+    const tipo =
+        identificar(valor);
+
+
+    if (!tipo) {
+
+        return false;
+    }
+
+
+    return (
+        tipo.categoria ===
+        "estabelecimento"
+    );
+}
+
+
+/* =========================================================
    OBTER SLUG
 ========================================================= */
 
@@ -1045,6 +1546,7 @@ function obterRecursos(valor) {
    possuiRecurso("musico", "instrumentos")
    possuiRecurso("cantor", "agenda")
    possuiRecurso("contratante", "portfolio")
+   possuiRecurso("bar", "agenda")
 ========================================================= */
 
 function possuiRecurso(
@@ -1200,6 +1702,18 @@ function ehArtista(valor) {
 function ehContratante(valor) {
 
     return validarContratante(
+        valor
+    );
+}
+
+
+/* =========================================================
+   VERIFICAR SE É ESTABELECIMENTO
+========================================================= */
+
+function ehEstabelecimento(valor) {
+
+    return validarEstabelecimento(
         valor
     );
 }
@@ -1513,6 +2027,8 @@ return {
 
     obterTiposArtisticos,
 
+    obterTiposEstabelecimentos,
+
     obterTipoContratante,
 
     obterPorSlug,
@@ -1528,6 +2044,8 @@ return {
     validarArtista,
 
     validarContratante,
+
+    validarEstabelecimento,
 
     obterSlug,
 
@@ -1563,6 +2081,8 @@ return {
 
     ehContratante,
 
+    ehEstabelecimento,
+
     obterTipoPadrao,
 
     resolver,
@@ -1587,9 +2107,11 @@ return {
 
 })();
 
+
 /* =========================================================
-DISPONIBILIZAR GLOBALMENTE
+   DISPONIBILIZAR GLOBALMENTE
 ========================================================= */
 
 window.PerfilEditorTipo =
 PerfilEditorTipo;
+

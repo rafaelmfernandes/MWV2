@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 
 <html lang="pt-BR">
@@ -117,84 +116,18 @@
     data-interacoes-perfil
 >
 
-<div class="topbar-inner">
+    <div class="topbar-inner">
 
-<!-- =================================================
-     BOTÃO VOLTAR
-     ================================================= -->
+        <!-- =================================================
+             BOTÃO VOLTAR
+             ================================================= -->
 
-<button
-    class="topbar-back"
-    id="btnVoltar"
-    type="button"
-    aria-label="Voltar"
-    data-action="back"
->
-
-<svg
-    viewBox="0 0 24 24"
-    aria-hidden="true"
->
-
-    <path
-        d="M15 18l-6-6 6-6"
-    ></path>
-
-</svg>
-
-</button>
-
-<!-- =================================================
-     IDENTIDADE DO PERFIL NO TOPO
-     ================================================= -->
-
-<div class="topbar-profile">
-
-<div class="topbar-profile-avatar">
-
-    <img
-        id="profileTopbarAvatar"
-        src=""
-        alt=""
-        hidden
-    >
-
-    <span
-        id="profileTopbarInitials"
-    >
-        —
-    </span>
-
-</div>
-
-<div class="topbar-profile-info">
-
-    <strong
-        class="topbar-profile-name"
-        id="profileTopbarName"
-    >
-        Carregando...
-    </strong>
-
-    <div class="topbar-profile-meta">
-
-        <span
-            class="topbar-profile-type"
-            id="profileTopbarType"
-        >
-            —
-        </span>
-
-        <span
-            class="topbar-profile-separator"
-            aria-hidden="true"
-        >
-            ·
-        </span>
-
-        <span
-            class="topbar-profile-location"
-            id="profileTopbarLocation"
+        <button
+            class="topbar-back"
+            id="btnVoltar"
+            type="button"
+            aria-label="Voltar"
+            data-action="back"
         >
 
             <svg
@@ -203,127 +136,193 @@
             >
 
                 <path
-                    d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"
+                    d="M15 18l-6-6 6-6"
                 ></path>
-
-                <circle
-                    cx="12"
-                    cy="10"
-                    r="2.5"
-                ></circle>
 
             </svg>
 
-            —
+        </button>
 
-        </span>
+        <!-- =================================================
+             IDENTIDADE DO PERFIL NO TOPO
+             ================================================= -->
+
+        <div class="topbar-profile">
+
+            <div class="topbar-profile-avatar">
+
+                <img
+                    id="profileTopbarAvatar"
+                    src=""
+                    alt=""
+                    hidden
+                >
+
+                <span
+                    id="profileTopbarInitials"
+                >
+                    —
+                </span>
+
+            </div>
+
+            <div class="topbar-profile-info">
+
+                <strong
+                    class="topbar-profile-name"
+                    id="profileTopbarName"
+                >
+                    Carregando...
+                </strong>
+
+                <div class="topbar-profile-meta">
+
+                    <span
+                        class="topbar-profile-type"
+                        id="profileTopbarType"
+                    >
+                        —
+                    </span>
+
+                    <span
+                        class="topbar-profile-separator"
+                        aria-hidden="true"
+                    >
+                        ·
+                    </span>
+
+                    <span
+                        class="topbar-profile-location"
+                        id="profileTopbarLocation"
+                    >
+
+                        <svg
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                        >
+
+                            <path
+                                d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"
+                            ></path>
+
+                            <circle
+                                cx="12"
+                                cy="10"
+                                r="2.5"
+                            ></circle>
+
+                        </svg>
+
+                        —
+
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- =================================================
+             AÇÕES DO TOPO
+             ================================================= -->
+
+        <div class="topbar-actions">
+
+            <!-- =================================================
+                 CURTIR
+                 ================================================= -->
+
+            <button
+                class="topbar-action"
+                id="btnCurtir"
+                type="button"
+                aria-label="Curtir perfil"
+                data-action="like"
+                data-interacao-perfil-botao="true"
+            >
+
+                <svg
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                >
+
+                    <path
+                        d="M20.8 8.6c0 5.5-8.8 10.4-8.8 10.4S3.2 14.1 3.2 8.6A4.6 4.6 0 0 1 12 6.2a4.6 4.6 0 0 1 8.8 2.4Z"
+                    ></path>
+
+                </svg>
+
+            </button>
+
+            <!-- =================================================
+                 SALVAR
+                 ================================================= -->
+
+            <button
+                class="topbar-action"
+                id="btnSalvar"
+                type="button"
+                aria-label="Salvar perfil"
+                data-action="save"
+                data-interacao-perfil-botao="true"
+            >
+
+                <svg
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                >
+
+                    <path
+                        d="M6 4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18l-6-3-6 3V4Z"
+                    ></path>
+
+                </svg>
+
+            </button>
+
+            <!-- =================================================
+                 MAIS OPÇÕES
+                 ================================================= -->
+
+            <button
+                class="topbar-action"
+                id="btnMenu"
+                type="button"
+                aria-label="Mais opções"
+                data-action="menu"
+            >
+
+                <svg
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                >
+
+                    <circle
+                        cx="5"
+                        cy="12"
+                        r="1.5"
+                    ></circle>
+
+                    <circle
+                        cx="12"
+                        cy="12"
+                        r="1.5"
+                    ></circle>
+
+                    <circle
+                        cx="19"
+                        cy="12"
+                        r="1.5"
+                    ></circle>
+
+                </svg>
+
+            </button>
+
+        </div>
 
     </div>
-
-</div>
-
-</div>
-
-<!-- =================================================
-     AÇÕES DO TOPO
-     ================================================= -->
-
-<div class="topbar-actions">
-
-<!-- =================================================
-     CURTIR
-     ================================================= -->
-
-<button
-    class="topbar-action"
-    id="btnCurtir"
-    type="button"
-    aria-label="Curtir perfil"
-    data-action="like"
-    data-interacao-perfil-botao="true"
->
-
-    <svg
-        viewBox="0 0 24 24"
-        aria-hidden="true"
-    >
-
-        <path
-            d="M20.8 8.6c0 5.5-8.8 10.4-8.8 10.4S3.2 14.1 3.2 8.6A4.6 4.6 0 0 1 12 6.2a4.6 4.6 0 0 1 8.8 2.4Z"
-        ></path>
-
-    </svg>
-
-</button>
-
-<!-- =================================================
-     SALVAR
-     ================================================= -->
-
-<button
-    class="topbar-action"
-    id="btnSalvar"
-    type="button"
-    aria-label="Salvar perfil"
-    data-action="save"
-    data-interacao-perfil-botao="true"
->
-
-    <svg
-        viewBox="0 0 24 24"
-        aria-hidden="true"
-    >
-
-        <path
-            d="M6 4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18l-6-3-6 3V4Z"
-        ></path>
-
-    </svg>
-
-</button>
-
-<!-- =================================================
-     MAIS OPÇÕES
-     ================================================= -->
-
-<button
-    class="topbar-action"
-    id="btnMenu"
-    type="button"
-    aria-label="Mais opções"
-    data-action="menu"
->
-
-    <svg
-        viewBox="0 0 24 24"
-        aria-hidden="true"
-    >
-
-        <circle
-            cx="5"
-            cy="12"
-            r="1.5"
-        ></circle>
-
-        <circle
-            cx="12"
-            cy="12"
-            r="1.5"
-        ></circle>
-
-        <circle
-            cx="19"
-            cy="12"
-            r="1.5"
-        ></circle>
-
-    </svg>
-
-</button>
-
-</div>
-
-</div>
 
 </header>
 
@@ -333,467 +332,1119 @@
 
 <main class="profile-page">
 
-<div
-    class="profile-feed"
-    id="profileFeed"
->
-
-<!-- =================================================
-     PERFIL PRINCIPAL
-     ================================================= -->
-
-<article
-    class="profile-post"
-    id="profilePost"
->
-
-<!-- =================================================
-     ÁREA DE MÍDIA
-
-     A identidade do usuário NÃO é mais exibida
-     sobre o vídeo.
-
-     A identificação agora fica exclusivamente
-     na topbar.
-     ================================================= -->
-
-<div
-    class="profile-media"
-    id="profileMedia"
-    hidden
->
-
-    <button
-        class="media-expand"
-        id="btnExpandMedia"
-        type="button"
-        aria-label="Expandir mídia"
-        data-action="expand"
+    <div
+        class="profile-feed"
+        id="profileFeed"
     >
 
-        <svg
-            viewBox="0 0 24 24"
-            aria-hidden="true"
+        <!-- =================================================
+             PERFIL PRINCIPAL
+             ================================================= -->
+
+        <article
+            class="profile-post"
+            id="profilePost"
         >
 
-            <path
-                d="M8 3H3v5"
-            ></path>
+            <!-- =================================================
+                 ÁREA DE MÍDIA
 
-            <path
-                d="M16 3h5v5"
-            ></path>
+                 A identidade do usuário NÃO é mais exibida
+                 sobre o vídeo.
 
-            <path
-                d="M8 21H3v-5"
-            ></path>
+                 A identificação agora fica exclusivamente
+                 na topbar.
+                 ================================================= -->
 
-            <path
-                d="M21 16v5h-5"
-            ></path>
+            <div
+                class="profile-media"
+                id="profileMedia"
+                hidden
+            >
 
-        </svg>
+                <button
+                    class="media-expand"
+                    id="btnExpandMedia"
+                    type="button"
+                    aria-label="Expandir mídia"
+                    data-action="expand"
+                >
 
-    </button>
+                    <svg
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                    >
 
-</div>
+                        <path
+                            d="M8 3H3v5"
+                        ></path>
 
-<!-- =================================================
-     INFORMAÇÕES DO ITEM DO PORTFÓLIO
-     ================================================= -->
+                        <path
+                            d="M16 3h5v5"
+                        ></path>
 
-<div
-    class="profile-portfolio-content"
-    id="profilePortfolioContent"
-    hidden
->
+                        <path
+                            d="M8 21H3v-5"
+                        ></path>
 
-    <h2
-        class="profile-portfolio-title"
-        id="profilePortfolioTitle"
-        hidden
-    ></h2>
+                        <path
+                            d="M21 16v5h-5"
+                        ></path>
 
-    <p
-        class="profile-portfolio-description"
-        id="profilePortfolioDescription"
-        hidden
-    ></p>
+                    </svg>
 
-    <button
-        class="profile-portfolio-read-more"
-        id="btnExpandirDescricao"
-        type="button"
-        hidden
-        aria-expanded="false"
-    >
-        Ler descrição completa
-    </button>
+                </button>
 
-</div>
+            </div>
 
-<!-- =================================================
-     CABEÇALHO SEM MÍDIA
+            <!-- =================================================
+                 INFORMAÇÕES DO ITEM DO PORTFÓLIO
+                 ================================================= -->
 
-     A identidade foi transferida para a topbar.
+            <div
+                class="profile-portfolio-content"
+                id="profilePortfolioContent"
+                hidden
+            >
 
-     O bloco permanece oculto para preservar os IDs
-     utilizados pelo módulo de renderização atual.
-     ================================================= -->
+                <h2
+                    class="profile-portfolio-title"
+                    id="profilePortfolioTitle"
+                    hidden
+                ></h2>
 
-<div
-    class="profile-header"
-    id="profileHeaderNoMedia"
-    hidden
->
+                <p
+                    class="profile-portfolio-description"
+                    id="profilePortfolioDescription"
+                    hidden
+                ></p>
 
-    <div class="profile-avatar">
+                <button
+                    class="profile-portfolio-read-more"
+                    id="btnExpandirDescricao"
+                    type="button"
+                    hidden
+                    aria-expanded="false"
+                >
+                    Ler descrição completa
+                </button>
 
-        <img
-            id="profileAvatar"
-            src=""
-            alt=""
+            </div>
+
+            <!-- =================================================
+                 CABEÇALHO SEM MÍDIA
+
+                 A identidade foi transferida para a topbar.
+
+                 O bloco permanece oculto para preservar os IDs
+                 utilizados pelo módulo de renderização atual.
+                 ================================================= -->
+
+            <div
+                class="profile-header"
+                id="profileHeaderNoMedia"
+                hidden
+            >
+
+                <div class="profile-avatar">
+
+                    <img
+                        id="profileAvatar"
+                        src=""
+                        alt=""
+                        hidden
+                    >
+
+                    <span
+                        id="profileInitials"
+                    >
+                        —
+                    </span>
+
+                </div>
+
+                <div class="profile-heading-content">
+
+                    <h2
+                        class="profile-name"
+                        id="profileName"
+                    >
+                        Carregando...
+                    </h2>
+
+                    <div class="profile-meta">
+
+                        <span
+                            id="profileType"
+                        >
+                            —
+                        </span>
+
+                        <span class="meta-separator">
+                            ·
+                        </span>
+
+                        <span
+                            class="location"
+                            id="profileLocation"
+                        >
+
+                            <svg
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                            >
+
+                                <path
+                                    d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"
+                                ></path>
+
+                                <circle
+                                    cx="12"
+                                    cy="10"
+                                    r="2.5"
+                                ></circle>
+
+                            </svg>
+
+                            —
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <button
+                    class="profile-more"
+                    type="button"
+                    aria-label="Mais opções"
+                    data-action="menu"
+                >
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                    >
+
+                        <circle
+                            cx="5"
+                            cy="12"
+                            r="1.5"
+                        ></circle>
+
+                        <circle
+                            cx="12"
+                            cy="12"
+                            r="1.5"
+                        ></circle>
+
+                        <circle
+                            cx="19"
+                            cy="12"
+                            r="1.5"
+                        ></circle>
+
+                    </svg>
+
+                </button>
+
+            </div>
+
+            <!-- =================================================
+                 AÇÕES PRINCIPAIS
+                 ================================================= -->
+
+            <div
+                class="profile-main-actions"
+                id="profileMainActions"
+            >
+
+                <button
+                    class="profile-action-button profile-action-button--secondary"
+                    id="btnMandarMensagem"
+                    type="button"
+                >
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                    >
+
+                        <path
+                            d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7A8.38 8.38 0 0 1 4 11.5a8.5 8.5 0 0 1 4.7-7.6A8.38 8.38 0 0 1 12.5 3h.5a8.5 8.5 0 0 1 8 8v.5Z"
+                        ></path>
+
+                    </svg>
+
+                    <span>
+                        Mensagem
+                    </span>
+
+                </button>
+
+                <button
+                    class="profile-action-button profile-action-button--primary"
+                    id="btnContratar"
+                    type="button"
+                >
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                    >
+
+                        <path
+                            d="M20 7h-9"
+                        ></path>
+
+                        <path
+                            d="M14 17H5"
+                        ></path>
+
+                        <path
+                            d="M19 12H5"
+                        ></path>
+
+                        <path
+                            d="m19 12-2-2"
+                        ></path>
+
+                        <path
+                            d="m19 12 2 2"
+                        ></path>
+
+                    </svg>
+
+                    <span>
+                        Contratar
+                    </span>
+
+                </button>
+
+            </div>
+
+        </article>
+
+        <!-- =====================================================
+             INFORMAÇÕES DO ESPAÇO
+
+             Exibida somente para perfis de estabelecimentos.
+
+             Dados utilizados:
+             - capacidade
+             - estrutura
+             - estilos musicais
+             - aceita música ao vivo
+
+             O conteúdo é preenchido pelo:
+             js/apresentar-perfil-teste/ApresentarPerfilRender.js
+             ===================================================== -->
+
+        <section
+            class="profile-space-info"
+            id="profileSpaceInfo"
             hidden
         >
 
-        <span
-            id="profileInitials"
-        >
-            —
-        </span>
+            <div class="section-heading">
 
-    </div>
+                <div
+                    class="section-heading-icon"
+                    aria-hidden="true"
+                >
 
-    <div class="profile-heading-content">
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
 
-        <h2
-            class="profile-name"
-            id="profileName"
-        >
-            Carregando...
-        </h2>
+                        <rect
+                            x="3"
+                            y="4"
+                            width="18"
+                            height="16"
+                            rx="2"
+                        ></rect>
 
-        <div class="profile-meta">
+                        <path
+                            d="M8 4v4"
+                        ></path>
 
-            <span
-                id="profileType"
+                        <path
+                            d="M16 4v4"
+                        ></path>
+
+                        <path
+                            d="M3 10h18"
+                        ></path>
+
+                    </svg>
+
+                </div>
+
+                <div>
+
+                    <span class="section-heading-eyebrow">
+                        Espaço
+                    </span>
+
+                    <h2 class="section-heading-title">
+                        Informações do espaço
+                    </h2>
+
+                </div>
+
+            </div>
+
+            <div
+                class="space-info-grid"
+                id="spaceInfoGrid"
             >
-                —
-            </span>
 
-            <span class="meta-separator">
-                ·
-            </span>
+                <!-- =================================================
+                     CAPACIDADE
+                     ================================================= -->
 
-            <span
-                class="location"
-                id="profileLocation"
+                <div
+                    class="space-info-item"
+                    id="spaceCapacityItem"
+                    hidden
+                >
+
+                    <span class="space-info-label">
+                        Capacidade
+                    </span>
+
+                    <strong
+                        class="space-info-value"
+                        id="spaceCapacity"
+                    ></strong>
+
+                </div>
+
+                <!-- =================================================
+                     MÚSICA AO VIVO
+                     ================================================= -->
+
+                <div
+                    class="space-info-item"
+                    id="spaceLiveMusicItem"
+                    hidden
+                >
+
+                    <span class="space-info-label">
+                        Música ao vivo
+                    </span>
+
+                    <strong
+                        class="space-info-value"
+                        id="spaceLiveMusic"
+                    ></strong>
+
+                </div>
+
+                <!-- =================================================
+                     ESTRUTURA
+                     ================================================= -->
+
+                <div
+                    class="space-info-item space-info-item--wide"
+                    id="spaceStructureItem"
+                    hidden
+                >
+
+                    <span class="space-info-label">
+                        Estrutura
+                    </span>
+
+                    <div
+                        class="space-info-tags"
+                        id="spaceStructure"
+                    ></div>
+
+                </div>
+
+                <!-- =================================================
+                     ESTILOS MUSICAIS
+                     ================================================= -->
+
+                <div
+                    class="space-info-item space-info-item--wide"
+                    id="spaceMusicStylesItem"
+                    hidden
+                >
+
+                    <span class="space-info-label">
+                        Estilos musicais
+                    </span>
+
+                    <div
+                        class="space-info-tags"
+                        id="spaceMusicStyles"
+                    ></div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- =====================================================
+             LOCALIZAÇÃO DO ESTABELECIMENTO
+             ===================================================== -->
+
+        <section
+            class="profile-establishment-location"
+            id="profileEstablishmentLocation"
+            hidden
+        >
+
+            <div class="section-heading">
+
+                <div
+                    class="section-heading-icon"
+                    aria-hidden="true"
+                >
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+
+                        <path
+                            d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"
+                        ></path>
+
+                        <circle
+                            cx="12"
+                            cy="10"
+                            r="2.5"
+                        ></circle>
+
+                    </svg>
+
+                </div>
+
+                <div>
+
+                    <span class="section-heading-eyebrow">
+                        Localização
+                    </span>
+
+                    <h2 class="section-heading-title">
+                        Onde estamos
+                    </h2>
+
+                </div>
+
+            </div>
+
+            <div class="establishment-location-content">
+
+                <div
+                    class="establishment-location-address"
+                    id="establishmentLocationAddress"
+                ></div>
+
+                <div
+                    class="establishment-location-neighborhood"
+                    id="establishmentLocationNeighborhood"
+                ></div>
+
+                <div
+                    class="establishment-location-city"
+                    id="establishmentLocationCity"
+                ></div>
+
+                <div
+                    class="establishment-location-cep"
+                    id="establishmentLocationCep"
+                ></div>
+
+            </div>
+
+        </section>
+
+        <!-- =====================================================
+             CONTATOS DO ESTABELECIMENTO
+
+             Exibida somente para perfis de estabelecimentos.
+
+             Dados utilizados:
+             - telefone_comercial
+             - instagram
+             - site
+
+             O conteúdo será preenchido pelo:
+             js/apresentar-perfil-teste/ApresentarPerfilRender.js
+
+             Cada contato é exibido somente quando possuir
+             um valor válido.
+             ===================================================== -->
+
+        <section
+            class="profile-establishment-contacts"
+            id="profileEstablishmentContacts"
+            hidden
+        >
+
+            <div class="section-heading">
+
+                <div
+                    class="section-heading-icon"
+                    aria-hidden="true"
+                >
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+
+                        <path
+                            d="M22 16.92v3a2 2 0 0 1-2.18 2
+                               19.79 19.79 0 0 1-8.63-3.07
+                               19.5 19.5 0 0 1-6-6
+                               A19.79 19.79 0 0 1 2.12 4.18
+                               2 2 0 0 1 5.11 2h3
+                               a2 2 0 0 1 2 1.72
+                               12.84 12.84 0 0 0 0.7 2.81
+                               2 2 0 0 1-.45 2.11L9.09 9.91
+                               a16 16 0 0 0 6 6l1.27-1.27
+                               a2 2 0 0 1 2.11-.45
+                               12.84 12.84 0 0 1 2.81.7
+                               A2 2 0 0 1 22 16.92Z"
+                        ></path>
+
+                    </svg>
+
+                </div>
+
+                <div>
+
+                    <span class="section-heading-eyebrow">
+                        Contato
+                    </span>
+
+                    <h2 class="section-heading-title">
+                        Fale com o estabelecimento
+                    </h2>
+
+                </div>
+
+            </div>
+
+            <div
+                class="establishment-contact-list"
+                id="establishmentContactList"
             >
+
+                <!-- =================================================
+                     TELEFONE
+                     ================================================= -->
+
+                <a
+                    class="establishment-contact-item"
+                    id="establishmentContactPhone"
+                    href="#"
+                    hidden
+                >
+
+                    <span
+                        class="establishment-contact-icon"
+                        aria-hidden="true"
+                    >
+
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+
+                            <path
+                                d="M22 16.92v3a2 2 0 0 1-2.18 2
+                                   19.79 19.79 0 0 1-8.63-3.07
+                                   19.5 19.5 0 0 1-6-6
+                                   A19.79 19.79 0 0 1 2.12 4.18
+                                   2 2 0 0 1 5.11 2h3
+                                   a2 2 0 0 1 2 1.72
+                                   12.84 12.84 0 0 0 0.7 2.81
+                                   2 2 0 0 1-.45 2.11L9.09 9.91
+                                   a16 16 0 0 0 6 6l1.27-1.27
+                                   a2 2 0 0 1 2.11-.45
+                                   12.84 12.84 0 0 1 2.81.7
+                                   A2 2 0 0 1 22 16.92Z"
+                            ></path>
+
+                        </svg>
+
+                    </span>
+
+                    <span class="establishment-contact-content">
+
+                        <span class="establishment-contact-label">
+                            Telefone
+                        </span>
+
+                        <strong
+                            class="establishment-contact-value"
+                            id="establishmentContactPhoneValue"
+                        ></strong>
+
+                    </span>
+
+                    <span
+                        class="establishment-contact-arrow"
+                        aria-hidden="true"
+                    >
+                        →
+                    </span>
+
+                </a>
+
+                <!-- =================================================
+                     INSTAGRAM
+                     ================================================= -->
+
+                <a
+                    class="establishment-contact-item"
+                    id="establishmentContactInstagram"
+                    href="#"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    hidden
+                >
+
+                    <span
+                        class="establishment-contact-icon"
+                        aria-hidden="true"
+                    >
+
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+
+                            <rect
+                                x="3"
+                                y="3"
+                                width="18"
+                                height="18"
+                                rx="5"
+                            ></rect>
+
+                            <circle
+                                cx="12"
+                                cy="12"
+                                r="4"
+                            ></circle>
+
+                            <circle
+                                cx="17.5"
+                                cy="6.5"
+                                r="1"
+                            ></circle>
+
+                        </svg>
+
+                    </span>
+
+                    <span class="establishment-contact-content">
+
+                        <span class="establishment-contact-label">
+                            Instagram
+                        </span>
+
+                        <strong
+                            class="establishment-contact-value"
+                            id="establishmentContactInstagramValue"
+                        ></strong>
+
+                    </span>
+
+                    <span
+                        class="establishment-contact-arrow"
+                        aria-hidden="true"
+                    >
+                        →
+                    </span>
+
+                </a>
+
+                <!-- =================================================
+                     SITE
+                     ================================================= -->
+
+                <a
+                    class="establishment-contact-item"
+                    id="establishmentContactSite"
+                    href="#"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    hidden
+                >
+
+                    <span
+                        class="establishment-contact-icon"
+                        aria-hidden="true"
+                    >
+
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+
+                            <circle
+                                cx="12"
+                                cy="12"
+                                r="10"
+                            ></circle>
+
+                            <path
+                                d="M2 12h20"
+                            ></path>
+
+                            <path
+                                d="M12 2a15.3 15.3 0 0 1 4 10
+                                   15.3 15.3 0 0 1-4 10
+                                   15.3 15.3 0 0 1-4-10
+                                   15.3 15.3 0 0 1 4-10Z"
+                            ></path>
+
+                        </svg>
+
+                    </span>
+
+                    <span class="establishment-contact-content">
+
+                        <span class="establishment-contact-label">
+                            Site
+                        </span>
+
+                        <strong
+                            class="establishment-contact-value"
+                            id="establishmentContactSiteValue"
+                        ></strong>
+
+                    </span>
+
+                    <span
+                        class="establishment-contact-arrow"
+                        aria-hidden="true"
+                    >
+                        →
+                    </span>
+
+                </a>
+
+            </div>
+
+        </section>
+
+        <!-- =====================================================
+             AGENDA / EVENTOS
+
+             Exibida quando o perfil possuir eventos públicos
+             futuros ou em andamento.
+
+             Para perfis de estabelecimento, esta seção será
+             reposicionada dinamicamente imediatamente após
+             o bloco do portfólio (#profilePost).
+
+             Para perfis de artista, a posição original desta
+             seção será preservada.
+
+             Dados utilizados:
+             - titulo
+             - descricao
+             - tipo
+             - data_inicio
+             - data_fim
+             - localizacao
+             - status
+
+             Os dados são carregados pelo:
+             js/apresentar-perfil-teste/ApresentarPerfilDados.js
+
+             A renderização será realizada posteriormente pelo:
+             js/apresentar-perfil-teste/ApresentarPerfilRender.js
+
+             Valores atuais de tipo:
+             - evento
+             - show
+
+             Valores atuais de status:
+             - agendado
+             - confirmado
+             ===================================================== -->
+
+        <section
+            class="profile-agenda"
+            id="profileAgenda"
+            hidden
+        >
+
+            <div class="section-heading">
+
+                <div
+                    class="section-heading-icon"
+                    aria-hidden="true"
+                >
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+
+                        <rect
+                            x="3"
+                            y="4"
+                            width="18"
+                            height="18"
+                            rx="2"
+                            ry="2"
+                        ></rect>
+
+                        <line
+                            x1="16"
+                            y1="2"
+                            x2="16"
+                            y2="6"
+                        ></line>
+
+                        <line
+                            x1="8"
+                            y1="2"
+                            x2="8"
+                            y2="6"
+                        ></line>
+
+                        <line
+                            x1="3"
+                            y1="10"
+                            x2="21"
+                            y2="10"
+                        ></line>
+
+                    </svg>
+
+                </div>
+
+                <div>
+
+                    <span class="section-heading-eyebrow">
+                        Agenda
+                    </span>
+
+                    <h2 class="section-heading-title">
+                        Próximos eventos
+                    </h2>
+
+                </div>
+
+            </div>
+
+            <div
+                class="agenda-list"
+                id="agendaList"
+                aria-live="polite"
+            ></div>
+
+        </section>
+
+        <!-- =====================================================
+             SERVIÇOS
+             ===================================================== -->
+
+        <section
+            class="profile-services"
+            id="profileServices"
+            hidden
+        >
+
+            <div class="section-heading">
+
+                <div
+                    class="section-heading-icon"
+                    aria-hidden="true"
+                >
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+
+                        <rect
+                            width="20"
+                            height="14"
+                            x="2"
+                            y="7"
+                            rx="2"
+                        ></rect>
+
+                        <path
+                            d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"
+                        ></path>
+
+                    </svg>
+
+                </div>
+
+                <div>
+
+                    <span class="section-heading-eyebrow">
+                        Serviços
+                    </span>
+
+                    <h2 class="section-heading-title">
+                        O que este artista oferece
+                    </h2>
+
+                </div>
+
+            </div>
+
+            <div
+                class="services-list"
+                id="servicesList"
+            ></div>
+
+        </section>
+
+        <!-- =====================================================
+             AVALIAÇÕES
+             ===================================================== -->
+
+        <section
+            class="profile-reviews"
+            id="profileReviews"
+            hidden
+        >
+
+            <div class="section-heading">
+
+                <div
+                    class="section-heading-icon"
+                    aria-hidden="true"
+                >
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+
+                        <path
+                            d="m12 3 2.78 5.63 6.22.9 1.06 6.2L12 17.2l-5.56 2.92L7.5 13.92l-6.22-.9L12 3Z"
+                        ></path>
+
+                    </svg>
+
+                </div>
+
+                <div>
+
+                    <span class="section-heading-eyebrow">
+                        Avaliações
+                    </span>
+
+                    <h2 class="section-heading-title">
+                        O que contratantes dizem
+                    </h2>
+
+                </div>
+
+            </div>
+
+            <div
+                class="reviews-render"
+                id="reviewsRender"
+                aria-live="polite"
+            ></div>
+
+        </section>
+
+        <!-- =====================================================
+             ERRO
+             ===================================================== -->
+
+        <section
+            class="profile-error"
+            id="profileError"
+            hidden
+        >
+
+            <div class="profile-error-icon">
 
                 <svg
                     viewBox="0 0 24 24"
                     aria-hidden="true"
                 >
 
+                    <circle
+                        cx="12"
+                        cy="12"
+                        r="9"
+                    ></circle>
+
                     <path
-                        d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"
+                        d="M12 8v4"
                     ></path>
 
                     <circle
                         cx="12"
-                        cy="10"
-                        r="2.5"
+                        cy="16"
+                        r="1"
                     ></circle>
 
                 </svg>
 
-                —
+            </div>
 
-            </span>
+            <h2>
+                Não foi possível carregar este perfil
+            </h2>
 
-        </div>
+            <p id="profileErrorMessage">
+                Tente novamente mais tarde.
+            </p>
 
-    </div>
-
-    <button
-        class="profile-more"
-        type="button"
-        aria-label="Mais opções"
-        data-action="menu"
-    >
-
-        <svg
-            viewBox="0 0 24 24"
-            aria-hidden="true"
-        >
-
-            <circle
-                cx="5"
-                cy="12"
-                r="1.5"
-            ></circle>
-
-            <circle
-                cx="12"
-                cy="12"
-                r="1.5"
-            ></circle>
-
-            <circle
-                cx="19"
-                cy="12"
-                r="1.5"
-            ></circle>
-
-        </svg>
-
-    </button>
-
-</div>
-
-<!-- =================================================
-     AÇÕES PRINCIPAIS
-     ================================================= -->
-
-<div
-    class="profile-main-actions"
-    id="profileMainActions"
->
-
-    <button
-        class="profile-action-button profile-action-button--secondary"
-        id="btnMandarMensagem"
-        type="button"
-    >
-
-        <svg
-            viewBox="0 0 24 24"
-            aria-hidden="true"
-        >
-
-            <path
-                d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7A8.38 8.38 0 0 1 4 11.5a8.5 8.5 0 0 1 4.7-7.6A8.38 8.38 0 0 1 12.5 3h.5a8.5 8.5 0 0 1 8 8v.5Z"
-            ></path>
-
-        </svg>
-
-        <span>
-            Mensagem
-        </span>
-
-    </button>
-
-    <button
-        class="profile-action-button profile-action-button--primary"
-        id="btnContratar"
-        type="button"
-    >
-
-        <svg
-            viewBox="0 0 24 24"
-            aria-hidden="true"
-        >
-
-            <path
-                d="M20 7h-9"
-            ></path>
-
-            <path
-                d="M14 17H5"
-            ></path>
-
-            <path
-                d="M19 12H5"
-            ></path>
-
-            <path
-                d="m19 12-2-2"
-            ></path>
-
-            <path
-                d="m19 12 2 2"
-            ></path>
-
-        </svg>
-
-        <span>
-            Contratar
-        </span>
-
-    </button>
-
-</div>
-
-</article>
-
-<!-- =====================================================
-     SERVIÇOS
-     ===================================================== -->
-
-<section
-    class="profile-services"
-    id="profileServices"
-    hidden
->
-
-<div class="section-heading">
-
-    <div
-        class="section-heading-icon"
-        aria-hidden="true"
-    >
-
-        <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-        >
-
-            <rect
-                width="20"
-                height="14"
-                x="2"
-                y="7"
-                rx="2"
-                ry="2"
-            ></rect>
-
-            <path
-                d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"
-            ></path>
-
-        </svg>
+        </section>
 
     </div>
-
-    <div>
-
-        <span class="section-heading-eyebrow">
-            Serviços
-        </span>
-
-        <h2 class="section-heading-title">
-            O que este artista oferece
-        </h2>
-
-    </div>
-
-</div>
-
-<div
-    class="services-list"
-    id="servicesList"
-></div>
-
-</section>
-
-<!-- =====================================================
-     AVALIAÇÕES
-     ===================================================== -->
-
-<section
-    class="profile-reviews"
-    id="profileReviews"
-    hidden
->
-
-<div class="section-heading">
-
-    <div
-        class="section-heading-icon"
-        aria-hidden="true"
-    >
-
-        <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-        >
-
-            <path
-                d="m12 3 2.78 5.63 6.22.9 1.06 6.2L12 17.2l-5.56 2.92L7.5 13.92l-6.22-.9L12 3Z"
-            ></path>
-
-        </svg>
-
-    </div>
-
-    <div>
-
-        <span class="section-heading-eyebrow">
-            Avaliações
-        </span>
-
-        <h2 class="section-heading-title">
-            O que contratantes dizem
-        </h2>
-
-    </div>
-
-</div>
-
-<div
-    class="reviews-render"
-    id="reviewsRender"
-    aria-live="polite"
-></div>
-
-</section>
-
-<!-- =====================================================
-     ERRO
-     ===================================================== -->
-
-<section
-    class="profile-error"
-    id="profileError"
-    hidden
->
-
-<div class="profile-error-icon">
-
-    <svg
-        viewBox="0 0 24 24"
-        aria-hidden="true"
-    >
-
-        <circle
-            cx="12"
-            cy="12"
-            r="9"
-        ></circle>
-
-        <path
-            d="M12 8v4"
-        ></path>
-
-        <circle
-            cx="12"
-            cy="16"
-            r="1"
-        ></circle>
-
-    </svg>
-
-</div>
-
-<h2>
-    Não foi possível carregar este perfil
-</h2>
-
-<p id="profileErrorMessage">
-    Tente novamente mais tarde.
-</p>
-
-</section>
-
-</div>
 
 </main>
 
@@ -807,81 +1458,81 @@
     aria-hidden="true"
 >
 
-<div
-    class="action-menu-backdrop"
-    data-menu-action="cancel"
-></div>
+    <div
+        class="action-menu-backdrop"
+        data-menu-action="cancel"
+    ></div>
 
-<div class="action-menu-panel">
+    <div class="action-menu-panel">
 
-<button
-    type="button"
-    data-menu-action="report"
->
+        <button
+            type="button"
+            data-menu-action="report"
+        >
 
-<svg
-    viewBox="0 0 24 24"
-    aria-hidden="true"
->
+            <svg
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+            >
 
-    <path
-        d="M4 4v16"
-    ></path>
+                <path
+                    d="M4 4v16"
+                ></path>
 
-    <path
-        d="M4 4h12l-2 4 2 4H4"
-    ></path>
+                <path
+                    d="M4 4h12l-2 4 2 4H4"
+                ></path>
 
-</svg>
+            </svg>
 
-<span>
-    Denunciar perfil
-</span>
+            <span>
+                Denunciar perfil
+            </span>
 
-</button>
+        </button>
 
-<button
-    type="button"
-    data-menu-action="copy"
->
+        <button
+            type="button"
+            data-menu-action="copy"
+        >
 
-<svg
-    viewBox="0 0 24 24"
-    aria-hidden="true"
->
+            <svg
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+            >
 
-    <rect
-        x="9"
-        y="9"
-        width="11"
-        height="11"
-        rx="2"
-    ></rect>
+                <rect
+                    x="9"
+                    y="9"
+                    width="11"
+                    height="11"
+                    rx="2"
+                ></rect>
 
-    <path
-        d="M15 9V7a2 2 0 0 0-2-2H7a2 2 0 0 0 2 2v6a2 2 0 0 0 2 2"
-    ></path>
+                <path
+                    d="M15 9V7a2 2 0 0 0-2-2H7a2 2 0 0 0 2 2v6a2 2 0 0 0 2 2"
+                ></path>
 
-</svg>
+            </svg>
 
-<span>
-    Copiar link do perfil
-</span>
+            <span>
+                Copiar link do perfil
+            </span>
 
-</button>
+        </button>
 
-<button
-    type="button"
-    data-menu-action="cancel"
->
+        <button
+            type="button"
+            data-menu-action="cancel"
+        >
 
-<span>
-    Cancelar
-</span>
+            <span>
+                Cancelar
+            </span>
 
-</button>
+        </button>
 
-</div>
+    </div>
 
 </div>
 
@@ -1032,6 +1683,66 @@ document.addEventListener(
                 await window
                     .ApresentarPerfilPortfolioTeste
                     .inicializar();
+
+            }
+
+            /* =================================================
+               4.1. POSICIONAR A AGENDA
+
+               Regra específica para estabelecimentos:
+
+               A agenda deve aparecer imediatamente depois
+               do bloco principal que contém o portfólio.
+
+               Perfil de estabelecimento:
+               - Portfólio
+               - Agenda
+               - Informações do espaço
+               - Localização
+               - Contatos
+               - Serviços
+               - Avaliações
+
+               Perfil de artista:
+               - Mantém a posição original da agenda.
+
+               A verificação utiliza os dados já carregados
+               pelo ApresentarPerfilDadosTeste.
+               ================================================= */
+
+            const dadosPerfilAgenda =
+                window
+                    .ApresentarPerfilDadosTeste
+                    .obterDados();
+
+            const perfilEstabelecimento =
+                dadosPerfilAgenda &&
+                dadosPerfilAgenda.perfilEstabelecimento;
+
+            const profilePost =
+                document.getElementById(
+                    "profilePost"
+                );
+
+            const profileAgenda =
+                document.getElementById(
+                    "profileAgenda"
+                );
+
+            if (
+                perfilEstabelecimento &&
+                profilePost &&
+                profileAgenda
+            ) {
+
+                profilePost.insertAdjacentElement(
+                    "afterend",
+                    profileAgenda
+                );
+
+                console.log(
+                    "MusicalWorld — Agenda reposicionada após o portfólio para perfil de estabelecimento."
+                );
 
             }
 
@@ -1239,4 +1950,3 @@ document.addEventListener(
 </body>
 
 </html>
-

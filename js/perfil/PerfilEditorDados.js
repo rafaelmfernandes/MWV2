@@ -1,64 +1,84 @@
+
 /* ============================================================
-MUSICALWORLD — PERFIL EDITOR DADOS
-Arquivo: js/perfil/PerfilEditorDados.js
-=======================================
+   MUSICALWORLD — PERFIL EDITOR DADOS
 
-RESPONSABILIDADE:
+   Arquivo:
+   js/perfil/PerfilEditorDados.js
 
-Este módulo é responsável exclusivamente pela comunicação
-entre o editor de perfil e o Supabase.
+   RESPONSABILIDADE:
 
-Ele suporta os dois tipos de perfil do MusicalWorld:
+   Este módulo é responsável exclusivamente pela comunicação
+   entre o editor de perfil e o Supabase.
 
-* ARTISTA
-* CONTRATANTE
+   Tipos de perfil suportados:
 
-ARTISTA:
+   * ARTISTA
+   * CONTRATANTE
+   * ESTABELECIMENTO
 
-* usuarios
-* perfis
-* perfis_artistas
+   ARTISTA:
 
-CONTRATANTE:
+   * usuarios
+   * perfis
+   * perfis_artistas
 
-* usuarios
-* perfis
+   CONTRATANTE:
 
-O contratante NÃO utiliza a tabela perfis_artistas.
+   * usuarios
+   * perfis
 
-Este módulo cuida de:
+   ESTABELECIMENTO:
 
-* carregar o usuário autenticado;
-* carregar os dados de usuarios;
-* localizar o perfil correto;
-* identificar o tipo do perfil;
-* carregar perfis_artistas somente para artistas;
-* salvar usuarios;
-* salvar perfis;
-* salvar perfis_artistas somente para artistas;
-* confirmar os dados retornados pelo Supabase;
-* atualizar o estado local após o salvamento.
+   * usuarios
+   * perfis
+   * perfis_estabelecimentos
 
-ESTE MÓDULO NÃO É RESPONSÁVEL POR:
+   O contratante NÃO utiliza:
+   * perfis_artistas
+   * perfis_estabelecimentos
 
-* manipular diretamente a interface;
-* controlar eventos de botões;
-* preencher campos HTML;
-* alterar visualmente o avatar;
-* controlar abas;
-* fazer upload de fotos.
+   O artista NÃO utiliza:
+   * perfis_estabelecimentos
 
-A interface fica no PerfilEditorUI.js.
+   O estabelecimento NÃO utiliza:
+   * perfis_artistas
 
-O PerfilEditor.js coordena este módulo.
+   Este módulo cuida de:
 
-IMPORTANTE:
+   * carregar o usuário autenticado;
+   * carregar os dados de usuarios;
+   * localizar o perfil correto;
+   * identificar o tipo do perfil;
+   * identificar a categoria do tipo;
+   * carregar perfis_artistas somente para artistas;
+   * carregar perfis_estabelecimentos somente para estabelecimentos;
+   * salvar usuarios;
+   * salvar perfis;
+   * salvar perfis_artistas somente para artistas;
+   * salvar perfis_estabelecimentos somente para estabelecimentos;
+   * confirmar os dados retornados pelo Supabase;
+   * atualizar o estado local após o salvamento.
 
-perfil_publicado é controlado diretamente pelo checkbox
-da interface.
+   ESTE MÓDULO NÃO É RESPONSÁVEL POR:
 
-Este módulo NÃO deve criar regras automáticas que alterem
-o valor de perfil_publicado.
+   * manipular diretamente a interface;
+   * controlar eventos de botões;
+   * preencher campos HTML;
+   * alterar visualmente o avatar;
+   * controlar abas;
+   * fazer upload de fotos.
+
+   A interface fica no PerfilEditorUI.js.
+
+   O PerfilEditor.js coordena este módulo.
+
+   IMPORTANTE:
+
+   perfil_publicado é controlado diretamente pelo checkbox
+   da interface.
+
+   Este módulo NÃO deve criar regras automáticas que alterem
+   o valor de perfil_publicado.
 
 ============================================================ */
 
@@ -119,6 +139,37 @@ function normalizarTipoPerfil(valor) {
 }
 
 
+/*
+ * Resolve a configuração centralizada do tipo de perfil.
+ *
+ * A identificação de estabelecimento não depende de uma lista
+ * duplicada de nomes aqui. O PerfilEditorTipo.js é a fonte
+ * central das categorias e tipos existentes no sistema.
+ */
+
+function resolverConfiguracaoTipo(perfil) {
+
+    const nomeTipo =
+        perfil?.tipos_perfil?.nome || "";
+
+
+    if (
+        window.PerfilEditorTipo &&
+        typeof window.PerfilEditorTipo.resolver === "function"
+    ) {
+
+        return window.PerfilEditorTipo.resolver(
+            nomeTipo
+        );
+
+    }
+
+
+    return null;
+
+}
+
+
 function identificarTipoPerfil(perfis) {
 
     const lista =
@@ -127,49 +178,126 @@ function identificarTipoPerfil(perfis) {
             : [];
 
 
-    const perfilArtista =
-        lista.find(
-            (perfil) => {
-
-                const nomeTipo =
-                    perfil?.tipos_perfil?.nome || "";
+    let perfilArtista =
+        null;
 
 
-                return (
-                    normalizarTipoPerfil(
-                        nomeTipo
-                    ) === "artista"
+    let perfilEstabelecimento =
+        null;
+
+
+    let perfilContratante =
+        null;
+
+
+    lista.forEach(
+        (perfil) => {
+
+            const configuracao =
+                resolverConfiguracaoTipo(
+                    perfil
                 );
 
-            }
-        );
 
-
-    const perfilContratante =
-        lista.find(
-            (perfil) => {
-
-                const nomeTipo =
-                    perfil?.tipos_perfil?.nome || "";
-
-
-                return (
-                    normalizarTipoPerfil(
-                        nomeTipo
-                    ) === "contratante"
+            const categoria =
+                normalizarTipoPerfil(
+                    configuracao?.categoria
                 );
 
+
+            const nomeTipo =
+                normalizarTipoPerfil(
+                    perfil?.tipos_perfil?.nome
+                );
+
+
+            /*
+             * ARTISTA
+             *
+             * Mantemos também a verificação pelo nome
+             * "artista" para preservar o comportamento atual.
+             */
+
+            if (
+                nomeTipo === "artista" ||
+                categoria === "artista"
+            ) {
+
+                if (!perfilArtista) {
+
+                    perfilArtista =
+                        perfil;
+
+                }
+
+                return;
+
             }
-        );
+
+
+            /*
+             * ESTABELECIMENTO
+             *
+             * A categoria vem do PerfilEditorTipo.js.
+             *
+             * Isso permite reconhecer:
+             *
+             * organizador_eventos
+             * casa_shows
+             * empresa_agencia
+             * restaurante
+             * hotel
+             * clube
+             * boate
+             * pousada
+             * bar
+             */
+
+            if (
+                categoria === "estabelecimento"
+            ) {
+
+                if (!perfilEstabelecimento) {
+
+                    perfilEstabelecimento =
+                        perfil;
+
+                }
+
+                return;
+
+            }
+
+
+            /*
+             * CONTRATANTE
+             *
+             * Continua sendo identificado pelo tipo
+             * "contratante".
+             */
+
+            if (
+                nomeTipo === "contratante" ||
+                categoria === "contratante"
+            ) {
+
+                if (!perfilContratante) {
+
+                    perfilContratante =
+                        perfil;
+
+                }
+
+            }
+
+        }
+    );
 
 
     /*
-     * Se existir um perfil artístico, ele continua tendo
-     * prioridade para preservar o comportamento atual do
-     * editor utilizado pelos artistas.
+     * ARTISTA continua tendo prioridade.
      *
-     * Caso não exista artista, mas exista contratante,
-     * o editor trabalha como contratante.
+     * Isso preserva o comportamento anterior do editor.
      */
 
     if (perfilArtista) {
@@ -186,6 +314,31 @@ function identificarTipoPerfil(perfis) {
 
     }
 
+
+    /*
+     * Caso não exista artista, trabalhamos com
+     * o perfil de estabelecimento.
+     */
+
+    if (perfilEstabelecimento) {
+
+        return {
+
+            tipoPerfil:
+                "estabelecimento",
+
+            perfil:
+                perfilEstabelecimento
+
+        };
+
+    }
+
+
+    /*
+     * Caso não exista artista nem estabelecimento,
+     * mantemos o comportamento do contratante.
+     */
 
     if (perfilContratante) {
 
@@ -410,7 +563,7 @@ async function carregarDados() {
     if (!resultadoTipo.perfil) {
 
         throw new Error(
-            "Nenhum perfil ativo de Artista ou Contratante foi encontrado para este usuário."
+            "Nenhum perfil ativo de Artista, Contratante ou Estabelecimento foi encontrado para este usuário."
         );
 
     }
@@ -425,8 +578,8 @@ async function carregarDados() {
 
 
     /*
-     * Mantemos também uma propriedade booleana simples
-     * para facilitar verificações nos outros módulos.
+     * Mantemos propriedades booleanas simples para
+     * facilitar verificações nos outros módulos.
      */
 
     estado.isArtista =
@@ -435,6 +588,10 @@ async function carregarDados() {
 
     estado.isContratante =
         estado.tipoPerfil === "contratante";
+
+
+    estado.isEstabelecimento =
+        estado.tipoPerfil === "estabelecimento";
 
 
     console.log(
@@ -514,6 +671,14 @@ async function carregarDados() {
             };
 
 
+        /*
+         * Artistas não possuem dados de estabelecimento.
+         */
+
+        estado.perfilEstabelecimento =
+            null;
+
+
         /* ================================================
            TIPO ARTÍSTICO
            ================================================ */
@@ -557,13 +722,133 @@ async function carregarDados() {
     } else {
 
         /*
-         * Contratante não possui perfil artístico.
-         *
-         * Explicitamente mantemos null para impedir que
-         * módulos posteriores tratem este usuário como artista.
+         * Não artistas não possuem perfil artístico.
          */
 
         estado.perfilArtista =
+            null;
+
+    }
+
+
+    /* ====================================================
+       PERFIL DO ESTABELECIMENTO
+       ==================================================== */
+
+    if (
+        estado.isEstabelecimento
+    ) {
+
+        /*
+         * O nome da tabela é obtido da configuração quando
+         * disponível.
+         *
+         * O fallback mantém este módulo compatível com a
+         * configuração atual enquanto o PerfilEditor.js ainda
+         * não recebeu a nova constante.
+         */
+
+        const tabelaEstabelecimentos =
+            CONFIG?.tabelas?.perfisEstabelecimentos ||
+            "perfis_estabelecimentos";
+
+
+        const {
+            data: perfilEstabelecimento,
+            error: erroPerfilEstabelecimento
+        } = await supabase
+            .from(
+                tabelaEstabelecimentos
+            )
+            .select(
+                "id,perfil_id,endereco,numero,bairro,cidade,estado,cep,telefone_comercial,instagram,site,capacidade,estrutura,estilos_musicais,aceita_musica_ao_vivo,created_at,updated_at"
+            )
+            .eq(
+                "perfil_id",
+                estado.perfil.id
+            )
+            .maybeSingle();
+
+
+        if (erroPerfilEstabelecimento) {
+
+            throw erroPerfilEstabelecimento;
+
+        }
+
+
+        estado.perfilEstabelecimento =
+            perfilEstabelecimento || {
+
+                id:
+                    null,
+
+                perfil_id:
+                    estado.perfil.id,
+
+                endereco:
+                    null,
+
+                numero:
+                    null,
+
+                bairro:
+                    null,
+
+                cidade:
+                    null,
+
+                estado:
+                    null,
+
+                cep:
+                    null,
+
+                telefone_comercial:
+                    null,
+
+                instagram:
+                    null,
+
+                site:
+                    null,
+
+                capacidade:
+                    null,
+
+                estrutura:
+                    null,
+
+                estilos_musicais:
+                    null,
+
+                aceita_musica_ao_vivo:
+                    false,
+
+                created_at:
+                    null,
+
+                updated_at:
+                    null
+
+            };
+
+
+        /*
+         * Estabelecimentos não possuem perfil artístico.
+         */
+
+        estado.perfilArtista =
+            null;
+
+    } else {
+
+        /*
+         * Apenas estabelecimentos utilizam
+         * perfis_estabelecimentos.
+         */
+
+        estado.perfilEstabelecimento =
             null;
 
     }
@@ -584,6 +869,9 @@ async function carregarDados() {
         perfilArtista:
             estado.perfilArtista,
 
+        perfilEstabelecimento:
+            estado.perfilEstabelecimento,
+
         tipoPerfil:
             estado.tipoPerfil,
 
@@ -591,7 +879,10 @@ async function carregarDados() {
             estado.isArtista,
 
         isContratante:
-            estado.isContratante
+            estado.isContratante,
+
+        isEstabelecimento:
+            estado.isEstabelecimento
 
     };
 
@@ -759,10 +1050,10 @@ async function salvarPerfil(
 
 
     /*
-     * Para o contratante, o local principal da foto é
-     * usuarios.foto_url.
+     * Para o contratante e estabelecimento, o local principal
+     * da foto continua sendo usuarios.foto_url.
      *
-     * Para artista, mantemos o mesmo comportamento atual.
+     * Para artista, mantemos também o comportamento atual.
      */
 
     const fotoUrl =
@@ -775,6 +1066,99 @@ async function salvarPerfil(
                 estado.usuario?.foto_url ||
                 null
             );
+
+
+    /* ====================================================
+       DADOS DO ESTABELECIMENTO
+       ==================================================== */
+
+    /*
+     * Estes campos ficam preparados nesta etapa para que
+     * o PerfilEditor.js possa fornecê-los posteriormente.
+     *
+     * Não interferem em artistas ou contratantes.
+     */
+
+    const endereco =
+        String(
+            dados?.endereco || ""
+        ).trim();
+
+
+    const numero =
+        String(
+            dados?.numero || ""
+        ).trim();
+
+
+    const bairro =
+        String(
+            dados?.bairro || ""
+        ).trim();
+
+
+    const cidade =
+        String(
+            dados?.cidade || ""
+        ).trim();
+
+
+    const estadoEstabelecimento =
+        String(
+            dados?.estado || ""
+        ).trim();
+
+
+    const cep =
+        String(
+            dados?.cep || ""
+        ).trim();
+
+
+    const telefoneComercial =
+        String(
+            dados?.telefoneComercial || ""
+        ).trim();
+
+
+    const instagram =
+        String(
+            dados?.instagram || ""
+        ).trim();
+
+
+    const site =
+        String(
+            dados?.site || ""
+        ).trim();
+
+
+    const capacidade =
+        dados?.capacidade !== undefined &&
+        dados?.capacidade !== null &&
+        dados?.capacidade !== ""
+            ? Number(
+                dados.capacidade
+            )
+            : null;
+
+
+    const estrutura =
+        String(
+            dados?.estrutura || ""
+        ).trim();
+
+
+    const estilosMusicais =
+        String(
+            dados?.estilosMusicais || ""
+        ).trim();
+
+
+    const aceitaMusicaAoVivo =
+        Boolean(
+            dados?.aceitaMusicaAoVivo
+        );
 
 
     /* ====================================================
@@ -1153,13 +1537,198 @@ async function salvarPerfil(
     } else {
 
         /*
-         * CONTRATANTE:
+         * CONTRATANTE E ESTABELECIMENTO:
          *
          * Nunca criamos, atualizamos ou removemos registros
          * em perfis_artistas.
          */
 
         estado.perfilArtista =
+            null;
+
+    }
+
+
+    /* ====================================================
+       PERFIS_ESTABELECIMENTOS
+       SOMENTE PARA ESTABELECIMENTOS
+       ==================================================== */
+
+    let perfilEstabelecimentoAtualizado =
+        null;
+
+
+    let dadosEstabelecimento =
+        null;
+
+
+    if (
+        estado.isEstabelecimento
+    ) {
+
+        const tabelaEstabelecimentos =
+            CONFIG?.tabelas?.perfisEstabelecimentos ||
+            "perfis_estabelecimentos";
+
+
+        dadosEstabelecimento = {
+
+            endereco:
+                endereco || null,
+
+            numero:
+                numero || null,
+
+            bairro:
+                bairro || null,
+
+            cidade:
+                cidade || null,
+
+            estado:
+                estadoEstabelecimento || null,
+
+            cep:
+                cep || null,
+
+            telefone_comercial:
+                telefoneComercial || null,
+
+            instagram:
+                instagram || null,
+
+            site:
+                site || null,
+
+            capacidade:
+                Number.isFinite(
+                    capacidade
+                )
+                    ? capacidade
+                    : null,
+
+            estrutura:
+                estrutura || null,
+
+            estilos_musicais:
+                estilosMusicais || null,
+
+            aceita_musica_ao_vivo:
+                aceitaMusicaAoVivo,
+
+            updated_at:
+                agora
+
+        };
+
+
+        console.log(
+            "PerfilEditorDados: salvando PERFIS_ESTABELECIMENTOS:",
+            {
+                perfilId:
+                    estado.perfil.id,
+
+                dados:
+                    dadosEstabelecimento
+            }
+        );
+
+
+        if (
+            estado.perfilEstabelecimento?.id
+        ) {
+
+            const {
+                data: estabelecimentoAtualizado,
+                error: erroAtualizacaoEstabelecimento
+            } = await supabase
+                .from(
+                    tabelaEstabelecimentos
+                )
+                .update(
+                    dadosEstabelecimento
+                )
+                .eq(
+                    "id",
+                    estado.perfilEstabelecimento.id
+                )
+                .eq(
+                    "perfil_id",
+                    estado.perfil.id
+                )
+                .select()
+                .maybeSingle();
+
+
+            if (erroAtualizacaoEstabelecimento) {
+
+                throw erroAtualizacaoEstabelecimento;
+
+            }
+
+
+            perfilEstabelecimentoAtualizado =
+                estabelecimentoAtualizado ||
+                null;
+
+        } else {
+
+            const {
+                data: novoPerfilEstabelecimento,
+                error: erroInsercaoEstabelecimento
+            } = await supabase
+                .from(
+                    tabelaEstabelecimentos
+                )
+                .insert({
+
+                    perfil_id:
+                        estado.perfil.id,
+
+                    ...dadosEstabelecimento
+
+                })
+                .select()
+                .maybeSingle();
+
+
+            if (erroInsercaoEstabelecimento) {
+
+                throw erroInsercaoEstabelecimento;
+
+            }
+
+
+            perfilEstabelecimentoAtualizado =
+                novoPerfilEstabelecimento ||
+                null;
+
+        }
+
+
+        estado.perfilEstabelecimento = {
+
+            ...estado.perfilEstabelecimento,
+
+            ...dadosEstabelecimento,
+
+            ...(perfilEstabelecimentoAtualizado || {}),
+
+            perfil_id:
+                estado.perfil.id
+
+        };
+
+    } else {
+
+        /*
+         * ARTISTA E CONTRATANTE:
+         *
+         * Nunca criamos ou atualizamos registros
+         * em perfis_estabelecimentos.
+         */
+
+        estado.perfilEstabelecimento =
             null;
 
     }
@@ -1220,6 +1789,9 @@ async function salvarPerfil(
         perfilArtista:
             estado.perfilArtista,
 
+        perfilEstabelecimento:
+            estado.perfilEstabelecimento,
+
         tipoPerfil:
             estado.tipoPerfil,
 
@@ -1229,12 +1801,17 @@ async function salvarPerfil(
         isContratante:
             estado.isContratante,
 
+        isEstabelecimento:
+            estado.isEstabelecimento,
+
         perfilPublicado:
             perfilAtualizado.perfil_publicado,
 
         fotoUrl,
 
-        dadosArtista
+        dadosArtista,
+
+        dadosEstabelecimento
 
     };
 
@@ -1260,5 +1837,7 @@ return {
 
 })();
 
+
 window.PerfilEditorDados =
 PerfilEditorDados;
+

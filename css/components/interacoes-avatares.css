@@ -1,0 +1,283 @@
+/* =========================================================
+   MUSICALWORLD — AVATARES DAS INTERAÇÕES DO FEED
+
+   Arquivo:
+   css/components/interacoes-avatares.css
+
+   Responsabilidade:
+
+   - Estilizar os pequenos avatares das interações.
+   - Manter os avatares sobrepostos.
+   - Preservar a leitura dos ícones.
+   - Adaptar o tamanho para desktop, tablet e celular.
+
+   IMPORTANTE:
+
+   Este CSS pertence ao Index.
+
+   Não interfere na página de apresentação do perfil.
+   ========================================================= */
+
+
+/* =========================================================
+   GRUPO DE UMA AÇÃO SOCIAL
+   ========================================================= */
+
+.ad-social-action {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    position: relative;
+
+    min-width: 0;
+
+}
+
+
+/* =========================================================
+   CONTAINER DOS AVATARES
+   ========================================================= */
+
+.ad-interacao-avatares {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    position: relative;
+
+    height: 22px;
+
+    width: 44px;
+
+    margin-left: -2px;
+
+    pointer-events: none;
+
+    flex-shrink: 0;
+
+}
+
+
+/* =========================================================
+   AVATAR INDIVIDUAL
+   ========================================================= */
+
+.ad-interacao-avatar {
+
+    position: absolute;
+
+    top: 50%;
+
+    left:
+        calc(
+            var(--avatar-index) * 10px
+        );
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 22px;
+
+    height: 22px;
+
+    min-width: 22px;
+
+    min-height: 22px;
+
+    overflow: hidden;
+
+    border:
+        2px solid #ffffff;
+
+    border-radius: 50%;
+
+    background:
+        #e8e4ff;
+
+    color:
+        #5b3de0;
+
+    font-size: 8px;
+
+    font-weight: 800;
+
+    line-height: 1;
+
+    transform:
+        translateY(-50%);
+
+    box-sizing: border-box;
+
+}
+
+
+/* =========================================================
+   CAMADA DOS AVATARES
+
+   O primeiro fica na frente.
+
+   Cada avatar seguinte fica ligeiramente atrás.
+   ========================================================= */
+
+.ad-interacao-avatar:nth-child(1) {
+
+    z-index: 3;
+
+}
+
+
+.ad-interacao-avatar:nth-child(2) {
+
+    z-index: 2;
+
+}
+
+
+.ad-interacao-avatar:nth-child(3) {
+
+    z-index: 1;
+
+}
+
+
+/* =========================================================
+   IMAGEM
+   ========================================================= */
+
+.ad-interacao-avatar-imagem {
+
+    display: block;
+
+    width: 100%;
+
+    height: 100%;
+
+    object-fit: cover;
+
+    border-radius: 50%;
+
+}
+
+
+/* =========================================================
+   FALLBACK DE INICIAIS
+   ========================================================= */
+
+.ad-interacao-avatar-fallback {
+
+    background:
+        #eeeaff;
+
+    color:
+        #6d4aff;
+
+}
+
+
+/* =========================================================
+   HIDDEN
+
+   O atributo hidden precisa realmente retirar o grupo
+   do fluxo para não deixar espaço vazio.
+   ========================================================= */
+
+.ad-interacao-avatares[hidden] {
+
+    display: none;
+
+}
+
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .ad-interacao-avatares {
+
+        width: 42px;
+
+    }
+
+
+    .ad-interacao-avatar {
+
+        width: 21px;
+
+        height: 21px;
+
+        min-width: 21px;
+
+        min-height: 21px;
+
+    }
+
+}
+
+
+/* =========================================================
+   CELULAR
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    .ad-interacao-avatares {
+
+        height: 20px;
+
+        width: 40px;
+
+        margin-left: -1px;
+
+    }
+
+
+    .ad-interacao-avatar {
+
+        width: 20px;
+
+        height: 20px;
+
+        min-width: 20px;
+
+        min-height: 20px;
+
+        border-width: 1.5px;
+
+        font-size: 7px;
+
+    }
+
+
+    .ad-interacao-avatar {
+
+        left:
+            calc(
+                var(--avatar-index) * 9px
+            );
+
+    }
+
+}
+
+
+/* =========================================================
+   REDUÇÃO DE MOVIMENTO
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .ad-interacao-avatar {
+
+        transition: none;
+
+    }
+
+}
