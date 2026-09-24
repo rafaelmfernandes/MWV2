@@ -17,7 +17,7 @@
        - Localizar conversa existente.
        - Criar conversa quando necessário.
        - Abrir o Chat diretamente.
-       - Iniciar contratação.
+       - Executar a ação de contratação.
        - Inicializar as interações universais do perfil.
        - Controlar a topbar durante o scroll.
        - Abrir/fechar menu de ações.
@@ -26,6 +26,16 @@
        - Exibir mensagens/toasts.
 
        IMPORTANTE:
+
+       A apresentação e os eventos dos botões principais do perfil
+       são controlados exclusivamente por:
+
+       js/apresentar-perfil-teste/ApresentarPerfilBotoes.js
+
+       Este módulo continua fornecendo as ações:
+
+       - abrirMensagens()
+       - contratarPerfil()
 
        Curtidas e favoritos NÃO são armazenados neste módulo.
 
@@ -2225,21 +2235,6 @@
             );
 
 
-        const btnContratar =
-            obterElemento(
-                CONFIG.elementos.contratar
-            );
-
-
-        const btnMensagem =
-            obterElemento(
-                CONFIG.elementos.mensagem
-            ) ||
-            obterElemento(
-                CONFIG.elementos.mensagemFallback
-            );
-
-
         const btnConta =
             obterElemento(
                 CONFIG.elementos.conta
@@ -2304,44 +2299,24 @@
         }
 
 
-        /* -----------------------------------------------------
-           CONTRATAR
-           ----------------------------------------------------- */
-
-        if (btnContratar) {
-
-            btnContratar.addEventListener(
-                "click",
-                function (evento) {
-
-                    evento.preventDefault();
-
-                    contratarPerfil();
-
-                }
-            );
-
-        }
-
-
-        /* -----------------------------------------------------
-           MENSAGEM
-           ----------------------------------------------------- */
-
-        if (btnMensagem) {
-
-            btnMensagem.addEventListener(
-                "click",
-                function (evento) {
-
-                    evento.preventDefault();
-
-                    abrirMensagens();
-
-                }
-            );
-
-        }
+        /*
+         * -----------------------------------------------------
+         * BOTÕES PRINCIPAIS DO PERFIL
+         * -----------------------------------------------------
+         *
+         * Os botões:
+         *
+         * - Mensagem;
+         * - Contratar;
+         * - Enviar proposta;
+         *
+         * são controlados exclusivamente pelo:
+         *
+         * js/apresentar-perfil-teste/ApresentarPerfilBotoes.js
+         *
+         * As funções abrirMensagens() e contratarPerfil()
+         * permanecem neste módulo como ações reutilizáveis.
+         */
 
 
         /*

@@ -25,6 +25,8 @@
        - Renderizar agenda e eventos públicos do perfil.
        - Renderizar atração contratada em eventos vinculados
          a uma contratação confirmada.
+       - Permitir acesso ao perfil público do artista contratado
+         através da foto, nome ou bloco da atração.
        - Manter funções de avaliação, gêneros, descrição e
          informações profissionais disponíveis para uso futuro.
        - Atualizar somente a interface do perfil.
@@ -55,6 +57,19 @@
        A Agenda/Eventos é uma seção independente da área
        do portfólio.
 
+       Os botões principais da página NÃO são controlados
+       por este arquivo.
+
+       Essa responsabilidade pertence ao:
+
+       js/apresentar-perfil-teste/ApresentarPerfilBotoes.js
+
+       que controla:
+
+       - Mensagem;
+       - Contratar;
+       - Enviar proposta.
+
        Este arquivo NÃO é responsável por:
 
        - Consultar o Supabase.
@@ -62,6 +77,7 @@
        - Buscar serviços.
        - Controlar contratação.
        - Controlar curtidas, comentários ou compartilhamentos.
+       - Controlar os botões principais da página.
 
        O acesso aos dados é responsabilidade de:
        ApresentarPerfilDadosTeste.js
@@ -875,6 +891,222 @@
                     evento.contratacao.id
 
             )
+        );
+
+    }
+
+
+    /* =========================================================
+       OBTER ID DO PERFIL DA ATRAÇÃO
+
+       O módulo de dados da agenda pública retorna:
+
+       evento.artista = {
+
+           usuario_id,
+           perfil_id,
+           nome,
+           tipo_artista,
+           foto_url
+
+       }
+
+       Para abrir o perfil público precisamos utilizar
+       especificamente:
+
+       artista.perfil_id
+
+       e NÃO:
+
+       artista.usuario_id
+
+       Isso ocorre porque a página pública recebe:
+
+       apresentar-perfil.html?id=PERFIL_ID
+       ========================================================= */
+
+    function obterPerfilIdAtracaoEvento(evento) {
+
+        const atracao =
+            obterAtracaoEvento(
+                evento
+            );
+
+
+        if (!atracao) {
+
+            return null;
+
+        }
+
+
+        const perfilId =
+            primeiroValor(
+
+                atracao.perfil_id,
+
+                atracao.perfilId,
+
+                atracao.id_perfil,
+
+                atracao.perfil &&
+                    atracao.perfil.id
+
+            );
+
+
+        if (!valorValido(perfilId)) {
+
+            return null;
+
+        }
+
+
+        return String(
+            perfilId
+        ).trim();
+
+    }
+
+
+    /* =========================================================
+       CONFIGURAR NAVEGAÇÃO DA ATRAÇÃO
+
+       Permite clicar no bloco da atração contratada para
+       abrir o perfil público do artista.
+
+       O destino é:
+
+       apresentar-perfil.html?id=PERFIL_ID
+
+       A navegação utiliza o perfil_id retornado pela RPC
+       pública da agenda.
+
+       Também adicionamos:
+
+       - cursor de navegação;
+       - role="link";
+       - tabindex="0";
+       - suporte a Enter;
+       - suporte a Espaço.
+
+       Caso o evento não possua perfil_id, nenhuma navegação
+       é configurada.
+       ========================================================= */
+
+    function configurarNavegacaoAtracao(
+        bloco,
+        evento
+    ) {
+
+        if (
+            !bloco ||
+            !evento
+        ) {
+
+            return;
+
+        }
+
+
+        const perfilId =
+            obterPerfilIdAtracaoEvento(
+                evento
+            );
+
+
+        if (!valorValido(perfilId)) {
+
+            return;
+
+        }
+
+
+        /*
+         * Evita configurar o mesmo bloco mais de uma vez.
+         */
+        if (
+            bloco.dataset.perfilAtracaoNavegacaoConfigurada ===
+            "true"
+        ) {
+
+            return;
+
+        }
+
+
+        const urlPerfil =
+            `apresentar-perfil.html?id=${encodeURIComponent(
+                perfilId
+            )}`;
+
+
+        bloco.dataset.perfilAtracaoNavegacaoConfigurada =
+            "true";
+
+
+        bloco.classList.add(
+            "agenda-attraction--clicavel"
+        );
+
+
+        bloco.style.cursor =
+            "pointer";
+
+
+        bloco.setAttribute(
+            "role",
+            "link"
+        );
+
+
+        bloco.setAttribute(
+            "tabindex",
+            "0"
+        );
+
+
+        bloco.setAttribute(
+            "aria-label",
+            "Abrir perfil público do artista"
+        );
+
+
+        function abrirPerfilAtracao() {
+
+            window.location.href =
+                urlPerfil;
+
+        }
+
+
+        bloco.addEventListener(
+            "click",
+            function () {
+
+                abrirPerfilAtracao();
+
+            }
+        );
+
+
+        bloco.addEventListener(
+            "keydown",
+            function (eventoTeclado) {
+
+                if (
+                    eventoTeclado.key === "Enter" ||
+                    eventoTeclado.key === " "
+                ) {
+
+                    eventoTeclado.preventDefault();
+
+
+                    abrirPerfilAtracao();
+
+                }
+
+            }
         );
 
     }
@@ -2093,6 +2325,33 @@
         );
 
 
+        /*
+         * =====================================================
+         * NAVEGAÇÃO PARA O PERFIL DO ARTISTA
+         *
+         * O perfil_id vem diretamente do objeto artista
+         * retornado pela RPC pública.
+         *
+         * Exemplo:
+         *
+         * evento.artista.perfil_id = 5
+         *
+         * Destino:
+         *
+         * apresentar-perfil.html?id=5
+         *
+         * Caso o evento não possua perfil_id, o bloco
+         * continua sendo exibido normalmente, apenas sem
+         * navegação.
+         * =====================================================
+         */
+
+        configurarNavegacaoAtracao(
+            bloco,
+            evento
+        );
+
+
         return bloco;
 
     }
@@ -2137,27 +2396,29 @@
             obterEventosPublicos();
 
 
+        console.log(
+            "MusicalWorld — EVENTOS DA AGENDA:",
+            eventos
+        );
+
+
+        eventos.forEach(function (evento, indice) {
+
             console.log(
-    "MusicalWorld — EVENTOS DA AGENDA:",
-    eventos
-);
+                `MusicalWorld — EVENTO ${indice + 1}:`,
+                {
+                    id: evento.id,
+                    titulo: evento.titulo,
+                    contratacao_id: evento.contratacao_id,
+                    contratacao: evento.contratacao,
+                    artista: evento.artista,
+                    nomeAtracao: obterNomeAtracaoEvento(evento),
+                    ehContratacao: eventoEhContratacao(evento)
+                }
+            );
 
-eventos.forEach(function (evento, indice) {
+        });
 
-    console.log(
-        `MusicalWorld — EVENTO ${indice + 1}:`,
-        {
-            id: evento.id,
-            titulo: evento.titulo,
-            contratacao_id: evento.contratacao_id,
-            contratacao: evento.contratacao,
-            artista: evento.artista,
-            nomeAtracao: obterNomeAtracaoEvento(evento),
-            ehContratacao: eventoEhContratacao(evento)
-        }
-    );
-
-});
 
         /*
          * Caso não existam eventos futuros ou em andamento,
@@ -2299,6 +2560,9 @@ eventos.forEach(function (evento, indice) {
                  *
                  * Atração confirmada
                  * [foto] Fulano
+                 *
+                 * O bloco agora também permite acessar o perfil
+                 * público do artista contratado.
                  * =================================================
                  */
 
@@ -2562,8 +2826,6 @@ eventos.forEach(function (evento, indice) {
             "MusicalWorld — Eventos públicos renderizados:",
             eventos.length
         );
-
-        
 
     }
 
@@ -4539,6 +4801,9 @@ eventos.forEach(function (evento, indice) {
 
     /* =========================================================
        NAVEGAÇÃO PARA O PERFIL
+
+       Esta navegação é referente à identidade exibida
+       na topbar e NÃO aos botões principais da página.
        ========================================================= */
 
     function configurarNavegacaoPerfil() {
@@ -4687,6 +4952,12 @@ eventos.forEach(function (evento, indice) {
 
     /* =========================================================
        RENDERIZAR DESCRIÇÃO
+
+       Mantida na API pública para compatibilidade com módulos
+       que ainda possam solicitar essa informação.
+
+       A renderização principal abaixo da mídia permanece
+       sob responsabilidade do módulo de portfólio.
        ========================================================= */
 
     function renderizarDescricao() {
@@ -4712,6 +4983,8 @@ eventos.forEach(function (evento, indice) {
 
     /* =========================================================
        RENDERIZAR GÊNEROS
+
+       Mantida na API pública para compatibilidade.
        ========================================================= */
 
     function renderizarGeneros() {
@@ -4772,6 +5045,8 @@ eventos.forEach(function (evento, indice) {
 
     /* =========================================================
        RENDERIZAR AVALIAÇÃO
+
+       Mantida na API pública para compatibilidade.
        ========================================================= */
 
     function renderizarAvaliacao() {
@@ -4830,6 +5105,8 @@ eventos.forEach(function (evento, indice) {
 
     /* =========================================================
        RENDERIZAR EXPERIÊNCIA
+
+       Mantida na API pública para compatibilidade.
        ========================================================= */
 
     function renderizarExperiencia() {
@@ -4855,6 +5132,8 @@ eventos.forEach(function (evento, indice) {
 
     /* =========================================================
        RENDERIZAR ÁREA
+
+       Mantida na API pública para compatibilidade.
        ========================================================= */
 
     function renderizarArea() {
@@ -4880,6 +5159,8 @@ eventos.forEach(function (evento, indice) {
 
     /* =========================================================
        RENDERIZAR DISPONIBILIDADE
+
+       Mantida na API pública para compatibilidade.
        ========================================================= */
 
     function renderizarDisponibilidade() {
@@ -4949,6 +5230,9 @@ eventos.forEach(function (evento, indice) {
         /*
          * =====================================================
          * NAVEGAÇÃO DO PERFIL
+         *
+         * Esta navegação é apenas para a identidade da
+         * topbar e não interfere nos botões principais.
          * =====================================================
          */
 
@@ -5021,6 +5305,13 @@ eventos.forEach(function (evento, indice) {
         renderizarAgenda,
 
         configurarNavegacaoPerfil,
+
+        configurarNavegacaoAtracao,
+
+        /*
+         * Funções mantidas para compatibilidade com módulos
+         * existentes e uso futuro.
+         */
 
         renderizarDescricao,
 

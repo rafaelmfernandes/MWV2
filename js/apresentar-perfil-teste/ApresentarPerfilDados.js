@@ -23,6 +23,15 @@
          um evento estiver vinculado a uma contratação.
        - Disponibilizar todos os dados para os demais módulos.
 
+       REGRA DE AGENDA PÚBLICA:
+       - Somente perfis de estabelecimento possuem agenda
+         pública para outros usuários.
+       - A agenda pública de estabelecimento utiliza a RPC:
+         buscar_agenda_publica_estabelecimento
+       - Contratações entre artistas continuam privadas.
+       - Dados financeiros e privados das contratações não
+         são expostos pela agenda pública.
+
        Este arquivo NÃO é responsável por:
        - Criar HTML.
        - Manipular o visual da página.
@@ -623,18 +632,25 @@
        CARREGAR DADOS DOS ARTISTAS DAS CONTRATAÇÕES
     =========================================================
 
-       Quando um item da agenda possui contratacao_id,
-       buscamos a contratação correspondente.
+       Esta função é utilizada somente pelo fluxo privado
+       da agenda de perfis que não são estabelecimentos.
 
-       A contratação possui:
+       Para estabelecimentos, a agenda pública NÃO utiliza
+       esta função.
 
-       - contratante_id
-       - contratado_id
+       A agenda pública de estabelecimentos utiliza a RPC:
+
+       buscar_agenda_publica_estabelecimento
+
+       Dessa forma:
+
+       - estabelecimento → agenda pública controlada pela RPC;
+       - artista → agenda continua privada;
+       - contratação entre artistas continua protegida.
 
        IMPORTANTE:
 
-       contratado_id referencia o:
-       usuarios.id
+       contratado_id referencia usuarios.id.
 
        Portanto:
 
@@ -647,32 +663,6 @@
                  perfis.id
                     ↓
              perfis_artistas
-
-       Não devemos tratar contratado_id diretamente
-       como perfis.id.
-
-       Depois buscamos:
-
-       - usuário do artista
-       - perfil do artista
-       - dados profissionais do artista
-
-       O resultado é associado ao item da agenda através
-       da propriedade:
-
-       evento.artista
-
-       Estrutura gerada:
-
-       artista: {
-           perfil_id,
-           usuario_id,
-           nome,
-           foto_url,
-           tipo_artista,
-           estilos,
-           instrumentos
-       }
 
        Esta função não cria HTML.
        ========================================================= */
@@ -830,14 +820,7 @@
 
         /* =====================================================
            BUSCAR USUÁRIOS DOS ARTISTAS CONTRATADOS
-        =====================================================
-
-           O contratado_id da contratação corresponde
-           diretamente ao usuarios.id.
-
-           Por isso a primeira consulta após a contratação
-           deve ser realizada na tabela usuarios.
-        */
+        ===================================================== */
 
         const usuarioArtistaIds = [
 
@@ -928,13 +911,7 @@
 
         /* =====================================================
            BUSCAR PERFIS DOS ARTISTAS
-        =====================================================
-
-           Agora usamos usuarios.id para encontrar
-           o perfil correspondente através de:
-
-           perfis.usuario_id
-        */
+        ===================================================== */
 
         const {
 
@@ -1362,32 +1339,44 @@
        CARREGAR AGENDA / EVENTOS
     =========================================================
 
-       Busca os eventos públicos vinculados ao perfil.
+       REGRA:
 
-       Tabela:
-       public.agenda_musicos
+       ESTABELECIMENTO
+       ----------------
+       A agenda pública é carregada pela RPC:
 
-       Valores atualmente existentes no banco:
+       buscar_agenda_publica_estabelecimento
 
-       tipo:
-       - evento
-       - show
+       A RPC já controla:
 
-       status:
-       - agendado
-       - confirmado
+       - perfil ativo;
+       - perfil publicado;
+       - tipo de perfil estabelecimento;
+       - agenda confirmada;
+       - contratação válida;
+       - artista contratado;
+       - dados públicos do artista.
 
-       O campo contratacao_id é carregado para permitir
-       identificar quando o evento veio de uma contratação.
+       ARTISTA
+       -------
+       A agenda continua sendo carregada pela consulta
+       privada existente.
 
-       Quando existe uma contratação, os dados do artista
-       contratado são adicionados ao evento através de:
+       Portanto:
 
-       evento.artista
+       estabelecimento → agenda pública
+       artista         → agenda privada
 
-       A filtragem de eventos passados e a apresentação
-       visual ficam sob responsabilidade do módulo de
-       renderização.
+       Importante:
+       Não confiamos somente no estado interno para saber
+       se o perfil é estabelecimento, porque carregarTudo()
+       utiliza Promise.all() e as consultas são executadas
+       simultaneamente.
+
+       Por isso fazemos uma consulta direta e simples em
+       perfis_estabelecimentos antes de decidir qual fluxo
+       utilizar.
+
        ========================================================= */
 
     async function carregarAgenda(perfilId) {
@@ -1420,6 +1409,161 @@
             return [];
 
         }
+
+
+        /* =====================================================
+           IDENTIFICAR SE O PERFIL É ESTABELECIMENTO
+        =====================================================
+
+           Não dependemos de estado.dados.perfilEstabelecimento
+           porque carregarAgenda() pode executar em paralelo
+           com carregarPerfilEstabelecimento().
+
+           A existência de um registro em
+           perfis_estabelecimentos identifica o perfil como
+           estabelecimento.
+
+           A RPC pública fará a validação definitiva do tipo,
+           status e publicação.
+        */
+
+        const {
+
+            data: estabelecimento,
+
+            error: erroEstabelecimento
+
+        } = await supabase
+
+            .from(
+                CONFIG.tabelas.perfisEstabelecimentos
+            )
+
+            .select(`
+                id,
+                perfil_id
+            `)
+
+            .eq(
+                "perfil_id",
+                id
+            )
+
+            .maybeSingle();
+
+
+        if (erroEstabelecimento) {
+
+            console.warn(
+                "MusicalWorld — Não foi possível verificar se o perfil possui agenda pública de estabelecimento:",
+                erroEstabelecimento
+            );
+
+        }
+
+
+        /* =====================================================
+           AGENDA PÚBLICA DO ESTABELECIMENTO
+        ===================================================== */
+
+        if (
+            estabelecimento &&
+            estabelecimento.id
+        ) {
+
+            const {
+
+                data,
+                error
+
+            } = await supabase.rpc(
+
+                "buscar_agenda_publica_estabelecimento",
+
+                {
+                    p_perfil_id:
+                        Number(id)
+                }
+
+            );
+
+
+            if (error) {
+
+                console.error(
+                    "MusicalWorld — Erro ao carregar agenda pública do estabelecimento:",
+                    error
+                );
+
+
+                /*
+                 * A agenda não deve impedir a abertura
+                 * do perfil.
+                 */
+                estado.dados.agenda =
+                    [];
+
+
+                return [];
+
+            }
+
+
+            const agendaPublica =
+
+                Array.isArray(data)
+
+                    ? data
+
+                    : [];
+
+
+            /*
+             * A RPC já retorna o artista contratado.
+             *
+             * Não executamos carregarArtistasDasContratacoes()
+             * aqui porque isso faria uma consulta direta
+             * em contratacoes.
+             *
+             * Para usuários que não participam da contratação,
+             * essa tabela continua protegida pela RLS.
+             */
+            estado.dados.agenda =
+                agendaPublica;
+
+
+            console.log(
+                "MusicalWorld — Agenda pública do estabelecimento carregada:",
+                estado.dados.agenda.length
+            );
+
+
+            console.log(
+                "MusicalWorld — Artistas vinculados à agenda pública:",
+                estado.dados.agenda.filter(
+                    evento =>
+                        evento &&
+                        evento.artista
+                ).length
+            );
+
+
+            return estado.dados.agenda;
+
+        }
+
+
+        /* =====================================================
+           AGENDA PRIVADA DE ARTISTA
+        =====================================================
+
+           Se não existe registro em
+           perfis_estabelecimentos, seguimos o fluxo
+           tradicional.
+
+           Dessa forma, uma agenda de artista não é
+           transformada em agenda pública.
+        */
 
 
         const {
@@ -1503,8 +1647,8 @@
 
 
         /*
-         * Agora enriquecemos somente os eventos que
-         * possuem uma contratação.
+         * Para perfis que não são estabelecimentos,
+         * mantemos o enriquecimento privado existente.
          */
         agenda =
             await carregarArtistasDasContratacoes(

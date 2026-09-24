@@ -1,685 +1,708 @@
 /* =========================================================
-MUSICALWORLD — CENTRAL DE CONTRATAÇÕES
+   MUSICALWORLD — CENTRAL DE CONTRATAÇÕES
 
-Arquivo:
-js/contratacoes.js
+   Arquivo:
+   js/contratacoes.js
 
-Responsabilidade:
+   Responsabilidade:
 
-* Carregar as contratações realizadas pelo usuário logado.
-* Carregar as solicitações de contratação recebidas pelo
-  usuário logado.
-* Buscar os dados reais no Supabase.
-* Utilizar a arquitetura central do MusicalWorld.
-* Permitir que qualquer usuário faça contratações,
-  inclusive um artista contratando outro artista.
-* Identificar se cada contratação foi feita pelo usuário
-  ou recebida pelo usuário.
-* Filtrar por status.
-* Pesquisar por pessoa, serviço ou evento.
-* Ordenar as contratações.
-* Atualizar os indicadores.
-* Renderizar os cards.
-* Abrir uma contratação individual.
+   - Carregar as contratações realizadas pelo usuário logado.
+   - Carregar as solicitações de contratação recebidas pelo
+     usuário logado.
+   - Buscar os dados reais no Supabase.
+   - Utilizar a arquitetura central do MusicalWorld.
+   - Permitir que qualquer usuário faça contratações,
+     inclusive um artista contratando outro artista.
+   - Identificar se cada contratação foi feita pelo usuário
+     ou recebida pelo usuário.
+   - Identificar propostas recebidas por estabelecimentos.
+   - Filtrar por status.
+   - Pesquisar por pessoa, serviço ou evento.
+   - Ordenar as contratações.
+   - Atualizar os indicadores.
+   - Renderizar os cards.
+   - Abrir uma contratação individual.
 
-IMPORTANTE:
+   IMPORTANTE:
 
-A tabela principal utilizada é:
+   A tabela principal utilizada é:
 
-public.contratacoes
+   public.contratacoes
 
-Relacionamentos:
+   Relacionamentos:
 
-contratante_id → usuarios.id
-contratado_id  → usuarios.id
-servico_id     → servicos_artistas.id
+   contratante_id → usuarios.id
+   contratado_id  → usuarios.id
+   servico_id     → servicos_artistas.id
 
-A página agora trabalha com os dois lados da contratação:
+   A página trabalha com os dois lados da contratação:
 
-1. CONTRATAÇÕES REALIZADAS
-   contratante_id = usuário logado
+   1. CONTRATAÇÕES REALIZADAS
+      contratante_id = usuário logado
 
-2. SOLICITAÇÕES RECEBIDAS
-   contratado_id = usuário logado
+   2. SOLICITAÇÕES RECEBIDAS
+      contratado_id = usuário logado
 
-Arquitetura utilizada:
+   Uma solicitação recebida pode representar:
 
-SupabaseClient.js
-↓
-supabaseClient
-↓
-Sessao.js
-↓
-UsuarioAtual.js
-↓
-contratacoes.js
+   - uma contratação tradicional;
+   - uma proposta enviada por um artista;
+   - uma proposta enviada por outro usuário.
+
+   Arquitetura utilizada:
+
+   SupabaseClient.js
+   ↓
+   supabaseClient
+   ↓
+   Sessao.js
+   ↓
+   UsuarioAtual.js
+   ↓
+   contratacoes.js
 ========================================================= */
 
 (function (window) {
 
-"use strict";
+    "use strict";
 
 
-/* =====================================================
-   CONFIGURAÇÃO
-====================================================== */
+    /* =====================================================
+       CONFIGURAÇÃO
+    ====================================================== */
 
-const CONFIG = {
+    const CONFIG = {
 
-    armazenamento: {
+        armazenamento: {
 
-        chaveContratacao:
-            "musicalworld_contratacao",
+            chaveContratacao:
+                "musicalworld_contratacao",
 
-        chaveLista:
-            "musicalworld_contratacoes"
+            chaveLista:
+                "musicalworld_contratacoes"
 
-    },
+        },
 
 
-    paginas: {
+        paginas: {
 
-        inicio:
-            "index.html",
+            inicio:
+                "index.html",
 
-        novaContratacao:
-            "contratacao.html",
+            novaContratacao:
+                "contratacao.html",
 
-        acompanhamento:
-            "contratacao-acompanhamento.html",
+            acompanhamento:
+                "contratacao-acompanhamento.html",
 
-        perfil:
-            "meu-perfil.html"
+            perfil:
+                "meu-perfil.html"
 
-    },
+        },
 
 
-    tabelas: {
+        tabelas: {
 
-        contratacoes:
-            "contratacoes",
+            contratacoes:
+                "contratacoes",
 
-        usuarios:
-            "usuarios",
+            usuarios:
+                "usuarios",
 
-        perfis:
-            "perfis",
+            perfis:
+                "perfis",
 
-        perfisArtistas:
-            "perfis_artistas",
+            perfisArtistas:
+                "perfis_artistas",
 
-        servicos:
-            "servicos_artistas"
+            servicos:
+                "servicos_artistas"
 
-    },
+        },
 
 
-    seletores: {
+        seletores: {
 
-        lista:
-            "contratacoesLista",
+            lista:
+                "contratacoesLista",
 
-        estadoVazio:
-            "estadoVazio",
+            estadoVazio:
+                "estadoVazio",
 
-        estadoVazioMensagem:
-            "estadoVazioMensagem",
+            estadoVazioMensagem:
+                "estadoVazioMensagem",
 
-        campoBusca:
-            "campoBusca",
+            campoBusca:
+                "campoBusca",
 
-        btnLimparBusca:
-            "btnLimparBusca",
+            btnLimparBusca:
+                "btnLimparBusca",
 
-        btnLimparFiltros:
-            "btnLimparFiltros",
+            btnLimparFiltros:
+                "btnLimparFiltros",
 
-        contador:
-            "contadorContratacoes",
+            contador:
+                "contadorContratacoes",
 
-        resumoAguardando:
-            "resumoAguardando",
+            resumoAguardando:
+                "resumoAguardando",
 
-        resumoProximas:
-            "resumoProximas",
+            resumoProximas:
+                "resumoProximas",
 
-        resumoAndamento:
-            "resumoAndamento",
+            resumoAndamento:
+                "resumoAndamento",
 
-        resumoHistorico:
-            "resumoHistorico",
+            resumoHistorico:
+                "resumoHistorico",
 
-        btnVoltar:
-            "btnVoltar",
+            btnVoltar:
+                "btnVoltar",
 
-        btnInicio:
-            "btnInicio",
+            btnInicio:
+                "btnInicio",
 
-        btnPerfil:
-            "btnPerfil",
+            btnPerfil:
+                "btnPerfil",
 
-        btnNovaContratacao:
-            "btnNovaContratacao",
+            btnNovaContratacao:
+                "btnNovaContratacao",
 
-        btnOrdenacao:
-            "btnOrdenacao",
+            btnOrdenacao:
+                "btnOrdenacao",
 
-        filtros:
-            ".filtro-btn",
+            filtros:
+                ".filtro-btn",
 
-        cardsResumo:
-            ".resumo-card"
+            cardsResumo:
+                ".resumo-card"
 
-    }
+        }
 
-};
+    };
 
 
-/* =====================================================
-   ESTADO
-====================================================== */
+    /* =====================================================
+       ESTADO
+    ====================================================== */
 
-const estado = {
+    const estado = {
 
-    /*
-     * Todas as contratações relacionadas ao usuário.
-     *
-     * Pode conter:
-     *
-     * - contratações realizadas;
-     * - solicitações recebidas.
-     */
+        /*
+         * Todas as contratações relacionadas ao usuário.
+         *
+         * Pode conter:
+         *
+         * - contratações realizadas;
+         * - solicitações recebidas;
+         * - propostas recebidas.
+         */
 
-    contratacoes: [],
+        contratacoes: [],
 
 
-    contratacoesFiltradas: [],
+        contratacoesFiltradas: [],
 
 
-    filtroAtual:
-        "todas",
+        filtroAtual:
+            "todas",
 
 
-    buscaAtual:
-        "",
+        buscaAtual:
+            "",
 
 
-    ordenacao:
-        "recentes",
+        ordenacao:
+            "recentes",
 
 
-    usuarioId:
-        null,
+        usuarioId:
+            null,
 
 
-    carregando:
-        false,
+        carregando:
+            false,
 
 
-    erro:
-        null,
+        erro:
+            null,
 
 
-    inicializado:
-        false
+        inicializado:
+            false
 
-};
+    };
 
 
-/* =====================================================
-   UTILITÁRIOS
-====================================================== */
+    /* =====================================================
+       UTILITÁRIOS
+    ====================================================== */
 
-function obterElemento(id) {
+    function obterElemento(id) {
 
-    return document.getElementById(id);
-
-}
-
-
-function escaparHtml(valor) {
-
-    if (
-        valor === null ||
-        valor === undefined
-    ) {
-
-        return "";
+        return document.getElementById(id);
 
     }
 
 
-    return String(valor)
+    function escaparHtml(valor) {
 
-        .replace(
-            /&/g,
-            "&amp;"
-        )
+        if (
+            valor === null ||
+            valor === undefined
+        ) {
 
-        .replace(
-            /</g,
-            "&lt;"
-        )
+            return "";
 
-        .replace(
-            />/g,
-            "&gt;"
-        )
+        }
 
-        .replace(
-            /"/g,
-            "&quot;"
-        )
 
-        .replace(
-            /'/g,
-            "&#039;"
+        return String(valor)
+
+            .replace(
+                /&/g,
+                "&amp;"
+            )
+
+            .replace(
+                /</g,
+                "&lt;"
+            )
+
+            .replace(
+                />/g,
+                "&gt;"
+            )
+
+            .replace(
+                /"/g,
+                "&quot;"
+            )
+
+            .replace(
+                /'/g,
+                "&#039;"
+            );
+
+    }
+
+
+    function formatarMoeda(valor) {
+
+        const numero =
+            Number(valor) || 0;
+
+
+        return numero.toLocaleString(
+            "pt-BR",
+            {
+                style: "currency",
+                currency: "BRL"
+            }
         );
 
-}
-
-
-function formatarMoeda(valor) {
-
-    const numero =
-        Number(valor) || 0;
-
-
-    return numero.toLocaleString(
-        "pt-BR",
-        {
-            style: "currency",
-            currency: "BRL"
-        }
-    );
-
-}
-
-
-function formatarData(data) {
-
-    if (!data) {
-
-        return "Data não informada";
-
     }
 
 
-    const dataObj =
-        new Date(
-            `${data}T12:00:00`
+    function formatarData(data) {
+
+        if (!data) {
+
+            return "Data não informada";
+
+        }
+
+
+        const dataObj =
+            new Date(
+                `${data}T12:00:00`
+            );
+
+
+        if (
+            Number.isNaN(
+                dataObj.getTime()
+            )
+        ) {
+
+            return data;
+
+        }
+
+
+        return dataObj.toLocaleDateString(
+            "pt-BR",
+            {
+                day: "2-digit",
+                month: "short"
+            }
         );
 
-
-    if (
-        Number.isNaN(
-            dataObj.getTime()
-        )
-    ) {
-
-        return data;
-
     }
 
 
-    return dataObj.toLocaleDateString(
-        "pt-BR",
-        {
-            day: "2-digit",
-            month: "short"
+    function formatarDataCompleta(data) {
+
+        if (!data) {
+
+            return "Data não informada";
+
         }
-    );
-
-}
 
 
-function formatarDataCompleta(data) {
-
-    if (!data) {
-
-        return "Data não informada";
-
-    }
+        const dataObj =
+            new Date(
+                `${data}T12:00:00`
+            );
 
 
-    const dataObj =
-        new Date(
-            `${data}T12:00:00`
+        if (
+            Number.isNaN(
+                dataObj.getTime()
+            )
+        ) {
+
+            return data;
+
+        }
+
+
+        return dataObj.toLocaleDateString(
+            "pt-BR",
+            {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric"
+            }
         );
 
-
-    if (
-        Number.isNaN(
-            dataObj.getTime()
-        )
-    ) {
-
-        return data;
-
     }
 
 
-    return dataObj.toLocaleDateString(
-        "pt-BR",
-        {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric"
-        }
-    );
+    function normalizarTexto(valor) {
 
-}
-
-
-function normalizarTexto(valor) {
-
-    return String(
-        valor || ""
-    )
-
-        .normalize("NFD")
-
-        .replace(
-            /[\u0300-\u036f]/g,
-            ""
+        return String(
+            valor || ""
         )
 
-        .toLowerCase()
+            .normalize("NFD")
 
-        .trim();
+            .replace(
+                /[\u0300-\u036f]/g,
+                ""
+            )
 
-}
+            .toLowerCase()
 
-
-function obterIniciais(nome) {
-
-    const texto =
-        String(nome || "")
             .trim();
 
-
-    if (!texto) {
-
-        return "MW";
-
     }
 
 
-    const partes =
-        texto
-            .split(/\s+/)
-            .filter(Boolean);
+    function obterIniciais(nome) {
 
+        const texto =
+            String(nome || "")
+                .trim();
 
-    if (
-        partes.length === 1
-    ) {
 
-        return partes[0]
-            .substring(0, 2)
-            .toUpperCase();
+        if (!texto) {
 
-    }
-
-
-    return (
-        partes[0].charAt(0) +
-        partes[
-            partes.length - 1
-        ].charAt(0)
-    ).toUpperCase();
-
-}
-
-
-/* =====================================================
-   CABEÇALHO DINÂMICO
-====================================================== */
-
-/*
- * A página continua podendo mostrar tanto:
- *
- * - contratações realizadas;
- * - solicitações recebidas.
- *
- * Por isso o título e o texto introdutório são mantidos
- * neutros.
- */
-
-function atualizarCabecalho() {
-
-    const titulo =
-        document.querySelector(
-            ".page-header h1"
-        );
-
-
-    const descricao =
-        document.querySelector(
-            ".page-header p"
-        );
-
-
-    if (titulo) {
-
-        titulo.textContent =
-            "Contratações";
-
-    }
-
-
-    if (descricao) {
-
-        descricao.textContent =
-            "Acompanhe suas contratações e as solicitações recebidas em um só lugar.";
-
-    }
-
-
-    const campoBusca =
-        obterElemento(
-            CONFIG.seletores.campoBusca
-        );
-
-
-    if (campoBusca) {
-
-        campoBusca.placeholder =
-            "Buscar pessoa, evento ou serviço...";
-
-    }
-
-}
-
-
-/* =====================================================
-   STATUS DO BANCO → STATUS DA INTERFACE
-====================================================== */
-
-function normalizarStatus(status) {
-
-    const mapa = {
-
-        rascunho:
-            "rascunho",
-
-        solicitacao_enviada:
-            "aguardando_artista",
-
-        aguardando_confirmacao:
-            "aguardando_artista",
-
-        confirmada:
-            "confirmada",
-
-        em_andamento:
-            "andamento",
-
-        concluida:
-            "concluida",
-
-        cancelada:
-            "cancelada",
-
-        recusada:
-            "recusada"
-
-    };
-
-
-    return (
-        mapa[status] ||
-        status ||
-        "aguardando_artista"
-    );
-
-}
-
-
-function obterStatusConfig(
-    status,
-    direcao
-) {
-
-    const configuracoes = {
-
-        aguardando_artista: {
-
-            texto:
-                direcao === "recebida"
-                    ? "Aguardando sua resposta"
-                    : "Aguardando resposta",
-
-            classe:
-                "status-aguardando"
-
-        },
-
-
-        confirmada: {
-
-            texto:
-                "Confirmada",
-
-            classe:
-                "status-confirmada"
-
-        },
-
-
-        andamento: {
-
-            texto:
-                "Em andamento",
-
-            classe:
-                "status-andamento"
-
-        },
-
-
-        concluida: {
-
-            texto:
-                "Concluída",
-
-            classe:
-                "status-concluida"
-
-        },
-
-
-        cancelada: {
-
-            texto:
-                "Cancelada",
-
-            classe:
-                "status-cancelada"
-
-        },
-
-
-        recusada: {
-
-            texto:
-                direcao === "recebida"
-                    ? "Recusada por você"
-                    : "Recusada",
-
-            classe:
-                "status-recusada"
-
-        },
-
-
-        rascunho: {
-
-            texto:
-                "Rascunho",
-
-            classe:
-                "status-aguardando"
+            return "MW";
 
         }
 
-    };
+
+        const partes =
+            texto
+                .split(/\s+/)
+                .filter(Boolean);
 
 
-    return (
-        configuracoes[status] ||
-        configuracoes.aguardando_artista
-    );
+        if (
+            partes.length === 1
+        ) {
 
-}
+            return partes[0]
+                .substring(0, 2)
+                .toUpperCase();
+
+        }
 
 
-/* =====================================================
-   LOCALIZAÇÃO DO EVENTO
-====================================================== */
+        return (
+            partes[0].charAt(0) +
+            partes[
+                partes.length - 1
+            ].charAt(0)
+        ).toUpperCase();
 
-function extrairDadosLocal(local) {
+    }
 
-    if (!local) {
 
-        return {
+    /* =====================================================
+       CABEÇALHO DINÂMICO
+    ====================================================== */
 
-            nome:
-                "Local não informado",
+    /*
+     * A página continua podendo mostrar tanto:
+     *
+     * - contratações realizadas;
+     * - solicitações recebidas;
+     * - propostas recebidas.
+     *
+     * Por isso o título e o texto introdutório são mantidos
+     * neutros.
+     */
 
-            cidade:
-                ""
+    function atualizarCabecalho() {
+
+        const titulo =
+            document.querySelector(
+                ".page-header h1"
+            );
+
+
+        const descricao =
+            document.querySelector(
+                ".page-header p"
+            );
+
+
+        if (titulo) {
+
+            titulo.textContent =
+                "Contratações";
+
+        }
+
+
+        if (descricao) {
+
+            descricao.textContent =
+                "Acompanhe suas contratações e as solicitações recebidas em um só lugar.";
+
+        }
+
+
+        const campoBusca =
+            obterElemento(
+                CONFIG.seletores.campoBusca
+            );
+
+
+        if (campoBusca) {
+
+            campoBusca.placeholder =
+                "Buscar pessoa, evento ou serviço...";
+
+        }
+
+    }
+
+
+    /* =====================================================
+       STATUS DO BANCO → STATUS DA INTERFACE
+    ====================================================== */
+
+    function normalizarStatus(status) {
+
+        const mapa = {
+
+            rascunho:
+                "rascunho",
+
+            solicitacao_enviada:
+                "aguardando_artista",
+
+            aguardando_confirmacao:
+                "aguardando_artista",
+
+            confirmada:
+                "confirmada",
+
+            em_andamento:
+                "andamento",
+
+            concluida:
+                "concluida",
+
+            cancelada:
+                "cancelada",
+
+            recusada:
+                "recusada"
 
         };
 
+
+        return (
+            mapa[status] ||
+            status ||
+            "aguardando_artista"
+        );
+
     }
 
 
-    /*
-     * A coluna "local" é JSONB.
-     *
-     * Aceitamos tanto objeto quanto string JSON.
-     */
-
-    if (
-        typeof local === "string"
+    function obterStatusConfig(
+        status,
+        direcao
     ) {
 
-        try {
+        const configuracoes = {
 
-            const convertido =
-                JSON.parse(local);
+            aguardando_artista: {
+
+                texto:
+                    direcao === "recebida"
+                        ? "Aguardando sua resposta"
+                        : "Aguardando resposta",
+
+                classe:
+                    "status-aguardando"
+
+            },
 
 
-            if (
-                convertido &&
-                typeof convertido === "object"
-            ) {
+            confirmada: {
 
-                local =
-                    convertido;
+                texto:
+                    "Confirmada",
 
-            } else {
+                classe:
+                    "status-confirmada"
+
+            },
+
+
+            andamento: {
+
+                texto:
+                    "Em andamento",
+
+                classe:
+                    "status-andamento"
+
+            },
+
+
+            concluida: {
+
+                texto:
+                    "Concluída",
+
+                classe:
+                    "status-concluida"
+
+            },
+
+
+            cancelada: {
+
+                texto:
+                    "Cancelada",
+
+                classe:
+                    "status-cancelada"
+
+            },
+
+
+            recusada: {
+
+                texto:
+                    direcao === "recebida"
+                        ? "Recusada por você"
+                        : "Recusada",
+
+                classe:
+                    "status-recusada"
+
+            },
+
+
+            rascunho: {
+
+                texto:
+                    "Rascunho",
+
+                classe:
+                    "status-aguardando"
+
+            }
+
+        };
+
+
+        return (
+            configuracoes[status] ||
+            configuracoes.aguardando_artista
+        );
+
+    }
+
+
+    /* =====================================================
+       LOCALIZAÇÃO DO EVENTO
+    ====================================================== */
+
+    function extrairDadosLocal(local) {
+
+        if (!local) {
+
+            return {
+
+                nome:
+                    "Local não informado",
+
+                cidade:
+                    ""
+
+            };
+
+        }
+
+
+        /*
+         * A coluna "local" é JSONB.
+         *
+         * Aceitamos tanto objeto quanto string JSON.
+         */
+
+        if (
+            typeof local === "string"
+        ) {
+
+            try {
+
+                const convertido =
+                    JSON.parse(local);
+
+
+                if (
+                    convertido &&
+                    typeof convertido === "object"
+                ) {
+
+                    local =
+                        convertido;
+
+                } else {
+
+                    return {
+
+                        nome:
+                            local,
+
+                        cidade:
+                            ""
+
+                    };
+
+                }
+
+            } catch (erro) {
 
                 return {
 
@@ -693,391 +716,420 @@ function extrairDadosLocal(local) {
 
             }
 
-        } catch (erro) {
+        }
+
+
+        /*
+         * Para propostas enviadas a estabelecimentos,
+         * o local é normalmente o endereço cadastrado
+         * pelo estabelecimento.
+         *
+         * Priorizamos nomeLocal quando disponível,
+         * mantendo os demais formatos existentes.
+         */
+
+        const nome =
+            local.nomeLocal ||
+            local.nome ||
+            local.endereco ||
+            local.local ||
+            local.logradouro ||
+            "Local não informado";
+
+
+        const cidade =
+            local.cidade ||
+            local.municipio ||
+            local.city ||
+            "";
+
+
+        return {
+
+            nome,
+
+            cidade
+
+        };
+
+    }
+
+
+    /* =====================================================
+       BUSCAR DADOS DE UMA PESSOA
+    ====================================================== */
+
+    /*
+     * Esta função substitui a ideia de carregar apenas
+     * "artista".
+     *
+     * Uma contratação possui duas pessoas:
+     *
+     * - contratante;
+     * - contratado.
+     *
+     * Cada lado pode ser artista, contratante,
+     * estabelecimento ou ambos.
+     */
+
+    async function carregarDadosPessoa(
+        supabase,
+        usuarioId
+    ) {
+
+        if (!usuarioId) {
 
             return {
 
-                nome:
-                    local,
+                id:
+                    null,
 
-                cidade:
+                nome:
+                    "Usuário",
+
+                tipo:
+                    "Usuário",
+
+                iniciais:
+                    "MW",
+
+                fotoUrl:
+                    null,
+
+                localizacao:
                     ""
 
             };
 
         }
 
-    }
+
+        let usuario =
+            null;
 
 
-    const nome =
-        local.nome ||
-        local.endereco ||
-        local.local ||
-        local.logradouro ||
-        "Local não informado";
+        let perfil =
+            null;
 
 
-    const cidade =
-        local.cidade ||
-        local.municipio ||
-        local.city ||
-        "";
+        let perfilArtista =
+            null;
 
 
-    return {
+        /* -------------------------------------------------
+           USUÁRIO
+        ------------------------------------------------- */
 
-        nome,
-
-        cidade
-
-    };
-
-}
-
-
-/* =====================================================
-   BUSCAR DADOS DE UMA PESSOA
-====================================================== */
-
-/*
- * Esta função substitui a ideia de carregar apenas
- * "artista".
- *
- * Uma contratação possui duas pessoas:
- *
- * - contratante;
- * - contratado.
- *
- * Cada lado pode ser artista, contratante ou ambos.
- */
-
-async function carregarDadosPessoa(
-    supabase,
-    usuarioId
-) {
-
-    if (!usuarioId) {
-
-        return {
-
-            id:
-                null,
-
-            nome:
-                "Usuário",
-
-            tipo:
-                "Usuário",
-
-            iniciais:
-                "MW",
-
-            fotoUrl:
-                null,
-
-            localizacao:
-                ""
-
-        };
-
-    }
-
-
-    let usuario =
-        null;
-
-
-    let perfil =
-        null;
-
-
-    let perfilArtista =
-        null;
-
-
-    /* -------------------------------------------------
-       USUÁRIO
-    ------------------------------------------------- */
-
-    const respostaUsuario =
-        await supabase
-
-            .from(
-                CONFIG.tabelas.usuarios
-            )
-
-            .select(`
-                id,
-                nome,
-                email,
-                telefone,
-                foto_url,
-                ativo
-            `)
-
-            .eq(
-                "id",
-                usuarioId
-            )
-
-            .maybeSingle();
-
-
-    if (
-        respostaUsuario.error
-    ) {
-
-        console.warn(
-            "MusicalWorld — erro ao carregar usuário:",
-            respostaUsuario.error
-        );
-
-    } else {
-
-        usuario =
-            respostaUsuario.data;
-
-    }
-
-
-    /* -------------------------------------------------
-       PERFIL
-    ------------------------------------------------- */
-
-    const respostaPerfil =
-        await supabase
-
-            .from(
-                CONFIG.tabelas.perfis
-            )
-
-            .select(`
-                id,
-                usuario_id,
-                nome_exibicao,
-                descricao,
-                ativo,
-                tipo_perfil_id,
-                tipos_perfil (
-                    id,
-                    nome,
-                    descricao
-                )
-            `)
-
-            .eq(
-                "usuario_id",
-                usuarioId
-            )
-
-            .eq(
-                "ativo",
-                true
-            )
-
-            .maybeSingle();
-
-
-    if (
-        respostaPerfil.error
-    ) {
-
-        console.warn(
-            "MusicalWorld — erro ao carregar perfil:",
-            respostaPerfil.error
-        );
-
-    } else {
-
-        perfil =
-            respostaPerfil.data;
-
-    }
-
-
-    /* -------------------------------------------------
-       PERFIL ARTÍSTICO
-    ------------------------------------------------- */
-
-    if (
-        perfil?.id
-    ) {
-
-        const respostaPerfilArtista =
+        const respostaUsuario =
             await supabase
 
                 .from(
-                    CONFIG.tabelas
-                        .perfisArtistas
+                    CONFIG.tabelas.usuarios
                 )
 
-                .select("*")
+                .select(`
+                    id,
+                    nome,
+                    email,
+                    telefone,
+                    foto_url,
+                    ativo
+                `)
 
                 .eq(
-                    "perfil_id",
-                    perfil.id
+                    "id",
+                    usuarioId
                 )
 
                 .maybeSingle();
 
 
         if (
-            respostaPerfilArtista.error
+            respostaUsuario.error
         ) {
 
             console.warn(
-                "MusicalWorld — erro ao carregar perfil artístico:",
-                respostaPerfilArtista.error
+                "MusicalWorld — erro ao carregar usuário:",
+                respostaUsuario.error
             );
 
         } else {
 
-            perfilArtista =
-                respostaPerfilArtista.data;
+            usuario =
+                respostaUsuario.data;
 
         }
 
-    }
+
+        /* -------------------------------------------------
+           PERFIL
+        ------------------------------------------------- */
+
+        const respostaPerfil =
+            await supabase
+
+                .from(
+                    CONFIG.tabelas.perfis
+                )
+
+                .select(`
+                    id,
+                    usuario_id,
+                    nome_exibicao,
+                    descricao,
+                    ativo,
+                    tipo_perfil_id,
+                    tipos_perfil (
+                        id,
+                        nome,
+                        descricao
+                    )
+                `)
+
+                .eq(
+                    "usuario_id",
+                    usuarioId
+                )
+
+                .eq(
+                    "ativo",
+                    true
+                )
+
+                .maybeSingle();
 
 
-    const nome =
-        perfil?.nome_exibicao ||
-        usuario?.nome ||
-        "Usuário";
+        if (
+            respostaPerfil.error
+        ) {
+
+            console.warn(
+                "MusicalWorld — erro ao carregar perfil:",
+                respostaPerfil.error
+            );
+
+        } else {
+
+            perfil =
+                respostaPerfil.data;
+
+        }
 
 
-    const tipo =
-        perfilArtista?.tipo_artista ||
-        perfil?.tipos_perfil?.nome ||
-        "Usuário";
+        /* -------------------------------------------------
+           PERFIL ARTÍSTICO
+        ------------------------------------------------- */
+
+        if (
+            perfil?.id
+        ) {
+
+            const respostaPerfilArtista =
+                await supabase
+
+                    .from(
+                        CONFIG.tabelas
+                            .perfisArtistas
+                    )
+
+                    .select("*")
+
+                    .eq(
+                        "perfil_id",
+                        perfil.id
+                    )
+
+                    .maybeSingle();
 
 
-    const fotoUrl =
-        perfilArtista?.foto_url ||
-        perfilArtista?.avatar_url ||
-        usuario?.foto_url ||
-        null;
+            if (
+                respostaPerfilArtista.error
+            ) {
+
+                console.warn(
+                    "MusicalWorld — erro ao carregar perfil artístico:",
+                    respostaPerfilArtista.error
+                );
+
+            } else {
+
+                perfilArtista =
+                    respostaPerfilArtista.data;
+
+            }
+
+        }
 
 
-    const localizacao =
-        perfilArtista?.localizacao ||
-        "";
+        const nome =
+            perfil?.nome_exibicao ||
+            usuario?.nome ||
+            "Usuário";
 
 
-    return {
-
-        id:
-            usuarioId,
-
-        nome,
-
-        tipo,
-
-        iniciais:
-            obterIniciais(nome),
-
-        fotoUrl,
-
-        localizacao
-
-    };
-
-}
+        const tipo =
+            perfilArtista?.tipo_artista ||
+            perfil?.tipos_perfil?.nome ||
+            "Usuário";
 
 
-/* =====================================================
-   COMPATIBILIDADE — BUSCAR ARTISTA
-====================================================== */
-
-/*
- * Mantemos esta função para preservar compatibilidade
- * com qualquer parte do projeto que eventualmente
- * utilize o nome antigo.
- */
-
-async function carregarDadosArtista(
-    supabase,
-    usuarioId
-) {
-
-    return carregarDadosPessoa(
-        supabase,
-        usuarioId
-    );
-
-}
+        const fotoUrl =
+            perfilArtista?.foto_url ||
+            perfilArtista?.avatar_url ||
+            usuario?.foto_url ||
+            null;
 
 
-/* =====================================================
-   BUSCAR SERVIÇO
-====================================================== */
+        const localizacao =
+            perfilArtista?.localizacao ||
+            "";
 
-async function carregarDadosServico(
-    supabase,
-    servicoId
-) {
-
-    if (!servicoId) {
 
         return {
 
             id:
-                null,
+                usuarioId,
 
-            nome:
-                "Serviço",
+            nome,
 
-            valor:
-                0,
+            tipo,
 
-            duracao:
-                ""
+            iniciais:
+                obterIniciais(nome),
+
+            fotoUrl,
+
+            localizacao
 
         };
 
     }
 
 
-    const resposta =
-        await supabase
+    /* =====================================================
+       COMPATIBILIDADE — BUSCAR ARTISTA
+    ====================================================== */
 
-            .from(
-                CONFIG.tabelas.servicos
-            )
+    /*
+     * Mantemos esta função para preservar compatibilidade
+     * com qualquer parte do projeto que eventualmente
+     * utilize o nome antigo.
+     */
 
-            .select("*")
-
-            .eq(
-                "id",
-                servicoId
-            )
-
-            .maybeSingle();
-
-
-    if (
-        resposta.error
+    async function carregarDadosArtista(
+        supabase,
+        usuarioId
     ) {
 
-        console.warn(
-            "MusicalWorld — erro ao carregar serviço:",
-            resposta.error
+        return carregarDadosPessoa(
+            supabase,
+            usuarioId
         );
+
+    }
+
+
+    /* =====================================================
+       BUSCAR SERVIÇO
+    ====================================================== */
+
+    async function carregarDadosServico(
+        supabase,
+        servicoId
+    ) {
+
+        if (!servicoId) {
+
+            return {
+
+                id:
+                    null,
+
+                nome:
+                    "Serviço",
+
+                valor:
+                    0,
+
+                duracao:
+                    ""
+
+            };
+
+        }
+
+
+        const resposta =
+            await supabase
+
+                .from(
+                    CONFIG.tabelas.servicos
+                )
+
+                .select("*")
+
+                .eq(
+                    "id",
+                    servicoId
+                )
+
+                .maybeSingle();
+
+
+        if (
+            resposta.error
+        ) {
+
+            console.warn(
+                "MusicalWorld — erro ao carregar serviço:",
+                resposta.error
+            );
+
+
+            return {
+
+                id:
+                    servicoId,
+
+                nome:
+                    "Serviço",
+
+                valor:
+                    0,
+
+                duracao:
+                    ""
+
+            };
+
+        }
+
+
+        const servico =
+            resposta.data || {};
 
 
         return {
 
             id:
+                servico.id ||
                 servicoId,
 
             nome:
+                servico.nome ||
+                servico.titulo ||
+                servico.nome_servico ||
                 "Serviço",
 
             valor:
+                servico.valor ??
+                servico.preco ??
+                servico.preco_base ??
                 0,
 
             duracao:
+                servico.duracao ||
+                servico.duracao_servico ||
                 ""
 
         };
@@ -1085,917 +1137,989 @@ async function carregarDadosServico(
     }
 
 
-    const servico =
-        resposta.data || {};
+    /* =====================================================
+       CONVERTER REGISTRO DO SUPABASE
+    ====================================================== */
 
+    async function transformarContratacao(
+        supabase,
+        registro,
+        usuarioId
+    ) {
 
-    return {
+        const direcao =
+            String(
+                registro.contratado_id
+            ) ===
+            String(usuarioId)
 
-        id:
-            servico.id ||
-            servicoId,
+                ? "recebida"
 
-        nome:
-            servico.nome ||
-            servico.titulo ||
-            servico.nome_servico ||
-            "Serviço",
-
-        valor:
-            servico.valor ??
-            servico.preco ??
-            servico.preco_base ??
-            0,
-
-        duracao:
-            servico.duracao ||
-            servico.duracao_servico ||
-            ""
-
-    };
-
-}
-
-
-/* =====================================================
-   CONVERTER REGISTRO DO SUPABASE
-====================================================== */
-
-async function transformarContratacao(
-    supabase,
-    registro,
-    usuarioId
-) {
-
-    const direcao =
-        String(
-            registro.contratado_id
-        ) ===
-        String(usuarioId)
-
-            ? "recebida"
-
-            : "realizada";
-
-
-    /*
-     * Pessoa do outro lado da contratação.
-     *
-     * Se foi uma contratação realizada:
-     *
-     * contratante = usuário atual
-     * contratado  = artista
-     *
-     * Se foi uma solicitação recebida:
-     *
-     * contratante = cliente
-     * contratado  = usuário atual
-     */
-
-    const pessoaId =
-        direcao === "recebida"
-
-            ? registro.contratante_id
-
-            : registro.contratado_id;
-
-
-    const pessoa =
-        await carregarDadosPessoa(
-            supabase,
-            pessoaId
-        );
-
-
-    const contratante =
-        await carregarDadosPessoa(
-            supabase,
-            registro.contratante_id
-        );
-
-
-    const contratado =
-        await carregarDadosPessoa(
-            supabase,
-            registro.contratado_id
-        );
-
-
-    const servico =
-        await carregarDadosServico(
-            supabase,
-            registro.servico_id
-        );
-
-
-    const dadosLocal =
-        extrairDadosLocal(
-            registro.local
-        );
-
-
-    return {
-
-        id:
-            registro.id,
-
-
-        contratanteId:
-            registro.contratante_id,
-
-
-        contratadoId:
-            registro.contratado_id,
-
-
-        servicoId:
-            registro.servico_id,
+                : "realizada";
 
 
         /*
-         * Indica de qual lado esta contratação
-         * está sendo visualizada.
+         * Pessoa do outro lado da contratação.
          *
-         * "realizada" = usuário contratou alguém.
-         * "recebida"  = alguém contratou o usuário.
+         * Se foi uma contratação realizada:
+         *
+         * contratante = usuário atual
+         * contratado  = artista / profissional
+         *
+         * Se foi uma solicitação recebida:
+         *
+         * contratante = pessoa que iniciou
+         * contratado  = usuário atual
          */
 
-        direcao,
+        const pessoaId =
+            direcao === "recebida"
+
+                ? registro.contratante_id
+
+                : registro.contratado_id;
 
 
-        pessoa,
+        const pessoa =
+            await carregarDadosPessoa(
+                supabase,
+                pessoaId
+            );
 
 
-        contratante,
+        const contratante =
+            await carregarDadosPessoa(
+                supabase,
+                registro.contratante_id
+            );
 
 
-        contratado,
+        const contratado =
+            await carregarDadosPessoa(
+                supabase,
+                registro.contratado_id
+            );
+
+
+        const servico =
+            await carregarDadosServico(
+                supabase,
+                registro.servico_id
+            );
+
+
+        const dadosLocal =
+            extrairDadosLocal(
+                registro.local
+            );
 
 
         /*
-         * Mantemos "artista" para compatibilidade com
-         * código anterior.
+         * Uma solicitação enviada pelo artista para um
+         * estabelecimento possui o status:
          *
-         * Nas contratações realizadas, é o contratado.
-         * Nas recebidas, continua sendo o contratado,
-         * mesmo que seja o próprio usuário.
+         * solicitacao_enviada
+         *
+         * O status normalizado continua sendo
+         * aguardando_artista para preservar o sistema
+         * existente de filtros e indicadores.
+         *
+         * A direção "recebida" permite que a interface
+         * apresente o texto correto:
+         *
+         * "Aguardando sua resposta"
          */
 
-        artista:
-            contratado,
+        const statusNormalizado =
+            normalizarStatus(
+                registro.status
+            );
 
 
-        servico: {
+        const propostaRecebida =
+            direcao === "recebida" &&
+            registro.status ===
+                "solicitacao_enviada";
 
-            ...servico,
+
+        return {
+
+            id:
+                registro.id,
+
+
+            contratanteId:
+                registro.contratante_id,
+
+
+            contratadoId:
+                registro.contratado_id,
+
+
+            servicoId:
+                registro.servico_id,
 
 
             /*
-             * O valor oficial pertence à contratação.
+             * Indica de qual lado esta contratação
+             * está sendo visualizada.
+             *
+             * "realizada" = usuário contratou alguém.
+             * "recebida"  = alguém contratou o usuário.
              */
 
-            valor:
-                registro.valor ??
-                servico.valor ??
-                0
-
-        },
+            direcao,
 
 
-        evento: {
+            /*
+             * Identifica especificamente a nova proposta
+             * recebida pelo usuário.
+             */
 
-            nome:
-                registro.tipo_evento ||
-                "Evento",
-
-
-            tipo:
-                registro.tipo_evento ||
-                "Evento",
+            propostaRecebida,
 
 
-            data:
-                registro.data_evento,
+            pessoa,
 
 
-            horarioInicio:
-                registro.horario_inicio,
+            contratante,
 
 
-            horarioFim:
-                registro.horario_fim,
+            contratado,
 
 
-            local:
-                dadosLocal.nome,
+            /*
+             * Mantemos "artista" para compatibilidade com
+             * código anterior.
+             *
+             * Nas contratações realizadas, é o contratado.
+             * Nas recebidas, continua sendo o contratado,
+             * mesmo que seja o próprio usuário.
+             */
+
+            artista:
+                contratado,
 
 
-            cidade:
-                dadosLocal.cidade,
+            servico: {
+
+                ...servico,
+
+
+                /*
+                 * O valor oficial pertence à contratação.
+                 *
+                 * Isso garante que, caso o artista tenha
+                 * enviado uma proposta de R$ 600,00, o card
+                 * mostre R$ 600,00 mesmo que o serviço tenha
+                 * outro valor cadastrado posteriormente.
+                 */
+
+                valor:
+                    registro.valor ??
+                    servico.valor ??
+                    0
+
+            },
+
+
+            evento: {
+
+                /*
+                 * O tipo do evento pode ser nulo nas novas
+                 * propostas.
+                 *
+                 * Mantemos "Evento" para compatibilidade
+                 * com a estrutura existente.
+                 */
+
+                nome:
+                    registro.tipo_evento ||
+                    "Evento",
+
+
+                tipo:
+                    registro.tipo_evento ||
+                    "Evento",
+
+
+                data:
+                    registro.data_evento,
+
+
+                horarioInicio:
+                    registro.horario_inicio,
+
+
+                horarioFim:
+                    registro.horario_fim,
+
+
+                local:
+                    dadosLocal.nome,
+
+
+                cidade:
+                    dadosLocal.cidade,
+
+
+                observacoes:
+                    registro.observacoes ||
+                    ""
+
+            },
+
+
+            status:
+                statusNormalizado,
+
+
+            statusBanco:
+                registro.status,
+
+
+            pagamento: {
+
+                metodo:
+                    registro.metodo_pagamento,
+
+                status:
+                    registro.status_pagamento
+
+            },
 
 
             observacoes:
                 registro.observacoes ||
-                ""
-
-        },
+                "",
 
 
-        status:
-            normalizarStatus(
-                registro.status
-            ),
+            createdAt:
+                registro.created_at,
 
 
-        statusBanco:
-            registro.status,
+            updatedAt:
+                registro.updated_at
+
+        };
+
+    }
 
 
-        pagamento: {
+    /* =====================================================
+       CLASSIFICAÇÃO
+    ====================================================== */
 
-            metodo:
-                registro.metodo_pagamento,
-
-            status:
-                registro.status_pagamento
-
-        },
-
-
-        observacoes:
-            registro.observacoes ||
-            "",
-
-
-        createdAt:
-            registro.created_at,
-
-
-        updatedAt:
-            registro.updated_at
-
-    };
-
-}
-
-
-/* =====================================================
-   CLASSIFICAÇÃO
-====================================================== */
-
-function pertenceAoFiltro(
-    contratacao,
-    filtro
-) {
-
-    if (
-        filtro === "todas"
+    function pertenceAoFiltro(
+        contratacao,
+        filtro
     ) {
 
-        return true;
+        if (
+            filtro === "todas"
+        ) {
 
-    }
+            return true;
 
+        }
 
-    if (
-        filtro === "aguardando"
-    ) {
 
-        return (
-            contratacao.status ===
-            "aguardando_artista"
-        );
-
-    }
-
-
-    if (
-        filtro === "confirmadas"
-    ) {
-
-        return (
-            contratacao.status ===
-            "confirmada"
-        );
-
-    }
-
-
-    if (
-        filtro === "concluidas"
-    ) {
-
-        return (
-            contratacao.status ===
-            "concluida"
-        );
-
-    }
-
-
-    if (
-        filtro === "canceladas"
-    ) {
-
-        return (
-            contratacao.status ===
-                "cancelada" ||
-
-            contratacao.status ===
-                "recusada"
-        );
-
-    }
-
-
-    if (
-        filtro === "proximas"
-    ) {
-
-        return (
-            contratacao.status ===
-                "confirmada" ||
-
-            contratacao.status ===
-                "aguardando_artista"
-        );
-
-    }
-
-
-    if (
-        filtro === "andamento"
-    ) {
-
-        return (
-            contratacao.status ===
-            "andamento"
-        );
-
-    }
-
-
-    if (
-        filtro === "historico"
-    ) {
-
-        return (
-            contratacao.status ===
-                "concluida" ||
-
-            contratacao.status ===
-                "cancelada" ||
-
-            contratacao.status ===
-                "recusada"
-        );
-
-    }
-
-
-    return true;
-
-}
-
-
-/* =====================================================
-   BUSCA
-====================================================== */
-
-function correspondeBusca(
-    contratacao,
-    busca
-) {
-
-    if (!busca) {
-
-        return true;
-
-    }
-
-
-    const pessoa =
-        contratacao.pessoa || {};
-
-
-    const termos = [
-
-        pessoa.nome,
-
-        pessoa.tipo,
-
-        pessoa.localizacao,
-
-        contratacao.contratante?.nome,
-
-        contratacao.contratado?.nome,
-
-        contratacao.artista?.nome,
-
-        contratacao.artista?.tipo,
-
-        contratacao.servico?.nome,
-
-        contratacao.evento?.nome,
-
-        contratacao.evento?.tipo,
-
-        contratacao.evento?.local,
-
-        contratacao.evento?.cidade
-
-    ];
-
-
-    const textoCompleto =
-        termos
-
-            .map(
-                normalizarTexto
-            )
-
-            .join(" ");
-
-
-    return textoCompleto.includes(
-        normalizarTexto(busca)
-    );
-
-}
-
-
-/* =====================================================
-   ORDENAÇÃO
-====================================================== */
-
-function ordenarContratacoes(
-    lista
-) {
-
-    const copia =
-        [...lista];
-
-
-    if (
-        estado.ordenacao ===
-        "antigas"
-    ) {
-
-        return copia.sort(
-            function (a, b) {
-
-                return (
-
-                    new Date(
-                        a.createdAt
-                    ) -
-
-                    new Date(
-                        b.createdAt
-                    )
-
-                );
-
-            }
-        );
-
-    }
-
-
-    if (
-        estado.ordenacao ===
-        "valor_maior"
-    ) {
-
-        return copia.sort(
-            function (a, b) {
-
-                return (
-
-                    Number(
-                        b.servico?.valor ||
-                        0
-                    ) -
-
-                    Number(
-                        a.servico?.valor ||
-                        0
-                    )
-
-                );
-
-            }
-        );
-
-    }
-
-
-    if (
-        estado.ordenacao ===
-        "valor_menor"
-    ) {
-
-        return copia.sort(
-            function (a, b) {
-
-                return (
-
-                    Number(
-                        a.servico?.valor ||
-                        0
-                    ) -
-
-                    Number(
-                        b.servico?.valor ||
-                        0
-                    )
-
-                );
-
-            }
-        );
-
-    }
-
-
-    return copia.sort(
-        function (a, b) {
+        if (
+            filtro === "aguardando"
+        ) {
 
             return (
-
-                new Date(
-                    b.createdAt
-                ) -
-
-                new Date(
-                    a.createdAt
-                )
-
+                contratacao.status ===
+                "aguardando_artista"
             );
 
         }
-    );
-
-}
 
 
-/* =====================================================
-   RESUMO
-====================================================== */
+        if (
+            filtro === "confirmadas"
+        ) {
 
-function atualizarResumo() {
+            return (
+                contratacao.status ===
+                "confirmada"
+            );
 
-    const aguardando =
-        estado.contratacoes.filter(
-            function (item) {
+        }
 
-                return (
-                    item.status ===
+
+        if (
+            filtro === "concluidas"
+        ) {
+
+            return (
+                contratacao.status ===
+                "concluida"
+            );
+
+        }
+
+
+        if (
+            filtro === "canceladas"
+        ) {
+
+            return (
+                contratacao.status ===
+                    "cancelada" ||
+
+                contratacao.status ===
+                    "recusada"
+            );
+
+        }
+
+
+        if (
+            filtro === "proximas"
+        ) {
+
+            return (
+                contratacao.status ===
+                    "confirmada" ||
+
+                contratacao.status ===
                     "aguardando_artista"
-                );
+            );
 
-            }
-        ).length;
+        }
 
 
-    const proximas =
-        estado.contratacoes.filter(
-            function (item) {
+        if (
+            filtro === "andamento"
+        ) {
+
+            return (
+                contratacao.status ===
+                "andamento"
+            );
+
+        }
+
+
+        if (
+            filtro === "historico"
+        ) {
+
+            return (
+                contratacao.status ===
+                    "concluida" ||
+
+                contratacao.status ===
+                    "cancelada" ||
+
+                contratacao.status ===
+                    "recusada"
+            );
+
+        }
+
+
+        return true;
+
+    }
+
+
+    /* =====================================================
+       BUSCA
+    ====================================================== */
+
+    function correspondeBusca(
+        contratacao,
+        busca
+    ) {
+
+        if (!busca) {
+
+            return true;
+
+        }
+
+
+        const pessoa =
+            contratacao.pessoa || {};
+
+
+        const termos = [
+
+            pessoa.nome,
+
+            pessoa.tipo,
+
+            pessoa.localizacao,
+
+            contratacao.contratante?.nome,
+
+            contratacao.contratado?.nome,
+
+            contratacao.artista?.nome,
+
+            contratacao.artista?.tipo,
+
+            contratacao.servico?.nome,
+
+            contratacao.evento?.nome,
+
+            contratacao.evento?.tipo,
+
+            contratacao.evento?.local,
+
+            contratacao.evento?.cidade
+
+        ];
+
+
+        const textoCompleto =
+            termos
+
+                .map(
+                    normalizarTexto
+                )
+
+                .join(" ");
+
+
+        return textoCompleto.includes(
+            normalizarTexto(busca)
+        );
+
+    }
+
+
+    /* =====================================================
+       ORDENAÇÃO
+    ====================================================== */
+
+    function ordenarContratacoes(
+        lista
+    ) {
+
+        const copia =
+            [...lista];
+
+
+        if (
+            estado.ordenacao ===
+            "antigas"
+        ) {
+
+            return copia.sort(
+                function (a, b) {
+
+                    return (
+
+                        new Date(
+                            a.createdAt
+                        ) -
+
+                        new Date(
+                            b.createdAt
+                        )
+
+                    );
+
+                }
+            );
+
+        }
+
+
+        if (
+            estado.ordenacao ===
+            "valor_maior"
+        ) {
+
+            return copia.sort(
+                function (a, b) {
+
+                    return (
+
+                        Number(
+                            b.servico?.valor ||
+                            0
+                        ) -
+
+                        Number(
+                            a.servico?.valor ||
+                            0
+                        )
+
+                    );
+
+                }
+            );
+
+        }
+
+
+        if (
+            estado.ordenacao ===
+            "valor_menor"
+        ) {
+
+            return copia.sort(
+                function (a, b) {
+
+                    return (
+
+                        Number(
+                            a.servico?.valor ||
+                            0
+                        ) -
+
+                        Number(
+                            b.servico?.valor ||
+                            0
+                        )
+
+                    );
+
+                }
+            );
+
+        }
+
+
+        return copia.sort(
+            function (a, b) {
 
                 return (
 
-                    item.status ===
-                        "confirmada" ||
+                    new Date(
+                        b.createdAt
+                    ) -
 
-                    item.status ===
+                    new Date(
+                        a.createdAt
+                    )
+
+                );
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       RESUMO
+    ====================================================== */
+
+    function atualizarResumo() {
+
+        const aguardando =
+            estado.contratacoes.filter(
+                function (item) {
+
+                    return (
+                        item.status ===
                         "aguardando_artista"
+                    );
 
-                );
-
-            }
-        ).length;
-
-
-    const andamento =
-        estado.contratacoes.filter(
-            function (item) {
-
-                return (
-                    item.status ===
-                    "andamento"
-                );
-
-            }
-        ).length;
+                }
+            ).length;
 
 
-    const historico =
-        estado.contratacoes.filter(
-            function (item) {
+        const proximas =
+            estado.contratacoes.filter(
+                function (item) {
 
-                return (
+                    return (
 
-                    item.status ===
-                        "concluida" ||
+                        item.status ===
+                            "confirmada" ||
 
-                    item.status ===
-                        "cancelada" ||
+                        item.status ===
+                            "aguardando_artista"
 
-                    item.status ===
-                        "recusada"
+                    );
 
-                );
-
-            }
-        ).length;
+                }
+            ).length;
 
 
-    const elementoAguardando =
-        obterElemento(
-            CONFIG.seletores
-                .resumoAguardando
-        );
+        const andamento =
+            estado.contratacoes.filter(
+                function (item) {
+
+                    return (
+                        item.status ===
+                        "andamento"
+                    );
+
+                }
+            ).length;
 
 
-    const elementoProximas =
-        obterElemento(
-            CONFIG.seletores
-                .resumoProximas
-        );
+        const historico =
+            estado.contratacoes.filter(
+                function (item) {
+
+                    return (
+
+                        item.status ===
+                            "concluida" ||
+
+                        item.status ===
+                            "cancelada" ||
+
+                        item.status ===
+                            "recusada"
+
+                    );
+
+                }
+            ).length;
 
 
-    const elementoAndamento =
-        obterElemento(
-            CONFIG.seletores
-                .resumoAndamento
-        );
+        const elementoAguardando =
+            obterElemento(
+                CONFIG.seletores
+                    .resumoAguardando
+            );
 
 
-    const elementoHistorico =
-        obterElemento(
-            CONFIG.seletores
-                .resumoHistorico
-        );
+        const elementoProximas =
+            obterElemento(
+                CONFIG.seletores
+                    .resumoProximas
+            );
 
 
-    if (
-        elementoAguardando
-    ) {
+        const elementoAndamento =
+            obterElemento(
+                CONFIG.seletores
+                    .resumoAndamento
+            );
 
-        elementoAguardando.textContent =
-            aguardando;
+
+        const elementoHistorico =
+            obterElemento(
+                CONFIG.seletores
+                    .resumoHistorico
+            );
+
+
+        if (
+            elementoAguardando
+        ) {
+
+            elementoAguardando.textContent =
+                aguardando;
+
+        }
+
+
+        if (
+            elementoProximas
+        ) {
+
+            elementoProximas.textContent =
+                proximas;
+
+        }
+
+
+        if (
+            elementoAndamento
+        ) {
+
+            elementoAndamento.textContent =
+                andamento;
+
+        }
+
+
+        if (
+            elementoHistorico
+        ) {
+
+            elementoHistorico.textContent =
+                historico;
+
+        }
 
     }
 
 
-    if (
-        elementoProximas
+    /* =====================================================
+       RENDERIZAÇÃO DO CARD
+    ====================================================== */
+
+    function renderizarCard(
+        contratacao
     ) {
 
-        elementoProximas.textContent =
-            proximas;
-
-    }
-
-
-    if (
-        elementoAndamento
-    ) {
-
-        elementoAndamento.textContent =
-            andamento;
-
-    }
+        const status =
+            obterStatusConfig(
+                contratacao.status,
+                contratacao.direcao
+            );
 
 
-    if (
-        elementoHistorico
-    ) {
-
-        elementoHistorico.textContent =
-            historico;
-
-    }
-
-}
+        const pessoa =
+            contratacao.pessoa || {};
 
 
-/* =====================================================
-   RENDERIZAÇÃO DO CARD
-====================================================== */
-
-function renderizarCard(
-    contratacao
-) {
-
-    const status =
-        obterStatusConfig(
-            contratacao.status,
-            contratacao.direcao
-        );
+        const servico =
+            contratacao.servico || {};
 
 
-    const pessoa =
-        contratacao.pessoa || {};
+        const evento =
+            contratacao.evento || {};
 
 
-    const servico =
-        contratacao.servico || {};
+        const recebida =
+            contratacao.direcao ===
+            "recebida";
 
 
-    const evento =
-        contratacao.evento || {};
+        const propostaRecebida =
+            contratacao.propostaRecebida ===
+            true;
 
 
-    const recebida =
-        contratacao.direcao ===
-        "recebida";
+        let avatarHtml = `
 
-
-    let avatarHtml = `
-
-        <span>
-            ${escaparHtml(
-                pessoa.iniciais ||
-                "MW"
-            )}
-        </span>
-
-    `;
-
-
-    if (
-        pessoa.fotoUrl
-    ) {
-
-        avatarHtml = `
-
-            <img
-                src="${escaparHtml(
-                    pessoa.fotoUrl
-                )}"
-                alt=""
-                loading="lazy"
-            >
+            <span>
+                ${escaparHtml(
+                    pessoa.iniciais ||
+                    "MW"
+                )}
+            </span>
 
         `;
 
-    }
 
+        if (
+            pessoa.fotoUrl
+        ) {
 
-    /*
-     * O texto principal do card muda conforme o lado
-     * da contratação.
-     */
+            avatarHtml = `
 
-    const rotuloPessoa =
-        recebida
-            ? "Contratante"
-            : "Artista";
-
-
-    const rotuloDirecao =
-        recebida
-            ? "Solicitação recebida"
-            : "Contratação realizada";
-
-
-    return `
-
-        <article
-            class="contratacao-card"
-            data-id="${escaparHtml(
-                contratacao.id
-            )}"
-        >
-
-
-            <div class="contratacao-status">
-
-                <span
-                    class="status-badge ${status.classe}"
+                <img
+                    src="${escaparHtml(
+                        pessoa.fotoUrl
+                    )}"
+                    alt=""
+                    loading="lazy"
                 >
-                    ${escaparHtml(
-                        status.texto
-                    )}
-                </span>
+
+            `;
+
+        }
 
 
-                <span class="contratacao-direcao">
-                    ${escaparHtml(
-                        rotuloDirecao
-                    )}
-                </span>
+        /*
+         * O texto principal do card muda conforme o lado
+         * da contratação.
+         *
+         * Para uma proposta recebida pelo estabelecimento,
+         * a pessoa exibida é quem enviou a proposta.
+         */
 
-            </div>
-
-
-            <div class="contratacao-artista">
-
-
-                <div class="artista-principal">
-
-                    <div class="artista-avatar">
-                        ${avatarHtml}
-                    </div>
+        let rotuloPessoa;
 
 
-                    <div class="artista-info">
+        if (
+            propostaRecebida
+        ) {
 
-                        <span class="artista-nome">
+            rotuloPessoa =
+                "Proposta de";
 
-                            ${escaparHtml(
-                                pessoa.nome ||
-                                "Usuário"
-                            )}
+        } else if (
+            recebida
+        ) {
 
-                        </span>
+            rotuloPessoa =
+                "Contratante";
+
+        } else {
+
+            rotuloPessoa =
+                "Artista";
+
+        }
 
 
-                        <span class="artista-tipo">
+        let rotuloDirecao;
 
-                            ${escaparHtml(
-                                pessoa.tipo ||
-                                "Usuário"
-                            )}
 
-                        </span>
+        if (
+            propostaRecebida
+        ) {
 
-                    </div>
+            rotuloDirecao =
+                "Nova proposta";
+
+        } else if (
+            recebida
+        ) {
+
+            rotuloDirecao =
+                "Solicitação recebida";
+
+        } else {
+
+            rotuloDirecao =
+                "Contratação realizada";
+
+        }
+
+
+        /*
+         * Quando os dois horários estão vazios, isso não
+         * significa que existe um horário inválido.
+         *
+         * Nas novas propostas o horário pode ser definido
+         * posteriormente pelo estabelecimento.
+         */
+
+        const horarioInicio =
+            normalizarHorario(
+                evento.horarioInicio
+            );
+
+
+        const horarioFim =
+            normalizarHorario(
+                evento.horarioFim
+            );
+
+
+        let textoHorario;
+
+
+        if (
+            horarioInicio &&
+            horarioFim
+        ) {
+
+            textoHorario =
+                `${horarioInicio} às ${horarioFim}`;
+
+        } else if (
+            horarioInicio
+        ) {
+
+            textoHorario =
+                `${horarioInicio} — término a definir`;
+
+        } else if (
+            horarioFim
+        ) {
+
+            textoHorario =
+                `Início a definir — ${horarioFim}`;
+
+        } else {
+
+            textoHorario =
+                "A definir";
+
+        }
+
+
+        return `
+
+            <article
+                class="contratacao-card"
+                data-id="${escaparHtml(
+                    contratacao.id
+                )}"
+            >
+
+
+                <div class="contratacao-status">
+
+                    <span
+                        class="status-badge ${status.classe}"
+                    >
+                        ${escaparHtml(
+                            status.texto
+                        )}
+                    </span>
+
+
+                    <span class="contratacao-direcao">
+                        ${escaparHtml(
+                            rotuloDirecao
+                        )}
+                    </span>
 
                 </div>
 
 
-                <span class="contratacao-servico">
-
-                    ${escaparHtml(
-                        servico.nome ||
-                        "Serviço"
-                    )}
-
-                </span>
-
-            </div>
+                <div class="contratacao-artista">
 
 
-            <div class="contratacao-info">
+                    <div class="artista-principal">
 
-                <span class="info-label">
-
-                    ${escaparHtml(
-                        rotuloPessoa
-                    )}
-
-                </span>
+                        <div class="artista-avatar">
+                            ${avatarHtml}
+                        </div>
 
 
-                <span class="info-valor">
+                        <div class="artista-info">
 
-                    ${escaparHtml(
-                        pessoa.nome ||
-                        "Usuário"
-                    )}
+                            <span class="artista-nome">
 
-                </span>
+                                ${escaparHtml(
+                                    pessoa.nome ||
+                                    "Usuário"
+                                )}
 
-
-                <span class="info-secundario">
-
-                    ${escaparHtml(
-                        formatarData(
-                            evento.data
-                        )
-                    )}
-
-                    •
-
-                    ${escaparHtml(
-                        normalizarHorario(
-                            evento.horarioInicio
-                        ) ||
-                        "--:--"
-                    )}
-
-                </span>
-
-            </div>
+                            </span>
 
 
-            <div class="contratacao-valor">
+                            <span class="artista-tipo">
+
+                                ${escaparHtml(
+                                    pessoa.tipo ||
+                                    "Usuário"
+                                )}
+
+                            </span>
+
+                        </div>
+
+                    </div>
 
 
-                <div>
+                    <span class="contratacao-servico">
+
+                        ${escaparHtml(
+                            servico.nome ||
+                            "Serviço"
+                        )}
+
+                    </span>
+
+                </div>
+
+
+                <div class="contratacao-info">
 
                     <span class="info-label">
-                        Local
+
+                        ${escaparHtml(
+                            rotuloPessoa
+                        )}
+
                     </span>
 
 
                     <span class="info-valor">
 
                         ${escaparHtml(
-                            evento.local ||
-                            "Local não informado"
+                            pessoa.nome ||
+                            "Usuário"
                         )}
 
                     </span>
@@ -2004,702 +2128,701 @@ function renderizarCard(
                     <span class="info-secundario">
 
                         ${escaparHtml(
-                            evento.cidade ||
-                            ""
-                        )}
-
-                    </span>
-
-                </div>
-
-
-                <div>
-
-                    <span class="info-label">
-                        Valor
-                    </span>
-
-
-                    <span class="valor-principal">
-
-                        ${escaparHtml(
-                            formatarMoeda(
-                                servico.valor
+                            formatarData(
+                                evento.data
                             )
                         )}
 
-                    </span>
-
-
-                    <span class="valor-pagamento">
+                        •
 
                         ${escaparHtml(
-                            servico.duracao ||
-                            ""
+                            textoHorario
                         )}
 
                     </span>
 
                 </div>
 
-            </div>
+
+                <div class="contratacao-valor">
 
 
-            <div class="contratacao-acao">
+                    <div>
 
-                <button
-                    type="button"
-                    class="btn-ver-contratacao"
-                    data-contratacao-id="${escaparHtml(
-                        contratacao.id
-                    )}"
-                >
-
-                    <span>
-                        Ver contratação
-                    </span>
+                        <span class="info-label">
+                            Local
+                        </span>
 
 
-                    <i
-                        data-lucide="arrow-right"
-                    ></i>
+                        <span class="info-valor">
 
-                </button>
+                            ${escaparHtml(
+                                evento.local ||
+                                "Local não informado"
+                            )}
 
-            </div>
-
-
-        </article>
-
-    `;
-
-}
+                        </span>
 
 
-/* =====================================================
-   NORMALIZAR HORÁRIO
-====================================================== */
+                        <span class="info-secundario">
 
-function normalizarHorario(
-    horario
-) {
+                            ${escaparHtml(
+                                evento.cidade ||
+                                ""
+                            )}
 
-    if (!horario) {
+                        </span>
 
-        return "";
-
-    }
+                    </div>
 
 
-    const texto =
-        String(horario)
-            .trim();
+                    <div>
+
+                        <span class="info-label">
+                            Valor
+                        </span>
 
 
-    /*
-     * PostgreSQL pode retornar:
-     *
-     * 13:51:00
-     *
-     * A interface utiliza:
-     *
-     * 13:51
-     */
+                        <span class="valor-principal">
 
-    const match =
-        texto.match(
-            /^(\d{2}:\d{2})(?::\d{2})?$/
-        );
+                            ${escaparHtml(
+                                formatarMoeda(
+                                    servico.valor
+                                )
+                            )}
+
+                        </span>
 
 
-    if (
-        match
-    ) {
+                        <span class="valor-pagamento">
 
-        return match[1];
+                            ${escaparHtml(
+                                servico.duracao ||
+                                ""
+                            )}
 
-    }
+                        </span>
 
+                    </div>
 
-    return texto;
-
-}
-
-
-/* =====================================================
-   RENDERIZAR LISTA
-====================================================== */
-
-function renderizarLista() {
-
-    const lista =
-        obterElemento(
-            CONFIG.seletores.lista
-        );
+                </div>
 
 
-    const estadoVazio =
-        obterElemento(
-            CONFIG.seletores.estadoVazio
-        );
+                <div class="contratacao-acao">
+
+                    <button
+                        type="button"
+                        class="btn-ver-contratacao"
+                        data-contratacao-id="${escaparHtml(
+                            contratacao.id
+                        )}"
+                    >
+
+                        <span>
+
+                            ${
+                                propostaRecebida
+                                    ? "Ver proposta"
+                                    : "Ver contratação"
+                            }
+
+                        </span>
 
 
-    if (
-        !lista ||
-        !estadoVazio
-    ) {
+                        <i
+                            data-lucide="arrow-right"
+                        ></i>
 
-        return;
+                    </button>
+
+                </div>
+
+
+            </article>
+
+        `;
 
     }
 
 
-    lista.innerHTML = "";
+    /* =====================================================
+       NORMALIZAR HORÁRIO
+    ====================================================== */
 
-
-    const filtradas =
-        estado.contratacoes
-
-            .filter(
-                function (contratacao) {
-
-                    return pertenceAoFiltro(
-                        contratacao,
-                        estado.filtroAtual
-                    );
-
-                }
-            )
-
-            .filter(
-                function (contratacao) {
-
-                    return correspondeBusca(
-                        contratacao,
-                        estado.buscaAtual
-                    );
-
-                }
-            );
-
-
-    estado.contratacoesFiltradas =
-        ordenarContratacoes(
-            filtradas
-        );
-
-
-    if (
-        estado.contratacoesFiltradas.length ===
-        0
+    function normalizarHorario(
+        horario
     ) {
 
-        lista.hidden = true;
+        if (!horario) {
 
-        estadoVazio.hidden = false;
-
-
-        const mensagem =
-            obterElemento(
-                CONFIG.seletores
-                    .estadoVazioMensagem
-            );
-
-
-        if (
-            mensagem
-        ) {
-
-            if (
-                estado.buscaAtual
-            ) {
-
-                mensagem.textContent =
-                    "Nenhuma contratação corresponde à sua busca.";
-
-            } else {
-
-                mensagem.textContent =
-                    "Você ainda não possui contratações ou solicitações recebidas.";
-
-            }
+            return "";
 
         }
 
-
-        atualizarContador(0);
-
-        return;
-
-    }
-
-
-    lista.hidden = false;
-
-    estadoVazio.hidden = true;
-
-
-    lista.innerHTML =
-        estado.contratacoesFiltradas
-
-            .map(
-                renderizarCard
-            )
-
-            .join("");
-
-
-    atualizarContador(
-        estado.contratacoesFiltradas.length
-    );
-
-
-    if (
-        window.lucide
-    ) {
-
-        window.lucide.createIcons();
-
-    }
-
-}
-
-
-/* =====================================================
-   CONTADOR
-====================================================== */
-
-function atualizarContador(
-    total
-) {
-
-    const elemento =
-        obterElemento(
-            CONFIG.seletores.contador
-        );
-
-
-    if (!elemento) {
-
-        return;
-
-    }
-
-
-    elemento.textContent =
-
-        total === 1
-
-            ? "1 contratação"
-
-            : `${total} contratações`;
-
-}
-
-
-/* =====================================================
-   FILTROS
-====================================================== */
-
-function atualizarFiltroVisual() {
-
-    const botoes =
-        document.querySelectorAll(
-            CONFIG.seletores.filtros
-        );
-
-
-    botoes.forEach(
-        function (botao) {
-
-            const ativo =
-                botao.dataset.filtro ===
-                estado.filtroAtual;
-
-
-            botao.classList.toggle(
-                "ativo",
-                ativo
-            );
-
-        }
-    );
-
-}
-
-
-function definirFiltro(
-    filtro
-) {
-
-    estado.filtroAtual =
-        filtro || "todas";
-
-
-    atualizarFiltroVisual();
-
-    renderizarLista();
-
-}
-
-
-/* =====================================================
-   BUSCA
-====================================================== */
-
-function atualizarBusca(
-    valor
-) {
-
-    estado.buscaAtual =
-        String(
-            valor || ""
-        ).trim();
-
-
-    const botaoLimpar =
-        obterElemento(
-            CONFIG.seletores
-                .btnLimparBusca
-        );
-
-
-    if (
-        botaoLimpar
-    ) {
-
-        botaoLimpar.hidden =
-            !estado.buscaAtual;
-
-    }
-
-
-    renderizarLista();
-
-}
-
-
-function limparBusca() {
-
-    const campo =
-        obterElemento(
-            CONFIG.seletores
-                .campoBusca
-        );
-
-
-    if (
-        campo
-    ) {
-
-        campo.value = "";
-
-    }
-
-
-    atualizarBusca("");
-
-}
-
-
-function limparFiltros() {
-
-    estado.filtroAtual =
-        "todas";
-
-
-    estado.buscaAtual =
-        "";
-
-
-    const campo =
-        obterElemento(
-            CONFIG.seletores
-                .campoBusca
-        );
-
-
-    if (
-        campo
-    ) {
-
-        campo.value = "";
-
-    }
-
-
-    const botaoLimpar =
-        obterElemento(
-            CONFIG.seletores
-                .btnLimparBusca
-        );
-
-
-    if (
-        botaoLimpar
-    ) {
-
-        botaoLimpar.hidden =
-            true;
-
-    }
-
-
-    atualizarFiltroVisual();
-
-    renderizarLista();
-
-}
-
-
-/* =====================================================
-   ORDENAÇÃO
-====================================================== */
-
-function alternarOrdenacao() {
-
-    const opcoes = [
-
-        {
-            chave:
-                "recentes",
-
-            texto:
-                "Mais recentes"
-        },
-
-        {
-            chave:
-                "antigas",
-
-            texto:
-                "Mais antigas"
-        },
-
-        {
-            chave:
-                "valor_maior",
-
-            texto:
-                "Maior valor"
-        },
-
-        {
-            chave:
-                "valor_menor",
-
-            texto:
-                "Menor valor"
-        }
-
-    ];
-
-
-    const indiceAtual =
-        opcoes.findIndex(
-            function (opcao) {
-
-                return (
-                    opcao.chave ===
-                    estado.ordenacao
-                );
-
-            }
-        );
-
-
-    const proximoIndice =
-        (
-            indiceAtual + 1
-        ) %
-        opcoes.length;
-
-
-    const proximaOpcao =
-        opcoes[
-            proximoIndice
-        ];
-
-
-    estado.ordenacao =
-        proximaOpcao.chave;
-
-
-    const botao =
-        obterElemento(
-            CONFIG.seletores
-                .btnOrdenacao
-        );
-
-
-    if (
-        botao
-    ) {
 
         const texto =
-            botao.querySelector(
-                "span"
+            String(horario)
+                .trim();
+
+
+        /*
+         * PostgreSQL pode retornar:
+         *
+         * 13:51:00
+         *
+         * A interface utiliza:
+         *
+         * 13:51
+         */
+
+        const match =
+            texto.match(
+                /^(\d{2}:\d{2})(?::\d{2})?$/
             );
 
 
         if (
-            texto
+            match
         ) {
 
-            texto.textContent =
-                proximaOpcao.texto;
+            return match[1];
+
+        }
+
+
+        return texto;
+
+    }
+
+
+    /* =====================================================
+       RENDERIZAR LISTA
+    ====================================================== */
+
+    function renderizarLista() {
+
+        const lista =
+            obterElemento(
+                CONFIG.seletores.lista
+            );
+
+
+        const estadoVazio =
+            obterElemento(
+                CONFIG.seletores.estadoVazio
+            );
+
+
+        if (
+            !lista ||
+            !estadoVazio
+        ) {
+
+            return;
+
+        }
+
+
+        lista.innerHTML = "";
+
+
+        const filtradas =
+            estado.contratacoes
+
+                .filter(
+                    function (contratacao) {
+
+                        return pertenceAoFiltro(
+                            contratacao,
+                            estado.filtroAtual
+                        );
+
+                    }
+                )
+
+                .filter(
+                    function (contratacao) {
+
+                        return correspondeBusca(
+                            contratacao,
+                            estado.buscaAtual
+                        );
+
+                    }
+                );
+
+
+        estado.contratacoesFiltradas =
+            ordenarContratacoes(
+                filtradas
+            );
+
+
+        if (
+            estado.contratacoesFiltradas.length ===
+            0
+        ) {
+
+            lista.hidden = true;
+
+            estadoVazio.hidden = false;
+
+
+            const mensagem =
+                obterElemento(
+                    CONFIG.seletores
+                        .estadoVazioMensagem
+                );
+
+
+            if (
+                mensagem
+            ) {
+
+                if (
+                    estado.buscaAtual
+                ) {
+
+                    mensagem.textContent =
+                        "Nenhuma contratação corresponde à sua busca.";
+
+                } else {
+
+                    mensagem.textContent =
+                        "Você ainda não possui contratações ou solicitações recebidas.";
+
+                }
+
+            }
+
+
+            atualizarContador(0);
+
+            return;
+
+        }
+
+
+        lista.hidden = false;
+
+        estadoVazio.hidden = true;
+
+
+        lista.innerHTML =
+            estado.contratacoesFiltradas
+
+                .map(
+                    renderizarCard
+                )
+
+                .join("");
+
+
+        atualizarContador(
+            estado.contratacoesFiltradas.length
+        );
+
+
+        if (
+            window.lucide
+        ) {
+
+            window.lucide.createIcons();
 
         }
 
     }
 
 
-    renderizarLista();
+    /* =====================================================
+       CONTADOR
+    ====================================================== */
 
-}
+    function atualizarContador(
+        total
+    ) {
+
+        const elemento =
+            obterElemento(
+                CONFIG.seletores.contador
+            );
 
 
-/* =====================================================
-   ABRIR CONTRATAÇÃO
-====================================================== */
+        if (!elemento) {
 
-function abrirContratacao(
-    id
-) {
+            return;
 
-    const contratacao =
-        estado.contratacoes.find(
-            function (item) {
+        }
 
-                return (
-                    String(item.id) ===
-                    String(id)
+
+        elemento.textContent =
+
+            total === 1
+
+                ? "1 contratação"
+
+                : `${total} contratações`;
+
+    }
+
+
+    /* =====================================================
+       FILTROS
+    ====================================================== */
+
+    function atualizarFiltroVisual() {
+
+        const botoes =
+            document.querySelectorAll(
+                CONFIG.seletores.filtros
+            );
+
+
+        botoes.forEach(
+            function (botao) {
+
+                const ativo =
+                    botao.dataset.filtro ===
+                    estado.filtroAtual;
+
+
+                botao.classList.toggle(
+                    "ativo",
+                    ativo
                 );
 
             }
         );
 
-
-    if (
-        !contratacao
-    ) {
-
-        console.warn(
-            "MusicalWorld — contratação não encontrada:",
-            id
-        );
-
-        return;
-
     }
 
 
-    /*
-     * O Supabase continua sendo a fonte oficial.
-     *
-     * O sessionStorage serve apenas como apoio
-     * para a tela seguinte.
-     */
-
-    try {
-
-        sessionStorage.setItem(
-
-            CONFIG.armazenamento
-                .chaveContratacao,
-
-            JSON.stringify(
-                contratacao
-            )
-
-        );
-
-    } catch (erro) {
-
-        console.warn(
-            "MusicalWorld — não foi possível salvar a contratação selecionada.",
-            erro
-        );
-
-    }
-
-
-    window.location.href =
-        `${CONFIG.paginas.acompanhamento}?id=${encodeURIComponent(
-            contratacao.id
-        )}`;
-
-}
-
-
-/* =====================================================
-   CARREGAR CONTRATAÇÕES DO SUPABASE
-====================================================== */
-
-async function carregarContratacoes() {
-
-    /*
-     * Utilizamos o cliente central.
-     */
-
-    if (
-        !window.supabaseClient ||
-        typeof window.supabaseClient.from !==
-            "function"
+    function definirFiltro(
+        filtro
     ) {
 
-        estado.erro =
-            "Cliente Supabase não encontrado.";
+        estado.filtroAtual =
+            filtro || "todas";
 
 
-        estado.contratacoes =
-            [];
-
-
-        atualizarResumo();
+        atualizarFiltroVisual();
 
         renderizarLista();
 
-
-        console.error(
-            "MusicalWorld — window.supabaseClient não encontrado."
-        );
+    }
 
 
-        return;
+    /* =====================================================
+       BUSCA
+    ====================================================== */
+
+    function atualizarBusca(
+        valor
+    ) {
+
+        estado.buscaAtual =
+            String(
+                valor || ""
+            ).trim();
+
+
+        const botaoLimpar =
+            obterElemento(
+                CONFIG.seletores
+                    .btnLimparBusca
+            );
+
+
+        if (
+            botaoLimpar
+        ) {
+
+            botaoLimpar.hidden =
+                !estado.buscaAtual;
+
+        }
+
+
+        renderizarLista();
 
     }
 
 
-    estado.carregando =
-        true;
+    function limparBusca() {
 
-
-    estado.erro =
-        null;
-
-
-    try {
-
-        /* ---------------------------------------------
-           USUÁRIO ATUAL
-        ---------------------------------------------- */
-
-        const dadosUsuario =
-            await UsuarioAtual.obter();
-
-
-        if (
-            !dadosUsuario
-        ) {
-
-            console.warn(
-                "MusicalWorld — nenhum usuário autenticado."
+        const campo =
+            obterElemento(
+                CONFIG.seletores
+                    .campoBusca
             );
 
 
-            estado.usuarioId =
-                null;
+        if (
+            campo
+        ) {
+
+            campo.value = "";
+
+        }
+
+
+        atualizarBusca("");
+
+    }
+
+
+    function limparFiltros() {
+
+        estado.filtroAtual =
+            "todas";
+
+
+        estado.buscaAtual =
+            "";
+
+
+        const campo =
+            obterElemento(
+                CONFIG.seletores
+                    .campoBusca
+            );
+
+
+        if (
+            campo
+        ) {
+
+            campo.value = "";
+
+        }
+
+
+        const botaoLimpar =
+            obterElemento(
+                CONFIG.seletores
+                    .btnLimparBusca
+            );
+
+
+        if (
+            botaoLimpar
+        ) {
+
+            botaoLimpar.hidden =
+                true;
+
+        }
+
+
+        atualizarFiltroVisual();
+
+        renderizarLista();
+
+    }
+
+
+    /* =====================================================
+       ORDENAÇÃO
+    ====================================================== */
+
+    function alternarOrdenacao() {
+
+        const opcoes = [
+
+            {
+                chave:
+                    "recentes",
+
+                texto:
+                    "Mais recentes"
+            },
+
+            {
+                chave:
+                    "antigas",
+
+                texto:
+                    "Mais antigas"
+            },
+
+            {
+                chave:
+                    "valor_maior",
+
+                texto:
+                    "Maior valor"
+            },
+
+            {
+                chave:
+                    "valor_menor",
+
+                texto:
+                    "Menor valor"
+            }
+
+        ];
+
+
+        const indiceAtual =
+            opcoes.findIndex(
+                function (opcao) {
+
+                    return (
+                        opcao.chave ===
+                        estado.ordenacao
+                    );
+
+                }
+            );
+
+
+        const proximoIndice =
+            (
+                indiceAtual + 1
+            ) %
+            opcoes.length;
+
+
+        const proximaOpcao =
+            opcoes[
+                proximoIndice
+            ];
+
+
+        estado.ordenacao =
+            proximaOpcao.chave;
+
+
+        const botao =
+            obterElemento(
+                CONFIG.seletores
+                    .btnOrdenacao
+            );
+
+
+        if (
+            botao
+        ) {
+
+            const texto =
+                botao.querySelector(
+                    "span"
+                );
+
+
+            if (
+                texto
+            ) {
+
+                texto.textContent =
+                    proximaOpcao.texto;
+
+            }
+
+        }
+
+
+        renderizarLista();
+
+    }
+
+
+    /* =====================================================
+       ABRIR CONTRATAÇÃO
+    ====================================================== */
+
+    function abrirContratacao(
+        id
+    ) {
+
+        const contratacao =
+            estado.contratacoes.find(
+                function (item) {
+
+                    return (
+                        String(item.id) ===
+                        String(id)
+                    );
+
+                }
+            );
+
+
+        if (
+            !contratacao
+        ) {
+
+            console.warn(
+                "MusicalWorld — contratação não encontrada:",
+                id
+            );
+
+            return;
+
+        }
+
+
+        /*
+         * O Supabase continua sendo a fonte oficial.
+         *
+         * O sessionStorage serve apenas como apoio
+         * para a tela seguinte.
+         *
+         * A mesma tela de acompanhamento será utilizada
+         * tanto para contratações tradicionais quanto
+         * para propostas recebidas.
+         */
+
+        try {
+
+            sessionStorage.setItem(
+
+                CONFIG.armazenamento
+                    .chaveContratacao,
+
+                JSON.stringify(
+                    contratacao
+                )
+
+            );
+
+        } catch (erro) {
+
+            console.warn(
+                "MusicalWorld — não foi possível salvar a contratação selecionada.",
+                erro
+            );
+
+        }
+
+
+        window.location.href =
+            `${CONFIG.paginas.acompanhamento}?id=${encodeURIComponent(
+                contratacao.id
+            )}`;
+
+    }
+
+
+    /* =====================================================
+       CARREGAR CONTRATAÇÕES DO SUPABASE
+    ====================================================== */
+
+    async function carregarContratacoes() {
+
+        /*
+         * Utilizamos o cliente central.
+         */
+
+        if (
+            !window.supabaseClient ||
+            typeof window.supabaseClient.from !==
+                "function"
+        ) {
+
+            estado.erro =
+                "Cliente Supabase não encontrado.";
 
 
             estado.contratacoes =
@@ -2711,705 +2834,755 @@ async function carregarContratacoes() {
             renderizarLista();
 
 
+            console.error(
+                "MusicalWorld — window.supabaseClient não encontrado."
+            );
+
+
             return;
 
         }
 
 
-        estado.usuarioId =
-            dadosUsuario.auth.id;
+        estado.carregando =
+            true;
 
 
-        /* ---------------------------------------------
-           BUSCAR OS DOIS LADOS
-        ---------------------------------------------- */
-
-        /*
-         * 1. Contratações realizadas:
-         *
-         * contratante_id = usuário atual
-         *
-         * 2. Solicitações recebidas:
-         *
-         * contratado_id = usuário atual
-         *
-         * Fazemos duas consultas separadas para manter
-         * a lógica clara e evitar depender de uma expressão
-         * OR específica do Supabase.
-         */
-
-        const [
-
-            respostaRealizadas,
-
-            respostaRecebidas
-
-        ] = await Promise.all([
-
-            supabaseClient
-
-                .from(
-                    CONFIG.tabelas
-                        .contratacoes
-                )
-
-                .select("*")
-
-                .eq(
-                    "contratante_id",
-                    estado.usuarioId
-                )
-
-                .order(
-                    "created_at",
-                    {
-                        ascending:
-                            false
-                    }
-                ),
+        estado.erro =
+            null;
 
 
-            supabaseClient
+        try {
 
-                .from(
-                    CONFIG.tabelas
-                        .contratacoes
-                )
+            /* ---------------------------------------------
+               USUÁRIO ATUAL
+            ---------------------------------------------- */
 
-                .select("*")
-
-                .eq(
-                    "contratado_id",
-                    estado.usuarioId
-                )
-
-                .order(
-                    "created_at",
-                    {
-                        ascending:
-                            false
-                    }
-                )
-
-        ]);
+            const dadosUsuario =
+                await UsuarioAtual.obter();
 
 
-        if (
-            respostaRealizadas.error
-        ) {
+            if (
+                !dadosUsuario
+            ) {
 
-            throw respostaRealizadas.error;
-
-        }
-
-
-        if (
-            respostaRecebidas.error
-        ) {
-
-            throw respostaRecebidas.error;
-
-        }
-
-
-        const registrosRealizados =
-            respostaRealizadas.data ||
-            [];
-
-
-        const registrosRecebidos =
-            respostaRecebidas.data ||
-            [];
-
-
-        /*
-         * Como um usuário pode contratar a si mesmo
-         * em algum cenário futuro, ou uma mesma linha
-         * aparecer nas duas consultas, fazemos uma
-         * deduplicação pelo ID da contratação.
-         */
-
-        const registrosMap =
-            new Map();
-
-
-        registrosRealizados.forEach(
-            function (registro) {
-
-                registrosMap.set(
-                    String(registro.id),
-                    registro
+                console.warn(
+                    "MusicalWorld — nenhum usuário autenticado."
                 );
 
+
+                estado.usuarioId =
+                    null;
+
+
+                estado.contratacoes =
+                    [];
+
+
+                atualizarResumo();
+
+                renderizarLista();
+
+
+                return;
+
             }
-        );
 
 
-        registrosRecebidos.forEach(
-            function (registro) {
+            estado.usuarioId =
+                dadosUsuario.auth.id;
 
-                registrosMap.set(
-                    String(registro.id),
-                    registro
-                );
+
+            /* ---------------------------------------------
+               BUSCAR OS DOIS LADOS
+            ---------------------------------------------- */
+
+            /*
+             * 1. Contratações realizadas:
+             *
+             * contratante_id = usuário atual
+             *
+             * 2. Solicitações recebidas:
+             *
+             * contratado_id = usuário atual
+             *
+             * Fazemos duas consultas separadas para manter
+             * a lógica clara e evitar depender de uma expressão
+             * OR específica do Supabase.
+             */
+
+            const [
+
+                respostaRealizadas,
+
+                respostaRecebidas
+
+            ] = await Promise.all([
+
+                supabaseClient
+
+                    .from(
+                        CONFIG.tabelas
+                            .contratacoes
+                    )
+
+                    .select("*")
+
+                    .eq(
+                        "contratante_id",
+                        estado.usuarioId
+                    )
+
+                    .order(
+                        "created_at",
+                        {
+                            ascending:
+                                false
+                        }
+                    ),
+
+
+                supabaseClient
+
+                    .from(
+                        CONFIG.tabelas
+                            .contratacoes
+                    )
+
+                    .select("*")
+
+                    .eq(
+                        "contratado_id",
+                        estado.usuarioId
+                    )
+
+                    .order(
+                        "created_at",
+                        {
+                            ascending:
+                                false
+                        }
+                    )
+
+            ]);
+
+
+            if (
+                respostaRealizadas.error
+            ) {
+
+                throw respostaRealizadas.error;
 
             }
-        );
 
 
-        const registros =
-            Array.from(
-                registrosMap.values()
+            if (
+                respostaRecebidas.error
+            ) {
+
+                throw respostaRecebidas.error;
+
+            }
+
+
+            const registrosRealizados =
+                respostaRealizadas.data ||
+                [];
+
+
+            const registrosRecebidos =
+                respostaRecebidas.data ||
+                [];
+
+
+            /*
+             * Como um usuário pode contratar a si mesmo
+             * em algum cenário futuro, ou uma mesma linha
+             * aparecer nas duas consultas, fazemos uma
+             * deduplicação pelo ID da contratação.
+             */
+
+            const registrosMap =
+                new Map();
+
+
+            registrosRealizados.forEach(
+                function (registro) {
+
+                    registrosMap.set(
+                        String(registro.id),
+                        registro
+                    );
+
+                }
             );
 
 
-        /*
-         * Transformamos cada contratação.
-         */
+            registrosRecebidos.forEach(
+                function (registro) {
 
-        const contratosConvertidos =
-            await Promise.all(
+                    registrosMap.set(
+                        String(registro.id),
+                        registro
+                    );
 
-                registros.map(
-                    function (registro) {
-
-                        return transformarContratacao(
-
-                            supabaseClient,
-
-                            registro,
-
-                            estado.usuarioId
-
-                        );
-
-                    }
-                )
-
+                }
             );
 
 
-        /*
-         * Mais recentes primeiro antes da renderização.
-         */
+            const registros =
+                Array.from(
+                    registrosMap.values()
+                );
 
-        contratosConvertidos.sort(
-            function (a, b) {
 
-                return (
+            /*
+             * Transformamos cada contratação.
+             */
 
-                    new Date(
-                        b.createdAt
-                    ) -
+            const contratosConvertidos =
+                await Promise.all(
 
-                    new Date(
-                        a.createdAt
+                    registros.map(
+                        function (registro) {
+
+                            return transformarContratacao(
+
+                                supabaseClient,
+
+                                registro,
+
+                                estado.usuarioId
+
+                            );
+
+                        }
                     )
 
                 );
 
-            }
-        );
 
+            /*
+             * Mais recentes primeiro antes da renderização.
+             */
 
-        estado.contratacoes =
-            contratosConvertidos;
+            contratosConvertidos.sort(
+                function (a, b) {
 
+                    return (
 
-        /* ---------------------------------------------
-           ARMAZENAMENTO LOCAL DE APOIO
-        ---------------------------------------------- */
+                        new Date(
+                            b.createdAt
+                        ) -
 
-        try {
+                        new Date(
+                            a.createdAt
+                        )
 
-            sessionStorage.setItem(
+                    );
 
-                CONFIG.armazenamento
-                    .chaveLista,
-
-                JSON.stringify(
-                    estado.contratacoes
-                )
-
+                }
             );
+
+
+            estado.contratacoes =
+                contratosConvertidos;
+
+
+            /* ---------------------------------------------
+               ARMAZENAMENTO LOCAL DE APOIO
+            ---------------------------------------------- */
+
+            try {
+
+                sessionStorage.setItem(
+
+                    CONFIG.armazenamento
+                        .chaveLista,
+
+                    JSON.stringify(
+                        estado.contratacoes
+                    )
+
+                );
+
+            } catch (erro) {
+
+                console.warn(
+                    "MusicalWorld — não foi possível armazenar a lista localmente.",
+                    erro
+                );
+
+            }
+
+
+            atualizarResumo();
+
+            renderizarLista();
+
 
         } catch (erro) {
 
-            console.warn(
-                "MusicalWorld — não foi possível armazenar a lista localmente.",
+            console.error(
+                "MusicalWorld — erro ao carregar contratações:",
                 erro
+            );
+
+
+            estado.erro =
+                erro;
+
+
+            estado.contratacoes =
+                [];
+
+
+            atualizarResumo();
+
+            renderizarLista();
+
+
+        } finally {
+
+            estado.carregando =
+                false;
+
+        }
+
+    }
+
+
+    /* =====================================================
+       EVENTOS
+    ====================================================== */
+
+    function configurarEventos() {
+
+        /* -----------------------------------------------
+           FILTROS
+        ------------------------------------------------ */
+
+        document
+
+            .querySelectorAll(
+                CONFIG.seletores.filtros
+            )
+
+            .forEach(
+                function (botao) {
+
+                    botao.addEventListener(
+                        "click",
+                        function () {
+
+                            definirFiltro(
+                                botao.dataset.filtro
+                            );
+
+                        }
+                    );
+
+                }
+            );
+
+
+        /* -----------------------------------------------
+           CARDS DE RESUMO
+        ------------------------------------------------ */
+
+        document
+
+            .querySelectorAll(
+                CONFIG.seletores.cardsResumo
+            )
+
+            .forEach(
+                function (card) {
+
+                    card.addEventListener(
+                        "click",
+                        function () {
+
+                            definirFiltro(
+                                card.dataset.filtro
+                            );
+
+                        }
+                    );
+
+                }
+            );
+
+
+        /* -----------------------------------------------
+           BUSCA
+        ------------------------------------------------ */
+
+        const campoBusca =
+            obterElemento(
+                CONFIG.seletores
+                    .campoBusca
+            );
+
+
+        if (
+            campoBusca
+        ) {
+
+            campoBusca.addEventListener(
+                "input",
+                function () {
+
+                    atualizarBusca(
+                        campoBusca.value
+                    );
+
+                }
             );
 
         }
 
 
-        atualizarResumo();
+        /* -----------------------------------------------
+           LIMPAR BUSCA
+        ------------------------------------------------ */
 
-        renderizarLista();
-
-
-    } catch (erro) {
-
-        console.error(
-            "MusicalWorld — erro ao carregar contratações:",
-            erro
-        );
+        const btnLimparBusca =
+            obterElemento(
+                CONFIG.seletores
+                    .btnLimparBusca
+            );
 
 
-        estado.erro =
-            erro;
+        if (
+            btnLimparBusca
+        ) {
+
+            btnLimparBusca.addEventListener(
+                "click",
+                limparBusca
+            );
+
+        }
 
 
-        estado.contratacoes =
-            [];
+        /* -----------------------------------------------
+           LIMPAR FILTROS
+        ------------------------------------------------ */
+
+        const btnLimparFiltros =
+            obterElemento(
+                CONFIG.seletores
+                    .btnLimparFiltros
+            );
 
 
-        atualizarResumo();
+        if (
+            btnLimparFiltros
+        ) {
 
-        renderizarLista();
+            btnLimparFiltros.addEventListener(
+                "click",
+                limparFiltros
+            );
 
-
-    } finally {
-
-        estado.carregando =
-            false;
-
-    }
-
-}
+        }
 
 
-/* =====================================================
-   EVENTOS
-====================================================== */
+        /* -----------------------------------------------
+           ORDENAÇÃO
+        ------------------------------------------------ */
 
-function configurarEventos() {
+        const btnOrdenacao =
+            obterElemento(
+                CONFIG.seletores
+                    .btnOrdenacao
+            );
 
-    /* -----------------------------------------------
-       FILTROS
-    ------------------------------------------------ */
 
-    document
+        if (
+            btnOrdenacao
+        ) {
 
-        .querySelectorAll(
-            CONFIG.seletores.filtros
-        )
+            btnOrdenacao.addEventListener(
+                "click",
+                alternarOrdenacao
+            );
 
-        .forEach(
-            function (botao) {
+        }
 
-                botao.addEventListener(
-                    "click",
-                    function () {
 
-                        definirFiltro(
-                            botao.dataset.filtro
+        /* -----------------------------------------------
+           VER CONTRATAÇÃO / PROPOSTA
+        ------------------------------------------------ */
+
+        const lista =
+            obterElemento(
+                CONFIG.seletores.lista
+            );
+
+
+        if (
+            lista
+        ) {
+
+            lista.addEventListener(
+                "click",
+                function (evento) {
+
+                    const botao =
+                        evento.target.closest(
+                            "[data-contratacao-id]"
                         );
 
-                    }
-                );
 
-            }
-        );
+                    if (
+                        !botao
+                    ) {
 
-
-    /* -----------------------------------------------
-       CARDS DE RESUMO
-    ------------------------------------------------ */
-
-    document
-
-        .querySelectorAll(
-            CONFIG.seletores.cardsResumo
-        )
-
-        .forEach(
-            function (card) {
-
-                card.addEventListener(
-                    "click",
-                    function () {
-
-                        definirFiltro(
-                            card.dataset.filtro
-                        );
+                        return;
 
                     }
-                );
-
-            }
-        );
 
 
-    /* -----------------------------------------------
-       BUSCA
-    ------------------------------------------------ */
-
-    const campoBusca =
-        obterElemento(
-            CONFIG.seletores
-                .campoBusca
-        );
-
-
-    if (
-        campoBusca
-    ) {
-
-        campoBusca.addEventListener(
-            "input",
-            function () {
-
-                atualizarBusca(
-                    campoBusca.value
-                );
-
-            }
-        );
-
-    }
-
-
-    /* -----------------------------------------------
-       LIMPAR BUSCA
-    ------------------------------------------------ */
-
-    const btnLimparBusca =
-        obterElemento(
-            CONFIG.seletores
-                .btnLimparBusca
-        );
-
-
-    if (
-        btnLimparBusca
-    ) {
-
-        btnLimparBusca.addEventListener(
-            "click",
-            limparBusca
-        );
-
-    }
-
-
-    /* -----------------------------------------------
-       LIMPAR FILTROS
-    ------------------------------------------------ */
-
-    const btnLimparFiltros =
-        obterElemento(
-            CONFIG.seletores
-                .btnLimparFiltros
-        );
-
-
-    if (
-        btnLimparFiltros
-    ) {
-
-        btnLimparFiltros.addEventListener(
-            "click",
-            limparFiltros
-        );
-
-    }
-
-
-    /* -----------------------------------------------
-       ORDENAÇÃO
-    ------------------------------------------------ */
-
-    const btnOrdenacao =
-        obterElemento(
-            CONFIG.seletores
-                .btnOrdenacao
-        );
-
-
-    if (
-        btnOrdenacao
-    ) {
-
-        btnOrdenacao.addEventListener(
-            "click",
-            alternarOrdenacao
-        );
-
-    }
-
-
-    /* -----------------------------------------------
-       VER CONTRATAÇÃO
-    ------------------------------------------------ */
-
-    const lista =
-        obterElemento(
-            CONFIG.seletores.lista
-        );
-
-
-    if (
-        lista
-    ) {
-
-        lista.addEventListener(
-            "click",
-            function (evento) {
-
-                const botao =
-                    evento.target.closest(
-                        "[data-contratacao-id]"
+                    abrirContratacao(
+                        botao.dataset
+                            .contratacaoId
                     );
 
+                }
+            );
 
-                if (
-                    !botao
-                ) {
+        }
 
-                    return;
+
+        /* -----------------------------------------------
+           VOLTAR
+        ------------------------------------------------ */
+
+        const btnVoltar =
+            obterElemento(
+                CONFIG.seletores.btnVoltar
+            );
+
+
+        if (
+            btnVoltar
+        ) {
+
+            btnVoltar.addEventListener(
+                "click",
+                function () {
+
+                    if (
+                        window.history.length > 1
+                    ) {
+
+                        window.history.back();
+
+                    } else {
+
+                        window.location.href =
+                            CONFIG.paginas.inicio;
+
+                    }
 
                 }
+            );
+
+        }
 
 
-                abrirContratacao(
-                    botao.dataset
-                        .contratacaoId
-                );
+        /* -----------------------------------------------
+           INÍCIO
+        ------------------------------------------------ */
 
-            }
-        );
-
-    }
-
-
-    /* -----------------------------------------------
-       VOLTAR
-    ------------------------------------------------ */
-
-    const btnVoltar =
-        obterElemento(
-            CONFIG.seletores.btnVoltar
-        );
+        const btnInicio =
+            obterElemento(
+                CONFIG.seletores.btnInicio
+            );
 
 
-    if (
-        btnVoltar
-    ) {
+        if (
+            btnInicio
+        ) {
 
-        btnVoltar.addEventListener(
-            "click",
-            function () {
-
-                if (
-                    window.history.length > 1
-                ) {
-
-                    window.history.back();
-
-                } else {
+            btnInicio.addEventListener(
+                "click",
+                function () {
 
                     window.location.href =
                         CONFIG.paginas.inicio;
 
                 }
-
-            }
-        );
-
-    }
-
-
-    /* -----------------------------------------------
-       INÍCIO
-    ------------------------------------------------ */
-
-    const btnInicio =
-        obterElemento(
-            CONFIG.seletores.btnInicio
-        );
-
-
-    if (
-        btnInicio
-    ) {
-
-        btnInicio.addEventListener(
-            "click",
-            function () {
-
-                window.location.href =
-                    CONFIG.paginas.inicio;
-
-            }
-        );
-
-    }
-
-
-    /* -----------------------------------------------
-       PERFIL
-    ------------------------------------------------ */
-
-    const btnPerfil =
-        obterElemento(
-            CONFIG.seletores.btnPerfil
-        );
-
-
-    if (
-        btnPerfil
-    ) {
-
-        btnPerfil.addEventListener(
-            "click",
-            function () {
-
-                window.location.href =
-                    CONFIG.paginas.perfil;
-
-            }
-        );
-
-    }
-
-
-    /* -----------------------------------------------
-       NOVA CONTRATAÇÃO
-    ------------------------------------------------ */
-
-    const btnNovaContratacao =
-        obterElemento(
-            CONFIG.seletores
-                .btnNovaContratacao
-        );
-
-
-    if (
-        btnNovaContratacao
-    ) {
-
-        btnNovaContratacao.addEventListener(
-            "click",
-            function () {
-
-                window.location.href =
-                    CONFIG.paginas
-                        .novaContratacao;
-
-            }
-        );
-
-    }
-
-}
-
-
-/* =====================================================
-   INICIALIZAÇÃO
-====================================================== */
-
-async function inicializar() {
-
-    if (
-        estado.inicializado
-    ) {
-
-        return;
-
-    }
-
-
-    estado.inicializado =
-        true;
-
-
-    configurarEventos();
-
-    atualizarCabecalho();
-
-    atualizarFiltroVisual();
-
-
-    await carregarContratacoes();
-
-
-    if (
-        window.lucide
-    ) {
-
-        window.lucide.createIcons();
-
-    }
-
-
-    console.log(
-        "MusicalWorld — Central de Contratações inicializada com contratações realizadas e solicitações recebidas."
-    );
-
-}
-
-
-/* =====================================================
-   API PÚBLICA
-====================================================== */
-
-window.MusicalWorldContratacoes = {
-
-    inicializar,
-
-    carregarContratacoes,
-
-    definirFiltro,
-
-    atualizarBusca,
-
-    limparFiltros,
-
-    abrirContratacao,
-
-
-    obterEstado:
-        function () {
-
-            return estado;
-
-        },
-
-
-    obterContratacoes:
-        function () {
-
-            return estado.contratacoes;
+            );
 
         }
 
-};
+
+        /* -----------------------------------------------
+           PERFIL
+        ------------------------------------------------ */
+
+        const btnPerfil =
+            obterElemento(
+                CONFIG.seletores.btnPerfil
+            );
 
 
-/* =====================================================
-   INICIALIZAÇÃO AUTOMÁTICA
-====================================================== */
+        if (
+            btnPerfil
+        ) {
 
-if (
-    document.readyState ===
-    "loading"
-) {
+            btnPerfil.addEventListener(
+                "click",
+                function () {
 
-    document.addEventListener(
-        "DOMContentLoaded",
-        function () {
+                    window.location.href =
+                        CONFIG.paginas.perfil;
 
-            inicializar();
+                }
+            );
 
         }
-    );
 
-} else {
 
-    inicializar();
+        /* -----------------------------------------------
+           NOVA CONTRATAÇÃO
+        ------------------------------------------------ */
 
-}
+        const btnNovaContratacao =
+            obterElemento(
+                CONFIG.seletores
+                    .btnNovaContratacao
+            );
+
+
+        if (
+            btnNovaContratacao
+        ) {
+
+            btnNovaContratacao.addEventListener(
+                "click",
+                function () {
+
+                    window.location.href =
+                        CONFIG.paginas
+                            .novaContratacao;
+
+                }
+            );
+
+        }
+
+    }
+
+
+    /* =====================================================
+       INICIALIZAÇÃO
+    ====================================================== */
+
+    async function inicializar() {
+
+        if (
+            estado.inicializado
+        ) {
+
+            return;
+
+        }
+
+
+        estado.inicializado =
+            true;
+
+
+        configurarEventos();
+
+        atualizarCabecalho();
+
+        atualizarFiltroVisual();
+
+
+        await carregarContratacoes();
+
+
+        if (
+            window.lucide
+        ) {
+
+            window.lucide.createIcons();
+
+        }
+
+
+        console.log(
+            "MusicalWorld — Central de Contratações inicializada com contratações realizadas, solicitações recebidas e propostas."
+        );
+
+    }
+
+
+    /* =====================================================
+       API PÚBLICA
+    ====================================================== */
+
+    window.MusicalWorldContratacoes = {
+
+        inicializar,
+
+        carregarContratacoes,
+
+        definirFiltro,
+
+        atualizarBusca,
+
+        limparFiltros,
+
+        abrirContratacao,
+
+
+        obterEstado:
+            function () {
+
+                return estado;
+
+            },
+
+
+        obterContratacoes:
+            function () {
+
+                return estado.contratacoes;
+
+            }
+
+    };
+
+
+    /* =====================================================
+       INICIALIZAÇÃO AUTOMÁTICA
+    ====================================================== */
+
+    if (
+        document.readyState ===
+        "loading"
+    ) {
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            function () {
+
+                inicializar();
+
+            }
+        );
+
+    } else {
+
+        inicializar();
+
+    }
 
 
 })(window);

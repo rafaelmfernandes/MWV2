@@ -375,6 +375,14 @@ svg {
 }
 
 /* =========================================================
+   CORREÇÃO — BOTÕES OCULTOS PELO JAVASCRIPT
+   ========================================================= */
+
+.profile-action-button[hidden] {
+    display: none;
+}
+
+/* =========================================================
    INFORMAÇÕES DO ESPAÇO
 
    Seção específica para perfis de estabelecimentos.

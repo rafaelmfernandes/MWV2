@@ -37,7 +37,12 @@
      - ApresentarPerfilServicos.js
      - ApresentarPerfilAvaliacoes.js
      - ApresentarPerfilAcoes.js
+     - ApresentarPerfilBotoes.js
      - interacoes-perfil.js
+     - proposta-dados.js
+     - proposta-render.js
+     - proposta-fluxo.js
+     - proposta.js
      ===================================================== -->
 
 <!-- =====================================================
@@ -67,6 +72,11 @@
 <link
     rel="stylesheet"
     href="css/apresentar-perfil/apresentar-perfil.css"
+>
+
+<link
+    rel="stylesheet"
+    href="css/proposta/proposta.css"
 >
 
 <!-- =====================================================
@@ -552,12 +562,27 @@
 
             <!-- =================================================
                  AÇÕES PRINCIPAIS
+
+                 Para artistas:
+                 - Mensagem
+                 - Contratar
+
+                 Para estabelecimentos:
+                 - Mensagem
+                 - Enviar proposta
+
+                 O ApresentarPerfilBotoes.js controla a
+                 visibilidade conforme o tipo de perfil.
                  ================================================= -->
 
             <div
                 class="profile-main-actions"
                 id="profileMainActions"
             >
+
+                <!-- =================================================
+                     MENSAGEM
+                     ================================================= -->
 
                 <button
                     class="profile-action-button profile-action-button--secondary"
@@ -581,6 +606,10 @@
                     </span>
 
                 </button>
+
+                <!-- =================================================
+                     CONTRATAR
+                     ================================================= -->
 
                 <button
                     class="profile-action-button profile-action-button--primary"
@@ -621,23 +650,56 @@
 
                 </button>
 
+                <!-- =================================================
+                     ENVIAR PROPOSTA
+
+                     Integração com:
+
+                     js/proposta/proposta.js
+
+                     O módulo identifica este botão através de:
+
+                     data-acao="enviar-proposta"
+
+                     O perfil_id é obtido automaticamente da URL
+                     caso data-perfil-id não seja informado.
+                     ================================================= -->
+
+                <button
+                    class="profile-action-button profile-action-button--primary"
+                    id="btnEnviarProposta"
+                    type="button"
+                    hidden
+                    data-acao="enviar-proposta"
+                >
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                    >
+
+                        <path
+                            d="M4 4h16v16H4z"
+                        ></path>
+
+                        <path
+                            d="M4 7l8 6 8-6"
+                        ></path>
+
+                    </svg>
+
+                    <span>
+                        Enviar proposta
+                    </span>
+
+                </button>
+
             </div>
 
         </article>
 
         <!-- =====================================================
              INFORMAÇÕES DO ESPAÇO
-
-             Exibida somente para perfis de estabelecimentos.
-
-             Dados utilizados:
-             - capacidade
-             - estrutura
-             - estilos musicais
-             - aceita música ao vivo
-
-             O conteúdo é preenchido pelo:
-             js/apresentar-perfil-teste/ApresentarPerfilRender.js
              ===================================================== -->
 
         <section
@@ -705,10 +767,6 @@
                 id="spaceInfoGrid"
             >
 
-                <!-- =================================================
-                     CAPACIDADE
-                     ================================================= -->
-
                 <div
                     class="space-info-item"
                     id="spaceCapacityItem"
@@ -725,10 +783,6 @@
                     ></strong>
 
                 </div>
-
-                <!-- =================================================
-                     MÚSICA AO VIVO
-                     ================================================= -->
 
                 <div
                     class="space-info-item"
@@ -747,10 +801,6 @@
 
                 </div>
 
-                <!-- =================================================
-                     ESTRUTURA
-                     ================================================= -->
-
                 <div
                     class="space-info-item space-info-item--wide"
                     id="spaceStructureItem"
@@ -767,10 +817,6 @@
                     ></div>
 
                 </div>
-
-                <!-- =================================================
-                     ESTILOS MUSICAIS
-                     ================================================= -->
 
                 <div
                     class="space-info-item space-info-item--wide"
@@ -875,19 +921,6 @@
 
         <!-- =====================================================
              CONTATOS DO ESTABELECIMENTO
-
-             Exibida somente para perfis de estabelecimentos.
-
-             Dados utilizados:
-             - telefone_comercial
-             - instagram
-             - site
-
-             O conteúdo será preenchido pelo:
-             js/apresentar-perfil-teste/ApresentarPerfilRender.js
-
-             Cada contato é exibido somente quando possuir
-             um valor válido.
              ===================================================== -->
 
         <section
@@ -950,10 +983,6 @@
                 id="establishmentContactList"
             >
 
-                <!-- =================================================
-                     TELEFONE
-                     ================================================= -->
-
                 <a
                     class="establishment-contact-item"
                     id="establishmentContactPhone"
@@ -1015,10 +1044,6 @@
                     </span>
 
                 </a>
-
-                <!-- =================================================
-                     INSTAGRAM
-                     ================================================= -->
 
                 <a
                     class="establishment-contact-item"
@@ -1088,10 +1113,6 @@
                     </span>
 
                 </a>
-
-                <!-- =================================================
-                     SITE
-                     ================================================= -->
 
                 <a
                     class="establishment-contact-item"
@@ -1165,39 +1186,6 @@
 
         <!-- =====================================================
              AGENDA / EVENTOS
-
-             Exibida quando o perfil possuir eventos públicos
-             futuros ou em andamento.
-
-             Para perfis de estabelecimento, esta seção será
-             reposicionada dinamicamente imediatamente após
-             o bloco do portfólio (#profilePost).
-
-             Para perfis de artista, a posição original desta
-             seção será preservada.
-
-             Dados utilizados:
-             - titulo
-             - descricao
-             - tipo
-             - data_inicio
-             - data_fim
-             - localizacao
-             - status
-
-             Os dados são carregados pelo:
-             js/apresentar-perfil-teste/ApresentarPerfilDados.js
-
-             A renderização será realizada posteriormente pelo:
-             js/apresentar-perfil-teste/ApresentarPerfilRender.js
-
-             Valores atuais de tipo:
-             - evento
-             - show
-
-             Valores atuais de status:
-             - agendado
-             - confirmado
              ===================================================== -->
 
         <section
@@ -1449,6 +1437,24 @@
 </main>
 
 <!-- =====================================================
+     CONTAINER DA PROPOSTA
+
+     O proposta-render.js utiliza este elemento para
+     construir a interface da proposta.
+
+     Ele permanece vazio inicialmente.
+
+     O conteúdo será criado dinamicamente quando o usuário
+     clicar em "Enviar proposta".
+     ===================================================== -->
+
+<div
+    id="propostaContainer"
+    class="proposta-container"
+    hidden
+></div>
+
+<!-- =====================================================
      MENU DE OPÇÕES
      ===================================================== -->
 
@@ -1566,26 +1572,15 @@
 
 <!-- =====================================================
      INTERAÇÕES UNIVERSAIS
-
-     Este módulo precisa estar carregado antes da
-     inicialização da página pública.
-
-     Ele é responsável por:
-
-     - Curtir
-     - Descurtir
-     - Salvar
-     - Remover dos salvos
-
-     utilizando o mesmo Supabase utilizado pelo Index.
-
-     A inicialização do container da topbar é feita
-     pelo ApresentarPerfilAcoesTeste.js.
      ===================================================== -->
 
 <script
     src="js/components/interacoes-perfil.js"
 ></script>
+
+<!-- =====================================================
+     MÓDULOS DO PERFIL
+     ===================================================== -->
 
 <script
     src="js/apresentar-perfil-teste/ApresentarPerfilDados.js"
@@ -1612,6 +1607,41 @@
 ></script>
 
 <!-- =====================================================
+     MÓDULOS DA PROPOSTA
+
+     Ordem obrigatória:
+
+     1. Dados
+     2. Renderização
+     3. Fluxo
+     4. Controlador principal
+     ===================================================== -->
+
+<script
+    src="js/proposta/proposta-dados.js"
+></script>
+
+<script
+    src="js/proposta/proposta-render.js"
+></script>
+
+<script
+    src="js/proposta/proposta-fluxo.js"
+></script>
+
+<script
+    src="js/proposta/proposta.js"
+></script>
+
+<!-- =====================================================
+     BOTÕES PRINCIPAIS DO PERFIL
+     ===================================================== -->
+
+<script
+    src="js/apresentar-perfil-teste/ApresentarPerfilBotoes.js"
+></script>
+
+<!-- =====================================================
      INICIALIZAÇÃO
      ===================================================== -->
 
@@ -1624,6 +1654,7 @@ document.addEventListener(
         console.log(
             "MusicalWorld — Inicializando apresentação de perfil de teste..."
         );
+
 
         try {
 
@@ -1641,6 +1672,7 @@ document.addEventListener(
 
             }
 
+
             /* =================================================
                2. CARREGAR DADOS DO PERFIL
                ================================================= */
@@ -1649,17 +1681,14 @@ document.addEventListener(
                 .ApresentarPerfilDadosTeste
                 .carregarTudo();
 
+
             console.log(
                 "MusicalWorld — Dados do perfil carregados."
             );
 
+
             /* =================================================
                3. RENDERIZAR DADOS GERAIS
-
-               A identidade é renderizada aqui.
-
-               O conteúdo do portfólio é renderizado
-               separadamente pelo módulo de portfólio.
                ================================================= */
 
             if (
@@ -1671,6 +1700,7 @@ document.addEventListener(
                     .renderizar();
 
             }
+
 
             /* =================================================
                4. INICIALIZAR PORTFÓLIO
@@ -1686,28 +1716,9 @@ document.addEventListener(
 
             }
 
+
             /* =================================================
                4.1. POSICIONAR A AGENDA
-
-               Regra específica para estabelecimentos:
-
-               A agenda deve aparecer imediatamente depois
-               do bloco principal que contém o portfólio.
-
-               Perfil de estabelecimento:
-               - Portfólio
-               - Agenda
-               - Informações do espaço
-               - Localização
-               - Contatos
-               - Serviços
-               - Avaliações
-
-               Perfil de artista:
-               - Mantém a posição original da agenda.
-
-               A verificação utiliza os dados já carregados
-               pelo ApresentarPerfilDadosTeste.
                ================================================= */
 
             const dadosPerfilAgenda =
@@ -1715,19 +1726,23 @@ document.addEventListener(
                     .ApresentarPerfilDadosTeste
                     .obterDados();
 
+
             const perfilEstabelecimento =
                 dadosPerfilAgenda &&
                 dadosPerfilAgenda.perfilEstabelecimento;
+
 
             const profilePost =
                 document.getElementById(
                     "profilePost"
                 );
 
+
             const profileAgenda =
                 document.getElementById(
                     "profileAgenda"
                 );
+
 
             if (
                 perfilEstabelecimento &&
@@ -1740,11 +1755,13 @@ document.addEventListener(
                     profileAgenda
                 );
 
+
                 console.log(
                     "MusicalWorld — Agenda reposicionada após o portfólio para perfil de estabelecimento."
                 );
 
             }
+
 
             /* =================================================
                5. INICIALIZAR SERVIÇOS
@@ -1759,6 +1776,7 @@ document.addEventListener(
                         .ApresentarPerfilDadosTeste
                         .obterDados();
 
+
                 const servicos =
                     dados &&
                     Array.isArray(
@@ -1766,6 +1784,7 @@ document.addEventListener(
                     )
                         ? dados.servicos
                         : [];
+
 
                 window
                     .ApresentarPerfilServicosTeste
@@ -1775,13 +1794,9 @@ document.addEventListener(
 
             }
 
+
             /* =================================================
                6. INICIALIZAR AVALIAÇÕES
-
-               As avaliações continuam em sua própria
-               seção abaixo dos serviços.
-
-               Elas NÃO aparecem na área do portfólio.
                ================================================= */
 
             if (
@@ -1793,6 +1808,7 @@ document.addEventListener(
                         .ApresentarPerfilDadosTeste
                         .obterDados();
 
+
                 const avaliacoes =
                     dados &&
                     Array.isArray(
@@ -1801,15 +1817,18 @@ document.addEventListener(
                         ? dados.avaliacoes
                         : [];
 
+
                 const secaoAvaliacoes =
                     document.getElementById(
                         "profileReviews"
                     );
 
+
                 const containerAvaliacoes =
                     document.getElementById(
                         "reviewsRender"
                     );
+
 
                 if (
                     avaliacoes.length > 0 &&
@@ -1823,6 +1842,7 @@ document.addEventListener(
                                 containerAvaliacoes
                         });
 
+
                     if (
                         secaoAvaliacoes
                     ) {
@@ -1831,6 +1851,7 @@ document.addEventListener(
                             false;
 
                     }
+
 
                     console.log(
                         "MusicalWorld — Avaliações públicas renderizadas:",
@@ -1848,6 +1869,7 @@ document.addEventListener(
 
                     }
 
+
                     console.log(
                         "MusicalWorld — Este perfil ainda não possui avaliações públicas."
                     );
@@ -1861,6 +1883,7 @@ document.addEventListener(
                 );
 
             }
+
 
             /* =================================================
                7. INICIALIZAR AÇÕES
@@ -1893,13 +1916,74 @@ document.addEventListener(
 
             }
 
+
             /* =================================================
-               8. FINALIZAÇÃO
+               8. INICIALIZAR BOTÕES PRINCIPAIS
+
+               A visibilidade depende dos dados já carregados
+               pelo ApresentarPerfilDadosTeste.
+
+               Artista:
+               - Mensagem
+               - Contratar
+
+               Estabelecimento:
+               - Mensagem
+               - Enviar proposta
+               ================================================= */
+
+            if (
+                window.ApresentarPerfilBotoesTeste
+            ) {
+
+                window
+                    .ApresentarPerfilBotoesTeste
+                    .inicializar();
+
+            }
+
+
+            /* =================================================
+               9. INICIALIZAR CONTROLADOR DA PROPOSTA
+
+               O módulo proposta.js já possui inicialização
+               automática própria.
+
+               Esta chamada é apenas uma garantia de que
+               o controlador esteja disponível depois que
+               todos os módulos da página forem carregados.
+
+               Não carregamos dados da proposta aqui.
+
+               Os dados serão carregados somente quando o
+               usuário clicar em "Enviar proposta".
+               ================================================= */
+
+            if (
+                window.MusicalWorldProposta
+            ) {
+
+                await window
+                    .MusicalWorldProposta
+                    .inicializar();
+
+            } else {
+
+                console.warn(
+                    "MusicalWorld — Controlador de proposta não carregado."
+                );
+
+            }
+
+
+            /* =================================================
+               10. FINALIZAÇÃO
                ================================================= */
 
             console.log(
                 "MusicalWorld — Apresentação de perfil carregada com sucesso."
             );
+
 
         } catch (erro) {
 
@@ -1912,24 +1996,32 @@ document.addEventListener(
                 erro
             );
 
+
             const erroContainer =
                 document.getElementById(
                     "profileError"
                 );
+
 
             const erroMensagem =
                 document.getElementById(
                     "profileErrorMessage"
                 );
 
-            if (erroContainer) {
+
+            if (
+                erroContainer
+            ) {
 
                 erroContainer.hidden =
                     false;
 
             }
 
-            if (erroMensagem) {
+
+            if (
+                erroMensagem
+            ) {
 
                 erroMensagem.textContent =
                     erro &&
