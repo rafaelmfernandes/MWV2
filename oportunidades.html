@@ -55,642 +55,10 @@
          ESTILOS
          ===================================================== -->
 
-    <style>
-
-        /* =====================================================
-           MUSICALWORLD — VISUALIZAÇÃO DE OPORTUNIDADE
-
-           Responsabilidade:
-           - Apresentar os detalhes de uma oportunidade.
-           - Identificar o estabelecimento responsável.
-           - Controlar a demonstração de interesse.
-           - Controlar o acesso à gestão da oportunidade.
-           - Manter a página responsiva.
-           ===================================================== */
-
-        :root {
-            --mw-bg: #f5f7fb;
-            --mw-card: #ffffff;
-            --mw-text: #172033;
-            --mw-muted: #6b7280;
-            --mw-border: #e5e7eb;
-
-            --mw-primary: #6d4aff;
-            --mw-primary-dark: #5738e6;
-            --mw-primary-light: #f0edff;
-
-            --mw-success: #16835b;
-            --mw-danger: #c43d4b;
-
-            --mw-radius: 22px;
-        }
-
-
-        * {
-            box-sizing: border-box;
-        }
-
-
-        html {
-            scroll-behavior: smooth;
-        }
-
-
-        body {
-            margin: 0;
-
-            background: var(--mw-bg);
-            color: var(--mw-text);
-
-            font-family: "Manrope", sans-serif;
-        }
-
-
-        button,
-        textarea {
-            font: inherit;
-        }
-
-
-        button {
-            cursor: pointer;
-        }
-
-
-        /* =====================================================
-           CABEÇALHO
-           ===================================================== */
-
-        .mw-header {
-            position: sticky;
-            top: 0;
-            z-index: 20;
-
-            min-height: 64px;
-
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-
-            padding: 0 24px;
-
-            background: rgba(255, 255, 255, 0.96);
-            border-bottom: 1px solid var(--mw-border);
-
-            backdrop-filter: blur(10px);
-        }
-
-
-        .mw-logo {
-            color: var(--mw-primary);
-
-            font-size: 20px;
-            font-weight: 800;
-
-            text-decoration: none;
-            letter-spacing: -0.5px;
-        }
-
-
-        .mw-header-link {
-            color: var(--mw-muted);
-
-            font-size: 14px;
-            font-weight: 700;
-
-            text-decoration: none;
-        }
-
-
-        .mw-header-link:hover {
-            color: var(--mw-primary);
-        }
-
-
-        /* =====================================================
-           CONTEÚDO
-           ===================================================== */
-
-        .mw-main {
-            width: min(100% - 32px, 900px);
-
-            margin: 0 auto;
-
-            padding: 40px 0 80px;
-        }
-
-
-        /* =====================================================
-           ESTADO
-           ===================================================== */
-
-        .mw-state {
-            padding: 50px 24px;
-
-            text-align: center;
-
-            background: #fff;
-
-            border: 1px solid var(--mw-border);
-            border-radius: var(--mw-radius);
-        }
-
-
-        .mw-state h1 {
-            margin: 0;
-
-            font-size: 24px;
-        }
-
-
-        .mw-state p {
-            max-width: 560px;
-
-            margin: 10px auto 0;
-
-            color: var(--mw-muted);
-
-            font-size: 14px;
-            line-height: 1.7;
-        }
-
-
-        /* =====================================================
-           OPORTUNIDADE
-           ===================================================== */
-
-        .mw-opportunity {
-            display: none;
-        }
-
-
-        .mw-opportunity.is-visible {
-            display: block;
-        }
-
-
-        /* =====================================================
-           CABEÇALHO DA OPORTUNIDADE
-           ===================================================== */
-
-        .mw-hero {
-            padding: clamp(22px, 5vw, 38px);
-
-            background: #fff;
-
-            border: 1px solid var(--mw-border);
-            border-radius: var(--mw-radius);
-
-            box-shadow:
-                0 12px 35px rgba(23, 32, 51, 0.05);
-        }
-
-
-        .mw-eyebrow {
-            margin: 0 0 10px;
-
-            color: var(--mw-primary);
-
-            font-size: 11px;
-            font-weight: 800;
-
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-        }
-
-
-        .mw-hero h1 {
-            margin: 0;
-
-            font-size: clamp(28px, 5vw, 42px);
-            line-height: 1.1;
-
-            letter-spacing: -1px;
-        }
-
-
-        .mw-estabelecimento {
-            margin: 12px 0 0;
-
-            color: var(--mw-muted);
-
-            font-size: 15px;
-            font-weight: 700;
-        }
-
-
-        .mw-status {
-            display: inline-flex;
-            align-items: center;
-
-            margin-top: 20px;
-            padding: 7px 11px;
-
-            color: var(--mw-success);
-            background: #eaf8f2;
-
-            border-radius: 999px;
-
-            font-size: 11px;
-            font-weight: 800;
-        }
-
-
-        /* =====================================================
-           GESTÃO DA OPORTUNIDADE
-
-           Exibida somente para o responsável pela oportunidade.
-           ===================================================== */
-
-        .mw-management {
-            display: none;
-
-            margin-top: 18px;
-            padding-top: 18px;
-
-            border-top: 1px solid var(--mw-border);
-        }
-
-
-        .mw-management.is-visible {
-            display: block;
-        }
-
-
-        .mw-management-button {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            width: 100%;
-            min-height: 48px;
-
-            padding: 12px 18px;
-
-            color: #fff;
-            background: var(--mw-primary);
-
-            border: 0;
-            border-radius: 12px;
-
-            font-size: 14px;
-            font-weight: 800;
-
-            text-decoration: none;
-
-            transition:
-                background 0.2s ease,
-                transform 0.2s ease;
-        }
-
-
-        .mw-management-button:hover {
-            color: #fff;
-            background: var(--mw-primary-dark);
-            transform: translateY(-1px);
-        }
-
-
-        /* =====================================================
-           DESCRIÇÃO
-           ===================================================== */
-
-        .mw-description {
-            margin-top: 24px;
-
-            color: var(--mw-muted);
-
-            font-size: 14px;
-            line-height: 1.8;
-
-            white-space: pre-line;
-        }
-
-
-        /* =====================================================
-           GRID DE INFORMAÇÕES
-           ===================================================== */
-
-        .mw-info-grid {
-            display: grid;
-
-            grid-template-columns:
-                repeat(2, minmax(0, 1fr));
-
-            gap: 14px;
-
-            margin-top: 28px;
-        }
-
-
-        .mw-info-card {
-            padding: 17px;
-
-            background: #fafafa;
-
-            border: 1px solid var(--mw-border);
-            border-radius: 15px;
-        }
-
-
-        .mw-info-label {
-            display: block;
-
-            margin-bottom: 6px;
-
-            color: var(--mw-muted);
-
-            font-size: 10px;
-            font-weight: 800;
-
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-        }
-
-
-        .mw-info-value {
-            display: block;
-
-            color: var(--mw-text);
-
-            font-size: 14px;
-            font-weight: 800;
-            line-height: 1.5;
-        }
-
-
-        /* =====================================================
-           SEÇÕES
-           ===================================================== */
-
-        .mw-section {
-            margin-top: 18px;
-            padding: 24px;
-
-            background: #fff;
-
-            border: 1px solid var(--mw-border);
-            border-radius: var(--mw-radius);
-        }
-
-
-        .mw-section h2 {
-            margin: 0 0 16px;
-
-            font-size: 18px;
-            font-weight: 800;
-        }
-
-
-        /* =====================================================
-           TAGS
-           ===================================================== */
-
-        .mw-tags {
-            display: flex;
-            flex-wrap: wrap;
-
-            gap: 8px;
-        }
-
-
-        .mw-tag {
-            padding: 7px 10px;
-
-            color: #5540c8;
-            background: var(--mw-primary-light);
-
-            border-radius: 999px;
-
-            font-size: 12px;
-            font-weight: 700;
-        }
-
-
-        .mw-empty {
-            color: var(--mw-muted);
-
-            font-size: 13px;
-            line-height: 1.6;
-        }
-
-
-        /* =====================================================
-           VALOR
-           ===================================================== */
-
-        .mw-value-box {
-            display: flex;
-            align-items: baseline;
-            gap: 8px;
-
-            padding: 20px;
-
-            background: var(--mw-primary-light);
-
-            border: 1px solid rgba(109, 74, 255, 0.14);
-            border-radius: 15px;
-        }
-
-
-        .mw-value-label {
-            color: #6253ad;
-
-            font-size: 12px;
-            font-weight: 700;
-        }
-
-
-        .mw-value {
-            color: var(--mw-primary);
-
-            font-size: 25px;
-            font-weight: 800;
-        }
-
-
-        /* =====================================================
-           FEEDBACK
-           ===================================================== */
-
-        .mw-feedback {
-            display: none;
-
-            margin-top: 18px;
-            padding: 14px 16px;
-
-            border-radius: 12px;
-
-            font-size: 13px;
-            font-weight: 700;
-            line-height: 1.5;
-        }
-
-
-        .mw-feedback.is-visible {
-            display: block;
-        }
-
-
-        .mw-feedback.success {
-            color: var(--mw-success);
-            background: #eaf8f2;
-            border: 1px solid #c5eadb;
-        }
-
-
-        .mw-feedback.error {
-            color: var(--mw-danger);
-            background: #fff0f2;
-            border: 1px solid #f3c9cf;
-        }
-
-
-        /* =====================================================
-           ÁREA DE INTERESSE
-           ===================================================== */
-
-        .mw-interest {
-            margin-top: 18px;
-            padding: 24px;
-
-            background: #fff;
-
-            border: 1px solid var(--mw-border);
-            border-radius: var(--mw-radius);
-        }
-
-
-        .mw-interest h2 {
-            margin: 0;
-
-            font-size: 19px;
-        }
-
-
-        .mw-interest p {
-            margin: 9px 0 18px;
-
-            color: var(--mw-muted);
-
-            font-size: 13px;
-            line-height: 1.7;
-        }
-
-
-        .mw-message {
-            width: 100%;
-            min-height: 110px;
-
-            padding: 13px 14px;
-
-            color: var(--mw-text);
-            background: #fff;
-
-            border: 1px solid var(--mw-border);
-            border-radius: 12px;
-
-            outline: none;
-
-            resize: vertical;
-        }
-
-
-        .mw-message:focus {
-            border-color: var(--mw-primary);
-
-            box-shadow:
-                0 0 0 3px rgba(109, 74, 255, 0.12);
-        }
-
-
-        .mw-button {
-            width: 100%;
-            min-height: 50px;
-
-            margin-top: 14px;
-
-            border: 0;
-            border-radius: 12px;
-
-            color: #fff;
-            background: var(--mw-primary);
-
-            font-size: 14px;
-            font-weight: 800;
-
-            transition:
-                background 0.2s ease,
-                transform 0.2s ease,
-                opacity 0.2s ease;
-        }
-
-
-        .mw-button:hover {
-            background: var(--mw-primary-dark);
-            transform: translateY(-1px);
-        }
-
-
-        .mw-button:disabled {
-            cursor: not-allowed;
-            opacity: 0.6;
-            transform: none;
-        }
-
-
-        .mw-already {
-            display: none;
-
-            padding: 16px;
-
-            color: var(--mw-success);
-            background: #eaf8f2;
-
-            border: 1px solid #c5eadb;
-            border-radius: 12px;
-
-            font-size: 13px;
-            font-weight: 700;
-            line-height: 1.6;
-        }
-
-
-        .mw-already.is-visible {
-            display: block;
-        }
-
-
-        /* =====================================================
-           RESPONSIVIDADE
-           ===================================================== */
-
-        @media (max-width: 650px) {
-
-            .mw-header {
-                padding: 0 16px;
-            }
-
-
-            .mw-main {
-                width: min(100% - 20px, 900px);
-
-                padding-top: 24px;
-            }
-
-
-            .mw-info-grid {
-                grid-template-columns: 1fr;
-            }
-
-
-            .mw-section,
-            .mw-interest {
-                padding: 20px;
-            }
-        }
-
-    </style>
+    <link
+        rel="stylesheet"
+        href="css/oportunidades/oportunidades.css"
+    >
 
 </head>
 
@@ -844,82 +212,240 @@
                 <div class="mw-info-grid">
 
 
+                    <!-- PROCURA-SE -->
+
                     <div class="mw-info-card">
 
-                        <span class="mw-info-label">
-                            Procura-se
-                        </span>
+                        <div class="mw-info-icon">
 
-                        <span
-                            id="tipoArtista"
-                            class="mw-info-value"
-                        >
-                            -
-                        </span>
+                            <svg
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"
+                                />
+
+                                <circle
+                                    cx="9"
+                                    cy="7"
+                                    r="4"
+                                />
+
+                                <path
+                                    d="M22 21v-2a4 4 0 0 0-3-3.87"
+                                />
+
+                                <path
+                                    d="M16 3.13a4 4 0 0 1 0 7.75"
+                                />
+                            </svg>
+
+                        </div>
+
+
+                        <div class="mw-info-content">
+
+                            <span class="mw-info-label">
+                                Procura-se
+                            </span>
+
+                            <span
+                                id="tipoArtista"
+                                class="mw-info-value"
+                            >
+                                -
+                            </span>
+
+                        </div>
 
                     </div>
 
 
+                    <!-- DATA -->
+
                     <div class="mw-info-card">
 
-                        <span class="mw-info-label">
-                            Data do evento
-                        </span>
+                        <div class="mw-info-icon">
 
-                        <span
-                            id="dataEvento"
-                            class="mw-info-value"
-                        >
-                            -
-                        </span>
+                            <svg
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                            >
+                                <rect
+                                    x="3"
+                                    y="4"
+                                    width="18"
+                                    height="18"
+                                    rx="2"
+                                    ry="2"
+                                />
+
+                                <line
+                                    x1="16"
+                                    y1="2"
+                                    x2="16"
+                                    y2="6"
+                                />
+
+                                <line
+                                    x1="8"
+                                    y1="2"
+                                    x2="8"
+                                    y2="6"
+                                />
+
+                                <line
+                                    x1="3"
+                                    y1="10"
+                                    x2="21"
+                                    y2="10"
+                                />
+                            </svg>
+
+                        </div>
+
+
+                        <div class="mw-info-content">
+
+                            <span class="mw-info-label">
+                                Data do evento
+                            </span>
+
+                            <span
+                                id="dataEvento"
+                                class="mw-info-value"
+                            >
+                                -
+                            </span>
+
+                        </div>
 
                     </div>
 
 
+                    <!-- HORÁRIO -->
+
                     <div class="mw-info-card">
 
-                        <span class="mw-info-label">
-                            Horário
-                        </span>
+                        <div class="mw-info-icon">
 
-                        <span
-                            id="horario"
-                            class="mw-info-value"
-                        >
-                            -
-                        </span>
+                            <svg
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                            >
+                                <circle
+                                    cx="12"
+                                    cy="12"
+                                    r="9"
+                                />
+
+                                <polyline
+                                    points="12 7 12 12 15 14"
+                                />
+                            </svg>
+
+                        </div>
+
+
+                        <div class="mw-info-content">
+
+                            <span class="mw-info-label">
+                                Horário
+                            </span>
+
+                            <span
+                                id="horario"
+                                class="mw-info-value"
+                            >
+                                -
+                            </span>
+
+                        </div>
 
                     </div>
 
 
+                    <!-- LOCAL -->
+
                     <div class="mw-info-card">
 
-                        <span class="mw-info-label">
-                            Local
-                        </span>
+                        <div class="mw-info-icon">
 
-                        <span
-                            id="local"
-                            class="mw-info-value"
-                        >
-                            -
-                        </span>
+                            <svg
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"
+                                />
+
+                                <circle
+                                    cx="12"
+                                    cy="10"
+                                    r="2.5"
+                                />
+                            </svg>
+
+                        </div>
+
+
+                        <div class="mw-info-content">
+
+                            <span class="mw-info-label">
+                                Local
+                            </span>
+
+                            <span
+                                id="local"
+                                class="mw-info-value"
+                            >
+                                -
+                            </span>
+
+                        </div>
 
                     </div>
 
 
+                    <!-- PRAZO -->
+
                     <div class="mw-info-card">
 
-                        <span class="mw-info-label">
-                            Prazo para interesse
-                        </span>
+                        <div class="mw-info-icon">
 
-                        <span
-                            id="prazo"
-                            class="mw-info-value"
-                        >
-                            -
-                        </span>
+                            <svg
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                            >
+                                <circle
+                                    cx="12"
+                                    cy="12"
+                                    r="9"
+                                />
+
+                                <polyline
+                                    points="12 7 12 12 16 14"
+                                />
+                            </svg>
+
+                        </div>
+
+
+                        <div class="mw-info-content">
+
+                            <span class="mw-info-label">
+                                Prazo para interesse
+                            </span>
+
+                            <span
+                                id="prazo"
+                                class="mw-info-value"
+                            >
+                                -
+                            </span>
+
+                        </div>
 
                     </div>
 
@@ -936,7 +462,34 @@
             <section class="mw-section">
 
                 <h2>
+
+                    <span class="mw-section-icon">
+
+                        <svg
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                        >
+                            <path
+                                d="M9 18V5l12-2v13"
+                            />
+
+                            <circle
+                                cx="6"
+                                cy="18"
+                                r="3"
+                            />
+
+                            <circle
+                                cx="18"
+                                cy="16"
+                                r="3"
+                            />
+                        </svg>
+
+                    </span>
+
                     Estilos musicais
+
                 </h2>
 
 
@@ -955,7 +508,42 @@
             <section class="mw-section">
 
                 <h2>
+
+                    <span class="mw-section-icon">
+
+                        <svg
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                        >
+                            <path
+                                d="M14.5 6.5 17.5 3.5"
+                            />
+
+                            <path
+                                d="M16 4l4 4"
+                            />
+
+                            <path
+                                d="M13 8 5 16"
+                            />
+
+                            <path
+                                d="M3 21l2-5 3-3 3 3-3 3-5 2Z"
+                            />
+
+                            <path
+                                d="m11 10 3 3"
+                            />
+
+                            <path
+                                d="m14 7 3 3"
+                            />
+                        </svg>
+
+                    </span>
+
                     Instrumentos
+
                 </h2>
 
 
@@ -974,7 +562,35 @@
             <section class="mw-section">
 
                 <h2>
+
+                    <span class="mw-section-icon">
+
+                        <svg
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                        >
+                            <circle
+                                cx="12"
+                                cy="12"
+                                r="9"
+                            />
+
+                            <path
+                                d="M15 8.5c-.7-.6-1.7-1-3-1-1.7 0-3 .8-3 2s1.3 2 3 2 3 .8 3 2-1.3 2-3 2c-1.3 0-2.3-.4-3-1"
+                            />
+
+                            <line
+                                x1="12"
+                                y1="6"
+                                x2="12"
+                                y2="18"
+                            />
+                        </svg>
+
+                    </span>
+
                     Cachê / orçamento
+
                 </h2>
 
 
@@ -1006,7 +622,26 @@
             >
 
                 <h2>
+
+                    <span class="mw-section-icon">
+
+                        <svg
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                        >
+                            <path
+                                d="M20 11.5a8.1 8.1 0 0 1-8 7.5 8 8 0 1 1 7.2-4.5"
+                            />
+
+                            <path
+                                d="M20 4v7h-7"
+                            />
+                        </svg>
+
+                    </span>
+
                     Tenho interesse
+
                 </h2>
 
 
@@ -1061,1158 +696,7 @@
          JAVASCRIPT
          ========================================================= -->
 
-    <script>
-
-        /* =========================================================
-           MUSICALWORLD — VISUALIZAÇÃO DE OPORTUNIDADE
-
-           Responsabilidades:
-           - Ler o ID da oportunidade.
-           - Carregar os dados do Supabase.
-           - Carregar o estabelecimento.
-           - Identificar o usuário atual.
-           - Verificar interesse existente.
-           - Registrar novo interesse.
-           - Liberar a gestão somente para o responsável.
-           ========================================================= */
-
-
-        (() => {
-
-            "use strict";
-
-
-            const estadoCarregamento =
-                document.getElementById(
-                    "estadoCarregamento"
-                );
-
-            const estadoErro =
-                document.getElementById(
-                    "estadoErro"
-                );
-
-            const mensagemErro =
-                document.getElementById(
-                    "mensagemErro"
-                );
-
-            const oportunidadeElement =
-                document.getElementById(
-                    "oportunidade"
-                );
-
-
-            const titulo =
-                document.getElementById(
-                    "titulo"
-                );
-
-            const estabelecimento =
-                document.getElementById(
-                    "estabelecimento"
-                );
-
-            const status =
-                document.getElementById(
-                    "status"
-                );
-
-            const descricao =
-                document.getElementById(
-                    "descricao"
-                );
-
-            const tipoArtista =
-                document.getElementById(
-                    "tipoArtista"
-                );
-
-            const dataEvento =
-                document.getElementById(
-                    "dataEvento"
-                );
-
-            const horario =
-                document.getElementById(
-                    "horario"
-                );
-
-            const local =
-                document.getElementById(
-                    "local"
-                );
-
-            const prazo =
-                document.getElementById(
-                    "prazo"
-                );
-
-            const estilos =
-                document.getElementById(
-                    "estilos"
-                );
-
-            const instrumentos =
-                document.getElementById(
-                    "instrumentos"
-                );
-
-            const valor =
-                document.getElementById(
-                    "valor"
-                );
-
-            const btnInteresse =
-                document.getElementById(
-                    "btnInteresse"
-                );
-
-            const mensagemInteresse =
-                document.getElementById(
-                    "mensagemInteresse"
-                );
-
-            const feedback =
-                document.getElementById(
-                    "feedback"
-                );
-
-            const jaInteressado =
-                document.getElementById(
-                    "jaInteressado"
-                );
-
-
-            const areaGerenciamento =
-                document.getElementById(
-                    "areaGerenciamento"
-                );
-
-            const btnGerenciar =
-                document.getElementById(
-                    "btnGerenciar"
-                );
-
-
-            let oportunidadeAtual = null;
-            let usuarioAtual = null;
-
-
-            /* =====================================================
-               CLIENTE SUPABASE
-               ===================================================== */
-
-            function obterClienteSupabase() {
-
-                const cliente =
-                    window.supabaseClient ||
-                    window.MusicalWorldSupabase ||
-                    window.musicalWorldSupabase;
-
-                if (!cliente) {
-
-                    throw new Error(
-                        "Cliente Supabase não encontrado."
-                    );
-                }
-
-                return cliente;
-            }
-
-
-            /* =====================================================
-               ESCAPAR HTML
-               ===================================================== */
-
-            function escaparHtml(valor) {
-
-                return String(valor ?? "")
-                    .replaceAll("&", "&amp;")
-                    .replaceAll("<", "&lt;")
-                    .replaceAll(">", "&gt;")
-                    .replaceAll('"', "&quot;")
-                    .replaceAll("'", "&#039;");
-            }
-
-
-            /* =====================================================
-               ID DA URL
-               ===================================================== */
-
-            function obterIdOportunidade() {
-
-                const params =
-                    new URLSearchParams(
-                        window.location.search
-                    );
-
-
-                return (
-                    params.get("id") ||
-                    params.get("oportunidade_id") ||
-                    params.get("oportunidadeId") ||
-                    ""
-                ).trim();
-            }
-
-
-            /* =====================================================
-               DATA
-               ===================================================== */
-
-            function formatarData(data) {
-
-                if (!data) {
-                    return "Não informada";
-                }
-
-
-                const partes =
-                    String(data).split("-");
-
-
-                if (partes.length !== 3) {
-                    return data;
-                }
-
-
-                return new Intl.DateTimeFormat(
-                    "pt-BR"
-                ).format(
-                    new Date(
-                        Number(partes[0]),
-                        Number(partes[1]) - 1,
-                        Number(partes[2])
-                    )
-                );
-            }
-
-
-            /* =====================================================
-               HORÁRIO
-               ===================================================== */
-
-            function formatarHorario(
-                inicio,
-                fim
-            ) {
-
-                if (!inicio && !fim) {
-                    return "A definir";
-                }
-
-
-                if (inicio && fim) {
-
-                    return `${inicio.slice(0, 5)} às ${fim.slice(0, 5)}`;
-                }
-
-
-                if (inicio) {
-                    return inicio.slice(0, 5);
-                }
-
-
-                return "A definir";
-            }
-
-
-            /* =====================================================
-               VALOR
-               ===================================================== */
-
-            function formatarValor(valorRecebido) {
-
-                const numero =
-                    Number(valorRecebido);
-
-
-                if (!Number.isFinite(numero)) {
-                    return "A combinar";
-                }
-
-
-                return new Intl.NumberFormat(
-                    "pt-BR",
-                    {
-                        style: "currency",
-                        currency: "BRL"
-                    }
-                ).format(numero);
-            }
-
-
-            /* =====================================================
-               ARRAY
-               ===================================================== */
-
-            function normalizarArray(valorRecebido) {
-
-                if (Array.isArray(valorRecebido)) {
-                    return valorRecebido.filter(Boolean);
-                }
-
-
-                return [];
-            }
-
-
-            /* =====================================================
-               LOCAL
-               ===================================================== */
-
-            function formatarLocal(localRecebido) {
-
-                if (!localRecebido) {
-                    return "Local não informado";
-                }
-
-
-                if (
-                    typeof localRecebido === "string"
-                ) {
-
-                    return localRecebido;
-                }
-
-
-                const endereco =
-                    [
-                        localRecebido.endereco,
-                        localRecebido.numero
-                    ]
-                        .filter(Boolean)
-                        .join(", ");
-
-
-                const cidadeEstado =
-                    [
-                        localRecebido.cidade,
-                        localRecebido.estado
-                    ]
-                        .filter(Boolean)
-                        .join("/");
-
-
-                const partes = [];
-
-
-                if (endereco) {
-                    partes.push(endereco);
-                }
-
-
-                if (localRecebido.bairro) {
-                    partes.push(
-                        localRecebido.bairro
-                    );
-                }
-
-
-                if (cidadeEstado) {
-                    partes.push(
-                        cidadeEstado
-                    );
-                }
-
-
-                if (localRecebido.cep) {
-                    partes.push(
-                        `CEP ${localRecebido.cep}`
-                    );
-                }
-
-
-                return (
-                    partes.join(" — ") ||
-                    localRecebido.nomeLocal ||
-                    "Local não informado"
-                );
-            }
-
-
-            /* =====================================================
-               CARREGAR USUÁRIO
-               ===================================================== */
-
-            async function carregarUsuario() {
-
-                const supabase =
-                    obterClienteSupabase();
-
-
-                const {
-                    data,
-                    error
-                } = await supabase.auth.getUser();
-
-
-                if (error) {
-                    throw error;
-                }
-
-
-                usuarioAtual =
-                    data?.user || null;
-            }
-
-
-            /* =====================================================
-               CARREGAR OPORTUNIDADE
-               ===================================================== */
-
-            async function carregarOportunidade(
-                id
-            ) {
-
-                const supabase =
-                    obterClienteSupabase();
-
-
-                const {
-                    data,
-                    error
-                } = await supabase
-                    .from("oportunidades")
-                    .select(`
-                        id,
-                        contratante_id,
-                        titulo,
-                        descricao,
-                        tipo_artista,
-                        data_evento,
-                        hora_inicio,
-                        hora_fim,
-                        estilos,
-                        instrumentos,
-                        valor,
-                        local,
-                        prazo_interesse,
-                        status,
-                        created_at
-                    `)
-                    .eq(
-                        "id",
-                        id
-                    )
-                    .maybeSingle();
-
-
-                if (error) {
-                    throw error;
-                }
-
-
-                if (!data) {
-
-                    throw new Error(
-                        "A oportunidade não foi encontrada."
-                    );
-                }
-
-
-                oportunidadeAtual =
-                    data;
-            }
-
-
-            /* =====================================================
-               CARREGAR ESTABELECIMENTO
-               ===================================================== */
-
-            async function carregarEstabelecimento() {
-
-                const supabase =
-                    obterClienteSupabase();
-
-
-                const {
-                    data,
-                    error
-                } = await supabase
-                    .from("perfis")
-                    .select(`
-                        usuario_id,
-                        nome_exibicao,
-                        tipos_perfil (
-                            nome
-                        )
-                    `)
-                    .eq(
-                        "usuario_id",
-                        oportunidadeAtual.contratante_id
-                    )
-                    .maybeSingle();
-
-
-                if (error) {
-                    throw error;
-                }
-
-
-                const nome =
-                    data?.nome_exibicao ||
-                    oportunidadeAtual.local?.nomeLocal ||
-                    "Estabelecimento";
-
-
-                estabelecimento.textContent =
-                    nome;
-            }
-
-
-            /* =====================================================
-               CONFIGURAR GESTÃO
-
-               O botão de gestão é exibido somente quando o
-               usuário autenticado é o responsável pela oportunidade.
-
-               O ID utilizado no link é o ID real retornado pelo
-               Supabase, garantindo que a página de interessados
-               receba:
-               
-               oportunidade-interessados.html?id=ID
-               ===================================================== */
-
-            function configurarGerenciamento() {
-
-                if (
-                    !usuarioAtual ||
-                    !oportunidadeAtual
-                ) {
-
-                    return;
-                }
-
-
-                const ehResponsavel =
-                    String(
-                        usuarioAtual.id
-                    ) ===
-                    String(
-                        oportunidadeAtual.contratante_id
-                    );
-
-
-                if (!ehResponsavel) {
-
-                    areaGerenciamento
-                        .classList
-                        .remove(
-                            "is-visible"
-                        );
-
-                    return;
-                }
-
-
-                btnGerenciar.href =
-                    `oportunidade-interessados.html?id=${encodeURIComponent(
-                        oportunidadeAtual.id
-                    )}`;
-
-
-                areaGerenciamento
-                    .classList
-                    .add(
-                        "is-visible"
-                    );
-            }
-
-
-            /* =====================================================
-               RENDERIZAR
-               ===================================================== */
-
-            function renderizar() {
-
-                titulo.textContent =
-                    oportunidadeAtual.titulo ||
-                    "Oportunidade";
-
-
-                status.textContent =
-                    oportunidadeAtual.status === "aberta"
-                        ? "Aberta"
-                        : oportunidadeAtual.status;
-
-
-                tipoArtista.textContent =
-                    oportunidadeAtual.tipo_artista ||
-                    "Não informado";
-
-
-                dataEvento.textContent =
-                    formatarData(
-                        oportunidadeAtual.data_evento
-                    );
-
-
-                horario.textContent =
-                    formatarHorario(
-                        oportunidadeAtual.hora_inicio,
-                        oportunidadeAtual.hora_fim
-                    );
-
-
-                local.textContent =
-                    formatarLocal(
-                        oportunidadeAtual.local
-                    );
-
-
-                prazo.textContent =
-                    oportunidadeAtual.prazo_interesse
-                        ? formatarData(
-                            oportunidadeAtual.prazo_interesse
-                        )
-                        : "Até preencher a oportunidade";
-
-
-                valor.textContent =
-                    formatarValor(
-                        oportunidadeAtual.valor
-                    );
-
-
-                if (
-                    oportunidadeAtual.descricao
-                ) {
-
-                    descricao.textContent =
-                        oportunidadeAtual.descricao;
-
-                } else {
-
-                    descricao.textContent =
-                        "O estabelecimento não adicionou uma descrição para esta oportunidade.";
-                }
-
-
-                renderizarTags(
-                    estilos,
-                    oportunidadeAtual.estilos,
-                    "Nenhum estilo informado."
-                );
-
-
-                renderizarTags(
-                    instrumentos,
-                    oportunidadeAtual.instrumentos,
-                    "Nenhum instrumento informado."
-                );
-            }
-
-
-            /* =====================================================
-               TAGS
-               ===================================================== */
-
-            function renderizarTags(
-                container,
-                valores,
-                mensagem
-            ) {
-
-                const lista =
-                    normalizarArray(
-                        valores
-                    );
-
-
-                if (!lista.length) {
-
-                    container.innerHTML = `
-
-                        <span class="mw-empty">
-                            ${mensagem}
-                        </span>
-
-                    `;
-
-                    return;
-                }
-
-
-                container.innerHTML =
-                    lista
-                        .map(
-                            item => `
-                                <span class="mw-tag">
-                                    ${escaparHtml(item)}
-                                </span>
-                            `
-                        )
-                        .join("");
-            }
-
-
-            /* =====================================================
-               VERIFICAR INTERESSE EXISTENTE
-               ===================================================== */
-
-            async function verificarInteresse() {
-
-                if (!usuarioAtual) {
-                    return;
-                }
-
-
-                if (
-                    String(
-                        usuarioAtual.id
-                    ) === String(
-                        oportunidadeAtual.contratante_id
-                    )
-                ) {
-
-                    areaInteresseDesabilitada(
-                        "Você é o responsável por esta oportunidade."
-                    );
-
-                    return;
-                }
-
-
-                const supabase =
-                    obterClienteSupabase();
-
-
-                const {
-                    data,
-                    error
-                } = await supabase
-                    .from("oportunidades_interessados")
-                    .select(`
-                        id,
-                        status
-                    `)
-                    .eq(
-                        "oportunidade_id",
-                        oportunidadeAtual.id
-                    )
-                    .eq(
-                        "artista_id",
-                        usuarioAtual.id
-                    )
-                    .maybeSingle();
-
-
-                if (error) {
-
-                    console.warn(
-                        "MusicalWorld — erro ao verificar interesse:",
-                        error
-                    );
-
-                    return;
-                }
-
-
-                if (data) {
-
-                    jaInteressado.classList.add(
-                        "is-visible"
-                    );
-
-
-                    btnInteresse.disabled =
-                        true;
-
-
-                    mensagemInteresse.disabled =
-                        true;
-
-                }
-            }
-
-
-            /* =====================================================
-               DESABILITAR ÁREA DO RESPONSÁVEL
-               ===================================================== */
-
-            function areaInteresseDesabilitada(
-                mensagem
-            ) {
-
-                btnInteresse.disabled =
-                    true;
-
-
-                mensagemInteresse.disabled =
-                    true;
-
-
-                mensagemInteresse.style.display =
-                    "none";
-
-
-                btnInteresse.style.display =
-                    "none";
-
-
-                const texto =
-                    document.querySelector(
-                        "#areaInteresse > p"
-                    );
-
-
-                if (texto) {
-
-                    texto.textContent =
-                        mensagem;
-                }
-            }
-
-
-            /* =====================================================
-               FEEDBACK
-               ===================================================== */
-
-            function mostrarFeedback(
-                mensagem,
-                tipo
-            ) {
-
-                feedback.textContent =
-                    mensagem;
-
-                feedback.className =
-                    `mw-feedback is-visible ${tipo}`;
-            }
-
-
-            /* =====================================================
-               DEMONSTRAR INTERESSE
-               ===================================================== */
-
-            async function demonstrarInteresse() {
-
-                if (!usuarioAtual) {
-
-                    mostrarFeedback(
-                        "Faça login para demonstrar interesse.",
-                        "error"
-                    );
-
-                    return;
-                }
-
-
-                if (!oportunidadeAtual) {
-
-                    mostrarFeedback(
-                        "A oportunidade ainda não foi carregada.",
-                        "error"
-                    );
-
-                    return;
-                }
-
-
-                if (
-                    String(
-                        usuarioAtual.id
-                    ) === String(
-                        oportunidadeAtual.contratante_id
-                    )
-                ) {
-
-                    mostrarFeedback(
-                        "Você não pode demonstrar interesse na própria oportunidade.",
-                        "error"
-                    );
-
-                    return;
-                }
-
-
-                if (
-                    oportunidadeAtual.status !== "aberta"
-                ) {
-
-                    mostrarFeedback(
-                        "Esta oportunidade não está mais aberta.",
-                        "error"
-                    );
-
-                    return;
-                }
-
-
-                if (
-                    oportunidadeAtual.prazo_interesse &&
-                    oportunidadeAtual.prazo_interesse <
-                    obterDataHoje()
-                ) {
-
-                    mostrarFeedback(
-                        "O prazo para demonstrar interesse já terminou.",
-                        "error"
-                    );
-
-                    return;
-                }
-
-
-                try {
-
-                    btnInteresse.disabled =
-                        true;
-
-                    btnInteresse.textContent =
-                        "Enviando...";
-
-
-                    const supabase =
-                        obterClienteSupabase();
-
-
-                    const mensagem =
-                        mensagemInteresse.value.trim();
-
-
-                    const registro = {
-
-                        oportunidade_id:
-                            oportunidadeAtual.id,
-
-                        artista_id:
-                            usuarioAtual.id,
-
-                        mensagem:
-                            mensagem || null,
-
-                        status:
-                            "interessado"
-
-                    };
-
-
-                    const {
-                        error
-                    } = await supabase
-                        .from(
-                            "oportunidades_interessados"
-                        )
-                        .insert(
-                            registro
-                        );
-
-
-                    if (error) {
-                        throw error;
-                    }
-
-
-                    mostrarFeedback(
-                        "Seu interesse foi enviado com sucesso.",
-                        "success"
-                    );
-
-
-                    jaInteressado.classList.add(
-                        "is-visible"
-                    );
-
-
-                    mensagemInteresse.disabled =
-                        true;
-
-
-                    btnInteresse.textContent =
-                        "Interesse enviado";
-
-
-                } catch (erro) {
-
-                    console.error(
-                        "MusicalWorld — erro ao demonstrar interesse:",
-                        erro
-                    );
-
-
-                    if (
-                        erro?.code === "23505"
-                    ) {
-
-                        jaInteressado.classList.add(
-                            "is-visible"
-                        );
-
-
-                        btnInteresse.disabled =
-                            true;
-
-
-                        mensagemInteresse.disabled =
-                            true;
-
-
-                        btnInteresse.textContent =
-                            "Interesse enviado";
-
-
-                        return;
-                    }
-
-
-                    mostrarFeedback(
-                        erro?.message ||
-                        "Não foi possível enviar seu interesse.",
-                        "error"
-                    );
-
-
-                    btnInteresse.disabled =
-                        false;
-
-                    btnInteresse.textContent =
-                        "Tenho interesse";
-                }
-            }
-
-
-            /* =====================================================
-               DATA DE HOJE
-               ===================================================== */
-
-            function obterDataHoje() {
-
-                const agora =
-                    new Date();
-
-
-                const ano =
-                    agora.getFullYear();
-
-
-                const mes =
-                    String(
-                        agora.getMonth() + 1
-                    ).padStart(2, "0");
-
-
-                const dia =
-                    String(
-                        agora.getDate()
-                    ).padStart(2, "0");
-
-
-                return `${ano}-${mes}-${dia}`;
-            }
-
-
-            /* =====================================================
-               EXIBIR ERRO
-               ===================================================== */
-
-            function mostrarErro(
-                mensagem
-            ) {
-
-                estadoCarregamento.hidden =
-                    true;
-
-
-                oportunidadeElement
-                    .classList
-                    .remove(
-                        "is-visible"
-                    );
-
-
-                mensagemErro.textContent =
-                    mensagem ||
-                    "Não foi possível carregar esta oportunidade.";
-
-
-                estadoErro.hidden =
-                    false;
-            }
-
-
-            /* =====================================================
-               INICIALIZAÇÃO
-               ===================================================== */
-
-            async function inicializar() {
-
-                try {
-
-                    const id =
-                        obterIdOportunidade();
-
-
-                    if (!id) {
-
-                        throw new Error(
-                            "O ID da oportunidade não foi informado."
-                        );
-                    }
-
-
-                    await carregarUsuario();
-
-                    await carregarOportunidade(
-                        id
-                    );
-
-                    await carregarEstabelecimento();
-
-                    renderizar();
-
-                    configurarGerenciamento();
-
-                    await verificarInteresse();
-
-
-                    estadoCarregamento.hidden =
-                        true;
-
-
-                    oportunidadeElement
-                        .classList
-                        .add(
-                            "is-visible"
-                        );
-
-
-                } catch (erro) {
-
-                    console.error(
-                        "MusicalWorld — erro ao carregar oportunidade:",
-                        erro
-                    );
-
-
-                    mostrarErro(
-                        erro?.message
-                    );
-                }
-            }
-
-
-            /* =====================================================
-               EVENTO
-               ===================================================== */
-
-            btnInteresse.addEventListener(
-                "click",
-                demonstrarInteresse
-            );
-
-
-            /* =====================================================
-               INICIAR
-               ===================================================== */
-
-            inicializar();
-
-        })();
-
-    </script>
+    <script src="js/oportunidades/oportunidades.js"></script>
 
 </body>
 

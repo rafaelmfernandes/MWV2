@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 
 <html lang="pt-BR">
@@ -370,10 +371,6 @@
 
     <!-- =========================================
          MINHAS OPORTUNIDADES
-
-         Este item permanece oculto inicialmente.
-         O JavaScript deverá exibi-lo somente
-         para usuários do tipo estabelecimento.
          ========================================= -->
 
     <button
@@ -759,13 +756,6 @@
 
 <!-- =================================================
      MODAL DE AVALIAÇÃO
-
-     O componente modal-avaliacao.js utiliza este
-     container para montar o modal dinamicamente.
-
-     O modal só será exibido quando existir uma
-     contratação concluída ainda não avaliada pelo
-     contratante.
      ================================================= -->
 
 <div
@@ -796,11 +786,16 @@
 
         <!-- =========================================
              CONTADOR DE PROFISSIONAIS
+
+             Oculto visualmente.
+             A lógica do feed continua utilizando
+             este elemento normalmente.
              ========================================= -->
 
         <div
             id="contador-profissionais"
             class="contador-profissionais"
+            style="display: none;"
         ></div>
 
 
@@ -1045,14 +1040,6 @@
 
 <script src="js/components/modal-anunciar.js"></script>
 
-<!--
-    Modal de avaliação.
-
-    Este componente precisa ser carregado depois do
-    SupabaseClient.js e antes da inicialização dos
-    componentes no DOMContentLoaded.
--->
-
 <script src="js/components/modal-avaliacao.js"></script>
 
 <script src="js/dados/municipios-brasil.js"></script>
@@ -1086,13 +1073,6 @@
 
 <!-- =====================================================
      FILTRO — EVENTO DE FILTROS APLICADOS
-
-     O modal-filtro.js dispara:
-
-     musicalworld:filtros-aplicados
-
-     Este listener entrega os filtros ao
-     MusicalWorldFeed sem alterar o main.js.
      ===================================================== -->
 
 <script>
@@ -1164,21 +1144,6 @@ document.addEventListener(
         );
 
 
-        /*
-        -------------------------------------------------
-        CABEÇALHO
-        -------------------------------------------------
-
-        O Cabecalho continua responsável pela sessão,
-        mensagens não lidas, Realtime e prévias de novas
-        mensagens.
-
-        Também controla o menu da conta aberto através
-        da seta ao lado da logo.
-
-        -------------------------------------------------
-        */
-
         if (
             window.Cabecalho &&
             typeof window.Cabecalho.iniciar === 'function'
@@ -1188,18 +1153,6 @@ document.addEventListener(
 
         }
 
-
-        /*
-        -------------------------------------------------
-        MODAL ANUNCIAR
-        -------------------------------------------------
-
-        O componente é carregado diretamente pelo
-        index.html, pois o botão Anunciar está no
-        cabeçalho.
-
-        -------------------------------------------------
-        */
 
         if (
             window.ModalAnunciar &&
@@ -1222,20 +1175,6 @@ document.addEventListener(
         }
 
 
-        /*
-        -------------------------------------------------
-        INTERAÇÕES DE PERFIL
-        -------------------------------------------------
-
-        O componente é universal e será utilizado pelos
-        perfis exibidos no Index.
-
-        A página de apresentação do perfil também utiliza
-        exatamente o mesmo componente.
-
-        -------------------------------------------------
-        */
-
         if (
             window.InteracoesPerfil &&
             typeof window.InteracoesPerfil.inicializar === 'function'
@@ -1256,20 +1195,6 @@ document.addEventListener(
 
         }
 
-
-        /*
-        -------------------------------------------------
-        AVISO DO FEED
-        -------------------------------------------------
-
-        Inicializa o componente responsável por:
-
-        - fechar o aviso;
-        - salvar o fechamento no localStorage;
-        - remover o aviso ao recarregar a página.
-
-        -------------------------------------------------
-        */
 
         if (
             window.MusicalWorldAviso &&
@@ -1292,20 +1217,6 @@ document.addEventListener(
         }
 
 
-        /*
-        -------------------------------------------------
-        ONBOARDING
-        -------------------------------------------------
-
-        O menu inferior é criado dinamicamente pelo
-        menu-inferior.js.
-
-        O onboarding aguarda o botão Perfil existir
-        antes de criar a primeira orientação.
-
-        -------------------------------------------------
-        */
-
         if (
             window.MusicalWorldOnboarding &&
             typeof window.MusicalWorldOnboarding.iniciar === 'function'
@@ -1320,37 +1231,6 @@ document.addEventListener(
 
         }
 
-
-        /*
-        -------------------------------------------------
-        MODAL DE AVALIAÇÃO
-        -------------------------------------------------
-
-        O componente verifica se o usuário atualmente
-        autenticado possui alguma contratação concluída
-        em que ele foi o contratante e que ainda não
-        possui uma avaliação vinculada.
-
-        A verificação utiliza o banco como fonte de
-        verdade.
-
-        Portanto:
-
-        contratação concluída
-                 +
-        nenhuma avaliação para a contratação
-                 =
-        modal disponível para avaliação.
-
-        Depois que a avaliação é inserida em
-        avaliacoes_musicos, a mesma contratação deixa
-        automaticamente de aparecer como pendente.
-
-        O componente é universal para todos os tipos de
-        artistas e não depende de uma categoria específica.
-
-        -------------------------------------------------
-        */
 
         if (
             window.MusicalWorldModalAvaliacao &&
@@ -1381,3 +1261,4 @@ document.addEventListener(
 </body>
 
 </html>
+

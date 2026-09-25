@@ -220,10 +220,6 @@
 
                     if (texto) {
 
-                        /*
-                         * Se já for um endereço completo,
-                         * usamos diretamente.
-                         */
                         return texto;
 
                     }
@@ -285,9 +281,6 @@
                 localizacao.postalCode;
 
 
-            /*
-             * Logradouro + número.
-             */
             if (logradouro) {
 
                 let textoLogradouro =
@@ -311,9 +304,6 @@
             }
 
 
-            /*
-             * Complemento.
-             */
             if (complemento) {
 
                 partes.push(
@@ -325,9 +315,6 @@
             }
 
 
-            /*
-             * Bairro.
-             */
             if (bairro) {
 
                 partes.push(
@@ -339,9 +326,6 @@
             }
 
 
-            /*
-             * Cidade + estado.
-             */
             if (cidade && estado) {
 
                 partes.push(
@@ -363,9 +347,6 @@
             }
 
 
-            /*
-             * CEP.
-             */
             if (cep) {
 
                 partes.push(
@@ -382,13 +363,6 @@
             }
 
 
-            /*
-             * Último fallback para objetos.
-
-             * Não exibimos "[object Object]".
-             * Se não houver nenhum campo reconhecível,
-             * retornamos vazio.
-             */
             return "";
 
         }
@@ -605,6 +579,18 @@
                 >
                     <path
                         d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9L12 3Z"
+                    ></path>
+                </svg>
+            `,
+
+
+            interesseAtivo: `
+                <svg
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                >
+                    <path
+                        d="m5 12 4 4L19 6"
                     ></path>
                 </svg>
             `,
@@ -988,11 +974,6 @@
 
     /* =====================================================
        CRIAR ÁREA DE VISUALIZAÇÕES
-
-       O número representa a quantidade de usuários
-       únicos que visualizaram a oportunidade.
-
-       A lógica de persistência fica no main.js.
     ===================================================== */
 
     function criarAreaVisualizacoes(
@@ -1040,9 +1021,6 @@
 
     /* =====================================================
        ATUALIZAR CONTADOR DE VISUALIZAÇÕES
-
-       Função pública utilizada pelo main.js depois que
-       uma nova visualização foi registrada.
     ===================================================== */
 
     function atualizarContadorVisualizacoes(
@@ -1103,15 +1081,190 @@
 
 
     /* =====================================================
+       ATUALIZAR ESTADO VISUAL DO BOTÃO DE INTERESSE
+    ===================================================== */
+
+    function atualizarEstadoInteresse(
+        card,
+        interessado
+    ) {
+
+        if (!card) {
+
+            return;
+
+        }
+
+
+        const botao =
+            card.querySelector(
+                "[data-acao-interesse]"
+            );
+
+
+        if (!botao) {
+
+            return;
+
+        }
+
+
+        const icone =
+            botao.querySelector(
+                ".feed-oportunidade-interesse-icon"
+            );
+
+
+        const texto =
+            botao.querySelector(
+                "[data-interesse-texto]"
+            );
+
+
+        if (interessado) {
+
+            card.classList.add(
+                "interesse-ativo"
+            );
+
+
+            botao.setAttribute(
+                "aria-pressed",
+                "true"
+            );
+
+
+            botao.setAttribute(
+                "aria-label",
+                "Você já demonstrou interesse nesta oportunidade"
+            );
+
+
+            botao.dataset.interesseRegistrado =
+                "true";
+
+
+            if (icone) {
+
+                icone.innerHTML =
+                    criarIcone(
+                        "interesseAtivo"
+                    );
+
+            }
+
+
+            if (texto) {
+
+                texto.textContent =
+                    "Interesse enviado";
+
+            }
+
+        } else {
+
+            card.classList.remove(
+                "interesse-ativo"
+            );
+
+
+            botao.setAttribute(
+                "aria-pressed",
+                "false"
+            );
+
+
+            botao.setAttribute(
+                "aria-label",
+                "Tenho interesse nesta oportunidade"
+            );
+
+
+            delete botao.dataset.interesseRegistrado;
+
+
+            if (icone) {
+
+                icone.innerHTML =
+                    criarIcone(
+                        "interesse"
+                    );
+
+            }
+
+
+            if (texto) {
+
+                texto.textContent =
+                    "Tenho interesse";
+
+            }
+
+        }
+
+    }
+
+
+    /* =====================================================
+       ATUALIZAR CONTADOR DE INTERESSADOS
+    ===================================================== */
+
+    function atualizarContadorInteressados(
+        card,
+        quantidade
+    ) {
+
+        if (!card) {
+
+            return;
+
+        }
+
+
+        const contador =
+            card.querySelector(
+                "[data-interessados-contador]"
+            );
+
+
+        if (!contador) {
+
+            return;
+
+        }
+
+
+        const valor =
+            Math.max(
+                0,
+                Number(quantidade) || 0
+            );
+
+
+        contador.textContent =
+            String(valor);
+
+
+        const label =
+            card.querySelector(
+                ".feed-oportunidade-contador-label"
+            );
+
+
+        if (label) {
+
+            label.textContent =
+                valor === 1
+                    ? "interessado"
+                    : "interessados";
+
+        }
+
+    }
+
+
+    /* =====================================================
        CRIAR CARD DE OPORTUNIDADE
-
-       Esta é a função principal do módulo.
-
-       O main.js fornecerá um objeto normalizado contendo
-       os dados da oportunidade e os dados do publicador.
-
-       Quando _ehProprietario for true, o botão
-       "Tenho interesse" será desabilitado.
     ===================================================== */
 
     function criar(
@@ -1173,13 +1326,6 @@
             );
 
 
-        /*
-         * A localização pode vir do Supabase como texto
-         * ou como objeto JSON.
-         *
-         * Nunca usamos String(objeto) diretamente,
-         * pois isso produziria "[object Object]".
-         */
         const local =
             obterLocalizacaoTexto(
                 oportunidade.local
@@ -1205,14 +1351,12 @@
             );
 
 
-        /*
-         * O main.js informa se o usuário autenticado
-         * é o proprietário desta oportunidade.
-         *
-         * Este renderer não consulta o Supabase.
-         */
         const ehProprietario =
             oportunidade._ehProprietario === true;
+
+
+        const ehInteressado =
+            oportunidade._ehInteressado === true;
 
 
         /* =================================================
@@ -1466,7 +1610,16 @@
                     type="button"
                     class="feed-oportunidade-interesse"
                     data-acao-interesse
-                    aria-label="Tenho interesse nesta oportunidade"
+                    aria-pressed="${
+                        ehInteressado
+                            ? "true"
+                            : "false"
+                    }"
+                    aria-label="${
+                        ehInteressado
+                            ? "Você já demonstrou interesse nesta oportunidade"
+                            : "Tenho interesse nesta oportunidade"
+                    }"
                     ${
                         ehProprietario
                             ? `
@@ -1482,11 +1635,21 @@
                         class="feed-oportunidade-interesse-icon"
                         aria-hidden="true"
                     >
-                        ${criarIcone("interesse")}
+                        ${criarIcone(
+                            ehInteressado
+                                ? "interesseAtivo"
+                                : "interesse"
+                        )}
                     </span>
 
-                    <span>
-                        Tenho interesse
+                    <span
+                        data-interesse-texto
+                    >
+                        ${
+                            ehInteressado
+                                ? "Interesse enviado"
+                                : "Tenho interesse"
+                        }
                     </span>
 
                 </button>
@@ -1516,6 +1679,9 @@
 
         /* =================================================
            EVENTO — TENHO INTERESSE
+
+           O main.js decide se deve inserir ou remover
+           o interesse no Supabase.
         ================================================= */
 
         const botaoInteresse =
@@ -1533,12 +1699,6 @@
                 "click",
                 function (evento) {
 
-                    /*
-                     * Proteção adicional:
-                     * mesmo que algum código externo tente
-                     * disparar o evento, o proprietário não
-                     * poderá demonstrar interesse.
-                     */
                     if (
                         oportunidade._ehProprietario ===
                         true
@@ -1644,6 +1804,9 @@
            O card inteiro abre a oportunidade.
 
            O botão "Tenho interesse" fica fora dessa ação.
+
+           A página correta do módulo de oportunidades é:
+           oportunidades.html
         ================================================= */
 
         card.addEventListener(
@@ -1676,7 +1839,7 @@
 
 
                 window.location.href =
-                    `oportunidade.html?id=${encodeURIComponent(
+                    `oportunidades.html?id=${encodeURIComponent(
                         oportunidadeId
                     )}`;
 
@@ -1703,7 +1866,11 @@
 
         formatarValor,
 
-        atualizarContadorVisualizacoes
+        atualizarContadorVisualizacoes,
+
+        atualizarEstadoInteresse,
+
+        atualizarContadorInteressados
 
     };
 

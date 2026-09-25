@@ -23,6 +23,8 @@
      interesse na própria oportunidade.
    - Contabilizar somente uma visualização por usuário
      para cada oportunidade.
+   - Permitir adicionar e remover interesse de uma
+     oportunidade.
 
    Renderizadores utilizados:
 
@@ -75,24 +77,8 @@
 
         },
 
-        /*
-         * O RPC atual dos profissionais foi criado para
-         * receber paginação.
-         *
-         * Para uma timeline realmente cronológica,
-         * precisamos conhecer os profissionais que podem
-         * ocupar cada posição junto das oportunidades.
-         *
-         * O limite de 1000 mantém essa primeira versão
-         * compatível com o limite padrão do Supabase.
-         */
         limiteFonteProfissionais: 1000,
 
-        /*
-         * Quantidade visual de itens por página.
-         *
-         * Continua compatível com o paginacao.js atual.
-         */
         limitePorPagina: 12,
 
         inicializado: false
@@ -114,8 +100,6 @@
 
     /* =====================================================
        CACHE DA TIMELINE
-
-       Estes dados representam a fonte atual do feed.
     ===================================================== */
 
     let timelineCache = [];
@@ -136,27 +120,12 @@
 
     /* =====================================================
        CONTROLE DAS VISUALIZAÇÕES
-
-       O Set guarda as combinações:
-
-       oportunidadeId + usuarioId
-
-       que já foram conhecidas como visualizadas pelo
-       usuário atual.
-
-       Dessa forma, uma mesma pessoa não gera uma nova
-       visualização quando volta ao feed posteriormente.
     ===================================================== */
 
     const visualizacoesRegistradas =
         new Set();
 
 
-    /*
-     * IntersectionObserver utilizado para identificar
-     * quando um card de oportunidade realmente entra
-     * na área visível do feed.
-     */
     let observadorVisualizacoes =
         null;
 
@@ -411,11 +380,6 @@
 
                 } catch (erro) {
 
-                    /*
-                     * Se não for JSON válido,
-                     * continua usando o texto normal.
-                     */
-
                 }
 
             }
@@ -438,24 +402,6 @@
 
     /* =====================================================
        NORMALIZAR LOCALIZAÇÃO DA OPORTUNIDADE
-
-       A coluna "local" pode chegar como texto ou como
-       objeto JSON.
-
-       O card precisa receber uma string já preparada
-       para exibição.
-
-       Prioridade visual:
-
-       Rua, número · Cidade/UF
-
-       Caso não exista endereço:
-
-       Cidade/UF
-
-       Caso não exista cidade/estado:
-
-       endereço disponível.
     ===================================================== */
 
     function normalizarLocalizacao(valor) {
@@ -469,10 +415,6 @@
 
         }
 
-
-        /* =============================================
-           LOCAL JÁ EM TEXTO
-        ============================================= */
 
         if (
             typeof valor === "string" ||
@@ -492,10 +434,6 @@
 
         }
 
-
-        /* =============================================
-           FUNÇÃO AUXILIAR PARA ENCONTRAR UM CAMPO
-        ============================================= */
 
         function obterCampo(
             objeto,
@@ -532,10 +470,6 @@
         }
 
 
-        /* =============================================
-           CIDADE
-        ============================================= */
-
         const cidade =
             obterCampo(
                 valor,
@@ -548,10 +482,6 @@
             );
 
 
-        /* =============================================
-           ESTADO / UF
-        ============================================= */
-
         const estado =
             obterCampo(
                 valor,
@@ -562,10 +492,6 @@
                 ]
             );
 
-
-        /* =============================================
-           ENDEREÇO
-        ============================================= */
 
         const enderecoCompleto =
             obterCampo(
@@ -615,21 +541,6 @@
             );
 
 
-        const bairro =
-            obterCampo(
-                valor,
-                [
-                    "bairro",
-                    "neighborhood",
-                    "district"
-                ]
-            );
-
-
-        /* =============================================
-           MONTAR PARTE DA CIDADE
-        ============================================= */
-
         let cidadeEstado = "";
 
 
@@ -653,10 +564,6 @@
 
         }
 
-
-        /* =============================================
-           MONTAR ENDEREÇO
-        ============================================= */
 
         let endereco = "";
 
@@ -688,23 +595,6 @@
         }
 
 
-        /*
-         * O bairro não será colocado automaticamente no
-         * card quando já temos cidade/estado.
-         *
-         * A intenção é manter a localização compacta e
-         * fácil de identificar rapidamente no feed.
-         */
-
-
-        /* =============================================
-           RESULTADO PRINCIPAL
-
-           Exemplo:
-
-           Rua 10, 245 · Goiânia/GO
-        ============================================= */
-
         if (
             endereco &&
             cidadeEstado
@@ -731,10 +621,6 @@
         }
 
 
-        /*
-         * Última tentativa para estruturas de localização
-         * que possam ter um campo textual não previsto.
-         */
         const texto =
             obterCampo(
                 valor,
@@ -825,16 +711,6 @@
 
     /* =====================================================
        CARREGAR VISUALIZAÇÕES DAS OPORTUNIDADES
-
-       Esta consulta busca todas as visualizações das
-       oportunidades que aparecem no feed.
-
-       Como existe uma restrição UNIQUE em:
-
-       oportunidade_id + usuario_id
-
-       cada usuário representa somente uma visualização
-       daquela oportunidade.
     ===================================================== */
 
     async function carregarVisualizacoesFonte(
@@ -938,12 +814,6 @@
                 );
 
 
-                /*
-                 * Se a visualização pertence ao usuário
-                 * atualmente autenticado, guardamos a
-                 * combinação para impedir uma nova tentativa
-                 * desnecessária de registro.
-                 */
                 if (
                     usuarioAtualId &&
                     visualizacao.usuario_id &&
@@ -976,33 +846,11 @@
 
     /* =====================================================
        CARREGAR OPORTUNIDADES ABERTAS
-
-       A relação confirmada é:
-
-       oportunidades.contratante_id
-                  ↓
-       perfis.usuario_id
-
-       A foto do estabelecimento vem de:
-
-       oportunidades.contratante_id
-                  ↓
-       usuarios.id
-                  ↓
-       usuarios.foto_url
-
-       Também identificamos aqui o usuário autenticado
-       para informar ao renderer quais oportunidades
-       pertencem ao próprio usuário.
     ===================================================== */
 
     async function carregarOportunidadesFonte(
         supabase
     ) {
-
-        /* =============================================
-           IDENTIFICAR USUÁRIO AUTENTICADO
-        ============================================= */
 
         let usuarioAtualId = null;
 
@@ -1609,9 +1457,9 @@
         );
 
 
-        /* =============================================
+        /* =================================================
            NORMALIZAR OPORTUNIDADES
-        ============================================= */
+        ================================================= */
 
         return lista.map(
             oportunidade => {
@@ -1685,6 +1533,25 @@
                     );
 
 
+                /*
+                 * Verifica se o usuário atual já demonstrou
+                 * interesse nesta oportunidade.
+                 */
+                const ehInteressado =
+                    Boolean(
+                        usuarioAtualId &&
+                        interessadosDaOportunidade.some(
+                            interessado =>
+                                String(
+                                    interessado.artista_id
+                                ) ===
+                                String(
+                                    usuarioAtualId
+                                )
+                        )
+                    );
+
+
                 const quantidadeVisualizacoes =
                     Number(
                         contadoresVisualizacoes.get(
@@ -1695,14 +1562,6 @@
                     ) || 0;
 
 
-                /*
-                 * Normalizamos a localização aqui para que
-                 * o renderer receba uma string pronta.
-                 *
-                 * Exemplo:
-                 *
-                 * Rua 10, 245 · Goiânia/GO
-                 */
                 const localizacao =
                     normalizarLocalizacao(
                         oportunidade.local
@@ -1723,6 +1582,9 @@
 
                     _ehProprietario:
                         ehProprietario,
+
+                    _ehInteressado:
+                        ehInteressado,
 
                     publicadorNome,
 
@@ -1746,10 +1608,6 @@
 
                         "",
 
-                    /*
-                     * O card recebe a localização já
-                     * formatada para leitura rápida.
-                     */
                     local:
                         localizacao,
 
@@ -2073,10 +1931,6 @@
         }
 
 
-        /*
-         * Fallback caso o renderer ainda não esteja
-         * disponível no momento da atualização.
-         */
         const contador =
             card.querySelector(
                 "[data-visualizacoes-contador]"
@@ -2099,13 +1953,6 @@
 
     /* =====================================================
        REGISTRAR VISUALIZAÇÃO DA OPORTUNIDADE
-
-       A visualização só é registrada uma vez por:
-
-       oportunidade + usuário
-
-       A tabela possui UNIQUE(opotunidade_id, usuario_id),
-       portanto o banco também protege contra duplicidade.
     ===================================================== */
 
     async function registrarVisualizacaoOportunidade(
@@ -2143,10 +1990,6 @@
 
         try {
 
-            /* =============================================
-               IDENTIFICAR USUÁRIO
-            ============================================= */
-
             const {
 
                 data: dadosUsuario,
@@ -2166,10 +2009,6 @@
                 dadosUsuario?.user;
 
 
-            /*
-             * Usuários não autenticados não entram
-             * na contagem.
-             */
             if (!usuario?.id) {
 
                 return;
@@ -2181,10 +2020,6 @@
                 `${String(oportunidade.id)}:${String(usuario.id)}`;
 
 
-            /*
-             * Se já conhecemos esta visualização,
-             * não consultamos nem inserimos novamente.
-             */
             if (
                 visualizacoesRegistradas.has(
                     chave
@@ -2196,11 +2031,6 @@
             }
 
 
-            /*
-             * Marcamos antes da inserção para evitar
-             * chamadas duplicadas enquanto o usuário
-             * continua com o card visível.
-             */
             visualizacoesRegistradas.add(
                 chave
             );
@@ -2225,21 +2055,10 @@
                 });
 
 
-            /*
-             * Se o registro já existir no banco, a
-             * restrição UNIQUE protege os dados.
-             *
-             * Nesse caso não incrementamos o contador,
-             * pois esta pessoa já havia sido contabilizada.
-             */
             if (
                 erroInsercao
             ) {
 
-                /*
-                 * Código PostgreSQL 23505 =
-                 * unique_violation.
-                 */
                 if (
                     erroInsercao.code ===
                     "23505"
@@ -2250,10 +2069,6 @@
                 }
 
 
-                /*
-                 * Se ocorreu outro erro, permitimos que
-                 * uma nova tentativa seja feita futuramente.
-                 */
                 visualizacoesRegistradas.delete(
                     chave
                 );
@@ -2269,10 +2084,6 @@
 
             }
 
-
-            /* =============================================
-               ATUALIZAR CACHE LOCAL
-            ============================================= */
 
             const oportunidadeCache =
                 oportunidadesCache.find(
@@ -2302,10 +2113,6 @@
             }
 
 
-            /*
-             * Também atualizamos o objeto armazenado
-             * diretamente no card.
-             */
             oportunidade
                 .quantidadeVisualizacoes =
                 (
@@ -2337,11 +2144,6 @@
 
     /* =====================================================
        CONFIGURAR OBSERVADOR DE VISUALIZAÇÕES
-
-       O card precisa estar realmente visível para que
-       a visualização seja registrada.
-
-       Utilizamos 50% de visibilidade como referência.
     ===================================================== */
 
     function configurarObservadorVisualizacoes() {
@@ -2401,12 +2203,6 @@
                                 "true";
 
 
-                            /*
-                             * Uma vez que o card foi
-                             * identificado como visível,
-                             * não precisamos observá-lo
-                             * novamente.
-                             */
                             observadorVisualizacoes.unobserve(
                                 card
                             );
@@ -2541,11 +2337,6 @@
             );
 
 
-        /*
-         * Depois de inserir os novos cards no DOM,
-         * conectamos os cards de oportunidade ao
-         * observador de visualizações.
-         */
         configurarObservadorVisualizacoes();
 
 
@@ -2873,12 +2664,6 @@
         itensTimelineRenderizados = 0;
 
 
-        /*
-         * As visualizações são relacionadas ao usuário
-         * atual. Ao recarregar o feed, limpamos o Set para
-         * que ele seja reconstruído com os dados atuais
-         * vindos do Supabase.
-         */
         visualizacoesRegistradas.clear();
 
 
@@ -2949,7 +2734,125 @@
 
 
     /* =====================================================
-       REGISTRAR INTERESSE EM OPORTUNIDADE
+       ATUALIZAR ESTADO VISUAL DO INTERESSE
+    ===================================================== */
+
+    function atualizarEstadoVisualInteresse(
+        card,
+        interessado
+    ) {
+
+        const anuncioOportunidade =
+            obterModuloAnuncioOportunidade();
+
+
+        if (
+            anuncioOportunidade &&
+            typeof anuncioOportunidade
+                .atualizarEstadoInteresse ===
+            "function"
+        ) {
+
+            anuncioOportunidade
+                .atualizarEstadoInteresse(
+                    card,
+                    interessado
+                );
+
+            return;
+
+        }
+
+
+        /*
+         * Fallback mínimo para manter o estado
+         * mesmo se o renderer antigo estiver carregado.
+         */
+        if (!card) {
+
+            return;
+
+        }
+
+
+        if (interessado) {
+
+            card.classList.add(
+                "interesse-ativo"
+            );
+
+        } else {
+
+            card.classList.remove(
+                "interesse-ativo"
+            );
+
+        }
+
+    }
+
+
+    /* =====================================================
+       ATUALIZAR CONTADOR DE INTERESSADOS
+    ===================================================== */
+
+    function atualizarContadorInteressadosCard(
+        card,
+        quantidade
+    ) {
+
+        const anuncioOportunidade =
+            obterModuloAnuncioOportunidade();
+
+
+        if (
+            anuncioOportunidade &&
+            typeof anuncioOportunidade
+                .atualizarContadorInteressados ===
+            "function"
+        ) {
+
+            anuncioOportunidade
+                .atualizarContadorInteressados(
+                    card,
+                    quantidade
+                );
+
+            return;
+
+        }
+
+
+        if (!card) {
+
+            return;
+
+        }
+
+
+        const contador =
+            card.querySelector(
+                "[data-interessados-contador]"
+            );
+
+
+        if (contador) {
+
+            contador.textContent =
+                String(
+                    Math.max(
+                        0,
+                        Number(quantidade) || 0
+                    )
+                );
+
+        }
+
+    }
+
+
+    /* =====================================================
+       REGISTRAR / REMOVER INTERESSE EM OPORTUNIDADE
 
        O renderer dispara:
 
@@ -2957,10 +2860,10 @@
 
        Este módulo realiza a persistência.
 
-       REGRA:
+       O comportamento funciona como um toggle:
 
-       O criador da oportunidade não pode registrar
-       interesse na própria oportunidade.
+       - sem interesse → INSERT
+       - com interesse → DELETE
     ===================================================== */
 
     async function registrarInteresseOportunidade(
@@ -2989,10 +2892,40 @@
         if (!supabase) {
 
             console.error(
-                "MusicalWorld Feed: cliente Supabase não encontrado para registrar interesse."
+                "MusicalWorld Feed: cliente Supabase não encontrado para controlar interesse."
             );
 
             return;
+
+        }
+
+
+        const botao =
+            card?.querySelector(
+                "[data-acao-interesse]"
+            );
+
+
+        /*
+         * Evita dois cliques enquanto a operação
+         * anterior ainda está sendo processada.
+         */
+        if (
+            botao?.dataset.interesseProcessando ===
+            "true"
+        ) {
+
+            return;
+
+        }
+
+
+        if (botao) {
+
+            botao.dataset.interesseProcessando =
+                "true";
+
+            botao.disabled = true;
 
         }
 
@@ -3053,7 +2986,7 @@
 
 
             /* =============================================
-               VERIFICAR SE JÁ EXISTE INTERESSE
+               VERIFICAR INTERESSE ATUAL
             ============================================= */
 
             const {
@@ -3084,11 +3017,119 @@
             }
 
 
+            /* =============================================
+               CACHE DA OPORTUNIDADE
+            ============================================= */
+
+            const oportunidadeCache =
+                oportunidadesCache.find(
+                    item =>
+                        String(
+                            item.id
+                        ) ===
+                        String(
+                            oportunidade.id
+                        )
+                );
+
+
+            const interessados =
+                oportunidadeCache &&
+                Array.isArray(
+                    oportunidadeCache.interessados
+                )
+                    ? oportunidadeCache.interessados
+                    : (
+                        Array.isArray(
+                            oportunidade.interessados
+                        )
+                            ? oportunidade.interessados
+                            : []
+                    );
+
+
+            /* =============================================
+               REMOVER INTERESSE
+            ============================================= */
+
             if (interesseExistente) {
 
-                marcarCardComoInteressado(
-                    card
+                const {
+
+                    error: erroRemocao
+
+                } = await supabase
+                    .from(
+                        "oportunidades_interessados"
+                    )
+                    .delete()
+                    .eq(
+                        "id",
+                        interesseExistente.id
+                    );
+
+
+                if (erroRemocao) {
+
+                    throw erroRemocao;
+
+                }
+
+
+                /*
+                 * Remove o usuário do cache local.
+                 */
+                const novaLista =
+                    interessados.filter(
+                        interessado =>
+                            String(
+                                interessado.artista_id
+                            ) !==
+                            String(
+                                usuario.id
+                            )
+                    );
+
+
+                if (oportunidadeCache) {
+
+                    oportunidadeCache.interessados =
+                        novaLista;
+
+                    oportunidadeCache
+                        .quantidadeInteressados =
+                        novaLista.length;
+
+                    oportunidadeCache
+                        ._ehInteressado =
+                        false;
+
+                }
+
+
+                oportunidade.interessados =
+                    novaLista;
+
+                oportunidade
+                    .quantidadeInteressados =
+                    novaLista.length;
+
+                oportunidade
+                    ._ehInteressado =
+                    false;
+
+
+                atualizarEstadoVisualInteresse(
+                    card,
+                    false
                 );
+
+
+                atualizarContadorInteressadosCard(
+                    card,
+                    novaLista.length
+                );
+
 
                 return;
 
@@ -3096,11 +3137,12 @@
 
 
             /* =============================================
-               REGISTRAR INTERESSE
+               REGISTRAR NOVO INTERESSE
             ============================================= */
 
             const {
 
+                data: novoInteresse,
                 error: erroInsercao
 
             } = await supabase
@@ -3118,10 +3160,108 @@
                     status:
                         "interessado"
 
-                });
+                })
+                .select(`
+                    id,
+                    oportunidade_id,
+                    artista_id,
+                    status,
+                    created_at
+                `)
+                .single();
 
 
             if (erroInsercao) {
+
+                /*
+                 * Caso outro processo já tenha registrado
+                 * o interesse, tratamos como ativo.
+                 */
+                if (
+                    erroInsercao.code ===
+                    "23505"
+                ) {
+
+                    const listaExistente =
+                        interessados.some(
+                            interessado =>
+                                String(
+                                    interessado.artista_id
+                                ) ===
+                                String(
+                                    usuario.id
+                                )
+                        )
+                            ? interessados
+                            : [
+                                ...interessados,
+                                {
+                                    id:
+                                        null,
+
+                                    artista_id:
+                                        usuario.id,
+
+                                    nome:
+                                        "Você",
+
+                                    foto_url:
+                                        usuario
+                                            .user_metadata
+                                            ?.foto_url ||
+                                        null,
+
+                                    status:
+                                        "interessado"
+                                }
+                            ];
+
+
+                    if (oportunidadeCache) {
+
+                        oportunidadeCache
+                            .interessados =
+                            listaExistente;
+
+                        oportunidadeCache
+                            .quantidadeInteressados =
+                            listaExistente.length;
+
+                        oportunidadeCache
+                            ._ehInteressado =
+                            true;
+
+                    }
+
+
+                    oportunidade.interessados =
+                        listaExistente;
+
+                    oportunidade
+                        .quantidadeInteressados =
+                        listaExistente.length;
+
+                    oportunidade
+                        ._ehInteressado =
+                        true;
+
+
+                    atualizarEstadoVisualInteresse(
+                        card,
+                        true
+                    );
+
+
+                    atualizarContadorInteressadosCard(
+                        card,
+                        listaExistente.length
+                    );
+
+
+                    return;
+
+                }
+
 
                 throw erroInsercao;
 
@@ -3129,149 +3269,121 @@
 
 
             /* =============================================
-               ATUALIZAR CACHE
+               ATUALIZAR CACHE LOCAL
             ============================================= */
 
-            const oportunidadeCache =
-                oportunidadesCache.find(
-                    item =>
+            const jaExiste =
+                interessados.some(
+                    interessado =>
                         String(
-                            item.id
+                            interessado.artista_id
                         ) ===
                         String(
-                            oportunidade.id
+                            usuario.id
                         )
                 );
 
 
-            if (
+            const novaLista =
+                jaExiste
+                    ? interessados
+                    : [
+                        ...interessados,
+                        {
+
+                            id:
+                                novoInteresse
+                                    ?.id ||
+                                null,
+
+                            artista_id:
+                                usuario.id,
+
+                            nome:
+                                "Você",
+
+                            foto_url:
+                                usuario
+                                    .user_metadata
+                                    ?.foto_url ||
+                                null,
+
+                            status:
+                                "interessado",
+
+                            created_at:
+                                novoInteresse
+                                    ?.created_at ||
+                                null
+
+                        }
+                    ];
+
+
+            if (oportunidadeCache) {
+
                 oportunidadeCache
-            ) {
+                    .interessados =
+                    novaLista;
 
-                const interessados =
-                    Array.isArray(
-                        oportunidadeCache
-                            .interessados
-                    )
-                        ? oportunidadeCache
-                            .interessados
-                        : [];
+                oportunidadeCache
+                    .quantidadeInteressados =
+                    novaLista.length;
 
-
-                const jaExiste =
-                    interessados.some(
-                        interessado =>
-                            String(
-                                interessado
-                                    .artista_id
-                            ) ===
-                            String(
-                                usuario.id
-                            )
-                    );
-
-
-                if (!jaExiste) {
-
-                    interessados.push({
-
-                        id:
-                            null,
-
-                        artista_id:
-                            usuario.id,
-
-                        nome:
-                            "Você",
-
-                        foto_url:
-                            usuario
-                                .user_metadata
-                                ?.foto_url ||
-                            null,
-
-                        status:
-                            "interessado"
-
-                    });
-
-
-                    oportunidadeCache
-                        .interessados =
-                        interessados;
-
-
-                    oportunidadeCache
-                        .quantidadeInteressados =
-                        interessados.length;
-
-                }
+                oportunidadeCache
+                    ._ehInteressado =
+                    true;
 
             }
+
+
+            oportunidade
+                .interessados =
+                novaLista;
+
+            oportunidade
+                .quantidadeInteressados =
+                novaLista.length;
+
+            oportunidade
+                ._ehInteressado =
+                true;
 
 
             /* =============================================
                ATUALIZAR CARD VISUAL
             ============================================= */
 
-            marcarCardComoInteressado(
-                card
+            atualizarEstadoVisualInteresse(
+                card,
+                true
+            );
+
+
+            atualizarContadorInteressadosCard(
+                card,
+                novaLista.length
             );
 
 
         } catch (erro) {
 
             console.error(
-                "MusicalWorld Feed: erro ao registrar interesse na oportunidade.",
+                "MusicalWorld Feed: erro ao controlar interesse na oportunidade.",
                 erro
             );
 
-        }
+        } finally {
 
-    }
+            if (botao) {
 
+                botao.disabled = false;
 
-    /* =====================================================
-       MARCAR CARD COMO INTERESSADO
-    ===================================================== */
+                delete botao.dataset.interesseProcessando;
 
-    function marcarCardComoInteressado(
-        card
-    ) {
-
-        if (!card) {
-
-            return;
+            }
 
         }
-
-
-        card.classList.add(
-            "interesse-ativo"
-        );
-
-
-        const botao =
-            card.querySelector(
-                "[data-acao-interesse]"
-            );
-
-
-        if (!botao) {
-
-            return;
-
-        }
-
-
-        botao.setAttribute(
-            "aria-pressed",
-            "true"
-        );
-
-
-        botao.dataset.interesseRegistrado =
-            "true";
 
     }
 
