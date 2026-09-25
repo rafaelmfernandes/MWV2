@@ -1,3 +1,4 @@
+
 /* =========================================================
    MUSICALWORLD — RENDERIZAÇÃO DOS INTERESSADOS
 
@@ -6,11 +7,14 @@
 
    Responsabilidade:
 
-   - Renderizar a oportunidade.
+   - Renderizar os dados da oportunidade.
    - Renderizar o estabelecimento.
+   - Renderizar a foto do estabelecimento ou sua inicial.
    - Renderizar os contadores.
    - Renderizar os cards dos artistas.
-   - Controlar estados visuais.
+   - Controlar os filtros visuais.
+   - Controlar o modal de seleção.
+   - Atualizar um interessado após seleção.
    - Não executar operações diretamente no Supabase.
 
    ========================================================= */
@@ -22,6 +26,7 @@ window.MusicalWorldOportunidadeInteressadosRender = (() => {
     let filtroAtual = "todos";
 
 
+
     /* =====================================================
        ELEMENTOS
        ===================================================== */
@@ -31,6 +36,7 @@ window.MusicalWorldOportunidadeInteressadosRender = (() => {
         return document.getElementById(id);
 
     }
+
 
 
     /* =====================================================
@@ -49,6 +55,7 @@ window.MusicalWorldOportunidadeInteressadosRender = (() => {
     }
 
 
+
     /* =====================================================
        FORMATAÇÃO DE DATA
        ===================================================== */
@@ -62,13 +69,23 @@ window.MusicalWorldOportunidadeInteressadosRender = (() => {
         }
 
 
+        const texto =
+            String(data);
+
+
+        const dataSomente =
+            texto.includes("T")
+                ? texto.split("T")[0]
+                : texto;
+
+
         const partes =
-            String(data).split("-");
+            dataSomente.split("-");
 
 
         if (partes.length !== 3) {
 
-            return data;
+            return texto;
 
         }
 
@@ -83,6 +100,7 @@ window.MusicalWorldOportunidadeInteressadosRender = (() => {
         return `${dia}/${mes}/${ano}`;
 
     }
+
 
 
     /* =====================================================
@@ -103,14 +121,14 @@ window.MusicalWorldOportunidadeInteressadosRender = (() => {
 
         if (inicio && fim) {
 
-            return `${inicio.slice(0, 5)} às ${fim.slice(0, 5)}`;
+            return `${String(inicio).slice(0, 5)} às ${String(fim).slice(0, 5)}`;
 
         }
 
 
         if (inicio) {
 
-            return `${inicio.slice(0, 5)}`;
+            return String(inicio).slice(0, 5);
 
         }
 
@@ -120,11 +138,23 @@ window.MusicalWorldOportunidadeInteressadosRender = (() => {
     }
 
 
+
     /* =====================================================
        FORMATAÇÃO DE VALOR
        ===================================================== */
 
     function formatarValor(valor) {
+
+        if (
+            valor === null ||
+            valor === undefined ||
+            valor === ""
+        ) {
+
+            return "A combinar";
+
+        }
+
 
         const numero =
             Number(valor);
@@ -155,6 +185,190 @@ window.MusicalWorldOportunidadeInteressadosRender = (() => {
     }
 
 
+
+    /* =====================================================
+       FORMATAÇÃO DO LOCAL
+       ===================================================== */
+
+    function formatarLocal(local) {
+
+        if (!local) {
+
+            return "Localização não informada";
+
+        }
+
+
+        let valor =
+            local;
+
+
+        /*
+         * O campo local pode chegar do Supabase como:
+         *
+         * - objeto JSON
+         * - string contendo JSON
+         * - string simples
+         */
+
+        if (typeof valor === "string") {
+
+            try {
+
+                valor =
+                    JSON.parse(valor);
+
+            } catch {
+
+                return valor;
+
+            }
+
+        }
+
+
+        if (typeof valor !== "object") {
+
+            return String(valor);
+
+        }
+
+
+        const nome =
+            valor.nome ||
+            valor.local ||
+            valor.estabelecimento ||
+            "";
+
+
+        const endereco =
+            valor.endereco ||
+            "";
+
+
+        const numero =
+            valor.numero ||
+            "";
+
+
+        const complemento =
+            valor.complemento ||
+            "";
+
+
+        const bairro =
+            valor.bairro ||
+            "";
+
+
+        const cidade =
+            valor.cidade ||
+            "";
+
+
+        const estado =
+            valor.estado ||
+            valor.uf ||
+            "";
+
+
+        const cidadeEstado =
+            cidade && estado
+                ? `${cidade}/${estado}`
+                : cidade || estado;
+
+
+        const partes = [
+            nome,
+            endereco,
+            numero,
+            complemento,
+            bairro,
+            cidadeEstado
+        ]
+            .filter(Boolean);
+
+
+        if (!partes.length) {
+
+            return "Localização não informada";
+
+        }
+
+
+        return partes.join(" • ");
+
+    }
+
+
+
+    /* =====================================================
+       LOCALIZAÇÃO RESUMIDA
+       ===================================================== */
+
+    function formatarLocalizacaoResumo(local) {
+
+        if (!local) {
+
+            return "Localização não informada";
+
+        }
+
+
+        let valor =
+            local;
+
+
+        if (typeof valor === "string") {
+
+            try {
+
+                valor =
+                    JSON.parse(valor);
+
+            } catch {
+
+                return valor;
+
+            }
+
+        }
+
+
+        if (typeof valor !== "object") {
+
+            return String(valor);
+
+        }
+
+
+        const cidade =
+            valor.cidade ||
+            "";
+
+
+        const estado =
+            valor.estado ||
+            valor.uf ||
+            "";
+
+
+        if (cidade && estado) {
+
+            return `${cidade}/${estado}`;
+
+        }
+
+
+        return cidade ||
+            estado ||
+            valor.nome ||
+            "Localização não informada";
+
+    }
+
+
+
     /* =====================================================
        INICIAL DO NOME
        ===================================================== */
@@ -179,8 +393,9 @@ window.MusicalWorldOportunidadeInteressadosRender = (() => {
     }
 
 
+
     /* =====================================================
-       LOCALIZAÇÃO
+       LOCALIZAÇÃO DO ARTISTA
        ===================================================== */
 
     function obterLocalizacao(
@@ -196,12 +411,43 @@ window.MusicalWorldOportunidadeInteressadosRender = (() => {
 
 
         const local =
-            oportunidade?.local || {};
+            oportunidade?.local;
+
+
+        if (typeof local === "string") {
+
+            try {
+
+                const localObjeto =
+                    JSON.parse(local);
+
+
+                if (
+                    localObjeto?.cidade &&
+                    localObjeto?.estado
+                ) {
+
+                    return `${localObjeto.cidade}/${localObjeto.estado}`;
+
+                }
+
+
+                return formatarLocalizacaoResumo(
+                    localObjeto
+                );
+
+            } catch {
+
+                return local;
+
+            }
+
+        }
 
 
         if (
-            local.cidade &&
-            local.estado
+            local?.cidade &&
+            local?.estado
         ) {
 
             return `${local.cidade}/${local.estado}`;
@@ -214,8 +460,9 @@ window.MusicalWorldOportunidadeInteressadosRender = (() => {
     }
 
 
+
     /* =====================================================
-       ESTILOS
+       OBTER TAGS
        ===================================================== */
 
     function obterTags(
@@ -252,6 +499,54 @@ window.MusicalWorldOportunidadeInteressadosRender = (() => {
     }
 
 
+
+    /* =====================================================
+       NORMALIZAR STATUS
+       ===================================================== */
+
+    function obterStatus(
+        interessado
+    ) {
+
+        return interessado?.status ||
+            "interessado";
+
+    }
+
+
+
+    /* =====================================================
+       TEXTO DO STATUS
+       ===================================================== */
+
+    function obterTextoStatus(
+        status
+    ) {
+
+        const textos = {
+
+            interessado:
+                "Interessado",
+
+            selecionado:
+                "Selecionado",
+
+            recusado:
+                "Recusado",
+
+            retirado:
+                "Retirado"
+
+        };
+
+
+        return textos[status] ||
+            "Interessado";
+
+    }
+
+
+
     /* =====================================================
        RENDERIZAR ESTADO
        ===================================================== */
@@ -270,16 +565,36 @@ window.MusicalWorldOportunidadeInteressadosRender = (() => {
             elemento("conteudoOportunidade");
 
 
-        carregando.hidden =
-            tipo !== "carregando";
+        /*
+         * Esses elementos podem não existir nesta versão
+         * da página. Por isso, cada alteração é protegida.
+         */
 
-        erro.hidden =
-            tipo !== "erro";
+        if (carregando) {
 
-        conteudo.hidden =
-            tipo !== "conteudo";
+            carregando.hidden =
+                tipo !== "carregando";
+
+        }
+
+
+        if (erro) {
+
+            erro.hidden =
+                tipo !== "erro";
+
+        }
+
+
+        if (conteudo) {
+
+            conteudo.hidden =
+                tipo !== "conteudo";
+
+        }
 
     }
+
 
 
     /* =====================================================
@@ -289,9 +604,6 @@ window.MusicalWorldOportunidadeInteressadosRender = (() => {
     function mostrarErro(
         mensagem
     ) {
-
-        mostrarEstado("erro");
-
 
         const elementoMensagem =
             elemento("estadoErroMensagem");
@@ -305,7 +617,28 @@ window.MusicalWorldOportunidadeInteressadosRender = (() => {
 
         }
 
+
+        const conteudo =
+            document.querySelector(".oi-conteudo");
+
+
+        if (
+            conteudo &&
+            !elementoMensagem
+        ) {
+
+            console.error(
+                mensagem ||
+                "Ocorreu um erro ao carregar esta oportunidade."
+            );
+
+        }
+
+
+        mostrarEstado("erro");
+
     }
+
 
 
     /* =====================================================
@@ -317,15 +650,163 @@ window.MusicalWorldOportunidadeInteressadosRender = (() => {
         estabelecimento
     ) {
 
-        elemento("oportunidadeTitulo").textContent =
+        if (!oportunidade) {
+
+            console.warn(
+                "Nenhuma oportunidade foi recebida para renderização."
+            );
+
+            return;
+
+        }
+
+
+        /* =================================================
+           DADOS PRINCIPAIS
+           ================================================= */
+
+        const titulo =
             oportunidade.titulo ||
             "Oportunidade de contratação";
 
 
-        elemento("oportunidadeDescricao").textContent =
+        const descricao =
             oportunidade.descricao ||
             "Gerencie os artistas que demonstraram interesse.";
 
+
+
+        /* =================================================
+           TÍTULO PRINCIPAL
+           ================================================= */
+
+        const tituloPrincipal =
+            elemento("oportunidadeTitulo");
+
+
+        if (tituloPrincipal) {
+
+            tituloPrincipal.textContent =
+                titulo;
+
+        }
+
+
+
+        /* =================================================
+           DESCRIÇÃO PRINCIPAL
+           ================================================= */
+
+        const descricaoElemento =
+            elemento("oportunidadeDescricao");
+
+
+        if (descricaoElemento) {
+
+            descricaoElemento.textContent =
+                descricao;
+
+        }
+
+
+
+        /* =================================================
+           TÍTULO DO CARD DA OPORTUNIDADE
+           ================================================= */
+
+        const tituloCard =
+            elemento("oportunidadeTituloCard");
+
+
+        if (tituloCard) {
+
+            tituloCard.textContent =
+                titulo;
+
+        }
+
+
+
+        /* =================================================
+           DATA
+           ================================================= */
+
+        const data =
+            elemento("resumoData");
+
+
+        if (data) {
+
+            data.textContent =
+                formatarData(
+                    oportunidade.data_evento
+                );
+
+        }
+
+
+
+        /* =================================================
+           HORÁRIO
+           ================================================= */
+
+        const horario =
+            elemento("resumoHorario");
+
+
+        if (horario) {
+
+            horario.textContent =
+                formatarHorario(
+                    oportunidade.hora_inicio,
+                    oportunidade.hora_fim
+                );
+
+        }
+
+
+
+        /* =================================================
+           LOCAL
+           ================================================= */
+
+        const local =
+            elemento("resumoLocal");
+
+
+        if (local) {
+
+            local.textContent =
+                formatarLocal(
+                    oportunidade.local
+                );
+
+        }
+
+
+
+        /* =================================================
+           VALOR
+           ================================================= */
+
+        const valor =
+            elemento("resumoValor");
+
+
+        if (valor) {
+
+            valor.textContent =
+                formatarValor(
+                    oportunidade.valor
+                );
+
+        }
+
+
+
+        /* =================================================
+           ESTABELECIMENTO
+           ================================================= */
 
         const perfil =
             estabelecimento || {};
@@ -336,64 +817,217 @@ window.MusicalWorldOportunidadeInteressadosRender = (() => {
             "Estabelecimento";
 
 
-        elemento("estabelecimentoNome").textContent =
-            nome;
-
-
-        elemento("estabelecimentoTipo").textContent =
+        const tipo =
             perfil?.tipos_perfil?.nome ||
             "Estabelecimento";
 
 
-        const local =
-            oportunidade.local || {};
+        /*
+         * A foto do estabelecimento pertence à tabela
+         * usuarios e foi carregada através do relacionamento:
+         *
+         * perfis.usuario_id → usuarios.id
+         *
+         * Portanto, a URL correta está em:
+         *
+         * estabelecimento.usuarios.foto_url
+         */
+
+        const foto =
+            String(
+                perfil?.usuarios?.foto_url ||
+                ""
+            ).trim();
 
 
-        const localizacao =
-            local.cidade && local.estado
-                ? `${local.cidade}/${local.estado}`
-                : "Localização não informada";
+        const nomeElemento =
+            elemento("estabelecimentoNome");
 
 
-        elemento("estabelecimentoLocalizacao").textContent =
-            localizacao;
+        if (nomeElemento) {
+
+            nomeElemento.textContent =
+                nome;
+
+        }
 
 
-        elemento("resumoData").textContent =
-            formatarData(
-                oportunidade.data_evento
-            );
+        const tipoElemento =
+            elemento("estabelecimentoTipo");
 
 
-        elemento("resumoHorario").textContent =
-            formatarHorario(
-                oportunidade.hora_inicio,
-                oportunidade.hora_fim
-            );
+        if (tipoElemento) {
+
+            tipoElemento.textContent =
+                tipo;
+
+        }
 
 
-        elemento("resumoValor").textContent =
-            formatarValor(
-                oportunidade.valor
-            );
+
+        /* =================================================
+           LOCALIZAÇÃO DO ESTABELECIMENTO
+           ================================================= */
+
+        const localEstabelecimento =
+            elemento("estabelecimentoLocalizacao");
 
 
-        elemento("estabelecimentoAvatarInicial").textContent =
-            obterInicial(nome);
+        if (localEstabelecimento) {
 
+            localEstabelecimento.textContent =
+                formatarLocalizacaoResumo(
+                    oportunidade.local
+                );
+
+        }
+
+
+
+        /* =================================================
+           AVATAR DO ESTABELECIMENTO
+           ================================================= */
+
+        const inicial =
+            elemento("estabelecimentoAvatarInicial");
+
+
+        const avatar =
+            elemento("estabelecimentoAvatar");
+
+
+        if (inicial) {
+
+            inicial.textContent =
+                obterInicial(nome);
+
+        }
+
+
+        /*
+         * Quando existe foto, o elemento <img> recebe a URL
+         * e passa a ser exibido.
+         *
+         * Quando não existe foto, a imagem permanece oculta
+         * e a inicial continua visível.
+         */
+
+        if (avatar) {
+
+            const imagem =
+                avatar.querySelector("img");
+
+
+            if (imagem && foto) {
+
+                imagem.alt =
+                    `Foto de ${nome}`;
+
+
+                imagem.src =
+                    foto;
+
+
+                imagem.style.display =
+                    "block";
+
+
+                if (inicial) {
+
+                    inicial.style.display =
+                        "none";
+
+                }
+
+
+                /*
+                 * Caso a URL exista no banco, mas a imagem não
+                 * possa ser carregada, voltamos automaticamente
+                 * para a inicial do estabelecimento.
+                 */
+
+                imagem.onerror = () => {
+
+                    imagem.style.display =
+                        "none";
+
+
+                    imagem.removeAttribute(
+                        "src"
+                    );
+
+
+                    if (inicial) {
+
+                        inicial.style.display =
+                            "flex";
+
+                    }
+
+                };
+
+            } else {
+
+                if (imagem) {
+
+                    imagem.style.display =
+                        "none";
+
+
+                    imagem.removeAttribute(
+                        "src"
+                    );
+
+                }
+
+
+                if (inicial) {
+
+                    inicial.style.display =
+                        "flex";
+
+                }
+
+            }
+
+
+            avatar.hidden =
+                false;
+
+        }
+
+
+
+        /* =================================================
+           BOTÃO — VER OPORTUNIDADE
+           ================================================= */
 
         const btn =
             elemento("btnVerOportunidade");
 
 
-        if (btn) {
+        if (btn && oportunidade.id) {
 
-            btn.href =
-                `oportunidade.html?id=${encodeURIComponent(oportunidade.id)}`;
+            const oportunidadeId =
+                String(oportunidade.id);
+
+
+            btn.dataset.oportunidadeId =
+                oportunidadeId;
+
+
+            /*
+             * A página atual utiliza um botão.
+             *
+             * Guardamos o ID no elemento para que o módulo
+             * de fluxo possa utilizá-lo sem precisar buscar
+             * novamente a oportunidade.
+             */
 
         }
 
     }
+
 
 
     /* =====================================================
@@ -411,33 +1045,68 @@ window.MusicalWorldOportunidadeInteressadosRender = (() => {
         const interessadosCount =
             interessados.filter(
                 item =>
-                    item.status === "interessado"
+                    obterStatus(item) ===
+                    "interessado"
             ).length;
 
 
         const selecionados =
             interessados.filter(
                 item =>
-                    item.status === "selecionado"
+                    obterStatus(item) ===
+                    "selecionado"
             ).length;
 
 
-        elemento("resumoInteressados").textContent =
-            todos;
+        const resumo =
+            elemento("resumoInteressados");
 
 
-        elemento("contadorTodos").textContent =
-            todos;
+        if (resumo) {
+
+            resumo.textContent =
+                todos;
+
+        }
 
 
-        elemento("contadorInteressados").textContent =
-            interessadosCount;
+        const contadorTodos =
+            elemento("contadorTodos");
 
 
-        elemento("contadorSelecionado").textContent =
-            selecionados;
+        if (contadorTodos) {
+
+            contadorTodos.textContent =
+                todos;
+
+        }
+
+
+        const contadorInteressados =
+            elemento("contadorInteressados");
+
+
+        if (contadorInteressados) {
+
+            contadorInteressados.textContent =
+                interessadosCount;
+
+        }
+
+
+        const contadorSelecionado =
+            elemento("contadorSelecionado");
+
+
+        if (contadorSelecionado) {
+
+            contadorSelecionado.textContent =
+                selecionados;
+
+        }
 
     }
+
 
 
     /* =====================================================
@@ -457,10 +1126,12 @@ window.MusicalWorldOportunidadeInteressadosRender = (() => {
 
         return interessados.filter(
             item =>
-                item.status === filtroAtual
+                obterStatus(item) ===
+                filtroAtual
         );
 
     }
+
 
 
     /* =====================================================
@@ -473,15 +1144,15 @@ window.MusicalWorldOportunidadeInteressadosRender = (() => {
     ) {
 
         const usuario =
-            interessado.usuario || {};
+            interessado?.usuario || {};
 
 
         const perfil =
-            interessado.perfil || {};
+            interessado?.perfil || {};
 
 
         const perfilArtista =
-            interessado.perfilArtista || {};
+            interessado?.perfilArtista || {};
 
 
         const nome =
@@ -504,26 +1175,35 @@ window.MusicalWorldOportunidadeInteressadosRender = (() => {
 
 
         const tags =
-            obterTags(interessado);
+            obterTags(
+                interessado
+            );
 
 
         const mensagem =
-            interessado.mensagem;
+            interessado?.mensagem;
 
 
         const status =
-            interessado.status ||
-            "interessado";
+            obterStatus(
+                interessado
+            );
 
 
         const foto =
-            perfilArtista.foto_url;
+            perfilArtista?.foto_url ||
+            "";
 
+
+
+        /* =================================================
+           AVATAR
+           ================================================= */
 
         const avatarHtml =
             foto
                 ? `
-                    <div class="interessado-avatar">
+                    <div class="oi-artista-avatar oi-artista-avatar-foto">
                         <img
                             src="${escaparHtml(foto)}"
                             alt="Foto de ${escaparHtml(nome)}"
@@ -531,39 +1211,48 @@ window.MusicalWorldOportunidadeInteressadosRender = (() => {
                     </div>
                 `
                 : `
-                    <div class="interessado-avatar">
-                        ${escaparHtml(obterInicial(nome))}
+                    <div class="oi-artista-avatar">
+                        <span>
+                            ${escaparHtml(obterInicial(nome))}
+                        </span>
                     </div>
                 `;
 
 
-        const statusTexto = {
 
-            interessado:
-                "Interessado",
+        /* =================================================
+           STATUS
+           ================================================= */
 
-            selecionado:
-                "Selecionado",
-
-            recusado:
-                "Recusado",
-
-            retirado:
-                "Retirado"
-
-        }[status] || "Interessado";
+        let classeStatus =
+            "oi-status-interessado";
 
 
-        const statusClasse =
-            status;
+        if (status === "selecionado") {
 
+            classeStatus =
+                "oi-status-selecionado";
+
+        }
+
+
+        const statusTexto =
+            obterTextoStatus(
+                status
+            );
+
+
+
+        /* =================================================
+           TAGS
+           ================================================= */
 
         const tagsHtml =
             tags.length
                 ? `
-                    <div class="interessado-tags">
+                    <div class="oi-artista-tags">
                         ${tags.map(tag => `
-                            <span class="interessado-tag">
+                            <span class="oi-artista-tag">
                                 ${escaparHtml(tag)}
                             </span>
                         `).join("")}
@@ -572,82 +1261,124 @@ window.MusicalWorldOportunidadeInteressadosRender = (() => {
                 : "";
 
 
+
+        /* =================================================
+           MENSAGEM
+           ================================================= */
+
         const mensagemHtml =
             mensagem
                 ? `
-                    <p class="interessado-mensagem">
+                    <p class="oi-artista-mensagem">
                         ${escaparHtml(mensagem)}
                     </p>
                 `
-                : `
-                    <p class="interessado-mensagem interessado-sem-mensagem">
-                        O artista não enviou uma mensagem.
-                    </p>
-                `;
+                : "";
 
+
+
+        /* =================================================
+           PERFIL
+           ================================================= */
 
         const perfilId =
-            perfil.id || "";
+            perfil?.id ||
+            "";
 
 
-        const podeSelecionar =
-            status === "interessado";
+        const urlPerfil =
+            perfilId
+                ? `apresentar-perfil.html?id=${encodeURIComponent(perfilId)}`
+                : "#";
 
 
-        const acaoSelecao =
-            podeSelecionar
-                ? `
-                    <button
-                        type="button"
-                        class="btn-principal btn-selecionar-artista"
-                        data-interessado-id="${escaparHtml(interessado.id)}"
-                    >
-                        Selecionar
-                    </button>
-                `
-                : status === "selecionado"
-                    ? `
-                        <button
-                            type="button"
-                            class="btn-principal btn-selecionado"
-                            disabled
-                        >
-                            Selecionado
-                        </button>
-                    `
-                    : "";
 
+        /* =================================================
+           AÇÃO DE SELEÇÃO
+           ================================================= */
+
+        let acaoSelecao =
+            "";
+
+
+        if (status === "interessado") {
+
+            acaoSelecao = `
+                <button
+                    type="button"
+                    class="oi-btn oi-btn-primary btn-selecionar-artista"
+                    data-interessado-id="${escaparHtml(interessado.id)}"
+                >
+                    Selecionar artista
+                </button>
+            `;
+
+        }
+
+
+        if (status === "selecionado") {
+
+            acaoSelecao = `
+                <button
+                    type="button"
+                    class="oi-btn oi-btn-primary oi-btn-selecionado"
+                    disabled
+                >
+                    Selecionado
+                </button>
+            `;
+
+        }
+
+
+
+        /* =================================================
+           CARD
+           ================================================= */
 
         return `
             <article
-                class="interessado-card"
+                class="oi-artista-card ${status === "selecionado" ? "oi-artista-selecionado" : ""}"
                 data-interessado-id="${escaparHtml(interessado.id)}"
                 data-status="${escaparHtml(status)}"
             >
 
-                <div class="interessado-card-topo">
+                <div class="oi-artista-avatar-wrapper">
 
-                    <div class="interessado-identidade">
+                    ${avatarHtml}
 
-                        ${avatarHtml}
+                </div>
 
-                        <div class="interessado-identidade-texto">
 
-                            <strong>
-                                ${escaparHtml(nome)}
-                            </strong>
+                <div class="oi-artista-info">
 
-                            <span>
-                                ${escaparHtml(tipo)}
-                            </span>
+                    <strong>
+                        ${escaparHtml(nome)}
+                    </strong>
 
-                        </div>
 
-                    </div>
+                    <span>
+                        ${escaparHtml(tipo)}
+                    </span>
 
+
+                    <small>
+                        ${escaparHtml(localizacao)}
+                    </small>
+
+
+                    ${tagsHtml}
+
+
+                    ${mensagemHtml}
+
+                </div>
+
+
+                <div class="oi-artista-status">
 
                     <span
-                        class="interessado-status ${escaparHtml(statusClasse)}"
+                        class="oi-status ${classeStatus}"
                     >
                         ${escaparHtml(statusTexto)}
                     </span>
@@ -655,44 +1386,15 @@ window.MusicalWorldOportunidadeInteressadosRender = (() => {
                 </div>
 
 
-                <div class="interessado-localizacao">
-
-                    <svg
-                        viewBox="0 0 24 24"
-                        aria-hidden="true"
-                    >
-                        <path
-                            d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1116 0z"
-                        />
-
-                        <circle
-                            cx="12"
-                            cy="10"
-                            r="2.5"
-                        />
-                    </svg>
-
-                    <span>
-                        ${escaparHtml(localizacao)}
-                    </span>
-
-                </div>
-
-
-                ${tagsHtml}
-
-
-                ${mensagemHtml}
-
-
-                <div class="interessado-acoes">
+                <div class="oi-artista-acoes">
 
                     <a
-                        href="apresentar-perfil.html?id=${encodeURIComponent(perfilId)}"
-                        class="btn-secundario"
+                        href="${escaparHtml(urlPerfil)}"
+                        class="oi-btn oi-btn-secondary"
                     >
                         Ver perfil
                     </a>
+
 
                     ${acaoSelecao}
 
@@ -702,6 +1404,7 @@ window.MusicalWorldOportunidadeInteressadosRender = (() => {
         `;
 
     }
+
 
 
     /* =====================================================
@@ -714,6 +1417,13 @@ window.MusicalWorldOportunidadeInteressadosRender = (() => {
             elemento("interessadosLista");
 
 
+        if (!lista) {
+
+            return;
+
+        }
+
+
         const estadoSemInteressados =
             elemento("estadoSemInteressados");
 
@@ -723,11 +1433,14 @@ window.MusicalWorldOportunidadeInteressadosRender = (() => {
 
 
         const interessados =
-            estadoAtual?.interessados || [];
+            estadoAtual?.interessados ||
+            [];
 
 
         const filtrados =
-            aplicarFiltro(interessados);
+            aplicarFiltro(
+                interessados
+            );
 
 
         renderizarContadores(
@@ -735,41 +1448,89 @@ window.MusicalWorldOportunidadeInteressadosRender = (() => {
         );
 
 
+
+        /* =================================================
+           NENHUM INTERESSADO
+           ================================================= */
+
         if (!interessados.length) {
 
-            lista.innerHTML = "";
+            lista.innerHTML =
+                "";
 
-            estadoSemInteressados.hidden =
-                false;
 
-            estadoFiltroVazio.hidden =
-                true;
+            if (estadoSemInteressados) {
+
+                estadoSemInteressados.hidden =
+                    false;
+
+            }
+
+
+            if (estadoFiltroVazio) {
+
+                estadoFiltroVazio.hidden =
+                    true;
+
+            }
+
 
             return;
 
         }
 
+
+
+        /* =================================================
+           FILTRO SEM RESULTADO
+           ================================================= */
 
         if (!filtrados.length) {
 
-            lista.innerHTML = "";
+            lista.innerHTML =
+                "";
 
-            estadoSemInteressados.hidden =
-                true;
 
-            estadoFiltroVazio.hidden =
-                false;
+            if (estadoSemInteressados) {
+
+                estadoSemInteressados.hidden =
+                    true;
+
+            }
+
+
+            if (estadoFiltroVazio) {
+
+                estadoFiltroVazio.hidden =
+                    false;
+
+            }
+
 
             return;
 
         }
 
 
-        estadoSemInteressados.hidden =
-            true;
 
-        estadoFiltroVazio.hidden =
-            true;
+        /* =================================================
+           COM RESULTADOS
+           ================================================= */
+
+        if (estadoSemInteressados) {
+
+            estadoSemInteressados.hidden =
+                true;
+
+        }
+
+
+        if (estadoFiltroVazio) {
+
+            estadoFiltroVazio.hidden =
+                true;
+
+        }
 
 
         lista.innerHTML =
@@ -778,12 +1539,13 @@ window.MusicalWorldOportunidadeInteressadosRender = (() => {
                     interessado =>
                         renderizarCard(
                             interessado,
-                            estadoAtual.oportunidade
+                            estadoAtual?.oportunidade
                         )
                 )
                 .join("");
 
     }
+
 
 
     /* =====================================================
@@ -793,11 +1555,12 @@ window.MusicalWorldOportunidadeInteressadosRender = (() => {
     function atualizarFiltroVisual() {
 
         document
-            .querySelectorAll(".filtro-interessados")
+            .querySelectorAll(".oi-filtro")
             .forEach(botao => {
 
                 const ativo =
-                    botao.dataset.filtro === filtroAtual;
+                    botao.id ===
+                    obterIdFiltroAtivo();
 
 
                 botao.classList.toggle(
@@ -816,6 +1579,34 @@ window.MusicalWorldOportunidadeInteressadosRender = (() => {
     }
 
 
+
+    /* =====================================================
+       OBTER ID DO FILTRO ATIVO
+       ===================================================== */
+
+    function obterIdFiltroAtivo() {
+
+        const ids = {
+
+            todos:
+                "filtroTodos",
+
+            interessados:
+                "filtroInteressados",
+
+            selecionado:
+                "filtroSelecionado"
+
+        };
+
+
+        return ids[filtroAtual] ||
+            "filtroTodos";
+
+    }
+
+
+
     /* =====================================================
        DEFINIR FILTRO
        ===================================================== */
@@ -824,8 +1615,17 @@ window.MusicalWorldOportunidadeInteressadosRender = (() => {
         filtro
     ) {
 
+        const filtrosPermitidos = [
+            "todos",
+            "interessados",
+            "selecionado"
+        ];
+
+
         filtroAtual =
-            filtro || "todos";
+            filtrosPermitidos.includes(filtro)
+                ? filtro
+                : "todos";
 
 
         atualizarFiltroVisual();
@@ -833,6 +1633,7 @@ window.MusicalWorldOportunidadeInteressadosRender = (() => {
         renderizarLista();
 
     }
+
 
 
     /* =====================================================
@@ -846,7 +1647,15 @@ window.MusicalWorldOportunidadeInteressadosRender = (() => {
         estadoAtual =
             novoEstado;
 
+
+        filtroAtual =
+            "todos";
+
+
+        atualizarFiltroVisual();
+
     }
+
 
 
     /* =====================================================
@@ -868,7 +1677,7 @@ window.MusicalWorldOportunidadeInteressadosRender = (() => {
             estadoAtual.interessados.findIndex(
                 item =>
                     String(item.id) ===
-                    String(interessadoAtualizado.id)
+                    String(interessadoAtualizado?.id)
             );
 
 
@@ -893,8 +1702,9 @@ window.MusicalWorldOportunidadeInteressadosRender = (() => {
     }
 
 
+
     /* =====================================================
-       MODAL
+       MODAL — ABRIR
        ===================================================== */
 
     function abrirModalSelecao(
@@ -924,23 +1734,44 @@ window.MusicalWorldOportunidadeInteressadosRender = (() => {
             "Artista";
 
 
-        elemento("modalArtistaNome").textContent =
-            nome;
+        const nomeElemento =
+            elemento("modalArtistaNome");
 
 
-        elemento("modalArtistaTipo").textContent =
-            tipo;
+        if (nomeElemento) {
+
+            nomeElemento.textContent =
+                nome;
+
+        }
 
 
-        modal.hidden =
-            false;
+        const tipoElemento =
+            elemento("modalArtistaTipo");
+
+
+        if (tipoElemento) {
+
+            tipoElemento.textContent =
+                tipo;
+
+        }
 
 
         modal.dataset.interessadoId =
             interessado.id;
 
+
+        modal.hidden =
+            false;
+
     }
 
+
+
+    /* =====================================================
+       MODAL — FECHAR
+       ===================================================== */
 
     function fecharModalSelecao() {
 
@@ -963,6 +1794,11 @@ window.MusicalWorldOportunidadeInteressadosRender = (() => {
 
     }
 
+
+
+    /* =====================================================
+       OBTER INTERESSADO DO MODAL
+       ===================================================== */
 
     function obterInteressadoDoModal() {
 
@@ -990,6 +1826,37 @@ window.MusicalWorldOportunidadeInteressadosRender = (() => {
     }
 
 
+
+    /* =====================================================
+       RENDERIZAR TUDO
+       ===================================================== */
+
+    function renderizarTudo(
+        estado
+    ) {
+
+        definirEstado(
+            estado
+        );
+
+
+        renderizarOportunidade(
+            estado?.oportunidade,
+            estado?.estabelecimento
+        );
+
+
+        renderizarLista();
+
+
+        mostrarEstado(
+            "conteudo"
+        );
+
+    }
+
+
+
     /* =====================================================
        EXPORTAÇÃO
        ===================================================== */
@@ -1004,6 +1871,8 @@ window.MusicalWorldOportunidadeInteressadosRender = (() => {
 
         renderizarLista,
 
+        renderizarContadores,
+
         definirEstado,
 
         definirFiltro,
@@ -1014,8 +1883,11 @@ window.MusicalWorldOportunidadeInteressadosRender = (() => {
 
         fecharModalSelecao,
 
-        obterInteressadoDoModal
+        obterInteressadoDoModal,
+
+        renderizarTudo
 
     };
 
 })();
+

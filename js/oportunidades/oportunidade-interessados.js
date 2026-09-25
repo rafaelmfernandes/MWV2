@@ -10,6 +10,7 @@
    - Carregar os dados.
    - Coordenar Dados, Render e Fluxo.
    - Controlar carregamento e erros.
+   - Controlar a navegação para edição da oportunidade.
    - Não concentrar regras de banco ou HTML neste arquivo.
 
    ========================================================= */
@@ -117,6 +118,11 @@
             Fluxo.registrarEventos();
 
 
+            registrarBotaoEditar(
+                estado
+            );
+
+
         } catch (erro) {
 
             console.error(
@@ -131,6 +137,73 @@
             );
 
         }
+
+    }
+
+
+    /* =====================================================
+       BOTÃO EDITAR OPORTUNIDADE
+       =====================================================
+
+       Responsabilidade:
+
+       - Ler o ID da oportunidade carregada.
+       - Direcionar para criar-oportunidade.html.
+       - Informar que a página deve abrir em modo edição.
+
+       ===================================================== */
+
+    function registrarBotaoEditar(
+        estado
+    ) {
+
+        const botao =
+            document.getElementById(
+                "btnEditarOportunidade"
+            );
+
+
+        if (!botao) {
+
+            return;
+
+        }
+
+
+        const oportunidade =
+            estado?.oportunidade;
+
+
+        const oportunidadeId =
+            oportunidade?.id;
+
+
+        if (!oportunidadeId) {
+
+            console.warn(
+                "MusicalWorld — ID da oportunidade não encontrado para edição."
+            );
+
+            return;
+
+        }
+
+
+        botao.addEventListener(
+            "click",
+            () => {
+
+                const url =
+                    `criar-oportunidade.html?id=${encodeURIComponent(
+                        oportunidadeId
+                    )}&modo=editar`;
+
+
+                window.location.href =
+                    url;
+
+            }
+        );
 
     }
 

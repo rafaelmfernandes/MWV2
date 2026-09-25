@@ -1,3 +1,4 @@
+
 /* =========================================================
    MUSICALWORLD — DADOS DA GESTÃO DE INTERESSADOS
 
@@ -7,16 +8,30 @@
    Responsabilidade:
 
    - Ler a oportunidade atual.
-   - Validar o usuário logado.
-   - Garantir que o usuário é o proprietário da oportunidade.
+   - Validar o usuário autenticado.
+   - Garantir que o usuário é proprietário da oportunidade.
+   - Validar que o perfil é de estabelecimento.
    - Carregar os interessados.
-   - Carregar dados dos artistas.
+   - Carregar usuários dos artistas.
+   - Carregar perfis dos artistas.
+   - Carregar dados específicos dos artistas.
+   - Carregar a foto do estabelecimento.
    - Selecionar um artista.
-   - Manter toda comunicação com o Supabase isolada deste módulo.
+   - Manter a comunicação com o Supabase isolada deste módulo.
+
+   Observação importante:
+
+   - A tabela "perfis" NÃO possui "foto_url".
+   - A foto do usuário está em "usuarios.foto_url".
+   - O vínculo entre as duas tabelas é:
+     perfis.usuario_id → usuarios.id
+
+   Este arquivo NÃO controla a interface.
 
    ========================================================= */
 
 window.MusicalWorldOportunidadeInteressadosDados = (() => {
+
 
     /* =====================================================
        NORMALIZAÇÃO
@@ -34,7 +49,7 @@ window.MusicalWorldOportunidadeInteressadosDados = (() => {
 
 
     /* =====================================================
-       OBTER SUPABASE
+       CLIENTE SUPABASE
        ===================================================== */
 
     function obterSupabase() {
@@ -48,7 +63,6 @@ window.MusicalWorldOportunidadeInteressadosDados = (() => {
 
         }
 
-
         throw new Error(
             "Cliente Supabase não encontrado."
         );
@@ -57,14 +71,15 @@ window.MusicalWorldOportunidadeInteressadosDados = (() => {
 
 
     /* =====================================================
-       OBTER ID DA OPORTUNIDADE
+       ID DA OPORTUNIDADE
        ===================================================== */
 
     function obterOportunidadeId() {
 
-        const params = new URLSearchParams(
-            window.location.search
-        );
+        const params =
+            new URLSearchParams(
+                window.location.search
+            );
 
         const id = params.get("id");
 
@@ -90,8 +105,13 @@ window.MusicalWorldOportunidadeInteressadosDados = (() => {
         oportunidadeId
     ) {
 
-        const { data, error } = await supabase
+        const {
+            data,
+            error
+        } = await supabase
+
             .from("oportunidades")
+
             .select(`
                 id,
                 contratante_id,
@@ -110,8 +130,14 @@ window.MusicalWorldOportunidadeInteressadosDados = (() => {
                 created_at,
                 updated_at
             `)
-            .eq("id", oportunidadeId)
+
+            .eq(
+                "id",
+                oportunidadeId
+            )
+
             .maybeSingle();
+
 
         if (error) {
 
@@ -146,7 +172,8 @@ window.MusicalWorldOportunidadeInteressadosDados = (() => {
     ) {
 
         if (
-            String(oportunidade.contratante_id) !==
+            String(oportunidade.contratante_id)
+            !==
             String(usuarioId)
         ) {
 
@@ -160,7 +187,7 @@ window.MusicalWorldOportunidadeInteressadosDados = (() => {
 
 
     /* =====================================================
-       CARREGAR PERFIL DO ESTABELECIMENTO
+       CARREGAR ESTABELECIMENTO
        ===================================================== */
 
     async function carregarEstabelecimento(
@@ -168,8 +195,21 @@ window.MusicalWorldOportunidadeInteressadosDados = (() => {
         usuarioId
     ) {
 
-        const { data, error } = await supabase
+        /*
+         * Primeiro carregamos somente os dados que realmente
+         * pertencem à tabela "perfis".
+         *
+         * Não utilizamos "foto_url" aqui porque essa coluna
+         * não existe em "perfis".
+         */
+
+        const {
+            data: perfil,
+            error: erroPerfil
+        } = await supabase
+
             .from("perfis")
+
             .select(`
                 id,
                 usuario_id,
@@ -181,19 +221,25 @@ window.MusicalWorldOportunidadeInteressadosDados = (() => {
                     nome
                 )
             `)
-            .eq("usuario_id", usuarioId)
+
+            .eq(
+                "usuario_id",
+                usuarioId
+            )
+
             .maybeSingle();
 
-        if (error) {
+
+        if (erroPerfil) {
 
             throw new Error(
-                `Erro ao carregar estabelecimento: ${error.message}`
+                `Erro ao carregar estabelecimento: ${erroPerfil.message}`
             );
 
         }
 
 
-        if (!data) {
+        if (!perfil) {
 
             throw new Error(
                 "Perfil do estabelecimento não encontrado."
@@ -202,43 +248,114 @@ window.MusicalWorldOportunidadeInteressadosDados = (() => {
         }
 
 
-        return data;
+        /*
+         * A foto pertence à tabela "usuarios".
+         *
+         * Buscamos diretamente pelo ID do usuário autenticado.
+         *
+         * Isso evita depender de um relacionamento embutido
+         * entre "perfis" e "usuarios" no Supabase.
+         */
+
+        const {
+            data: usuario,
+            error: erroUsuario
+        } = await supabase
+
+            .from("usuarios")
+
+            .select(`
+                id,
+                foto_url
+            `)
+
+            .eq(
+                "id",
+                usuarioId
+            )
+
+            .maybeSingle();
+
+
+        if (erroUsuario) {
+
+            throw new Error(
+                `Erro ao carregar foto do estabelecimento: ${erroUsuario.message}`
+            );
+
+        }
+
+
+        /*
+         * Mantemos os dados do usuário dentro do objeto
+         * retornado para o módulo de renderização.
+         *
+         * Assim, o render.js poderá acessar:
+         *
+         * estabelecimento.usuarios.foto_url
+         */
+
+        return {
+
+            ...perfil,
+
+            usuarios:
+                usuario || null
+
+        };
 
     }
 
 
     /* =====================================================
-       VERIFICAR TIPO DE ESTABELECIMENTO
+       VALIDAR TIPO DE PERFIL
        ===================================================== */
 
-    function ehEstabelecimento(
-        perfil
-    ) {
+    function ehEstabelecimento(perfil) {
 
-        const tipo = normalizarTexto(
-            perfil?.tipos_perfil?.nome
-        ).replace(/_/g, " ");
+        const tipo =
+            normalizarTexto(
+                perfil?.tipos_perfil?.nome
+            )
+            .replace(/_/g, " ");
 
 
         const tiposEstabelecimento = [
+
             "bar",
+
             "boate",
+
             "casa shows",
+
             "casa de shows",
+
             "clube",
+
             "contratante",
+
             "empresa agencia",
+
             "hotel",
+
             "organizador eventos",
+
             "pousada",
+
             "restaurante",
+
             "pub",
+
             "espaco para eventos",
+
             "estabelecimento"
+
         ];
 
 
-        return tiposEstabelecimento.includes(tipo);
+        return tiposEstabelecimento.includes(
+            tipo
+        );
 
     }
 
@@ -252,8 +369,13 @@ window.MusicalWorldOportunidadeInteressadosDados = (() => {
         oportunidadeId
     ) {
 
-        const { data, error } = await supabase
+        const {
+            data,
+            error
+        } = await supabase
+
             .from("oportunidades_interessados")
+
             .select(`
                 id,
                 oportunidade_id,
@@ -263,10 +385,19 @@ window.MusicalWorldOportunidadeInteressadosDados = (() => {
                 created_at,
                 updated_at
             `)
-            .eq("oportunidade_id", oportunidadeId)
-            .order("created_at", {
-                ascending: false
-            });
+
+            .eq(
+                "oportunidade_id",
+                oportunidadeId
+            )
+
+            .order(
+                "created_at",
+                {
+                    ascending: false
+                }
+            );
+
 
         if (error) {
 
@@ -298,14 +429,24 @@ window.MusicalWorldOportunidadeInteressadosDados = (() => {
         }
 
 
-        const { data, error } = await supabase
+        const {
+            data,
+            error
+        } = await supabase
+
             .from("usuarios")
+
             .select(`
                 id,
                 nome,
                 email
             `)
-            .in("id", ids);
+
+            .in(
+                "id",
+                ids
+            );
+
 
         if (error) {
 
@@ -337,8 +478,13 @@ window.MusicalWorldOportunidadeInteressadosDados = (() => {
         }
 
 
-        const { data, error } = await supabase
+        const {
+            data,
+            error
+        } = await supabase
+
             .from("perfis")
+
             .select(`
                 id,
                 usuario_id,
@@ -351,7 +497,12 @@ window.MusicalWorldOportunidadeInteressadosDados = (() => {
                     nome
                 )
             `)
-            .in("usuario_id", ids);
+
+            .in(
+                "usuario_id",
+                ids
+            );
+
 
         if (error) {
 
@@ -368,7 +519,7 @@ window.MusicalWorldOportunidadeInteressadosDados = (() => {
 
 
     /* =====================================================
-       CARREGAR PERFIS ARTÍSTICOS
+       CARREGAR DADOS ARTÍSTICOS
        ===================================================== */
 
     async function carregarPerfisArtistas(
@@ -383,8 +534,13 @@ window.MusicalWorldOportunidadeInteressadosDados = (() => {
         }
 
 
-        const { data, error } = await supabase
+        const {
+            data,
+            error
+        } = await supabase
+
             .from("perfis_artistas")
+
             .select(`
                 id,
                 perfil_id,
@@ -398,7 +554,12 @@ window.MusicalWorldOportunidadeInteressadosDados = (() => {
                 servicos,
                 foto_url
             `)
-            .in("perfil_id", perfilIds);
+
+            .in(
+                "perfil_id",
+                perfilIds
+            );
+
 
         if (error) {
 
@@ -415,7 +576,7 @@ window.MusicalWorldOportunidadeInteressadosDados = (() => {
 
 
     /* =====================================================
-       MONTAR INTERESSADOS
+       MONTAR INTERESSADOS COMPLETOS
        ===================================================== */
 
     function montarInteressados(
@@ -425,45 +586,50 @@ window.MusicalWorldOportunidadeInteressadosDados = (() => {
         perfisArtistas
     ) {
 
-        return interessados.map((interessado) => {
+        return interessados.map(
+            (interessado) => {
 
-            const usuario =
-                usuarios.find(
-                    item =>
-                        String(item.id) ===
-                        String(interessado.artista_id)
-                ) || null;
-
-
-            const perfil =
-                perfis.find(
-                    item =>
-                        String(item.usuario_id) ===
-                        String(interessado.artista_id)
-                ) || null;
+                const usuario =
+                    usuarios.find(
+                        item =>
+                            String(item.id)
+                            ===
+                            String(interessado.artista_id)
+                    ) || null;
 
 
-            const perfilArtista =
-                perfisArtistas.find(
-                    item =>
-                        String(item.perfil_id) ===
-                        String(perfil?.id)
-                ) || null;
+                const perfil =
+                    perfis.find(
+                        item =>
+                            String(item.usuario_id)
+                            ===
+                            String(interessado.artista_id)
+                    ) || null;
 
 
-            return {
+                const perfilArtista =
+                    perfisArtistas.find(
+                        item =>
+                            String(item.perfil_id)
+                            ===
+                            String(perfil?.id)
+                    ) || null;
 
-                ...interessado,
 
-                usuario,
+                return {
 
-                perfil,
+                    ...interessado,
 
-                perfilArtista
+                    usuario,
 
-            };
+                    perfil,
 
-        });
+                    perfilArtista
+
+                };
+
+            }
+        );
 
     }
 
@@ -474,7 +640,9 @@ window.MusicalWorldOportunidadeInteressadosDados = (() => {
 
     async function carregarTudo() {
 
-        const supabase = obterSupabase();
+        const supabase =
+            obterSupabase();
+
 
         const oportunidadeId =
             obterOportunidadeId();
@@ -517,7 +685,11 @@ window.MusicalWorldOportunidadeInteressadosDados = (() => {
             );
 
 
-        if (!ehEstabelecimento(estabelecimento)) {
+        if (
+            !ehEstabelecimento(
+                estabelecimento
+            )
+        ) {
 
             throw new Error(
                 "A gestão de oportunidades está disponível apenas para perfis de estabelecimento."
@@ -534,9 +706,12 @@ window.MusicalWorldOportunidadeInteressadosDados = (() => {
 
 
         const artistaIds =
-            interessados.map(
-                item => item.artista_id
-            );
+            interessados
+                .map(
+                    item =>
+                        item.artista_id
+                )
+                .filter(Boolean);
 
 
         const [
@@ -558,9 +733,11 @@ window.MusicalWorldOportunidadeInteressadosDados = (() => {
 
 
         const perfilIds =
-            perfis.map(
-                item => item.id
-            );
+            perfis
+                .map(
+                    item => item.id
+                )
+                .filter(Boolean);
 
 
         const perfisArtistas =
@@ -610,8 +787,9 @@ window.MusicalWorldOportunidadeInteressadosDados = (() => {
             obterSupabase();
 
 
-        const { data: usuarioData } =
-            await supabase.auth.getUser();
+        const {
+            data: usuarioData
+        } = await supabase.auth.getUser();
 
 
         const usuarioAtual =
@@ -640,28 +818,44 @@ window.MusicalWorldOportunidadeInteressadosDados = (() => {
         );
 
 
-        const { data, error } =
-            await supabase
-                .from("oportunidades_interessados")
-                .update({
-                    status: "selecionado",
-                    updated_at: new Date().toISOString()
-                })
-                .eq("id", interessadoId)
-                .eq(
-                    "oportunidade_id",
-                    oportunidadeId
-                )
-                .select(`
-                    id,
-                    oportunidade_id,
-                    artista_id,
-                    mensagem,
-                    status,
-                    created_at,
-                    updated_at
-                `)
-                .maybeSingle();
+        const {
+            data,
+            error
+        } = await supabase
+
+            .from("oportunidades_interessados")
+
+            .update({
+
+                status:
+                    "selecionado",
+
+                updated_at:
+                    new Date().toISOString()
+
+            })
+
+            .eq(
+                "id",
+                interessadoId
+            )
+
+            .eq(
+                "oportunidade_id",
+                oportunidadeId
+            )
+
+            .select(`
+                id,
+                oportunidade_id,
+                artista_id,
+                mensagem,
+                status,
+                created_at,
+                updated_at
+            `)
+
+            .maybeSingle();
 
 
         if (error) {
@@ -688,7 +882,7 @@ window.MusicalWorldOportunidadeInteressadosDados = (() => {
 
 
     /* =====================================================
-       EXPORTAÇÃO
+       API PÚBLICA DO MÓDULO
        ===================================================== */
 
     return {
@@ -699,4 +893,6 @@ window.MusicalWorldOportunidadeInteressadosDados = (() => {
 
     };
 
+
 })();
+

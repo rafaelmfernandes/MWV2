@@ -1,103 +1,230 @@
 /* =========================================================
-   MUSICALWORLD — GESTÃO DE INTERESSADOS
+   MUSICALWORLD — GERENCIAR OPORTUNIDADE
 
    Arquivo:
    css/oportunidades/oportunidade-interessados.css
 
-   Responsabilidade:
+   Responsabilidades:
 
-   - Estilizar a página de gestão dos interessados.
-   - Criar a apresentação da oportunidade.
-   - Estilizar resumo, filtros e cards dos artistas.
-   - Criar estados de carregamento, erro e vazio.
-   - Criar modal de confirmação de seleção.
-   - Manter responsividade para desktop, tablet e celular.
+   - Controlar todo o visual da página.
+   - Não depender do main.css.
+   - Organizar o cabeçalho.
+   - Organizar os dados da oportunidade.
+   - Organizar o estabelecimento.
+   - Organizar os artistas interessados.
+   - Controlar os filtros.
+   - Controlar estados vazios.
+   - Controlar o modal de seleção.
+   - Garantir responsividade em desktop, tablet e celular.
+
+   IMPORTANTE:
+
+   Este arquivo é AUTÔNOMO.
+
+   Não existem dependências visuais do:
+   css/main.css
 
    ========================================================= */
 
 
 /* =========================================================
-   VARIÁVEIS
+   1. VARIÁVEIS
    ========================================================= */
 
 :root {
 
     --oi-bg: #f5f7fb;
-    --oi-card: #ffffff;
-    --oi-text: #172033;
-    --oi-muted: #6b7280;
-    --oi-border: #e5e7eb;
 
-    --oi-purple: #6d4aff;
-    --oi-purple-dark: #5637e8;
-    --oi-purple-soft: #f1edff;
+    --oi-white: #ffffff;
+
+    --oi-text: #172033;
+
+    --oi-text-soft: #344054;
+
+    --oi-muted: #667085;
+
+    --oi-light: #98a2b3;
+
+    --oi-border: #e4e7ec;
+
+    --oi-border-soft: #eef0f4;
+
+    --oi-primary: #6d4aff;
+
+    --oi-primary-dark: #5738d6;
+
+    --oi-primary-light: #f0edff;
 
     --oi-success: #16845b;
-    --oi-success-soft: #e9f8f1;
 
-    --oi-danger: #c73b4b;
-    --oi-danger-soft: #fff0f2;
+    --oi-success-light: #e9f8f1;
 
-    --oi-radius: 22px;
-    --oi-radius-small: 14px;
+    --oi-danger: #c73535;
 
-    --oi-shadow:
-        0 14px 40px rgba(23, 32, 51, 0.07);
+    --oi-danger-light: #fff0f0;
+
+    --oi-shadow-sm:
+        0 2px 8px rgba(23, 32, 51, 0.04);
+
+    --oi-shadow-md:
+        0 12px 32px rgba(23, 32, 51, 0.08);
+
+    --oi-shadow-lg:
+        0 24px 70px rgba(23, 32, 51, 0.18);
+
+    --oi-radius-sm: 10px;
+
+    --oi-radius-md: 14px;
+
+    --oi-radius-lg: 18px;
+
+    --oi-radius-xl: 24px;
 
 }
 
 
 /* =========================================================
-   BASE
+   2. RESET GLOBAL DA PÁGINA
    ========================================================= */
 
-.oportunidade-interessados-page {
+html {
 
-    min-height: 100vh;
+    width: 100%;
+
+    min-width: 0;
+
+    margin: 0;
+
+    padding: 0;
+
+    overflow-x: hidden;
+
+    -webkit-text-size-adjust: 100%;
+
+    text-size-adjust: 100%;
+
+    font-family:
+        Manrope,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        sans-serif;
+
+    font-size: 16px;
+
+    line-height: 1.5;
 
     background: var(--oi-bg);
 
     color: var(--oi-text);
 
-    padding:
-        36px
-        24px
-        80px;
+}
+
+
+body {
+
+    width: 100%;
+
+    min-width: 0;
+
+    min-height: 100vh;
+
+    margin: 0;
+
+    padding: 0;
+
+    font-family:
+        Manrope,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        sans-serif;
+
+    background: var(--oi-bg);
+
+    color: var(--oi-text);
+
+    overflow-x: hidden;
 
 }
 
 
-.oportunidade-interessados-page *,
-.oportunidade-interessados-page *::before,
-.oportunidade-interessados-page *::after {
+*,
+*::before,
+*::after {
 
     box-sizing: border-box;
 
 }
 
 
+button,
+input,
+textarea,
+select {
+
+    font: inherit;
+
+}
+
+
+button {
+
+    border: 0;
+
+}
+
+
+img {
+
+    max-width: 100%;
+
+}
+
+
+a {
+
+    color: inherit;
+
+}
+
+
 /* =========================================================
-   CABEÇALHO
+   3. CABEÇALHO
    ========================================================= */
 
-.oportunidade-interessados-header {
+.oi-header {
+
+    position: sticky;
+
+    top: 0;
+
+    z-index: 100;
+
+    display: block;
+
+    width: 100%;
 
     height: 64px;
 
-    background: #ffffff;
+    margin: 0;
+
+    padding: 0;
+
+    background: var(--oi-white);
 
     border-bottom: 1px solid var(--oi-border);
 
 }
 
 
-.oportunidade-interessados-header-inner {
-
-    width: min(1180px, calc(100% - 48px));
-
-    height: 100%;
-
-    margin: 0 auto;
+.oi-header-inner {
 
     display: flex;
 
@@ -105,10 +232,22 @@
 
     justify-content: space-between;
 
+    width: min(1180px, calc(100% - 40px));
+
+    height: 64px;
+
+    margin: 0 auto;
+
+    padding: 0;
+
 }
 
 
-.oportunidade-interessados-voltar {
+/* =========================================================
+   4. BOTÃO VOLTAR
+   ========================================================= */
+
+.oi-voltar {
 
     display: inline-flex;
 
@@ -116,723 +255,52 @@
 
     gap: 8px;
 
-    color: var(--oi-text);
+    min-width: 0;
 
-    text-decoration: none;
+    margin: 0;
+
+    padding: 8px 0;
+
+    color: var(--oi-text);
 
     font-size: 14px;
 
-    font-weight: 700;
+    font-weight: 650;
+
+    line-height: 1;
+
+    text-decoration: none;
+
+    cursor: pointer;
+
+    transition:
+        color 0.2s ease,
+        transform 0.2s ease;
 
 }
 
 
-.oportunidade-interessados-voltar svg {
+.oi-voltar:hover {
+
+    color: var(--oi-primary);
+
+}
+
+
+.oi-voltar:active {
+
+    transform: translateX(-2px);
+
+}
+
+
+.oi-voltar svg {
 
     width: 20px;
 
     height: 20px;
 
-    fill: none;
-
-    stroke: currentColor;
-
-    stroke-width: 2;
-
-    stroke-linecap: round;
-
-    stroke-linejoin: round;
-
-}
-
-
-.oportunidade-interessados-logo {
-
-    font-size: 18px;
-
-    font-weight: 800;
-
-    letter-spacing: -0.03em;
-
-}
-
-
-/* =========================================================
-   CONTEÚDO
-   ========================================================= */
-
-.oportunidade-interessados-conteudo {
-
-    width: min(1180px, 100%);
-
-    margin: 0 auto;
-
-}
-
-
-/* =========================================================
-   INTRO
-   ========================================================= */
-
-.oportunidade-interessados-intro {
-
-    display: flex;
-
-    align-items: flex-end;
-
-    justify-content: space-between;
-
-    gap: 30px;
-
-    margin-bottom: 28px;
-
-}
-
-
-.oportunidade-interessados-eyebrow,
-.oportunidade-interessados-section-label {
-
-    display: block;
-
-    color: var(--oi-purple);
-
-    font-size: 12px;
-
-    font-weight: 800;
-
-    text-transform: uppercase;
-
-    letter-spacing: 0.08em;
-
-}
-
-
-.oportunidade-interessados-intro h1 {
-
-    margin: 8px 0 8px;
-
-    font-size: clamp(28px, 4vw, 42px);
-
-    line-height: 1.05;
-
-    letter-spacing: -0.04em;
-
-}
-
-
-.oportunidade-interessados-intro p {
-
-    max-width: 680px;
-
-    margin: 0;
-
-    color: var(--oi-muted);
-
-    font-size: 15px;
-
-    line-height: 1.6;
-
-}
-
-
-/* =========================================================
-   BOTÕES
-   ========================================================= */
-
-.btn-principal,
-.btn-secundario {
-
-    min-height: 44px;
-
-    display: inline-flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    padding:
-        0
-        18px;
-
-    border-radius: 12px;
-
-    font-family: inherit;
-
-    font-size: 14px;
-
-    font-weight: 800;
-
-    cursor: pointer;
-
-    text-decoration: none;
-
-    transition:
-        transform 0.18s ease,
-        background 0.18s ease,
-        border-color 0.18s ease;
-
-}
-
-
-.btn-principal {
-
-    border: 1px solid var(--oi-purple);
-
-    background: var(--oi-purple);
-
-    color: #ffffff;
-
-}
-
-
-.btn-principal:hover {
-
-    background: var(--oi-purple-dark);
-
-    transform: translateY(-1px);
-
-}
-
-
-.btn-secundario {
-
-    border: 1px solid var(--oi-border);
-
-    background: #ffffff;
-
-    color: var(--oi-text);
-
-}
-
-
-.btn-secundario:hover {
-
-    border-color: #cfc7ff;
-
-    background: var(--oi-purple-soft);
-
-}
-
-
-/* =========================================================
-   RESUMO
-   ========================================================= */
-
-.oportunidade-resumo-card {
-
-    display: grid;
-
-    grid-template-columns: minmax(260px, 1fr) minmax(500px, 1.6fr);
-
-    gap: 24px;
-
-    padding: 24px;
-
-    margin-bottom: 42px;
-
-    background: var(--oi-card);
-
-    border: 1px solid var(--oi-border);
-
-    border-radius: var(--oi-radius);
-
-    box-shadow: var(--oi-shadow);
-
-}
-
-
-.oportunidade-resumo-identidade {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 16px;
-
-    min-width: 0;
-
-}
-
-
-.oportunidade-resumo-avatar {
-
-    width: 64px;
-
-    height: 64px;
-
-    flex: 0 0 64px;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    border-radius: 18px;
-
-    overflow: hidden;
-
-    background: var(--oi-purple-soft);
-
-    color: var(--oi-purple);
-
-    font-size: 22px;
-
-    font-weight: 800;
-
-}
-
-
-.oportunidade-resumo-avatar img {
-
-    width: 100%;
-
-    height: 100%;
-
-    object-fit: cover;
-
-}
-
-
-.oportunidade-resumo-identidade > div:last-child {
-
-    min-width: 0;
-
-    display: flex;
-
-    flex-direction: column;
-
-    gap: 4px;
-
-}
-
-
-.oportunidade-resumo-tipo {
-
-    color: var(--oi-muted);
-
-    font-size: 11px;
-
-    font-weight: 800;
-
-    text-transform: uppercase;
-
-    letter-spacing: 0.06em;
-
-}
-
-
-.oportunidade-resumo-identidade strong {
-
-    overflow: hidden;
-
-    text-overflow: ellipsis;
-
-    white-space: nowrap;
-
-    font-size: 18px;
-
-}
-
-
-.oportunidade-resumo-identidade span:last-child {
-
-    color: var(--oi-muted);
-
-    font-size: 13px;
-
-}
-
-
-.oportunidade-resumo-detalhes {
-
-    display: grid;
-
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-
-    gap: 12px;
-
-}
-
-
-.oportunidade-resumo-item {
-
-    min-width: 0;
-
-    padding: 16px;
-
-    border: 1px solid var(--oi-border);
-
-    border-radius: 16px;
-
-    background: #fbfcfe;
-
-}
-
-
-.oportunidade-resumo-item span {
-
-    display: block;
-
-    margin-bottom: 7px;
-
-    color: var(--oi-muted);
-
-    font-size: 12px;
-
-    font-weight: 700;
-
-}
-
-
-.oportunidade-resumo-item strong {
-
-    display: block;
-
-    overflow-wrap: anywhere;
-
-    font-size: 14px;
-
-}
-
-
-.oportunidade-resumo-item-destaque {
-
-    border-color: #ddd6ff;
-
-    background: var(--oi-purple-soft);
-
-}
-
-
-.oportunidade-resumo-item-destaque strong {
-
-    color: var(--oi-purple);
-
-    font-size: 22px;
-
-}
-
-
-/* =========================================================
-   FILTROS
-   ========================================================= */
-
-.oportunidade-interessados-filtros {
-
-    margin-bottom: 22px;
-
-}
-
-
-.oportunidade-interessados-filtros-topo h2 {
-
-    margin: 6px 0 18px;
-
-    font-size: 24px;
-
-    letter-spacing: -0.025em;
-
-}
-
-
-.oportunidade-interessados-filtro-lista {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 8px;
-
-    flex-wrap: wrap;
-
-}
-
-
-.filtro-interessados {
-
-    min-height: 40px;
-
-    display: inline-flex;
-
-    align-items: center;
-
-    gap: 8px;
-
-    padding: 0 14px;
-
-    border: 1px solid var(--oi-border);
-
-    border-radius: 999px;
-
-    background: #ffffff;
-
-    color: var(--oi-muted);
-
-    font-family: inherit;
-
-    font-size: 13px;
-
-    font-weight: 800;
-
-    cursor: pointer;
-
-}
-
-
-.filtro-interessados span {
-
-    min-width: 22px;
-
-    height: 22px;
-
-    display: inline-flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    border-radius: 999px;
-
-    background: #f1f3f6;
-
-    color: var(--oi-muted);
-
-    font-size: 11px;
-
-}
-
-
-.filtro-interessados.ativo {
-
-    border-color: var(--oi-purple);
-
-    background: var(--oi-purple);
-
-    color: #ffffff;
-
-}
-
-
-.filtro-interessados.ativo span {
-
-    background: rgba(255, 255, 255, 0.18);
-
-    color: #ffffff;
-
-}
-
-
-/* =========================================================
-   LISTA
-   ========================================================= */
-
-.interessados-lista {
-
-    display: grid;
-
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-
-    gap: 16px;
-
-}
-
-
-/* =========================================================
-   CARD DO ARTISTA
-   ========================================================= */
-
-.interessado-card {
-
-    display: flex;
-
-    flex-direction: column;
-
-    min-width: 0;
-
-    padding: 20px;
-
-    background: #ffffff;
-
-    border: 1px solid var(--oi-border);
-
-    border-radius: var(--oi-radius);
-
-    box-shadow: 0 8px 28px rgba(23, 32, 51, 0.045);
-
-}
-
-
-.interessado-card-topo {
-
-    display: flex;
-
-    align-items: flex-start;
-
-    justify-content: space-between;
-
-    gap: 14px;
-
-}
-
-
-.interessado-identidade {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 13px;
-
-    min-width: 0;
-
-}
-
-
-.interessado-avatar {
-
-    width: 58px;
-
-    height: 58px;
-
-    flex: 0 0 58px;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    overflow: hidden;
-
-    border-radius: 16px;
-
-    background: var(--oi-purple-soft);
-
-    color: var(--oi-purple);
-
-    font-size: 19px;
-
-    font-weight: 800;
-
-}
-
-
-.interessado-avatar img {
-
-    width: 100%;
-
-    height: 100%;
-
-    object-fit: cover;
-
-}
-
-
-.interessado-identidade-texto {
-
-    min-width: 0;
-
-}
-
-
-.interessado-identidade-texto strong {
-
-    display: block;
-
-    overflow: hidden;
-
-    text-overflow: ellipsis;
-
-    white-space: nowrap;
-
-    font-size: 16px;
-
-}
-
-
-.interessado-identidade-texto span {
-
-    display: block;
-
-    margin-top: 4px;
-
-    color: var(--oi-muted);
-
-    font-size: 12px;
-
-}
-
-
-.interessado-status {
-
-    flex: 0 0 auto;
-
-    padding: 6px 9px;
-
-    border-radius: 999px;
-
-    background: #f1f3f6;
-
-    color: var(--oi-muted);
-
-    font-size: 10px;
-
-    font-weight: 800;
-
-    text-transform: uppercase;
-
-    letter-spacing: 0.05em;
-
-}
-
-
-.interessado-status.selecionado {
-
-    background: var(--oi-success-soft);
-
-    color: var(--oi-success);
-
-}
-
-
-.interessado-status.recusado {
-
-    background: var(--oi-danger-soft);
-
-    color: var(--oi-danger);
-
-}
-
-
-/* =========================================================
-   LOCALIZAÇÃO
-   ========================================================= */
-
-.interessado-localizacao {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 6px;
-
-    margin-top: 16px;
-
-    color: var(--oi-muted);
-
-    font-size: 12px;
-
-}
-
-
-.interessado-localizacao svg {
-
-    width: 15px;
-
-    height: 15px;
-
-    flex: 0 0 auto;
+    flex: 0 0 20px;
 
     fill: none;
 
@@ -848,133 +316,519 @@
 
 
 /* =========================================================
-   TAGS
+   5. LOGO
    ========================================================= */
 
-.interessado-tags {
+.oi-logo {
 
-    display: flex;
+    display: block;
 
-    flex-wrap: wrap;
+    margin: 0;
 
-    gap: 6px;
+    padding: 0;
 
-    margin-top: 14px;
+    color: var(--oi-text);
+
+    font-size: 17px;
+
+    font-weight: 800;
+
+    line-height: 1;
+
+    letter-spacing: -0.35px;
+
+    white-space: nowrap;
 
 }
 
 
-.interessado-tag {
+/* =========================================================
+   6. CONTEÚDO PRINCIPAL
+   ========================================================= */
 
-    padding: 6px 9px;
+.oi-page {
 
-    border-radius: 8px;
+    display: block;
 
-    background: #f5f6f8;
+    width: 100%;
 
-    color: #4b5563;
+    min-width: 0;
+
+    min-height: calc(100vh - 64px);
+
+    margin: 0;
+
+    padding:
+        48px 20px
+        80px;
+
+    background: var(--oi-bg);
+
+}
+
+
+.oi-conteudo {
+
+    display: block;
+
+    width: min(1180px, 100%);
+
+    min-width: 0;
+
+    margin: 0 auto;
+
+    padding: 0;
+
+}
+
+
+/* =========================================================
+   7. INTRODUÇÃO
+   ========================================================= */
+
+.oi-intro {
+
+    display: block;
+
+    width: 100%;
+
+    min-width: 0;
+
+    margin: 0 0 28px;
+
+    padding: 0;
+
+}
+
+
+.oi-eyebrow {
+
+    display: block;
+
+    margin: 0 0 8px;
+
+    padding: 0;
+
+    color: var(--oi-primary);
 
     font-size: 11px;
 
-    font-weight: 700;
+    font-weight: 800;
+
+    line-height: 1.4;
+
+    letter-spacing: 0.08em;
+
+    text-transform: uppercase;
+
+}
+
+
+.oi-intro h1 {
+
+    display: block;
+
+    width: 100%;
+
+    margin: 0;
+
+    padding: 0;
+
+    color: var(--oi-text);
+
+    font-size: 36px;
+
+    font-weight: 750;
+
+    line-height: 1.15;
+
+    letter-spacing: -1px;
+
+    overflow-wrap: anywhere;
+
+}
+
+
+.oi-intro p {
+
+    display: block;
+
+    max-width: 700px;
+
+    margin: 12px 0 0;
+
+    padding: 0;
+
+    color: var(--oi-muted);
+
+    font-size: 15px;
+
+    font-weight: 400;
+
+    line-height: 1.65;
 
 }
 
 
 /* =========================================================
-   MENSAGEM
+   8. BOTÕES
    ========================================================= */
 
-.interessado-mensagem {
+.oi-btn {
 
-    margin: 17px 0 0;
+    display: inline-flex;
 
-    padding: 13px 14px;
+    align-items: center;
 
-    border-left: 3px solid #ddd6ff;
-
-    border-radius: 0 10px 10px 0;
-
-    background: #faf9ff;
-
-    color: #596174;
-
-    font-size: 13px;
-
-    line-height: 1.55;
-
-}
-
-
-.interessado-sem-mensagem {
-
-    color: #9ca3af;
-
-    font-style: italic;
-
-}
-
-
-/* =========================================================
-   AÇÕES
-   ========================================================= */
-
-.interessado-acoes {
-
-    display: flex;
+    justify-content: center;
 
     gap: 8px;
 
-    margin-top: 18px;
+    min-height: 42px;
+
+    margin: 0;
+
+    padding:
+        0 16px;
+
+    border: 1px solid transparent;
+
+    border-radius: var(--oi-radius-sm);
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    line-height: 1;
+
+    white-space: nowrap;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.2s ease;
 
 }
 
 
-.interessado-acoes .btn-principal,
-.interessado-acoes .btn-secundario {
+.oi-btn:hover {
 
-    flex: 1;
+    transform: translateY(-1px);
 
 }
 
 
-.btn-selecionado {
+.oi-btn:active {
 
-    border-color: #c7ebda;
+    transform: translateY(0);
 
-    background: var(--oi-success-soft);
+}
 
-    color: var(--oi-success);
 
-    cursor: default;
+.oi-btn:focus-visible,
+.oi-filtro:focus-visible,
+.oi-voltar:focus-visible,
+.oi-modal-fechar:focus-visible {
+
+    outline: 3px solid rgba(109, 74, 255, 0.2);
+
+    outline-offset: 3px;
+
+}
+
+
+.oi-btn-primary {
+
+    background: var(--oi-primary);
+
+    border-color: var(--oi-primary);
+
+    color: var(--oi-white);
+
+}
+
+
+.oi-btn-primary:hover {
+
+    background: var(--oi-primary-dark);
+
+    border-color: var(--oi-primary-dark);
+
+    color: var(--oi-white);
+
+    box-shadow:
+        0 6px 18px rgba(109, 74, 255, 0.2);
+
+}
+
+
+.oi-btn-secondary {
+
+    background: var(--oi-white);
+
+    border-color: var(--oi-border);
+
+    color: var(--oi-text);
+
+}
+
+
+.oi-btn-secondary:hover {
+
+    background: var(--oi-primary-light);
+
+    border-color: var(--oi-primary);
+
+    color: var(--oi-primary);
 
 }
 
 
 /* =========================================================
-   VAZIO
+   ÍCONES DOS BOTÕES DA OPORTUNIDADE
    ========================================================= */
 
-.interessados-vazio {
+.oi-oportunidade-acoes {
 
-    padding: 64px 24px;
+    display: flex;
 
-    text-align: center;
+    align-items: center;
 
-    background: #ffffff;
+    justify-content: flex-end;
 
-    border: 1px dashed #d7dbe3;
+    gap: 8px;
 
-    border-radius: var(--oi-radius);
+    flex: 0 0 auto;
+
+    min-width: 0;
 
 }
 
 
-.interessados-vazio-icone {
+.oi-btn-oportunidade {
 
-    width: 54px;
+    min-width: 0;
 
-    height: 54px;
+}
+
+
+.oi-btn-icon {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 17px;
+
+    height: 17px;
+
+    flex: 0 0 17px;
+
+}
+
+
+.oi-btn-icon svg {
+
+    display: block;
+
+    width: 17px;
+
+    height: 17px;
+
+    fill: none;
+
+    stroke: currentColor;
+
+    stroke-width: 1.8;
+
+    stroke-linecap: round;
+
+    stroke-linejoin: round;
+
+}
+
+
+.oi-btn-text {
+
+    display: inline;
+
+}
+
+
+/* =========================================================
+   9. CARD DA OPORTUNIDADE
+   ========================================================= */
+
+.oi-oportunidade-card {
+
+    display: block;
+
+    width: 100%;
+
+    min-width: 0;
+
+    margin: 0;
+
+    padding: 28px;
+
+    background: var(--oi-white);
+
+    border: 1px solid var(--oi-border);
+
+    border-radius: var(--oi-radius-xl);
+
+    box-shadow: var(--oi-shadow-sm);
+
+}
+
+
+.oi-oportunidade-topo {
+
+    display: flex;
+
+    align-items: flex-start;
+
+    justify-content: space-between;
+
+    gap: 24px;
+
+    width: 100%;
+
+    min-width: 0;
+
+    padding: 0 0 24px;
+
+    border-bottom: 1px solid var(--oi-border-soft);
+
+}
+
+
+.oi-oportunidade-topo > div:first-child {
+
+    flex: 1 1 auto;
+
+    min-width: 0;
+
+}
+
+
+.oi-card-label {
+
+    display: block;
+
+    margin: 0 0 7px;
+
+    padding: 0;
+
+    color: var(--oi-muted);
+
+    font-size: 11px;
+
+    font-weight: 750;
+
+    line-height: 1.4;
+
+    letter-spacing: 0.06em;
+
+    text-transform: uppercase;
+
+}
+
+
+.oi-oportunidade-topo h2 {
+
+    display: block;
+
+    width: 100%;
+
+    margin: 0;
+
+    padding: 0;
+
+    color: var(--oi-text);
+
+    font-size: 21px;
+
+    font-weight: 750;
+
+    line-height: 1.3;
+
+    overflow-wrap: anywhere;
+
+}
+
+
+/* =========================================================
+   10. DETALHES DA OPORTUNIDADE
+
+   Os detalhes possuem agora:
+
+   - ícone visual;
+   - conteúdo separado;
+   - destaque específico para valor;
+   - adaptação própria para celular.
+
+   ========================================================= */
+
+.oi-detalhes-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    width: 100%;
+
+    min-width: 0;
+
+    margin: 24px 0 0;
+
+    padding: 0;
+
+}
+
+
+.oi-detalhe {
+
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 11px;
+
+    min-width: 0;
+
+    padding:
+        0 20px;
+
+    border-right: 1px solid var(--oi-border-soft);
+
+}
+
+
+.oi-detalhe:first-child {
+
+    padding-left: 0;
+
+}
+
+
+.oi-detalhe:last-child {
+
+    padding-right: 0;
+
+    border-right: 0;
+
+}
+
+
+.oi-detalhe-icone {
 
     display: flex;
 
@@ -982,22 +836,30 @@
 
     justify-content: center;
 
-    margin: 0 auto 16px;
+    width: 34px;
 
-    border-radius: 16px;
+    height: 34px;
 
-    background: var(--oi-purple-soft);
+    min-width: 34px;
 
-    color: var(--oi-purple);
+    min-height: 34px;
+
+    margin: 0;
+
+    border-radius: 10px;
+
+    background: var(--oi-primary-light);
+
+    color: var(--oi-primary);
 
 }
 
 
-.interessados-vazio-icone svg {
+.oi-detalhe-icone svg {
 
-    width: 25px;
+    width: 18px;
 
-    height: 25px;
+    height: 18px;
 
     fill: none;
 
@@ -1012,70 +874,117 @@
 }
 
 
-.interessados-vazio h2 {
+.oi-detalhe-conteudo {
 
-    margin: 0 0 8px;
+    display: flex;
 
-    font-size: 20px;
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    justify-content: center;
+
+    min-width: 0;
+
+    min-height: 34px;
 
 }
 
 
-.interessados-vazio p {
+.oi-detalhe-label {
 
-    max-width: 480px;
+    display: block;
 
-    margin: 0 auto;
+    margin: 0 0 4px;
+
+    padding: 0;
 
     color: var(--oi-muted);
 
+    font-size: 11px;
+
+    font-weight: 650;
+
+    line-height: 1.4;
+
+}
+
+
+.oi-detalhe strong {
+
+    display: block;
+
+    width: 100%;
+
+    min-width: 0;
+
+    margin: 0;
+
+    padding: 0;
+
+    color: var(--oi-text);
+
     font-size: 14px;
 
-    line-height: 1.6;
+    font-weight: 700;
+
+    line-height: 1.45;
+
+    overflow-wrap: anywhere;
 
 }
 
 
 /* =========================================================
-   ESTADOS
+   DESTAQUE DO VALOR
    ========================================================= */
 
-.oportunidade-interessados-estado {
+.oi-detalhe-valor .oi-detalhe-icone {
 
-    width: min(560px, 100%);
+    background: var(--oi-success-light);
 
-    margin: 100px auto;
-
-    padding: 40px 24px;
-
-    text-align: center;
+    color: var(--oi-success);
 
 }
 
 
-.oportunidade-interessados-estado p {
+.oi-detalhe-valor strong {
 
-    color: var(--oi-muted);
+    color: var(--oi-success);
 
 }
 
 
-.oportunidade-interessados-estado-erro {
+/* =========================================================
+   11. ESTABELECIMENTO
+   ========================================================= */
 
-    background: #ffffff;
+.oi-estabelecimento {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 14px;
+
+    width: 100%;
+
+    min-width: 0;
+
+    margin: 16px 0 0;
+
+    padding: 18px 20px;
+
+    background: var(--oi-white);
 
     border: 1px solid var(--oi-border);
 
-    border-radius: var(--oi-radius);
+    border-radius: var(--oi-radius-lg);
 
 }
 
 
-.oportunidade-interessados-estado-icone {
-
-    width: 54px;
-
-    height: 54px;
+.oi-estabelecimento-avatar {
 
     display: flex;
 
@@ -1083,22 +992,995 @@
 
     justify-content: center;
 
-    margin: 0 auto 16px;
+    width: 48px;
 
-    border-radius: 16px;
+    height: 48px;
 
-    background: var(--oi-danger-soft);
+    min-width: 48px;
 
-    color: var(--oi-danger);
+    min-height: 48px;
+
+    overflow: hidden;
+
+    border-radius: 50%;
+
+    background: var(--oi-primary-light);
+
+    color: var(--oi-primary);
 
 }
 
 
-.oportunidade-interessados-estado-icone svg {
+.oi-estabelecimento-avatar img {
 
-    width: 25px;
+    display: none;
 
-    height: 25px;
+    width: 100%;
+
+    height: 100%;
+
+    object-fit: cover;
+
+}
+
+
+.oi-avatar-inicial,
+#estabelecimentoAvatarInicial {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 100%;
+
+    height: 100%;
+
+    color: var(--oi-primary);
+
+    font-size: 17px;
+
+    font-weight: 800;
+
+    line-height: 1;
+
+}
+
+
+.oi-estabelecimento-info {
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    min-width: 0;
+
+    gap: 2px;
+
+}
+
+
+.oi-estabelecimento-info span {
+
+    display: block;
+
+    max-width: 100%;
+
+    color: var(--oi-primary);
+
+    font-size: 10px;
+
+    font-weight: 800;
+
+    line-height: 1.3;
+
+    letter-spacing: 0.06em;
+
+    text-transform: uppercase;
+
+}
+
+
+.oi-estabelecimento-info strong {
+
+    display: block;
+
+    max-width: 100%;
+
+    color: var(--oi-text);
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    line-height: 1.35;
+
+    overflow-wrap: anywhere;
+
+}
+
+
+.oi-estabelecimento-info small {
+
+    display: block;
+
+    max-width: 100%;
+
+    color: var(--oi-muted);
+
+    font-size: 12px;
+
+    line-height: 1.35;
+
+    overflow-wrap: anywhere;
+
+}
+
+
+/* =========================================================
+   12. ÁREA DE INTERESSADOS
+   ========================================================= */
+
+.oi-interessados {
+
+    display: block;
+
+    width: 100%;
+
+    min-width: 0;
+
+    margin: 48px 0 0;
+
+    padding: 0;
+
+}
+
+
+.oi-interessados-header {
+
+    display: flex;
+
+    align-items: flex-end;
+
+    justify-content: space-between;
+
+    gap: 24px;
+
+    width: 100%;
+
+    min-width: 0;
+
+    margin: 0 0 24px;
+
+    padding: 0;
+
+}
+
+
+.oi-interessados-header > div:first-child {
+
+    flex: 1 1 auto;
+
+    min-width: 0;
+
+}
+
+
+.oi-interessados-header h2 {
+
+    display: block;
+
+    margin: 0;
+
+    padding: 0;
+
+    color: var(--oi-text);
+
+    font-size: 25px;
+
+    font-weight: 750;
+
+    line-height: 1.25;
+
+    letter-spacing: -0.5px;
+
+}
+
+
+.oi-interessados-header p {
+
+    display: block;
+
+    max-width: 700px;
+
+    margin: 7px 0 0;
+
+    padding: 0;
+
+    color: var(--oi-muted);
+
+    font-size: 14px;
+
+    line-height: 1.55;
+
+}
+
+
+.oi-total-interessados {
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    min-width: 110px;
+
+    padding: 12px 16px;
+
+    background: var(--oi-white);
+
+    border: 1px solid var(--oi-border);
+
+    border-radius: var(--oi-radius-md);
+
+}
+
+
+.oi-total-interessados strong {
+
+    display: block;
+
+    margin: 0;
+
+    padding: 0;
+
+    color: var(--oi-primary);
+
+    font-size: 22px;
+
+    font-weight: 800;
+
+    line-height: 1;
+
+}
+
+
+.oi-total-interessados span {
+
+    display: block;
+
+    margin: 5px 0 0;
+
+    color: var(--oi-muted);
+
+    font-size: 11px;
+
+    font-weight: 650;
+
+    line-height: 1.3;
+
+}
+
+
+/* =========================================================
+   13. FILTROS
+   ========================================================= */
+
+.oi-filtros {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 4px;
+
+    width: 100%;
+
+    min-width: 0;
+
+    margin: 0 0 20px;
+
+    padding: 5px;
+
+    background: var(--oi-white);
+
+    border: 1px solid var(--oi-border);
+
+    border-radius: var(--oi-radius-md);
+
+    overflow-x: auto;
+
+    scrollbar-width: none;
+
+}
+
+
+.oi-filtros::-webkit-scrollbar {
+
+    display: none;
+
+}
+
+
+.oi-filtro {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 7px;
+
+    min-height: 40px;
+
+    flex: 0 0 auto;
+
+    margin: 0;
+
+    padding:
+        0 15px;
+
+    border: 0;
+
+    border-radius: 9px;
+
+    background: transparent;
+
+    color: var(--oi-muted);
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    line-height: 1;
+
+    white-space: nowrap;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease;
+
+}
+
+
+.oi-filtro:hover {
+
+    color: var(--oi-text);
+
+}
+
+
+.oi-filtro strong {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    min-width: 20px;
+
+    height: 20px;
+
+    padding: 0 5px;
+
+    border-radius: 10px;
+
+    background: var(--oi-border-soft);
+
+    color: var(--oi-muted);
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    line-height: 1;
+
+}
+
+
+.oi-filtro.ativo {
+
+    background: var(--oi-primary-light);
+
+    color: var(--oi-primary);
+
+}
+
+
+.oi-filtro.ativo strong {
+
+    background: var(--oi-primary);
+
+    color: var(--oi-white);
+
+}
+
+
+/* =========================================================
+   14. LISTA DE ARTISTAS
+   ========================================================= */
+
+.oi-lista {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 12px;
+
+    width: 100%;
+
+    min-width: 0;
+
+    margin: 0;
+
+    padding: 0;
+
+}
+
+
+/* =========================================================
+   15. CARD DO ARTISTA
+   ========================================================= */
+
+.oi-artista-card {
+
+    display: grid;
+
+    grid-template-columns:
+        56px
+        minmax(0, 1fr)
+        auto
+        auto;
+
+    align-items: center;
+
+    gap: 16px;
+
+    width: 100%;
+
+    min-width: 0;
+
+    margin: 0;
+
+    padding: 20px;
+
+    background: var(--oi-white);
+
+    border: 1px solid var(--oi-border);
+
+    border-radius: var(--oi-radius-lg);
+
+    box-shadow: var(--oi-shadow-sm);
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.2s ease;
+
+}
+
+
+.oi-artista-card:hover {
+
+    border-color: #d7d0ff;
+
+    box-shadow: var(--oi-shadow-md);
+
+    transform: translateY(-1px);
+
+}
+
+
+.oi-artista-selecionado {
+
+    border-color: #cfc5ff;
+
+    background:
+        linear-gradient(
+            90deg,
+            #fbfaff 0%,
+            #ffffff 100%
+        );
+
+}
+
+
+/* =========================================================
+   16. AVATAR DO ARTISTA
+   ========================================================= */
+
+.oi-artista-avatar {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 56px;
+
+    height: 56px;
+
+    min-width: 56px;
+
+    min-height: 56px;
+
+    overflow: hidden;
+
+    border-radius: 50%;
+
+    background: var(--oi-primary-light);
+
+    color: var(--oi-primary);
+
+    font-size: 18px;
+
+    font-weight: 800;
+
+    line-height: 1;
+
+}
+
+
+.oi-artista-avatar img {
+
+    display: block;
+
+    width: 100%;
+
+    height: 100%;
+
+    object-fit: cover;
+
+}
+
+
+.oi-artista-avatar span {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 100%;
+
+    height: 100%;
+
+}
+
+
+/* =========================================================
+   17. INFORMAÇÕES DO ARTISTA
+   ========================================================= */
+
+.oi-artista-info {
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    min-width: 0;
+
+    gap: 3px;
+
+}
+
+
+.oi-artista-info strong {
+
+    display: block;
+
+    width: 100%;
+
+    min-width: 0;
+
+    margin: 0;
+
+    padding: 0;
+
+    color: var(--oi-text);
+
+    font-size: 16px;
+
+    font-weight: 750;
+
+    line-height: 1.35;
+
+    overflow-wrap: anywhere;
+
+}
+
+
+.oi-artista-info span {
+
+    display: block;
+
+    max-width: 100%;
+
+    color: var(--oi-text-soft);
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    line-height: 1.35;
+
+    overflow-wrap: anywhere;
+
+}
+
+
+.oi-artista-info small {
+
+    display: block;
+
+    max-width: 100%;
+
+    color: var(--oi-muted);
+
+    font-size: 12px;
+
+    line-height: 1.35;
+
+    overflow-wrap: anywhere;
+
+}
+
+
+/* =========================================================
+   18. STATUS DO ARTISTA
+   ========================================================= */
+
+.oi-artista-status {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    min-width: 0;
+
+}
+
+
+.oi-status {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    min-height: 28px;
+
+    padding:
+        0 10px;
+
+    border-radius: 20px;
+
+    font-size: 10px;
+
+    font-weight: 800;
+
+    line-height: 1;
+
+    letter-spacing: 0.02em;
+
+    text-transform: uppercase;
+
+    white-space: nowrap;
+
+}
+
+
+.oi-status-interessado {
+
+    background: var(--oi-primary-light);
+
+    color: var(--oi-primary);
+
+}
+
+
+.oi-status-selecionado {
+
+    background: var(--oi-success-light);
+
+    color: var(--oi-success);
+
+}
+
+
+/* =========================================================
+   19. AÇÕES DO ARTISTA
+   ========================================================= */
+
+.oi-artista-acoes {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: flex-end;
+
+    gap: 8px;
+
+    min-width: 0;
+
+}
+
+
+.oi-artista-acoes .oi-btn {
+
+    min-height: 38px;
+
+    padding:
+        0 13px;
+
+    font-size: 12px;
+
+}
+
+
+/* =========================================================
+   20. ESTADOS VAZIOS
+   ========================================================= */
+
+.oi-lista-vazia {
+
+    display: block;
+
+    width: 100%;
+
+    min-width: 0;
+
+    margin: 0;
+
+    padding:
+        64px 24px;
+
+    background: var(--oi-white);
+
+    border: 1px dashed var(--oi-border);
+
+    border-radius: var(--oi-radius-xl);
+
+    text-align: center;
+
+}
+
+
+.oi-lista-vazia[hidden] {
+
+    display: none;
+
+}
+
+
+.oi-lista-vazia-icone {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 52px;
+
+    height: 52px;
+
+    margin: 0 auto 16px;
+
+    border-radius: 50%;
+
+    background: var(--oi-primary-light);
+
+    color: var(--oi-primary);
+
+}
+
+
+.oi-lista-vazia-icone svg {
+
+    width: 24px;
+
+    height: 24px;
+
+    fill: none;
+
+    stroke: currentColor;
+
+    stroke-width: 1.7;
+
+    stroke-linecap: round;
+
+    stroke-linejoin: round;
+
+}
+
+
+.oi-lista-vazia h3 {
+
+    margin: 0;
+
+    padding: 0;
+
+    color: var(--oi-text);
+
+    font-size: 17px;
+
+    font-weight: 700;
+
+    line-height: 1.35;
+
+}
+
+
+.oi-lista-vazia p {
+
+    max-width: 450px;
+
+    margin: 8px auto 0;
+
+    padding: 0;
+
+    color: var(--oi-muted);
+
+    font-size: 13px;
+
+    line-height: 1.6;
+
+}
+
+
+/* =========================================================
+   21. MODAL
+   ========================================================= */
+
+.oi-modal {
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 1000;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 100%;
+
+    height: 100%;
+
+    margin: 0;
+
+    padding: 20px;
+
+}
+
+
+.oi-modal[hidden] {
+
+    display: none;
+
+}
+
+
+.oi-modal-overlay {
+
+    position: absolute;
+
+    inset: 0;
+
+    width: 100%;
+
+    height: 100%;
+
+    background: rgba(23, 32, 51, 0.48);
+
+    backdrop-filter: blur(3px);
+
+}
+
+
+.oi-modal-card {
+
+    position: relative;
+
+    z-index: 1;
+
+    display: block;
+
+    width: min(440px, 100%);
+
+    max-height: calc(100vh - 40px);
+
+    margin: 0;
+
+    padding: 32px;
+
+    overflow-y: auto;
+
+    background: var(--oi-white);
+
+    border: 1px solid var(--oi-border);
+
+    border-radius: var(--oi-radius-xl);
+
+    box-shadow: var(--oi-shadow-lg);
+
+    text-align: center;
+
+}
+
+
+.oi-modal-fechar {
+
+    position: absolute;
+
+    top: 14px;
+
+    right: 14px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 36px;
+
+    height: 36px;
+
+    margin: 0;
+
+    padding: 0;
+
+    border: 0;
+
+    border-radius: 50%;
+
+    background: transparent;
+
+    color: var(--oi-muted);
+
+    cursor: pointer;
+
+}
+
+
+.oi-modal-fechar:hover {
+
+    background: #f3f4f6;
+
+    color: var(--oi-text);
+
+}
+
+
+.oi-modal-fechar svg {
+
+    width: 19px;
+
+    height: 19px;
 
     fill: none;
 
@@ -1113,182 +1995,40 @@
 }
 
 
-.oportunidade-interessados-estado h1 {
-
-    margin: 0;
-
-    font-size: 22px;
-
-}
-
-
-/* =========================================================
-   LOADER
-   ========================================================= */
-
-.oportunidade-interessados-loader {
-
-    width: 30px;
-
-    height: 30px;
-
-    margin: 0 auto 14px;
-
-    border: 3px solid #e4e0ff;
-
-    border-top-color: var(--oi-purple);
-
-    border-radius: 50%;
-
-    animation: oportunidadeInteressadosLoader 0.8s linear infinite;
-
-}
-
-
-@keyframes oportunidadeInteressadosLoader {
-
-    to {
-        transform: rotate(360deg);
-    }
-
-}
-
-
-/* =========================================================
-   MODAL
-   ========================================================= */
-
-.modal-selecao {
-
-    position: fixed;
-
-    inset: 0;
-
-    z-index: 1000;
+.oi-modal-icone {
 
     display: flex;
 
     align-items: center;
 
     justify-content: center;
-
-    padding: 24px;
-
-}
-
-
-.modal-selecao-overlay {
-
-    position: absolute;
-
-    inset: 0;
-
-    background: rgba(17, 24, 39, 0.48);
-
-}
-
-
-.modal-selecao-card {
-
-    position: relative;
-
-    z-index: 1;
-
-    width: min(460px, 100%);
-
-    padding: 30px;
-
-    background: #ffffff;
-
-    border-radius: 24px;
-
-    box-shadow: 0 30px 80px rgba(17, 24, 39, 0.2);
-
-}
-
-
-.modal-selecao-fechar {
-
-    position: absolute;
-
-    top: 16px;
-
-    right: 16px;
-
-    width: 40px;
-
-    height: 40px;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    border: 0;
-
-    border-radius: 10px;
-
-    background: #f5f6f8;
-
-    color: var(--oi-muted);
-
-    cursor: pointer;
-
-}
-
-
-.modal-selecao-fechar svg {
-
-    width: 18px;
-
-    height: 18px;
-
-    fill: none;
-
-    stroke: currentColor;
-
-    stroke-width: 2;
-
-    stroke-linecap: round;
-
-}
-
-
-.modal-selecao-icone {
 
     width: 56px;
 
     height: 56px;
 
-    display: flex;
+    margin: 0 auto 18px;
 
-    align-items: center;
+    border-radius: 50%;
 
-    justify-content: center;
+    background: var(--oi-primary-light);
 
-    margin-bottom: 18px;
-
-    border-radius: 17px;
-
-    background: var(--oi-purple-soft);
-
-    color: var(--oi-purple);
+    color: var(--oi-primary);
 
 }
 
 
-.modal-selecao-icone svg {
+.oi-modal-icone svg {
 
-    width: 27px;
+    width: 26px;
 
-    height: 27px;
+    height: 26px;
 
     fill: none;
 
     stroke: currentColor;
 
-    stroke-width: 2;
+    stroke-width: 1.7;
 
     stroke-linecap: round;
 
@@ -1297,35 +2037,70 @@
 }
 
 
-.modal-selecao-eyebrow {
+.oi-modal-eyebrow {
 
-    color: var(--oi-purple);
+    display: block;
+
+    margin: 0 0 6px;
+
+    padding: 0;
+
+    color: var(--oi-primary);
 
     font-size: 11px;
 
     font-weight: 800;
 
+    line-height: 1.3;
+
+    letter-spacing: 0.07em;
+
     text-transform: uppercase;
 
-    letter-spacing: 0.08em;
-
 }
 
 
-.modal-selecao-card h2 {
-
-    margin: 7px 0 8px;
-
-    font-size: 24px;
-
-    letter-spacing: -0.03em;
-
-}
-
-
-.modal-selecao-card > p {
+.oi-modal-card h2 {
 
     margin: 0;
+
+    padding: 0;
+
+    color: var(--oi-text);
+
+    font-size: 21px;
+
+    font-weight: 750;
+
+    line-height: 1.3;
+
+    overflow-wrap: anywhere;
+
+}
+
+
+#modalArtistaTipo {
+
+    margin: 5px 0 0;
+
+    padding: 0;
+
+    color: var(--oi-muted);
+
+    font-size: 13px;
+
+    line-height: 1.4;
+
+}
+
+
+.oi-modal-texto {
+
+    max-width: 360px;
+
+    margin: 20px auto 0;
+
+    padding: 0;
 
     color: var(--oi-muted);
 
@@ -1336,193 +2111,723 @@
 }
 
 
-.modal-selecao-artista {
+.oi-modal-acoes {
 
     display: flex;
 
-    flex-direction: column;
+    align-items: center;
 
-    gap: 4px;
+    justify-content: flex-end;
 
-    margin-top: 20px;
+    gap: 8px;
 
-    padding: 15px;
+    margin: 24px 0 0;
 
-    border: 1px solid var(--oi-border);
-
-    border-radius: 14px;
-
-    background: #fafbfc;
-
-}
-
-
-.modal-selecao-artista strong {
-
-    font-size: 15px;
-
-}
-
-
-.modal-selecao-artista span {
-
-    color: var(--oi-muted);
-
-    font-size: 12px;
-
-}
-
-
-.modal-selecao-acoes {
-
-    display: flex;
-
-    gap: 10px;
-
-    margin-top: 22px;
-
-}
-
-
-.modal-selecao-acoes > * {
-
-    flex: 1;
+    padding: 0;
 
 }
 
 
 /* =========================================================
-   RESPONSIVIDADE
+   22. TABLET
    ========================================================= */
 
-@media (max-width: 980px) {
-
-    .oportunidade-resumo-card {
-
-        grid-template-columns: 1fr;
-
-    }
-
-    .oportunidade-resumo-detalhes {
-
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-
-    }
-
-}
+@media (max-width: 900px) {
 
 
-@media (max-width: 760px) {
-
-    .oportunidade-interessados-page {
-
-        padding:
-            26px
-            16px
-            60px;
-
-    }
-
-
-    .oportunidade-interessados-header-inner {
+    .oi-header-inner {
 
         width: calc(100% - 32px);
 
     }
 
 
-    .oportunidade-interessados-logo {
+    .oi-page {
 
-        font-size: 16px;
-
-    }
-
-
-    .oportunidade-interessados-intro {
-
-        align-items: stretch;
-
-        flex-direction: column;
-
-        gap: 18px;
+        padding:
+            40px 16px
+            64px;
 
     }
 
 
-    .oportunidade-interessados-intro .btn-secundario {
+    .oi-detalhes-grid {
 
-        width: 100%;
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 14px;
 
     }
 
 
-    .interessados-lista {
+    .oi-detalhe {
 
-        grid-template-columns: 1fr;
+        padding:
+            14px;
+
+        border: 1px solid var(--oi-border-soft);
+
+        border-radius: var(--oi-radius-md);
+
+        background: #fcfcfd;
+
+    }
+
+
+    .oi-detalhe:first-child,
+    .oi-detalhe:last-child {
+
+        padding:
+            14px;
+
+    }
+
+
+    .oi-artista-card {
+
+        grid-template-columns:
+            56px
+            minmax(0, 1fr);
+
+    }
+
+
+    .oi-artista-status {
+
+        grid-column: 2;
+
+        grid-row: 2;
+
+        justify-content: flex-start;
+
+    }
+
+
+    .oi-artista-acoes {
+
+        grid-column: 1 / -1;
+
+        grid-row: 3;
+
+        justify-content: flex-start;
+
+        padding-top: 2px;
 
     }
 
 }
 
 
-@media (max-width: 520px) {
+/* =========================================================
+   23. CELULAR
+   ========================================================= */
 
-    .oportunidade-resumo-card {
-
-        padding: 17px;
-
-    }
+@media (max-width: 600px) {
 
 
-    .oportunidade-resumo-detalhes {
+    .oi-header {
 
-        grid-template-columns: 1fr 1fr;
+        height: 58px;
 
     }
 
 
-    .oportunidade-resumo-item {
+    .oi-header-inner {
 
-        padding: 13px;
+        width: calc(100% - 28px);
+
+        height: 58px;
 
     }
 
 
-    .interessado-card {
+    .oi-logo {
+
+        font-size: 15px;
+
+    }
+
+
+    .oi-voltar {
+
+        font-size: 13px;
+
+    }
+
+
+    .oi-voltar svg {
+
+        width: 18px;
+
+        height: 18px;
+
+        flex-basis: 18px;
+
+    }
+
+
+    .oi-page {
+
+        min-height: calc(100vh - 58px);
+
+        padding:
+            28px 14px
+            48px;
+
+    }
+
+
+    .oi-intro {
+
+        margin-bottom: 22px;
+
+    }
+
+
+    .oi-intro h1 {
+
+        font-size: 28px;
+
+        letter-spacing: -0.7px;
+
+    }
+
+
+    .oi-intro p {
+
+        font-size: 14px;
+
+    }
+
+
+    /* =====================================================
+       CARD DA OPORTUNIDADE — CELULAR
+       ===================================================== */
+
+    .oi-oportunidade-card {
+
+        padding: 20px;
+
+        border-radius: var(--oi-radius-lg);
+
+    }
+
+
+    .oi-oportunidade-topo {
+
+        flex-direction: row;
+
+        align-items: flex-start;
+
+        justify-content: space-between;
+
+        gap: 12px;
+
+        padding-bottom: 20px;
+
+    }
+
+
+    .oi-oportunidade-topo > div:first-child {
+
+        flex: 1 1 auto;
+
+        min-width: 0;
+
+    }
+
+
+    /* =====================================================
+       AÇÕES DA OPORTUNIDADE — CELULAR
+
+       No celular os botões deixam de exibir texto.
+
+       Ficam somente os ícones de:
+       - visualizar;
+       - editar.
+
+       Os dois ficam lado a lado no canto direito,
+       alinhados horizontalmente com o conteúdo da
+       oportunidade.
+       ===================================================== */
+
+    .oi-oportunidade-acoes {
+
+        width: auto;
+
+        flex: 0 0 auto;
+
+        justify-content: flex-end;
+
+        align-items: center;
+
+        gap: 8px;
+
+    }
+
+
+    .oi-oportunidade-acoes .oi-btn {
+
+        width: 42px;
+
+        min-width: 42px;
+
+        height: 42px;
+
+        min-height: 42px;
+
+        padding: 0;
+
+        border-radius: 11px;
+
+    }
+
+
+    .oi-oportunidade-acoes .oi-btn-text {
+
+        display: none;
+
+    }
+
+
+    .oi-oportunidade-acoes .oi-btn-icon {
+
+        width: 18px;
+
+        height: 18px;
+
+        flex: 0 0 18px;
+
+    }
+
+
+    .oi-oportunidade-acoes .oi-btn-icon svg {
+
+        width: 18px;
+
+        height: 18px;
+
+    }
+
+
+    .oi-detalhes-grid {
+
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 10px;
+
+        margin-top: 20px;
+
+    }
+
+
+    .oi-detalhe {
+
+        display: flex;
+
+        align-items: center;
+
+        gap: 10px;
+
+        min-height: 66px;
+
+        padding: 12px;
+
+        border: 1px solid var(--oi-border-soft);
+
+        border-radius: 13px;
+
+        background: #fcfcfd;
+
+    }
+
+
+    .oi-detalhe:first-child,
+    .oi-detalhe:last-child {
+
+        padding:
+            12px;
+
+    }
+
+
+    .oi-detalhe-icone {
+
+        width: 32px;
+
+        height: 32px;
+
+        min-width: 32px;
+
+        min-height: 32px;
+
+        border-radius: 9px;
+
+    }
+
+
+    .oi-detalhe-icone svg {
+
+        width: 17px;
+
+        height: 17px;
+
+    }
+
+
+    .oi-detalhe-conteudo {
+
+        min-width: 0;
+
+    }
+
+
+    .oi-detalhe-label {
+
+        margin-bottom: 3px;
+
+        font-size: 10px;
+
+    }
+
+
+    .oi-detalhe strong {
+
+        font-size: 12px;
+
+        line-height: 1.35;
+
+    }
+
+
+    .oi-estabelecimento {
 
         padding: 16px;
 
     }
 
 
-    .interessado-acoes {
+    .oi-interessados {
+
+        margin-top: 36px;
+
+    }
+
+
+    .oi-interessados-header {
+
+        align-items: flex-start;
 
         flex-direction: column;
 
-    }
-
-
-    .modal-selecao-card {
-
-        padding: 24px;
+        gap: 16px;
 
     }
 
 
-    .modal-selecao-acoes {
+    .oi-total-interessados {
+
+        width: 100%;
+
+    }
+
+
+    .oi-filtros {
+
+        margin-bottom: 16px;
+
+    }
+
+
+    .oi-filtro {
+
+        padding:
+            0 12px;
+
+    }
+
+
+    .oi-artista-card {
+
+        grid-template-columns:
+            48px
+            minmax(0, 1fr);
+
+        gap: 12px;
+
+        padding: 17px;
+
+    }
+
+
+    .oi-artista-avatar {
+
+        width: 48px;
+
+        height: 48px;
+
+        min-width: 48px;
+
+        min-height: 48px;
+
+    }
+
+
+    .oi-artista-status {
+
+        grid-column: 2;
+
+        grid-row: 2;
+
+        justify-content: flex-start;
+
+    }
+
+
+    .oi-artista-acoes {
+
+        grid-column: 1 / -1;
+
+        grid-row: 3;
+
+        flex-direction: column;
+
+        align-items: stretch;
+
+        width: 100%;
+
+    }
+
+
+    .oi-artista-acoes .oi-btn {
+
+        width: 100%;
+
+    }
+
+
+    .oi-lista-vazia {
+
+        padding:
+            52px 20px;
+
+    }
+
+
+    .oi-modal {
+
+        align-items: flex-end;
+
+        padding: 12px;
+
+    }
+
+
+    .oi-modal-card {
+
+        width: 100%;
+
+        max-height: calc(100vh - 24px);
+
+        padding:
+            28px 20px
+            20px;
+
+        border-radius: 20px;
+
+    }
+
+
+    .oi-modal-acoes {
 
         flex-direction: column-reverse;
+
+        align-items: stretch;
+
+    }
+
+
+    .oi-modal-acoes .oi-btn {
+
+        width: 100%;
 
     }
 
 }
 
 
-@media (max-width: 360px) {
+/* =========================================================
+   24. CELULAR PEQUENO
+   ========================================================= */
 
-    .oportunidade-resumo-detalhes {
+@media (max-width: 420px) {
+
+
+    .oi-header-inner {
+
+        width: calc(100% - 24px);
+
+    }
+
+
+    .oi-voltar span {
+
+        max-width: 150px;
+
+        overflow: hidden;
+
+        text-overflow: ellipsis;
+
+        white-space: nowrap;
+
+    }
+
+
+    .oi-logo {
+
+        font-size: 14px;
+
+    }
+
+
+    .oi-page {
+
+        padding-left: 12px;
+
+        padding-right: 12px;
+
+    }
+
+
+    .oi-intro h1 {
+
+        font-size: 25px;
+
+    }
+
+
+    .oi-oportunidade-card {
+
+        padding: 18px;
+
+    }
+
+
+    /* =====================================================
+       AÇÕES DA OPORTUNIDADE — CELULAR PEQUENO
+
+       Mantém os dois botões somente com os ícones,
+       alinhados ao lado direito do título.
+       ===================================================== */
+
+    .oi-oportunidade-acoes {
+
+        gap: 7px;
+
+    }
+
+
+    .oi-oportunidade-acoes .oi-btn {
+
+        width: 40px;
+
+        min-width: 40px;
+
+        height: 40px;
+
+        min-height: 40px;
+
+    }
+
+
+    .oi-detalhes-grid {
 
         grid-template-columns: 1fr;
+
+        gap: 8px;
+
+    }
+
+
+    .oi-detalhe {
+
+        min-height: 60px;
+
+        padding:
+            12px;
+
+    }
+
+
+    .oi-detalhe:first-child,
+    .oi-detalhe:last-child {
+
+        padding:
+            12px;
+
+    }
+
+
+    .oi-detalhe strong {
+
+        white-space: normal;
+
+    }
+
+
+    .oi-artista-card {
+
+        padding: 14px;
+
+    }
+
+
+    .oi-artista-info strong {
+
+        font-size: 15px;
+
+    }
+
+
+    .oi-artista-info span {
+
+        font-size: 12px;
+
+    }
+
+
+    .oi-artista-info small {
+
+        font-size: 11px;
+
+    }
+
+}
+
+
+/* =========================================================
+   25. ACESSIBILIDADE — REDUÇÃO DE MOVIMENTO
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+
+    .oi-btn,
+    .oi-filtro,
+    .oi-artista-card,
+    .oi-voltar {
+
+        transition: none;
+
+    }
+
+
+    .oi-btn:hover,
+    .oi-artista-card:hover {
+
+        transform: none;
 
     }
 

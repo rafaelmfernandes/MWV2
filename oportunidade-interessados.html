@@ -14,27 +14,39 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>Interessados | MusicalWorld</title>
+    <title>Gerenciar oportunidade — MusicalWorld</title>
 
 
     <!-- =====================================================
-         FAVICON
+         FONTE PRINCIPAL
+
+         A página utiliza Manrope como primeira opção
+         na pilha tipográfica definida pelo CSS.
          ===================================================== -->
 
     <link
-        rel="icon"
-        href="data:,"
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
     >
 
-
-    <!-- =====================================================
-         CSS PRINCIPAL
-         ===================================================== -->
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
 
     <link
+        href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
         rel="stylesheet"
-        href="css/main.css"
     >
+
+
+    <!-- =====================================================
+         CSS EXCLUSIVO DESTA PÁGINA
+
+         Esta página NÃO utiliza main.css.
+         Todo o visual é controlado pelo CSS abaixo.
+         ===================================================== -->
 
     <link
         rel="stylesheet"
@@ -46,35 +58,44 @@
 
 <body>
 
+
     <!-- =====================================================
          CABEÇALHO
          ===================================================== -->
 
-    <header class="oportunidade-interessados-header">
+    <header class="oi-header">
 
-        <div class="oportunidade-interessados-header-inner">
+        <div class="oi-header-inner">
+
+
+            <!-- =================================================
+                 VOLTAR
+                 ================================================= -->
 
             <a
-                href="oportunidades.html"
-                class="oportunidade-interessados-voltar"
-                aria-label="Voltar para oportunidades"
+                href="minhas-oportunidades.html"
+                class="oi-voltar"
             >
 
                 <svg
                     viewBox="0 0 24 24"
                     aria-hidden="true"
                 >
-                    <path
-                        d="M15 18l-6-6 6-6"
-                    />
+                    <path d="M15 18l-6-6 6-6"></path>
                 </svg>
 
-                <span>Oportunidades</span>
+                <span>
+                    Minhas oportunidades
+                </span>
 
             </a>
 
 
-            <div class="oportunidade-interessados-logo">
+            <!-- =================================================
+                 LOGO
+                 ================================================= -->
+
+            <div class="oi-logo">
                 MusicalWorld
             </div>
 
@@ -83,366 +104,682 @@
     </header>
 
 
+
     <!-- =====================================================
          CONTEÚDO PRINCIPAL
          ===================================================== -->
 
-    <main class="oportunidade-interessados-page">
+    <main class="oi-page">
 
-        <!-- =================================================
-             ESTADO DE CARREGAMENTO
-             ================================================= -->
-
-        <section
-            id="estadoCarregando"
-            class="oportunidade-interessados-estado"
-        >
-
-            <div class="oportunidade-interessados-loader"></div>
-
-            <p>Carregando interessados...</p>
-
-        </section>
+        <div class="oi-conteudo">
 
 
-        <!-- =================================================
-             ESTADO DE ERRO
-             ================================================= -->
+            <!-- =================================================
+                 INTRODUÇÃO
+                 ================================================= -->
 
-        <section
-            id="estadoErro"
-            class="oportunidade-interessados-estado oportunidade-interessados-estado-erro"
-            hidden
-        >
+            <section class="oi-intro">
 
-            <div class="oportunidade-interessados-estado-icone">
-
-                <svg
-                    viewBox="0 0 24 24"
-                    aria-hidden="true"
-                >
-                    <path
-                        d="M12 9v4"
-                    />
-
-                    <path
-                        d="M12 17h.01"
-                    />
-
-                    <path
-                        d="M10.3 3.9L2.7 17a2 2 0 001.7 3h15.2a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z"
-                    />
-                </svg>
-
-            </div>
-
-            <h1>Não foi possível carregar</h1>
-
-            <p id="estadoErroMensagem">
-                Ocorreu um erro ao carregar esta oportunidade.
-            </p>
-
-            <button
-                type="button"
-                id="btnTentarNovamente"
-                class="btn-principal"
-            >
-                Tentar novamente
-            </button>
-
-        </section>
+                <span class="oi-eyebrow">
+                    Gerenciar oportunidade
+                </span>
 
 
-        <!-- =================================================
-             CONTEÚDO DA OPORTUNIDADE
-             ================================================= -->
-
-        <div
-            id="conteudoOportunidade"
-            class="oportunidade-interessados-conteudo"
-            hidden
-        >
-
-            <!-- =============================================
-                 CABEÇALHO DA OPORTUNIDADE
-                 ============================================= -->
-
-            <section class="oportunidade-interessados-intro">
-
-                <div>
-
-                    <span class="oportunidade-interessados-eyebrow">
-                        Gestão da oportunidade
-                    </span>
-
-                    <h1 id="oportunidadeTitulo">
-                        Oportunidade
-                    </h1>
-
-                    <p id="oportunidadeDescricao">
-                        Gerencie os artistas que demonstraram interesse.
-                    </p>
-
-                </div>
+                <h1 id="oportunidadeTitulo">
+                    Oportunidade
+                </h1>
 
 
-                <a
-                    href="#"
-                    id="btnVerOportunidade"
-                    class="btn-secundario"
-                >
-                    Ver oportunidade
-                </a>
+                <p id="oportunidadeDescricao">
+                    Gerencie os artistas que demonstraram interesse
+                    nesta oportunidade.
+                </p>
 
             </section>
 
 
-            <!-- =============================================
-                 RESUMO
-                 ============================================= -->
 
-            <section class="oportunidade-resumo-card">
+            <!-- =================================================
+                 RESUMO DA OPORTUNIDADE
+                 ================================================= -->
 
-                <div class="oportunidade-resumo-identidade">
+            <section class="oi-oportunidade-card">
 
-                    <div
-                        id="estabelecimentoAvatar"
-                        class="oportunidade-resumo-avatar"
-                    >
-                        <span id="estabelecimentoAvatarInicial">
-                            M
-                        </span>
-                    </div>
 
+                <div class="oi-oportunidade-topo">
 
                     <div>
 
-                        <span
-                            id="estabelecimentoTipo"
-                            class="oportunidade-resumo-tipo"
+                        <span class="oi-card-label">
+                            Oportunidade publicada
+                        </span>
+
+
+                        <h2 id="oportunidadeTituloCard">
+                            Oportunidade
+                        </h2>
+
+                    </div>
+
+
+                    <!-- =========================================
+                         AÇÕES DA OPORTUNIDADE
+
+                         Desktop:
+                         - Ver oportunidade
+                         - Editar
+
+                         Mobile:
+                         - Apenas os ícones.
+                         ========================================= -->
+
+                    <div class="oi-oportunidade-acoes">
+
+
+                        <!-- =====================================
+                             VER OPORTUNIDADE
+                             ===================================== -->
+
+                        <button
+                            type="button"
+                            id="btnVerOportunidade"
+                            class="oi-btn oi-btn-secondary oi-btn-oportunidade"
+                            aria-label="Ver oportunidade"
                         >
-                            Estabelecimento
-                        </span>
 
-                        <strong id="estabelecimentoNome">
-                            Estabelecimento
-                        </strong>
+                            <span
+                                class="oi-btn-icon"
+                                aria-hidden="true"
+                            >
 
-                        <span id="estabelecimentoLocalizacao">
-                            Goiânia/GO
-                        </span>
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                >
+
+                                    <path
+                                        d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"
+                                    ></path>
+
+                                    <circle
+                                        cx="12"
+                                        cy="12"
+                                        r="2.5"
+                                    ></circle>
+
+                                </svg>
+
+                            </span>
+
+
+                            <span class="oi-btn-text">
+                                Ver oportunidade
+                            </span>
+
+                        </button>
+
+
+
+                        <!-- =====================================
+                             EDITAR OPORTUNIDADE
+                             ===================================== -->
+
+                        <button
+                            type="button"
+                            id="btnEditarOportunidade"
+                            class="oi-btn oi-btn-secondary oi-btn-oportunidade"
+                            aria-label="Editar oportunidade"
+                        >
+
+                            <span
+                                class="oi-btn-icon"
+                                aria-hidden="true"
+                            >
+
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                >
+
+                                    <path
+                                        d="M12 20h9"
+                                    ></path>
+
+                                    <path
+                                        d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"
+                                    ></path>
+
+                                </svg>
+
+                            </span>
+
+
+                            <span class="oi-btn-text">
+                                Editar
+                            </span>
+
+                        </button>
 
                     </div>
 
                 </div>
 
 
-                <div class="oportunidade-resumo-detalhes">
 
-                    <div class="oportunidade-resumo-item">
+                <!-- =============================================
+                     DETALHES DA OPORTUNIDADE
 
-                        <span>Evento</span>
+                     Cada informação possui um ícone SVG próprio.
+                     No celular, os itens são apresentados como
+                     pequenos blocos visuais.
+                     ============================================= -->
 
-                        <strong id="resumoData">
-                            —
-                        </strong>
+                <div class="oi-detalhes-grid">
+
+
+                    <!-- =========================================
+                         DATA
+                         ========================================= -->
+
+                    <div class="oi-detalhe">
+
+                        <div
+                            class="oi-detalhe-icone"
+                            aria-hidden="true"
+                        >
+
+                            <svg
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                            >
+
+                                <rect
+                                    x="3"
+                                    y="4"
+                                    width="18"
+                                    height="17"
+                                    rx="2"
+                                ></rect>
+
+                                <path
+                                    d="M16 2v4"
+                                ></path>
+
+                                <path
+                                    d="M8 2v4"
+                                ></path>
+
+                                <path
+                                    d="M3 10h18"
+                                ></path>
+
+                            </svg>
+
+                        </div>
+
+
+                        <div class="oi-detalhe-conteudo">
+
+                            <span class="oi-detalhe-label">
+                                Data
+                            </span>
+
+                            <strong id="resumoData">
+                                —
+                            </strong>
+
+                        </div>
 
                     </div>
 
 
-                    <div class="oportunidade-resumo-item">
 
-                        <span>Horário</span>
+                    <!-- =========================================
+                         HORÁRIO
+                         ========================================= -->
 
-                        <strong id="resumoHorario">
-                            —
-                        </strong>
+                    <div class="oi-detalhe">
+
+                        <div
+                            class="oi-detalhe-icone"
+                            aria-hidden="true"
+                        >
+
+                            <svg
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                            >
+
+                                <circle
+                                    cx="12"
+                                    cy="12"
+                                    r="9"
+                                ></circle>
+
+                                <path
+                                    d="M12 7v5l3 2"
+                                ></path>
+
+                            </svg>
+
+                        </div>
+
+
+                        <div class="oi-detalhe-conteudo">
+
+                            <span class="oi-detalhe-label">
+                                Horário
+                            </span>
+
+                            <strong id="resumoHorario">
+                                —
+                            </strong>
+
+                        </div>
 
                     </div>
 
 
-                    <div class="oportunidade-resumo-item">
 
-                        <span>Valor</span>
+                    <!-- =========================================
+                         LOCAL
+                         ========================================= -->
 
-                        <strong id="resumoValor">
-                            —
-                        </strong>
+                    <div class="oi-detalhe">
+
+                        <div
+                            class="oi-detalhe-icone"
+                            aria-hidden="true"
+                        >
+
+                            <svg
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                            >
+
+                                <path
+                                    d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"
+                                ></path>
+
+                                <circle
+                                    cx="12"
+                                    cy="10"
+                                    r="2.5"
+                                ></circle>
+
+                            </svg>
+
+                        </div>
+
+
+                        <div class="oi-detalhe-conteudo">
+
+                            <span class="oi-detalhe-label">
+                                Local
+                            </span>
+
+                            <strong id="resumoLocal">
+                                —
+                            </strong>
+
+                        </div>
 
                     </div>
 
 
-                    <div class="oportunidade-resumo-item oportunidade-resumo-item-destaque">
 
-                        <span>Interessados</span>
+                    <!-- =========================================
+                         VALOR
+                         ========================================= -->
+
+                    <div class="oi-detalhe oi-detalhe-valor">
+
+                        <div
+                            class="oi-detalhe-icone"
+                            aria-hidden="true"
+                        >
+
+                            <svg
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                            >
+
+                                <circle
+                                    cx="12"
+                                    cy="12"
+                                    r="9"
+                                ></circle>
+
+                                <path
+                                    d="M15 8.5c-.7-.7-1.7-1-3-1-1.7 0-3 .8-3 2s1.3 2 3 2 3 .8 3 2-1.3 2-3 2c-1.3 0-2.3-.3-3-1"
+                                ></path>
+
+                                <path
+                                    d="M12 6v12"
+                                ></path>
+
+                            </svg>
+
+                        </div>
+
+
+                        <div class="oi-detalhe-conteudo">
+
+                            <span class="oi-detalhe-label">
+                                Valor
+                            </span>
+
+                            <strong id="resumoValor">
+                                —
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 ESTABELECIMENTO
+                 ================================================= -->
+
+            <section class="oi-estabelecimento">
+
+
+                <!-- =============================================
+                     AVATAR
+
+                     O container recebe o ID esperado pelo
+                     oportunidade-interessados-render.js.
+
+                     A imagem permanece dentro do container.
+                     ============================================= -->
+
+                <div
+                    id="estabelecimentoAvatar"
+                    class="oi-estabelecimento-avatar"
+                >
+
+                    <img
+                        src=""
+                        alt=""
+                        hidden
+                    >
+
+                    <span id="estabelecimentoAvatarInicial">
+                        M
+                    </span>
+
+                </div>
+
+
+                <!-- =============================================
+                     INFORMAÇÕES
+                     ============================================= -->
+
+                <div class="oi-estabelecimento-info">
+
+                    <span id="estabelecimentoTipo">
+                        Estabelecimento
+                    </span>
+
+
+                    <strong id="estabelecimentoNome">
+                        MusicalWorld
+                    </strong>
+
+
+                    <small id="estabelecimentoLocalizacao">
+                        —
+                    </small>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 INTERESSADOS
+                 ================================================= -->
+
+            <section class="oi-interessados">
+
+
+                <!-- =============================================
+                     CABEÇALHO
+                     ============================================= -->
+
+                <div class="oi-interessados-header">
+
+                    <div>
+
+                        <h2>
+                            Artistas interessados
+                        </h2>
+
+
+                        <p>
+                            Veja quem demonstrou interesse nesta
+                            oportunidade e selecione o artista que
+                            participará do evento.
+                        </p>
+
+                    </div>
+
+
+                    <!-- =========================================
+                         TOTAL
+                         ========================================= -->
+
+                    <div class="oi-total-interessados">
 
                         <strong id="resumoInteressados">
                             0
                         </strong>
 
-                    </div>
-
-                </div>
-
-            </section>
-
-
-            <!-- =============================================
-                 FILTROS
-                 ============================================= -->
-
-            <section class="oportunidade-interessados-filtros">
-
-                <div class="oportunidade-interessados-filtros-topo">
-
-                    <div>
-
-                        <span class="oportunidade-interessados-section-label">
-                            Artistas interessados
+                        <span>
+                            interessados
                         </span>
 
-                        <h2>
-                            Quem demonstrou interesse
-                        </h2>
-
                     </div>
 
                 </div>
 
 
-                <div
-                    class="oportunidade-interessados-filtro-lista"
-                    role="tablist"
-                    aria-label="Filtrar interessados"
-                >
+
+                <!-- =============================================
+                     FILTROS
+                     ============================================= -->
+
+                <div class="oi-filtros">
+
+
+                    <!-- =========================================
+                         TODOS
+                         ========================================= -->
 
                     <button
                         type="button"
-                        class="filtro-interessados ativo"
-                        data-filtro="todos"
-                        role="tab"
+                        id="filtroTodos"
+                        class="oi-filtro ativo"
                         aria-selected="true"
                     >
-                        Todos
-                        <span id="contadorTodos">0</span>
+
+                        <span>
+                            Todos
+                        </span>
+
+                        <strong id="contadorTodos">
+                            0
+                        </strong>
+
                     </button>
 
+
+                    <!-- =========================================
+                         INTERESSADOS
+                         ========================================= -->
 
                     <button
                         type="button"
-                        class="filtro-interessados"
-                        data-filtro="interessado"
-                        role="tab"
+                        id="filtroInteressados"
+                        class="oi-filtro"
                         aria-selected="false"
                     >
-                        Interessados
-                        <span id="contadorInteressados">0</span>
+
+                        <span>
+                            Interessados
+                        </span>
+
+                        <strong id="contadorInteressados">
+                            0
+                        </strong>
+
                     </button>
 
+
+                    <!-- =========================================
+                         SELECIONADO
+                         ========================================= -->
 
                     <button
                         type="button"
-                        class="filtro-interessados"
-                        data-filtro="selecionado"
-                        role="tab"
+                        id="filtroSelecionado"
+                        class="oi-filtro"
                         aria-selected="false"
                     >
-                        Selecionado
-                        <span id="contadorSelecionado">0</span>
+
+                        <span>
+                            Selecionado
+                        </span>
+
+                        <strong id="contadorSelecionado">
+                            0
+                        </strong>
+
                     </button>
 
                 </div>
 
-            </section>
 
 
-            <!-- =============================================
-                 LISTA DE INTERESSADOS
-                 ============================================= -->
+                <!-- =============================================
+                     LISTA DE INTERESSADOS
 
-            <section
-                id="interessadosLista"
-                class="interessados-lista"
-            >
-            </section>
+                     Os cards reais serão inseridos pelo
+                     oportunidade-interessados-render.js.
+                     ============================================= -->
 
-
-            <!-- =============================================
-                 ESTADO SEM INTERESSADOS
-                 ============================================= -->
-
-            <section
-                id="estadoSemInteressados"
-                class="interessados-vazio"
-                hidden
-            >
-
-                <div class="interessados-vazio-icone">
-
-                    <svg
-                        viewBox="0 0 24 24"
-                        aria-hidden="true"
-                    >
-                        <path
-                            d="M20 21a8 8 0 00-16 0"
-                        />
-
-                        <circle
-                            cx="12"
-                            cy="7"
-                            r="4"
-                        />
-                    </svg>
-
-                </div>
-
-                <h2>Nenhum interessado ainda</h2>
-
-                <p>
-                    Quando artistas demonstrarem interesse nesta oportunidade,
-                    eles aparecerão aqui.
-                </p>
-
-            </section>
+                <div
+                    id="interessadosLista"
+                    class="oi-lista"
+                ></div>
 
 
-            <!-- =============================================
-                 ESTADO DE FILTRO VAZIO
-                 ============================================= -->
 
-            <section
-                id="estadoFiltroVazio"
-                class="interessados-vazio"
-                hidden
-            >
+                <!-- =============================================
+                     ESTADO SEM INTERESSADOS
+                     ============================================= -->
 
-                <div class="interessados-vazio-icone">
+                <div
+                    id="estadoSemInteressados"
+                    class="oi-lista-vazia"
+                    hidden
+                >
 
-                    <svg
-                        viewBox="0 0 24 24"
-                        aria-hidden="true"
-                    >
-                        <path
-                            d="M4 6h16"
-                        />
+                    <div class="oi-lista-vazia-icone">
 
-                        <path
-                            d="M7 12h10"
-                        />
+                        <svg
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                        >
 
-                        <path
-                            d="M10 18h4"
-                        />
+                            <path
+                                d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"
+                            ></path>
 
-                    </svg>
+                            <circle
+                                cx="9"
+                                cy="7"
+                                r="4"
+                            ></circle>
+
+                            <path
+                                d="M22 21v-2a4 4 0 0 0-3-3.87"
+                            ></path>
+
+                            <path
+                                d="M16 3.13a4 4 0 0 1 0 7.75"
+                            ></path>
+
+                        </svg>
+
+                    </div>
+
+
+                    <h3>
+                        Ainda não há interessados
+                    </h3>
+
+
+                    <p>
+                        Quando artistas demonstrarem interesse
+                        nesta oportunidade, eles aparecerão aqui.
+                    </p>
 
                 </div>
 
-                <h2>Nenhum resultado</h2>
 
-                <p>
-                    Não há interessados nesta categoria.
-                </p>
+
+                <!-- =============================================
+                     ESTADO DE FILTRO VAZIO
+                     ============================================= -->
+
+                <div
+                    id="estadoFiltroVazio"
+                    class="oi-lista-vazia"
+                    hidden
+                >
+
+                    <div class="oi-lista-vazia-icone">
+
+                        <svg
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                        >
+
+                            <path
+                                d="M3 6h18"
+                            ></path>
+
+                            <path
+                                d="M6 12h12"
+                            ></path>
+
+                            <path
+                                d="M10 18h4"
+                            ></path>
+
+                        </svg>
+
+                    </div>
+
+
+                    <h3>
+                        Nenhum artista encontrado
+                    </h3>
+
+
+                    <p>
+                        Não existem artistas dentro deste filtro.
+                    </p>
+
+                </div>
 
             </section>
 
@@ -451,91 +788,141 @@
     </main>
 
 
+
     <!-- =====================================================
-         MODAL DE CONFIRMAÇÃO
+         MODAL DE SELEÇÃO
+
+         O modal fica fora do conteúdo principal.
+
+         Ele recebe os dados do artista selecionado
+         dinamicamente pelo JavaScript.
          ===================================================== -->
 
     <div
         id="modalSelecao"
-        class="modal-selecao"
+        class="oi-modal"
         hidden
     >
 
+
+        <!-- =================================================
+             FUNDO DO MODAL
+             ================================================= -->
+
         <div
-            class="modal-selecao-overlay"
+            class="oi-modal-overlay"
             data-modal-fechar
         ></div>
 
 
-        <section
-            class="modal-selecao-card"
+
+        <!-- =================================================
+             CARD DO MODAL
+             ================================================= -->
+
+        <div
+            class="oi-modal-card"
             role="dialog"
             aria-modal="true"
-            aria-labelledby="modalSelecaoTitulo"
+            aria-labelledby="modalArtistaNome"
         >
+
+
+            <!-- =============================================
+                 FECHAR
+                 ============================================= -->
 
             <button
                 type="button"
                 id="btnFecharModalSelecao"
-                class="modal-selecao-fechar"
+                class="oi-modal-fechar"
                 aria-label="Fechar"
             >
+
                 <svg
                     viewBox="0 0 24 24"
                     aria-hidden="true"
                 >
-                    <path d="M18 6L6 18"></path>
-                    <path d="M6 6l12 12"></path>
+
+                    <path
+                        d="M18 6L6 18"
+                    ></path>
+
+                    <path
+                        d="M6 6L18 18"
+                    ></path>
+
                 </svg>
+
             </button>
 
 
-            <div class="modal-selecao-icone">
+
+            <!-- =============================================
+                 ÍCONE
+                 ============================================= -->
+
+            <div class="oi-modal-icone">
 
                 <svg
                     viewBox="0 0 24 24"
                     aria-hidden="true"
                 >
-                    <path d="M20 6L9 17l-5-5"></path>
+
+                    <path
+                        d="M20 6L9 17l-5-5"
+                    ></path>
+
                 </svg>
 
             </div>
 
 
-            <span class="modal-selecao-eyebrow">
+
+            <!-- =============================================
+                 TÍTULO DO MODAL
+                 ============================================= -->
+
+            <span class="oi-modal-eyebrow">
                 Selecionar artista
             </span>
 
 
-            <h2 id="modalSelecaoTitulo">
-                Selecionar este artista?
+            <h2 id="modalArtistaNome">
+                Artista
             </h2>
 
 
-            <p id="modalSelecaoMensagem">
-                Este artista será marcado como selecionado para esta oportunidade.
+            <p id="modalArtistaTipo">
+                Tipo de artista
             </p>
 
 
-            <div class="modal-selecao-artista">
 
-                <strong id="modalArtistaNome">
-                    Artista
-                </strong>
+            <!-- =============================================
+                 TEXTO
+                 ============================================= -->
 
-                <span id="modalArtistaTipo">
-                    Músico(a)
-                </span>
+            <p class="oi-modal-texto">
 
-            </div>
+                Ao selecionar este artista, ele será definido
+                como responsável por esta oportunidade.
+
+            </p>
 
 
-            <div class="modal-selecao-acoes">
+
+            <!-- =============================================
+                 AÇÕES
+                 ============================================= -->
+
+            <div class="oi-modal-acoes">
+
 
                 <button
                     type="button"
                     id="btnCancelarSelecao"
-                    class="btn-secundario"
+                    class="oi-btn oi-btn-secondary"
                 >
                     Cancelar
                 </button>
@@ -544,44 +931,63 @@
                 <button
                     type="button"
                     id="btnConfirmarSelecao"
-                    class="btn-principal"
+                    class="oi-btn oi-btn-primary"
                 >
-                    Selecionar artista
+                    Confirmar seleção
                 </button>
 
             </div>
 
-        </section>
+        </div>
 
     </div>
+
 
 
     <!-- =====================================================
          SUPABASE
          ===================================================== -->
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script
+        src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"
+    ></script>
 
 
     <!-- =====================================================
-         CORE MUSICALWORLD
+         CORE
          ===================================================== -->
 
     <script src="js/core/SupabaseClient.js"></script>
+
     <script src="js/core/Sessao.js"></script>
+
     <script src="js/core/UsuarioAtual.js"></script>
+
     <script src="js/core/ControleSessao.js"></script>
+
     <script src="js/core/RoteamentoPerfil.js"></script>
 
 
     <!-- =====================================================
-         MÓDULOS DA PÁGINA
+         JAVASCRIPT
+
+         Ordem obrigatória:
+
+         1. Dados
+         2. Renderização
+         3. Fluxo
+         4. Controlador principal
+
          ===================================================== -->
 
     <script src="js/oportunidades/oportunidade-interessados-dados.js"></script>
+
     <script src="js/oportunidades/oportunidade-interessados-render.js"></script>
+
     <script src="js/oportunidades/oportunidade-interessados-fluxo.js"></script>
+
     <script src="js/oportunidades/oportunidade-interessados.js"></script>
+
 
 </body>
 

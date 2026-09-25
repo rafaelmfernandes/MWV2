@@ -7,17 +7,27 @@
    Responsabilidade:
 
    - Controlar as ações da interface.
+   - Controlar os filtros.
    - Abrir confirmação de seleção.
    - Executar seleção.
    - Atualizar a interface após seleção.
    - Encaminhar o usuário para o perfil do artista.
+   - Fechar o modal de seleção.
    - Manter o fluxo de contratação separado desta etapa.
+
+   Observação:
+
+   Este módulo não acessa diretamente o Supabase.
+   As operações de dados são realizadas pelo módulo:
+
+   js/oportunidades/oportunidade-interessados-dados.js
 
    ========================================================= */
 
 window.MusicalWorldOportunidadeInteressadosFluxo = (() => {
 
     let estado = null;
+
 
 
     /* =====================================================
@@ -29,6 +39,7 @@ window.MusicalWorldOportunidadeInteressadosFluxo = (() => {
         return document.getElementById(id);
 
     }
+
 
 
     /* =====================================================
@@ -43,6 +54,7 @@ window.MusicalWorldOportunidadeInteressadosFluxo = (() => {
             estadoInicial;
 
     }
+
 
 
     /* =====================================================
@@ -62,6 +74,7 @@ window.MusicalWorldOportunidadeInteressadosFluxo = (() => {
     }
 
 
+
     /* =====================================================
        SOLICITAR SELEÇÃO
        ===================================================== */
@@ -78,10 +91,20 @@ window.MusicalWorldOportunidadeInteressadosFluxo = (() => {
 
         if (!interessado) {
 
+            console.warn(
+                "MusicalWorld — interessado não encontrado:",
+                interessadoId
+            );
+
             return;
 
         }
 
+
+        /*
+         * Somente artistas com status "interessado"
+         * podem ser selecionados.
+         */
 
         if (
             interessado.status !==
@@ -93,12 +116,31 @@ window.MusicalWorldOportunidadeInteressadosFluxo = (() => {
         }
 
 
-        window.MusicalWorldOportunidadeInteressadosRender
-            .abrirModalSelecao(
-                interessado
+        const render =
+            window.MusicalWorldOportunidadeInteressadosRender;
+
+
+        if (
+            !render ||
+            typeof render.abrirModalSelecao !==
+            "function"
+        ) {
+
+            console.error(
+                "MusicalWorld — módulo de renderização não encontrado."
             );
 
+            return;
+
+        }
+
+
+        render.abrirModalSelecao(
+            interessado
+        );
+
     }
+
 
 
     /* =====================================================
@@ -107,9 +149,19 @@ window.MusicalWorldOportunidadeInteressadosFluxo = (() => {
 
     async function confirmarSelecao() {
 
+        const render =
+            window.MusicalWorldOportunidadeInteressadosRender;
+
+
+        if (!render) {
+
+            return;
+
+        }
+
+
         const interessado =
-            window.MusicalWorldOportunidadeInteressadosRender
-                .obterInteressadoDoModal();
+            render.obterInteressadoDoModal();
 
 
         if (!interessado) {
@@ -125,13 +177,20 @@ window.MusicalWorldOportunidadeInteressadosFluxo = (() => {
 
         if (!oportunidadeId) {
 
+            mostrarFeedback(
+                "Oportunidade não encontrada.",
+                true
+            );
+
             return;
 
         }
 
 
         const botao =
-            elemento("btnConfirmarSelecao");
+            elemento(
+                "btnConfirmarSelecao"
+            );
 
 
         if (botao) {
@@ -147,25 +206,41 @@ window.MusicalWorldOportunidadeInteressadosFluxo = (() => {
 
         try {
 
+            const dados =
+                window.MusicalWorldOportunidadeInteressadosDados;
+
+
+            if (
+                !dados ||
+                typeof dados.selecionarArtista !==
+                "function"
+            ) {
+
+                throw new Error(
+                    "Módulo de dados dos interessados não encontrado."
+                );
+
+            }
+
+
             const atualizado =
-                await window
-                    .MusicalWorldOportunidadeInteressadosDados
-                    .selecionarArtista(
-                        oportunidadeId,
-                        interessado.id
-                    );
-
-
-            window
-                .MusicalWorldOportunidadeInteressadosRender
-                .atualizarInteressado(
-                    atualizado
+                await dados.selecionarArtista(
+                    oportunidadeId,
+                    interessado.id
                 );
 
 
-            window
-                .MusicalWorldOportunidadeInteressadosRender
-                .fecharModalSelecao();
+            /*
+             * Atualiza o registro localmente e
+             * redesenha a lista.
+             */
+
+            render.atualizarInteressado(
+                atualizado
+            );
+
+
+            render.fecharModalSelecao();
 
 
             mostrarFeedback(
@@ -194,13 +269,14 @@ window.MusicalWorldOportunidadeInteressadosFluxo = (() => {
                     false;
 
                 botao.textContent =
-                    "Selecionar artista";
+                    "Confirmar seleção";
 
             }
 
         }
 
     }
+
 
 
     /* =====================================================
@@ -213,10 +289,18 @@ window.MusicalWorldOportunidadeInteressadosFluxo = (() => {
     ) {
 
         const elementoFeedback =
-            document.getElementById(
+            elemento(
                 "feedbackOportunidadeInteressados"
             );
 
+
+        /*
+         * O HTML atual ainda não possui um elemento
+         * específico para feedback.
+         *
+         * Enquanto ele não existir, registramos
+         * a mensagem no console.
+         */
 
         if (!elementoFeedback) {
 
@@ -253,153 +337,327 @@ window.MusicalWorldOportunidadeInteressadosFluxo = (() => {
             false;
 
 
-        window.setTimeout(() => {
+        window.setTimeout(
+            () => {
 
-            elementoFeedback.hidden =
-                true;
+                elementoFeedback.hidden =
+                    true;
 
-        }, 4500);
+            },
+            4500
+        );
 
     }
 
 
+
     /* =====================================================
-       EVENTOS
+       OBTER FILTRO PELO BOTÃO
        ===================================================== */
 
-    function registrarEventos() {
+    function obterFiltroDoBotao(
+        botao
+    ) {
 
-        const lista =
-            elemento("interessadosLista");
+        if (!botao) {
 
-
-        if (lista) {
-
-            lista.addEventListener(
-                "click",
-                evento => {
-
-                    const botao =
-                        evento.target.closest(
-                            ".btn-selecionar-artista"
-                        );
-
-
-                    if (!botao) {
-
-                        return;
-
-                    }
-
-
-                    solicitarSelecao(
-                        botao.dataset.interessadoId
-                    );
-
-                }
-            );
+            return "todos";
 
         }
 
 
+        const mapa = {
+
+            filtroTodos:
+                "todos",
+
+            filtroInteressados:
+                "interessados",
+
+            filtroSelecionado:
+                "selecionado"
+
+        };
+
+
+        return mapa[botao.id] ||
+            "todos";
+
+    }
+
+
+
+    /* =====================================================
+       EVENTO DOS FILTROS
+       ===================================================== */
+
+    function registrarEventosFiltros() {
+
         document
-            .querySelectorAll(".filtro-interessados")
+            .querySelectorAll(".oi-filtro")
             .forEach(botao => {
 
                 botao.addEventListener(
                     "click",
                     () => {
 
-                        window
-                            .MusicalWorldOportunidadeInteressadosRender
-                            .definirFiltro(
-                                botao.dataset.filtro
+                        const filtro =
+                            obterFiltroDoBotao(
+                                botao
                             );
 
+
+                        const render =
+                            window
+                                .MusicalWorldOportunidadeInteressadosRender;
+
+
+                        if (
+                            !render ||
+                            typeof render.definirFiltro !==
+                            "function"
+                        ) {
+
+                            return;
+
+                        }
+
+
+                        render.definirFiltro(
+                            filtro
+                        );
+
                     }
                 );
 
             });
 
+    }
+
+
+
+    /* =====================================================
+       EVENTO DA LISTA
+       ===================================================== */
+
+    function registrarEventoLista() {
+
+        const lista =
+            elemento(
+                "interessadosLista"
+            );
+
+
+        if (!lista) {
+
+            return;
+
+        }
+
+
+        /*
+         * Delegação de eventos.
+         *
+         * A lista é renderizada dinamicamente,
+         * então o evento fica no elemento pai.
+         */
+
+        lista.addEventListener(
+            "click",
+            evento => {
+
+                const botao =
+                    evento.target.closest(
+                        ".btn-selecionar-artista"
+                    );
+
+
+                if (!botao) {
+
+                    return;
+
+                }
+
+
+                const interessadoId =
+                    botao.dataset.interessadoId;
+
+
+                solicitarSelecao(
+                    interessadoId
+                );
+
+            }
+        );
+
+    }
+
+
+
+    /* =====================================================
+       BOTÃO CONFIRMAR
+       ===================================================== */
+
+    function registrarEventoConfirmar() {
 
         const confirmar =
-            elemento("btnConfirmarSelecao");
-
-
-        if (confirmar) {
-
-            confirmar.addEventListener(
-                "click",
-                confirmarSelecao
+            elemento(
+                "btnConfirmarSelecao"
             );
+
+
+        if (!confirmar) {
+
+            return;
 
         }
 
+
+        confirmar.addEventListener(
+            "click",
+            confirmarSelecao
+        );
+
+    }
+
+
+
+    /* =====================================================
+       BOTÃO CANCELAR
+       ===================================================== */
+
+    function registrarEventoCancelar() {
 
         const cancelar =
-            elemento("btnCancelarSelecao");
-
-
-        if (cancelar) {
-
-            cancelar.addEventListener(
-                "click",
-                () => {
-
-                    window
-                        .MusicalWorldOportunidadeInteressadosRender
-                        .fecharModalSelecao();
-
-                }
+            elemento(
+                "btnCancelarSelecao"
             );
+
+
+        if (!cancelar) {
+
+            return;
 
         }
 
+
+        cancelar.addEventListener(
+            "click",
+            () => {
+
+                const render =
+                    window
+                        .MusicalWorldOportunidadeInteressadosRender;
+
+
+                if (render) {
+
+                    render.fecharModalSelecao();
+
+                }
+
+            }
+        );
+
+    }
+
+
+
+    /* =====================================================
+       BOTÃO FECHAR MODAL
+       ===================================================== */
+
+    function registrarEventoFecharModal() {
 
         const fechar =
-            elemento("btnFecharModalSelecao");
-
-
-        if (fechar) {
-
-            fechar.addEventListener(
-                "click",
-                () => {
-
-                    window
-                        .MusicalWorldOportunidadeInteressadosRender
-                        .fecharModalSelecao();
-
-                }
+            elemento(
+                "btnFecharModalSelecao"
             );
+
+
+        if (!fechar) {
+
+            return;
 
         }
 
 
-        document
-            .querySelectorAll("[data-modal-fechar]")
-            .forEach(elementoModal => {
+        fechar.addEventListener(
+            "click",
+            () => {
 
-                elementoModal.addEventListener(
-                    "click",
-                    () => {
+                const render =
+                    window
+                        .MusicalWorldOportunidadeInteressadosRender;
 
-                        window
-                            .MusicalWorldOportunidadeInteressadosRender
-                            .fecharModalSelecao();
 
-                    }
-                );
+                if (render) {
 
-            });
+                    render.fecharModalSelecao();
 
+                }
+
+            }
+        );
+
+    }
+
+
+
+    /* =====================================================
+       FECHAR CLICANDO NO OVERLAY
+       ===================================================== */
+
+    function registrarEventoOverlay() {
+
+        const overlay =
+            document.querySelector(
+                "#modalSelecao .oi-modal-overlay"
+            );
+
+
+        if (!overlay) {
+
+            return;
+
+        }
+
+
+        overlay.addEventListener(
+            "click",
+            () => {
+
+                const render =
+                    window
+                        .MusicalWorldOportunidadeInteressadosRender;
+
+
+                if (render) {
+
+                    render.fecharModalSelecao();
+
+                }
+
+            }
+        );
+
+    }
+
+
+
+    /* =====================================================
+       FECHAR COM ESC
+       ===================================================== */
+
+    function registrarEventoEscape() {
 
         document.addEventListener(
             "keydown",
             evento => {
 
                 if (
-                    evento.key !== "Escape"
+                    evento.key !==
+                    "Escape"
                 ) {
 
                     return;
@@ -407,14 +665,62 @@ window.MusicalWorldOportunidadeInteressadosFluxo = (() => {
                 }
 
 
-                window
-                    .MusicalWorldOportunidadeInteressadosRender
-                    .fecharModalSelecao();
+                const modal =
+                    elemento(
+                        "modalSelecao"
+                    );
+
+
+                if (
+                    !modal ||
+                    modal.hidden
+                ) {
+
+                    return;
+
+                }
+
+
+                const render =
+                    window
+                        .MusicalWorldOportunidadeInteressadosRender;
+
+
+                if (render) {
+
+                    render.fecharModalSelecao();
+
+                }
 
             }
         );
 
     }
+
+
+
+    /* =====================================================
+       REGISTRAR TODOS OS EVENTOS
+       ===================================================== */
+
+    function registrarEventos() {
+
+        registrarEventoLista();
+
+        registrarEventosFiltros();
+
+        registrarEventoConfirmar();
+
+        registrarEventoCancelar();
+
+        registrarEventoFecharModal();
+
+        registrarEventoOverlay();
+
+        registrarEventoEscape();
+
+    }
+
 
 
     /* =====================================================
