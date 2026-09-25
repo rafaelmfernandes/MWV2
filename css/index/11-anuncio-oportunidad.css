@@ -1,0 +1,1968 @@
+
+/* =========================================================
+MUSICALWORLD — CARD DE OPORTUNIDADE DO FEED
+
+Arquivo:
+css/index/anuncio-oportunidade.css
+
+Responsabilidades:
+
+* Estilizar exclusivamente os cards de oportunidade.
+* Diferenciar visualmente oportunidades dos cards
+  de artistas e estabelecimentos.
+* Manter o card compacto e legível no mobile.
+* Organizar informações de data, horário, local,
+  cachê, estilos e instrumentos.
+* Identificar visualmente o publicador da oportunidade.
+* Estilizar o botão "Tenho interesse".
+* Estilizar os avatares e contador de interessados.
+* Estilizar o contador de visualizações.
+* Manter responsividade para telas maiores.
+
+Este arquivo NÃO altera os estilos dos cards
+profissionais existentes.
+========================================================= */
+
+
+/* =========================================================
+
+1. CARD PRINCIPAL
+   ========================================================= */
+
+.feed-oportunidade-card {
+
+    position: relative;
+
+    width: 100%;
+
+    box-sizing: border-box;
+
+    margin: 0;
+
+    padding: 0;
+
+    overflow: hidden;
+
+    background: #ffffff;
+
+    border: 1px solid #e4e7ef;
+
+    border-radius: 20px;
+
+    box-shadow:
+        0 4px 16px rgba(23, 32, 51, 0.06);
+
+    cursor: pointer;
+
+    transition:
+        transform 0.18s ease,
+        box-shadow 0.18s ease,
+        border-color 0.18s ease;
+
+}
+
+
+/* =========================================================
+2. INTERAÇÃO DO CARD
+========================================================= */
+
+.feed-oportunidade-card:hover {
+
+    border-color: #d8d1ff;
+
+    box-shadow:
+        0 8px 24px rgba(23, 32, 51, 0.09);
+
+    transform: translateY(-1px);
+
+}
+
+.feed-oportunidade-card:active {
+
+    transform: translateY(0);
+
+    box-shadow:
+        0 4px 14px rgba(23, 32, 51, 0.07);
+
+}
+
+
+/* =========================================================
+3. CABEÇALHO DA OPORTUNIDADE
+========================================================= */
+
+.feed-oportunidade-header {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    width: 100%;
+
+    box-sizing: border-box;
+
+    padding: 16px 18px 0;
+
+    gap: 12px;
+
+}
+
+
+/*
+Área de identificação do publicador.
+
+Contém:
+
+* avatar;
+* nome do publicador;
+* identificação da oportunidade.
+*/
+
+.feed-oportunidade-publicador {
+
+    display: flex;
+
+    align-items: center;
+
+    min-width: 0;
+
+    flex: 1 1 auto;
+
+    gap: 9px;
+
+}
+
+
+/* =========================================================
+4. AVATAR DO PUBLICADOR
+========================================================= */
+
+.feed-oportunidade-publicador-avatar {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    flex: 0 0 auto;
+
+    width: 34px;
+
+    height: 34px;
+
+    overflow: hidden;
+
+    background: #f1edff;
+
+    border: 1px solid #e5defd;
+
+    border-radius: 50%;
+
+    box-sizing: border-box;
+
+}
+
+.feed-oportunidade-publicador-avatar img {
+
+    display: block;
+
+    width: 100%;
+
+    height: 100%;
+
+    object-fit: cover;
+
+}
+
+
+/*
+Avatar alternativo quando o publicador
+não possui foto.
+*/
+
+.feed-oportunidade-publicador-avatar-inicial {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    flex: 0 0 auto;
+
+    width: 34px;
+
+    height: 34px;
+
+    box-sizing: border-box;
+
+    color: #5a4ab5;
+
+    background: #eeeaff;
+
+    border: 1px solid #e5defd;
+
+    border-radius: 50%;
+
+    font-family:
+        "Manrope",
+        sans-serif;
+
+    font-size: 10px;
+
+    font-weight: 800;
+
+    line-height: 1;
+
+    text-transform: uppercase;
+
+}
+
+
+/* =========================================================
+5. DADOS DO PUBLICADOR
+========================================================= */
+
+.feed-oportunidade-publicador-dados {
+
+    display: flex;
+
+    align-items: center;
+
+    min-width: 0;
+
+    gap: 8px;
+
+}
+
+.feed-oportunidade-publicador-nome {
+
+    display: block;
+
+    min-width: 0;
+
+    max-width: 180px;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+
+    color: #30394d;
+
+    font-family:
+        "Manrope",
+        sans-serif;
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    line-height: 1.3;
+
+}
+
+
+/* =========================================================
+6. ÍCONE DA OPORTUNIDADE
+========================================================= */
+
+.feed-oportunidade-icon {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    flex: 0 0 auto;
+
+    width: 32px;
+
+    height: 32px;
+
+    background: #f1edff;
+
+    color: #6d4aff;
+
+    border-radius: 10px;
+
+}
+
+.feed-oportunidade-icon svg {
+
+    width: 17px;
+
+    height: 17px;
+
+    fill: none;
+
+    stroke: currentColor;
+
+    stroke-width: 1.8;
+
+    stroke-linecap: round;
+
+    stroke-linejoin: round;
+
+}
+
+
+/* =========================================================
+7. IDENTIFICAÇÃO "OPORTUNIDADE"
+========================================================= */
+
+.feed-oportunidade-label {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    min-width: 0;
+
+    color: #6d4aff;
+
+    font-family:
+        "Manrope",
+        sans-serif;
+
+    font-size: 10px;
+
+    font-weight: 800;
+
+    line-height: 1.2;
+
+    letter-spacing: 0.08em;
+
+    text-transform: uppercase;
+
+}
+
+
+/* =========================================================
+8. BLOCO "PROCURANDO"
+========================================================= */
+
+.feed-oportunidade-tipo {
+
+    display: flex;
+
+    align-items: baseline;
+
+    flex-wrap: wrap;
+
+    gap: 5px;
+
+    margin-top: 7px;
+
+    color: #6d7587;
+
+    font-family:
+        "Manrope",
+        sans-serif;
+
+    font-size: 12px;
+
+    font-weight: 500;
+
+    line-height: 1.4;
+
+}
+
+.feed-oportunidade-tipo-label {
+
+    color: #6d7587;
+
+    font-weight: 600;
+
+}
+
+.feed-oportunidade-tipo-artista {
+
+    margin: 0;
+
+    color: #30394d;
+
+    font-weight: 800;
+
+}
+
+
+/* =========================================================
+9. CONTEÚDO PRINCIPAL
+========================================================= */
+
+.feed-oportunidade-content {
+
+    box-sizing: border-box;
+
+    width: 100%;
+
+    padding: 12px 18px 16px;
+
+}
+
+
+/* =========================================================
+10. TÍTULO
+========================================================= */
+
+.feed-oportunidade-titulo {
+
+    margin: 0;
+
+    color: #172033;
+
+    font-family:
+        "Manrope",
+        sans-serif;
+
+    font-size: 20px;
+
+    font-weight: 800;
+
+    line-height: 1.25;
+
+    letter-spacing: -0.02em;
+
+    overflow-wrap: anywhere;
+
+}
+
+
+/*
+Mantido para compatibilidade com versões anteriores
+do renderer.
+*/
+
+.feed-oportunidade-estabelecimento {
+
+    margin: 5px 0 0;
+
+    color: #566176;
+
+    font-family:
+        "Manrope",
+        sans-serif;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    line-height: 1.4;
+
+}
+
+
+/* =========================================================
+11. INFORMAÇÕES DO EVENTO
+========================================================= */
+
+.feed-oportunidade-informacoes {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 7px;
+
+    margin-top: 13px;
+
+}
+
+.feed-oportunidade-informacao {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    min-width: 0;
+
+    color: #596478;
+
+    font-family:
+        "Manrope",
+        sans-serif;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    line-height: 1.35;
+
+}
+
+.feed-oportunidade-informacao > span:last-child {
+
+    min-width: 0;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+
+}
+
+.feed-oportunidade-informacao-icon {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    flex: 0 0 auto;
+
+    width: 17px;
+
+    height: 17px;
+
+    color: #7a8498;
+
+}
+
+.feed-oportunidade-informacao-icon svg {
+
+    width: 16px;
+
+    height: 16px;
+
+    fill: none;
+
+    stroke: currentColor;
+
+    stroke-width: 1.7;
+
+    stroke-linecap: round;
+
+    stroke-linejoin: round;
+
+}
+
+
+/* =========================================================
+12. CACHÊ
+========================================================= */
+
+.feed-oportunidade-valor {
+
+    color: #4f586b;
+
+}
+
+.feed-oportunidade-valor .feed-oportunidade-informacao-icon {
+
+    color: #6d4aff;
+
+}
+
+.feed-oportunidade-valor strong {
+
+    margin-left: 3px;
+
+    color: #172033;
+
+    font-weight: 800;
+
+}
+
+
+/* =========================================================
+13. PREFERÊNCIAS
+========================================================= */
+
+.feed-oportunidade-preferencias {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 11px;
+
+    margin-top: 14px;
+
+}
+
+
+/* =========================================================
+14. GRUPOS DE ESTILOS E INSTRUMENTOS
+========================================================= */
+
+.feed-oportunidade-tags-grupo {
+
+    display: flex;
+
+    flex-direction: column;
+
+    min-width: 0;
+
+    gap: 6px;
+
+}
+
+.feed-oportunidade-tags-titulo {
+
+    display: block;
+
+    color: #566176;
+
+    font-family:
+        "Manrope",
+        sans-serif;
+
+    font-size: 10px;
+
+    font-weight: 800;
+
+    line-height: 1.2;
+
+    letter-spacing: 0.04em;
+
+    text-transform: uppercase;
+
+}
+
+
+/* =========================================================
+15. TAGS
+========================================================= */
+
+.feed-oportunidade-tags {
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 6px;
+
+    margin-top: 0;
+
+}
+
+.feed-oportunidade-tag {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    max-width: 100%;
+
+    box-sizing: border-box;
+
+    padding: 5px 9px;
+
+    color: #5a4ab5;
+
+    background: #f5f3ff;
+
+    border: 1px solid #e8e2ff;
+
+    border-radius: 999px;
+
+    font-family:
+        "Manrope",
+        sans-serif;
+
+    font-size: 10px;
+
+    font-weight: 700;
+
+    line-height: 1.2;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+}
+
+
+/* =========================================================
+16. RODAPÉ
+========================================================= */
+
+.feed-oportunidade-footer {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 12px;
+
+    width: 100%;
+
+    box-sizing: border-box;
+
+    padding: 12px 18px 15px;
+
+    border-top: 1px solid #edf0f5;
+
+}
+
+
+/* =========================================================
+17. BOTÃO "TENHO INTERESSE"
+========================================================= */
+
+.feed-oportunidade-interesse {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 7px;
+
+    flex: 0 0 auto;
+
+    min-height: 34px;
+
+    padding: 7px 12px;
+
+    color: #6d4aff;
+
+    background: #f5f3ff;
+
+    border: 1px solid #e6e0ff;
+
+    border-radius: 10px;
+
+    font-family:
+        "Manrope",
+        sans-serif;
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    line-height: 1;
+
+    cursor: pointer;
+
+    transition:
+        background 0.18s ease,
+        border-color 0.18s ease,
+        color 0.18s ease,
+        transform 0.18s ease;
+
+}
+
+.feed-oportunidade-interesse:hover {
+
+    background: #ece7ff;
+
+    border-color: #d9d0ff;
+
+}
+
+.feed-oportunidade-interesse:active {
+
+    transform: scale(0.98);
+
+}
+
+.feed-oportunidade-interesse:focus-visible {
+
+    outline: 2px solid #6d4aff;
+
+    outline-offset: 2px;
+
+}
+
+.feed-oportunidade-interesse-icon {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 15px;
+
+    height: 15px;
+
+}
+
+.feed-oportunidade-interesse-icon svg {
+
+    width: 15px;
+
+    height: 15px;
+
+    fill: none;
+
+    stroke: currentColor;
+
+    stroke-width: 1.8;
+
+    stroke-linecap: round;
+
+    stroke-linejoin: round;
+
+}
+
+
+/* =========================================================
+18. ÁREA DE INTERESSADOS
+========================================================= */
+
+.feed-oportunidade-interessados {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: flex-end;
+
+    min-width: 0;
+
+}
+
+.feed-oportunidade-interessados-info {
+
+    display: flex;
+
+    align-items: center;
+
+    min-width: 0;
+
+}
+
+
+/* =========================================================
+19. AVATARES DOS INTERESSADOS
+========================================================= */
+
+.feed-oportunidade-avatares {
+
+    display: flex;
+
+    align-items: center;
+
+    flex: 0 0 auto;
+
+    margin-right: 6px;
+
+}
+
+.feed-oportunidade-avatar {
+
+    position: relative;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 25px;
+
+    height: 25px;
+
+    margin-left: -7px;
+
+    overflow: hidden;
+
+    background: #ffffff;
+
+    border: 2px solid #ffffff;
+
+    border-radius: 50%;
+
+    box-sizing: border-box;
+
+}
+
+.feed-oportunidade-avatar:first-child {
+
+    margin-left: 0;
+
+}
+
+.feed-oportunidade-avatar img {
+
+    display: block;
+
+    width: 100%;
+
+    height: 100%;
+
+    object-fit: cover;
+
+}
+
+.feed-oportunidade-avatar-inicial {
+
+    color: #5a4ab5;
+
+    background: #eeeaff;
+
+    font-family:
+        "Manrope",
+        sans-serif;
+
+    font-size: 8px;
+
+    font-weight: 800;
+
+}
+
+
+/* =========================================================
+20. CONTADOR DE INTERESSADOS
+========================================================= */
+
+.feed-oportunidade-contador {
+
+    flex: 0 0 auto;
+
+    color: #172033;
+
+    font-family:
+        "Manrope",
+        sans-serif;
+
+    font-size: 12px;
+
+    font-weight: 800;
+
+    line-height: 1.2;
+
+}
+
+.feed-oportunidade-contador-label {
+
+    margin-left: 3px;
+
+    color: #747d90;
+
+    font-family:
+        "Manrope",
+        sans-serif;
+
+    font-size: 10px;
+
+    font-weight: 600;
+
+    line-height: 1.2;
+
+}
+
+
+/* =========================================================
+21. CONTADOR DE VISUALIZAÇÕES
+
+Mostra:
+
+* ícone de olho;
+* quantidade de usuários que visualizaram
+  a oportunidade.
+
+O valor é atualizado pelo JavaScript
+quando a visualização é registrada.
+========================================================= */
+
+.feed-oportunidade-visualizacoes {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    flex: 0 0 auto;
+
+    gap: 4px;
+
+    min-height: 25px;
+
+    color: #747d90;
+
+    font-family:
+        "Manrope",
+        sans-serif;
+
+    font-size: 10px;
+
+    font-weight: 700;
+
+    line-height: 1.2;
+
+    white-space: nowrap;
+
+}
+
+.feed-oportunidade-visualizacoes-icon {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    flex: 0 0 auto;
+
+    width: 15px;
+
+    height: 15px;
+
+    color: #7a8498;
+
+}
+
+.feed-oportunidade-visualizacoes-icon svg {
+
+    display: block;
+
+    width: 15px;
+
+    height: 15px;
+
+    fill: none;
+
+    stroke: currentColor;
+
+    stroke-width: 1.7;
+
+    stroke-linecap: round;
+
+    stroke-linejoin: round;
+
+}
+
+.feed-oportunidade-visualizacoes-contador {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    min-width: 8px;
+
+    color: #596478;
+
+    font-family:
+        "Manrope",
+        sans-serif;
+
+    font-size: 10px;
+
+    font-weight: 800;
+
+    line-height: 1.2;
+
+}
+
+
+/* =========================================================
+22. ORGANIZAÇÃO DOS DADOS DO RODAPÉ
+
+Mantém:
+
+* botão de interesse à esquerda;
+* visualizações;
+* interessados à direita.
+
+========================================================= */
+
+.feed-oportunidade-footer-acoes {
+
+    display: flex;
+
+    align-items: center;
+
+    min-width: 0;
+
+    gap: 10px;
+
+}
+
+
+/* =========================================================
+23. ESTADO SEM INTERESSADOS
+========================================================= */
+
+.feed-oportunidade-interessados:not(
+:has(.feed-oportunidade-avatar)
+) {
+
+    min-height: 25px;
+
+}
+
+
+/* =========================================================
+24. ESTADOS DE INTERESSE
+
+Preparado para quando o JavaScript marcar que o
+usuário atual já demonstrou interesse.
+========================================================= */
+
+.feed-oportunidade-card.interesse-ativo
+.feed-oportunidade-interesse {
+
+    color: #ffffff;
+
+    background: #6d4aff;
+
+    border-color: #6d4aff;
+
+}
+
+.feed-oportunidade-card.interesse-ativo
+.feed-oportunidade-interesse:hover {
+
+    background: #5f3ff0;
+
+    border-color: #5f3ff0;
+
+}
+
+.feed-oportunidade-card.interesse-ativo
+.feed-oportunidade-interesse-icon svg {
+
+    fill: currentColor;
+
+}
+
+
+/* =========================================================
+25. ESTADO DE CARREGAMENTO DO INTERESSE
+========================================================= */
+
+.feed-oportunidade-card.interesse-carregando
+.feed-oportunidade-interesse {
+
+    pointer-events: none;
+
+    opacity: 0.65;
+
+}
+
+
+/* =========================================================
+26. ACESSIBILIDADE
+========================================================= */
+
+.feed-oportunidade-card:focus-within {
+
+    border-color: #d8d1ff;
+
+}
+
+.feed-oportunidade-card
+button:focus-visible {
+
+    outline: 2px solid #6d4aff;
+
+    outline-offset: 2px;
+
+}
+
+
+/* =========================================================
+27. TABLETS
+========================================================= */
+
+@media (min-width: 600px) {
+
+    .feed-oportunidade-card {
+
+        border-radius: 22px;
+
+        margin-bottom: 0;
+    }
+
+
+    .feed-oportunidade-header {
+
+        padding:
+            17px
+            20px
+            0;
+    }
+
+
+    .feed-oportunidade-publicador-avatar,
+    .feed-oportunidade-publicador-avatar-inicial {
+
+        width: 36px;
+
+        height: 36px;
+    }
+
+
+    .feed-oportunidade-publicador-nome {
+
+        max-width: 220px;
+
+        font-size: 12px;
+    }
+
+
+    .feed-oportunidade-content {
+
+        padding:
+            13px
+            20px
+            17px;
+    }
+
+
+    .feed-oportunidade-footer {
+
+        padding:
+            13px
+            20px
+            16px;
+    }
+
+
+    .feed-oportunidade-titulo {
+
+        font-size: 21px;
+    }
+
+
+    .feed-oportunidade-preferencias {
+
+        gap: 12px;
+    }
+
+
+    .feed-oportunidade-visualizacoes {
+
+        gap: 5px;
+
+        min-height: 27px;
+
+        font-size: 11px;
+    }
+
+
+    .feed-oportunidade-visualizacoes-icon {
+
+        width: 16px;
+
+        height: 16px;
+    }
+
+
+    .feed-oportunidade-visualizacoes-icon svg {
+
+        width: 16px;
+
+        height: 16px;
+    }
+
+
+    .feed-oportunidade-visualizacoes-contador {
+
+        font-size: 11px;
+    }
+
+}
+
+
+/* =========================================================
+28. DESKTOP
+========================================================= */
+
+@media (min-width: 900px) {
+
+    .feed-oportunidade-card {
+
+        border-radius: 22px;
+
+        margin-bottom: 0;
+    }
+
+
+    .feed-oportunidade-header {
+
+        padding:
+            18px
+            22px
+            0;
+    }
+
+
+    .feed-oportunidade-publicador-avatar,
+    .feed-oportunidade-publicador-avatar-inicial {
+
+        width: 38px;
+
+        height: 38px;
+    }
+
+
+    .feed-oportunidade-publicador-nome {
+
+        max-width: 280px;
+
+        font-size: 13px;
+    }
+
+
+    .feed-oportunidade-content {
+
+        padding:
+            14px
+            22px
+            18px;
+    }
+
+
+    .feed-oportunidade-footer {
+
+        padding:
+            14px
+            22px
+            17px;
+    }
+
+
+    .feed-oportunidade-titulo {
+
+        font-size: 22px;
+    }
+
+
+    .feed-oportunidade-interesse {
+
+        min-height: 36px;
+
+        padding:
+            8px
+            13px;
+
+        font-size: 12px;
+    }
+
+
+    .feed-oportunidade-avatar {
+
+        width: 27px;
+
+        height: 27px;
+    }
+
+
+    .feed-oportunidade-visualizacoes {
+
+        gap: 5px;
+
+        min-height: 27px;
+
+        font-size: 11px;
+    }
+
+
+    .feed-oportunidade-visualizacoes-icon {
+
+        width: 16px;
+
+        height: 16px;
+    }
+
+
+    .feed-oportunidade-visualizacoes-icon svg {
+
+        width: 16px;
+
+        height: 16px;
+    }
+
+
+    .feed-oportunidade-visualizacoes-contador {
+
+        font-size: 11px;
+    }
+
+}
+
+
+/* =========================================================
+29. MOBILE COMPACTO
+
+O objetivo aqui é manter o card compacto,
+mas melhorar a leitura dos textos principais
+na tela do celular.
+========================================================= */
+
+@media (max-width: 599px) {
+
+    .feed-oportunidade-card {
+
+        margin-bottom: 0;
+
+        border-radius: 17px;
+
+        box-shadow:
+            0 3px 12px rgba(23, 32, 51, 0.05);
+    }
+
+
+    .feed-oportunidade-card:hover {
+
+        transform: none;
+
+        box-shadow:
+            0 3px 12px rgba(23, 32, 51, 0.05);
+    }
+
+
+    .feed-oportunidade-header {
+
+        padding:
+            13px
+            14px
+            0;
+
+        gap: 8px;
+    }
+
+
+    .feed-oportunidade-publicador {
+
+        gap: 7px;
+    }
+
+
+    .feed-oportunidade-publicador-avatar,
+    .feed-oportunidade-publicador-avatar-inicial {
+
+        width: 29px;
+
+        height: 29px;
+    }
+
+
+    .feed-oportunidade-publicador-avatar-inicial {
+
+        font-size: 8px;
+    }
+
+
+    .feed-oportunidade-publicador-dados {
+
+        gap: 5px;
+
+        flex-wrap: wrap;
+    }
+
+
+    .feed-oportunidade-publicador-nome {
+
+        max-width: 125px;
+
+        font-size: 11px;
+    }
+
+
+    .feed-oportunidade-icon {
+
+        width: 28px;
+
+        height: 28px;
+
+        border-radius: 8px;
+    }
+
+
+    .feed-oportunidade-icon svg {
+
+        width: 15px;
+
+        height: 15px;
+    }
+
+
+    .feed-oportunidade-label {
+
+        font-size: 10px;
+
+        letter-spacing: 0.07em;
+    }
+
+
+    .feed-oportunidade-content {
+
+        padding:
+            9px
+            14px
+            12px;
+    }
+
+
+    .feed-oportunidade-titulo {
+
+        font-size: 18px;
+
+        line-height: 1.28;
+    }
+
+
+    .feed-oportunidade-estabelecimento {
+
+        margin-top: 4px;
+
+        font-size: 12px;
+    }
+
+
+    /*
+    "Procurando: Cantor, Músico, Banda..."
+
+    Aumentado para facilitar a leitura
+    sem ocupar espaço excessivo.
+    */
+
+    .feed-oportunidade-tipo {
+
+        gap: 4px;
+
+        margin-top: 6px;
+
+        font-size: 12px;
+
+        line-height: 1.4;
+    }
+
+
+    .feed-oportunidade-tipo-label {
+
+        font-size: 12px;
+
+    }
+
+
+    .feed-oportunidade-tipo-artista {
+
+        font-size: 12px;
+
+    }
+
+
+    /*
+    Data, horário, localização e valor.
+    */
+
+    .feed-oportunidade-informacoes {
+
+        gap: 7px;
+
+        margin-top: 11px;
+    }
+
+
+    .feed-oportunidade-informacao {
+
+        gap: 7px;
+
+        font-size: 12px;
+
+        line-height: 1.4;
+    }
+
+
+    .feed-oportunidade-informacao-icon {
+
+        width: 16px;
+
+        height: 16px;
+    }
+
+
+    .feed-oportunidade-informacao-icon svg {
+
+        width: 15px;
+
+        height: 15px;
+    }
+
+
+    /*
+    Valor do cachê.
+    */
+
+    .feed-oportunidade-valor {
+
+        font-size: 12px;
+
+    }
+
+
+    .feed-oportunidade-valor strong {
+
+        font-size: 12px;
+
+    }
+
+
+    .feed-oportunidade-preferencias {
+
+        gap: 10px;
+
+        margin-top: 11px;
+    }
+
+
+    .feed-oportunidade-tags-grupo {
+
+        gap: 5px;
+    }
+
+
+    .feed-oportunidade-tags-titulo {
+
+        font-size: 9px;
+    }
+
+
+    .feed-oportunidade-tags {
+
+        gap: 5px;
+    }
+
+
+    .feed-oportunidade-tag {
+
+        padding:
+            5px
+            8px;
+
+        font-size: 10px;
+    }
+
+
+    .feed-oportunidade-footer {
+
+        gap: 8px;
+
+        padding:
+            9px
+            14px
+            11px;
+    }
+
+
+    .feed-oportunidade-footer-acoes {
+
+        gap: 7px;
+    }
+
+
+    .feed-oportunidade-interesse {
+
+        min-height: 32px;
+
+        padding:
+            6px
+            9px;
+
+        gap: 5px;
+
+        border-radius: 9px;
+
+        font-size: 10px;
+    }
+
+
+    .feed-oportunidade-interesse-icon {
+
+        width: 13px;
+
+        height: 13px;
+    }
+
+
+    .feed-oportunidade-interesse-icon svg {
+
+        width: 13px;
+
+        height: 13px;
+    }
+
+
+    .feed-oportunidade-avatar {
+
+        width: 22px;
+
+        height: 22px;
+
+        margin-left: -6px;
+
+        border-width: 1.5px;
+    }
+
+
+    .feed-oportunidade-avatar-inicial {
+
+        font-size: 7px;
+    }
+
+
+    .feed-oportunidade-contador {
+
+        font-size: 10px;
+    }
+
+
+    .feed-oportunidade-contador-label {
+
+        font-size: 9px;
+    }
+
+
+    .feed-oportunidade-visualizacoes {
+
+        gap: 3px;
+
+        min-height: 22px;
+
+        font-size: 10px;
+    }
+
+
+    .feed-oportunidade-visualizacoes-icon {
+
+        width: 14px;
+
+        height: 14px;
+    }
+
+
+    .feed-oportunidade-visualizacoes-icon svg {
+
+        width: 14px;
+
+        height: 14px;
+    }
+
+
+    .feed-oportunidade-visualizacoes-contador {
+
+        font-size: 10px;
+    }
+
+}
+
+
+/* =========================================================
+30. TELAS MUITO PEQUENAS
+========================================================= */
+
+@media (max-width: 380px) {
+
+    .feed-oportunidade-header {
+
+        padding:
+            12px
+            12px
+            0;
+    }
+
+
+    .feed-oportunidade-publicador-avatar,
+    .feed-oportunidade-publicador-avatar-inicial {
+
+        width: 27px;
+
+        height: 27px;
+    }
+
+
+    .feed-oportunidade-publicador-nome {
+
+        max-width: 105px;
+
+        font-size: 10px;
+    }
+
+
+    .feed-oportunidade-content {
+
+        padding:
+            8px
+            12px
+            11px;
+    }
+
+
+    .feed-oportunidade-footer {
+
+        padding:
+            8px
+            12px
+            10px;
+    }
+
+
+    .feed-oportunidade-titulo {
+
+        font-size: 17px;
+    }
+
+
+    /*
+    Mantém "Procurando" legível mesmo
+    em aparelhos com tela muito pequena.
+    */
+
+    .feed-oportunidade-tipo {
+
+        font-size: 11px;
+
+        line-height: 1.4;
+    }
+
+
+    .feed-oportunidade-tipo-label {
+
+        font-size: 11px;
+
+    }
+
+
+    .feed-oportunidade-tipo-artista {
+
+        font-size: 11px;
+
+    }
+
+
+    /*
+    Mantém data, horário, localização
+    e valor confortáveis para leitura.
+    */
+
+    .feed-oportunidade-informacao {
+
+        font-size: 11px;
+
+    }
+
+
+    .feed-oportunidade-informacao-icon {
+
+        width: 15px;
+
+        height: 15px;
+    }
+
+
+    .feed-oportunidade-informacao-icon svg {
+
+        width: 14px;
+
+        height: 14px;
+    }
+
+
+    .feed-oportunidade-valor {
+
+        font-size: 11px;
+
+    }
+
+
+    .feed-oportunidade-valor strong {
+
+        font-size: 11px;
+
+    }
+
+
+    .feed-oportunidade-tags-titulo {
+
+        font-size: 9px;
+    }
+
+
+    .feed-oportunidade-tag {
+
+        font-size: 10px;
+
+        padding:
+            4px
+            7px;
+    }
+
+
+    .feed-oportunidade-interesse {
+
+        padding:
+            6px
+            8px;
+
+        font-size: 9px;
+    }
+
+
+    .feed-oportunidade-contador-label {
+
+        display: none;
+    }
+
+
+    .feed-oportunidade-visualizacoes {
+
+        gap: 2px;
+
+        min-height: 21px;
+
+        font-size: 9px;
+    }
+
+
+    .feed-oportunidade-visualizacoes-icon {
+
+        width: 13px;
+
+        height: 13px;
+    }
+
+
+    .feed-oportunidade-visualizacoes-icon svg {
+
+        width: 13px;
+
+        height: 13px;
+    }
+
+
+    .feed-oportunidade-visualizacoes-contador {
+
+        font-size: 9px;
+    }
+
+}
+
+
+/* =========================================================
+31. REDUÇÃO DE MOVIMENTO
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .feed-oportunidade-card,
+    .feed-oportunidade-interesse {
+
+        transition: none;
+    }
+
+}
+

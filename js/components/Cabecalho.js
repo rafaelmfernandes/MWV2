@@ -14,6 +14,9 @@ Responsabilidade deste módulo:
 - Controlar acesso à página de perfis salvos e curtidos.
 - Controlar acesso à página de configurações da conta.
 - Controlar acesso à página de minhas oportunidades.
+- Identificar se o usuário atual é um estabelecimento.
+- Disponibilizar a identificação do tipo de perfil para
+  outros componentes do sistema.
 - Controlar troca de usuário.
 - Controlar logout.
 - Manter compatibilidade com ControleSessao.js.
@@ -68,6 +71,18 @@ const Cabecalho = {
     canalMensagensRealtime: null,
 
     usuarioAtualId: null,
+
+    /*
+    -----------------------------------------------------
+    Tipo de perfil atualmente autenticado.
+
+    Este valor é mantido pelo cabeçalho para que outros
+    componentes possam consultar se o usuário atual é um
+    estabelecimento sem duplicar a regra de identificação.
+    -----------------------------------------------------
+    */
+
+    tipoPerfilAtual: null,
 
     carregandoContadorMensagens: false,
 
@@ -806,6 +821,10 @@ const Cabecalho = {
             null;
 
 
+        this.tipoPerfilAtual =
+            null;
+
+
         this.carregandoContadorMensagens =
             false;
 
@@ -910,6 +929,23 @@ const Cabecalho = {
             return;
 
         }
+
+
+        /*
+        -------------------------------------------------
+        ARMAZENAR TIPO DE PERFIL ATUAL
+        -------------------------------------------------
+
+        O tipo de perfil fica disponível para outros
+        componentes, como o modal de anúncio do index.
+
+        Dessa forma, não é necessário repetir a lista de
+        tipos de estabelecimento em vários arquivos.
+        -------------------------------------------------
+        */
+
+        this.tipoPerfilAtual =
+            tipoPerfil || null;
 
 
         this.usuarioAtualId =
@@ -1023,10 +1059,9 @@ const Cabecalho = {
         A página de gestão de oportunidades pertence aos
         perfis que representam estabelecimentos.
 
-        A regra abaixo utiliza os mesmos tipos definidos
-        na página de gestão de interessados, evitando que
-        cada módulo do sistema tenha uma interpretação
-        diferente sobre quem é um estabelecimento.
+        A identificação agora utiliza o mesmo método
+        público ehEstabelecimento(), que também poderá ser
+        utilizado pelo modal de anúncio do index.
         -------------------------------------------------
         */
 
@@ -1130,38 +1165,25 @@ const Cabecalho = {
 
     /*
     =====================================================
-    MENU — MINHAS OPORTUNIDADES
+    VERIFICAR SE O PERFIL ATUAL É UM ESTABELECIMENTO
     =====================================================
 
-    Controla a visibilidade do item:
+    Este método centraliza a regra utilizada pelo sistema
+    para identificar perfis que podem trabalhar com
+    oportunidades.
 
-        #menu-minhas-oportunidades
+    Outros componentes podem consultar:
 
-    O item permanece oculto para artistas e demais perfis.
+        window.Cabecalho.ehEstabelecimento()
 
-    Os tipos utilizados aqui são os mesmos já utilizados
-    pela página:
-
-        oportunidade-interessados-dados.js
+    Dessa forma, a lista de tipos não precisa ser
+    duplicada em cada módulo.
     =====================================================
     */
 
-    atualizarMenuMinhasOportunidades(
-        tipoPerfil
+    ehEstabelecimento(
+        tipoPerfil = this.tipoPerfilAtual
     ) {
-
-        const menu =
-            document.getElementById(
-                'menu-minhas-oportunidades'
-            );
-
-
-        if (!menu) {
-
-            return;
-
-        }
-
 
         const tipo =
             String(
@@ -1208,9 +1230,50 @@ const Cabecalho = {
         ];
 
 
+        return tiposEstabelecimento.includes(
+            tipo
+        );
+
+    },
+
+
+    /*
+    =====================================================
+    MENU — MINHAS OPORTUNIDADES
+    =====================================================
+
+    Controla a visibilidade do item:
+
+        #menu-minhas-oportunidades
+
+    O item permanece oculto para artistas e demais perfis.
+
+    A regra de identificação é centralizada em:
+
+        ehEstabelecimento()
+    =====================================================
+    */
+
+    atualizarMenuMinhasOportunidades(
+        tipoPerfil
+    ) {
+
+        const menu =
+            document.getElementById(
+                'menu-minhas-oportunidades'
+            );
+
+
+        if (!menu) {
+
+            return;
+
+        }
+
+
         const ehEstabelecimento =
-            tiposEstabelecimento.includes(
-                tipo
+            this.ehEstabelecimento(
+                tipoPerfil
             );
 
 
