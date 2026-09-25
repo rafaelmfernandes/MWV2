@@ -365,6 +365,70 @@
 
 
     <!-- =========================================
+         MINHAS OPORTUNIDADES
+
+         Este item permanece oculto inicialmente.
+         O JavaScript deverá exibi-lo somente
+         para usuários do tipo estabelecimento.
+         ========================================= -->
+
+    <button
+        type="button"
+        id="menu-minhas-oportunidades"
+        class="cabecalho-menu-conta-item"
+        role="menuitem"
+        style="display: none;"
+        onclick="window.location.href='minhas-oportunidades.html'"
+    >
+
+        <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
+        >
+
+            <rect
+                x="4"
+                y="5"
+                width="16"
+                height="14"
+                rx="2"
+                stroke="currentColor"
+                stroke-width="1.8"
+            />
+
+            <path
+                d="M8 9H16"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+            />
+
+            <path
+                d="M8 13H13"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+            />
+
+            <path
+                d="M8 16H11"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+            />
+
+        </svg>
+
+        <span>
+            Minhas oportunidades
+        </span>
+
+    </button>
+
+
+    <!-- =========================================
          DIVISOR
          ========================================= -->
 
@@ -691,10 +755,10 @@
 
 <!-- =================================================
      MODAL DE AVALIAÇÃO
-     
+
      O componente modal-avaliacao.js utiliza este
      container para montar o modal dinamicamente.
-     
+
      O modal só será exibido quando existir uma
      contratação concluída ainda não avaliada pelo
      contratante.

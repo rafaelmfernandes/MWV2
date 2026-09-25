@@ -1,4 +1,3 @@
-
 /* =========================================================
    MUSICALWORLD
    MINHAS OPORTUNIDADES
@@ -613,6 +612,20 @@ a {
 
 
 /* =========================================================
+   METADADOS DO CARD
+   =========================================================
+
+   No desktop e tablet essas informações ficam ocultas.
+
+   Elas são exibidas somente na versão celular.
+   ========================================================= */
+
+.mw-card-meta {
+    display: none;
+}
+
+
+/* =========================================================
    RODAPÉ DO CARD
    ========================================================= */
 
@@ -899,40 +912,248 @@ a {
     }
 
 
-    .mw-card-link {
+    /* =====================================================
+       CARD COMPACTO NO CELULAR
+       ===================================================== */
 
-        padding: 20px;
+    .mw-opportunities {
+
+        gap: 12px;
     }
 
 
+    .mw-opportunity-card {
+
+        border-radius: 16px;
+
+        box-shadow:
+            0 4px 18px rgba(23, 32, 51, 0.05);
+    }
+
+
+    .mw-opportunity-card:hover {
+
+        transform: none;
+
+        box-shadow:
+            0 4px 18px rgba(23, 32, 51, 0.05);
+    }
+
+
+    .mw-card-link {
+
+        padding: 16px;
+    }
+
+
+    /* =====================================================
+       TOPO DO CARD
+       ===================================================== */
+
     .mw-card-top {
 
-        flex-direction: column;
+        display: block;
+
+        margin-bottom: 14px;
+    }
+
+
+    .mw-card-title h2 {
+
+        padding-right: 0;
+
+        font-size: 16px;
+
+        line-height: 1.35;
+
+        letter-spacing: -0.2px;
+    }
+
+
+    /* =====================================================
+       ESCONDER INFORMAÇÕES SECUNDÁRIAS
+       =====================================================
+
+       No celular o card mostra somente:
+
+       - título
+       - data do evento
+       - horário
+       - data de publicação
+       - valor
+
+       O restante continua disponível na página
+       de gerenciamento da oportunidade.
+       ===================================================== */
+
+    .mw-card-status,
+    .mw-card-type {
+
+        display: none;
+    }
+
+
+    /* =====================================================
+       INFORMAÇÕES PRINCIPAIS
+       ===================================================== */
+
+    .mw-card-info {
+
+        display: grid;
+
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 8px;
+
+        margin-bottom: 0;
+    }
+
+
+    .mw-info-item {
+
+        min-width: 0;
+
+        padding: 9px 10px;
+
+        border-radius: 10px;
+    }
+
+
+    .mw-info-label {
+
+        margin-bottom: 3px;
+
+        font-size: 9px;
+
+        letter-spacing: 0.03em;
+    }
+
+
+    .mw-info-value {
+
+        font-size: 12px;
+
+        line-height: 1.35;
+    }
+
+
+    /*
+       Mantém somente os quatro dados principais.
+
+       A ordem esperada pelo card é:
+
+       1. Data do evento
+       2. Horário
+       3. Local
+       4. Valor
+
+       Os demais itens são ocultados.
+    */
+
+    .mw-card-info .mw-info-item:nth-child(n + 5) {
+
+        display: none;
+    }
+
+
+    /* =====================================================
+       METADADOS — DATA DE PUBLICAÇÃO E INTERESSADOS
+       =====================================================
+
+       Essas informações foram adicionadas pelo JavaScript
+       e aparecem somente na versão celular.
+
+       A data possui menor destaque visual.
+
+       A quantidade de interessados recebe um pequeno
+       destaque roxo para facilitar sua identificação.
+       ===================================================== */
+
+    .mw-card-meta {
+
+        margin-top: 12px;
+
+        padding-top: 10px;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-between;
+
+        gap: 12px;
+
+        border-top: 1px solid var(--mw-border);
+    }
+
+
+    .mw-publication-date,
+    .mw-mobile-interested {
+
+        color: var(--mw-text-secondary);
+
+        font-size: 11px;
+
+        line-height: 1.4;
+
+        font-weight: 700;
+    }
+
+
+    .mw-publication-date {
+
+        min-width: 0;
+
+        overflow: hidden;
+
+        text-overflow: ellipsis;
+
+        white-space: nowrap;
+    }
+
+
+    .mw-mobile-interested {
+
+        flex-shrink: 0;
+
+        padding: 5px 8px;
+
+        border-radius: 7px;
+
+        background: var(--mw-primary-light);
+
+        color: var(--mw-primary);
+
+        font-size: 10px;
+
+        font-weight: 800;
+
+        white-space: nowrap;
+    }
+
+
+    /* =====================================================
+       RODAPÉ COMPACTO
+       ===================================================== */
+
+    .mw-card-footer {
+
+        margin-top: 12px;
+
+        padding-top: 10px;
+
+        align-items: center;
+
+        flex-direction: row;
 
         gap: 10px;
     }
 
 
-    .mw-card-status {
+    .mw-interested {
 
-        align-self: flex-start;
-    }
-
-
-    .mw-card-info {
-
-        grid-template-columns:
-            minmax(0, 1fr);
-    }
-
-
-    .mw-card-footer {
-
-        align-items: flex-start;
-
-        flex-direction: column;
-
-        gap: 12px;
+        display: none;
     }
 
 
@@ -940,9 +1161,11 @@ a {
 
         width: 100%;
 
-        min-height: 42px;
+        min-height: 34px;
 
-        border-radius: 10px;
+        padding: 0 12px;
+
+        border-radius: 9px;
 
         display: flex;
 
@@ -951,7 +1174,10 @@ a {
         justify-content: center;
 
         background: var(--mw-primary-light);
+
+        color: var(--mw-primary);
+
+        font-size: 12px;
     }
 
 }
-

@@ -1,3 +1,4 @@
+
 /* =========================================================
    MUSICALWORLD — MINHAS OPORTUNIDADES
 
@@ -485,6 +486,12 @@ function criarCardOportunidade(
         );
 
 
+    const dataPublicacao =
+        formatarDataHoraPublicacao(
+            oportunidade.created_at
+        );
+
+
     const local =
         obterNomeLocal(
             oportunidade.local
@@ -513,6 +520,12 @@ function criarCardOportunidade(
         Number(
             oportunidade.quantidadeInteressados || 0
         );
+
+
+    const textoInteressados =
+        quantidade === 1
+            ? "1 interessado"
+            : `${quantidade} interessados`;
 
 
     const url =
@@ -620,6 +633,27 @@ function criarCardOportunidade(
                         </span>
 
                     </div>
+
+                </div>
+
+
+                <!--
+                    Informações discretas adicionais.
+
+                    A data de publicação vem de created_at.
+                    A quantidade vem da contagem calculada
+                    em carregarQuantidadeInteressados().
+                -->
+
+                <div class="mw-card-meta">
+
+                    <span class="mw-publication-date">
+                        Publicada em ${dataPublicacao}
+                    </span>
+
+                    <span class="mw-mobile-interested">
+                        ${textoInteressados}
+                    </span>
 
                 </div>
 
@@ -871,6 +905,76 @@ function formatarData(data) {
 
     const dia =
         partes[2];
+
+
+    return `${dia}/${mes}/${ano}`;
+
+}
+
+
+/* =========================================================
+   FORMATAR DATA DE PUBLICAÇÃO
+   =========================================================
+
+   O campo created_at do Supabase normalmente chega
+   como timestamp ISO.
+
+   Aqui utilizamos somente a data para manter a
+   informação discreta no card.
+   ========================================================= */
+
+function formatarDataHoraPublicacao(
+    data
+) {
+
+    if (!data) {
+
+        return "Não informada";
+
+    }
+
+
+    const dataObjeto =
+        new Date(
+            data
+        );
+
+
+    if (
+        Number.isNaN(
+            dataObjeto.getTime()
+        )
+    ) {
+
+        return escaparHtml(
+            String(data)
+        );
+
+    }
+
+
+    const dia =
+        String(
+            dataObjeto.getDate()
+        )
+            .padStart(
+                2,
+                "0"
+            );
+
+
+    const mes =
+        String(
+            dataObjeto.getMonth() + 1
+        )
+            .padStart(
+                2,
+                "0"
+            );
+
+
+    const ano =
+        dataObjeto.getFullYear();
 
 
     return `${dia}/${mes}/${ano}`;

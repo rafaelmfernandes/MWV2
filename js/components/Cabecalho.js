@@ -1,4 +1,3 @@
-
 /*
 =========================================================
 MUSICALWORLD — CABEÇALHO PRINCIPAL
@@ -14,6 +13,7 @@ Responsabilidade deste módulo:
 - Controlar o menu da conta através da logo.
 - Controlar acesso à página de perfis salvos e curtidos.
 - Controlar acesso à página de configurações da conta.
+- Controlar acesso à página de minhas oportunidades.
 - Controlar troca de usuário.
 - Controlar logout.
 - Manter compatibilidade com ControleSessao.js.
@@ -136,6 +136,8 @@ const Cabecalho = {
         this.ocultarContadorMensagens();
 
         this.ocultarContadorNotificacoes();
+
+        this.ocultarMenuMinhasOportunidades();
 
 
         try {
@@ -762,6 +764,9 @@ const Cabecalho = {
 
         }
 
+
+        this.ocultarMenuMinhasOportunidades();
+
     },
 
 
@@ -818,6 +823,9 @@ const Cabecalho = {
 
 
         this.fecharMenuConta();
+
+
+        this.ocultarMenuMinhasOportunidades();
 
 
         if (logo) {
@@ -1009,6 +1017,26 @@ const Cabecalho = {
 
         /*
         -------------------------------------------------
+        MENU DE OPORTUNIDADES
+        -------------------------------------------------
+
+        A página de gestão de oportunidades pertence aos
+        perfis que representam estabelecimentos.
+
+        A regra abaixo utiliza os mesmos tipos definidos
+        na página de gestão de interessados, evitando que
+        cada módulo do sistema tenha uma interpretação
+        diferente sobre quem é um estabelecimento.
+        -------------------------------------------------
+        */
+
+        this.atualizarMenuMinhasOportunidades(
+            tipoPerfil
+        );
+
+
+        /*
+        -------------------------------------------------
         AVATAR
         -------------------------------------------------
         */
@@ -1096,6 +1124,145 @@ const Cabecalho = {
         */
 
         this.iniciarRealtimeMensagens();
+
+    },
+
+
+    /*
+    =====================================================
+    MENU — MINHAS OPORTUNIDADES
+    =====================================================
+
+    Controla a visibilidade do item:
+
+        #menu-minhas-oportunidades
+
+    O item permanece oculto para artistas e demais perfis.
+
+    Os tipos utilizados aqui são os mesmos já utilizados
+    pela página:
+
+        oportunidade-interessados-dados.js
+    =====================================================
+    */
+
+    atualizarMenuMinhasOportunidades(
+        tipoPerfil
+    ) {
+
+        const menu =
+            document.getElementById(
+                'menu-minhas-oportunidades'
+            );
+
+
+        if (!menu) {
+
+            return;
+
+        }
+
+
+        const tipo =
+            String(
+                tipoPerfil?.nome ||
+                ''
+            )
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .toLowerCase()
+                .trim()
+                .replace(/_/g, ' ');
+
+
+        const tiposEstabelecimento = [
+
+            'bar',
+
+            'boate',
+
+            'casa shows',
+
+            'casa de shows',
+
+            'clube',
+
+            'contratante',
+
+            'empresa agencia',
+
+            'hotel',
+
+            'organizador eventos',
+
+            'pousada',
+
+            'restaurante',
+
+            'pub',
+
+            'espaco para eventos',
+
+            'estabelecimento'
+
+        ];
+
+
+        const ehEstabelecimento =
+            tiposEstabelecimento.includes(
+                tipo
+            );
+
+
+        if (ehEstabelecimento) {
+
+            menu.style.display =
+                'flex';
+
+            menu.setAttribute(
+                'aria-hidden',
+                'false'
+            );
+
+            return;
+
+        }
+
+
+        this.ocultarMenuMinhasOportunidades();
+
+    },
+
+
+    /*
+    =====================================================
+    OCULTAR MENU — MINHAS OPORTUNIDADES
+    =====================================================
+    */
+
+    ocultarMenuMinhasOportunidades() {
+
+        const menu =
+            document.getElementById(
+                'menu-minhas-oportunidades'
+            );
+
+
+        if (!menu) {
+
+            return;
+
+        }
+
+
+        menu.style.display =
+            'none';
+
+
+        menu.setAttribute(
+            'aria-hidden',
+            'true'
+        );
 
     },
 
@@ -3244,4 +3411,3 @@ document.addEventListener(
 
     }
 );
-
