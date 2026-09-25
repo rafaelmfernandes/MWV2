@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <!-- =====================================================
+         CONFIGURAÇÕES BÁSICAS
+         ===================================================== -->
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Minhas oportunidades | MusicalWorld</title>
+
+    <!-- =====================================================
+         FONTE
+         ===================================================== -->
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <!-- =====================================================
+         CSS DA PÁGINA
+         ===================================================== -->
+
+    <link
+        rel="stylesheet"
+        href="css/oportunidades/minhas-oportunidades.css"
+    >
+
+    <!-- =====================================================
+         SUPABASE
+         ===================================================== -->
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+        defer
+    ></script>
+
+    <!-- =====================================================
+         CORE DO MUSICALWORLD
+         ===================================================== -->
+
+    <script
+        src="js/core/SupabaseClient.js"
+        defer
+    ></script>
+
+    <script
+        src="js/core/Sessao.js"
+        defer
+    ></script>
+
+    <script
+        src="js/core/UsuarioAtual.js"
+        defer
+    ></script>
+
+    <script
+        src="js/core/ControleSessao.js"
+        defer
+    ></script>
+
+    <!-- =====================================================
+         JS DA PÁGINA
+         ===================================================== -->
+
+    <script
+        src="js/oportunidades/minhas-oportunidades.js"
+        defer
+    ></script>
+
+</head>
+
+
+<body>
+
+    <!-- =====================================================
+         CABEÇALHO
+         ===================================================== -->
+
+    <header class="mw-header">
+
+        <div class="mw-header-inner">
+
+            <a
+                href="index.html"
+                class="mw-logo"
+            >
+                MusicalWorld
+            </a>
+
+            <a
+                href="minhas-oportunidades.html"
+                class="mw-header-link active"
+            >
+                Oportunidades
+            </a>
+
+        </div>
+
+    </header>
+
+
+    <!-- =====================================================
+         CONTEÚDO PRINCIPAL
+         ===================================================== -->
+
+    <main class="mw-main">
+
+        <section class="mw-page-header">
+
+            <div>
+
+                <span class="mw-eyebrow">
+                    Gestão
+                </span>
+
+                <h1>
+                    Minhas oportunidades
+                </h1>
+
+                <p>
+                    Acompanhe as oportunidades que você publicou
+                    e gerencie os artistas interessados.
+                </p>
+
+            </div>
+
+            <a
+                href="criar-oportunidades.html"
+                class="mw-primary-button"
+            >
+                Criar oportunidade
+            </a>
+
+        </section>
+
+
+        <!-- =================================================
+             MENSAGEM DE CARREGAMENTO
+             ================================================= -->
+
+        <section
+            id="estadoCarregando"
+            class="mw-state"
+        >
+
+            <div class="mw-loader"></div>
+
+            <p>
+                Carregando suas oportunidades...
+            </p>
+
+        </section>
+
+
+        <!-- =================================================
+             ESTADO DE ERRO
+             ================================================= -->
+
+        <section
+            id="estadoErro"
+            class="mw-state mw-state-error"
+            hidden
+        >
+
+            <div class="mw-state-icon">
+                !
+            </div>
+
+            <h2>
+                Não foi possível carregar suas oportunidades
+            </h2>
+
+            <p id="mensagemErro">
+                Ocorreu um erro ao carregar os dados.
+            </p>
+
+            <button
+                type="button"
+                id="btnTentarNovamente"
+                class="mw-secondary-button"
+            >
+                Tentar novamente
+            </button>
+
+        </section>
+
+
+        <!-- =================================================
+             ESTADO VAZIO
+             ================================================= -->
+
+        <section
+            id="estadoVazio"
+            class="mw-empty"
+            hidden
+        >
+
+            <div class="mw-empty-icon">
+                +
+            </div>
+
+            <h2>
+                Você ainda não publicou nenhuma oportunidade
+            </h2>
+
+            <p>
+                Crie uma oportunidade para encontrar artistas
+                para seus eventos.
+            </p>
+
+            <a
+                href="criar-oportunidades.html"
+                class="mw-primary-button"
+            >
+                Criar primeira oportunidade
+            </a>
+
+        </section>
+
+
+        <!-- =================================================
+             LISTA DE OPORTUNIDADES
+             ================================================= -->
+
+        <section
+            id="listaOportunidades"
+            class="mw-opportunities"
+            aria-label="Minhas oportunidades"
+            hidden
+        ></section>
+
+    </main>
+
+</body>
+
+</html>
+

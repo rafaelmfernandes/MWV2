@@ -1,0 +1,2220 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <!-- =====================================================
+         CONFIGURAÇÕES BÁSICAS
+         ===================================================== -->
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Oportunidades | MusicalWorld</title>
+
+
+    <!-- =====================================================
+         FONTE
+         ===================================================== -->
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+
+    <!-- =====================================================
+         SUPABASE
+         ===================================================== -->
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script src="js/core/SupabaseClient.js"></script>
+    <script src="js/core/Sessao.js"></script>
+    <script src="js/core/UsuarioAtual.js"></script>
+    <script src="js/core/ControleSessao.js"></script>
+
+
+    <!-- =====================================================
+         ESTILOS
+         ===================================================== -->
+
+    <style>
+
+        /* =====================================================
+           MUSICALWORLD — VISUALIZAÇÃO DE OPORTUNIDADE
+
+           Responsabilidade:
+           - Apresentar os detalhes de uma oportunidade.
+           - Identificar o estabelecimento responsável.
+           - Controlar a demonstração de interesse.
+           - Controlar o acesso à gestão da oportunidade.
+           - Manter a página responsiva.
+           ===================================================== */
+
+        :root {
+            --mw-bg: #f5f7fb;
+            --mw-card: #ffffff;
+            --mw-text: #172033;
+            --mw-muted: #6b7280;
+            --mw-border: #e5e7eb;
+
+            --mw-primary: #6d4aff;
+            --mw-primary-dark: #5738e6;
+            --mw-primary-light: #f0edff;
+
+            --mw-success: #16835b;
+            --mw-danger: #c43d4b;
+
+            --mw-radius: 22px;
+        }
+
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+
+        body {
+            margin: 0;
+
+            background: var(--mw-bg);
+            color: var(--mw-text);
+
+            font-family: "Manrope", sans-serif;
+        }
+
+
+        button,
+        textarea {
+            font: inherit;
+        }
+
+
+        button {
+            cursor: pointer;
+        }
+
+
+        /* =====================================================
+           CABEÇALHO
+           ===================================================== */
+
+        .mw-header {
+            position: sticky;
+            top: 0;
+            z-index: 20;
+
+            min-height: 64px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 0 24px;
+
+            background: rgba(255, 255, 255, 0.96);
+            border-bottom: 1px solid var(--mw-border);
+
+            backdrop-filter: blur(10px);
+        }
+
+
+        .mw-logo {
+            color: var(--mw-primary);
+
+            font-size: 20px;
+            font-weight: 800;
+
+            text-decoration: none;
+            letter-spacing: -0.5px;
+        }
+
+
+        .mw-header-link {
+            color: var(--mw-muted);
+
+            font-size: 14px;
+            font-weight: 700;
+
+            text-decoration: none;
+        }
+
+
+        .mw-header-link:hover {
+            color: var(--mw-primary);
+        }
+
+
+        /* =====================================================
+           CONTEÚDO
+           ===================================================== */
+
+        .mw-main {
+            width: min(100% - 32px, 900px);
+
+            margin: 0 auto;
+
+            padding: 40px 0 80px;
+        }
+
+
+        /* =====================================================
+           ESTADO
+           ===================================================== */
+
+        .mw-state {
+            padding: 50px 24px;
+
+            text-align: center;
+
+            background: #fff;
+
+            border: 1px solid var(--mw-border);
+            border-radius: var(--mw-radius);
+        }
+
+
+        .mw-state h1 {
+            margin: 0;
+
+            font-size: 24px;
+        }
+
+
+        .mw-state p {
+            max-width: 560px;
+
+            margin: 10px auto 0;
+
+            color: var(--mw-muted);
+
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+
+        /* =====================================================
+           OPORTUNIDADE
+           ===================================================== */
+
+        .mw-opportunity {
+            display: none;
+        }
+
+
+        .mw-opportunity.is-visible {
+            display: block;
+        }
+
+
+        /* =====================================================
+           CABEÇALHO DA OPORTUNIDADE
+           ===================================================== */
+
+        .mw-hero {
+            padding: clamp(22px, 5vw, 38px);
+
+            background: #fff;
+
+            border: 1px solid var(--mw-border);
+            border-radius: var(--mw-radius);
+
+            box-shadow:
+                0 12px 35px rgba(23, 32, 51, 0.05);
+        }
+
+
+        .mw-eyebrow {
+            margin: 0 0 10px;
+
+            color: var(--mw-primary);
+
+            font-size: 11px;
+            font-weight: 800;
+
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+
+        .mw-hero h1 {
+            margin: 0;
+
+            font-size: clamp(28px, 5vw, 42px);
+            line-height: 1.1;
+
+            letter-spacing: -1px;
+        }
+
+
+        .mw-estabelecimento {
+            margin: 12px 0 0;
+
+            color: var(--mw-muted);
+
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+
+        .mw-status {
+            display: inline-flex;
+            align-items: center;
+
+            margin-top: 20px;
+            padding: 7px 11px;
+
+            color: var(--mw-success);
+            background: #eaf8f2;
+
+            border-radius: 999px;
+
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+
+        /* =====================================================
+           GESTÃO DA OPORTUNIDADE
+
+           Exibida somente para o responsável pela oportunidade.
+           ===================================================== */
+
+        .mw-management {
+            display: none;
+
+            margin-top: 18px;
+            padding-top: 18px;
+
+            border-top: 1px solid var(--mw-border);
+        }
+
+
+        .mw-management.is-visible {
+            display: block;
+        }
+
+
+        .mw-management-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            width: 100%;
+            min-height: 48px;
+
+            padding: 12px 18px;
+
+            color: #fff;
+            background: var(--mw-primary);
+
+            border: 0;
+            border-radius: 12px;
+
+            font-size: 14px;
+            font-weight: 800;
+
+            text-decoration: none;
+
+            transition:
+                background 0.2s ease,
+                transform 0.2s ease;
+        }
+
+
+        .mw-management-button:hover {
+            color: #fff;
+            background: var(--mw-primary-dark);
+            transform: translateY(-1px);
+        }
+
+
+        /* =====================================================
+           DESCRIÇÃO
+           ===================================================== */
+
+        .mw-description {
+            margin-top: 24px;
+
+            color: var(--mw-muted);
+
+            font-size: 14px;
+            line-height: 1.8;
+
+            white-space: pre-line;
+        }
+
+
+        /* =====================================================
+           GRID DE INFORMAÇÕES
+           ===================================================== */
+
+        .mw-info-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(2, minmax(0, 1fr));
+
+            gap: 14px;
+
+            margin-top: 28px;
+        }
+
+
+        .mw-info-card {
+            padding: 17px;
+
+            background: #fafafa;
+
+            border: 1px solid var(--mw-border);
+            border-radius: 15px;
+        }
+
+
+        .mw-info-label {
+            display: block;
+
+            margin-bottom: 6px;
+
+            color: var(--mw-muted);
+
+            font-size: 10px;
+            font-weight: 800;
+
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+
+        .mw-info-value {
+            display: block;
+
+            color: var(--mw-text);
+
+            font-size: 14px;
+            font-weight: 800;
+            line-height: 1.5;
+        }
+
+
+        /* =====================================================
+           SEÇÕES
+           ===================================================== */
+
+        .mw-section {
+            margin-top: 18px;
+            padding: 24px;
+
+            background: #fff;
+
+            border: 1px solid var(--mw-border);
+            border-radius: var(--mw-radius);
+        }
+
+
+        .mw-section h2 {
+            margin: 0 0 16px;
+
+            font-size: 18px;
+            font-weight: 800;
+        }
+
+
+        /* =====================================================
+           TAGS
+           ===================================================== */
+
+        .mw-tags {
+            display: flex;
+            flex-wrap: wrap;
+
+            gap: 8px;
+        }
+
+
+        .mw-tag {
+            padding: 7px 10px;
+
+            color: #5540c8;
+            background: var(--mw-primary-light);
+
+            border-radius: 999px;
+
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+
+        .mw-empty {
+            color: var(--mw-muted);
+
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+
+        /* =====================================================
+           VALOR
+           ===================================================== */
+
+        .mw-value-box {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+
+            padding: 20px;
+
+            background: var(--mw-primary-light);
+
+            border: 1px solid rgba(109, 74, 255, 0.14);
+            border-radius: 15px;
+        }
+
+
+        .mw-value-label {
+            color: #6253ad;
+
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+
+        .mw-value {
+            color: var(--mw-primary);
+
+            font-size: 25px;
+            font-weight: 800;
+        }
+
+
+        /* =====================================================
+           FEEDBACK
+           ===================================================== */
+
+        .mw-feedback {
+            display: none;
+
+            margin-top: 18px;
+            padding: 14px 16px;
+
+            border-radius: 12px;
+
+            font-size: 13px;
+            font-weight: 700;
+            line-height: 1.5;
+        }
+
+
+        .mw-feedback.is-visible {
+            display: block;
+        }
+
+
+        .mw-feedback.success {
+            color: var(--mw-success);
+            background: #eaf8f2;
+            border: 1px solid #c5eadb;
+        }
+
+
+        .mw-feedback.error {
+            color: var(--mw-danger);
+            background: #fff0f2;
+            border: 1px solid #f3c9cf;
+        }
+
+
+        /* =====================================================
+           ÁREA DE INTERESSE
+           ===================================================== */
+
+        .mw-interest {
+            margin-top: 18px;
+            padding: 24px;
+
+            background: #fff;
+
+            border: 1px solid var(--mw-border);
+            border-radius: var(--mw-radius);
+        }
+
+
+        .mw-interest h2 {
+            margin: 0;
+
+            font-size: 19px;
+        }
+
+
+        .mw-interest p {
+            margin: 9px 0 18px;
+
+            color: var(--mw-muted);
+
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+
+        .mw-message {
+            width: 100%;
+            min-height: 110px;
+
+            padding: 13px 14px;
+
+            color: var(--mw-text);
+            background: #fff;
+
+            border: 1px solid var(--mw-border);
+            border-radius: 12px;
+
+            outline: none;
+
+            resize: vertical;
+        }
+
+
+        .mw-message:focus {
+            border-color: var(--mw-primary);
+
+            box-shadow:
+                0 0 0 3px rgba(109, 74, 255, 0.12);
+        }
+
+
+        .mw-button {
+            width: 100%;
+            min-height: 50px;
+
+            margin-top: 14px;
+
+            border: 0;
+            border-radius: 12px;
+
+            color: #fff;
+            background: var(--mw-primary);
+
+            font-size: 14px;
+            font-weight: 800;
+
+            transition:
+                background 0.2s ease,
+                transform 0.2s ease,
+                opacity 0.2s ease;
+        }
+
+
+        .mw-button:hover {
+            background: var(--mw-primary-dark);
+            transform: translateY(-1px);
+        }
+
+
+        .mw-button:disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+            transform: none;
+        }
+
+
+        .mw-already {
+            display: none;
+
+            padding: 16px;
+
+            color: var(--mw-success);
+            background: #eaf8f2;
+
+            border: 1px solid #c5eadb;
+            border-radius: 12px;
+
+            font-size: 13px;
+            font-weight: 700;
+            line-height: 1.6;
+        }
+
+
+        .mw-already.is-visible {
+            display: block;
+        }
+
+
+        /* =====================================================
+           RESPONSIVIDADE
+           ===================================================== */
+
+        @media (max-width: 650px) {
+
+            .mw-header {
+                padding: 0 16px;
+            }
+
+
+            .mw-main {
+                width: min(100% - 20px, 900px);
+
+                padding-top: 24px;
+            }
+
+
+            .mw-info-grid {
+                grid-template-columns: 1fr;
+            }
+
+
+            .mw-section,
+            .mw-interest {
+                padding: 20px;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+    <!-- =====================================================
+         CABEÇALHO
+         ===================================================== -->
+
+    <header class="mw-header">
+
+        <a
+            href="index.html"
+            class="mw-logo"
+        >
+            MusicalWorld
+        </a>
+
+
+        <a
+            href="oportunidades.html"
+            class="mw-header-link"
+        >
+            Oportunidades
+        </a>
+
+    </header>
+
+
+    <!-- =====================================================
+         CONTEÚDO
+         ===================================================== -->
+
+    <main class="mw-main">
+
+
+        <!-- =================================================
+             CARREGAMENTO
+             ================================================= -->
+
+        <section
+            id="estadoCarregamento"
+            class="mw-state"
+        >
+
+            <h1>
+                Carregando oportunidade...
+            </h1>
+
+            <p>
+                Aguarde enquanto carregamos os detalhes.
+            </p>
+
+        </section>
+
+
+        <!-- =================================================
+             ERRO
+             ================================================= -->
+
+        <section
+            id="estadoErro"
+            class="mw-state"
+            hidden
+        >
+
+            <h1>
+                Oportunidade não encontrada
+            </h1>
+
+            <p id="mensagemErro">
+                Não foi possível carregar esta oportunidade.
+            </p>
+
+        </section>
+
+
+        <!-- =================================================
+             OPORTUNIDADE
+             ================================================= -->
+
+        <article
+            id="oportunidade"
+            class="mw-opportunity"
+        >
+
+
+            <!-- =============================================
+                 HERO
+                 ============================================= -->
+
+            <section class="mw-hero">
+
+                <p class="mw-eyebrow">
+                    Oportunidade de contratação
+                </p>
+
+
+                <h1 id="titulo">
+                    -
+                </h1>
+
+
+                <p
+                    id="estabelecimento"
+                    class="mw-estabelecimento"
+                >
+                    -
+                </p>
+
+
+                <span
+                    id="status"
+                    class="mw-status"
+                >
+                    Aberta
+                </span>
+
+
+                <!-- =========================================
+                     GESTÃO DA OPORTUNIDADE
+                     ========================================= -->
+
+                <div
+                    id="areaGerenciamento"
+                    class="mw-management"
+                >
+
+                    <a
+                        id="btnGerenciar"
+                        class="mw-management-button"
+                        href="#"
+                    >
+                        Gerenciar oportunidade
+                    </a>
+
+                </div>
+
+
+                <div
+                    id="descricao"
+                    class="mw-description"
+                ></div>
+
+
+                <!-- =========================================
+                     INFORMAÇÕES
+                     ========================================= -->
+
+                <div class="mw-info-grid">
+
+
+                    <div class="mw-info-card">
+
+                        <span class="mw-info-label">
+                            Procura-se
+                        </span>
+
+                        <span
+                            id="tipoArtista"
+                            class="mw-info-value"
+                        >
+                            -
+                        </span>
+
+                    </div>
+
+
+                    <div class="mw-info-card">
+
+                        <span class="mw-info-label">
+                            Data do evento
+                        </span>
+
+                        <span
+                            id="dataEvento"
+                            class="mw-info-value"
+                        >
+                            -
+                        </span>
+
+                    </div>
+
+
+                    <div class="mw-info-card">
+
+                        <span class="mw-info-label">
+                            Horário
+                        </span>
+
+                        <span
+                            id="horario"
+                            class="mw-info-value"
+                        >
+                            -
+                        </span>
+
+                    </div>
+
+
+                    <div class="mw-info-card">
+
+                        <span class="mw-info-label">
+                            Local
+                        </span>
+
+                        <span
+                            id="local"
+                            class="mw-info-value"
+                        >
+                            -
+                        </span>
+
+                    </div>
+
+
+                    <div class="mw-info-card">
+
+                        <span class="mw-info-label">
+                            Prazo para interesse
+                        </span>
+
+                        <span
+                            id="prazo"
+                            class="mw-info-value"
+                        >
+                            -
+                        </span>
+
+                    </div>
+
+
+                </div>
+
+            </section>
+
+
+            <!-- =============================================
+                 ESTILOS
+                 ============================================= -->
+
+            <section class="mw-section">
+
+                <h2>
+                    Estilos musicais
+                </h2>
+
+
+                <div
+                    id="estilos"
+                    class="mw-tags"
+                ></div>
+
+            </section>
+
+
+            <!-- =============================================
+                 INSTRUMENTOS
+                 ============================================= -->
+
+            <section class="mw-section">
+
+                <h2>
+                    Instrumentos
+                </h2>
+
+
+                <div
+                    id="instrumentos"
+                    class="mw-tags"
+                ></div>
+
+            </section>
+
+
+            <!-- =============================================
+                 VALOR
+                 ============================================= -->
+
+            <section class="mw-section">
+
+                <h2>
+                    Cachê / orçamento
+                </h2>
+
+
+                <div class="mw-value-box">
+
+                    <span class="mw-value-label">
+                        Valor disponível
+                    </span>
+
+                    <span
+                        id="valor"
+                        class="mw-value"
+                    >
+                        -
+                    </span>
+
+                </div>
+
+            </section>
+
+
+            <!-- =============================================
+                 INTERESSE
+                 ============================================= -->
+
+            <section
+                id="areaInteresse"
+                class="mw-interest"
+            >
+
+                <h2>
+                    Tenho interesse
+                </h2>
+
+
+                <p>
+                    Demonstre seu interesse nesta oportunidade.
+                    O estabelecimento poderá analisar seu perfil
+                    e entrar em contato caso tenha interesse.
+                </p>
+
+
+                <textarea
+                    id="mensagemInteresse"
+                    class="mw-message"
+                    maxlength="1000"
+                    placeholder="Escreva uma mensagem para o estabelecimento (opcional)..."
+                ></textarea>
+
+
+                <button
+                    type="button"
+                    id="btnInteresse"
+                    class="mw-button"
+                >
+                    Tenho interesse
+                </button>
+
+
+                <div
+                    id="feedback"
+                    class="mw-feedback"
+                    role="alert"
+                ></div>
+
+
+                <div
+                    id="jaInteressado"
+                    class="mw-already"
+                >
+                    Você já demonstrou interesse nesta oportunidade.
+                    O estabelecimento poderá visualizar seu perfil.
+                </div>
+
+            </section>
+
+
+        </article>
+
+    </main>
+
+
+    <!-- =========================================================
+         JAVASCRIPT
+         ========================================================= -->
+
+    <script>
+
+        /* =========================================================
+           MUSICALWORLD — VISUALIZAÇÃO DE OPORTUNIDADE
+
+           Responsabilidades:
+           - Ler o ID da oportunidade.
+           - Carregar os dados do Supabase.
+           - Carregar o estabelecimento.
+           - Identificar o usuário atual.
+           - Verificar interesse existente.
+           - Registrar novo interesse.
+           - Liberar a gestão somente para o responsável.
+           ========================================================= */
+
+
+        (() => {
+
+            "use strict";
+
+
+            const estadoCarregamento =
+                document.getElementById(
+                    "estadoCarregamento"
+                );
+
+            const estadoErro =
+                document.getElementById(
+                    "estadoErro"
+                );
+
+            const mensagemErro =
+                document.getElementById(
+                    "mensagemErro"
+                );
+
+            const oportunidadeElement =
+                document.getElementById(
+                    "oportunidade"
+                );
+
+
+            const titulo =
+                document.getElementById(
+                    "titulo"
+                );
+
+            const estabelecimento =
+                document.getElementById(
+                    "estabelecimento"
+                );
+
+            const status =
+                document.getElementById(
+                    "status"
+                );
+
+            const descricao =
+                document.getElementById(
+                    "descricao"
+                );
+
+            const tipoArtista =
+                document.getElementById(
+                    "tipoArtista"
+                );
+
+            const dataEvento =
+                document.getElementById(
+                    "dataEvento"
+                );
+
+            const horario =
+                document.getElementById(
+                    "horario"
+                );
+
+            const local =
+                document.getElementById(
+                    "local"
+                );
+
+            const prazo =
+                document.getElementById(
+                    "prazo"
+                );
+
+            const estilos =
+                document.getElementById(
+                    "estilos"
+                );
+
+            const instrumentos =
+                document.getElementById(
+                    "instrumentos"
+                );
+
+            const valor =
+                document.getElementById(
+                    "valor"
+                );
+
+            const btnInteresse =
+                document.getElementById(
+                    "btnInteresse"
+                );
+
+            const mensagemInteresse =
+                document.getElementById(
+                    "mensagemInteresse"
+                );
+
+            const feedback =
+                document.getElementById(
+                    "feedback"
+                );
+
+            const jaInteressado =
+                document.getElementById(
+                    "jaInteressado"
+                );
+
+
+            const areaGerenciamento =
+                document.getElementById(
+                    "areaGerenciamento"
+                );
+
+            const btnGerenciar =
+                document.getElementById(
+                    "btnGerenciar"
+                );
+
+
+            let oportunidadeAtual = null;
+            let usuarioAtual = null;
+
+
+            /* =====================================================
+               CLIENTE SUPABASE
+               ===================================================== */
+
+            function obterClienteSupabase() {
+
+                const cliente =
+                    window.supabaseClient ||
+                    window.MusicalWorldSupabase ||
+                    window.musicalWorldSupabase;
+
+                if (!cliente) {
+
+                    throw new Error(
+                        "Cliente Supabase não encontrado."
+                    );
+                }
+
+                return cliente;
+            }
+
+
+            /* =====================================================
+               ESCAPAR HTML
+               ===================================================== */
+
+            function escaparHtml(valor) {
+
+                return String(valor ?? "")
+                    .replaceAll("&", "&amp;")
+                    .replaceAll("<", "&lt;")
+                    .replaceAll(">", "&gt;")
+                    .replaceAll('"', "&quot;")
+                    .replaceAll("'", "&#039;");
+            }
+
+
+            /* =====================================================
+               ID DA URL
+               ===================================================== */
+
+            function obterIdOportunidade() {
+
+                const params =
+                    new URLSearchParams(
+                        window.location.search
+                    );
+
+
+                return (
+                    params.get("id") ||
+                    params.get("oportunidade_id") ||
+                    params.get("oportunidadeId") ||
+                    ""
+                ).trim();
+            }
+
+
+            /* =====================================================
+               DATA
+               ===================================================== */
+
+            function formatarData(data) {
+
+                if (!data) {
+                    return "Não informada";
+                }
+
+
+                const partes =
+                    String(data).split("-");
+
+
+                if (partes.length !== 3) {
+                    return data;
+                }
+
+
+                return new Intl.DateTimeFormat(
+                    "pt-BR"
+                ).format(
+                    new Date(
+                        Number(partes[0]),
+                        Number(partes[1]) - 1,
+                        Number(partes[2])
+                    )
+                );
+            }
+
+
+            /* =====================================================
+               HORÁRIO
+               ===================================================== */
+
+            function formatarHorario(
+                inicio,
+                fim
+            ) {
+
+                if (!inicio && !fim) {
+                    return "A definir";
+                }
+
+
+                if (inicio && fim) {
+
+                    return `${inicio.slice(0, 5)} às ${fim.slice(0, 5)}`;
+                }
+
+
+                if (inicio) {
+                    return inicio.slice(0, 5);
+                }
+
+
+                return "A definir";
+            }
+
+
+            /* =====================================================
+               VALOR
+               ===================================================== */
+
+            function formatarValor(valorRecebido) {
+
+                const numero =
+                    Number(valorRecebido);
+
+
+                if (!Number.isFinite(numero)) {
+                    return "A combinar";
+                }
+
+
+                return new Intl.NumberFormat(
+                    "pt-BR",
+                    {
+                        style: "currency",
+                        currency: "BRL"
+                    }
+                ).format(numero);
+            }
+
+
+            /* =====================================================
+               ARRAY
+               ===================================================== */
+
+            function normalizarArray(valorRecebido) {
+
+                if (Array.isArray(valorRecebido)) {
+                    return valorRecebido.filter(Boolean);
+                }
+
+
+                return [];
+            }
+
+
+            /* =====================================================
+               LOCAL
+               ===================================================== */
+
+            function formatarLocal(localRecebido) {
+
+                if (!localRecebido) {
+                    return "Local não informado";
+                }
+
+
+                if (
+                    typeof localRecebido === "string"
+                ) {
+
+                    return localRecebido;
+                }
+
+
+                const endereco =
+                    [
+                        localRecebido.endereco,
+                        localRecebido.numero
+                    ]
+                        .filter(Boolean)
+                        .join(", ");
+
+
+                const cidadeEstado =
+                    [
+                        localRecebido.cidade,
+                        localRecebido.estado
+                    ]
+                        .filter(Boolean)
+                        .join("/");
+
+
+                const partes = [];
+
+
+                if (endereco) {
+                    partes.push(endereco);
+                }
+
+
+                if (localRecebido.bairro) {
+                    partes.push(
+                        localRecebido.bairro
+                    );
+                }
+
+
+                if (cidadeEstado) {
+                    partes.push(
+                        cidadeEstado
+                    );
+                }
+
+
+                if (localRecebido.cep) {
+                    partes.push(
+                        `CEP ${localRecebido.cep}`
+                    );
+                }
+
+
+                return (
+                    partes.join(" — ") ||
+                    localRecebido.nomeLocal ||
+                    "Local não informado"
+                );
+            }
+
+
+            /* =====================================================
+               CARREGAR USUÁRIO
+               ===================================================== */
+
+            async function carregarUsuario() {
+
+                const supabase =
+                    obterClienteSupabase();
+
+
+                const {
+                    data,
+                    error
+                } = await supabase.auth.getUser();
+
+
+                if (error) {
+                    throw error;
+                }
+
+
+                usuarioAtual =
+                    data?.user || null;
+            }
+
+
+            /* =====================================================
+               CARREGAR OPORTUNIDADE
+               ===================================================== */
+
+            async function carregarOportunidade(
+                id
+            ) {
+
+                const supabase =
+                    obterClienteSupabase();
+
+
+                const {
+                    data,
+                    error
+                } = await supabase
+                    .from("oportunidades")
+                    .select(`
+                        id,
+                        contratante_id,
+                        titulo,
+                        descricao,
+                        tipo_artista,
+                        data_evento,
+                        hora_inicio,
+                        hora_fim,
+                        estilos,
+                        instrumentos,
+                        valor,
+                        local,
+                        prazo_interesse,
+                        status,
+                        created_at
+                    `)
+                    .eq(
+                        "id",
+                        id
+                    )
+                    .maybeSingle();
+
+
+                if (error) {
+                    throw error;
+                }
+
+
+                if (!data) {
+
+                    throw new Error(
+                        "A oportunidade não foi encontrada."
+                    );
+                }
+
+
+                oportunidadeAtual =
+                    data;
+            }
+
+
+            /* =====================================================
+               CARREGAR ESTABELECIMENTO
+               ===================================================== */
+
+            async function carregarEstabelecimento() {
+
+                const supabase =
+                    obterClienteSupabase();
+
+
+                const {
+                    data,
+                    error
+                } = await supabase
+                    .from("perfis")
+                    .select(`
+                        usuario_id,
+                        nome_exibicao,
+                        tipos_perfil (
+                            nome
+                        )
+                    `)
+                    .eq(
+                        "usuario_id",
+                        oportunidadeAtual.contratante_id
+                    )
+                    .maybeSingle();
+
+
+                if (error) {
+                    throw error;
+                }
+
+
+                const nome =
+                    data?.nome_exibicao ||
+                    oportunidadeAtual.local?.nomeLocal ||
+                    "Estabelecimento";
+
+
+                estabelecimento.textContent =
+                    nome;
+            }
+
+
+            /* =====================================================
+               CONFIGURAR GESTÃO
+
+               O botão de gestão é exibido somente quando o
+               usuário autenticado é o responsável pela oportunidade.
+
+               O ID utilizado no link é o ID real retornado pelo
+               Supabase, garantindo que a página de interessados
+               receba:
+               
+               oportunidade-interessados.html?id=ID
+               ===================================================== */
+
+            function configurarGerenciamento() {
+
+                if (
+                    !usuarioAtual ||
+                    !oportunidadeAtual
+                ) {
+
+                    return;
+                }
+
+
+                const ehResponsavel =
+                    String(
+                        usuarioAtual.id
+                    ) ===
+                    String(
+                        oportunidadeAtual.contratante_id
+                    );
+
+
+                if (!ehResponsavel) {
+
+                    areaGerenciamento
+                        .classList
+                        .remove(
+                            "is-visible"
+                        );
+
+                    return;
+                }
+
+
+                btnGerenciar.href =
+                    `oportunidade-interessados.html?id=${encodeURIComponent(
+                        oportunidadeAtual.id
+                    )}`;
+
+
+                areaGerenciamento
+                    .classList
+                    .add(
+                        "is-visible"
+                    );
+            }
+
+
+            /* =====================================================
+               RENDERIZAR
+               ===================================================== */
+
+            function renderizar() {
+
+                titulo.textContent =
+                    oportunidadeAtual.titulo ||
+                    "Oportunidade";
+
+
+                status.textContent =
+                    oportunidadeAtual.status === "aberta"
+                        ? "Aberta"
+                        : oportunidadeAtual.status;
+
+
+                tipoArtista.textContent =
+                    oportunidadeAtual.tipo_artista ||
+                    "Não informado";
+
+
+                dataEvento.textContent =
+                    formatarData(
+                        oportunidadeAtual.data_evento
+                    );
+
+
+                horario.textContent =
+                    formatarHorario(
+                        oportunidadeAtual.hora_inicio,
+                        oportunidadeAtual.hora_fim
+                    );
+
+
+                local.textContent =
+                    formatarLocal(
+                        oportunidadeAtual.local
+                    );
+
+
+                prazo.textContent =
+                    oportunidadeAtual.prazo_interesse
+                        ? formatarData(
+                            oportunidadeAtual.prazo_interesse
+                        )
+                        : "Até preencher a oportunidade";
+
+
+                valor.textContent =
+                    formatarValor(
+                        oportunidadeAtual.valor
+                    );
+
+
+                if (
+                    oportunidadeAtual.descricao
+                ) {
+
+                    descricao.textContent =
+                        oportunidadeAtual.descricao;
+
+                } else {
+
+                    descricao.textContent =
+                        "O estabelecimento não adicionou uma descrição para esta oportunidade.";
+                }
+
+
+                renderizarTags(
+                    estilos,
+                    oportunidadeAtual.estilos,
+                    "Nenhum estilo informado."
+                );
+
+
+                renderizarTags(
+                    instrumentos,
+                    oportunidadeAtual.instrumentos,
+                    "Nenhum instrumento informado."
+                );
+            }
+
+
+            /* =====================================================
+               TAGS
+               ===================================================== */
+
+            function renderizarTags(
+                container,
+                valores,
+                mensagem
+            ) {
+
+                const lista =
+                    normalizarArray(
+                        valores
+                    );
+
+
+                if (!lista.length) {
+
+                    container.innerHTML = `
+
+                        <span class="mw-empty">
+                            ${mensagem}
+                        </span>
+
+                    `;
+
+                    return;
+                }
+
+
+                container.innerHTML =
+                    lista
+                        .map(
+                            item => `
+                                <span class="mw-tag">
+                                    ${escaparHtml(item)}
+                                </span>
+                            `
+                        )
+                        .join("");
+            }
+
+
+            /* =====================================================
+               VERIFICAR INTERESSE EXISTENTE
+               ===================================================== */
+
+            async function verificarInteresse() {
+
+                if (!usuarioAtual) {
+                    return;
+                }
+
+
+                if (
+                    String(
+                        usuarioAtual.id
+                    ) === String(
+                        oportunidadeAtual.contratante_id
+                    )
+                ) {
+
+                    areaInteresseDesabilitada(
+                        "Você é o responsável por esta oportunidade."
+                    );
+
+                    return;
+                }
+
+
+                const supabase =
+                    obterClienteSupabase();
+
+
+                const {
+                    data,
+                    error
+                } = await supabase
+                    .from("oportunidades_interessados")
+                    .select(`
+                        id,
+                        status
+                    `)
+                    .eq(
+                        "oportunidade_id",
+                        oportunidadeAtual.id
+                    )
+                    .eq(
+                        "artista_id",
+                        usuarioAtual.id
+                    )
+                    .maybeSingle();
+
+
+                if (error) {
+
+                    console.warn(
+                        "MusicalWorld — erro ao verificar interesse:",
+                        error
+                    );
+
+                    return;
+                }
+
+
+                if (data) {
+
+                    jaInteressado.classList.add(
+                        "is-visible"
+                    );
+
+
+                    btnInteresse.disabled =
+                        true;
+
+
+                    mensagemInteresse.disabled =
+                        true;
+
+                }
+            }
+
+
+            /* =====================================================
+               DESABILITAR ÁREA DO RESPONSÁVEL
+               ===================================================== */
+
+            function areaInteresseDesabilitada(
+                mensagem
+            ) {
+
+                btnInteresse.disabled =
+                    true;
+
+
+                mensagemInteresse.disabled =
+                    true;
+
+
+                mensagemInteresse.style.display =
+                    "none";
+
+
+                btnInteresse.style.display =
+                    "none";
+
+
+                const texto =
+                    document.querySelector(
+                        "#areaInteresse > p"
+                    );
+
+
+                if (texto) {
+
+                    texto.textContent =
+                        mensagem;
+                }
+            }
+
+
+            /* =====================================================
+               FEEDBACK
+               ===================================================== */
+
+            function mostrarFeedback(
+                mensagem,
+                tipo
+            ) {
+
+                feedback.textContent =
+                    mensagem;
+
+                feedback.className =
+                    `mw-feedback is-visible ${tipo}`;
+            }
+
+
+            /* =====================================================
+               DEMONSTRAR INTERESSE
+               ===================================================== */
+
+            async function demonstrarInteresse() {
+
+                if (!usuarioAtual) {
+
+                    mostrarFeedback(
+                        "Faça login para demonstrar interesse.",
+                        "error"
+                    );
+
+                    return;
+                }
+
+
+                if (!oportunidadeAtual) {
+
+                    mostrarFeedback(
+                        "A oportunidade ainda não foi carregada.",
+                        "error"
+                    );
+
+                    return;
+                }
+
+
+                if (
+                    String(
+                        usuarioAtual.id
+                    ) === String(
+                        oportunidadeAtual.contratante_id
+                    )
+                ) {
+
+                    mostrarFeedback(
+                        "Você não pode demonstrar interesse na própria oportunidade.",
+                        "error"
+                    );
+
+                    return;
+                }
+
+
+                if (
+                    oportunidadeAtual.status !== "aberta"
+                ) {
+
+                    mostrarFeedback(
+                        "Esta oportunidade não está mais aberta.",
+                        "error"
+                    );
+
+                    return;
+                }
+
+
+                if (
+                    oportunidadeAtual.prazo_interesse &&
+                    oportunidadeAtual.prazo_interesse <
+                    obterDataHoje()
+                ) {
+
+                    mostrarFeedback(
+                        "O prazo para demonstrar interesse já terminou.",
+                        "error"
+                    );
+
+                    return;
+                }
+
+
+                try {
+
+                    btnInteresse.disabled =
+                        true;
+
+                    btnInteresse.textContent =
+                        "Enviando...";
+
+
+                    const supabase =
+                        obterClienteSupabase();
+
+
+                    const mensagem =
+                        mensagemInteresse.value.trim();
+
+
+                    const registro = {
+
+                        oportunidade_id:
+                            oportunidadeAtual.id,
+
+                        artista_id:
+                            usuarioAtual.id,
+
+                        mensagem:
+                            mensagem || null,
+
+                        status:
+                            "interessado"
+
+                    };
+
+
+                    const {
+                        error
+                    } = await supabase
+                        .from(
+                            "oportunidades_interessados"
+                        )
+                        .insert(
+                            registro
+                        );
+
+
+                    if (error) {
+                        throw error;
+                    }
+
+
+                    mostrarFeedback(
+                        "Seu interesse foi enviado com sucesso.",
+                        "success"
+                    );
+
+
+                    jaInteressado.classList.add(
+                        "is-visible"
+                    );
+
+
+                    mensagemInteresse.disabled =
+                        true;
+
+
+                    btnInteresse.textContent =
+                        "Interesse enviado";
+
+
+                } catch (erro) {
+
+                    console.error(
+                        "MusicalWorld — erro ao demonstrar interesse:",
+                        erro
+                    );
+
+
+                    if (
+                        erro?.code === "23505"
+                    ) {
+
+                        jaInteressado.classList.add(
+                            "is-visible"
+                        );
+
+
+                        btnInteresse.disabled =
+                            true;
+
+
+                        mensagemInteresse.disabled =
+                            true;
+
+
+                        btnInteresse.textContent =
+                            "Interesse enviado";
+
+
+                        return;
+                    }
+
+
+                    mostrarFeedback(
+                        erro?.message ||
+                        "Não foi possível enviar seu interesse.",
+                        "error"
+                    );
+
+
+                    btnInteresse.disabled =
+                        false;
+
+                    btnInteresse.textContent =
+                        "Tenho interesse";
+                }
+            }
+
+
+            /* =====================================================
+               DATA DE HOJE
+               ===================================================== */
+
+            function obterDataHoje() {
+
+                const agora =
+                    new Date();
+
+
+                const ano =
+                    agora.getFullYear();
+
+
+                const mes =
+                    String(
+                        agora.getMonth() + 1
+                    ).padStart(2, "0");
+
+
+                const dia =
+                    String(
+                        agora.getDate()
+                    ).padStart(2, "0");
+
+
+                return `${ano}-${mes}-${dia}`;
+            }
+
+
+            /* =====================================================
+               EXIBIR ERRO
+               ===================================================== */
+
+            function mostrarErro(
+                mensagem
+            ) {
+
+                estadoCarregamento.hidden =
+                    true;
+
+
+                oportunidadeElement
+                    .classList
+                    .remove(
+                        "is-visible"
+                    );
+
+
+                mensagemErro.textContent =
+                    mensagem ||
+                    "Não foi possível carregar esta oportunidade.";
+
+
+                estadoErro.hidden =
+                    false;
+            }
+
+
+            /* =====================================================
+               INICIALIZAÇÃO
+               ===================================================== */
+
+            async function inicializar() {
+
+                try {
+
+                    const id =
+                        obterIdOportunidade();
+
+
+                    if (!id) {
+
+                        throw new Error(
+                            "O ID da oportunidade não foi informado."
+                        );
+                    }
+
+
+                    await carregarUsuario();
+
+                    await carregarOportunidade(
+                        id
+                    );
+
+                    await carregarEstabelecimento();
+
+                    renderizar();
+
+                    configurarGerenciamento();
+
+                    await verificarInteresse();
+
+
+                    estadoCarregamento.hidden =
+                        true;
+
+
+                    oportunidadeElement
+                        .classList
+                        .add(
+                            "is-visible"
+                        );
+
+
+                } catch (erro) {
+
+                    console.error(
+                        "MusicalWorld — erro ao carregar oportunidade:",
+                        erro
+                    );
+
+
+                    mostrarErro(
+                        erro?.message
+                    );
+                }
+            }
+
+
+            /* =====================================================
+               EVENTO
+               ===================================================== */
+
+            btnInteresse.addEventListener(
+                "click",
+                demonstrarInteresse
+            );
+
+
+            /* =====================================================
+               INICIAR
+               ===================================================== */
+
+            inicializar();
+
+        })();
+
+    </script>
+
+</body>
+
+</html>
+

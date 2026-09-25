@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <!-- =====================================================
+         MUSICALWORLD — VISUALIZAÇÃO DE PROPOSTA
+
+         Arquivo:
+         proposta.html
+
+         Responsabilidade:
+         - Exibir uma proposta de contratação.
+         - Apresentar os dados do participante correto
+           conforme o papel do usuário.
+         - Permitir posteriormente aceitar ou recusar
+           quando o usuário for o destinatário.
+         - Servir como página intermediária antes do
+           acompanhamento da contratação.
+
+         Observação:
+         - Esta página não contém lógica de negócio.
+         - Os dados serão carregados pelos módulos JavaScript
+           específicos da visualização da proposta.
+         ===================================================== -->
+
+
+    <!-- =====================================================
+         CONFIGURAÇÕES BÁSICAS
+         ===================================================== -->
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Visualização de proposta de contratação no MusicalWorld."
+    >
+
+    <title>Proposta | MusicalWorld</title>
+
+
+    <!-- =====================================================
+         FONTES
+         ===================================================== -->
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+
+    <!-- =====================================================
+         CSS DA PÁGINA
+         ===================================================== -->
+
+    <link
+        rel="stylesheet"
+        href="css/proposta/proposta-visualizacao.css"
+    >
+
+</head>
+
+
+<body>
+
+
+    <!-- =====================================================
+         CONTAINER PRINCIPAL
+         ===================================================== -->
+
+    <main
+        id="propostaPage"
+        class="proposta-page"
+    >
+
+
+        <!-- =================================================
+             CABEÇALHO DA PÁGINA
+             ================================================= -->
+
+        <header class="proposta-header">
+
+            <div class="proposta-header-inner">
+
+
+                <!-- Botão voltar -->
+
+                <button
+                    type="button"
+                    id="btnVoltar"
+                    class="proposta-btn-voltar"
+                    aria-label="Voltar"
+                >
+
+                    <svg
+                        class="proposta-icon"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        aria-hidden="true"
+                    >
+                        <path d="M19 12H5"></path>
+                        <path d="M12 19l-7-7 7-7"></path>
+                    </svg>
+
+                    <span>Voltar</span>
+
+                </button>
+
+
+                <!-- Identificação -->
+
+                <div class="proposta-header-titulo">
+
+                    <span class="proposta-header-eyebrow">
+                        Contratação
+                    </span>
+
+                    <h1>
+                        Nova proposta
+                    </h1>
+
+                    <p>
+                        Analise os detalhes da proposta.
+                    </p>
+
+                </div>
+
+
+            </div>
+
+        </header>
+
+
+
+        <!-- =================================================
+             CONTEÚDO
+             ================================================= -->
+
+        <section class="proposta-conteudo">
+
+
+            <!-- =================================================
+                 ESTADO DE CARREGAMENTO
+                 ================================================= -->
+
+            <section
+                id="propostaLoading"
+                class="proposta-estado proposta-loading"
+                aria-live="polite"
+            >
+
+                <div class="proposta-loading-indicador"></div>
+
+                <p>
+                    Carregando proposta...
+                </p>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 ESTADO DE ERRO
+                 ================================================= -->
+
+            <section
+                id="propostaErro"
+                class="proposta-estado proposta-erro"
+                hidden
+                aria-live="assertive"
+            >
+
+                <div class="proposta-estado-icone">
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        aria-hidden="true"
+                    >
+                        <circle
+                            cx="12"
+                            cy="12"
+                            r="10"
+                        ></circle>
+
+                        <line
+                            x1="12"
+                            y1="8"
+                            x2="12"
+                            y2="12"
+                        ></line>
+
+                        <line
+                            x1="12"
+                            y1="16"
+                            x2="12.01"
+                            y2="16"
+                        ></line>
+                    </svg>
+
+                </div>
+
+                <h2>
+                    Não foi possível carregar a proposta
+                </h2>
+
+                <p id="propostaErroMensagem">
+                    Ocorreu um problema ao carregar os dados da proposta.
+                </p>
+
+                <button
+                    type="button"
+                    id="btnVoltarErro"
+                    class="proposta-btn proposta-btn-secundario"
+                >
+                    Voltar
+                </button>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 PROPOSTA
+                 ================================================= -->
+
+            <div
+                id="propostaConteudo"
+                class="proposta-conteudo-principal"
+                hidden
+            >
+
+
+                <!-- =================================================
+                     IDENTIFICAÇÃO DA PROPOSTA
+                     ================================================= -->
+
+                <section class="proposta-card proposta-card-artista">
+
+
+                    <div class="proposta-card-topo">
+
+                        <div>
+
+                            <!--
+                                 Este texto é preenchido pelo
+                                 renderizador conforme o papel
+                                 do usuário:
+                                 - Proposta recebida
+                                 - Proposta enviada
+                            -->
+
+                            <span
+                                id="propostaCardEyebrow"
+                                class="proposta-card-eyebrow"
+                            >
+                                Proposta recebida
+                            </span>
+
+
+                            <!--
+                                 Este título também é preenchido
+                                 dinamicamente:
+                                 - Detalhes do profissional
+                                 - Detalhes do estabelecimento
+                            -->
+
+                            <h2 id="propostaCardTitulo">
+                                Detalhes do profissional
+                            </h2>
+
+                        </div>
+
+
+                        <span
+                            id="propostaStatus"
+                            class="proposta-status"
+                        >
+                            Nova proposta
+                        </span>
+
+                    </div>
+
+
+
+                    <!-- =================================================
+                         PERFIL DO PARTICIPANTE
+                         ================================================= -->
+
+                    <div class="proposta-artista">
+
+                        <div class="proposta-artista-foto">
+
+                            <img
+                                id="propostaArtistaFoto"
+                                src=""
+                                alt="Foto do participante"
+                            >
+
+                            <div
+                                id="propostaArtistaFotoPlaceholder"
+                                class="proposta-artista-foto-placeholder"
+                                aria-hidden="true"
+                            >
+
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                >
+                                    <path d="M20 21a8 8 0 0 0-16 0"></path>
+
+                                    <circle
+                                        cx="12"
+                                        cy="7"
+                                        r="4"
+                                    ></circle>
+
+                                </svg>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="proposta-artista-dados">
+
+                            <h3 id="propostaArtistaNome">
+                                —
+                            </h3>
+
+                            <span id="propostaArtistaTipo">
+                                —
+                            </span>
+
+                            <span
+                                id="propostaArtistaLocalizacao"
+                                class="proposta-artista-localizacao"
+                            >
+                                —
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+
+                <!-- =================================================
+                     RESUMO DO EVENTO
+                     ================================================= -->
+
+                <section class="proposta-card">
+
+
+                    <div class="proposta-card-topo">
+
+                        <div>
+
+                            <span class="proposta-card-eyebrow">
+                                Evento
+                            </span>
+
+                            <h2>
+                                Detalhes da contratação
+                            </h2>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="proposta-detalhes-grid">
+
+
+                        <!-- Serviço -->
+
+                        <div
+                            id="propostaServicoContainer"
+                            class="proposta-detalhe"
+                        >
+
+                            <div class="proposta-detalhe-icone">
+
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    aria-hidden="true"
+                                >
+                                    <path d="M20 7h-4V3H8v4H4v14h16V7z"></path>
+                                    <path d="M8 3h8"></path>
+                                </svg>
+
+                            </div>
+
+                            <div>
+
+                                <span>
+                                    Serviço
+                                </span>
+
+                                <strong id="propostaServico">
+                                    —
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+
+
+                        <!-- Data -->
+
+                        <div class="proposta-detalhe">
+
+                            <div class="proposta-detalhe-icone">
+
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    aria-hidden="true"
+                                >
+                                    <rect
+                                        x="3"
+                                        y="4"
+                                        width="18"
+                                        height="18"
+                                        rx="2"
+                                        ry="2"
+                                    ></rect>
+
+                                    <line
+                                        x1="16"
+                                        y1="2"
+                                        x2="16"
+                                        y2="6"
+                                    ></line>
+
+                                    <line
+                                        x1="8"
+                                        y1="2"
+                                        x2="8"
+                                        y2="6"
+                                    ></line>
+
+                                    <line
+                                        x1="3"
+                                        y1="10"
+                                        x2="21"
+                                        y2="10"
+                                    ></line>
+
+                                </svg>
+
+                            </div>
+
+                            <div>
+
+                                <span>
+                                    Data
+                                </span>
+
+                                <strong id="propostaData">
+                                    —
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+
+
+                        <!-- Horário -->
+
+                        <div class="proposta-detalhe">
+
+                            <div class="proposta-detalhe-icone">
+
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    aria-hidden="true"
+                                >
+                                    <circle
+                                        cx="12"
+                                        cy="12"
+                                        r="9"
+                                    ></circle>
+
+                                    <polyline
+                                        points="12 7 12 12 15 14"
+                                    ></polyline>
+
+                                </svg>
+
+                            </div>
+
+                            <div>
+
+                                <span>
+                                    Horário
+                                </span>
+
+                                <strong id="propostaHorario">
+                                    A definir
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+
+
+                        <!-- Local -->
+
+                        <div class="proposta-detalhe">
+
+                            <div class="proposta-detalhe-icone">
+
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    aria-hidden="true"
+                                >
+                                    <path
+                                        d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0z"
+                                    ></path>
+
+                                    <circle
+                                        cx="12"
+                                        cy="10"
+                                        r="2.5"
+                                    ></circle>
+
+                                </svg>
+
+                            </div>
+
+                            <div>
+
+                                <span>
+                                    Local
+                                </span>
+
+                                <strong id="propostaLocalNome">
+                                    —
+                                </strong>
+
+                                <small id="propostaLocalEndereco">
+                                    —
+                                </small>
+
+                            </div>
+
+                        </div>
+
+
+                    </div>
+
+                </section>
+
+
+
+                <!-- =================================================
+                     VALOR DA PROPOSTA
+                     ================================================= -->
+
+                <section class="proposta-card proposta-card-valor">
+
+
+                    <div>
+
+                        <span class="proposta-card-eyebrow">
+                            Valor da proposta
+                        </span>
+
+                        <h2>
+                            Valor combinado
+                        </h2>
+
+                    </div>
+
+
+                    <strong
+                        id="propostaValor"
+                        class="proposta-valor"
+                    >
+                        R$ 0,00
+                    </strong>
+
+
+                </section>
+
+
+
+                <!-- =================================================
+                     OBSERVAÇÕES
+                     ================================================= -->
+
+                <section
+                    id="propostaObservacoesContainer"
+                    class="proposta-card"
+                    hidden
+                >
+
+                    <div class="proposta-card-topo">
+
+                        <div>
+
+                            <span class="proposta-card-eyebrow">
+                                Informações adicionais
+                            </span>
+
+                            <h2>
+                                Observações
+                            </h2>
+
+                        </div>
+
+                    </div>
+
+
+                    <p
+                        id="propostaObservacoes"
+                        class="proposta-observacoes"
+                    >
+                    </p>
+
+                </section>
+
+
+
+                <!-- =================================================
+                     AÇÕES
+                     ================================================= -->
+
+                <section
+                    id="propostaAcoes"
+                    class="proposta-acoes"
+                >
+
+                    <div class="proposta-acoes-texto">
+
+                        <strong>
+                            O que deseja fazer?
+                        </strong>
+
+                        <span>
+                            Analise os detalhes antes de responder à proposta.
+                        </span>
+
+                    </div>
+
+
+                    <div class="proposta-acoes-botoes">
+
+
+                        <button
+                            type="button"
+                            id="btnRecusarProposta"
+                            class="proposta-btn proposta-btn-recusar"
+                        >
+
+                            <svg
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                aria-hidden="true"
+                            >
+                                <line
+                                    x1="18"
+                                    y1="6"
+                                    x2="6"
+                                    y2="18"
+                                ></line>
+
+                                <line
+                                    x1="6"
+                                    y1="6"
+                                    x2="18"
+                                    y2="18"
+                                ></line>
+
+                            </svg>
+
+                            <span>
+                                Recusar proposta
+                            </span>
+
+                        </button>
+
+
+                        <button
+                            type="button"
+                            id="btnAceitarProposta"
+                            class="proposta-btn proposta-btn-aceitar"
+                        >
+
+                            <svg
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                aria-hidden="true"
+                            >
+                                <polyline
+                                    points="20 6 9 17 4 12"
+                                ></polyline>
+
+                            </svg>
+
+                            <span>
+                                Aceitar proposta
+                            </span>
+
+                        </button>
+
+
+                    </div>
+
+                </section>
+
+
+
+                <!-- =================================================
+                     MENSAGEM DE PROCESSAMENTO
+                     ================================================= -->
+
+                <div
+                    id="propostaProcessando"
+                    class="proposta-processando"
+                    hidden
+                    aria-live="polite"
+                >
+
+                    <div class="proposta-loading-indicador"></div>
+
+                    <span>
+                        Processando...
+                    </span>
+
+                </div>
+
+
+
+                <!-- =================================================
+                     MENSAGEM DE RESULTADO
+                     ================================================= -->
+
+                <div
+                    id="propostaResultado"
+                    class="proposta-resultado"
+                    hidden
+                    aria-live="polite"
+                >
+
+                    <div
+                        id="propostaResultadoIcone"
+                        class="proposta-resultado-icone"
+                    >
+                    </div>
+
+                    <strong
+                        id="propostaResultadoTitulo"
+                    >
+                    </strong>
+
+                    <p
+                        id="propostaResultadoMensagem"
+                    >
+                    </p>
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+
+    <!-- =====================================================
+         SCRIPTS DO CORE
+         ===================================================== -->
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script src="js/core/SupabaseClient.js"></script>
+
+    <script src="js/core/Sessao.js"></script>
+
+    <script src="js/core/UsuarioAtual.js"></script>
+
+    <script src="js/core/ControleSessao.js"></script>
+
+    <script src="js/core/RoteamentoPerfil.js"></script>
+
+
+
+    <!-- =====================================================
+         SCRIPTS DA VISUALIZAÇÃO DA PROPOSTA
+         ===================================================== -->
+
+    <script src="js/proposta/proposta-visualizacao-dados.js"></script>
+
+    <script src="js/proposta/proposta-visualizacao-render.js"></script>
+
+    <script src="js/proposta/proposta-visualizacao-fluxo.js"></script>
+
+    <script src="js/proposta/proposta-visualizacao.js"></script>
+
+
+</body>
+
+</html>

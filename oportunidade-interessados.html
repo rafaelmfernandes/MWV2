@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <!-- =====================================================
+         CONFIGURAÇÕES BÁSICAS
+         ===================================================== -->
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Interessados | MusicalWorld</title>
+
+
+    <!-- =====================================================
+         FAVICON
+         ===================================================== -->
+
+    <link
+        rel="icon"
+        href="data:,"
+    >
+
+
+    <!-- =====================================================
+         CSS PRINCIPAL
+         ===================================================== -->
+
+    <link
+        rel="stylesheet"
+        href="css/main.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="css/oportunidades/oportunidade-interessados.css"
+    >
+
+</head>
+
+
+<body>
+
+    <!-- =====================================================
+         CABEÇALHO
+         ===================================================== -->
+
+    <header class="oportunidade-interessados-header">
+
+        <div class="oportunidade-interessados-header-inner">
+
+            <a
+                href="oportunidades.html"
+                class="oportunidade-interessados-voltar"
+                aria-label="Voltar para oportunidades"
+            >
+
+                <svg
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                >
+                    <path
+                        d="M15 18l-6-6 6-6"
+                    />
+                </svg>
+
+                <span>Oportunidades</span>
+
+            </a>
+
+
+            <div class="oportunidade-interessados-logo">
+                MusicalWorld
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <!-- =====================================================
+         CONTEÚDO PRINCIPAL
+         ===================================================== -->
+
+    <main class="oportunidade-interessados-page">
+
+        <!-- =================================================
+             ESTADO DE CARREGAMENTO
+             ================================================= -->
+
+        <section
+            id="estadoCarregando"
+            class="oportunidade-interessados-estado"
+        >
+
+            <div class="oportunidade-interessados-loader"></div>
+
+            <p>Carregando interessados...</p>
+
+        </section>
+
+
+        <!-- =================================================
+             ESTADO DE ERRO
+             ================================================= -->
+
+        <section
+            id="estadoErro"
+            class="oportunidade-interessados-estado oportunidade-interessados-estado-erro"
+            hidden
+        >
+
+            <div class="oportunidade-interessados-estado-icone">
+
+                <svg
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                >
+                    <path
+                        d="M12 9v4"
+                    />
+
+                    <path
+                        d="M12 17h.01"
+                    />
+
+                    <path
+                        d="M10.3 3.9L2.7 17a2 2 0 001.7 3h15.2a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z"
+                    />
+                </svg>
+
+            </div>
+
+            <h1>Não foi possível carregar</h1>
+
+            <p id="estadoErroMensagem">
+                Ocorreu um erro ao carregar esta oportunidade.
+            </p>
+
+            <button
+                type="button"
+                id="btnTentarNovamente"
+                class="btn-principal"
+            >
+                Tentar novamente
+            </button>
+
+        </section>
+
+
+        <!-- =================================================
+             CONTEÚDO DA OPORTUNIDADE
+             ================================================= -->
+
+        <div
+            id="conteudoOportunidade"
+            class="oportunidade-interessados-conteudo"
+            hidden
+        >
+
+            <!-- =============================================
+                 CABEÇALHO DA OPORTUNIDADE
+                 ============================================= -->
+
+            <section class="oportunidade-interessados-intro">
+
+                <div>
+
+                    <span class="oportunidade-interessados-eyebrow">
+                        Gestão da oportunidade
+                    </span>
+
+                    <h1 id="oportunidadeTitulo">
+                        Oportunidade
+                    </h1>
+
+                    <p id="oportunidadeDescricao">
+                        Gerencie os artistas que demonstraram interesse.
+                    </p>
+
+                </div>
+
+
+                <a
+                    href="#"
+                    id="btnVerOportunidade"
+                    class="btn-secundario"
+                >
+                    Ver oportunidade
+                </a>
+
+            </section>
+
+
+            <!-- =============================================
+                 RESUMO
+                 ============================================= -->
+
+            <section class="oportunidade-resumo-card">
+
+                <div class="oportunidade-resumo-identidade">
+
+                    <div
+                        id="estabelecimentoAvatar"
+                        class="oportunidade-resumo-avatar"
+                    >
+                        <span id="estabelecimentoAvatarInicial">
+                            M
+                        </span>
+                    </div>
+
+
+                    <div>
+
+                        <span
+                            id="estabelecimentoTipo"
+                            class="oportunidade-resumo-tipo"
+                        >
+                            Estabelecimento
+                        </span>
+
+                        <strong id="estabelecimentoNome">
+                            Estabelecimento
+                        </strong>
+
+                        <span id="estabelecimentoLocalizacao">
+                            Goiânia/GO
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="oportunidade-resumo-detalhes">
+
+                    <div class="oportunidade-resumo-item">
+
+                        <span>Evento</span>
+
+                        <strong id="resumoData">
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <div class="oportunidade-resumo-item">
+
+                        <span>Horário</span>
+
+                        <strong id="resumoHorario">
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <div class="oportunidade-resumo-item">
+
+                        <span>Valor</span>
+
+                        <strong id="resumoValor">
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <div class="oportunidade-resumo-item oportunidade-resumo-item-destaque">
+
+                        <span>Interessados</span>
+
+                        <strong id="resumoInteressados">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =============================================
+                 FILTROS
+                 ============================================= -->
+
+            <section class="oportunidade-interessados-filtros">
+
+                <div class="oportunidade-interessados-filtros-topo">
+
+                    <div>
+
+                        <span class="oportunidade-interessados-section-label">
+                            Artistas interessados
+                        </span>
+
+                        <h2>
+                            Quem demonstrou interesse
+                        </h2>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    class="oportunidade-interessados-filtro-lista"
+                    role="tablist"
+                    aria-label="Filtrar interessados"
+                >
+
+                    <button
+                        type="button"
+                        class="filtro-interessados ativo"
+                        data-filtro="todos"
+                        role="tab"
+                        aria-selected="true"
+                    >
+                        Todos
+                        <span id="contadorTodos">0</span>
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="filtro-interessados"
+                        data-filtro="interessado"
+                        role="tab"
+                        aria-selected="false"
+                    >
+                        Interessados
+                        <span id="contadorInteressados">0</span>
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="filtro-interessados"
+                        data-filtro="selecionado"
+                        role="tab"
+                        aria-selected="false"
+                    >
+                        Selecionado
+                        <span id="contadorSelecionado">0</span>
+                    </button>
+
+                </div>
+
+            </section>
+
+
+            <!-- =============================================
+                 LISTA DE INTERESSADOS
+                 ============================================= -->
+
+            <section
+                id="interessadosLista"
+                class="interessados-lista"
+            >
+            </section>
+
+
+            <!-- =============================================
+                 ESTADO SEM INTERESSADOS
+                 ============================================= -->
+
+            <section
+                id="estadoSemInteressados"
+                class="interessados-vazio"
+                hidden
+            >
+
+                <div class="interessados-vazio-icone">
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                    >
+                        <path
+                            d="M20 21a8 8 0 00-16 0"
+                        />
+
+                        <circle
+                            cx="12"
+                            cy="7"
+                            r="4"
+                        />
+                    </svg>
+
+                </div>
+
+                <h2>Nenhum interessado ainda</h2>
+
+                <p>
+                    Quando artistas demonstrarem interesse nesta oportunidade,
+                    eles aparecerão aqui.
+                </p>
+
+            </section>
+
+
+            <!-- =============================================
+                 ESTADO DE FILTRO VAZIO
+                 ============================================= -->
+
+            <section
+                id="estadoFiltroVazio"
+                class="interessados-vazio"
+                hidden
+            >
+
+                <div class="interessados-vazio-icone">
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                    >
+                        <path
+                            d="M4 6h16"
+                        />
+
+                        <path
+                            d="M7 12h10"
+                        />
+
+                        <path
+                            d="M10 18h4"
+                        />
+
+                    </svg>
+
+                </div>
+
+                <h2>Nenhum resultado</h2>
+
+                <p>
+                    Não há interessados nesta categoria.
+                </p>
+
+            </section>
+
+        </div>
+
+    </main>
+
+
+    <!-- =====================================================
+         MODAL DE CONFIRMAÇÃO
+         ===================================================== -->
+
+    <div
+        id="modalSelecao"
+        class="modal-selecao"
+        hidden
+    >
+
+        <div
+            class="modal-selecao-overlay"
+            data-modal-fechar
+        ></div>
+
+
+        <section
+            class="modal-selecao-card"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="modalSelecaoTitulo"
+        >
+
+            <button
+                type="button"
+                id="btnFecharModalSelecao"
+                class="modal-selecao-fechar"
+                aria-label="Fechar"
+            >
+                <svg
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                >
+                    <path d="M18 6L6 18"></path>
+                    <path d="M6 6l12 12"></path>
+                </svg>
+            </button>
+
+
+            <div class="modal-selecao-icone">
+
+                <svg
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                >
+                    <path d="M20 6L9 17l-5-5"></path>
+                </svg>
+
+            </div>
+
+
+            <span class="modal-selecao-eyebrow">
+                Selecionar artista
+            </span>
+
+
+            <h2 id="modalSelecaoTitulo">
+                Selecionar este artista?
+            </h2>
+
+
+            <p id="modalSelecaoMensagem">
+                Este artista será marcado como selecionado para esta oportunidade.
+            </p>
+
+
+            <div class="modal-selecao-artista">
+
+                <strong id="modalArtistaNome">
+                    Artista
+                </strong>
+
+                <span id="modalArtistaTipo">
+                    Músico(a)
+                </span>
+
+            </div>
+
+
+            <div class="modal-selecao-acoes">
+
+                <button
+                    type="button"
+                    id="btnCancelarSelecao"
+                    class="btn-secundario"
+                >
+                    Cancelar
+                </button>
+
+
+                <button
+                    type="button"
+                    id="btnConfirmarSelecao"
+                    class="btn-principal"
+                >
+                    Selecionar artista
+                </button>
+
+            </div>
+
+        </section>
+
+    </div>
+
+
+    <!-- =====================================================
+         SUPABASE
+         ===================================================== -->
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+
+    <!-- =====================================================
+         CORE MUSICALWORLD
+         ===================================================== -->
+
+    <script src="js/core/SupabaseClient.js"></script>
+    <script src="js/core/Sessao.js"></script>
+    <script src="js/core/UsuarioAtual.js"></script>
+    <script src="js/core/ControleSessao.js"></script>
+    <script src="js/core/RoteamentoPerfil.js"></script>
+
+
+    <!-- =====================================================
+         MÓDULOS DA PÁGINA
+         ===================================================== -->
+
+    <script src="js/oportunidades/oportunidade-interessados-dados.js"></script>
+    <script src="js/oportunidades/oportunidade-interessados-render.js"></script>
+    <script src="js/oportunidades/oportunidade-interessados-fluxo.js"></script>
+    <script src="js/oportunidades/oportunidade-interessados.js"></script>
+
+</body>
+
+</html>

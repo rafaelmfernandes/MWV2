@@ -1,0 +1,1897 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <!-- =====================================================
+         CONFIGURAÇÕES BÁSICAS
+         ===================================================== -->
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Criar oportunidade | MusicalWorld</title>
+
+
+    <!-- =====================================================
+         FONTE
+         ===================================================== -->
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+
+    <!-- =====================================================
+         SUPABASE
+         ===================================================== -->
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script src="js/core/SupabaseClient.js"></script>
+    <script src="js/core/Sessao.js"></script>
+    <script src="js/core/UsuarioAtual.js"></script>
+    <script src="js/core/ControleSessao.js"></script>
+
+
+    <!-- =====================================================
+         ESTILOS DA PÁGINA
+         ===================================================== -->
+
+    <style>
+
+        /* =====================================================
+           MUSICALWORLD — CRIAR OPORTUNIDADE
+           Responsabilidade:
+           - Estruturar visualmente o formulário.
+           - Manter aparência responsiva.
+           - Não depender de CSS externo.
+           ===================================================== */
+
+        :root {
+            --mw-bg: #f5f7fb;
+            --mw-card: #ffffff;
+            --mw-text: #172033;
+            --mw-muted: #6b7280;
+            --mw-border: #e5e7eb;
+            --mw-primary: #6d4aff;
+            --mw-primary-dark: #5738e6;
+            --mw-primary-light: #f0edff;
+            --mw-success: #16835b;
+            --mw-danger: #c43d4b;
+            --mw-radius: 20px;
+        }
+
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+
+        body {
+            margin: 0;
+            background: var(--mw-bg);
+            color: var(--mw-text);
+            font-family: "Manrope", sans-serif;
+        }
+
+
+        button,
+        input,
+        textarea,
+        select {
+            font: inherit;
+        }
+
+
+        button {
+            cursor: pointer;
+        }
+
+
+        .mw-page {
+            min-height: 100vh;
+        }
+
+
+        /* =====================================================
+           CABEÇALHO
+           ===================================================== */
+
+        .mw-header {
+            position: sticky;
+            top: 0;
+            z-index: 20;
+
+            min-height: 64px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 0 24px;
+
+            background: rgba(255, 255, 255, 0.96);
+            border-bottom: 1px solid var(--mw-border);
+            backdrop-filter: blur(10px);
+        }
+
+
+        .mw-logo {
+            color: var(--mw-primary);
+            font-size: 20px;
+            font-weight: 800;
+            text-decoration: none;
+            letter-spacing: -0.5px;
+        }
+
+
+        .mw-voltar {
+            color: var(--mw-muted);
+            font-size: 14px;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+
+        .mw-voltar:hover {
+            color: var(--mw-primary);
+        }
+
+
+        /* =====================================================
+           CONTEÚDO
+           ===================================================== */
+
+        .mw-main {
+            width: min(100% - 32px, 900px);
+            margin: 0 auto;
+            padding: 40px 0 80px;
+        }
+
+
+        .mw-page-intro {
+            margin-bottom: 24px;
+        }
+
+
+        .mw-eyebrow {
+            margin: 0 0 8px;
+
+            color: var(--mw-primary);
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+
+        .mw-page-intro h1 {
+            margin: 0;
+
+            font-size: clamp(28px, 5vw, 40px);
+            line-height: 1.1;
+            letter-spacing: -1px;
+        }
+
+
+        .mw-page-intro p {
+            max-width: 650px;
+            margin: 12px 0 0;
+
+            color: var(--mw-muted);
+            font-size: 15px;
+            line-height: 1.7;
+        }
+
+
+        /* =====================================================
+           CARD
+           ===================================================== */
+
+        .mw-card {
+            padding: clamp(20px, 4vw, 32px);
+
+            background: var(--mw-card);
+            border: 1px solid var(--mw-border);
+            border-radius: var(--mw-radius);
+            box-shadow: 0 12px 35px rgba(23, 32, 51, 0.05);
+        }
+
+
+        .mw-section {
+            padding-bottom: 28px;
+            margin-bottom: 28px;
+
+            border-bottom: 1px solid var(--mw-border);
+        }
+
+
+        .mw-section:last-of-type {
+            padding-bottom: 0;
+            margin-bottom: 0;
+            border-bottom: 0;
+        }
+
+
+        .mw-section-title {
+            margin: 0 0 18px;
+
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: -0.3px;
+        }
+
+
+        /* =====================================================
+           GRID
+           ===================================================== */
+
+        .mw-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+
+        .mw-field-full {
+            grid-column: 1 / -1;
+        }
+
+
+        /* =====================================================
+           CAMPOS
+           ===================================================== */
+
+        .mw-field {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+
+        .mw-field label {
+            color: var(--mw-text);
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+
+        .mw-field input,
+        .mw-field textarea,
+        .mw-field select {
+            width: 100%;
+            min-height: 48px;
+
+            padding: 12px 14px;
+
+            color: var(--mw-text);
+            background: #fff;
+
+            border: 1px solid var(--mw-border);
+            border-radius: 12px;
+
+            outline: none;
+
+            transition:
+                border-color 0.2s ease,
+                box-shadow 0.2s ease;
+        }
+
+
+        .mw-field textarea {
+            min-height: 130px;
+            resize: vertical;
+        }
+
+
+        .mw-field input:focus,
+        .mw-field textarea:focus,
+        .mw-field select:focus {
+            border-color: var(--mw-primary);
+
+            box-shadow:
+                0 0 0 3px rgba(109, 74, 255, 0.12);
+        }
+
+
+        .mw-field small {
+            color: var(--mw-muted);
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+
+        /* =====================================================
+           CHECKBOXES
+           ===================================================== */
+
+        .mw-check-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+
+        .mw-check {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+
+            min-height: 44px;
+            padding: 10px 12px;
+
+            background: #fafafa;
+            border: 1px solid var(--mw-border);
+            border-radius: 10px;
+
+            cursor: pointer;
+        }
+
+
+        .mw-check input {
+            width: 17px;
+            height: 17px;
+
+            accent-color: var(--mw-primary);
+        }
+
+
+        .mw-check span {
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+
+        /* =====================================================
+           LOCAL
+           ===================================================== */
+
+        .mw-local-card {
+            padding: 16px;
+
+            background: var(--mw-primary-light);
+            border: 1px solid rgba(109, 74, 255, 0.15);
+            border-radius: 14px;
+        }
+
+
+        .mw-local-label {
+            margin-bottom: 5px;
+
+            color: var(--mw-primary);
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+
+        .mw-local-nome {
+            margin: 0;
+
+            font-size: 15px;
+            font-weight: 800;
+        }
+
+
+        .mw-local-endereco {
+            margin: 5px 0 0;
+
+            color: var(--mw-muted);
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+
+        /* =====================================================
+           MENSAGENS
+           ===================================================== */
+
+        .mw-feedback {
+            display: none;
+
+            margin-bottom: 20px;
+            padding: 14px 16px;
+
+            border-radius: 12px;
+
+            font-size: 13px;
+            font-weight: 700;
+            line-height: 1.5;
+        }
+
+
+        .mw-feedback.is-visible {
+            display: block;
+        }
+
+
+        .mw-feedback.success {
+            color: var(--mw-success);
+            background: #eaf8f2;
+            border: 1px solid #c5eadb;
+        }
+
+
+        .mw-feedback.error {
+            color: var(--mw-danger);
+            background: #fff0f2;
+            border: 1px solid #f3c9cf;
+        }
+
+
+        /* =====================================================
+           AÇÕES
+           ===================================================== */
+
+        .mw-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+
+            margin-top: 28px;
+        }
+
+
+        .mw-button {
+            min-height: 48px;
+            padding: 0 22px;
+
+            border-radius: 12px;
+
+            font-size: 14px;
+            font-weight: 800;
+
+            border: 0;
+
+            transition:
+                background 0.2s ease,
+                transform 0.2s ease,
+                opacity 0.2s ease;
+        }
+
+
+        .mw-button-primary {
+            color: #fff;
+            background: var(--mw-primary);
+        }
+
+
+        .mw-button-primary:hover {
+            background: var(--mw-primary-dark);
+            transform: translateY(-1px);
+        }
+
+
+        .mw-button-secondary {
+            color: var(--mw-text);
+            background: #fff;
+            border: 1px solid var(--mw-border);
+        }
+
+
+        .mw-button-secondary:hover {
+            border-color: var(--mw-primary);
+        }
+
+
+        .mw-button:disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+            transform: none;
+        }
+
+
+        /* =====================================================
+           ESTADO DE CARREGAMENTO
+           ===================================================== */
+
+        .mw-loading {
+            padding: 30px;
+            text-align: center;
+            color: var(--mw-muted);
+            font-size: 14px;
+        }
+
+
+        /* =====================================================
+           RESPONSIVIDADE
+           ===================================================== */
+
+        @media (max-width: 700px) {
+
+            .mw-header {
+                padding: 0 16px;
+            }
+
+
+            .mw-main {
+                width: min(100% - 20px, 900px);
+                padding-top: 24px;
+            }
+
+
+            .mw-grid {
+                grid-template-columns: 1fr;
+            }
+
+
+            .mw-field-full {
+                grid-column: auto;
+            }
+
+
+            .mw-check-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+
+            .mw-actions {
+                flex-direction: column-reverse;
+            }
+
+
+            .mw-button {
+                width: 100%;
+            }
+        }
+
+
+        @media (max-width: 430px) {
+
+            .mw-check-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+    <div class="mw-page">
+
+        <!-- =================================================
+             CABEÇALHO
+             ================================================= -->
+
+        <header class="mw-header">
+
+            <a
+                href="index.html"
+                class="mw-logo"
+            >
+                MusicalWorld
+            </a>
+
+            <a
+                href="contratacoes.html"
+                class="mw-voltar"
+            >
+                Voltar
+            </a>
+
+        </header>
+
+
+        <!-- =================================================
+             CONTEÚDO PRINCIPAL
+             ================================================= -->
+
+        <main class="mw-main">
+
+            <div class="mw-page-intro">
+
+                <p class="mw-eyebrow">
+                    Oportunidade de contratação
+                </p>
+
+                <h1>
+                    Criar oportunidade
+                </h1>
+
+                <p>
+                    Publique uma oportunidade para artistas encontrarem seu evento
+                    e demonstrarem interesse.
+                </p>
+
+            </div>
+
+
+            <!-- =================================================
+                 FEEDBACK
+                 ================================================= -->
+
+            <div
+                id="feedback"
+                class="mw-feedback"
+                role="alert"
+            ></div>
+
+
+            <!-- =================================================
+                 FORMULÁRIO
+                 ================================================= -->
+
+            <form
+                id="formOportunidade"
+                class="mw-card"
+            >
+
+                <!-- =================================================
+                     INFORMAÇÕES DA OPORTUNIDADE
+                     ================================================= -->
+
+                <section class="mw-section">
+
+                    <h2 class="mw-section-title">
+                        Informações da oportunidade
+                    </h2>
+
+
+                    <div class="mw-grid">
+
+                        <div class="mw-field mw-field-full">
+
+                            <label for="titulo">
+                                Título
+                            </label>
+
+                            <input
+                                type="text"
+                                id="titulo"
+                                name="titulo"
+                                maxlength="150"
+                                placeholder="Ex.: Músico para evento no Bahrem"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="mw-field mw-field-full">
+
+                            <label for="descricao">
+                                Descrição
+                            </label>
+
+                            <textarea
+                                id="descricao"
+                                name="descricao"
+                                maxlength="2000"
+                                placeholder="Descreva o que você procura para o evento..."
+                            ></textarea>
+
+                        </div>
+
+
+                        <div class="mw-field">
+
+                            <label for="tipoArtista">
+                                Tipo de artista
+                            </label>
+
+                            <select
+                                id="tipoArtista"
+                                name="tipoArtista"
+                                required
+                            >
+
+                                <option value="">
+                                    Selecione
+                                </option>
+
+                                <option value="Cantor(a)">
+                                    Cantor(a)
+                                </option>
+
+                                <option value="Músico(a)">
+                                    Músico(a)
+                                </option>
+
+                                <option value="Banda">
+                                    Banda
+                                </option>
+
+                                <option value="Dupla musical">
+                                    Dupla musical
+                                </option>
+
+                                <option value="DJ">
+                                    DJ
+                                </option>
+
+                                <option value="Dançarino(a)">
+                                    Dançarino(a)
+                                </option>
+
+                                <option value="Grupo de dança">
+                                    Grupo de dança
+                                </option>
+
+                                <option value="MC">
+                                    MC
+                                </option>
+
+                                <option value="Compositor(a)">
+                                    Compositor(a)
+                                </option>
+
+                                <option value="Produtor(a) musical">
+                                    Produtor(a) musical
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     DATA E HORÁRIO
+                     ================================================= -->
+
+                <section class="mw-section">
+
+                    <h2 class="mw-section-title">
+                        Data e horário
+                    </h2>
+
+
+                    <div class="mw-grid">
+
+                        <div class="mw-field">
+
+                            <label for="dataEvento">
+                                Data do evento
+                            </label>
+
+                            <input
+                                type="date"
+                                id="dataEvento"
+                                name="dataEvento"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div></div>
+
+
+                        <div class="mw-field">
+
+                            <label for="horaInicio">
+                                Horário inicial
+                            </label>
+
+                            <input
+                                type="time"
+                                id="horaInicio"
+                                name="horaInicio"
+                            >
+
+                        </div>
+
+
+                        <div class="mw-field">
+
+                            <label for="horaFim">
+                                Horário final
+                            </label>
+
+                            <input
+                                type="time"
+                                id="horaFim"
+                                name="horaFim"
+                            >
+
+                        </div>
+
+
+                        <div class="mw-field">
+
+                            <label for="prazoInteresse">
+                                Prazo para demonstrar interesse
+                            </label>
+
+                            <input
+                                type="date"
+                                id="prazoInteresse"
+                                name="prazoInteresse"
+                            >
+
+                            <small>
+                                Opcional. Deve ser igual ou anterior à data do evento.
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     ESTILOS
+                     ================================================= -->
+
+                <section class="mw-section">
+
+                    <h2 class="mw-section-title">
+                        Estilos musicais
+                    </h2>
+
+
+                    <div
+                        id="estilosGrid"
+                        class="mw-check-grid"
+                    >
+
+                        <label class="mw-check">
+                            <input type="checkbox" value="Pop">
+                            <span>Pop</span>
+                        </label>
+
+                        <label class="mw-check">
+                            <input type="checkbox" value="Rock">
+                            <span>Rock</span>
+                        </label>
+
+                        <label class="mw-check">
+                            <input type="checkbox" value="Sertanejo">
+                            <span>Sertanejo</span>
+                        </label>
+
+                        <label class="mw-check">
+                            <input type="checkbox" value="MPB">
+                            <span>MPB</span>
+                        </label>
+
+                        <label class="mw-check">
+                            <input type="checkbox" value="Pagode">
+                            <span>Pagode</span>
+                        </label>
+
+                        <label class="mw-check">
+                            <input type="checkbox" value="Samba">
+                            <span>Samba</span>
+                        </label>
+
+                        <label class="mw-check">
+                            <input type="checkbox" value="Forró">
+                            <span>Forró</span>
+                        </label>
+
+                        <label class="mw-check">
+                            <input type="checkbox" value="Eletrônica">
+                            <span>Eletrônica</span>
+                        </label>
+
+                        <label class="mw-check">
+                            <input type="checkbox" value="Gospel">
+                            <span>Gospel</span>
+                        </label>
+
+                        <label class="mw-check">
+                            <input type="checkbox" value="Funk">
+                            <span>Funk</span>
+                        </label>
+
+                        <label class="mw-check">
+                            <input type="checkbox" value="Reggae">
+                            <span>Reggae</span>
+                        </label>
+
+                        <label class="mw-check">
+                            <input type="checkbox" value="Jazz">
+                            <span>Jazz</span>
+                        </label>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     INSTRUMENTOS
+                     ================================================= -->
+
+                <section class="mw-section">
+
+                    <h2 class="mw-section-title">
+                        Instrumentos
+                    </h2>
+
+
+                    <div
+                        id="instrumentosGrid"
+                        class="mw-check-grid"
+                    >
+
+                        <label class="mw-check">
+                            <input type="checkbox" value="Violão">
+                            <span>Violão</span>
+                        </label>
+
+                        <label class="mw-check">
+                            <input type="checkbox" value="Guitarra">
+                            <span>Guitarra</span>
+                        </label>
+
+                        <label class="mw-check">
+                            <input type="checkbox" value="Teclado">
+                            <span>Teclado</span>
+                        </label>
+
+                        <label class="mw-check">
+                            <input type="checkbox" value="Piano">
+                            <span>Piano</span>
+                        </label>
+
+                        <label class="mw-check">
+                            <input type="checkbox" value="Bateria">
+                            <span>Bateria</span>
+                        </label>
+
+                        <label class="mw-check">
+                            <input type="checkbox" value="Baixo">
+                            <span>Baixo</span>
+                        </label>
+
+                        <label class="mw-check">
+                            <input type="checkbox" value="Saxofone">
+                            <span>Saxofone</span>
+                        </label>
+
+                        <label class="mw-check">
+                            <input type="checkbox" value="Flauta">
+                            <span>Flauta</span>
+                        </label>
+
+                        <label class="mw-check">
+                            <input type="checkbox" value="Percussão">
+                            <span>Percussão</span>
+                        </label>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     VALOR
+                     ================================================= -->
+
+                <section class="mw-section">
+
+                    <h2 class="mw-section-title">
+                        Cachê / orçamento
+                    </h2>
+
+
+                    <div class="mw-grid">
+
+                        <div class="mw-field">
+
+                            <label for="valor">
+                                Valor disponível
+                            </label>
+
+                            <input
+                                type="number"
+                                id="valor"
+                                name="valor"
+                                min="0"
+                                step="0.01"
+                                inputmode="decimal"
+                                placeholder="0,00"
+                                required
+                            >
+
+                            <small>
+                                Informe o valor disponível para a oportunidade.
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     LOCAL
+                     ================================================= -->
+
+                <section class="mw-section">
+
+                    <h2 class="mw-section-title">
+                        Local do evento
+                    </h2>
+
+
+                    <div
+                        id="localContainer"
+                        class="mw-loading"
+                    >
+                        Carregando endereço do estabelecimento...
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     AÇÕES
+                     ================================================= -->
+
+                <div class="mw-actions">
+
+                    <button
+                        type="button"
+                        id="btnCancelar"
+                        class="mw-button mw-button-secondary"
+                    >
+                        Cancelar
+                    </button>
+
+
+                    <button
+                        type="submit"
+                        id="btnPublicar"
+                        class="mw-button mw-button-primary"
+                    >
+                        Publicar oportunidade
+                    </button>
+
+                </div>
+
+            </form>
+
+        </main>
+
+    </div>
+
+
+    <!-- =========================================================
+         JAVASCRIPT
+         ========================================================= -->
+
+    <script>
+
+        /* =========================================================
+           MUSICALWORLD — CRIAÇÃO DE OPORTUNIDADE
+
+           Responsabilidades:
+           - Identificar o usuário autenticado.
+           - Validar seu perfil de estabelecimento.
+           - Carregar endereço cadastrado.
+           - Validar formulário.
+           - Criar registro em public.oportunidades.
+           - Deixar a RLS do Supabase validar a autorização final.
+           ========================================================= */
+
+
+        (() => {
+
+            "use strict";
+
+
+            const form =
+                document.getElementById("formOportunidade");
+
+            const feedback =
+                document.getElementById("feedback");
+
+            const btnPublicar =
+                document.getElementById("btnPublicar");
+
+            const btnCancelar =
+                document.getElementById("btnCancelar");
+
+            const localContainer =
+                document.getElementById("localContainer");
+
+            const dataEvento =
+                document.getElementById("dataEvento");
+
+            const prazoInteresse =
+                document.getElementById("prazoInteresse");
+
+            const horaInicio =
+                document.getElementById("horaInicio");
+
+            const horaFim =
+                document.getElementById("horaFim");
+
+
+            let usuarioAtual = null;
+            let perfilEstabelecimento = null;
+            let localEstabelecimento = null;
+
+
+            /* =====================================================
+               SUPABASE
+               ===================================================== */
+
+            function obterClienteSupabase() {
+
+                const cliente =
+                    window.supabaseClient ||
+                    window.MusicalWorldSupabase ||
+                    window.musicalWorldSupabase;
+
+                if (!cliente) {
+
+                    throw new Error(
+                        "Cliente Supabase não encontrado."
+                    );
+                }
+
+                return cliente;
+            }
+
+
+            /* =====================================================
+               FEEDBACK
+               ===================================================== */
+
+            function mostrarFeedback(
+                mensagem,
+                tipo = "error"
+            ) {
+
+                feedback.textContent = mensagem;
+
+                feedback.className =
+                    `mw-feedback is-visible ${tipo}`;
+            }
+
+
+            function limparFeedback() {
+
+                feedback.textContent = "";
+
+                feedback.className =
+                    "mw-feedback";
+            }
+
+
+            /* =====================================================
+               DATA ATUAL
+               ===================================================== */
+
+            function obterDataHoje() {
+
+                const agora = new Date();
+
+                const ano =
+                    agora.getFullYear();
+
+                const mes =
+                    String(
+                        agora.getMonth() + 1
+                    ).padStart(2, "0");
+
+                const dia =
+                    String(
+                        agora.getDate()
+                    ).padStart(2, "0");
+
+                return `${ano}-${mes}-${dia}`;
+            }
+
+
+            /* =====================================================
+               DATA MÍNIMA
+               ===================================================== */
+
+            function configurarDatas() {
+
+                const hoje =
+                    obterDataHoje();
+
+                dataEvento.min = hoje;
+
+                prazoInteresse.min = hoje;
+            }
+
+
+            /* =====================================================
+               CARREGAR USUÁRIO
+               ===================================================== */
+
+            async function carregarUsuario() {
+
+                const supabase =
+                    obterClienteSupabase();
+
+                const {
+                    data,
+                    error
+                } = await supabase.auth.getUser();
+
+                if (error) {
+                    throw error;
+                }
+
+                if (!data?.user) {
+
+                    throw new Error(
+                        "Você precisa estar conectado para criar uma oportunidade."
+                    );
+                }
+
+                usuarioAtual =
+                    data.user;
+            }
+
+
+            /* =====================================================
+               CARREGAR PERFIL
+               ===================================================== */
+
+            async function carregarPerfilEstabelecimento() {
+
+                const supabase =
+                    obterClienteSupabase();
+
+
+                const {
+                    data,
+                    error
+                } = await supabase
+                    .from("perfis")
+                    .select(`
+                        id,
+                        usuario_id,
+                        tipo_perfil_id,
+                        nome_exibicao,
+                        ativo,
+                        perfil_publicado,
+                        tipos_perfil (
+                            id,
+                            nome
+                        )
+                    `)
+                    .eq(
+                        "usuario_id",
+                        usuarioAtual.id
+                    )
+                    .in(
+                        "tipo_perfil_id",
+                        [4, 6, 7, 8, 9, 10, 11]
+                    )
+                    .eq(
+                        "ativo",
+                        true
+                    )
+                    .eq(
+                        "perfil_publicado",
+                        true
+                    )
+                    .maybeSingle();
+
+
+                if (error) {
+                    throw error;
+                }
+
+
+                if (!data) {
+
+                    throw new Error(
+                        "Seu usuário não possui um perfil de estabelecimento ativo e publicado."
+                    );
+                }
+
+
+                perfilEstabelecimento =
+                    data;
+            }
+
+
+            /* =====================================================
+               CARREGAR ENDEREÇO
+               ===================================================== */
+
+            async function carregarLocalEstabelecimento() {
+
+                const supabase =
+                    obterClienteSupabase();
+
+
+                const {
+                    data,
+                    error
+                } = await supabase
+                    .from("perfis_estabelecimentos")
+                    .select(`
+                        id,
+                        perfil_id,
+                        endereco,
+                        numero,
+                        bairro,
+                        cidade,
+                        estado,
+                        cep
+                    `)
+                    .eq(
+                        "perfil_id",
+                        perfilEstabelecimento.id
+                    )
+                    .maybeSingle();
+
+
+                if (error) {
+                    throw error;
+                }
+
+
+                if (!data) {
+
+                    throw new Error(
+                        "O endereço do estabelecimento não foi encontrado."
+                    );
+                }
+
+
+                localEstabelecimento =
+                    data;
+
+
+                renderizarLocal();
+            }
+
+
+            /* =====================================================
+               RENDERIZAR LOCAL
+               ===================================================== */
+
+            function renderizarLocal() {
+
+                const local =
+                    localEstabelecimento;
+
+
+                const nomeLocal =
+                    perfilEstabelecimento.nome_exibicao ||
+                    "Estabelecimento";
+
+
+                const enderecoPartes = [
+                    local.endereco,
+                    local.numero,
+                    local.complemento,
+                    local.bairro
+                ].filter(Boolean);
+
+
+                const cidadeEstado = [
+                    local.cidade,
+                    local.estado
+                ].filter(Boolean).join("/");
+
+
+                if (cidadeEstado) {
+                    enderecoPartes.push(
+                        cidadeEstado
+                    );
+                }
+
+
+                if (local.cep) {
+
+                    enderecoPartes.push(
+                        `CEP ${local.cep}`
+                    );
+                }
+
+
+                localContainer.innerHTML = `
+
+                    <div class="mw-local-card">
+
+                        <div class="mw-local-label">
+                            Local cadastrado
+                        </div>
+
+                        <p class="mw-local-nome">
+                            ${escaparHtml(nomeLocal)}
+                        </p>
+
+                        <p class="mw-local-endereco">
+                            ${escaparHtml(
+                                enderecoPartes.join(", ")
+                            )}
+                        </p>
+
+                    </div>
+
+                `;
+            }
+
+
+            /* =====================================================
+               ESCAPAR HTML
+               ===================================================== */
+
+            function escaparHtml(valor) {
+
+                return String(valor ?? "")
+                    .replaceAll("&", "&amp;")
+                    .replaceAll("<", "&lt;")
+                    .replaceAll(">", "&gt;")
+                    .replaceAll('"', "&quot;")
+                    .replaceAll("'", "&#039;");
+            }
+
+
+            /* =====================================================
+               CHECKBOXES
+               ===================================================== */
+
+            function obterSelecionados(containerId) {
+
+                return [
+                    ...document.querySelectorAll(
+                        `#${containerId} input[type="checkbox"]:checked`
+                    )
+                ].map(
+                    checkbox => checkbox.value
+                );
+            }
+
+
+            /* =====================================================
+               VALIDAR HORÁRIOS
+               ===================================================== */
+
+            function validarHorarios() {
+
+                const inicio =
+                    horaInicio.value.trim();
+
+                const fim =
+                    horaFim.value.trim();
+
+
+                if (!inicio && !fim) {
+
+                    return {
+                        valido: true,
+                        inicio: null,
+                        fim: null
+                    };
+                }
+
+
+                if (
+                    (inicio && !fim) ||
+                    (!inicio && fim)
+                ) {
+
+                    return {
+                        valido: false,
+                        mensagem:
+                            "Informe o horário inicial e final ou deixe os dois em branco."
+                    };
+                }
+
+
+                if (fim <= inicio) {
+
+                    return {
+                        valido: false,
+                        mensagem:
+                            "O horário final deve ser posterior ao horário inicial."
+                    };
+                }
+
+
+                return {
+                    valido: true,
+                    inicio,
+                    fim
+                };
+            }
+
+
+            /* =====================================================
+               VALIDAR FORMULÁRIO
+               ===================================================== */
+
+            function validarFormulario() {
+
+                const titulo =
+                    document
+                        .getElementById("titulo")
+                        .value
+                        .trim();
+
+                const tipoArtista =
+                    document
+                        .getElementById("tipoArtista")
+                        .value
+                        .trim();
+
+                const data =
+                    dataEvento.value;
+
+                const valorTexto =
+                    document
+                        .getElementById("valor")
+                        .value
+                        .trim();
+
+                const valor =
+                    Number(valorTexto);
+
+
+                if (!titulo) {
+
+                    return {
+                        valido: false,
+                        mensagem:
+                            "Informe o título da oportunidade."
+                    };
+                }
+
+
+                if (!tipoArtista) {
+
+                    return {
+                        valido: false,
+                        mensagem:
+                            "Selecione o tipo de artista."
+                    };
+                }
+
+
+                if (!data) {
+
+                    return {
+                        valido: false,
+                        mensagem:
+                            "Informe a data do evento."
+                    };
+                }
+
+
+                if (data < obterDataHoje()) {
+
+                    return {
+                        valido: false,
+                        mensagem:
+                            "A data do evento não pode estar no passado."
+                    };
+                }
+
+
+                if (!Number.isFinite(valor) || valor < 0) {
+
+                    return {
+                        valido: false,
+                        mensagem:
+                            "Informe um valor válido."
+                    };
+                }
+
+
+                if (
+                    prazoInteresse.value &&
+                    prazoInteresse.value > data
+                ) {
+
+                    return {
+                        valido: false,
+                        mensagem:
+                            "O prazo para interesse não pode ser posterior à data do evento."
+                    };
+                }
+
+
+                const horarios =
+                    validarHorarios();
+
+
+                if (!horarios.valido) {
+                    return horarios;
+                }
+
+
+                return {
+                    valido: true,
+                    titulo,
+                    tipoArtista,
+                    data,
+                    valor,
+                    horarios
+                };
+            }
+
+
+            /* =====================================================
+               CRIAR OPORTUNIDADE
+               ===================================================== */
+
+            async function criarOportunidade(evento) {
+
+                evento.preventDefault();
+
+                limparFeedback();
+
+
+                try {
+
+                    const validacao =
+                        validarFormulario();
+
+
+                    if (!validacao.valido) {
+
+                        mostrarFeedback(
+                            validacao.mensagem
+                        );
+
+                        return;
+                    }
+
+
+                    btnPublicar.disabled =
+                        true;
+
+                    btnPublicar.textContent =
+                        "Publicando...";
+
+
+                    const supabase =
+                        obterClienteSupabase();
+
+
+                    const descricao =
+                        document
+                            .getElementById("descricao")
+                            .value
+                            .trim();
+
+
+                    const estilos =
+                        obterSelecionados(
+                            "estilosGrid"
+                        );
+
+
+                    const instrumentos =
+                        obterSelecionados(
+                            "instrumentosGrid"
+                        );
+
+
+                    const local = {
+
+                        nomeLocal:
+                            perfilEstabelecimento.nome_exibicao ||
+                            "Estabelecimento",
+
+                        endereco:
+                            localEstabelecimento.endereco || "",
+
+                        numero:
+                            localEstabelecimento.numero || "",
+
+                        bairro:
+                            localEstabelecimento.bairro || "",
+
+                        cidade:
+                            localEstabelecimento.cidade || "",
+
+                        estado:
+                            localEstabelecimento.estado || "",
+
+                        cep:
+                            localEstabelecimento.cep || ""
+
+                    };
+
+
+                    const registro = {
+
+                        contratante_id:
+                            usuarioAtual.id,
+
+                        titulo:
+                            validacao.titulo,
+
+                        descricao:
+                            descricao || null,
+
+                        tipo_artista:
+                            validacao.tipoArtista,
+
+                        data_evento:
+                            validacao.data,
+
+                        hora_inicio:
+                            validacao.horarios.inicio,
+
+                        hora_fim:
+                            validacao.horarios.fim,
+
+                        estilos,
+
+                        instrumentos,
+
+                        valor:
+                            validacao.valor,
+
+                        local,
+
+                        prazo_interesse:
+                            prazoInteresse.value || null,
+
+                        status:
+                            "aberta"
+
+                    };
+
+
+                    const {
+                        data,
+                        error
+                    } = await supabase
+                        .from("oportunidades")
+                        .insert(registro)
+                        .select("id")
+                        .single();
+
+
+                    if (error) {
+                        throw error;
+                    }
+
+
+                    mostrarFeedback(
+                        "Oportunidade publicada com sucesso.",
+                        "success"
+                    );
+
+
+                    form.reset();
+
+                    configurarDatas();
+
+
+                    if (data?.id) {
+
+                        setTimeout(() => {
+
+                            window.location.href =
+                                `oportunidades.html?id=${encodeURIComponent(data.id)}`;
+
+                        }, 900);
+
+                    }
+
+
+                } catch (erro) {
+
+                    console.error(
+                        "MusicalWorld — erro ao criar oportunidade:",
+                        erro
+                    );
+
+
+                    mostrarFeedback(
+                        erro?.message ||
+                        "Não foi possível publicar a oportunidade."
+                    );
+
+
+                } finally {
+
+                    btnPublicar.disabled =
+                        false;
+
+                    btnPublicar.textContent =
+                        "Publicar oportunidade";
+                }
+            }
+
+
+            /* =====================================================
+               CANCELAR
+               ===================================================== */
+
+            function cancelar() {
+
+                window.history.back();
+            }
+
+
+            /* =====================================================
+               INICIALIZAÇÃO
+               ===================================================== */
+
+            async function inicializar() {
+
+                try {
+
+                    configurarDatas();
+
+                    await carregarUsuario();
+
+                    await carregarPerfilEstabelecimento();
+
+                    await carregarLocalEstabelecimento();
+
+                } catch (erro) {
+
+                    console.error(
+                        "MusicalWorld — erro ao inicializar criação de oportunidade:",
+                        erro
+                    );
+
+
+                    localContainer.innerHTML = "";
+
+                    mostrarFeedback(
+                        erro?.message ||
+                        "Não foi possível carregar os dados do estabelecimento."
+                    );
+
+
+                    btnPublicar.disabled =
+                        true;
+                }
+            }
+
+
+            form.addEventListener(
+                "submit",
+                criarOportunidade
+            );
+
+
+            btnCancelar.addEventListener(
+                "click",
+                cancelar
+            );
+
+
+            inicializar();
+
+        })();
+
+    </script>
+
+</body>
+
+</html>

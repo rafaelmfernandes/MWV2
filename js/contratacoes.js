@@ -16,12 +16,15 @@
    - Identificar se cada contratação foi feita pelo usuário
      ou recebida pelo usuário.
    - Identificar propostas recebidas por estabelecimentos.
+   - Identificar propostas enviadas por artistas para
+     estabelecimentos.
    - Filtrar por status.
    - Pesquisar por pessoa, serviço ou evento.
    - Ordenar as contratações.
    - Atualizar os indicadores.
    - Renderizar os cards.
    - Abrir uma contratação individual.
+   - Abrir propostas pendentes na página correta.
 
    IMPORTANTE:
 
@@ -48,6 +51,11 @@
    - uma contratação tradicional;
    - uma proposta enviada por um artista;
    - uma proposta enviada por outro usuário.
+
+   Uma contratação realizada pelo usuário pode representar:
+
+   - uma contratação tradicional feita pelo usuário;
+   - uma proposta enviada por um artista para um estabelecimento.
 
    Arquitetura utilizada:
 
@@ -94,6 +102,9 @@
 
             acompanhamento:
                 "contratacao-acompanhamento.html",
+
+            proposta:
+                "proposta.html",
 
             perfil:
                 "meu-perfil.html"
@@ -188,45 +199,27 @@
 
     const estado = {
 
-        /*
-         * Todas as contratações relacionadas ao usuário.
-         *
-         * Pode conter:
-         *
-         * - contratações realizadas;
-         * - solicitações recebidas;
-         * - propostas recebidas.
-         */
-
         contratacoes: [],
 
-
         contratacoesFiltradas: [],
-
 
         filtroAtual:
             "todas",
 
-
         buscaAtual:
             "",
-
 
         ordenacao:
             "recentes",
 
-
         usuarioId:
             null,
-
 
         carregando:
             false,
 
-
         erro:
             null,
-
 
         inicializado:
             false
@@ -441,19 +434,72 @@
 
 
     /* =====================================================
-       CABEÇALHO DINÂMICO
+       IDENTIFICAÇÃO DE ESTABELECIMENTO
     ====================================================== */
 
-    /*
-     * A página continua podendo mostrar tanto:
-     *
-     * - contratações realizadas;
-     * - solicitações recebidas;
-     * - propostas recebidas.
-     *
-     * Por isso o título e o texto introdutório são mantidos
-     * neutros.
-     */
+    function ehEstabelecimento(pessoa) {
+
+        if (!pessoa) {
+
+            return false;
+
+        }
+
+
+        const tipo =
+            normalizarTexto(
+                pessoa.tipo
+            );
+
+
+        if (!tipo) {
+
+            return false;
+
+        }
+
+
+        const tiposEstabelecimento = [
+
+            "casa_shows",
+
+            "casa shows",
+
+            "casa de shows",
+
+            "casa de show",
+
+            "estabelecimento",
+
+            "bar",
+
+            "restaurante",
+
+            "pub",
+
+            "clube",
+
+            "espaco para eventos",
+
+            "espaco de eventos",
+
+            "espaco para evento",
+
+            "espaco de evento"
+
+        ];
+
+
+        return tiposEstabelecimento.includes(
+            tipo
+        );
+
+    }
+
+
+    /* =====================================================
+       CABEÇALHO DINÂMICO
+    ====================================================== */
 
     function atualizarCabecalho() {
 
@@ -547,7 +593,8 @@
 
     function obterStatusConfig(
         status,
-        direcao
+        direcao,
+        propostaEnviada
     ) {
 
         const configuracoes = {
@@ -555,9 +602,11 @@
             aguardando_artista: {
 
                 texto:
-                    direcao === "recebida"
-                        ? "Aguardando sua resposta"
-                        : "Aguardando resposta",
+                    propostaEnviada
+                        ? "Aguardando resposta do estabelecimento"
+                        : direcao === "recebida"
+                            ? "Aguardando sua resposta"
+                            : "Aguardando resposta",
 
                 classe:
                     "status-aguardando"
@@ -664,12 +713,6 @@
         }
 
 
-        /*
-         * A coluna "local" é JSONB.
-         *
-         * Aceitamos tanto objeto quanto string JSON.
-         */
-
         if (
             typeof local === "string"
         ) {
@@ -719,15 +762,6 @@
         }
 
 
-        /*
-         * Para propostas enviadas a estabelecimentos,
-         * o local é normalmente o endereço cadastrado
-         * pelo estabelecimento.
-         *
-         * Priorizamos nomeLocal quando disponível,
-         * mantendo os demais formatos existentes.
-         */
-
         const nome =
             local.nomeLocal ||
             local.nome ||
@@ -758,19 +792,6 @@
     /* =====================================================
        BUSCAR DADOS DE UMA PESSOA
     ====================================================== */
-
-    /*
-     * Esta função substitui a ideia de carregar apenas
-     * "artista".
-     *
-     * Uma contratação possui duas pessoas:
-     *
-     * - contratante;
-     * - contratado.
-     *
-     * Cada lado pode ser artista, contratante,
-     * estabelecimento ou ambos.
-     */
 
     async function carregarDadosPessoa(
         supabase,
@@ -816,10 +837,6 @@
             null;
 
 
-        /* -------------------------------------------------
-           USUÁRIO
-        ------------------------------------------------- */
-
         const respostaUsuario =
             await supabase
 
@@ -860,10 +877,6 @@
 
         }
 
-
-        /* -------------------------------------------------
-           PERFIL
-        ------------------------------------------------- */
 
         const respostaPerfil =
             await supabase
@@ -915,10 +928,6 @@
 
         }
 
-
-        /* -------------------------------------------------
-           PERFIL ARTÍSTICO
-        ------------------------------------------------- */
 
         if (
             perfil?.id
@@ -1009,12 +1018,6 @@
     /* =====================================================
        COMPATIBILIDADE — BUSCAR ARTISTA
     ====================================================== */
-
-    /*
-     * Mantemos esta função para preservar compatibilidade
-     * com qualquer parte do projeto que eventualmente
-     * utilize o nome antigo.
-     */
 
     async function carregarDadosArtista(
         supabase,
@@ -1147,30 +1150,31 @@
         usuarioId
     ) {
 
-        const direcao =
+        const usuarioEhContratante =
+            String(
+                registro.contratante_id
+            ) ===
+            String(usuarioId);
+
+
+        const usuarioEhContratado =
             String(
                 registro.contratado_id
             ) ===
-            String(usuarioId)
+            String(usuarioId);
+
+
+        const direcao =
+            usuarioEhContratado
 
                 ? "recebida"
 
-                : "realizada";
+                : usuarioEhContratante
 
+                    ? "realizada"
 
-        /*
-         * Pessoa do outro lado da contratação.
-         *
-         * Se foi uma contratação realizada:
-         *
-         * contratante = usuário atual
-         * contratado  = artista / profissional
-         *
-         * Se foi uma solicitação recebida:
-         *
-         * contratante = pessoa que iniciou
-         * contratado  = usuário atual
-         */
+                    : "desconhecida";
+
 
         const pessoaId =
             direcao === "recebida"
@@ -1214,32 +1218,61 @@
             );
 
 
-        /*
-         * Uma solicitação enviada pelo artista para um
-         * estabelecimento possui o status:
-         *
-         * solicitacao_enviada
-         *
-         * O status normalizado continua sendo
-         * aguardando_artista para preservar o sistema
-         * existente de filtros e indicadores.
-         *
-         * A direção "recebida" permite que a interface
-         * apresente o texto correto:
-         *
-         * "Aguardando sua resposta"
-         */
-
         const statusNormalizado =
             normalizarStatus(
                 registro.status
             );
 
 
+        /*
+         * PROPOSTA RECEBIDA
+         *
+         * O usuário atual é o contratado e a proposta
+         * ainda está aguardando resposta.
+         *
+         * Exemplo:
+         *
+         * Artista → Estabelecimento
+         *
+         * Nesse caso o estabelecimento verá:
+         *
+         * "Proposta de"
+         * "Nova proposta"
+         * "Ver proposta"
+         */
+
         const propostaRecebida =
             direcao === "recebida" &&
             registro.status ===
                 "solicitacao_enviada";
+
+
+        /*
+         * PROPOSTA ENVIADA
+         *
+         * O usuário atual é o contratante, mas o
+         * destinatário da proposta é um estabelecimento.
+         *
+         * Exemplo:
+         *
+         * Artista → @bahrem
+         *
+         * O artista verá:
+         *
+         * "Proposta enviada"
+         * "Aguardando resposta do estabelecimento"
+         * "Ver proposta"
+         *
+         * Isso é diferente de uma contratação tradicional.
+         */
+
+        const propostaEnviada =
+            direcao === "realizada" &&
+            registro.status ===
+                "solicitacao_enviada" &&
+            ehEstabelecimento(
+                contratado
+            );
 
 
         return {
@@ -1260,23 +1293,13 @@
                 registro.servico_id,
 
 
-            /*
-             * Indica de qual lado esta contratação
-             * está sendo visualizada.
-             *
-             * "realizada" = usuário contratou alguém.
-             * "recebida"  = alguém contratou o usuário.
-             */
-
             direcao,
 
 
-            /*
-             * Identifica especificamente a nova proposta
-             * recebida pelo usuário.
-             */
-
             propostaRecebida,
+
+
+            propostaEnviada,
 
 
             pessoa,
@@ -1288,15 +1311,6 @@
             contratado,
 
 
-            /*
-             * Mantemos "artista" para compatibilidade com
-             * código anterior.
-             *
-             * Nas contratações realizadas, é o contratado.
-             * Nas recebidas, continua sendo o contratado,
-             * mesmo que seja o próprio usuário.
-             */
-
             artista:
                 contratado,
 
@@ -1304,16 +1318,6 @@
             servico: {
 
                 ...servico,
-
-
-                /*
-                 * O valor oficial pertence à contratação.
-                 *
-                 * Isso garante que, caso o artista tenha
-                 * enviado uma proposta de R$ 600,00, o card
-                 * mostre R$ 600,00 mesmo que o serviço tenha
-                 * outro valor cadastrado posteriormente.
-                 */
 
                 valor:
                     registro.valor ??
@@ -1324,14 +1328,6 @@
 
 
             evento: {
-
-                /*
-                 * O tipo do evento pode ser nulo nas novas
-                 * propostas.
-                 *
-                 * Mantemos "Evento" para compatibilidade
-                 * com a estrutura existente.
-                 */
 
                 nome:
                     registro.tipo_evento ||
@@ -1858,7 +1854,8 @@
         const status =
             obterStatusConfig(
                 contratacao.status,
-                contratacao.direcao
+                contratacao.direcao,
+                contratacao.propostaEnviada
             );
 
 
@@ -1881,6 +1878,11 @@
 
         const propostaRecebida =
             contratacao.propostaRecebida ===
+            true;
+
+
+        const propostaEnviada =
+            contratacao.propostaEnviada ===
             true;
 
 
@@ -1915,14 +1917,6 @@
         }
 
 
-        /*
-         * O texto principal do card muda conforme o lado
-         * da contratação.
-         *
-         * Para uma proposta recebida pelo estabelecimento,
-         * a pessoa exibida é quem enviou a proposta.
-         */
-
         let rotuloPessoa;
 
 
@@ -1932,6 +1926,13 @@
 
             rotuloPessoa =
                 "Proposta de";
+
+        } else if (
+            propostaEnviada
+        ) {
+
+            rotuloPessoa =
+                "Estabelecimento";
 
         } else if (
             recebida
@@ -1959,6 +1960,13 @@
                 "Nova proposta";
 
         } else if (
+            propostaEnviada
+        ) {
+
+            rotuloDirecao =
+                "Proposta enviada";
+
+        } else if (
             recebida
         ) {
 
@@ -1972,14 +1980,6 @@
 
         }
 
-
-        /*
-         * Quando os dois horários estão vazios, isso não
-         * significa que existe um horário inválido.
-         *
-         * Nas novas propostas o horário pode ser definido
-         * posteriormente pelo estabelecimento.
-         */
 
         const horarioInicio =
             normalizarHorario(
@@ -2035,7 +2035,6 @@
                 )}"
             >
 
-
                 <div class="contratacao-status">
 
                     <span
@@ -2045,7 +2044,6 @@
                             status.texto
                         )}
                     </span>
-
 
                     <span class="contratacao-direcao">
                         ${escaparHtml(
@@ -2057,7 +2055,6 @@
 
 
                 <div class="contratacao-artista">
-
 
                     <div class="artista-principal">
 
@@ -2146,7 +2143,6 @@
 
                 <div class="contratacao-valor">
 
-
                     <div>
 
                         <span class="info-label">
@@ -2221,7 +2217,8 @@
                         <span>
 
                             ${
-                                propostaRecebida
+                                propostaRecebida ||
+                                propostaEnviada
                                     ? "Ver proposta"
                                     : "Ver contratação"
                             }
@@ -2264,16 +2261,6 @@
             String(horario)
                 .trim();
 
-
-        /*
-         * PostgreSQL pode retornar:
-         *
-         * 13:51:00
-         *
-         * A interface utiliza:
-         *
-         * 13:51
-         */
 
         const match =
             texto.match(
@@ -2729,7 +2716,7 @@
 
 
     /* =====================================================
-       ABRIR CONTRATAÇÃO
+       ABRIR CONTRATAÇÃO / PROPOSTA
     ====================================================== */
 
     function abrirContratacao(
@@ -2767,12 +2754,9 @@
          * O Supabase continua sendo a fonte oficial.
          *
          * O sessionStorage serve apenas como apoio
-         * para a tela seguinte.
-         *
-         * A mesma tela de acompanhamento será utilizada
-         * tanto para contratações tradicionais quanto
-         * para propostas recebidas.
+         * para as telas seguintes.
          */
+
 
         try {
 
@@ -2797,6 +2781,61 @@
         }
 
 
+        /*
+         * PROPOSTA RECEBIDA
+         *
+         * O estabelecimento recebeu uma proposta
+         * enviada por um artista.
+         */
+
+        if (
+            contratacao.propostaRecebida === true
+        ) {
+
+            window.location.href =
+                `${CONFIG.paginas.proposta}?id=${encodeURIComponent(
+                    contratacao.id
+                )}`;
+
+            return;
+
+        }
+
+
+        /*
+         * PROPOSTA ENVIADA
+         *
+         * O artista enviou uma proposta para um
+         * estabelecimento.
+         *
+         * O artista também precisa visualizar a
+         * proposta pela página específica.
+         *
+         * Não deve abrir o acompanhamento da
+         * contratação enquanto o estabelecimento
+         * ainda não respondeu.
+         */
+
+        if (
+            contratacao.propostaEnviada === true
+        ) {
+
+            window.location.href =
+                `${CONFIG.paginas.proposta}?id=${encodeURIComponent(
+                    contratacao.id
+                )}`;
+
+            return;
+
+        }
+
+
+        /*
+         * CONTRATAÇÃO NORMAL
+         *
+         * Mantém o fluxo antigo exatamente como estava.
+         */
+
         window.location.href =
             `${CONFIG.paginas.acompanhamento}?id=${encodeURIComponent(
                 contratacao.id
@@ -2810,10 +2849,6 @@
     ====================================================== */
 
     async function carregarContratacoes() {
-
-        /*
-         * Utilizamos o cliente central.
-         */
 
         if (
             !window.supabaseClient ||
@@ -2896,20 +2931,6 @@
             /* ---------------------------------------------
                BUSCAR OS DOIS LADOS
             ---------------------------------------------- */
-
-            /*
-             * 1. Contratações realizadas:
-             *
-             * contratante_id = usuário atual
-             *
-             * 2. Solicitações recebidas:
-             *
-             * contratado_id = usuário atual
-             *
-             * Fazemos duas consultas separadas para manter
-             * a lógica clara e evitar depender de uma expressão
-             * OR específica do Supabase.
-             */
 
             const [
 
@@ -2995,13 +3016,6 @@
                 [];
 
 
-            /*
-             * Como um usuário pode contratar a si mesmo
-             * em algum cenário futuro, ou uma mesma linha
-             * aparecer nas duas consultas, fazemos uma
-             * deduplicação pelo ID da contratação.
-             */
-
             const registrosMap =
                 new Map();
 
@@ -3036,10 +3050,6 @@
                 );
 
 
-            /*
-             * Transformamos cada contratação.
-             */
-
             const contratosConvertidos =
                 await Promise.all(
 
@@ -3061,10 +3071,6 @@
 
                 );
 
-
-            /*
-             * Mais recentes primeiro antes da renderização.
-             */
 
             contratosConvertidos.sort(
                 function (a, b) {

@@ -1,0 +1,957 @@
+
+/* =========================================================
+   MUSICALWORLD
+   MINHAS OPORTUNIDADES
+   RESPONSIVO — DESKTOP / TABLET / CELULAR
+
+   Arquivo:
+   css/oportunidades/minhas-oportunidades.css
+
+   Responsabilidades:
+
+   - Estilizar a central de oportunidades.
+   - Organizar os cards das oportunidades.
+   - Criar estados de carregamento, erro e vazio.
+   - Adaptar a página para desktop, tablet e celular.
+   ========================================================= */
+
+
+/* =========================================================
+   VARIÁVEIS
+   ========================================================= */
+
+:root {
+
+    --mw-bg: #f5f7fb;
+    --mw-surface: #ffffff;
+    --mw-text: #172033;
+    --mw-text-secondary: #667085;
+    --mw-border: #e5e7eb;
+
+    --mw-primary: #6d4aff;
+    --mw-primary-dark: #5636dc;
+    --mw-primary-light: #f0edff;
+
+    --mw-success: #16845b;
+    --mw-success-bg: #e9f8f1;
+
+    --mw-warning: #a15c00;
+    --mw-warning-bg: #fff4df;
+
+    --mw-danger: #c0392b;
+    --mw-danger-bg: #fff0ee;
+
+    --mw-radius-lg: 24px;
+    --mw-radius-md: 16px;
+    --mw-radius-sm: 10px;
+
+    --mw-shadow:
+        0 8px 30px rgba(23, 32, 51, 0.06);
+}
+
+
+/* =========================================================
+   RESET
+   ========================================================= */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+
+html {
+    scroll-behavior: smooth;
+}
+
+
+body {
+
+    min-height: 100vh;
+
+    background: var(--mw-bg);
+
+    color: var(--mw-text);
+
+    font-family:
+        "Manrope",
+        Arial,
+        sans-serif;
+
+    -webkit-font-smoothing: antialiased;
+}
+
+
+/* =========================================================
+   CONTROLE DE ELEMENTOS OCULTOS
+   =========================================================
+
+   Garante que elementos com o atributo HTML "hidden"
+   permaneçam realmente invisíveis.
+
+   Isso é importante porque componentes como:
+
+   - .mw-state
+   - .mw-empty
+   - .mw-opportunities
+
+   possuem propriedades "display" próprias no CSS.
+
+   Sem esta regra, o display definido pelas classes pode
+   sobrescrever o comportamento visual esperado do atributo
+   hidden e fazer carregamento, erro, vazio e conteúdo
+   aparecerem simultaneamente.
+   ========================================================= */
+
+[hidden] {
+    display: none !important;
+}
+
+
+button,
+a {
+    font: inherit;
+}
+
+
+button {
+    cursor: pointer;
+}
+
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+
+/* =========================================================
+   CABEÇALHO
+   ========================================================= */
+
+.mw-header {
+
+    width: 100%;
+
+    height: 64px;
+
+    background: var(--mw-surface);
+
+    border-bottom: 1px solid var(--mw-border);
+
+    position: sticky;
+
+    top: 0;
+
+    z-index: 100;
+}
+
+
+.mw-header-inner {
+
+    width: min(
+        calc(100% - 48px),
+        1180px
+    );
+
+    height: 100%;
+
+    margin: 0 auto;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 24px;
+}
+
+
+.mw-logo {
+
+    font-size: 20px;
+
+    font-weight: 800;
+
+    letter-spacing: -0.5px;
+
+    color: var(--mw-text);
+}
+
+
+.mw-header-link {
+
+    height: 100%;
+
+    display: flex;
+
+    align-items: center;
+
+    position: relative;
+
+    color: var(--mw-text-secondary);
+
+    font-size: 14px;
+
+    font-weight: 700;
+}
+
+
+.mw-header-link.active {
+    color: var(--mw-primary);
+}
+
+
+.mw-header-link.active::after {
+
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+
+    right: 0;
+
+    bottom: 0;
+
+    height: 2px;
+
+    background: var(--mw-primary);
+
+    border-radius: 2px;
+}
+
+
+/* =========================================================
+   CONTEÚDO PRINCIPAL
+   ========================================================= */
+
+.mw-main {
+
+    width: min(
+        calc(100% - 48px),
+        1180px
+    );
+
+    margin: 0 auto;
+
+    padding: 48px 0 80px;
+}
+
+
+/* =========================================================
+   CABEÇALHO DA PÁGINA
+   ========================================================= */
+
+.mw-page-header {
+
+    display: flex;
+
+    align-items: flex-end;
+
+    justify-content: space-between;
+
+    gap: 32px;
+
+    margin-bottom: 32px;
+}
+
+
+.mw-eyebrow {
+
+    display: inline-block;
+
+    margin-bottom: 8px;
+
+    color: var(--mw-primary);
+
+    font-size: 12px;
+
+    font-weight: 800;
+
+    letter-spacing: 0.08em;
+
+    text-transform: uppercase;
+}
+
+
+.mw-page-header h1 {
+
+    font-size: 32px;
+
+    line-height: 1.15;
+
+    letter-spacing: -1px;
+
+    font-weight: 800;
+
+    margin-bottom: 10px;
+}
+
+
+.mw-page-header p {
+
+    max-width: 680px;
+
+    color: var(--mw-text-secondary);
+
+    font-size: 15px;
+
+    line-height: 1.7;
+}
+
+
+/* =========================================================
+   BOTÕES
+   ========================================================= */
+
+.mw-primary-button,
+.mw-secondary-button {
+
+    min-height: 46px;
+
+    padding: 0 18px;
+
+    border-radius: 12px;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border: 1px solid transparent;
+
+    font-size: 14px;
+
+    font-weight: 800;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+
+.mw-primary-button {
+
+    background: var(--mw-primary);
+
+    color: #ffffff;
+}
+
+
+.mw-primary-button:hover {
+
+    background: var(--mw-primary-dark);
+
+    transform: translateY(-1px);
+}
+
+
+.mw-secondary-button {
+
+    background: #ffffff;
+
+    color: var(--mw-text);
+
+    border-color: var(--mw-border);
+}
+
+
+.mw-secondary-button:hover {
+
+    border-color: var(--mw-primary);
+
+    color: var(--mw-primary);
+}
+
+
+/* =========================================================
+   LISTA
+   ========================================================= */
+
+.mw-opportunities {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 20px;
+}
+
+
+/* =========================================================
+   CARD DA OPORTUNIDADE
+   ========================================================= */
+
+.mw-opportunity-card {
+
+    background: var(--mw-surface);
+
+    border: 1px solid var(--mw-border);
+
+    border-radius: var(--mw-radius-lg);
+
+    box-shadow: var(--mw-shadow);
+
+    overflow: hidden;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
+}
+
+
+.mw-opportunity-card:hover {
+
+    transform: translateY(-3px);
+
+    border-color: #d8d0ff;
+
+    box-shadow:
+        0 14px 36px rgba(23, 32, 51, 0.09);
+}
+
+
+.mw-card-link {
+
+    display: block;
+
+    padding: 24px;
+}
+
+
+/* =========================================================
+   TOPO DO CARD
+   ========================================================= */
+
+.mw-card-top {
+
+    display: flex;
+
+    align-items: flex-start;
+
+    justify-content: space-between;
+
+    gap: 16px;
+
+    margin-bottom: 20px;
+}
+
+
+.mw-card-title {
+
+    min-width: 0;
+}
+
+
+.mw-card-title h2 {
+
+    font-size: 19px;
+
+    line-height: 1.35;
+
+    font-weight: 800;
+
+    letter-spacing: -0.3px;
+
+    overflow-wrap: anywhere;
+}
+
+
+.mw-card-status {
+
+    flex-shrink: 0;
+
+    padding: 6px 10px;
+
+    border-radius: 999px;
+
+    font-size: 11px;
+
+    line-height: 1;
+
+    font-weight: 800;
+
+    text-transform: capitalize;
+}
+
+
+/* =========================================================
+   STATUS
+   ========================================================= */
+
+.mw-status-aberta {
+
+    color: var(--mw-success);
+
+    background: var(--mw-success-bg);
+}
+
+
+.mw-status-fechada,
+.mw-status-cancelada {
+
+    color: var(--mw-danger);
+
+    background: var(--mw-danger-bg);
+}
+
+
+.mw-status-encerrada {
+
+    color: var(--mw-warning);
+
+    background: var(--mw-warning-bg);
+}
+
+
+.mw-status-default {
+
+    color: var(--mw-text-secondary);
+
+    background: #f2f4f7;
+}
+
+
+/* =========================================================
+   TIPO DE ARTISTA
+   ========================================================= */
+
+.mw-card-type {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    min-height: 28px;
+
+    padding: 0 10px;
+
+    margin-top: 8px;
+
+    border-radius: 8px;
+
+    background: var(--mw-primary-light);
+
+    color: var(--mw-primary-dark);
+
+    font-size: 12px;
+
+    font-weight: 800;
+}
+
+
+/* =========================================================
+   INFORMAÇÕES
+   ========================================================= */
+
+.mw-card-info {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 12px;
+
+    margin-bottom: 20px;
+}
+
+
+.mw-info-item {
+
+    min-width: 0;
+
+    padding: 13px;
+
+    border-radius: 12px;
+
+    background: #f8f9fc;
+
+    border: 1px solid #edf0f5;
+}
+
+
+.mw-info-label {
+
+    display: block;
+
+    margin-bottom: 4px;
+
+    color: var(--mw-text-secondary);
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.04em;
+}
+
+
+.mw-info-value {
+
+    display: block;
+
+    color: var(--mw-text);
+
+    font-size: 13px;
+
+    line-height: 1.45;
+
+    font-weight: 700;
+
+    overflow-wrap: anywhere;
+}
+
+
+/* =========================================================
+   RODAPÉ DO CARD
+   ========================================================= */
+
+.mw-card-footer {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 16px;
+
+    padding-top: 18px;
+
+    border-top: 1px solid var(--mw-border);
+}
+
+
+.mw-interested {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    color: var(--mw-text-secondary);
+
+    font-size: 13px;
+
+    font-weight: 700;
+}
+
+
+.mw-interested-count {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    min-width: 28px;
+
+    height: 28px;
+
+    padding: 0 8px;
+
+    border-radius: 8px;
+
+    background: var(--mw-primary-light);
+
+    color: var(--mw-primary);
+
+    font-size: 12px;
+
+    font-weight: 800;
+}
+
+
+.mw-manage {
+
+    color: var(--mw-primary);
+
+    font-size: 13px;
+
+    font-weight: 800;
+}
+
+
+/* =========================================================
+   ESTADOS
+   ========================================================= */
+
+.mw-state,
+.mw-empty {
+
+    min-height: 300px;
+
+    padding: 48px 24px;
+
+    background: var(--mw-surface);
+
+    border: 1px solid var(--mw-border);
+
+    border-radius: var(--mw-radius-lg);
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    text-align: center;
+}
+
+
+.mw-state p,
+.mw-empty p {
+
+    max-width: 520px;
+
+    color: var(--mw-text-secondary);
+
+    font-size: 14px;
+
+    line-height: 1.7;
+
+    margin-top: 8px;
+}
+
+
+.mw-state h2,
+.mw-empty h2 {
+
+    max-width: 600px;
+
+    font-size: 19px;
+
+    line-height: 1.4;
+
+    font-weight: 800;
+}
+
+
+.mw-state-error {
+
+    border-color: #f0d3cf;
+}
+
+
+.mw-state-error .mw-secondary-button {
+
+    margin-top: 20px;
+}
+
+
+.mw-state-icon,
+.mw-empty-icon {
+
+    width: 52px;
+
+    height: 52px;
+
+    margin-bottom: 18px;
+
+    border-radius: 16px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background: var(--mw-primary-light);
+
+    color: var(--mw-primary);
+
+    font-size: 22px;
+
+    font-weight: 800;
+}
+
+
+.mw-state-error .mw-state-icon {
+
+    background: var(--mw-danger-bg);
+
+    color: var(--mw-danger);
+}
+
+
+.mw-empty .mw-primary-button {
+
+    margin-top: 22px;
+}
+
+
+/* =========================================================
+   LOADER
+   ========================================================= */
+
+.mw-loader {
+
+    width: 28px;
+
+    height: 28px;
+
+    margin-bottom: 16px;
+
+    border: 3px solid #e6e1ff;
+
+    border-top-color: var(--mw-primary);
+
+    border-radius: 50%;
+
+    animation:
+        mw-spin 0.8s linear infinite;
+}
+
+
+@keyframes mw-spin {
+
+    to {
+        transform: rotate(360deg);
+    }
+
+}
+
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .mw-main {
+
+        padding-top: 36px;
+    }
+
+
+    .mw-opportunities {
+
+        grid-template-columns:
+            minmax(0, 1fr);
+    }
+
+}
+
+
+/* =========================================================
+   CELULAR
+   ========================================================= */
+
+@media (max-width: 640px) {
+
+    .mw-header-inner {
+
+        width: min(
+            calc(100% - 32px),
+            1180px
+        );
+    }
+
+
+    .mw-main {
+
+        width: min(
+            calc(100% - 32px),
+            1180px
+        );
+
+        padding-top: 28px;
+
+        padding-bottom: 48px;
+    }
+
+
+    .mw-page-header {
+
+        align-items: stretch;
+
+        flex-direction: column;
+
+        gap: 20px;
+
+        margin-bottom: 24px;
+    }
+
+
+    .mw-page-header h1 {
+
+        font-size: 27px;
+    }
+
+
+    .mw-primary-button {
+
+        width: 100%;
+    }
+
+
+    .mw-card-link {
+
+        padding: 20px;
+    }
+
+
+    .mw-card-top {
+
+        flex-direction: column;
+
+        gap: 10px;
+    }
+
+
+    .mw-card-status {
+
+        align-self: flex-start;
+    }
+
+
+    .mw-card-info {
+
+        grid-template-columns:
+            minmax(0, 1fr);
+    }
+
+
+    .mw-card-footer {
+
+        align-items: flex-start;
+
+        flex-direction: column;
+
+        gap: 12px;
+    }
+
+
+    .mw-manage {
+
+        width: 100%;
+
+        min-height: 42px;
+
+        border-radius: 10px;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        background: var(--mw-primary-light);
+    }
+
+}
+
