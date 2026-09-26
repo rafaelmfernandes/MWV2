@@ -18,6 +18,8 @@
    - Identificar corretamente o dono do perfil visualizado.
    - Identificar o participante relacionado a compromissos
      originados de uma contratação.
+   - Identificar corretamente a foto do participante,
+     seja ele artista ou contratante.
 
    REGRAS:
 
@@ -31,6 +33,7 @@
 
    CONTRATANTE:
    - perfis
+   - perfis_estabelecimentos
    - portfolio_musicos
    - agenda_musicos
    - avaliacoes_musicos
@@ -71,6 +74,9 @@
 
             perfisArtistas:
                 "perfis_artistas",
+
+            perfisEstabelecimentos:
+                "perfis_estabelecimentos",
 
             servicos:
                 "servicos_artistas",
@@ -1349,26 +1355,209 @@
 
 
     /* =====================================================
+       CARREGAR FOTO DO PARTICIPANTE NO STORAGE
+
+       Estabelecimentos não possuem foto_url em
+       perfis_estabelecimentos.
+
+       O PerfilEditorFoto salva a foto diretamente no bucket
+       perfil-musico, dentro da pasta correspondente ao
+       usuario_id:
+
+           perfil-musico/{usuario_id}/{arquivo}
+
+       Como não existe uma coluna no banco apontando para
+       o arquivo atual do estabelecimento, os arquivos da
+       pasta são consultados e o mais recente é utilizado.
+
+       Este recurso permanece como FALLBACK para casos em
+       que usuarios.foto_url não estiver preenchido.
+    ===================================================== */
+
+    async function carregarFotoParticipanteStorage(
+        usuarioId
+    ) {
+
+        if (!usuarioId) {
+
+            return null;
+
+        }
+
+
+        const supabase =
+            obterClienteSupabase();
+
+
+        if (!supabase) {
+
+            return null;
+
+        }
+
+
+        try {
+
+            const {
+                data: arquivos,
+                error
+            } = await supabase
+                .storage
+                .from("perfil-musico")
+                .list(
+                    String(usuarioId),
+                    {
+                        limit: 100,
+                        sortBy: {
+                            column: "updated_at",
+                            order: "desc"
+                        }
+                    }
+                );
+
+
+            if (error) {
+
+                console.warn(
+                    "PerfilPublicoDados: não foi possível carregar as fotos do participante no Storage.",
+                    error
+                );
+
+                return null;
+
+            }
+
+
+            if (
+                !Array.isArray(arquivos) ||
+                !arquivos.length
+            ) {
+
+                return null;
+
+            }
+
+
+            /* -------------------------------------------------
+               O Storage pode retornar entradas que não sejam
+               imagens. Mantemos somente os formatos aceitos
+               pelo PerfilEditorFoto.
+            ------------------------------------------------- */
+
+            const extensoesPermitidas = [
+                "jpg",
+                "jpeg",
+                "png",
+                "webp"
+            ];
+
+
+            const arquivosImagem =
+                arquivos.filter(
+                    arquivo => {
+
+                        const nome =
+                            String(
+                                arquivo?.name || ""
+                            )
+                                .toLowerCase();
+
+                        const extensao =
+                            nome.includes(".")
+                                ? nome
+                                    .split(".")
+                                    .pop()
+                                : "";
+
+                        return (
+                            extensoesPermitidas.includes(
+                                extensao
+                            )
+                        );
+
+                    }
+                );
+
+
+            if (!arquivosImagem.length) {
+
+                return null;
+
+            }
+
+
+            /* -------------------------------------------------
+               O resultado já vem ordenado por updated_at.
+               O primeiro arquivo de imagem é tratado como
+               a foto mais recente do participante.
+            ------------------------------------------------- */
+
+            const arquivoAtual =
+                arquivosImagem[0];
+
+
+            if (
+                !arquivoAtual?.name
+            ) {
+
+                return null;
+
+            }
+
+
+            const caminho =
+                `${usuarioId}/${arquivoAtual.name}`;
+
+
+            const {
+                data
+            } =
+                supabase
+                    .storage
+                    .from("perfil-musico")
+                    .getPublicUrl(
+                        caminho
+                    );
+
+
+            return (
+                data?.publicUrl ||
+                null
+            );
+
+        } catch (erro) {
+
+            console.warn(
+                "PerfilPublicoDados: erro inesperado ao carregar foto do participante no Storage.",
+                erro
+            );
+
+            return null;
+
+        }
+
+    }
+
+
+    /* =====================================================
        CARREGAR PARTICIPANTE DE UMA CONTRATAÇÃO
 
        Esta função identifica o OUTRO participante da
        contratação em relação ao perfil que está sendo
        visualizado na agenda.
 
-       A foto do artista é obtida de:
+       FOTO:
 
-       perfis_artistas.foto_url
+       ARTISTA:
+       - perfis_artistas.foto_url
+       - usuarios.foto_url como fallback
 
-       O perfil geral é utilizado somente para descobrir
+       CONTRATANTE:
+       - usuarios.foto_url
+       - Storage perfil-musico/{usuario_id}/... como fallback
+
+       O perfil geral é utilizado para descobrir o tipo,
        o perfil e o usuario_id.
-
-       IMPORTANTE:
-
-       Não consultar foto_url em perfis.
-
-       A tabela perfis possui aqui somente:
-       id
-       usuario_id
 
     ===================================================== */
 
@@ -1556,14 +1745,6 @@
 
             /* =================================================
                CARREGAR PERFIL DO PARTICIPANTE
-
-               IMPORTANTE:
-
-               NÃO buscamos foto_url em perfis.
-
-               Isso evita que a consulta falhe caso a tabela
-               perfis não possua essa coluna.
-
             ================================================= */
 
             const {
@@ -1573,9 +1754,14 @@
                 .from(
                     CONFIG.tabelas.perfis
                 )
-                .select(
-                    "id,usuario_id"
-                )
+                .select(`
+                    id,
+                    usuario_id,
+                    ${CONFIG.tabelas.tiposPerfil} (
+                        id,
+                        nome
+                    )
+                `)
                 .eq(
                     "usuario_id",
                     participanteUsuarioId
@@ -1608,7 +1794,25 @@
 
 
             /* =================================================
+               IDENTIFICAR TIPO DO PARTICIPANTE
+            ================================================= */
+
+            const tipoParticipante =
+                identificarTipoPerfil(
+                    perfilParticipante
+                );
+
+
+            /* =================================================
                CARREGAR USUÁRIO DO PARTICIPANTE
+
+               usuarios.foto_url é carregado junto com os
+               dados básicos do participante.
+
+               A foto do usuário é mantida como fallback
+               geral para evitar que uma eventual falha na
+               identificação do tipo do perfil impeça a
+               apresentação da foto.
             ================================================= */
 
             const {
@@ -1619,7 +1823,7 @@
                     CONFIG.tabelas.usuarios
                 )
                 .select(
-                    "id,nome,email"
+                    "id,nome,email,foto_url"
                 )
                 .eq(
                     "id",
@@ -1641,61 +1845,116 @@
             /* =================================================
                FOTO DO PARTICIPANTE
 
-               Para artista:
+               usuarios.foto_url começa como fallback geral.
 
-               perfis_artistas.foto_url
+               Artista:
+               perfis_artistas.foto_url tem prioridade.
 
-               Se não existir registro artístico, mantemos
-               fotoUrl como null.
+               Contratante:
+               usuarios.foto_url é a fonte principal.
+
+               Fallback final:
+               Storage perfil-musico/{usuario_id}/...
             ================================================= */
 
             let fotoUrl =
+                usuarioParticipante?.foto_url ||
                 null;
 
 
-            const {
-                data: perfilArtistaParticipante,
-                error: erroArtistaParticipante
-            } = await supabase
-                .from(
-                    CONFIG.tabelas.perfisArtistas
-                )
-                .select(
-                    "foto_url"
-                )
-                .eq(
-                    "perfil_id",
-                    perfilParticipante.id
-                )
-                .maybeSingle();
-
-
             if (
-                erroArtistaParticipante
+                tipoParticipante ===
+                CONFIG.tiposPerfil.artista
             ) {
 
-                /*
-                 * O participante pode ser contratante e,
-                 * nesse caso, não possuir registro em
-                 * perfis_artistas.
-                 *
-                 * Portanto isso não interrompe a agenda.
-                 */
+                const {
+                    data: perfilArtistaParticipante,
+                    error: erroArtistaParticipante
+                } = await supabase
+                    .from(
+                        CONFIG.tabelas.perfisArtistas
+                    )
+                    .select(
+                        "foto_url"
+                    )
+                    .eq(
+                        "perfil_id",
+                        perfilParticipante.id
+                    )
+                    .maybeSingle();
 
-                console.warn(
-                    "PerfilPublicoDados: perfil artístico do participante não disponível. A foto poderá não existir.",
+
+                if (
                     erroArtistaParticipante
-                );
+                ) {
+
+                    console.warn(
+                        "PerfilPublicoDados: perfil artístico do participante não disponível.",
+                        erroArtistaParticipante
+                    );
+
+                }
+
+
+                if (
+                    perfilArtistaParticipante?.foto_url
+                ) {
+
+                    fotoUrl =
+                        perfilArtistaParticipante.foto_url;
+
+                }
+
+            } else if (
+                tipoParticipante ===
+                CONFIG.tiposPerfil.contratante
+            ) {
+
+                /* -------------------------------------------------
+                   ESTABELECIMENTO
+
+                   A tabela perfis_estabelecimentos não possui
+                   coluna de foto.
+
+                   A foto oficial do estabelecimento está em:
+
+                       usuarios.foto_url
+                ------------------------------------------------- */
+
+                fotoUrl =
+                    usuarioParticipante?.foto_url ||
+                    fotoUrl;
+
+
+                if (!fotoUrl) {
+
+                    fotoUrl =
+                        await carregarFotoParticipanteStorage(
+                            participanteUsuarioId
+                        );
+
+                }
 
             }
 
 
-            if (
-                perfilArtistaParticipante?.foto_url
-            ) {
+            /* =================================================
+               FALLBACK FINAL
+
+               Caso o tipo do participante não tenha sido
+               identificado corretamente, ainda tentamos
+               recuperar a foto pelo Storage.
+
+               Isso não interfere no funcionamento normal
+               de artistas ou contratantes.
+            ================================================= */
+
+            if (!fotoUrl) {
 
                 fotoUrl =
-                    perfilArtistaParticipante.foto_url;
+                    await carregarFotoParticipanteStorage(
+                        participanteUsuarioId
+                    );
 
             }
 

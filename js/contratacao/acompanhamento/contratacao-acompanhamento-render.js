@@ -70,6 +70,78 @@
 
 
     /* =====================================================
+       IDENTIFICAR CONTRATAÇÃO DE OPORTUNIDADE
+       ===================================================== */
+
+    function ehContratacaoDeOportunidade(
+        dados
+    ) {
+
+        return Boolean(
+            dados &&
+            dados.oportunidadeId
+        );
+    }
+
+
+    /* =====================================================
+       IDENTIFICAR PROPOSTA ACEITA AGUARDANDO PAGAMENTO
+       ===================================================== */
+
+    function ehPropostaAceitaAguardandoPagamento(
+        dados
+    ) {
+
+        if (!dados) {
+
+            return false;
+        }
+
+
+        return (
+            ehContratacaoDeOportunidade(
+                dados
+            ) &&
+
+            dados.status ===
+                "confirmada" &&
+
+            String(
+                dados.pagamento?.status ||
+                ""
+            )
+                .toLowerCase()
+                .trim() ===
+                "pendente"
+        );
+    }
+
+
+    /* =====================================================
+       ATUALIZAR ÍCONE DE PAGAMENTO
+       ===================================================== */
+
+    function atualizarIconePagamento(
+        icone
+    ) {
+
+        if (!icone) {
+
+            return;
+        }
+
+
+        icone.setAttribute(
+            "data-lucide",
+            "wallet"
+        );
+
+
+        atualizarIcones();
+    }
+
+
+    /* =====================================================
        RENDERIZAR RELAÇÃO
        ===================================================== */
 
@@ -100,6 +172,12 @@
             obterElemento("timelineArtistaDescricao");
 
 
+        const propostaAguardandoPagamento =
+            ehPropostaAceitaAguardandoPagamento(
+                dados
+            );
+
+
         if (
             dados.direcao ===
             "recebida"
@@ -107,14 +185,31 @@
 
             if (titulo) {
 
-                titulo.textContent =
-                    "Solicitação recebida";
+                if (
+                    propostaAguardandoPagamento
+                ) {
+
+                    titulo.textContent =
+                        "Proposta aceita";
+
+                } else {
+
+                    titulo.textContent =
+                        "Solicitação recebida";
+                }
             }
 
 
             if (descricao) {
 
                 if (
+                    propostaAguardandoPagamento
+                ) {
+
+                    descricao.textContent =
+                        "Você aceitou a proposta da oportunidade. O contratante precisa realizar o pagamento para continuar a contratação.";
+
+                } else if (
                     dados.status === "concluida" ||
                     dados.status === "pagamento"
                 ) {
@@ -168,6 +263,19 @@
             if (timelineTitulo) {
 
                 if (
+                    propostaAguardandoPagamento
+                ) {
+
+                    timelineTitulo.textContent =
+                        "Proposta aceita";
+
+                    if (timelineDescricao) {
+
+                        timelineDescricao.textContent =
+                            "Você aceitou a proposta. O contratante precisa realizar o pagamento para continuar a contratação.";
+                    }
+
+                } else if (
                     dados.status === "concluida" ||
                     dados.status === "pagamento"
                 ) {
@@ -228,6 +336,13 @@
         if (titulo) {
 
             if (
+                propostaAguardandoPagamento
+            ) {
+
+                titulo.textContent =
+                    "Proposta aceita";
+
+            } else if (
                 dados.status === "concluida" ||
                 dados.status === "pagamento"
             ) {
@@ -253,6 +368,13 @@
         if (descricao) {
 
             if (
+                propostaAguardandoPagamento
+            ) {
+
+                descricao.textContent =
+                    "O artista aceitou sua proposta. Agora realize o pagamento para continuar com a contratação.";
+
+            } else if (
                 dados.status === "concluida" ||
                 dados.status === "pagamento"
             ) {
@@ -313,12 +435,24 @@
         if (timelineTitulo) {
 
             if (
+                propostaAguardandoPagamento
+            ) {
+
+                timelineTitulo.textContent =
+                    "Proposta aceita pelo artista";
+
+                if (timelineDescricao) {
+
+                    timelineDescricao.textContent =
+                        "O artista aceitou a proposta da oportunidade. Realize o pagamento para continuar com a contratação.";
+                }
+
+            } else if (
                 dados.status === "em_andamento"
             ) {
 
                 timelineTitulo.textContent =
                     "Evento em andamento";
-
 
                 if (timelineDescricao) {
 
@@ -334,7 +468,6 @@
                 timelineTitulo.textContent =
                     "Contratação concluída";
 
-
                 if (timelineDescricao) {
 
                     timelineDescricao.textContent =
@@ -348,7 +481,6 @@
                 timelineTitulo.textContent =
                     "Contratação confirmada";
 
-
                 if (timelineDescricao) {
 
                     timelineDescricao.textContent =
@@ -359,7 +491,6 @@
 
                 timelineTitulo.textContent =
                     "Aguardando o artista";
-
 
                 if (timelineDescricao) {
 
@@ -377,18 +508,6 @@
 
     function renderizarParticipante(dados) {
 
-        /*
-         * Define qual pessoa deve ser exibida.
-         *
-         * RECEBIDA:
-         * - o usuário atual é o contratado;
-         * - exibimos o contratante.
-         *
-         * ENVIADA:
-         * - o usuário atual é o contratante;
-         * - exibimos o contratado.
-         */
-
         const pessoa =
             dados.direcao === "recebida"
                 ? dados.contratante
@@ -401,15 +520,6 @@
         }
 
 
-        /*
-         * O carregarPessoa() já fornece o ID do perfil
-         * da pessoa que está sendo exibida.
-         *
-         * Esse ID será utilizado para abrir:
-         *
-         * meu-perfil.html?id=<perfilId>
-         */
-
         const urlPerfil =
             pessoa.perfilId
                 ? `meu-perfil.html?id=${encodeURIComponent(
@@ -417,10 +527,6 @@
                 )}`
                 : null;
 
-
-        /*
-         * Função centralizada para abrir o perfil.
-         */
 
         function abrirPerfil() {
 
@@ -434,10 +540,6 @@
                 urlPerfil;
         }
 
-
-        /* =================================================
-           AVATAR
-           ================================================= */
 
         const avatar =
             obterElemento("artistaAvatar");
@@ -503,10 +605,6 @@
             }
 
 
-            /*
-             * Torna a foto clicável.
-             */
-
             if (urlPerfil) {
 
                 avatar.style.cursor =
@@ -541,11 +639,6 @@
                     };
 
 
-                /*
-                 * Permite abrir o perfil também
-                 * utilizando teclado.
-                 */
-
                 avatar.onkeydown =
                     function (evento) {
 
@@ -563,10 +656,6 @@
         }
 
 
-        /* =================================================
-           NOME
-           ================================================= */
-
         const nome =
             obterElemento("artistaNome");
 
@@ -577,10 +666,6 @@
                 pessoa.nome ||
                 "Usuário";
 
-
-            /*
-             * Torna o nome clicável.
-             */
 
             if (urlPerfil) {
 
@@ -616,11 +701,6 @@
                     };
 
 
-                /*
-                 * Permite abrir o perfil também
-                 * utilizando teclado.
-                 */
-
                 nome.onkeydown =
                     function (evento) {
 
@@ -638,10 +718,6 @@
         }
 
 
-        /* =================================================
-           TIPO DO PERFIL
-           ================================================= */
-
         const tipo =
             obterElemento("artistaTipo");
 
@@ -653,10 +729,6 @@
                 "Usuário";
         }
 
-
-        /* =================================================
-           LOCALIZAÇÃO
-           ================================================= */
 
         const localizacao =
             obterElemento("artistaLocalizacao");
@@ -903,6 +975,16 @@
             estado.direcao === "recebida";
 
 
+        const dados =
+            estado.dados;
+
+
+        const propostaAguardandoPagamento =
+            ehPropostaAceitaAguardandoPagamento(
+                dados
+            );
+
+
         const configuracoes = {
 
             rascunho: {
@@ -938,15 +1020,27 @@
             confirmada: {
 
                 titulo:
-                    "Contratação confirmada",
+                    propostaAguardandoPagamento
+                        ? "Proposta aceita — aguardando pagamento"
+                        : "Contratação confirmada",
 
                 descricao:
-                    recebida
-                        ? "Você confirmou a contratação e o evento está agendado."
-                        : "O artista aceitou sua solicitação e a contratação está confirmada.",
+                    propostaAguardandoPagamento
+                        ? (
+                            recebida
+                                ? "Você aceitou a proposta. O contratante precisa realizar o pagamento para continuar a contratação."
+                                : "O artista aceitou sua proposta. Agora realize o pagamento para continuar com a contratação."
+                        )
+                        : (
+                            recebida
+                                ? "Você confirmou a contratação e o evento está agendado."
+                                : "O artista aceitou sua solicitação e a contratação está confirmada."
+                        ),
 
                 icone:
-                    "circle-check"
+                    propostaAguardandoPagamento
+                        ? "wallet"
+                        : "circle-check"
             },
 
 
@@ -1233,6 +1327,61 @@
         );
 
 
+        /*
+         * Em uma oportunidade confirmada e ainda pendente
+         * de pagamento, a etapa de confirmação já aconteceu,
+         * mas o próximo passo é financeiro.
+         *
+         * O índice da timeline continua em "confirmada",
+         * evitando apresentar o evento como se já estivesse
+         * pronto para realização.
+         */
+
+        if (
+            status === "confirmada" &&
+            ehPropostaAceitaAguardandoPagamento(
+                estado.dados
+            )
+        ) {
+
+            const itemConfirmada =
+                document.querySelector(
+                    '.timeline-item[data-status="confirmada"]'
+                );
+
+
+            if (itemConfirmada) {
+
+                const titulo =
+                    itemConfirmada.querySelector(
+                        "#timelineConfirmadaTitulo"
+                    );
+
+
+                const descricao =
+                    itemConfirmada.querySelector(
+                        "#timelineConfirmadaDescricao"
+                    );
+
+
+                if (titulo) {
+
+                    titulo.textContent =
+                        "Proposta aceita";
+                }
+
+
+                if (descricao) {
+
+                    descricao.textContent =
+                        estado.direcao === "enviada"
+                            ? "O artista aceitou a proposta. Realize o pagamento para continuar com a contratação."
+                            : "A proposta foi aceita. O contratante precisa realizar o pagamento para continuar.";
+                }
+            }
+        }
+
+
         atualizarIcones();
     }
 
@@ -1248,6 +1397,11 @@
 
         const elementoDescricao =
             obterElemento("pagamentoDescricao");
+
+        const elementoIcone =
+            document.querySelector(
+                "#pagamentoCard .pagamento-icon i"
+            );
 
 
         const status =
@@ -1266,6 +1420,46 @@
             )
                 .toLowerCase()
                 .trim();
+
+
+        if (
+            estado.statusAtual === "confirmada" &&
+            ehPropostaAceitaAguardandoPagamento(
+                estado.dados
+            )
+        ) {
+
+            if (elementoStatus) {
+
+                elementoStatus.textContent =
+                    "Pagamento pendente";
+            }
+
+
+            if (elementoDescricao) {
+
+                if (
+                    estado.direcao === "enviada"
+                ) {
+
+                    elementoDescricao.textContent =
+                        "O artista aceitou sua proposta. Agora realize o pagamento para confirmar a contratação e continuar o fluxo.";
+
+                } else {
+
+                    elementoDescricao.textContent =
+                        "O contratante ainda precisa realizar o pagamento para que a contratação possa continuar.";
+                }
+            }
+
+
+            atualizarIconePagamento(
+                elementoIcone
+            );
+
+
+            return;
+        }
 
 
         if (
@@ -1436,6 +1630,110 @@
 
 
     /* =====================================================
+       RENDERIZAR AÇÃO DE PAGAMENTO DA OPORTUNIDADE
+
+       Utilizamos a estrutura pagamentoAcao que já existe
+       no HTML para não criar uma segunda área de pagamento.
+       ===================================================== */
+
+    function renderizarAcaoPagamento(
+        dados
+    ) {
+
+        const container =
+            obterElemento("pagamentoAcao");
+
+        const botao =
+            obterElemento(
+                "btnLiberarPagamento"
+            );
+
+        const status =
+            obterElemento(
+                "pagamentoAcaoStatus"
+            );
+
+
+        if (!container) {
+
+            return;
+        }
+
+
+        const deveExibir =
+            ehPropostaAceitaAguardandoPagamento(
+                dados
+            ) &&
+            dados.direcao ===
+                "enviada";
+
+
+        container.hidden =
+            !deveExibir;
+
+
+        if (!deveExibir) {
+
+            if (botao) {
+
+                botao.disabled =
+                    true;
+
+                botao.dataset.acao =
+                    "";
+            }
+
+
+            return;
+        }
+
+
+        if (status) {
+
+            status.textContent =
+                "O artista aceitou sua proposta. Realize o pagamento para continuar com a contratação.";
+        }
+
+
+        const titulo =
+            container.querySelector(
+                "h2"
+            );
+
+
+        if (titulo) {
+
+            titulo.textContent =
+                "Pagamento necessário";
+        }
+
+
+        if (botao) {
+
+            botao.disabled =
+                false;
+
+
+            botao.dataset.acao =
+                "realizar-pagamento";
+
+
+            botao.innerHTML =
+                `
+                <span>
+                    Realizar pagamento
+                </span>
+
+                <i data-lucide="wallet"></i>
+                `;
+        }
+
+
+        atualizarIcones();
+    }
+
+
+    /* =====================================================
        RENDERIZAR AÇÕES DE CONCLUSÃO
        ===================================================== */
 
@@ -1461,9 +1759,16 @@
             dados.direcao === "enviada";
 
 
+        const pagamentoPendente =
+            ehPropostaAceitaAguardandoPagamento(
+                dados
+            );
+
+
         const podeSimularEvento =
             ehContratante &&
             dados.status === "confirmada" &&
+            !pagamentoPendente &&
             !estado.simulandoEvento;
 
 
@@ -1567,27 +1872,31 @@
         renderizarAcoesConclusao(
             dados
         );
+
+
+        renderizarAcaoPagamento(
+            dados
+        );
     }
 
 
     /* =====================================================
        OCULTAR LIBERAÇÃO LEGADA
+
+       Mantemos a função pública para compatibilidade com
+       o restante do acompanhamento.
+
+       Agora ela também atualiza a ação específica de
+       pagamento de oportunidade.
        ===================================================== */
 
-    function renderizarAcaoLiberacaoPagamento() {
+    function renderizarAcaoLiberacaoPagamento(
+        dados
+    ) {
 
-        const container =
-            obterElemento("pagamentoAcao");
-
-
-        if (!container) {
-
-            return;
-        }
-
-
-        container.hidden =
-            true;
+        renderizarAcaoPagamento(
+            dados
+        );
     }
 
 

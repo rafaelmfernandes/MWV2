@@ -2,7 +2,7 @@
    MUSICALWORLD — CONTROLADOR DA CENTRAL DE CONTRATAÇÕES
 
    Arquivo:
-   js/contratacoes.js
+   js/contratacoes/contratacoes.js
 
    Responsabilidade:
 

@@ -1,956 +1,2277 @@
+
+/*
+=========================================================
+MUSICALWORLD — CONFIGURAÇÃO INICIAL DA CONTA
+
+Arquivo:
+css/configuracao-de-conta/configurar-conta.css
+
+Responsabilidades:
+
+- Estilizar a página de configuração inicial.
+- Criar a identidade visual clara do MusicalWorld.
+- Adaptar o layout para desktop, tablet e mobile.
+- Estilizar as três etapas do processo.
+- Estilizar seleção de tipo de conta.
+- Estilizar seleção de tipo de artista.
+- Estilizar confirmação dos dados.
+- Estilizar mensagens, carregamento e estados de interação.
+
+Observação:
+
+O JavaScript controla quais etapas ficam ativas.
+Este arquivo controla somente a apresentação visual.
+=========================================================
+*/
+
+
 /* =========================================================
-   MUSICALWORLD — CONFIGURAÇÕES DA CONTA
-
-   Arquivo:
-   css/configuracoes-conta/configuracoes-conta.css
-
-   Responsabilidade:
-   - Estilizar a central de configurações da conta.
-   - Adaptar a interface para desktop, tablet e celular.
-   - Manter o padrão visual claro do MusicalWorld.
-   - Organizar as opções em grupos.
-   - Garantir boa área de toque em dispositivos móveis.
-   ========================================================= */
-
-
-/* =========================================================
-   VARIÁVEIS
-   ========================================================= */
+   01. VARIÁVEIS
+========================================================= */
 
 :root {
 
-    --mw-bg: #f5f7fb;
+    --mw-bg:
+        #f5f7fb;
 
-    --mw-surface: #ffffff;
+    --mw-surface:
+        #ffffff;
 
-    --mw-text: #172033;
+    --mw-surface-soft:
+        #f8f9fc;
 
-    --mw-text-secondary: #687386;
+    --mw-border:
+        #e5e7ef;
 
-    --mw-text-muted: #8b95a7;
+    --mw-border-strong:
+        #d7dbea;
 
-    --mw-border: #e7eaf0;
+    --mw-text:
+        #172033;
 
-    --mw-border-hover: #dfe3eb;
+    --mw-text-secondary:
+        #667085;
 
-    --mw-primary: #6d4aff;
+    --mw-text-muted:
+        #98a2b3;
 
-    --mw-primary-soft: #f1edff;
+    --mw-primary:
+        #6d4aff;
 
-    --mw-danger: #d83a52;
+    --mw-primary-dark:
+        #5937e8;
 
-    --mw-danger-soft: #fff1f3;
+    --mw-primary-soft:
+        #f0edff;
+
+    --mw-success:
+        #16845b;
+
+    --mw-success-soft:
+        #eaf8f2;
+
+    --mw-error:
+        #d92d20;
+
+    --mw-error-soft:
+        #fff1f0;
 
     --mw-shadow:
-        0 8px 30px rgba(23, 32, 51, 0.05);
+        0 18px 55px rgba(23, 32, 51, 0.08);
 
-    --mw-radius-large: 24px;
+    --mw-shadow-hover:
+        0 22px 65px rgba(23, 32, 51, 0.12);
 
-    --mw-radius-medium: 18px;
+    --mw-radius:
+        24px;
 
-    --mw-radius-small: 14px;
+    --mw-radius-small:
+        14px;
+
+    --mw-transition:
+        180ms ease;
 
 }
 
 
 /* =========================================================
-   RESET
-   ========================================================= */
+   02. RESET
+========================================================= */
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+*,
+*::before,
+*::after {
+
+    box-sizing:
+        border-box;
+
 }
 
 
 html {
-    min-height: 100%;
-    /* Impede que o navegador altere o tamanho da fonte por conta própria */
-        -webkit-text-size-adjust: 100%;
-        text-size-adjust: 100%;
+
+    min-height:
+        100%;
+
+    scroll-behavior:
+        smooth;
+
 }
 
 
 body {
 
-    min-height: 100%;
+    min-height:
+        100vh;
+
+    margin:
+        0;
+
+    padding:
+        0;
+
+    background:
+        var(--mw-bg);
+
+    color:
+        var(--mw-text);
 
     font-family:
         "Manrope",
-        "Inter",
-        system-ui,
         -apple-system,
         BlinkMacSystemFont,
         "Segoe UI",
         sans-serif;
 
-    color: var(--mw-text);
+    -webkit-font-smoothing:
+        antialiased;
 
-    background: var(--mw-bg);
+    text-rendering:
+        optimizeLegibility;
 
-    -webkit-font-smoothing: antialiased;
-
-    text-rendering: optimizeLegibility;
 }
 
 
 button,
-a,
 input,
 select,
 textarea {
-    font: inherit;
+
+    font:
+        inherit;
+
 }
 
 
 button {
-    border: 0;
+
+    border:
+        0;
+
 }
 
 
-a {
-    color: inherit;
-    text-decoration: none;
-}
+button,
+select {
 
+    -webkit-tap-highlight-color:
+        transparent;
 
-/* =========================================================
-   CABEÇALHO
-   ========================================================= */
-
-.config-header {
-
-    position: sticky;
-
-    top: 0;
-
-    z-index: 100;
-
-    width: 100%;
-
-    background: rgba(255, 255, 255, 0.96);
-
-    border-bottom: 1px solid var(--mw-border);
-
-    backdrop-filter: blur(14px);
-
-    -webkit-backdrop-filter: blur(14px);
-}
-
-
-.config-header-inner {
-
-    width: min(100%, 1180px);
-
-    min-height: 68px;
-
-    margin: 0 auto;
-
-    padding: 0 24px;
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 16px;
-}
-
-
-.config-voltar {
-
-    width: 42px;
-
-    height: 42px;
-
-    flex: 0 0 42px;
-
-    display: inline-flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    color: var(--mw-text);
-
-    background: transparent;
-
-    border-radius: 50%;
-
-    cursor: pointer;
-
-    transition:
-        background-color 0.18s ease,
-        transform 0.18s ease;
-}
-
-
-.config-voltar:hover {
-    background: #f0f2f6;
-}
-
-
-.config-voltar:active {
-    transform: scale(0.95);
-}
-
-
-.config-voltar svg {
-    width: 21px;
-    height: 21px;
-}
-
-
-.config-header-title h1 {
-
-    font-size: 20px;
-
-    line-height: 1.2;
-
-    font-weight: 800;
-
-    letter-spacing: -0.02em;
 }
 
 
 /* =========================================================
-   CONTEÚDO PRINCIPAL
-   ========================================================= */
+   03. PÁGINA
+========================================================= */
 
-.config-main {
+.configurar-conta-page {
 
-    width: 100%;
+    width:
+        100%;
+
+    min-height:
+        100vh;
+
+    display:
+        flex;
+
+    align-items:
+        flex-start;
+
+    justify-content:
+        center;
 
     padding:
-        32px 24px 80px;
-}
+        56px 24px 72px;
 
-
-.config-container {
-
-    width: min(100%, 900px);
-
-    margin: 0 auto;
-
-    display: flex;
-
-    flex-direction: column;
-
-    gap: 28px;
 }
 
 
 /* =========================================================
-   PERFIL / IDENTIDADE
-   ========================================================= */
+   04. CONTAINER PRINCIPAL
+========================================================= */
 
-.perfil-conta {
+.configurar-conta-container {
 
-    min-height: 104px;
+    width:
+        100%;
 
-    padding: 18px 20px;
+    max-width:
+        820px;
 
-    display: flex;
+    margin:
+        0 auto;
 
-    align-items: center;
-
-    gap: 16px;
-
-    background: var(--mw-surface);
-
-    border: 1px solid var(--mw-border);
-
-    border-radius: var(--mw-radius-large);
-
-    box-shadow: var(--mw-shadow);
 }
 
 
-.perfil-conta-avatar {
+/* =========================================================
+   05. CABEÇALHO
+========================================================= */
 
-    position: relative;
+.configurar-conta-header {
 
-    width: 68px;
+    text-align:
+        center;
 
-    height: 68px;
+    margin-bottom:
+        36px;
 
-    flex: 0 0 68px;
-
-    overflow: hidden;
-
-    border-radius: 50%;
-
-    background: #eeeafc;
 }
 
 
-.perfil-conta-avatar img {
+.brand {
 
-    width: 100%;
+    display:
+        flex;
 
-    height: 100%;
+    justify-content:
+        center;
 
-    display: none;
+    align-items:
+        center;
 
-    object-fit: cover;
+    margin-bottom:
+        24px;
+
 }
 
 
-.perfil-conta-avatar-placeholder {
+.brand-name {
 
-    width: 100%;
+    color:
+        var(--mw-primary);
 
-    height: 100%;
+    font-size:
+        22px;
 
-    display: flex;
+    line-height:
+        1;
 
-    align-items: center;
+    font-weight:
+        800;
 
-    justify-content: center;
+    letter-spacing:
+        -0.6px;
 
-    color: var(--mw-primary);
 }
 
 
-.perfil-conta-avatar-placeholder svg {
+.configurar-conta-header h1 {
 
-    width: 30px;
+    margin:
+        0;
 
-    height: 30px;
+    color:
+        var(--mw-text);
+
+    font-size:
+        clamp(30px, 4vw, 42px);
+
+    line-height:
+        1.12;
+
+    font-weight:
+        800;
+
+    letter-spacing:
+        -1.2px;
+
 }
 
 
-.perfil-conta-dados {
+.configurar-conta-header p {
 
-    min-width: 0;
+    max-width:
+        590px;
 
-    flex: 1;
+    margin:
+        14px auto 0;
+
+    color:
+        var(--mw-text-secondary);
+
+    font-size:
+        15px;
+
+    line-height:
+        1.7;
+
+    font-weight:
+        500;
+
 }
 
 
-.perfil-conta-dados h2 {
+/* =========================================================
+   06. PROGRESSO
+========================================================= */
 
-    overflow: hidden;
+.progresso-container {
 
-    margin-bottom: 4px;
+    width:
+        100%;
 
-    font-size: 17px;
+    display:
+        flex;
 
-    line-height: 1.3;
+    align-items:
+        flex-start;
 
-    font-weight: 800;
+    justify-content:
+        center;
 
-    white-space: nowrap;
+    margin-bottom:
+        30px;
 
-    text-overflow: ellipsis;
 }
 
 
-.perfil-conta-dados p {
+.progresso-etapa {
 
-    overflow: hidden;
+    min-width:
+        88px;
 
-    color: var(--mw-text-secondary);
+    display:
+        flex;
 
-    font-size: 13px;
+    flex-direction:
+        column;
 
-    line-height: 1.4;
+    align-items:
+        center;
 
-    white-space: nowrap;
+    gap:
+        9px;
 
-    text-overflow: ellipsis;
-}
-
-
-.perfil-conta-editar {
-
-    min-height: 40px;
-
-    padding: 0 13px;
-
-    display: inline-flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    gap: 4px;
-
-    flex: 0 0 auto;
-
-    color: var(--mw-primary);
-
-    font-size: 13px;
-
-    font-weight: 700;
-
-    border-radius: 12px;
+    color:
+        var(--mw-text-muted);
 
     transition:
-        background-color 0.18s ease;
+        color var(--mw-transition);
+
 }
 
 
-.perfil-conta-editar:hover {
-    background: var(--mw-primary-soft);
+.progresso-numero {
+
+    width:
+        38px;
+
+    height:
+        38px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    border:
+        1px solid var(--mw-border-strong);
+
+    border-radius:
+        50%;
+
+    background:
+        var(--mw-surface);
+
+    color:
+        var(--mw-text-muted);
+
+    font-size:
+        13px;
+
+    font-weight:
+        800;
+
+    transition:
+        all var(--mw-transition);
+
 }
 
 
-.perfil-conta-editar svg {
+.progresso-label {
 
-    width: 16px;
+    font-size:
+        12px;
 
-    height: 16px;
+    line-height:
+        1.2;
+
+    font-weight:
+        700;
+
+    white-space:
+        nowrap;
+
+}
+
+
+.progresso-etapa.ativa {
+
+    color:
+        var(--mw-primary);
+
+}
+
+
+.progresso-etapa.ativa .progresso-numero {
+
+    border-color:
+        var(--mw-primary);
+
+    background:
+        var(--mw-primary);
+
+    color:
+        #ffffff;
+
+    box-shadow:
+        0 8px 20px rgba(109, 74, 255, 0.22);
+
+}
+
+
+.progresso-etapa.concluida {
+
+    color:
+        var(--mw-primary);
+
+}
+
+
+.progresso-etapa.concluida .progresso-numero {
+
+    border-color:
+        var(--mw-primary);
+
+    background:
+        var(--mw-primary-soft);
+
+    color:
+        var(--mw-primary);
+
+}
+
+
+.progresso-linha {
+
+    width:
+        min(110px, 12vw);
+
+    height:
+        1px;
+
+    margin-top:
+        19px;
+
+    background:
+        var(--mw-border-strong);
+
 }
 
 
 /* =========================================================
-   SEÇÕES
-   ========================================================= */
+   07. CARD PRINCIPAL
+========================================================= */
 
-.config-section {
+.configurar-card {
 
-    display: flex;
+    position:
+        relative;
 
-    flex-direction: column;
+    width:
+        100%;
 
-    gap: 10px;
-}
-
-
-.config-section-heading {
+    min-height:
+        390px;
 
     padding:
-        0 6px;
-}
+        42px;
 
+    border:
+        1px solid rgba(229, 231, 239, 0.95);
 
-.config-section-heading h2 {
+    border-radius:
+        var(--mw-radius);
 
-    color: var(--mw-text-secondary);
+    background:
+        var(--mw-surface);
 
-    font-size: 12px;
+    box-shadow:
+        var(--mw-shadow);
 
-    line-height: 1.4;
-
-    font-weight: 800;
-
-    letter-spacing: 0.08em;
-
-    text-transform: uppercase;
-}
-
-
-/* =========================================================
-   LISTA DE CONFIGURAÇÕES
-   ========================================================= */
-
-.config-list {
-
-    overflow: hidden;
-
-    background: var(--mw-surface);
-
-    border: 1px solid var(--mw-border);
-
-    border-radius: var(--mw-radius-medium);
-
-    box-shadow: var(--mw-shadow);
 }
 
 
 /* =========================================================
-   ITEM
-   ========================================================= */
+   08. ETAPAS
+========================================================= */
 
-.config-item {
+.etapa {
 
-    position: relative;
+    display:
+        none;
 
-    width: 100%;
-
-    min-height: 76px;
-
-    padding: 12px 18px;
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 14px;
-
-    color: var(--mw-text);
-
-    background: var(--mw-surface);
-
-    text-align: left;
-
-    cursor: pointer;
-
-    transition:
-        background-color 0.18s ease;
 }
 
 
-.config-item + .config-item {
+.etapa.ativa {
 
-    border-top:
+    display:
+        block;
+
+}
+
+
+.etapa-cabecalho {
+
+    margin-bottom:
+        30px;
+
+}
+
+
+.etapa-kicker {
+
+    display:
+        inline-flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    margin-bottom:
+        10px;
+
+    color:
+        var(--mw-primary);
+
+    font-size:
+        11px;
+
+    line-height:
+        1;
+
+    font-weight:
+        800;
+
+    letter-spacing:
+        1.1px;
+
+}
+
+
+.etapa-cabecalho h2 {
+
+    margin:
+        0;
+
+    color:
+        var(--mw-text);
+
+    font-size:
+        clamp(23px, 3vw, 29px);
+
+    line-height:
+        1.2;
+
+    font-weight:
+        800;
+
+    letter-spacing:
+        -0.7px;
+
+}
+
+
+.etapa-cabecalho p {
+
+    max-width:
+        620px;
+
+    margin:
+        10px 0 0;
+
+    color:
+        var(--mw-text-secondary);
+
+    font-size:
+        14px;
+
+    line-height:
+        1.7;
+
+    font-weight:
+        500;
+
+}
+
+
+/* =========================================================
+   09. OPÇÕES DE CONTA
+========================================================= */
+
+.opcoes-conta {
+
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap:
+        16px;
+
+}
+
+
+.opcao-conta {
+
+    position:
+        relative;
+
+    width:
+        100%;
+
+    min-height:
+        170px;
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    align-items:
+        flex-start;
+
+    justify-content:
+        flex-start;
+
+    padding:
+        24px;
+
+    border:
         1px solid var(--mw-border);
+
+    border-radius:
+        18px;
+
+    background:
+        var(--mw-surface);
+
+    color:
+        var(--mw-text);
+
+    text-align:
+        left;
+
+    cursor:
+        pointer;
+
+    transition:
+        border-color var(--mw-transition),
+        background-color var(--mw-transition),
+        box-shadow var(--mw-transition),
+        transform var(--mw-transition);
+
 }
 
 
-.config-item:hover {
-    background: #fafbfe;
+.opcao-conta:hover {
+
+    border-color:
+        #cfc6ff;
+
+    background:
+        #fcfbff;
+
+    box-shadow:
+        0 12px 32px rgba(23, 32, 51, 0.07);
+
+    transform:
+        translateY(-2px);
+
 }
 
 
-.config-item:focus-visible {
+.opcao-conta:focus-visible {
 
     outline:
-        3px solid rgba(109, 74, 255, 0.18);
+        3px solid rgba(109, 74, 255, 0.22);
 
-    outline-offset: -3px;
+    outline-offset:
+        3px;
+
+}
+
+
+.opcao-conta.selecionada {
+
+    border-color:
+        var(--mw-primary);
+
+    background:
+        var(--mw-primary-soft);
+
+    box-shadow:
+        0 12px 32px rgba(109, 74, 255, 0.10);
+
+}
+
+
+.opcao-icone {
+
+    width:
+        48px;
+
+    height:
+        48px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    margin-bottom:
+        22px;
+
+    border-radius:
+        14px;
+
+    background:
+        #f1efff;
+
+    color:
+        var(--mw-primary);
+
+}
+
+
+.opcao-icone svg {
+
+    width:
+        23px;
+
+    height:
+        23px;
+
+    fill:
+        none;
+
+    stroke:
+        currentColor;
+
+    stroke-width:
+        1.8;
+
+    stroke-linecap:
+        round;
+
+    stroke-linejoin:
+        round;
+
+}
+
+
+.opcao-conteudo {
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    gap:
+        7px;
+
+    padding-right:
+        28px;
+
+}
+
+
+.opcao-conteudo strong {
+
+    color:
+        var(--mw-text);
+
+    font-size:
+        16px;
+
+    line-height:
+        1.3;
+
+    font-weight:
+        800;
+
+}
+
+
+.opcao-conteudo small {
+
+    color:
+        var(--mw-text-secondary);
+
+    font-size:
+        13px;
+
+    line-height:
+        1.6;
+
+    font-weight:
+        500;
+
+}
+
+
+.opcao-check {
+
+    position:
+        absolute;
+
+    top:
+        20px;
+
+    right:
+        20px;
+
+    width:
+        27px;
+
+    height:
+        27px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    border:
+        1px solid var(--mw-border-strong);
+
+    border-radius:
+        50%;
+
+    background:
+        var(--mw-surface);
+
+    color:
+        transparent;
+
+    transition:
+        all var(--mw-transition);
+
+}
+
+
+.opcao-check svg {
+
+    width:
+        15px;
+
+    height:
+        15px;
+
+    fill:
+        none;
+
+    stroke:
+        currentColor;
+
+    stroke-width:
+        2.4;
+
+    stroke-linecap:
+        round;
+
+    stroke-linejoin:
+        round;
+
+}
+
+
+.opcao-conta.selecionada .opcao-check {
+
+    border-color:
+        var(--mw-primary);
+
+    background:
+        var(--mw-primary);
+
+    color:
+        #ffffff;
+
 }
 
 
 /* =========================================================
-   ÍCONE
-   ========================================================= */
+   10. MENSAGEM DE ERRO DA ETAPA 1
+========================================================= */
 
-.config-item-icon {
+.mensagem-erro {
 
-    width: 42px;
+    display:
+        none;
 
-    height: 42px;
+    margin-top:
+        16px;
 
-    flex: 0 0 42px;
+    padding:
+        12px 14px;
 
-    display: inline-flex;
+    border:
+        1px solid #ffd5d1;
 
-    align-items: center;
+    border-radius:
+        10px;
 
-    justify-content: center;
+    background:
+        var(--mw-error-soft);
 
-    color: var(--mw-primary);
+    color:
+        var(--mw-error);
 
-    background: var(--mw-primary-soft);
+    font-size:
+        13px;
 
-    border-radius: 12px;
+    line-height:
+        1.5;
+
+    font-weight:
+        600;
+
 }
 
 
-.config-item-icon svg {
+.mensagem-erro.visivel {
 
-    width: 19px;
+    display:
+        block;
 
-    height: 19px;
-
-    stroke-width: 2;
-}
-
-
-/* =========================================================
-   TEXTO
-   ========================================================= */
-
-.config-item-content {
-
-    min-width: 0;
-
-    flex: 1;
-
-    display: flex;
-
-    flex-direction: column;
-
-    gap: 3px;
-}
-
-
-.config-item-content strong {
-
-    color: var(--mw-text);
-
-    font-size: 14px;
-
-    line-height: 1.35;
-
-    font-weight: 700;
-}
-
-
-.config-item-content small {
-
-    color: var(--mw-text-secondary);
-
-    font-size: 12px;
-
-    line-height: 1.4;
-
-    font-weight: 400;
 }
 
 
 /* =========================================================
-   SETA
-   ========================================================= */
+   11. CAMPOS
+========================================================= */
 
-.config-item-arrow {
+.campo-grupo {
 
-    width: 18px;
+    display:
+        none;
 
-    height: 18px;
+}
 
-    flex: 0 0 18px;
 
-    color: #9aa3b2;
+.campo-grupo label {
+
+    display:
+        block;
+
+    margin-bottom:
+        9px;
+
+    color:
+        var(--mw-text);
+
+    font-size:
+        14px;
+
+    line-height:
+        1.4;
+
+    font-weight:
+        700;
+
+}
+
+
+.campo-grupo select {
+
+    width:
+        100%;
+
+    height:
+        54px;
+
+    padding:
+        0 46px 0 16px;
+
+    border:
+        1px solid var(--mw-border-strong);
+
+    border-radius:
+        12px;
+
+    background:
+        var(--mw-surface);
+
+    color:
+        var(--mw-text);
+
+    font-size:
+        14px;
+
+    font-weight:
+        600;
+
+    cursor:
+        pointer;
+
+    appearance:
+        none;
+
+    background-image:
+        linear-gradient(45deg, transparent 50%, #667085 50%),
+        linear-gradient(135deg, #667085 50%, transparent 50%);
+
+    background-position:
+        calc(100% - 20px) 23px,
+        calc(100% - 14px) 23px;
+
+    background-size:
+        6px 6px,
+        6px 6px;
+
+    background-repeat:
+        no-repeat;
+
+    transition:
+        border-color var(--mw-transition),
+        box-shadow var(--mw-transition);
+
+}
+
+
+.campo-grupo select:hover {
+
+    border-color:
+        #c5bfdc;
+
+}
+
+
+.campo-grupo select:focus {
+
+    outline:
+        none;
+
+    border-color:
+        var(--mw-primary);
+
+    box-shadow:
+        0 0 0 4px rgba(109, 74, 255, 0.10);
+
+}
+
+
+.campo-grupo select.erro {
+
+    border-color:
+        var(--mw-error);
+
+}
+
+
+.campo-erro {
+
+    display:
+        none;
+
+    margin-top:
+        9px;
+
+    color:
+        var(--mw-error);
+
+    font-size:
+        12px;
+
+    line-height:
+        1.5;
+
+    font-weight:
+        600;
+
+}
+
+
+.campo-erro.visivel {
+
+    display:
+        block;
+
 }
 
 
 /* =========================================================
-   SAIR
-   ========================================================= */
+   12. RESUMO CONTRATANTE
+========================================================= */
 
-.config-section-sair {
+.resumo-contratante {
 
-    margin-top: -4px;
+    display:
+        none;
+
+    align-items:
+        flex-start;
+
+    gap:
+        16px;
+
+    padding:
+        20px;
+
+    border:
+        1px solid var(--mw-border);
+
+    border-radius:
+        16px;
+
+    background:
+        var(--mw-surface-soft);
+
 }
 
 
-.config-item-sair {
+.resumo-contratante.visivel {
 
-    color: var(--mw-danger);
+    display:
+        flex;
+
 }
 
 
-.config-item-sair .config-item-icon {
+.resumo-icone {
 
-    color: var(--mw-danger);
+    flex:
+        0 0 44px;
 
-    background: var(--mw-danger-soft);
+    width:
+        44px;
+
+    height:
+        44px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    border-radius:
+        12px;
+
+    background:
+        var(--mw-primary-soft);
+
+    color:
+        var(--mw-primary);
+
 }
 
 
-.config-item-sair .config-item-content strong {
-    color: var(--mw-danger);
+.resumo-icone svg {
+
+    width:
+        21px;
+
+    height:
+        21px;
+
+    fill:
+        none;
+
+    stroke:
+        currentColor;
+
+    stroke-width:
+        1.8;
+
+    stroke-linecap:
+        round;
+
+    stroke-linejoin:
+        round;
+
+}
+
+
+.resumo-contratante strong {
+
+    display:
+        block;
+
+    margin-bottom:
+        5px;
+
+    color:
+        var(--mw-text);
+
+    font-size:
+        14px;
+
+    line-height:
+        1.4;
+
+    font-weight:
+        800;
+
+}
+
+
+.resumo-contratante p {
+
+    margin:
+        0;
+
+    color:
+        var(--mw-text-secondary);
+
+    font-size:
+        13px;
+
+    line-height:
+        1.6;
+
+    font-weight:
+        500;
+
 }
 
 
 /* =========================================================
-   RODAPÉ
-   ========================================================= */
+   13. AÇÕES
+========================================================= */
 
-.config-footer {
+.acoes-etapa {
 
-    padding: 4px 6px 0;
+    display:
+        flex;
 
-    display: flex;
+    align-items:
+        center;
 
-    align-items: center;
+    justify-content:
+        space-between;
 
-    justify-content: center;
+    gap:
+        14px;
 
-    gap: 8px;
+    margin-top:
+        36px;
 
-    color: var(--mw-text-muted);
-
-    font-size: 11px;
-
-    line-height: 1.4;
-
-    text-align: center;
 }
 
 
-.config-footer-separador {
-    opacity: 0.6;
+.btn-secundario,
+.btn-primario {
+
+    min-height:
+        48px;
+
+    display:
+        inline-flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    padding:
+        0 22px;
+
+    border-radius:
+        11px;
+
+    font-size:
+        13px;
+
+    line-height:
+        1;
+
+    font-weight:
+        800;
+
+    cursor:
+        pointer;
+
+    transition:
+        background-color var(--mw-transition),
+        border-color var(--mw-transition),
+        color var(--mw-transition),
+        box-shadow var(--mw-transition),
+        transform var(--mw-transition);
+
+}
+
+
+.btn-secundario {
+
+    border:
+        1px solid var(--mw-border-strong);
+
+    background:
+        var(--mw-surface);
+
+    color:
+        var(--mw-text-secondary);
+
+}
+
+
+.btn-secundario:hover {
+
+    border-color:
+        #c8cbd6;
+
+    background:
+        #fafafa;
+
+    color:
+        var(--mw-text);
+
+}
+
+
+.btn-primario {
+
+    background:
+        var(--mw-primary);
+
+    color:
+        #ffffff;
+
+    box-shadow:
+        0 8px 20px rgba(109, 74, 255, 0.20);
+
+}
+
+
+.btn-primario:hover {
+
+    background:
+        var(--mw-primary-dark);
+
+    box-shadow:
+        0 12px 26px rgba(109, 74, 255, 0.26);
+
+    transform:
+        translateY(-1px);
+
+}
+
+
+.btn-secundario:focus-visible,
+.btn-primario:focus-visible {
+
+    outline:
+        3px solid rgba(109, 74, 255, 0.20);
+
+    outline-offset:
+        3px;
+
+}
+
+
+.btn-secundario:active,
+.btn-primario:active {
+
+    transform:
+        translateY(0);
+
 }
 
 
 /* =========================================================
-   TABLET
-   ========================================================= */
+   14. CONFIRMAÇÃO
+========================================================= */
+
+.confirmacao {
+
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap:
+        12px;
+
+}
+
+
+.confirmacao-item {
+
+    min-width:
+        0;
+
+    padding:
+        17px 18px;
+
+    border:
+        1px solid var(--mw-border);
+
+    border-radius:
+        13px;
+
+    background:
+        var(--mw-surface-soft);
+
+}
+
+
+.confirmacao-item span {
+
+    display:
+        block;
+
+    margin-bottom:
+        6px;
+
+    color:
+        var(--mw-text-muted);
+
+    font-size:
+        11px;
+
+    line-height:
+        1.3;
+
+    font-weight:
+        800;
+
+    text-transform:
+        uppercase;
+
+    letter-spacing:
+        0.5px;
+
+}
+
+
+.confirmacao-item strong {
+
+    display:
+        block;
+
+    overflow:
+        hidden;
+
+    color:
+        var(--mw-text);
+
+    font-size:
+        14px;
+
+    line-height:
+        1.45;
+
+    font-weight:
+        800;
+
+    text-overflow:
+        ellipsis;
+
+    white-space:
+        nowrap;
+
+}
+
+
+/* =========================================================
+   15. MENSAGEM DE CONFIGURAÇÃO
+========================================================= */
+
+.mensagem-configuracao {
+
+    display:
+        none;
+
+    margin-top:
+        18px;
+
+    padding:
+        13px 15px;
+
+    border:
+        1px solid var(--mw-border);
+
+    border-radius:
+        11px;
+
+    background:
+        var(--mw-surface-soft);
+
+    color:
+        var(--mw-text-secondary);
+
+    font-size:
+        13px;
+
+    line-height:
+        1.5;
+
+    font-weight:
+        600;
+
+}
+
+
+.mensagem-configuracao.visivel {
+
+    display:
+        block;
+
+}
+
+
+.mensagem-configuracao.sucesso {
+
+    border-color:
+        #b8e6d2;
+
+    background:
+        var(--mw-success-soft);
+
+    color:
+        var(--mw-success);
+
+}
+
+
+.mensagem-configuracao.erro {
+
+    border-color:
+        #ffd0cc;
+
+    background:
+        var(--mw-error-soft);
+
+    color:
+        var(--mw-error);
+
+}
+
+
+/* =========================================================
+   16. ESTADO DE CARREGAMENTO
+========================================================= */
+
+.estado-carregando {
+
+    position:
+        absolute;
+
+    inset:
+        0;
+
+    z-index:
+        20;
+
+    display:
+        none;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    flex-direction:
+        column;
+
+    gap:
+        14px;
+
+    border-radius:
+        var(--mw-radius);
+
+    background:
+        rgba(255, 255, 255, 0.94);
+
+    backdrop-filter:
+        blur(6px);
+
+    color:
+        var(--mw-text);
+
+    font-size:
+        13px;
+
+    font-weight:
+        700;
+
+}
+
+
+.estado-carregando.visivel {
+
+    display:
+        flex;
+
+}
+
+
+.spinner {
+
+    width:
+        30px;
+
+    height:
+        30px;
+
+    border:
+        3px solid #e7e3ff;
+
+    border-top-color:
+        var(--mw-primary);
+
+    border-radius:
+        50%;
+
+    animation:
+        mw-spin 0.8s linear infinite;
+
+}
+
+
+@keyframes mw-spin {
+
+    to {
+
+        transform:
+            rotate(360deg);
+
+    }
+
+}
+
+
+/* =========================================================
+   17. TABLET
+========================================================= */
 
 @media (max-width: 900px) {
 
-    .config-main {
+    .configurar-conta-page {
 
         padding:
-            26px 20px 70px;
+            42px 20px 56px;
+
     }
 
 
-    .config-container {
+    .configurar-conta-container {
 
-        width: min(100%, 760px);
+        max-width:
+            720px;
 
-        gap: 24px;
     }
 
 
-    .config-header-inner {
+    .configurar-card {
 
-        min-height: 64px;
+        padding:
+            34px;
 
-        padding: 0 20px;
     }
 
 
-    .perfil-conta {
+    .opcoes-conta {
 
-        border-radius: 20px;
+        gap:
+            14px;
+
+    }
+
+
+    .opcao-conta {
+
+        min-height:
+            160px;
+
+        padding:
+            21px;
+
+    }
+
+
+    .progresso-linha {
+
+        width:
+            min(90px, 10vw);
+
     }
 
 }
 
 
 /* =========================================================
-   CELULAR
-   ========================================================= */
+   18. TABLET PEQUENO
+========================================================= */
 
-@media (max-width: 600px) {
+@media (max-width: 700px) {
 
-    .config-header-inner {
-
-        min-height: 60px;
-
-        padding: 0 14px;
-
-        gap: 10px;
-    }
-
-
-    .config-voltar {
-
-        width: 40px;
-
-        height: 40px;
-
-        flex-basis: 40px;
-    }
-
-
-    .config-header-title h1 {
-
-        font-size: 18px;
-    }
-
-
-    .config-main {
+    .configurar-conta-page {
 
         padding:
-            18px 14px 60px;
+            30px 16px 42px;
+
     }
 
 
-    .config-container {
+    .configurar-conta-header {
 
-        gap: 22px;
+        margin-bottom:
+            30px;
+
     }
 
 
-    .perfil-conta {
+    .configurar-conta-header h1 {
 
-        min-height: auto;
+        font-size:
+            30px;
 
-        padding: 16px;
-
-        display: grid;
-
-        grid-template-columns: 54px minmax(0, 1fr);
-
-        grid-template-rows: auto auto;
-
-        column-gap: 13px;
-
-        row-gap: 12px;
-
-        border-radius: 18px;
     }
 
 
-    .perfil-conta-avatar {
+    .configurar-conta-header p {
 
-        width: 54px;
+        font-size:
+            14px;
 
-        height: 54px;
-
-        flex-basis: 54px;
-
-        grid-column: 1;
-
-        grid-row: 1;
     }
 
 
-    .perfil-conta-avatar-placeholder svg {
-
-        width: 25px;
-
-        height: 25px;
-    }
-
-
-    .perfil-conta-dados {
-
-        grid-column: 2;
-
-        grid-row: 1;
-
-        align-self: center;
-    }
-
-
-    .perfil-conta-dados h2 {
-
-        font-size: 15px;
-    }
-
-
-    .perfil-conta-dados p {
-
-        font-size: 12px;
-    }
-
-
-    .perfil-conta-editar {
-
-        width: 100%;
-
-        min-height: 40px;
-
-        grid-column: 1 / -1;
-
-        grid-row: 2;
-
-        justify-content: center;
-
-        background: var(--mw-primary-soft);
-
-        border-radius: 11px;
-    }
-
-
-    .config-section {
-
-        gap: 8px;
-    }
-
-
-    .config-section-heading {
+    .configurar-card {
 
         padding:
-            0 4px;
+            28px 24px;
+
+        border-radius:
+            20px;
+
     }
 
 
-    .config-section-heading h2 {
+    .opcoes-conta {
 
-        font-size: 11px;
+        grid-template-columns:
+            1fr;
+
     }
 
 
-    .config-item {
+    .opcao-conta {
 
-        min-height: 70px;
+        min-height:
+            auto;
 
-        padding: 11px 13px;
-
-        gap: 12px;
     }
 
 
-    .config-item-icon {
+    .confirmacao {
 
-        width: 40px;
+        grid-template-columns:
+            1fr;
 
-        height: 40px;
-
-        flex-basis: 40px;
-
-        border-radius: 11px;
     }
 
 
-    .config-item-icon svg {
+    .progresso-etapa {
 
-        width: 18px;
+        min-width:
+            76px;
 
-        height: 18px;
     }
 
 
-    .config-item-content {
+    .progresso-linha {
 
-        gap: 2px;
-    }
+        width:
+            min(60px, 8vw);
 
-
-    .config-item-content strong {
-
-        font-size: 13px;
-    }
-
-
-    .config-item-content small {
-
-        font-size: 11px;
-    }
-
-
-    .config-item-arrow {
-
-        width: 17px;
-
-        height: 17px;
-    }
-
-
-    .config-footer {
-
-        flex-wrap: wrap;
-
-        padding-bottom: 10px;
-
-        font-size: 10px;
     }
 
 }
 
 
 /* =========================================================
-   CELULARES MUITO PEQUENOS
-   ========================================================= */
+   19. MOBILE
+========================================================= */
 
-@media (max-width: 380px) {
+@media (max-width: 520px) {
 
-    .config-main {
+    .configurar-conta-page {
 
-        padding-left: 10px;
+        min-height:
+            100svh;
 
-        padding-right: 10px;
+        padding:
+            24px 12px 30px;
+
     }
 
 
-    .config-header-inner {
+    .configurar-conta-header {
 
-        padding-left: 10px;
+        margin-bottom:
+            24px;
 
-        padding-right: 10px;
     }
 
 
-    .config-item {
+    .brand {
 
-        padding-left: 11px;
+        margin-bottom:
+            18px;
 
-        padding-right: 11px;
     }
 
 
-    .config-item-content small {
+    .brand-name {
 
-        display: none;
+        font-size:
+            20px;
+
+    }
+
+
+    .configurar-conta-header h1 {
+
+        font-size:
+            27px;
+
+        letter-spacing:
+            -0.8px;
+
+    }
+
+
+    .configurar-conta-header p {
+
+        margin-top:
+            11px;
+
+        font-size:
+            13px;
+
+        line-height:
+            1.6;
+
+    }
+
+
+    .progresso-container {
+
+        margin-bottom:
+            22px;
+
+    }
+
+
+    .progresso-etapa {
+
+        min-width:
+            62px;
+
+        gap:
+            7px;
+
+    }
+
+
+    .progresso-numero {
+
+        width:
+            34px;
+
+        height:
+            34px;
+
+        font-size:
+            12px;
+
+    }
+
+
+    .progresso-label {
+
+        font-size:
+            10px;
+
+    }
+
+
+    .progresso-linha {
+
+        width:
+            28px;
+
+        margin-top:
+            17px;
+
+    }
+
+
+    .configurar-card {
+
+        min-height:
+            0;
+
+        padding:
+            24px 18px;
+
+        border-radius:
+            18px;
+
+        box-shadow:
+            0 12px 35px rgba(23, 32, 51, 0.07);
+
+    }
+
+
+    .etapa-cabecalho {
+
+        margin-bottom:
+            24px;
+
+    }
+
+
+    .etapa-kicker {
+
+        margin-bottom:
+            9px;
+
+        font-size:
+            10px;
+
+    }
+
+
+    .etapa-cabecalho h2 {
+
+        font-size:
+            22px;
+
+        line-height:
+            1.25;
+
+    }
+
+
+    .etapa-cabecalho p {
+
+        margin-top:
+            9px;
+
+        font-size:
+            13px;
+
+    }
+
+
+    .opcao-conta {
+
+        min-height:
+            132px;
+
+        padding:
+            19px;
+
+        border-radius:
+            15px;
+
+    }
+
+
+    .opcao-icone {
+
+        width:
+            43px;
+
+        height:
+            43px;
+
+        margin-bottom:
+            16px;
+
+        border-radius:
+            12px;
+
+    }
+
+
+    .opcao-icone svg {
+
+        width:
+            21px;
+
+        height:
+            21px;
+
+    }
+
+
+    .opcao-conteudo {
+
+        padding-right:
+            24px;
+
+    }
+
+
+    .opcao-conteudo strong {
+
+        font-size:
+            15px;
+
+    }
+
+
+    .opcao-conteudo small {
+
+        font-size:
+            12px;
+
+        line-height:
+            1.55;
+
+    }
+
+
+    .opcao-check {
+
+        top:
+            16px;
+
+        right:
+            16px;
+
+        width:
+            25px;
+
+        height:
+            25px;
+
+    }
+
+
+    .campo-grupo select {
+
+        height:
+            50px;
+
+        font-size:
+            13px;
+
+    }
+
+
+    .resumo-contratante {
+
+        gap:
+            12px;
+
+        padding:
+            17px;
+
+    }
+
+
+    .resumo-icone {
+
+        flex-basis:
+            40px;
+
+        width:
+            40px;
+
+        height:
+            40px;
+
+    }
+
+
+    .resumo-contratante p {
+
+        font-size:
+            12px;
+
+    }
+
+
+    .acoes-etapa {
+
+        flex-direction:
+            column-reverse;
+
+        align-items:
+            stretch;
+
+        margin-top:
+            28px;
+
+    }
+
+
+    .btn-secundario,
+    .btn-primario {
+
+        width:
+            100%;
+
+        min-height:
+            50px;
+
+    }
+
+
+    .confirmacao-item {
+
+        padding:
+            15px;
+
+    }
+
+
+    .confirmacao-item strong {
+
+        font-size:
+            13px;
+
     }
 
 }
+
+
+/* =========================================================
+   20. MOBILE MUITO PEQUENO
+========================================================= */
+
+@media (max-width: 360px) {
+
+    .configurar-conta-page {
+
+        padding-left:
+            9px;
+
+        padding-right:
+            9px;
+
+    }
+
+
+    .configurar-card {
+
+        padding:
+            22px 15px;
+
+    }
+
+
+    .progresso-etapa {
+
+        min-width:
+            56px;
+
+    }
+
+
+    .progresso-label {
+
+        font-size:
+            9px;
+
+    }
+
+
+    .progresso-linha {
+
+        width:
+            20px;
+
+    }
+
+
+    .configurar-conta-header h1 {
+
+        font-size:
+            24px;
+
+    }
+
+}
+
+
+/* =========================================================
+   21. REDUÇÃO DE MOVIMENTO
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    html {
+
+        scroll-behavior:
+            auto;
+
+    }
+
+
+    *,
+    *::before,
+    *::after {
+
+        transition:
+            none !important;
+
+        animation:
+            none !important;
+
+    }
+
+}
+

@@ -13,6 +13,7 @@
      confirmada.
    - Simular realização do evento.
    - Concluir contratação.
+   - Encaminhar pagamento de oportunidades.
    - Liberar pagamento pelo fluxo atual.
    - Configurar eventos dos botões.
 
@@ -26,40 +27,23 @@
           ↓
        concluida
 
-   AGENDA:
+   OPORTUNIDADE:
 
-   aguardando_artista
+   proposta aceita
+          ↓
+      pagamento
           ↓
       confirmada
           ↓
-   agenda_musicos
-
-   IMPORTANTE:
-
-   - A tabela contratacoes utiliza "em_andamento".
-   - O banco NÃO utiliza "evento" como status válido.
-   - Os UPDATEs não dependem de .select() imediatamente
-     após a alteração.
-   - Após cada UPDATE, o registro é consultado separadamente
-     para confirmar o novo status.
-   - A tabela contratacoes NÃO possui a coluna
-     status_financeiro.
-   - Uma contratação confirmada gera duas entradas
-     automáticas na agenda_musicos:
-       1. uma para o artista contratado;
-       2. uma para o contratante.
-   - As duas entradas compartilham o mesmo contratacao_id,
-     mas possuem perfil_id diferentes.
+     em_andamento
+          ↓
+       concluida
    ========================================================= */
 
 (function (window) {
 
     "use strict";
 
-
-    /* =====================================================
-       NAMESPACE INTERNO
-       ===================================================== */
 
     const modulo =
         window.MusicalWorldContratacaoAcompanhamentoInterno;
@@ -75,10 +59,6 @@
     }
 
 
-    /* =====================================================
-       DEPENDÊNCIAS DO MÓDULO DE DADOS
-       ===================================================== */
-
     const {
         CONFIG,
         estado,
@@ -92,28 +72,9 @@
     } = modulo;
 
 
-    /* =====================================================
-       TABELA DA AGENDA
-
-       A agenda automática é vinculada diretamente à
-       contratação através da coluna contratacao_id.
-
-       Uma mesma contratação pode possuir duas entradas:
-       - uma para o perfil do artista;
-       - uma para o perfil do contratante.
-       ===================================================== */
-
     const TABELA_AGENDA =
         "agenda_musicos";
 
-
-    /* =====================================================
-       TIPOS ACEITOS PELA AGENDA
-
-       A tabela agenda_musicos possui tipos próprios.
-       Caso tipo_evento da contratação não corresponda
-       a um deles, usamos "evento" como padrão seguro.
-       ===================================================== */
 
     const TIPOS_AGENDA_PERMITIDOS = [
 
@@ -130,10 +91,6 @@
     ];
 
 
-    /* =====================================================
-       DEPENDÊNCIA DO MÓDULO DE RENDERIZAÇÃO
-       ===================================================== */
-
     const render =
         modulo.render;
 
@@ -149,18 +106,99 @@
 
 
     /* =====================================================
+       IDENTIFICAR CONTRATAÇÃO DE OPORTUNIDADE
+       ===================================================== */
+
+    function ehContratacaoDeOportunidade() {
+
+        return Boolean(
+            estado.dados &&
+            estado.dados.oportunidadeId
+        );
+    }
+
+
+    /* =====================================================
+       VERIFICAR PAGAMENTO PENDENTE DE OPORTUNIDADE
+       ===================================================== */
+
+    function pagamentoDaOportunidadeEstaPendente() {
+
+        if (
+            !ehContratacaoDeOportunidade()
+        ) {
+
+            return false;
+        }
+
+
+        if (
+            !estado.dados ||
+            estado.dados.status !==
+                "confirmada"
+        ) {
+
+            return false;
+        }
+
+
+        return (
+            String(
+                estado.dados.pagamento?.status ||
+                ""
+            )
+                .toLowerCase()
+                .trim() ===
+            "pendente"
+        );
+    }
+
+
+    /* =====================================================
+       ABRIR PÁGINA DE PAGAMENTO
+
+       O ID da contratação é enviado na URL para permitir
+       que a página de pagamento identifique a contratação
+       existente da oportunidade.
+       ===================================================== */
+
+    function abrirPagamentoOportunidade() {
+
+        if (
+            !estado.contratacaoId
+        ) {
+
+            console.error(
+                "MusicalWorldContratacaoAcompanhamento: não foi possível abrir o pagamento porque o ID da contratação não foi encontrado."
+            );
+
+            alert(
+                "Não foi possível localizar a contratação para realizar o pagamento."
+            );
+
+            return false;
+        }
+
+
+        salvarContratacaoLocal();
+
+
+        const id =
+            encodeURIComponent(
+                estado.contratacaoId
+            );
+
+
+        window.location.href =
+            `contratacao-pagamento.html?contratacaoId=${id}`;
+
+
+        return true;
+    }
+
+
+    /* =====================================================
        CONVERTER DATA + HORÁRIO PARA ISO
-
-       A contratação salva:
-       - data_evento: YYYY-MM-DD
-       - horario_inicio: HH:MM:SS
-       - horario_fim: HH:MM:SS
-
-       A agenda utiliza timestamptz.
-
-       O comportamento abaixo segue a mesma lógica usada
-       pelo editor da agenda ao converter datetime-local
-       para ISO.
        ===================================================== */
 
     function converterDataHoraParaISO(
@@ -227,14 +265,6 @@
 
     /* =====================================================
        OBTER TIPO DA AGENDA
-
-       O campo tipo_evento da contratação pode conter
-       valores próprios do formulário de contratação,
-       como "festa".
-
-       A agenda possui uma lista diferente de tipos.
-       Portanto, somente copiamos o valor quando ele
-       realmente pertence aos tipos permitidos.
        ===================================================== */
 
     function obterTipoAgenda(
@@ -309,10 +339,7 @@
 
 
     /* =====================================================
-       OBTER TÍTULO DA AGENDA DO ARTISTA
-
-       O artista verá a contratação como um compromisso
-       profissional recebido.
+       TÍTULO DA AGENDA DO ARTISTA
        ===================================================== */
 
     function obterTituloAgendaArtista() {
@@ -342,10 +369,7 @@
 
 
     /* =====================================================
-       OBTER TÍTULO DA AGENDA DO CONTRATANTE
-
-       O contratante verá a contratação como um compromisso
-       com o profissional contratado.
+       TÍTULO DA AGENDA DO CONTRATANTE
        ===================================================== */
 
     function obterTituloAgendaContratante() {
@@ -375,10 +399,7 @@
 
 
     /* =====================================================
-       OBTER DESCRIÇÃO DA AGENDA
-
-       Mantemos as observações fornecidas pelo contratante,
-       quando existirem.
+       DESCRIÇÃO DA AGENDA
        ===================================================== */
 
     function obterDescricaoAgenda() {
@@ -393,7 +414,7 @@
 
 
     /* =====================================================
-       OBTER LOCALIZAÇÃO DA CONTRATAÇÃO
+       LOCALIZAÇÃO DA CONTRATAÇÃO
        ===================================================== */
 
     function obterLocalizacaoAgenda() {
@@ -413,11 +434,6 @@
                 );
         }
 
-
-        /*
-         * Caso formatarLocal não retorne conteúdo,
-         * preservamos uma representação simples do local.
-         */
 
         if (
             !localizacao &&
@@ -458,17 +474,6 @@
 
     /* =====================================================
        LOCALIZAR PERFIL PELO ID DO USUÁRIO
-
-       Relação:
-
-       usuarios.id
-            ↓
-       perfis.usuario_id
-            ↓
-       perfis.id
-
-       O perfil encontrado será utilizado como
-       agenda_musicos.perfil_id.
        ===================================================== */
 
     async function obterPerfilPorUsuario(
@@ -517,19 +522,6 @@
 
     /* =====================================================
        CRIAR UMA ENTRADA INDIVIDUAL NA AGENDA
-
-       Esta função trabalha com um único perfil.
-
-       Assim conseguimos criar:
-
-       1. agenda do artista;
-       2. agenda do contratante.
-
-       A verificação de duplicidade considera:
-
-       contratacao_id + perfil_id
-
-       Isso acompanha o índice criado no banco.
        ===================================================== */
 
     async function criarAgendaParaPerfil(
@@ -549,20 +541,6 @@
             return false;
         }
 
-
-        /* =================================================
-           VERIFICAR SE ESTA AGENDA JÁ EXISTE
-
-           Importante:
-
-           Não podemos mais procurar somente por
-           contratacao_id porque agora uma contratação
-           pode possuir duas agendas.
-
-           A combinação correta é:
-
-           contratacao_id + perfil_id
-           ================================================= */
 
         const agendaExistente =
             await supabase
@@ -600,10 +578,6 @@
             return true;
         }
 
-
-        /* =================================================
-           CRIAR REGISTRO
-           ================================================= */
 
         const novoEvento = {
 
@@ -662,24 +636,8 @@
 
         if (insercao.error) {
 
-            /*
-             * O índice UNIQUE composto por:
-             *
-             * contratacao_id + perfil_id
-             *
-             * protege contra duplicidade em situações
-             * de chamadas simultâneas.
-             *
-             * Se outra execução já criou a mesma entrada,
-             * consideramos a operação concluída.
-             */
-
-            const codigoErro =
-                insercao.error.code;
-
-
             if (
-                codigoErro ===
+                insercao.error.code ===
                 "23505"
             ) {
 
@@ -708,30 +666,6 @@
 
     /* =====================================================
        CRIAR AGENDAS DA CONTRATAÇÃO
-
-       Esta função é chamada somente depois que o banco
-       confirmou que a contratação passou para "confirmada".
-
-       A contratação gera dois compromissos:
-
-       ┌──────────────────────────────────────────────┐
-       │ CONTRATAÇÃO                                  │
-       │ contratacao_id = X                           │
-       └──────────────────────────────────────────────┘
-                         │
-              ┌──────────┴──────────┐
-              │                     │
-              ▼                     ▼
-       PERFIL ARTISTA        PERFIL CONTRATANTE
-              │                     │
-              ▼                     ▼
-       Agenda do artista      Agenda do contratante
-
-       Importante:
-       - Não cria agenda para contratação pendente.
-       - Não cria agenda para contratação recusada.
-       - Não cria duplicidade.
-       - A falha aqui NÃO cancela a contratação.
        ===================================================== */
 
     async function criarAgendasDaContratacao() {
@@ -771,13 +705,6 @@
         }
 
 
-        /* =================================================
-           IDs DOS PARTICIPANTES
-
-           contratado_id = artista
-           contratante_id = pessoa que realizou a contratação
-           ================================================= */
-
         const contratadoId =
             String(
                 estado.dados.contratadoId ||
@@ -816,30 +743,6 @@
 
         try {
 
-            /* =================================================
-               LOCALIZAR OS DOIS PERFIS
-
-               ARTISTA:
-
-               contratacoes.contratado_id
-                         ↓
-               usuarios.id
-                         ↓
-               perfis.usuario_id
-                         ↓
-               perfis.id
-
-               CONTRATANTE:
-
-               contratacoes.contratante_id
-                         ↓
-               usuarios.id
-                         ↓
-               perfis.usuario_id
-                         ↓
-               perfis.id
-               ================================================= */
-
             const perfilArtista =
                 await obterPerfilPorUsuario(
                     supabase,
@@ -869,10 +772,6 @@
                 );
             }
 
-
-            /* =================================================
-               DATA E HORÁRIO
-               ================================================= */
 
             const dataEvento =
                 estado.dados.data;
@@ -910,17 +809,9 @@
                     : null;
 
 
-            /* =================================================
-               LOCALIZAÇÃO
-               ================================================= */
-
             const localizacao =
                 obterLocalizacaoAgenda();
 
-
-            /* =================================================
-               TIPO
-               ================================================= */
 
             const tipo =
                 obterTipoAgenda(
@@ -928,48 +819,23 @@
                 );
 
 
-            /* =================================================
-               DESCRIÇÃO
-               ================================================= */
-
             const descricao =
                 obterDescricaoAgenda();
 
 
-            /* =================================================
-               DADOS BASE DO COMPROMISSO
-
-               Data, horário, local e tipo são iguais para
-               os dois participantes.
-               ================================================= */
-
             const dadosBaseAgenda = {
 
-                descricao:
+                descricao,
 
-                    descricao,
+                tipo,
 
-                tipo:
+                dataInicio,
 
-                    tipo,
+                dataFim,
 
-                dataInicio:
-
-                    dataInicio,
-
-                dataFim:
-
-                    dataFim,
-
-                localizacao:
-
-                    localizacao
+                localizacao
             };
 
-
-            /* =================================================
-               CRIAR AGENDA DO ARTISTA
-               ================================================= */
 
             const agendaArtista =
                 await criarAgendaParaPerfil(
@@ -985,10 +851,6 @@
                 );
 
 
-            /* =================================================
-               CRIAR AGENDA DO CONTRATANTE
-               ================================================= */
-
             const agendaContratante =
                 await criarAgendaParaPerfil(
                     supabase,
@@ -1002,11 +864,6 @@
                     }
                 );
 
-
-            /*
-             * As duas operações precisam ter sido concluídas
-             * para considerarmos a criação automática completa.
-             */
 
             const agendasCriadas =
                 agendaArtista &&
@@ -1049,18 +906,6 @@
 
         } catch (erro) {
 
-            /*
-             * IMPORTANTE:
-             *
-             * A contratação já foi confirmada no banco antes
-             * desta função ser chamada.
-             *
-             * Portanto, não lançamos novamente o erro para
-             * impedir a aceitação da contratação.
-             *
-             * O problema fica registrado para investigação.
-             */
-
             console.error(
                 "MusicalWorldContratacaoAcompanhamento: contratação confirmada, mas não foi possível criar todos os compromissos nas agendas.",
                 erro
@@ -1074,12 +919,6 @@
 
     /* =====================================================
        SIMULAR EVENTO REALIZADO
-
-       O banco utiliza:
-
-       confirmada → em_andamento
-
-       "evento" não é um status válido na tabela.
        ===================================================== */
 
     async function simularEventoRealizado() {
@@ -1098,11 +937,6 @@
         }
 
 
-        /*
-         * Somente o contratante pode registrar que o
-         * evento está acontecendo.
-         */
-
         if (
             estado.direcao !==
             "enviada"
@@ -1117,9 +951,35 @@
 
 
         /*
-         * O evento somente pode ser registrado depois
-         * que o artista aceitou a contratação.
+         * IMPORTANTE:
+         *
+         * Contratação de oportunidade somente pode avançar
+         * para em_andamento depois que o contratante realizar
+         * o pagamento.
          */
+
+        if (
+            pagamentoDaOportunidadeEstaPendente()
+        ) {
+
+            render.renderizarAcoes(
+                estado.dados
+            );
+
+
+            render.renderizarPagamento(
+                estado.dados.pagamento
+            );
+
+
+            alert(
+                "O artista aceitou sua proposta. Primeiro realize o pagamento para continuar com a contratação."
+            );
+
+
+            return false;
+        }
+
 
         if (
             estado.dados.status !==
@@ -1221,13 +1081,6 @@
 
         try {
 
-            /*
-             * statusBanco representa o valor bruto atualmente
-             * salvo no banco.
-             *
-             * Para esta transição, esperamos "confirmada".
-             */
-
             const statusAtualBanco =
                 estado.dados.statusBanco ||
                 "confirmada";
@@ -1251,23 +1104,12 @@
             );
 
 
-            /* =================================================
-               ATUALIZAR CONTRATAÇÃO
-               ================================================= */
-
             const resposta =
                 await supabase
                     .from(
                         CONFIG.tabelas.contratacoes
                     )
                     .update({
-
-                        /*
-                         * O banco possui "em_andamento".
-                         *
-                         * Não utilizar "evento", pois esse valor
-                         * não faz parte da CHECK CONSTRAINT.
-                         */
 
                         status:
                             "em_andamento",
@@ -1296,10 +1138,6 @@
                 throw resposta.error;
             }
 
-
-            /* =================================================
-               VERIFICAR RESULTADO
-               ================================================= */
 
             const verificacao =
                 await supabase
@@ -1343,10 +1181,6 @@
             }
 
 
-            /* =================================================
-               ATUALIZAR ESTADO LOCAL
-               ================================================= */
-
             estado.dados.statusBanco =
                 verificacao.data.status;
 
@@ -1359,13 +1193,6 @@
                 estado.dados.pagamento ||
                 {};
 
-
-            /*
-             * O evento ainda NÃO libera o pagamento.
-             *
-             * Portanto, mantemos exatamente o status de
-             * pagamento que já estava salvo no banco.
-             */
 
             if (
                 Object.prototype.hasOwnProperty.call(
@@ -1386,10 +1213,6 @@
             estado.statusAtual =
                 "em_andamento";
 
-
-            /* =================================================
-               ATUALIZAR INTERFACE
-               ================================================= */
 
             render.renderizarRelacao(
                 estado.dados
@@ -1507,14 +1330,6 @@
 
     /* =====================================================
        CONCLUIR CONTRATAÇÃO
-
-       Fluxo:
-
-       em_andamento → concluida
-
-       Neste momento o código mantém o comportamento
-       financeiro já existente. A integração real com
-       carteira/transação será tratada separadamente.
        ===================================================== */
 
     async function concluirContratacao() {
@@ -1533,11 +1348,6 @@
         }
 
 
-        /*
-         * Somente o contratante pode confirmar a realização
-         * do serviço.
-         */
-
         if (
             estado.direcao !==
             "enviada"
@@ -1550,10 +1360,6 @@
             return false;
         }
 
-
-        /*
-         * A contratação precisa estar em andamento.
-         */
 
         if (
             estado.dados.status !==
@@ -1596,11 +1402,6 @@
             return false;
         }
 
-
-        /*
-         * Evita tentar liberar novamente um pagamento que
-         * já foi processado pelo fluxo atual.
-         */
 
         if (
             pagamentoJaFoiLiberado()
@@ -1688,10 +1489,6 @@
                 "em_andamento";
 
 
-            /* =================================================
-               ATUALIZAR STATUS PARA CONCLUÍDA
-               ================================================= */
-
             const resposta =
                 await supabase
                     .from(
@@ -1726,10 +1523,6 @@
                 throw resposta.error;
             }
 
-
-            /* =================================================
-               VERIFICAR RESULTADO
-               ================================================= */
 
             const verificacao =
                 await supabase
@@ -1773,10 +1566,6 @@
             }
 
 
-            /* =================================================
-               ATUALIZAR ESTADO LOCAL
-               ================================================= */
-
             estado.dados.statusBanco =
                 verificacao.data.status;
 
@@ -1809,10 +1598,6 @@
             estado.statusAtual =
                 "concluida";
 
-
-            /* =================================================
-               ATUALIZAR INTERFACE
-               ================================================= */
 
             render.renderizarRelacao(
                 estado.dados
@@ -1848,11 +1633,6 @@
                 estado.dados
             );
 
-
-            /*
-             * A notificação é criada somente depois que
-             * a contratação foi confirmada como concluída.
-             */
 
             await criarNotificacaoResultado(
                 "contratacao_concluida"
@@ -1940,9 +1720,6 @@
 
     /* =====================================================
        PROCESSAR AÇÃO PRINCIPAL
-
-       confirmada    → simular evento
-       em_andamento  → concluir contratação
        ===================================================== */
 
     async function processarAcaoPrincipal() {
@@ -1950,6 +1727,14 @@
         if (!estado.dados) {
 
             return false;
+        }
+
+
+        if (
+            pagamentoDaOportunidadeEstaPendente()
+        ) {
+
+            return abrirPagamentoOportunidade();
         }
 
 
@@ -1977,12 +1762,6 @@
 
     /* =====================================================
        ATUALIZAR STATUS DA CONTRATAÇÃO
-
-       Utilizado pelo artista/contratado para:
-
-       aguardando_artista → confirmada
-
-       aguardando_artista → recusada
        ===================================================== */
 
     async function atualizarStatusContratacao(
@@ -2209,21 +1988,6 @@
                 );
 
 
-            /* =================================================
-               CRIAR AGENDAS SOMENTE APÓS CONFIRMAR NO BANCO
-
-               A contratação já está oficialmente confirmada
-               neste ponto.
-
-               Serão criadas duas entradas:
-
-               1. agenda do artista;
-               2. agenda do contratante.
-
-               Se a criação das agendas falhar, a contratação
-               permanece confirmada.
-               ================================================= */
-
             let agendasCriadas =
                 true;
 
@@ -2276,17 +2040,9 @@
             salvarContratacaoLocal();
 
 
-            /*
-             * Se a contratação foi confirmada mas houve
-             * problema somente na agenda, mostramos uma
-             * informação específica sem tratar a aceitação
-             * como erro.
-             */
-
             if (
                 novoStatus ===
-                "confirmada" &&
-
+                    "confirmada" &&
                 !agendasCriadas
             ) {
 
@@ -2539,7 +2295,28 @@
 
             btnLiberarPagamento.addEventListener(
                 "click",
-                concluirContratacao
+                function () {
+
+                    /*
+                     * O mesmo botão legado agora pode representar
+                     * a ação "Realizar pagamento" para oportunidades.
+                     *
+                     * Para contratações normais, mantém o comportamento
+                     * anterior de concluir a contratação.
+                     */
+
+                    if (
+                        pagamentoDaOportunidadeEstaPendente()
+                    ) {
+
+                        abrirPagamentoOportunidade();
+
+                        return;
+                    }
+
+
+                    concluirContratacao();
+                }
             );
         }
 
@@ -2571,6 +2348,8 @@
 
         recusar:
             recusarContratacao,
+
+        abrirPagamentoOportunidade,
 
         configurarEventos
     };

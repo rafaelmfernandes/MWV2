@@ -1,3 +1,4 @@
+
 /* =========================================================
    MUSICALWORLD — FLUXO DA GESTÃO DE INTERESSADOS
 
@@ -231,12 +232,20 @@ window.MusicalWorldOportunidadeInteressadosFluxo = (() => {
 
 
             /*
-             * Atualiza o registro localmente e
-             * redesenha a lista.
+             * O módulo de dados retorna um objeto contendo:
+             *
+             * {
+             *     interessado,
+             *     contratacao
+             * }
+             *
+             * O módulo de renderização precisa receber
+             * somente o interessado atualizado, pois é esse
+             * registro que deve ser atualizado na lista.
              */
 
             render.atualizarInteressado(
-                atualizado
+                atualizado.interessado
             );
 
 
@@ -740,3 +749,4 @@ window.MusicalWorldOportunidadeInteressadosFluxo = (() => {
     };
 
 })();
+

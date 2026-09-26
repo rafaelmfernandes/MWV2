@@ -1,4 +1,5 @@
-css/* =========================================================
+
+/* =========================================================
    MUSICALWORLD
    MEU PERFIL
    RESPONSIVO
@@ -533,6 +534,10 @@ button:focus-visible {
 
   /* =====================================================
      AGENDA
+     
+     Ajuste exclusivo da tipografia para celular.
+     O tamanho e a estrutura dos elementos permanecem
+     iguais; apenas as fontes foram ampliadas.
      ===================================================== */
 
   .agenda-list {
@@ -563,13 +568,13 @@ button:focus-visible {
   }
 
   .agenda-date strong {
-    font-size: 21px;
-    line-height: 24px;
+    font-size: 22px;
+    line-height: 25px;
   }
 
   .agenda-date span {
-    font-size: 8px;
-    line-height: 12px;
+    font-size: 9px;
+    line-height: 13px;
 
     letter-spacing: 0.4px;
   }
@@ -579,19 +584,19 @@ button:focus-visible {
   }
 
   .agenda-title {
-    font-size: 12px;
-    line-height: 15px;
+    font-size: 14px;
+    line-height: 18px;
   }
 
   .agenda-type {
     max-width: 90px;
 
-    min-height: 20px;
+    min-height: 21px;
 
     padding: 3px 6px;
 
     font-size: 10px;
-    line-height: 11px;
+    line-height: 12px;
   }
 
   .agenda-detail {
@@ -599,8 +604,8 @@ button:focus-visible {
 
     margin-top: 5px;
 
-    font-size: 10px;
-    line-height: 13px;
+    font-size: 11px;
+    line-height: 15px;
   }
 
   .agenda-detail svg {
@@ -611,8 +616,8 @@ button:focus-visible {
   .agenda-description {
     margin-top: 6px;
 
-    font-size: 10px;
-    line-height: 14px;
+    font-size: 11px;
+    line-height: 16px;
   }
 
   .agenda-footer {
@@ -624,12 +629,12 @@ button:focus-visible {
   }
 
   .agenda-status {
-    min-height: 21px;
+    min-height: 22px;
 
     padding: 3px 6px;
 
     font-size: 10px;
-    line-height: 11px;
+    line-height: 12px;
   }
 
   .agenda-status svg {
@@ -638,12 +643,12 @@ button:focus-visible {
   }
 
   .agenda-link {
-    min-height: 25px;
+    min-height: 26px;
 
     padding: 4px 7px;
 
-    font-size: 8px;
-    line-height: 12px;
+    font-size: 9px;
+    line-height: 13px;
   }
 
   .agenda-link svg {
@@ -1227,6 +1232,10 @@ button:focus-visible {
 
   /* =====================================================
      AGENDA
+     
+     Ajuste específico para celulares pequenos.
+     As fontes permanecem legíveis sem alterar a
+     estrutura ou o dimensionamento do card.
      ===================================================== */
 
   .agenda-list {
@@ -1253,29 +1262,29 @@ button:focus-visible {
   }
 
   .agenda-date strong {
-    font-size: 19px;
-    line-height: 22px;
+    font-size: 20px;
+    line-height: 23px;
   }
 
   .agenda-date span {
-    font-size: 7px;
-    line-height: 10px;
+    font-size: 8px;
+    line-height: 11px;
   }
 
   .agenda-title {
-    font-size: 10px;
-    line-height: 14px;
+    font-size: 12px;
+    line-height: 16px;
   }
 
   .agenda-type {
     max-width: 75px;
 
-    min-height: 18px;
+    min-height: 19px;
 
     padding: 2px 5px;
 
-    font-size: 7px;
-    line-height: 10px;
+    font-size: 9px;
+    line-height: 11px;
   }
 
   .agenda-detail {
@@ -1283,8 +1292,8 @@ button:focus-visible {
 
     margin-top: 4px;
 
-    font-size: 8px;
-    line-height: 12px;
+    font-size: 10px;
+    line-height: 14px;
   }
 
   .agenda-detail svg {
@@ -1295,8 +1304,8 @@ button:focus-visible {
   .agenda-description {
     margin-top: 5px;
 
-    font-size: 8px;
-    line-height: 12px;
+    font-size: 10px;
+    line-height: 14px;
   }
 
   .agenda-footer {
@@ -1306,12 +1315,12 @@ button:focus-visible {
   }
 
   .agenda-status {
-    min-height: 19px;
+    min-height: 20px;
 
     padding: 2px 5px;
 
-    font-size: 7px;
-    line-height: 10px;
+    font-size: 9px;
+    line-height: 11px;
   }
 
   .agenda-status svg {
@@ -1320,12 +1329,12 @@ button:focus-visible {
   }
 
   .agenda-link {
-    min-height: 23px;
+    min-height: 24px;
 
     padding: 3px 6px;
 
-    font-size: 7px;
-    line-height: 10px;
+    font-size: 9px;
+    line-height: 11px;
   }
 
   .agenda-link svg {

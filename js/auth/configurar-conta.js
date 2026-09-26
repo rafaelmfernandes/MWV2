@@ -1,31 +1,37 @@
- /*
 
-MUSICALWORLD — CONFIGURAÇÃO INICIAL DA CONTA
+/*
+   =========================================================
+   MUSICALWORLD — CONFIGURAÇÃO INICIAL DA CONTA
 
-Arquivo:
-js/auth/configurar-conta.js
+   Arquivo:
+   js/auth/configurar-conta.js
 
-Responsabilidades:
+   Responsabilidades:
 
-* Verificar o usuário autenticado.
-* Identificar se a conta já possui perfil configurado.
-* Permitir escolher Contratante ou Artista.
-* Permitir escolher o tipo de artista.
-* Criar o perfil principal através de Perfil.js.
-* Criar o registro em perfis_artistas quando necessário.
-* Redirecionar para o Index após a conclusão.
+   * Verificar o usuário autenticado.
+   * Identificar se a conta já possui perfil configurado.
+   * Permitir escolher Contratante ou Artista.
+   * Permitir escolher o tipo de artista.
+   * Aproveitar os dados básicos recebidos pelo Google no
+     primeiro acesso.
+   * Criar o perfil principal através de Perfil.js.
+   * Criar o registro em perfis_artistas quando necessário.
+   * Salvar a foto recebida do Google em usuarios.foto_url.
+   * Limpar os dados temporários do primeiro acesso.
+   * Redirecionar para o Index após a conclusão.
 
-Importante:
+   Importante:
 
-* Este arquivo controla somente o fluxo de configuração.
-* A criação do perfil principal utiliza window.Perfil.criar().
-* A criação de perfis_artistas é feita aqui porque a função
-  criar_perfil_cadastro não cria esse registro automaticamente.
-  =========================================================
-  */
+   * Este arquivo controla somente o fluxo de configuração.
+   * A criação do perfil principal utiliza window.Perfil.criar().
+   * A criação de perfis_artistas é feita aqui porque a função
+     criar_perfil_cadastro não cria esse registro automaticamente.
+   * Usuários que chegaram pelo Google continuam utilizando o
+     mesmo registro autenticado no Supabase.
+   =========================================================
+   */
 
 (function (window) {
-
 
 "use strict";
 
@@ -49,6 +55,12 @@ const ConfigurarConta = {
     inicializado: false,
 
     processando: false,
+
+    dadosPrimeiroAcesso: {
+        nome: "",
+        email: "",
+        foto: ""
+    },
 
 
     /* =====================================================
@@ -75,6 +87,8 @@ const ConfigurarConta = {
         if (!usuarioValido) {
             return;
         }
+
+        this.carregarDadosPrimeiroAcesso();
 
         const perfilExistente =
             await this.verificarPerfilExistente();
@@ -281,6 +295,138 @@ const ConfigurarConta = {
 
 
     /* =====================================================
+       CARREGAR DADOS DO PRIMEIRO ACESSO
+    ======================================================
+
+    Quando o usuário chega aqui pelo Google, o login.js
+    guarda temporariamente os dados básicos recebidos
+    durante a autenticação.
+
+    Esses dados servem como fallback para o cadastro inicial.
+    ====================================================== */
+
+    carregarDadosPrimeiroAcesso() {
+
+        try {
+
+            const nome =
+                localStorage.getItem(
+                    "musicalworld_primeiro_acesso_nome"
+                );
+
+            const email =
+                localStorage.getItem(
+                    "musicalworld_primeiro_acesso_email"
+                );
+
+            const foto =
+                localStorage.getItem(
+                    "musicalworld_primeiro_acesso_foto"
+                );
+
+
+            this.dadosPrimeiroAcesso = {
+
+                nome:
+                    nome &&
+                    nome.trim()
+                        ? nome.trim()
+                        : "",
+
+                email:
+                    email &&
+                    email.trim()
+                        ? email.trim()
+                        : "",
+
+                foto:
+                    foto &&
+                    foto.trim()
+                        ? foto.trim()
+                        : ""
+
+            };
+
+
+            console.log(
+                "MusicalWorld: dados do primeiro acesso carregados:",
+                {
+                    nome:
+                        this.dadosPrimeiroAcesso.nome,
+
+                    email:
+                        this.dadosPrimeiroAcesso.email,
+
+                    foto:
+                        Boolean(
+                            this.dadosPrimeiroAcesso.foto
+                        )
+                }
+            );
+
+        } catch (erro) {
+
+            console.warn(
+                "MusicalWorld: não foi possível carregar os dados temporários do primeiro acesso.",
+                erro
+            );
+
+            this.dadosPrimeiroAcesso = {
+                nome: "",
+                email: "",
+                foto: ""
+            };
+
+        }
+
+    },
+
+
+    /* =====================================================
+       LIMPAR DADOS DO PRIMEIRO ACESSO
+    ====================================================== */
+
+    limparDadosPrimeiroAcesso() {
+
+        try {
+
+            localStorage.removeItem(
+                "musicalworld_primeiro_acesso"
+            );
+
+            localStorage.removeItem(
+                "musicalworld_primeiro_acesso_id"
+            );
+
+            localStorage.removeItem(
+                "musicalworld_primeiro_acesso_nome"
+            );
+
+            localStorage.removeItem(
+                "musicalworld_primeiro_acesso_email"
+            );
+
+            localStorage.removeItem(
+                "musicalworld_primeiro_acesso_foto"
+            );
+
+            console.log(
+                "MusicalWorld: dados temporários do primeiro acesso removidos."
+            );
+
+        } catch (erro) {
+
+            console.warn(
+                "MusicalWorld: não foi possível limpar os dados temporários do primeiro acesso.",
+                erro
+            );
+
+        }
+
+    },
+
+
+    /* =====================================================
        VERIFICAR PERFIL EXISTENTE
     ====================================================== */
 
@@ -401,6 +547,8 @@ const ConfigurarConta = {
                         "MusicalWorld: conta de artista já configurada."
                     );
 
+                    this.limparDadosPrimeiroAcesso();
+
                     window.location.href =
                         "index.html";
 
@@ -441,6 +589,8 @@ const ConfigurarConta = {
                 console.log(
                     "MusicalWorld: conta de contratante já configurada."
                 );
+
+                this.limparDadosPrimeiroAcesso();
 
                 window.location.href =
                     "index.html";
@@ -595,10 +745,7 @@ const ConfigurarConta = {
 
 
         const email =
-            this.usuario &&
-            this.usuario.email
-                ? this.usuario.email
-                : "—";
+            this.obterEmailExibicao();
 
 
         const campoNome =
@@ -815,12 +962,26 @@ const ConfigurarConta = {
 
 
             /*
+             * Se o usuário veio do Google e possui uma foto,
+             * salvamos essa foto no registro usuarios.
+             *
+             * Isso permite que o estabelecimento também tenha
+             * sua foto disponível para os demais fluxos do sistema.
+             */
+
+            await this.salvarFotoPrimeiroAcesso();
+
+
+            /*
              * Configuração concluída.
              */
 
             console.log(
                 "MusicalWorld: configuração concluída com sucesso."
             );
+
+
+            this.limparDadosPrimeiroAcesso();
 
 
             this.mostrarMensagemConfiguracao(
@@ -857,6 +1018,78 @@ const ConfigurarConta = {
             this.processando = false;
 
             this.mostrarCarregamento(false);
+
+        }
+
+    },
+
+
+    /* =====================================================
+       SALVAR FOTO DO PRIMEIRO ACESSO
+    ====================================================== */
+
+    async salvarFotoPrimeiroAcesso() {
+
+        if (!this.usuario) {
+            return true;
+        }
+
+
+        const foto =
+            this.obterFotoPrimeiroAcesso();
+
+
+        if (!foto) {
+            return true;
+        }
+
+
+        try {
+
+            const {
+                error
+            } = await supabaseClient
+                .from("usuarios")
+                .update({
+                    foto_url: foto
+                })
+                .eq(
+                    "id",
+                    this.usuario.id
+                );
+
+
+            if (error) {
+
+                /*
+                 * A foto não deve impedir a criação
+                 * da conta. Registramos o erro e seguimos.
+                 */
+
+                console.warn(
+                    "MusicalWorld: não foi possível salvar a foto do primeiro acesso:",
+                    error
+                );
+
+                return true;
+            }
+
+
+            console.log(
+                "MusicalWorld: foto do primeiro acesso salva em usuarios.foto_url."
+            );
+
+
+            return true;
+
+        } catch (erro) {
+
+            console.warn(
+                "MusicalWorld: erro inesperado ao salvar foto do primeiro acesso:",
+                erro
+            );
+
+            return true;
 
         }
 
@@ -1039,6 +1272,27 @@ const ConfigurarConta = {
 
     obterNomeExibicao() {
 
+        /*
+         * Primeiro utilizamos o nome temporário salvo pelo
+         * fluxo de primeiro acesso do Google.
+         */
+
+        if (
+            this.dadosPrimeiroAcesso &&
+            this.dadosPrimeiroAcesso.nome &&
+            this.dadosPrimeiroAcesso.nome.trim()
+        ) {
+
+            return this.dadosPrimeiroAcesso.nome.trim();
+
+        }
+
+
+        /*
+         * Depois utilizamos os dados diretamente do usuário
+         * autenticado no Supabase.
+         */
+
         if (
             this.usuario &&
             this.usuario.user_metadata
@@ -1111,6 +1365,95 @@ const ConfigurarConta = {
 
 
         return "Usuário";
+
+    },
+
+
+    /* =====================================================
+       OBTER E-MAIL DE EXIBIÇÃO
+    ====================================================== */
+
+    obterEmailExibicao() {
+
+        if (
+            this.dadosPrimeiroAcesso &&
+            this.dadosPrimeiroAcesso.email &&
+            this.dadosPrimeiroAcesso.email.trim()
+        ) {
+
+            return this.dadosPrimeiroAcesso.email.trim();
+
+        }
+
+
+        if (
+            this.usuario &&
+            this.usuario.email
+        ) {
+
+            return this.usuario.email;
+
+        }
+
+
+        return "—";
+
+    },
+
+
+    /* =====================================================
+       OBTER FOTO DO PRIMEIRO ACESSO
+    ====================================================== */
+
+    obterFotoPrimeiroAcesso() {
+
+        /*
+         * Primeiro verificamos a foto salva pelo login.js.
+         */
+
+        if (
+            this.dadosPrimeiroAcesso &&
+            this.dadosPrimeiroAcesso.foto &&
+            this.dadosPrimeiroAcesso.foto.trim()
+        ) {
+
+            return this.dadosPrimeiroAcesso.foto.trim();
+
+        }
+
+
+        /*
+         * Depois verificamos os metadados do usuário autenticado.
+         */
+
+        if (
+            this.usuario &&
+            this.usuario.user_metadata
+        ) {
+
+            const metadata =
+                this.usuario.user_metadata;
+
+
+            const fotoMetadata =
+                metadata.avatar_url ||
+                metadata.picture ||
+                metadata.photo_url;
+
+
+            if (
+                fotoMetadata &&
+                fotoMetadata.trim()
+            ) {
+
+                return fotoMetadata.trim();
+
+            }
+
+        }
+
+
+        return "";
 
     },
 
@@ -1434,6 +1777,25 @@ const ConfigurarConta = {
 
 
     /* =====================================================
+       ERRO GERAL
+    ====================================================== */
+
+    mostrarErro(mensagem) {
+
+        console.error(
+            "MusicalWorld:",
+            mensagem
+        );
+
+        this.mostrarMensagemConfiguracao(
+            mensagem,
+            "erro"
+        );
+
+    },
+
+
+    /* =====================================================
        REDIRECIONAR PARA LOGIN
     ====================================================== */
 
@@ -1476,3 +1838,4 @@ if (
 
 
 })(window);
+

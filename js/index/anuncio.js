@@ -10,12 +10,15 @@
    * Montar a identidade do artista ou estabelecimento.
    * Renderizar imagem ou vídeo de destaque.
    * Controlar reprodução automática dos vídeos.
+   * Controlar áudio dos vídeos.
+   * Controlar play/pause dos vídeos.
    * Controlar vídeo em tela cheia.
    * Controlar menu da publicação.
    * Controlar compartilhamento do perfil.
    * Controlar fallbacks de imagem, avatar e vídeo.
    * Observar os vídeos presentes no feed.
    * Integrar o card ao componente de interações.
+   * Controlar expansão da descrição do anúncio.
 
    IMPORTANTE:
 
@@ -63,6 +66,43 @@
    9. IDENTIDADE SEM MÍDIA:
       texto escuro em fluxo normal.
 
+   10. DESCRIÇÃO:
+       mostra no máximo 2 linhas inicialmente.
+       Quando o usuário clicar na descrição,
+       ela será expandida para mostrar todo o conteúdo.
+
+   11. CONTROLES DE VÍDEO:
+       vídeos iniciam respeitando a preferência
+       global de áudio salva no navegador.
+
+       No canto superior direito aparecem:
+
+           áudio | play/pause | tela cheia
+
+       Os controles funcionam independentemente
+       da navegação do anúncio.
+
+   12. ÁUDIO GLOBAL DO FEED:
+       a preferência de áudio é compartilhada
+       por todos os vídeos do feed.
+
+       Se o usuário mutar um vídeo:
+
+           todos os vídeos ficam mutados.
+
+       Se o usuário desmutar um vídeo:
+
+           todos os vídeos ficam desmutados.
+
+       Vídeos que entrarem posteriormente no feed
+       respeitam automaticamente essa preferência.
+
+       A preferência fica salva no localStorage.
+
+       Portanto, ao sair do Feed e voltar posteriormente,
+       o estado de áudio continua igual ao escolhido
+       anteriormente pelo usuário.
+
    IMPORTANTE:
 
    A foto de perfil NUNCA é utilizada como mídia
@@ -99,8 +139,118 @@
 
         timers: new Map(),
 
-        configurado: false
+        configurado: false,
+
+        /*
+         * Preferência global de áudio do feed.
+         *
+         * false = vídeos desmutados
+         * true  = vídeos mutados
+         *
+         * O valor inicial é atualizado imediatamente
+         * pelo localStorage logo abaixo.
+         */
+        audioMutado: false
     };
+
+
+    /* =========================================================
+       PERSISTÊNCIA DA PREFERÊNCIA DE ÁUDIO
+    =========================================================
+
+       A preferência é armazenada no navegador.
+
+       Isso permite que o estado sobreviva:
+
+       * à troca de página;
+       * ao retorno ao Feed;
+       * à atualização da página;
+       * ao fechamento e reabertura do navegador.
+
+       A chave é específica do Feed do MusicalWorld.
+    ========================================================= */
+
+    const CHAVE_AUDIO_FEED =
+        "musicalworld_feed_audio_mutado";
+
+
+    function carregarPreferenciaAudio() {
+
+        try {
+
+            const valorSalvo =
+                window.localStorage.getItem(
+                    CHAVE_AUDIO_FEED
+                );
+
+
+            /*
+             * Se ainda não existe uma preferência salva,
+             * mantemos o comportamento inicial:
+             *
+             * áudio habilitado.
+             */
+
+            if (valorSalvo === null) {
+
+                return false;
+            }
+
+
+            return valorSalvo === "true";
+
+        } catch (erro) {
+
+            /*
+             * Caso o navegador bloqueie o localStorage,
+             * o Feed continua funcionando normalmente.
+             */
+
+            console.warn(
+                "MusicalWorld Anúncio: não foi possível ler a preferência de áudio salva.",
+                erro
+            );
+
+
+            return false;
+        }
+    }
+
+
+    function salvarPreferenciaAudio(mutado) {
+
+        try {
+
+            window.localStorage.setItem(
+                CHAVE_AUDIO_FEED,
+                String(Boolean(mutado))
+            );
+
+        } catch (erro) {
+
+            /*
+             * A falha de armazenamento não deve impedir
+             * o funcionamento normal dos vídeos.
+             */
+
+            console.warn(
+                "MusicalWorld Anúncio: não foi possível salvar a preferência de áudio.",
+                erro
+            );
+        }
+    }
+
+
+    /*
+     * Recupera a última preferência salva antes que
+     * qualquer vídeo seja criado no Feed.
+     *
+     * Assim, o primeiro vídeo da página já nasce
+     * com o estado correto.
+     */
+
+    ANUNCIO_VIDEO_CONFIG.audioMutado =
+        carregarPreferenciaAudio();
 
 
     /* =========================================================
@@ -185,6 +335,325 @@
 
 
     /* =========================================================
+       CONTROLE GLOBAL DE ÁUDIO DOS VÍDEOS
+
+       Todos os vídeos do feed compartilham a mesma
+       configuração de áudio.
+
+       Quando o usuário altera o áudio de um vídeo,
+       todos os vídeos existentes recebem imediatamente
+       a mesma configuração.
+
+       A preferência também fica armazenada em:
+
+           ANUNCIO_VIDEO_CONFIG.audioMutado
+
+       e em:
+
+           localStorage
+
+       Assim, novos vídeos que forem adicionados ao feed
+       conseguem iniciar já com a configuração correta.
+
+       Quando o usuário sai da página e retorna ao Feed,
+       a preferência salva é recuperada automaticamente.
+    ========================================================= */
+
+    function atualizarIconeAudioVideo(video) {
+
+        if (!video) {
+
+            return;
+        }
+
+
+        const card =
+            video.closest(".ad-card-novo");
+
+
+        if (!card) {
+
+            return;
+        }
+
+
+        const audioButton =
+            card.querySelector(
+                ".ad-video-audio"
+            );
+
+
+        if (!audioButton) {
+
+            return;
+        }
+
+
+        const silenciado =
+            video.muted;
+
+
+        audioButton.setAttribute(
+            "aria-label",
+            silenciado
+                ? "Ativar áudio"
+                : "Desativar áudio"
+        );
+
+
+        audioButton.setAttribute(
+            "title",
+            silenciado
+                ? "Ativar áudio"
+                : "Desativar áudio"
+        );
+
+
+        audioButton.innerHTML =
+            silenciado
+
+                ? `
+                    <svg
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+                        <path d="M11 5 6 9H3v6h3l5 4V5z"/>
+                        <path d="m19 9-4 6"/>
+                        <path d="m15 9 4 6"/>
+                    </svg>
+                `
+
+                : `
+                    <svg
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+                        <path d="M11 5 6 9H3v6h3l5 4V5z"/>
+                        <path d="M15.5 8.5a5 5 0 0 1 0 7"/>
+                        <path d="M18.5 5.5a9 9 0 0 1 0 13"/>
+                    </svg>
+                `;
+    }
+
+
+    function aplicarAudioGlobal(mutado) {
+
+        ANUNCIO_VIDEO_CONFIG.audioMutado =
+            Boolean(mutado);
+
+
+        /*
+         * Salva imediatamente a escolha do usuário.
+         *
+         * Dessa forma, mesmo que ele saia do Feed logo
+         * depois de clicar no botão, a próxima página
+         * do Feed recuperará a mesma preferência.
+         */
+
+        salvarPreferenciaAudio(
+            ANUNCIO_VIDEO_CONFIG.audioMutado
+        );
+
+
+        const videos =
+            document.querySelectorAll(
+                ".ad-media-video"
+            );
+
+
+        videos.forEach(video => {
+
+            video.muted =
+                ANUNCIO_VIDEO_CONFIG.audioMutado;
+
+
+            video.defaultMuted =
+                ANUNCIO_VIDEO_CONFIG.audioMutado;
+
+
+            atualizarIconeAudioVideo(
+                video
+            );
+        });
+    }
+
+
+    function aplicarAudioGlobalAoVideo(video) {
+
+        if (!video) {
+
+            return;
+        }
+
+
+        video.muted =
+            ANUNCIO_VIDEO_CONFIG.audioMutado;
+
+
+        video.defaultMuted =
+            ANUNCIO_VIDEO_CONFIG.audioMutado;
+
+
+        atualizarIconeAudioVideo(
+            video
+        );
+    }
+
+
+    /* =========================================================
+       CONTROLE DA DESCRIÇÃO
+
+       A descrição começa limitada visualmente a 2 linhas.
+
+       O CSS do anúncio utiliza line-clamp para realizar
+       o corte e apresentar os três pontos quando existir
+       conteúdo além do limite.
+
+       Ao clicar:
+
+       * descrição limitada -> expandida
+       * descrição expandida -> limitada
+
+       A expansão somente acontece quando realmente existe
+       conteúdo além das duas linhas.
+
+       A classe:
+
+           ad-card-descricao-expandida
+
+       é responsável por informar ao CSS que a descrição
+       deve mostrar todo o conteúdo.
+    ========================================================= */
+
+    function configurarExpansaoDescricao(card) {
+
+        if (!card) {
+
+            return;
+        }
+
+
+        const descricao =
+            card.querySelector(
+                ".ad-card-descricao"
+            );
+
+
+        if (!descricao) {
+
+            return;
+        }
+
+
+        descricao.setAttribute(
+            "aria-expanded",
+            "false"
+        );
+
+
+        descricao.setAttribute(
+            "role",
+            "button"
+        );
+
+
+        descricao.setAttribute(
+            "tabindex",
+            "0"
+        );
+
+
+        const descricaoPossuiMaisConteudo = () => {
+
+            return (
+                descricao.scrollHeight >
+                descricao.clientHeight + 1
+            );
+        };
+
+
+        const alternarDescricao = () => {
+
+            const expandida =
+                descricao.classList.contains(
+                    "ad-card-descricao-expandida"
+                );
+
+
+            if (
+                !expandida &&
+                !descricaoPossuiMaisConteudo()
+            ) {
+
+                return;
+            }
+
+
+            descricao.classList.toggle(
+                "ad-card-descricao-expandida"
+            );
+
+
+            const agoraExpandida =
+                descricao.classList.contains(
+                    "ad-card-descricao-expandida"
+                );
+
+
+            descricao.setAttribute(
+                "aria-expanded",
+                agoraExpandida
+                    ? "true"
+                    : "false"
+            );
+        };
+
+
+        descricao.addEventListener(
+            "click",
+            evento => {
+
+                evento.preventDefault();
+                evento.stopPropagation();
+
+                alternarDescricao();
+            }
+        );
+
+
+        descricao.addEventListener(
+            "keydown",
+            evento => {
+
+                if (
+                    evento.key !== "Enter" &&
+                    evento.key !== " "
+                ) {
+
+                    return;
+                }
+
+
+                evento.preventDefault();
+                evento.stopPropagation();
+
+                alternarDescricao();
+            }
+        );
+    }
+
+
+    /* =========================================================
        IDENTIFICAÇÃO DO PERFIL
     ========================================================= */
 
@@ -237,13 +706,6 @@
 
     /* =========================================================
        NOMES DOS TIPOS DE PERFIL
-
-       Os tipos 3 a 11 correspondem aos estabelecimentos
-       atualmente cadastrados em tipos_perfil.
-
-       Esta função é utilizada somente quando a RPC
-       entrega o tipo_perfil_id, mas não entrega diretamente
-       o nome do tipo.
     ========================================================= */
 
     function obterNomeTipoPerfil(id) {
@@ -351,13 +813,6 @@
 
     /* =========================================================
        PÁGINA DO PERFIL
-
-       Foto e nome do perfil:
-
-           meu-perfil.html?id=<perfilId>
-
-       A página Meu Perfil interpreta esse ID como
-       o perfil que está sendo visualizado.
     ========================================================= */
 
     function obterPaginaPerfil() {
@@ -368,13 +823,6 @@
 
     /* =========================================================
        PÁGINA DE APRESENTAÇÃO DO PERFIL
-
-       A mídia do anúncio:
-
-           apresentar-perfil.html?id=<perfilId>
-
-       A mídia representa o conteúdo do anúncio e,
-       portanto, abre a apresentação pública do perfil.
     ========================================================= */
 
     function obterPaginaApresentarPerfil() {
@@ -666,7 +1114,35 @@
         }
 
 
+        /*
+         * Se o usuário pausou manualmente o vídeo,
+         * o autoplay não deve reativá-lo imediatamente.
+         */
+
+        if (
+            video.dataset.videoPausadoManual ===
+            "true"
+        ) {
+
+            return;
+        }
+
+
         cancelarTimerVideo(video);
+
+
+        /*
+         * Antes de reproduzir, o vídeo recebe a
+         * preferência global atual de áudio.
+         *
+         * Isso garante que vídeos novos que entram
+         * na tela respeitem a última escolha do usuário.
+         */
+
+        aplicarAudioGlobalAoVideo(
+            video
+        );
+
 
         pausarTodosVideos(video);
 
@@ -702,6 +1178,15 @@
 
 
         if (!videoEstaVisivel(video)) {
+
+            return;
+        }
+
+
+        if (
+            video.dataset.videoPausadoManual ===
+            "true"
+        ) {
 
             return;
         }
@@ -755,7 +1240,15 @@
 
             if (videoEstaVisivel(video)) {
 
-                agendarReproducaoVideo(video);
+                if (
+                    video.dataset.videoPausadoManual !==
+                    "true"
+                ) {
+
+                    agendarReproducaoVideo(
+                        video
+                    );
+                }
 
             } else {
 
@@ -777,6 +1270,358 @@
         });
     }
 
+
+    /* =========================================================
+       CONTROLES VISUAIS DO VÍDEO
+
+       Cada vídeo possui três controles:
+
+       1. Áudio
+       2. Play / Pause
+       3. Tela cheia
+
+       Os controles ficam sobre o vídeo.
+
+       O clique nos controles nunca deve abrir
+       o link da apresentação do perfil.
+    ========================================================= */
+
+    function configurarControlesVideo(
+        card,
+        video
+    ) {
+
+        if (
+            !card ||
+            !video
+        ) {
+
+            return;
+        }
+
+
+        const audioButton =
+            card.querySelector(
+                ".ad-video-audio"
+            );
+
+
+        const playButton =
+            card.querySelector(
+                ".ad-video-play"
+            );
+
+
+        const fullscreenButton =
+            card.querySelector(
+                ".ad-video-fullscreen"
+            );
+
+
+        /* =====================================================
+           ATUALIZA ÍCONE DO ÁUDIO
+        ===================================================== */
+
+        function atualizarControleAudio() {
+
+            atualizarIconeAudioVideo(
+                video
+            );
+        }
+
+
+        /* =====================================================
+           ATUALIZA ÍCONE DO PLAY / PAUSE
+        ===================================================== */
+
+        function atualizarControlePlay() {
+
+            if (!playButton) {
+
+                return;
+            }
+
+
+            const pausado =
+                video.paused;
+
+
+            playButton.setAttribute(
+                "aria-label",
+                pausado
+                    ? "Reproduzir vídeo"
+                    : "Pausar vídeo"
+            );
+
+
+            playButton.setAttribute(
+                "title",
+                pausado
+                    ? "Reproduzir vídeo"
+                    : "Pausar vídeo"
+            );
+
+
+            playButton.innerHTML =
+                pausado
+
+                    ? `
+                        <svg
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                            fill="currentColor"
+                        >
+                            <path d="M8 5v14l11-7L8 5z"/>
+                        </svg>
+                    `
+
+                    : `
+                        <svg
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                            fill="currentColor"
+                        >
+                            <path d="M7 5h3v14H7z"/>
+                            <path d="M14 5h3v14h-3z"/>
+                        </svg>
+                    `;
+        }
+
+
+        /* =====================================================
+           CONTROLE DE ÁUDIO
+
+           A alteração de áudio é GLOBAL.
+
+           O estado escolhido neste vídeo é aplicado
+           imediatamente a todos os vídeos existentes
+           no feed.
+
+           A preferência também é salva no localStorage.
+        ===================================================== */
+
+        if (audioButton) {
+
+            audioButton.addEventListener(
+                "click",
+                evento => {
+
+                    evento.preventDefault();
+                    evento.stopPropagation();
+
+
+                    const novoEstadoMutado =
+                        !video.muted;
+
+
+                    aplicarAudioGlobal(
+                        novoEstadoMutado
+                    );
+                }
+            );
+        }
+
+
+        /* =====================================================
+           CONTROLE DE PLAY / PAUSE
+        ===================================================== */
+
+        if (playButton) {
+
+            playButton.addEventListener(
+                "click",
+                evento => {
+
+                    evento.preventDefault();
+                    evento.stopPropagation();
+
+
+                    if (video.paused) {
+
+                        /*
+                         * O usuário decidiu reproduzir
+                         * manualmente.
+                         *
+                         * Removemos a marca de pausa manual.
+                         */
+
+                        video.dataset.videoPausadoManual =
+                            "false";
+
+
+                        /*
+                         * O vídeo também recebe a
+                         * configuração global de áudio.
+                         *
+                         * Isso garante que o botão play
+                         * nunca desrespeite a preferência
+                         * escolhida no feed.
+                         */
+
+                        aplicarAudioGlobalAoVideo(
+                            video
+                        );
+
+
+                        pausarTodosVideos(
+                            video
+                        );
+
+
+                        const promessa =
+                            video.play();
+
+
+                        if (
+                            promessa &&
+                            typeof promessa.catch ===
+                                "function"
+                        ) {
+
+                            promessa.catch(erro => {
+
+                                console.warn(
+                                    "MusicalWorld Anúncio: não foi possível reproduzir o vídeo.",
+                                    erro
+                                );
+                            });
+                        }
+
+                    } else {
+
+                        /*
+                         * O usuário pausou manualmente.
+                         *
+                         * O autoplay não deve iniciar
+                         * novamente enquanto o usuário
+                         * não tocar em reproduzir.
+                         */
+
+                        video.dataset.videoPausadoManual =
+                            "true";
+
+
+                        cancelarTimerVideo(
+                            video
+                        );
+
+
+                        video.pause();
+                    }
+
+
+                    atualizarControlePlay();
+                }
+            );
+        }
+
+
+        /* =====================================================
+           EVENTOS NATIVOS DO VÍDEO
+        ===================================================== */
+
+        video.addEventListener(
+            "play",
+            () => {
+
+                atualizarControlePlay();
+            }
+        );
+
+
+        video.addEventListener(
+            "pause",
+            () => {
+
+                atualizarControlePlay();
+            }
+        );
+
+
+        video.addEventListener(
+            "volumechange",
+            () => {
+
+                /*
+                 * Se o volume for alterado por alguma
+                 * outra ação, o estado visual acompanha
+                 * o estado real do vídeo.
+                 *
+                 * A configuração global continua sendo
+                 * controlada pelo botão de áudio.
+                 */
+
+                atualizarControleAudio();
+            }
+        );
+
+
+        /* =====================================================
+           TELA CHEIA
+        ===================================================== */
+
+        if (fullscreenButton) {
+
+            fullscreenButton.addEventListener(
+                "click",
+                async evento => {
+
+                    evento.preventDefault();
+                    evento.stopPropagation();
+
+
+                    try {
+
+                        if (
+                            document.fullscreenElement
+                        ) {
+
+                            await document.exitFullscreen();
+
+                            return;
+                        }
+
+
+                        if (
+                            video.requestFullscreen
+                        ) {
+
+                            await video.requestFullscreen();
+
+                            return;
+                        }
+
+
+                        if (
+                            video.webkitEnterFullscreen
+                        ) {
+
+                            video.webkitEnterFullscreen();
+
+                            return;
+                        }
+
+                    } catch (erro) {
+
+                        console.warn(
+                            "MusicalWorld Anúncio: não foi possível abrir vídeo em tela cheia.",
+                            erro
+                        );
+                    }
+                }
+            );
+        }
+
+
+        atualizarControleAudio();
+
+        atualizarControlePlay();
+    }
+
+
+    /* =========================================================
+       OBSERVADOR DOS VÍDEOS
+    ========================================================= */
 
     function inicializarObservadorVideos() {
 
@@ -826,9 +1671,20 @@
                                 ANUNCIO_VIDEO_CONFIG.percentualMinimoVisivel
                         ) {
 
-                            agendarReproducaoVideo(
-                                video
-                            );
+                            /*
+                             * Não reativa um vídeo que o
+                             * usuário pausou manualmente.
+                             */
+
+                            if (
+                                video.dataset.videoPausadoManual !==
+                                "true"
+                            ) {
+
+                                agendarReproducaoVideo(
+                                    video
+                                );
+                            }
 
                         } else {
 
@@ -892,12 +1748,41 @@
                 "true"
             ) {
 
+                /*
+                 * Mesmo que o vídeo já esteja observado,
+                 * garantimos que ele continue respeitando
+                 * a configuração global de áudio.
+                 */
+
+                aplicarAudioGlobalAoVideo(
+                    video
+                );
+
                 return;
             }
 
 
             video.dataset.feedVideoObserved =
                 "true";
+
+
+            if (
+                !video.dataset.videoPausadoManual
+            ) {
+
+                video.dataset.videoPausadoManual =
+                    "false";
+            }
+
+
+            /*
+             * Todo vídeo novo recebe imediatamente
+             * a preferência global atual de áudio.
+             */
+
+            aplicarAudioGlobalAoVideo(
+                video
+            );
 
 
             ANUNCIO_VIDEO_CONFIG.observer.observe(
@@ -968,11 +1853,6 @@
 
     /* =========================================================
        TRANSFORMA O CARD PARA O ESTADO SEM MÍDIA
-
-       Esta função NÃO remove o anúncio.
-
-       Ela remove somente a área grande de mídia
-       e mantém a identidade do perfil.
     ========================================================= */
 
     function transformarCardSemMidia(card) {
@@ -1104,14 +1984,6 @@
 
     /* =========================================================
        COMPARTILHAR PERFIL
-
-       Retorna:
-
-       true  = compartilhamento/cópia realizado
-       false = cancelado ou não realizado
-
-       O contador só será incrementado quando esta função
-       retornar true.
     ========================================================= */
 
     async function compartilharPerfil(
@@ -1220,16 +2092,6 @@
 
     /* =========================================================
        REGISTRA O COMPARTILHAMENTO
-
-       A tabela compartilhamentos_perfis registra uma pessoa
-       compartilhando um determinado perfil.
-
-       Existe uma restrição única por:
-
-           perfil_id + usuario_id
-
-       Portanto, a mesma pessoa não aumenta novamente
-       o contador ao compartilhar o mesmo perfil várias vezes.
     ========================================================= */
 
     async function registrarCompartilhamento(card) {
@@ -1276,19 +2138,6 @@
 
     /* =========================================================
        INTEGRAÇÃO COM INTERAÇÕES
-
-       O card já está pronto quando esta função é chamada.
-
-       O componente de interações recebe o próprio card
-       e passa a controlar:
-
-       * Curtir
-       * Comentar
-       * Salvar
-       * Contadores
-       * Compartilhamentos
-
-       O componente NÃO deve reconstruir o card.
     ========================================================= */
 
     function inicializarInteracoesCard(card) {
@@ -1323,7 +2172,7 @@
 
 
     /* =========================================================
-       CRIAÇÃO DO CARD DO PROFISSIONAL / ESTABELECIMENTO
+       CRIAÇÃO DO CARD
     ========================================================= */
 
     function criarCardProfissional(
@@ -1361,16 +2210,6 @@
                 perfil
             );
 
-
-        /*
-         * Quando o perfil é estabelecimento, utilizamos
-         * diretamente os dados retornados pela RPC:
-         *
-         *     perfil.perfis_estabelecimentos
-         *
-         * Para artista, preservamos exatamente a estrutura
-         * que o anúncio já utilizava.
-         */
 
         const dadosPerfil =
             ehEstabelecimento
@@ -1486,18 +2325,9 @@
                 );
 
 
-        /*
-         * A foto de perfil é utilizada SOMENTE
-         * no pequeno avatar da identidade.
-         *
-         * Para artistas, mantemos exatamente as fontes
-         * existentes.
-         *
-         * Para estabelecimentos, a RPC atual não retorna
-         * foto_url no objeto de estabelecimento.
-         * Portanto, caso exista uma foto diretamente no
-         * perfil, ela ainda poderá ser utilizada.
-         */
+        /* =====================================================
+           FOTO DO PERFIL
+        ===================================================== */
 
         const fotoUrl =
             dadosPerfil?.foto_url ||
@@ -1512,7 +2342,7 @@
 
 
         /* =====================================================
-           AVATAR DA IDENTIDADE
+           AVATAR
         ===================================================== */
 
         let avatarHtml = "";
@@ -1552,14 +2382,6 @@
 
         /* =====================================================
            MÍDIA DE DESTAQUE
-
-           IMPORTANTE:
-
-           A mídia abre:
-
-               apresentar-perfil.html?id=<perfilId>
-
-           Ela NÃO abre mais meu-perfil.html.
         ===================================================== */
 
         let mediaHtml = "";
@@ -1605,6 +2427,15 @@
 
         /* =====================================================
            VÍDEO DE PORTFÓLIO
+
+           O vídeo inicia respeitando a configuração global
+           de áudio do feed.
+
+           Os controles são renderizados sobre o vídeo:
+
+           * áudio
+           * play/pause
+           * tela cheia
         ===================================================== */
 
         if (
@@ -1627,7 +2458,6 @@
 
                         <video
                             class="ad-media-video"
-                            muted
                             loop
                             playsinline
                             preload="metadata"
@@ -1651,29 +2481,55 @@
                     </a>
 
 
-                    <button
-                        type="button"
-                        class="ad-video-fullscreen"
-                        aria-label="Assistir vídeo em tela cheia"
-                        title="Tela cheia"
+                    <div
+                        class="ad-video-controles"
+                        role="group"
+                        aria-label="Controles do vídeo"
                     >
 
-                        <svg
-                            viewBox="0 0 24 24"
-                            aria-hidden="true"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="1.8"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
+                        <button
+                            type="button"
+                            class="ad-video-control ad-video-audio"
+                            aria-label="Desativar áudio"
+                            title="Desativar áudio"
                         >
-                            <path d="M8 3H5a2 2 0 0 0-2 2v3"/>
-                            <path d="M16 3h3a2 2 0 0 1 2 2v3"/>
-                            <path d="M21 16v3a2 2 0 0 1-2 2h-3"/>
-                            <path d="M3 16v3a2 2 0 0 0 2 2h3"/>
-                        </svg>
+                        </button>
 
-                    </button>
+
+                        <button
+                            type="button"
+                            class="ad-video-control ad-video-play"
+                            aria-label="Pausar vídeo"
+                            title="Pausar vídeo"
+                        >
+                        </button>
+
+
+                        <button
+                            type="button"
+                            class="ad-video-control ad-video-fullscreen"
+                            aria-label="Assistir vídeo em tela cheia"
+                            title="Tela cheia"
+                        >
+
+                            <svg
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.8"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+                                <path d="M8 3H5a2 2 0 0 0-2 2v3"/>
+                                <path d="M16 3h3a2 2 0 0 1 2 2v3"/>
+                                <path d="M21 16v3a2 2 0 0 1-2 2h-3"/>
+                                <path d="M3 16v3a2 2 0 0 0 2 2h3"/>
+                            </svg>
+
+                        </button>
+
+                    </div>
 
                 </div>
             `;
@@ -1715,10 +2571,6 @@
 
         /* =====================================================
            IDENTIDADE DO PERFIL
-
-           Foto e nome continuam abrindo:
-
-               meu-perfil.html?id=<perfilId>
         ===================================================== */
 
         const identidadeClasse =
@@ -1872,33 +2724,6 @@
 
         /* =====================================================
            AÇÕES SOCIAIS
-
-           Os botões possuem contadores próprios.
-
-           O valor inicial é 0.
-
-           O componente interacoes-perfil.js carrega os
-           valores reais no banco depois que o card é criado.
-
-           Os pequenos containers:
-
-               data-interacao-avatares="curtidas"
-               data-interacao-avatares="comentarios"
-               data-interacao-avatares="salvos"
-
-           pertencem EXCLUSIVAMENTE ao Index.
-
-           O módulo:
-
-               js/index/interacoes-avatares.js
-
-           utiliza esses containers para mostrar até
-           3 usuários por tipo de interação.
-
-           IMPORTANTE:
-
-           O componente universal de interações continua
-           controlando os botões e contadores normalmente.
         ===================================================== */
 
         const acoesHtml = `
@@ -2126,15 +2951,6 @@
             perfil.id || "";
 
 
-        /*
-         * Mantemos o atributo antigo para não quebrar
-         * nenhuma lógica existente que eventualmente
-         * utilize data-tipo-artista.
-         *
-         * Para estabelecimentos, ele passa a receber
-         * a categoria do estabelecimento.
-         */
-
         card.dataset.tipoArtista =
             tipo;
 
@@ -2143,35 +2959,10 @@
             nome;
 
 
-        /*
-         * Novo atributo específico para identificar
-         * o tipo geral do perfil no anúncio.
-         */
-
         card.dataset.tipoPerfil =
             ehEstabelecimento
                 ? "estabelecimento"
                 : "artista";
-
-
-        /* =====================================================
-           CLIQUE NO CARD
-
-           IMPORTANTE:
-
-           O card inteiro NÃO é mais clicável.
-
-           A navegação acontece somente nos elementos
-           que possuem seus próprios links:
-
-           * Foto/nome:
-             meu-perfil.html
-
-           * Mídia:
-             apresentar-perfil.html
-
-           O restante do card permanece sem navegação.
-        ===================================================== */
 
 
         /* =====================================================
@@ -2275,69 +3066,38 @@
 
 
         /* =====================================================
-           TELA CHEIA DO VÍDEO
+           CONTROLES DO VÍDEO
         ===================================================== */
 
-        const fullscreenButton =
-            card.querySelector(
-                ".ad-video-fullscreen"
+        if (video) {
+
+            /*
+             * O vídeo recebe a preferência global atual
+             * do feed.
+             *
+             * Essa preferência já foi recuperada do
+             * localStorage quando este módulo foi carregado.
+             *
+             * Portanto:
+             *
+             * primeira utilização:
+             *     áudio habilitado
+             *
+             * usuário mutou anteriormente:
+             *     vídeo começa mutado
+             *
+             * usuário desmutou anteriormente:
+             *     vídeo começa desmutado
+             */
+
+            aplicarAudioGlobalAoVideo(
+                video
             );
 
 
-        if (
-            fullscreenButton &&
-            video
-        ) {
-
-            fullscreenButton.addEventListener(
-                "click",
-                async evento => {
-
-                    evento.preventDefault();
-
-                    evento.stopPropagation();
-
-
-                    try {
-
-                        if (
-                            document.fullscreenElement
-                        ) {
-
-                            await document.exitFullscreen();
-
-                            return;
-                        }
-
-
-                        if (
-                            video.requestFullscreen
-                        ) {
-
-                            await video.requestFullscreen();
-
-                            return;
-                        }
-
-
-                        if (
-                            video.webkitEnterFullscreen
-                        ) {
-
-                            video.webkitEnterFullscreen();
-
-                            return;
-                        }
-
-                    } catch (erro) {
-
-                        console.warn(
-                            "MusicalWorld Anúncio: não foi possível abrir vídeo em tela cheia.",
-                            erro
-                        );
-                    }
-
-                }
+            configurarControlesVideo(
+                card,
+                video
             );
         }
 
@@ -2401,13 +3161,6 @@
                         "perfil";
 
 
-                    /*
-                     * Primeiro executamos o compartilhamento.
-                     *
-                     * Somente se ele realmente for concluído
-                     * registramos a pessoa no banco.
-                     */
-
                     const compartilhado =
                         await compartilharPerfil(
                             perfilId,
@@ -2431,22 +3184,18 @@
 
         /* =====================================================
            INTERAÇÕES DO PERFIL
-
-           IMPORTANTE:
-
-           O card já está completamente montado neste
-           ponto.
-
-           Só agora entregamos o card para o componente
-           de interações.
-
-           O componente não recria o card.
-
-           Os containers de avatares permanecem
-           independentes deste componente.
         ===================================================== */
 
         inicializarInteracoesCard(
+            card
+        );
+
+
+        /* =====================================================
+           EXPANSÃO DA DESCRIÇÃO
+        ===================================================== */
+
+        configurarExpansaoDescricao(
             card
         );
 

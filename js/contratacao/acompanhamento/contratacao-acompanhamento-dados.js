@@ -14,6 +14,7 @@
    - Carregamento da contratação.
    - Carregamento dos participantes.
    - Carregamento do serviço.
+   - Identificação de contratação originada por oportunidade.
    - Normalização dos dados.
    - Formatação de dados.
    - Verificação de pagamento.
@@ -40,7 +41,7 @@
 
     /* =====================================================
        CONFIGURAÇÃO
-    ===================================================== */
+       ===================================================== */
 
     const CONFIG = {
 
@@ -62,6 +63,7 @@
             perfis: "perfis",
             perfisArtistas: "perfis_artistas",
             servicos: "servicos_artistas",
+            oportunidades: "oportunidades",
             notificacoes: "notificacoes"
         },
 
@@ -201,7 +203,7 @@
 
     /* =====================================================
        ESTADO INTERNO
-    ===================================================== */
+       ===================================================== */
 
     const estado = {
 
@@ -242,7 +244,7 @@
 
     /* =====================================================
        OBTER ELEMENTO PELO ID
-    ===================================================== */
+       ===================================================== */
 
     function obterElemento(nome) {
 
@@ -262,7 +264,7 @@
 
     /* =====================================================
        OBTER CLIENTE SUPABASE
-    ===================================================== */
+       ===================================================== */
 
     function obterSupabase() {
 
@@ -283,7 +285,7 @@
 
     /* =====================================================
        FORMATAR MOEDA
-    ===================================================== */
+       ===================================================== */
 
     function formatarMoeda(valor) {
 
@@ -309,7 +311,7 @@
 
     /* =====================================================
        FORMATAR DATA
-    ===================================================== */
+       ===================================================== */
 
     function formatarData(data) {
 
@@ -373,7 +375,7 @@
 
     /* =====================================================
        NORMALIZAR HORÁRIO
-    ===================================================== */
+       ===================================================== */
 
     function normalizarHorario(valor) {
 
@@ -406,7 +408,7 @@
 
     /* =====================================================
        FORMATAR HORÁRIO
-    ===================================================== */
+       ===================================================== */
 
     function formatarHorario(dados) {
 
@@ -472,7 +474,7 @@
 
     /* =====================================================
        FORMATAR LOCAL
-    ===================================================== */
+       ===================================================== */
 
     function formatarLocal(local) {
 
@@ -564,7 +566,7 @@
 
     /* =====================================================
        EXTRAIR CIDADE
-    ===================================================== */
+       ===================================================== */
 
     function extrairCidade(local) {
 
@@ -608,7 +610,7 @@
 
     /* =====================================================
        OBTER INICIAIS
-    ===================================================== */
+       ===================================================== */
 
     function obterIniciais(nome) {
 
@@ -655,7 +657,7 @@
 
     /* =====================================================
        OBTER ID DA CONTRATAÇÃO
-    ===================================================== */
+       ===================================================== */
 
     function obterIdDaContratacao() {
 
@@ -715,7 +717,7 @@
 
     /* =====================================================
        CARREGAR USUÁRIO ATUAL
-    ===================================================== */
+       ===================================================== */
 
     async function carregarUsuarioAtual() {
 
@@ -810,7 +812,7 @@
 
        Nunca utilizamos a foto do usuário autenticado
        como fallback do participante.
-    ===================================================== */
+       ===================================================== */
 
     async function carregarPessoa(
         supabase,
@@ -1107,7 +1109,7 @@
 
     /* =====================================================
        CARREGAR SERVIÇO
-    ===================================================== */
+       ===================================================== */
 
     async function carregarServico(
         supabase,
@@ -1289,7 +1291,7 @@
 
     /* =====================================================
        CARREGAR CONTRATAÇÃO
-    ===================================================== */
+       ===================================================== */
 
     async function carregarContratacao() {
 
@@ -1433,6 +1435,21 @@
             servicoId:
                 registro.servico_id,
 
+            /*
+             * IMPORTANTE:
+             *
+             * Quando esta contratação nasceu do fluxo de
+             * oportunidades, este ID identifica a proposta
+             * que originou a contratação.
+             *
+             * O render utiliza esta informação para
+             * diferenciar uma contratação normal de uma
+             * proposta aceita de oportunidade.
+             */
+            oportunidadeId:
+                registro.oportunidade_id ||
+                null,
+
             direcao,
 
             contratante,
@@ -1513,8 +1530,100 @@
 
 
     /* =====================================================
+       VERIFICAR SE É CONTRATAÇÃO DE OPORTUNIDADE
+       =====================================================
+
+       Retorna true quando a contratação possui
+       oportunidade_id.
+
+       Essa informação é importante porque o fluxo de
+       oportunidade possui uma etapa adicional:
+
+       estabelecimento seleciona artista
+               ↓
+       proposta é criada
+               ↓
+       artista aceita
+               ↓
+       contratante precisa realizar o pagamento
+               ↓
+       fluxo normal continua
+       ===================================================== */
+
+    function ehContratacaoDeOportunidade(dados) {
+
+        return Boolean(
+            dados?.oportunidadeId
+        );
+    }
+
+
+    /* =====================================================
+       VERIFICAR SE O CONTRATANTE PRECISA PAGAR
+
+       Cenário específico:
+
+       - contratação originada de oportunidade;
+       - artista já aceitou;
+       - contratação está confirmada;
+       - pagamento ainda está pendente;
+       - usuário atual é o contratante.
+
+       Nesse cenário a próxima ação é o pagamento.
+       ===================================================== */
+
+    function contratantePrecisaPagar() {
+
+        if (!estado.dados) {
+
+            return false;
+        }
+
+
+        const status =
+            normalizarStatus(
+                estado.dados.statusBanco ||
+                estado.dados.status
+            );
+
+
+        const pagamento =
+            String(
+                estado.dados.pagamento?.status ||
+                ""
+            )
+                .toLowerCase()
+                .trim();
+
+
+        const ehContratante =
+            String(
+                estado.dados.contratanteId
+            ) ===
+            String(
+                estado.usuarioId
+            );
+
+
+        return (
+
+            ehContratante &&
+
+            ehContratacaoDeOportunidade(
+                estado.dados
+            ) &&
+
+            status === "confirmada" &&
+
+            pagamento === "pendente"
+
+        );
+    }
+
+
+    /* =====================================================
        DETERMINAR STATUS
-    ===================================================== */
+       ===================================================== */
 
     function determinarStatus(dados) {
 
@@ -1597,7 +1706,7 @@
 
     /* =====================================================
        CRIAR NOTIFICAÇÃO
-    ===================================================== */
+       ===================================================== */
 
     async function criarNotificacaoResultado(
         novoStatus
@@ -1702,10 +1811,18 @@
                 "contratacao_aceita";
 
             titulo =
-                "Contratação aceita";
+                ehContratacaoDeOportunidade(
+                    estado.dados
+                )
+                    ? "Proposta aceita"
+                    : "Contratação aceita";
 
             mensagem =
-                "O artista aceitou sua solicitação de contratação.";
+                ehContratacaoDeOportunidade(
+                    estado.dados
+                )
+                    ? "O artista aceitou sua proposta. Agora realize o pagamento para confirmar a contratação."
+                    : "O artista aceitou sua solicitação de contratação.";
 
             remetenteId =
                 artistaId;
@@ -1843,7 +1960,7 @@
 
     /* =====================================================
        SALVAR CONTRATAÇÃO LOCALMENTE
-    ===================================================== */
+       ===================================================== */
 
     function salvarContratacaoLocal() {
 
@@ -1874,7 +1991,7 @@
 
     /* =====================================================
        EXPOR API DE DADOS
-    ===================================================== */
+       ===================================================== */
 
     modulo.CONFIG =
         CONFIG;
@@ -1930,6 +2047,12 @@
     modulo.determinarStatus =
         determinarStatus;
 
+    modulo.ehContratacaoDeOportunidade =
+        ehContratacaoDeOportunidade;
+
+    modulo.contratantePrecisaPagar =
+        contratantePrecisaPagar;
+
     modulo.pagamentoJaFoiLiberado =
         pagamentoJaFoiLiberado;
 
@@ -1941,5 +2064,4 @@
 
 
 })(window);
-
 

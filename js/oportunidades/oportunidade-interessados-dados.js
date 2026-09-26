@@ -99,7 +99,7 @@ window.MusicalWorldOportunidadeInteressadosDados = (() => {
 
     /* =====================================================
        CARREGAR OPORTUNIDADE
-       ===================================================== */
+    ====================================================== */
 
     async function carregarOportunidade(
         supabase,
@@ -165,7 +165,7 @@ window.MusicalWorldOportunidadeInteressadosDados = (() => {
 
     /* =====================================================
        VALIDAR PROPRIETÁRIO
-       ===================================================== */
+    ====================================================== */
 
     function validarProprietario(
         oportunidade,
@@ -189,7 +189,7 @@ window.MusicalWorldOportunidadeInteressadosDados = (() => {
 
     /* =====================================================
        CARREGAR ESTABELECIMENTO
-       ===================================================== */
+    ====================================================== */
 
     async function carregarEstabelecimento(
         supabase,
@@ -310,7 +310,7 @@ window.MusicalWorldOportunidadeInteressadosDados = (() => {
 
     /* =====================================================
        VALIDAR TIPO DE PERFIL
-       ===================================================== */
+    ====================================================== */
 
     function ehEstabelecimento(perfil) {
 
@@ -363,7 +363,7 @@ window.MusicalWorldOportunidadeInteressadosDados = (() => {
 
     /* =====================================================
        CARREGAR INTERESSADOS
-       ===================================================== */
+    ====================================================== */
 
     async function carregarInteressados(
         supabase,
@@ -416,7 +416,7 @@ window.MusicalWorldOportunidadeInteressadosDados = (() => {
 
     /* =====================================================
        CARREGAR USUÁRIOS
-       ===================================================== */
+    ====================================================== */
 
     async function carregarUsuarios(
         supabase,
@@ -465,7 +465,7 @@ window.MusicalWorldOportunidadeInteressadosDados = (() => {
 
     /* =====================================================
        CARREGAR PERFIS
-       ===================================================== */
+    ====================================================== */
 
     async function carregarPerfis(
         supabase,
@@ -521,7 +521,7 @@ window.MusicalWorldOportunidadeInteressadosDados = (() => {
 
     /* =====================================================
        CARREGAR DADOS ARTÍSTICOS
-       ===================================================== */
+    ====================================================== */
 
     async function carregarPerfisArtistas(
         supabase,
@@ -578,7 +578,7 @@ window.MusicalWorldOportunidadeInteressadosDados = (() => {
 
     /* =====================================================
        MONTAR INTERESSADOS COMPLETOS
-       ===================================================== */
+    ====================================================== */
 
     function montarInteressados(
         interessados,
@@ -637,7 +637,7 @@ window.MusicalWorldOportunidadeInteressadosDados = (() => {
 
     /* =====================================================
        CARREGAR TUDO
-       ===================================================== */
+    ====================================================== */
 
     async function carregarTudo() {
 
@@ -777,7 +777,7 @@ window.MusicalWorldOportunidadeInteressadosDados = (() => {
 
     /* =====================================================
        SELECIONAR ARTISTA
-       ===================================================== */
+    ====================================================== */
 
     async function selecionarArtista(
         oportunidadeId,
@@ -974,6 +974,9 @@ window.MusicalWorldOportunidadeInteressadosDados = (() => {
 
            Mapeamento:
 
+           oportunidades.id
+               → contratacoes.oportunidade_id
+
            oportunidades.contratante_id
                → contratacoes.contratante_id
 
@@ -1021,6 +1024,9 @@ window.MusicalWorldOportunidadeInteressadosDados = (() => {
 
             .insert({
 
+                oportunidade_id:
+                    oportunidadeId,
+
                 contratante_id:
                     oportunidade.contratante_id,
 
@@ -1065,6 +1071,8 @@ window.MusicalWorldOportunidadeInteressadosDados = (() => {
             .select(`
 
                 id,
+
+                oportunidade_id,
 
                 contratante_id,
 
@@ -1206,7 +1214,7 @@ window.MusicalWorldOportunidadeInteressadosDados = (() => {
 
     /* =====================================================
        API PÚBLICA DO MÓDULO
-       ===================================================== */
+    ====================================================== */
 
     return {
 

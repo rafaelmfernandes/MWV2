@@ -1,3 +1,4 @@
+
 /* =========================================================
    MUSICALWORLD — CONTROLADOR DA PÁGINA DE LOGIN
 
@@ -9,6 +10,8 @@
    - Realizar login.
    - Realizar cadastro.
    - Controlar login social.
+   - Verificar se o usuário possui perfil concluído.
+   - Encaminhar primeiro acesso para configurar-conta.html.
    - Abrir modal de recuperação de senha.
    - Detectar sessão PASSWORD_RECOVERY.
    - Abrir modal de nova senha.
@@ -18,7 +21,7 @@
    - O listener de autenticação é registrado imediatamente,
      antes do evento "load".
    - PASSWORD_RECOVERY é tratado separadamente.
-   - SIGNED_IN normal continua o fluxo para index.html.
+   - SIGNED_IN normal verifica o perfil antes de redirecionar.
    - access_token NÃO é utilizado para identificar
      recuperação de senha, pois login social também possui
      access_token.
@@ -132,20 +135,248 @@ function abrirModalNovaSenha() {
 
 
 /* =========================================================
+   VERIFICAR PERFIL APÓS AUTENTICAÇÃO
+   =========================================================
+
+   Responsabilidade:
+
+   - Verificar se o usuário autenticado já possui um perfil.
+   - Considerar incompleto um usuário que possui registro
+     em usuarios, mas ainda não possui um perfil válido.
+   - Salvar temporariamente os dados básicos da autenticação
+     para o fluxo de primeiro acesso.
+   - Redirecionar usuários sem perfil para
+     configurar-conta.html.
+   - Permitir acesso normal ao index quando o perfil já
+     estiver criado e preenchido.
+   ========================================================= */
+
+async function verificarPerfilAposAutenticacao(usuario) {
+
+    if (
+        !usuario?.id
+    ) {
+
+        console.error(
+            "Não foi possível verificar o perfil: usuário não informado."
+        );
+
+        return false;
+
+    }
+
+
+    const supabase =
+        window.supabaseClient ||
+        window.supabase;
+
+
+    if (
+        !supabase?.from
+    ) {
+
+        console.error(
+            "Cliente Supabase não disponível para verificar o perfil."
+        );
+
+        return false;
+
+    }
+
+
+    try {
+
+        console.log(
+            "Verificando perfil do usuário:",
+            usuario.id
+        );
+
+
+        const resultado =
+            await supabase
+                .from("perfis")
+                .select(
+                    "id, nome_exibicao, tipo_perfil_id"
+                )
+                .eq(
+                    "usuario_id",
+                    usuario.id
+                )
+                .limit(1)
+                .maybeSingle();
+
+
+        if (
+            resultado.error
+        ) {
+
+            console.error(
+                "Erro ao verificar perfil:",
+                resultado.error
+            );
+
+            /*
+             * Em caso de erro real de consulta, não vamos
+             * mandar o usuário para o index como se estivesse
+             * tudo certo.
+             *
+             * Retornamos false para manter o fluxo seguro.
+             */
+
+            return false;
+
+        }
+
+
+        const perfil =
+            resultado.data || null;
+
+
+        /*
+         * Um perfil só é considerado concluído quando:
+         *
+         * - existe um registro;
+         * - possui nome de exibição;
+         * - possui tipo de perfil.
+         *
+         * Isso evita considerar como completo um perfil
+         * vazio ou parcialmente criado.
+         */
+
+        const perfilCompleto =
+            Boolean(
+                perfil?.id &&
+                perfil?.nome_exibicao?.trim() &&
+                perfil?.tipo_perfil_id
+            );
+
+
+        if (
+            perfilCompleto
+        ) {
+
+            console.log(
+                "Perfil existente e preenchido. Acesso normal."
+            );
+
+            return true;
+
+        }
+
+
+        /*
+         * Não existe perfil ou o perfil ainda está incompleto.
+         *
+         * Guardamos os dados básicos da autenticação para
+         * a página de configuração completar o cadastro.
+         */
+
+        const metadados =
+            usuario.user_metadata || {};
+
+
+        const nomeGoogle =
+            metadados.full_name ||
+            metadados.name ||
+            metadados.nome ||
+            "";
+
+
+        const email =
+            usuario.email ||
+            "";
+
+
+        const fotoGoogle =
+            metadados.avatar_url ||
+            metadados.picture ||
+            metadados.photo_url ||
+            "";
+
+
+        try {
+
+            localStorage.setItem(
+                "musicalworld_primeiro_acesso",
+                "true"
+            );
+
+
+            localStorage.setItem(
+                "musicalworld_primeiro_acesso_id",
+                usuario.id
+            );
+
+
+            localStorage.setItem(
+                "musicalworld_primeiro_acesso_nome",
+                nomeGoogle
+            );
+
+
+            localStorage.setItem(
+                "musicalworld_primeiro_acesso_email",
+                email
+            );
+
+
+            localStorage.setItem(
+                "musicalworld_primeiro_acesso_foto",
+                fotoGoogle
+            );
+
+
+        } catch (erroStorage) {
+
+            console.warn(
+                "Não foi possível salvar dados temporários do primeiro acesso:",
+                erroStorage
+            );
+
+        }
+
+
+        console.log(
+            "Primeiro acesso detectado. Redirecionando para configuração do perfil."
+        );
+
+
+        window.location.href =
+            "configurar-conta.html";
+
+
+        return false;
+
+    } catch (erro) {
+
+        console.error(
+            "Erro inesperado ao verificar perfil:",
+            erro
+        );
+
+        return false;
+
+    }
+
+}
+
+
+/* =========================================================
    OBSERVAR AUTENTICAÇÃO / PASSWORD_RECOVERY
 
    Responsabilidade:
    - Observar os eventos de autenticação do Supabase.
    - Abrir o modal de nova senha quando o evento for
      PASSWORD_RECOVERY.
-   - Redirecionar para index.html quando ocorrer um
-     SIGNED_IN normal.
+   - Verificar o perfil quando ocorrer SIGNED_IN.
+   - Redirecionar para index.html somente quando o perfil
+     já estiver criado e preenchido.
    - NÃO tratar access_token como recuperação.
 
    IMPORTANTE:
    O login Google também produz SIGNED_IN e access_token.
    Portanto, access_token NÃO deve ser usado para identificar
-   recuperação de senha.
+   recuperação.
    ========================================================= */
 
 function observarRecuperacaoSenha() {
@@ -186,7 +417,7 @@ function observarRecuperacaoSenha() {
 
 
     supabase.auth.onAuthStateChange(
-        (evento, sessao) => {
+        async (evento, sessao) => {
 
             console.log(
                 "🔄 Estado da autenticação:",
@@ -297,8 +528,48 @@ function observarRecuperacaoSenha() {
                 }
 
 
+                if (
+                    !sessao?.user
+                ) {
+
+                    console.error(
+                        "SIGNED_IN recebido sem usuário."
+                    );
+
+                    return;
+
+                }
+
+
                 console.log(
-                    "✅ Login normal concluído. Redirecionando para o MusicalWorld..."
+                    "Verificando perfil antes de concluir o login..."
+                );
+
+
+                /*
+                 * O próprio método decide se deve:
+                 *
+                 * - permanecer no fluxo normal;
+                 * - ou redirecionar para configurar-conta.html.
+                 */
+
+                const perfilCompleto =
+                    await verificarPerfilAposAutenticacao(
+                        sessao.user
+                    );
+
+
+                if (
+                    !perfilCompleto
+                ) {
+
+                    return;
+
+                }
+
+
+                console.log(
+                    "✅ Login normal concluído. Perfil válido encontrado."
                 );
 
 
@@ -526,7 +797,7 @@ function alternarAba(tipo) {
 
                             <path
                                 fill="#0f172a"
-                                d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 5.56c.57-.69 0-1.63 0-1.63s-1.01.12-1.67.8-.75 1.51-.7 1.55c.53.04 1.34-.33 1.81-.72z"
+                                d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 5.56c.57-.69 0-1.63 0-1.63s-1.01.12-1.67.8-.75 1.51-.7 1.55c.53.04 1.34-.33 1.81-.72z"
                             ></path>
 
                         </svg>
@@ -977,6 +1248,29 @@ async function realizarLogin(e) {
         console.log(
             "Login realizado com sucesso."
         );
+
+
+        /*
+         * O login por e-mail também passa pela mesma
+         * verificação de perfil utilizada pelo Google.
+         *
+         * Dessa forma, uma conta existente sem perfil
+         * também será direcionada para configurar-conta.html.
+         */
+
+        const perfilCompleto =
+            await verificarPerfilAposAutenticacao(
+                resultado.usuario
+            );
+
+
+        if (
+            !perfilCompleto
+        ) {
+
+            return;
+
+        }
 
 
         window.location.href =
@@ -1673,3 +1967,4 @@ async function verificarSessaoInicial() {
     );
 
 })();
+

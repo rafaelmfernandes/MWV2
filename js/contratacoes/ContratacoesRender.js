@@ -1,3 +1,4 @@
+
 /* =========================================================
    MUSICALWORLD — RENDERIZAÇÃO DA CENTRAL DE CONTRATAÇÕES
 
@@ -15,6 +16,8 @@
    - Atualizar contador.
    - Atualizar filtros visuais.
    - Atualizar navegação visual.
+   - Rolar automaticamente para a última oportunidade
+     selecionada pelo artista.
 
    Este módulo NÃO busca dados no Supabase.
 
@@ -1272,6 +1275,89 @@
 
 
     /* =====================================================
+       SCROLL PARA A ÚLTIMA OPORTUNIDADE
+       
+       Quando o artista abre "Fui selecionado", a lista
+       já está filtrada somente pelas oportunidades em que
+       ele foi selecionado.
+
+       O último card renderizado é o destino do scroll.
+
+       O comportamento é limitado a artistas para que a
+       área "Minhas oportunidades" do estabelecimento
+       permaneça exatamente como está.
+    ====================================================== */
+
+    function rolarParaUltimaOportunidadeSelecionada(
+        estado
+    ) {
+
+        if (
+            !estado ||
+            estado.usuarioEhEstabelecimento ||
+            estado.filtroAtual !== "oportunidades"
+        ) {
+
+            return;
+
+        }
+
+
+        const lista =
+            obterElemento(
+                CONFIG.seletores.lista
+            );
+
+
+        if (
+            !lista ||
+            lista.hidden
+        ) {
+
+            return;
+
+        }
+
+
+        const ultimaOportunidade =
+            lista.lastElementChild;
+
+
+        if (
+            !ultimaOportunidade
+        ) {
+
+            return;
+
+        }
+
+
+        /*
+         * requestAnimationFrame garante que o navegador
+         * tenha concluído a atualização do DOM antes de
+         * executar o movimento da página.
+         */
+
+        window.requestAnimationFrame(
+            function () {
+
+                ultimaOportunidade.scrollIntoView({
+
+                    behavior:
+                        "smooth",
+
+                    block:
+                        "center"
+
+                });
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
        LISTA
     ====================================================== */
 
@@ -1439,6 +1525,19 @@
 
         }
 
+
+        /*
+         * Depois que a lista de oportunidades foi criada,
+         * posiciona o artista automaticamente no último
+         * card selecionado.
+         *
+         * Não executa para estabelecimentos.
+         */
+
+        rolarParaUltimaOportunidadeSelecionada(
+            estado
+        );
+
     }
 
 
@@ -1585,8 +1684,11 @@
 
         atualizarFiltroVisual,
 
-        atualizarCentralVisual
+        atualizarCentralVisual,
+
+        rolarParaUltimaOportunidadeSelecionada
 
     };
 
 })(window);
+

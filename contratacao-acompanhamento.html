@@ -128,10 +128,6 @@
                 </p>
 
 
-                <!-- =================================================
-                     INDICADOR DE DIREÇÃO
-                     ================================================= -->
-
                 <span
                     class="direcao-badge"
                     id="direcaoBadge"
@@ -385,10 +381,6 @@
                 <div class="detalhes-lista">
 
 
-                    <!-- =================================================
-                         DATA
-                         ================================================= -->
-
                     <div class="detalhe-item">
 
                         <div class="detalhe-icon">
@@ -414,10 +406,6 @@
                     </div>
 
 
-
-                    <!-- =================================================
-                         HORÁRIO
-                         ================================================= -->
 
                     <div class="detalhe-item">
 
@@ -445,10 +433,6 @@
 
 
 
-                    <!-- =================================================
-                         LOCAL
-                         ================================================= -->
-
                     <div class="detalhe-item">
 
                         <div class="detalhe-icon">
@@ -475,10 +459,6 @@
 
 
 
-                    <!-- =================================================
-                         TIPO DO EVENTO
-                         ================================================= -->
-
                     <div class="detalhe-item">
 
                         <div class="detalhe-icon">
@@ -504,10 +484,6 @@
                     </div>
 
 
-
-                    <!-- =================================================
-                         PÚBLICO ESTIMADO
-                         ================================================= -->
 
                     <div
                         class="detalhe-item"
@@ -569,10 +545,6 @@
                 <div class="timeline">
 
 
-                    <!-- =================================================
-                         SOLICITAÇÃO
-                         ================================================= -->
-
                     <div
                         class="timeline-item concluido"
                         data-status="solicitacao"
@@ -601,10 +573,6 @@
                     </div>
 
 
-
-                    <!-- =================================================
-                         RESPOSTA / ANÁLISE
-                         ================================================= -->
 
                     <div
                         class="timeline-item ativo"
@@ -635,10 +603,6 @@
 
 
 
-                    <!-- =================================================
-                         CONFIRMAÇÃO
-                         ================================================= -->
-
                     <div
                         class="timeline-item"
                         data-status="confirmada"
@@ -667,10 +631,6 @@
                     </div>
 
 
-
-                    <!-- =================================================
-                         EVENTO
-                         ================================================= -->
 
                     <div
                         class="timeline-item"
@@ -701,10 +661,6 @@
 
 
 
-                    <!-- =================================================
-                         CONCLUSÃO
-                         ================================================= -->
-
                     <div
                         class="timeline-item"
                         data-status="concluida"
@@ -733,10 +689,6 @@
                     </div>
 
 
-
-                    <!-- =================================================
-                         PAGAMENTO
-                         ================================================= -->
 
                     <div
                         class="timeline-item"
@@ -851,17 +803,6 @@
 
             <!-- =================================================
                  AÇÕES DE CONCLUSÃO / SIMULAÇÃO DO EVENTO
-
-                 Esta área é controlada pelo:
-                 contratacao-acompanhamento-render.js
-
-                 O JavaScript decide quando ela deve aparecer:
-
-                 confirmada
-                 → Simular evento realizado
-
-                 evento
-                 → Confirmar serviço realizado
                  ================================================= -->
 
             <section
@@ -923,12 +864,23 @@
 
 
             <!-- =================================================
-                 AÇÃO LEGADA DE LIBERAÇÃO DO PAGAMENTO
+                 PAGAMENTO DA PROPOSTA
 
-                 Mantida no DOM para compatibilidade com versões
-                 anteriores do JavaScript.
+                 A mesma estrutura é reutilizada para o fluxo
+                 de oportunidade.
 
-                 O render atual controla sua visibilidade.
+                 Quando:
+
+                 oportunidadeId != null
+                 status = confirmada
+                 status_pagamento = pendente
+
+                 o JavaScript transforma este bloco em:
+
+                 "Pagamento necessário"
+                 "Realizar pagamento"
+
+                 Para contratações normais, ele continua oculto.
                  ================================================= -->
 
             <section
@@ -945,13 +897,13 @@
 
 
                     <h2>
-                        Liberar pagamento
+                        Pagamento necessário
                     </h2>
 
 
                     <p id="pagamentoAcaoStatus">
-                        O pagamento será liberado após a confirmação
-                        da realização do serviço.
+                        O pagamento será necessário para continuar
+                        com a contratação.
                     </p>
 
                 </div>
@@ -964,7 +916,7 @@
                 >
 
                     <span>
-                        Liberar pagamento
+                        Realizar pagamento
                     </span>
 
 

@@ -1,4 +1,3 @@
-
 (function (window) {
 
     "use strict";
@@ -7,48 +6,35 @@
        MUSICALWORLD — ETAPA 6: PAGAMENTO
 
        Arquivo:
-       www/js/contratacao/contratacao-pagamento.js
+       js/contratacao/contratacao-pagamento.js
 
        Responsabilidades:
        ---------------------------------------------------------
-       - Exibir os dados da contratação vindos do estado central.
-       - Exibir nome, tipo, localização e foto do artista.
-       - Permitir escolha do método de pagamento.
-       - Abrir o modal somente após clicar em Continuar.
-       - Controlar Pix e cartão.
-       - Validar os dados do cartão.
-       - Simular o processamento do pagamento.
-       - Criar a contratação real no Supabase.
-       - Criar a notificação da nova solicitação para o artista.
-       - Salvar o ID da contratação no estado central.
+       - Controlar o fluxo principal da etapa 6.
+       - Recuperar o estado central.
+       - Validar contratação existente.
+       - Criar contratação normal no Supabase.
+       - Criar notificação para o artista.
+       - Salvar dados da contratação no estado central.
+       - Delegar contratações de oportunidades ao módulo:
+         contratacao-pagamento-oportunidade.js
+       - Coordenar a interface através do módulo:
+         contratacao-pagamento-ui.js
        - Encaminhar para a tela de sucesso.
 
        IMPORTANTE:
        ---------------------------------------------------------
-       O estado central continua sendo a única fonte de verdade
-       durante o fluxo da contratação.
+       A interface da página está em:
 
-       Este arquivo NÃO cria um segundo estado para a contratação.
+       js/contratacao/contratacao-pagamento-ui.js
 
-       Depois do pagamento aprovado:
+       A lógica de oportunidades está em:
 
-       1. Recupera o usuário autenticado.
-       2. Identifica contratante e contratado.
-       3. Monta o registro de public.contratacoes.
-       4. Insere o registro no Supabase.
-       5. Cria a notificação para o artista.
-       6. Salva contratacaoId no estado central.
-       7. Salva o pagamento como pago.
-       8. Redireciona para a tela de sucesso.
+       js/contratacao/contratacao-pagamento-oportunidade.js
 
-       PROTEÇÃO CONTRA ID ANTIGO:
-       ---------------------------------------------------------
-       O contratacaoId armazenado no estado central é validado
-       contra o banco antes de ser reutilizado.
+       Este arquivo permanece como controlador principal.
 
-       Isso evita que um ID antigo, por exemplo de uma contratação
-       que foi apagada manualmente do Supabase, impeça a criação
-       de uma nova contratação.
+       O estado central continua sendo a fonte de verdade.
 
        Não são armazenados número do cartão, CVV ou validade
        dentro do banco.
@@ -65,42 +51,59 @@
 
         totalEtapas: 6,
 
-        paginaAnterior: "contratacao-revisao.html",
+        paginaAnterior:
+            "contratacao-revisao.html",
 
-        paginaSucesso: "contratacao-sucesso.html",
+        paginaSucesso:
+            "contratacao-sucesso.html",
 
-        paginaCancelar: "apresentar-perfil.html",
+        paginaCancelar:
+            "apresentar-perfil.html",
 
-        moeda: "BRL",
+        moeda:
+            "BRL",
 
-        simboloMoeda: "R$",
+        simboloMoeda:
+            "R$",
 
-        tabelaContratacoes: "contratacoes",
+        tabelaContratacoes:
+            "contratacoes",
 
-        tabelaNotificacoes: "notificacoes",
+        tabelaNotificacoes:
+            "notificacoes",
 
-        tabelaUsuarios: "usuarios",
+        tabelaUsuarios:
+            "usuarios",
 
-        statusContratacao: "aguardando_confirmacao",
+        statusContratacao:
+            "aguardando_confirmacao",
 
-        statusPagamento: "pago"
+        statusPagamento:
+            "pago"
 
     };
 
 
     /* =========================================================
-       ESTADO LOCAL DA INTERFACE
+       ESTADO LOCAL
+
+       IMPORTANTE:
+       ---------------------------------------------------------
+       O método de pagamento também é mantido pela interface.
+       O controlador utiliza obterMetodoPagamentoAtual() para
+       sempre sincronizar o valor antes de processar.
        ========================================================= */
 
     const UI = {
 
-        metodoPagamento: "",
+        metodoPagamento:
+            "",
 
-        modalAtual: null,
+        processando:
+            false,
 
-        processando: false,
-
-        salvandoContratacao: false
+        salvandoContratacao:
+            false
 
     };
 
@@ -109,11 +112,135 @@
        ESTADO CENTRAL
        ========================================================= */
 
-    let estadoCentral = null;
+    let estadoCentral =
+        null;
 
 
     /* =========================================================
-       UTILITÁRIOS
+       MÓDULO DE INTERFACE
+       ========================================================= */
+
+    function obterModuloUI() {
+
+        return (
+            window.MusicalWorldContratacaoPagamentoUI ||
+            null
+        );
+
+    }
+
+
+    /* =========================================================
+       OBTER MÉTODO DE PAGAMENTO ATUAL
+       
+       IMPORTANTE:
+       ---------------------------------------------------------
+       A interface possui o estado real da seleção de Pix/cartão.
+
+       Antes, o controlador consultava somente:
+       
+       UI.metodoPagamento
+
+       Isso criava dois estados independentes.
+
+       Agora o controlador consulta primeiro a interface e
+       sincroniza sua própria variável local.
+       ========================================================= */
+
+    function obterMetodoPagamentoAtual() {
+
+        const moduloUI =
+            obterModuloUI();
+
+
+        if (
+            moduloUI &&
+            typeof moduloUI.obterMetodoPagamento ===
+            "function"
+        ) {
+
+            const metodo =
+                moduloUI.obterMetodoPagamento();
+
+
+            if (
+                metodo === "pix" ||
+                metodo === "cartao"
+            ) {
+
+                UI.metodoPagamento =
+                    metodo;
+
+
+                return metodo;
+
+            }
+
+        }
+
+
+        return UI.metodoPagamento;
+
+    }
+
+
+    /* =========================================================
+       SINCRONIZAR ESTADO COM UI
+       ========================================================= */
+
+    function sincronizarEstadoComUI() {
+
+        const moduloUI =
+            obterModuloUI();
+
+
+        if (!moduloUI) {
+
+            return;
+
+        }
+
+
+        if (
+            typeof moduloUI.definirEstado ===
+            "function"
+        ) {
+
+            moduloUI.definirEstado(
+                estadoCentral
+            );
+
+        }
+
+
+        if (
+            typeof moduloUI.definirProcessando ===
+            "function"
+        ) {
+
+            moduloUI.definirProcessando(
+                UI.processando
+            );
+
+        }
+
+
+        if (
+            typeof moduloUI.definirSalvandoContratacao ===
+            "function"
+        ) {
+
+            moduloUI.definirSalvandoContratacao(
+                UI.salvandoContratacao
+            );
+
+        }
+
+    }
+
+
+    /* =========================================================
+       ESTADO CENTRAL
        ========================================================= */
 
     function obterGerenciadorEstado() {
@@ -141,6 +268,7 @@
             );
 
             return null;
+
         }
 
 
@@ -168,6 +296,7 @@
                 );
 
                 return null;
+
             }
 
 
@@ -202,6 +331,7 @@
             );
 
             return false;
+
         }
 
 
@@ -212,7 +342,9 @@
                 "function"
             ) {
 
-                gerenciador.salvar(dados);
+                gerenciador.salvar(
+                    dados
+                );
 
                 return true;
 
@@ -224,7 +356,9 @@
                 "function"
             ) {
 
-                Object.keys(dados).forEach(
+                Object.keys(
+                    dados
+                ).forEach(
                     function (campo) {
 
                         gerenciador.definir(
@@ -235,6 +369,7 @@
                     }
                 );
 
+
                 return true;
 
             }
@@ -244,6 +379,7 @@
                 "MusicalWorldContratacaoPagamento: " +
                 "nenhum método de persistência disponível."
             );
+
 
             return false;
 
@@ -313,256 +449,6 @@
     }
 
 
-    function escaparHTML(valor) {
-
-        if (
-            valor === null ||
-            valor === undefined
-        ) {
-
-            return "";
-
-        }
-
-
-        return String(valor)
-
-            .replace(
-                /&/g,
-                "&amp;"
-            )
-
-            .replace(
-                /</g,
-                "&lt;"
-            )
-
-            .replace(
-                />/g,
-                "&gt;"
-            )
-
-            .replace(
-                /"/g,
-                "&quot;"
-            )
-
-            .replace(
-                /'/g,
-                "&#039;"
-            );
-
-    }
-
-
-    function formatarMoeda(valor) {
-
-        const numero =
-            Number(valor);
-
-
-        if (!Number.isFinite(numero)) {
-
-            return "R$ 0,00";
-
-        }
-
-
-        return numero.toLocaleString(
-            "pt-BR",
-            {
-                style: "currency",
-                currency: CONFIG.moeda
-            }
-        );
-
-    }
-
-
-    function obterValorServico(estado) {
-
-        if (
-            !estado ||
-            !estado.servico
-        ) {
-
-            return 0;
-
-        }
-
-
-        const valor =
-            Number(
-                estado.servico.valor
-            );
-
-
-        if (
-            Number.isFinite(valor)
-        ) {
-
-            return valor;
-
-        }
-
-
-        const minimo =
-            Number(
-                estado.servico.valorMinimo
-            );
-
-
-        if (
-            Number.isFinite(minimo)
-        ) {
-
-            return minimo;
-
-        }
-
-
-        return 0;
-
-    }
-
-
-    function obterNomeArtista(estado) {
-
-        if (
-            !estado ||
-            !estado.artista
-        ) {
-
-            return "Artista";
-
-        }
-
-
-        return (
-
-            estado.artista.nomeExibicao ||
-
-            estado.artista.nome ||
-
-            "Artista"
-
-        );
-
-    }
-
-
-    function obterTipoArtista(estado) {
-
-        if (
-            !estado ||
-            !estado.artista
-        ) {
-
-            return "";
-
-        }
-
-
-        return (
-
-            estado.artista.tipoArtista ||
-
-            estado.artista.tipo_artista ||
-
-            estado.tipo ||
-
-            "Artista"
-
-        );
-
-    }
-
-
-    function obterLocalizacaoArtista(estado) {
-
-        if (
-            !estado ||
-            !estado.artista
-        ) {
-
-            return "";
-
-        }
-
-
-        return (
-
-            estado.artista.localizacao ||
-
-            estado.artista.localizacaoArtista ||
-
-            ""
-
-        );
-
-    }
-
-
-    function obterFotoArtista(estado) {
-
-        if (
-            !estado ||
-            !estado.artista
-        ) {
-
-            return "";
-
-        }
-
-
-        return (
-
-            estado.artista.fotoUrl ||
-
-            estado.artista.foto_url ||
-
-            estado.artista.avatarUrl ||
-
-            estado.artista.avatar_url ||
-
-            ""
-
-        );
-
-    }
-
-
-    function obterElemento(...ids) {
-
-        for (
-            const id of ids
-        ) {
-
-            if (!id) {
-
-                continue;
-
-            }
-
-
-            const elemento =
-                document.getElementById(id);
-
-
-            if (elemento) {
-
-                return elemento;
-
-            }
-
-        }
-
-
-        return null;
-
-    }
-
-
     /* =========================================================
        SUPABASE
        ========================================================= */
@@ -571,8 +457,8 @@
 
         if (
             window.supabaseClient &&
-            typeof window.supabaseClient
-                .from === "function"
+            typeof window.supabaseClient.from ===
+            "function"
         ) {
 
             return window.supabaseClient;
@@ -582,8 +468,8 @@
 
         if (
             window.SupabaseClient &&
-            typeof window.SupabaseClient
-                .getClient === "function"
+            typeof window.SupabaseClient.getClient ===
+            "function"
         ) {
 
             try {
@@ -618,8 +504,8 @@
         if (
             window.SupabaseClient &&
             window.SupabaseClient.client &&
-            typeof window.SupabaseClient.client
-                .from === "function"
+            typeof window.SupabaseClient.client.from ===
+            "function"
         ) {
 
             return window.SupabaseClient.client;
@@ -699,24 +585,154 @@
 
 
     /* =========================================================
+       VALOR DO SERVIÇO
+       ========================================================= */
+
+    function obterValorServico(estado) {
+
+        const moduloUI =
+            obterModuloUI();
+
+
+        if (
+            moduloUI &&
+            typeof moduloUI.obterValorServico ===
+            "function"
+        ) {
+
+            return moduloUI.obterValorServico(
+                estado
+            );
+
+        }
+
+
+        if (
+            !estado ||
+            !estado.servico
+        ) {
+
+            return 0;
+
+        }
+
+
+        const valor =
+            Number(
+                estado.servico.valor
+            );
+
+
+        if (
+            Number.isFinite(valor)
+        ) {
+
+            return valor;
+
+        }
+
+
+        const minimo =
+            Number(
+                estado.servico.valorMinimo
+            );
+
+
+        if (
+            Number.isFinite(minimo)
+        ) {
+
+            return minimo;
+
+        }
+
+
+        return 0;
+
+    }
+
+
+    /* =========================================================
+       SALVAR PAGAMENTO PARCIAL
+       ========================================================= */
+
+    function salvarPagamentoParcial(
+        metodoPagamento
+    ) {
+
+        if (!estadoCentral) {
+
+            return false;
+
+        }
+
+
+        const metodo =
+            metodoPagamento !== undefined
+                ? metodoPagamento
+                : obterMetodoPagamentoAtual();
+
+
+        const valor =
+            obterValorServico(
+                estadoCentral
+            );
+
+
+        const pagamentoAtual =
+            estadoCentral.pagamento ||
+            {};
+
+
+        const sucesso =
+            salvarEstado({
+
+                pagamento: {
+
+                    ...pagamentoAtual,
+
+                    metodo:
+                        metodo,
+
+                    valor:
+                        Number.isFinite(valor)
+                            ? valor
+                            : null,
+
+                    status:
+                        pagamentoAtual.status ||
+                        "pendente",
+
+                    idTransacao:
+                        pagamentoAtual.idTransacao ||
+                        null
+
+                },
+
+                etapaAtual:
+                    CONFIG.etapaAtual
+
+            });
+
+
+        if (sucesso) {
+
+            estadoCentral =
+                obterEstado();
+
+
+            sincronizarEstadoComUI();
+
+        }
+
+
+        return sucesso;
+
+    }
+
+
+    /* =========================================================
        VALIDAR CONTRATAÇÃO EXISTENTE
-
-       O estado central pode conter um contratacaoId antigo,
-       especialmente depois de uma contratação ter sido apagada
-       manualmente do banco durante testes.
-
-       Esta função verifica o ID diretamente no Supabase.
-
-       Retornos:
-
-       - contratação encontrada e pertencente ao usuário:
-         retorna os dados da contratação.
-
-       - ID não existe mais:
-         limpa o ID antigo e retorna null.
-
-       - erro real de banco/autenticação:
-         lança o erro para impedir uma nova criação insegura.
        ========================================================= */
 
     async function verificarContratacaoExistente() {
@@ -778,7 +794,7 @@
                 )
 
                 .select(
-                    "id,contratante_id,contratado_id,status,status_pagamento"
+                    "id,contratante_id,contratado_id,status,status_pagamento,oportunidade_id"
                 )
 
                 .eq(
@@ -797,22 +813,11 @@
                 resposta.error
             );
 
+
             throw resposta.error;
 
         }
 
-
-        /*
-         * -----------------------------------------------------
-         * O ID está no estado, mas não existe mais no banco.
-         *
-         * Isso acontece, por exemplo, quando uma contratação
-         * foi apagada manualmente durante os testes.
-         *
-         * Nesse caso, o estado antigo não pode bloquear uma
-         * nova contratação.
-         * -----------------------------------------------------
-         */
 
         if (!resposta.data) {
 
@@ -850,17 +855,13 @@
                 obterEstado();
 
 
+            sincronizarEstadoComUI();
+
+
             return null;
 
         }
 
-
-        /*
-         * -----------------------------------------------------
-         * O ID existe, mas precisamos confirmar que pertence
-         * ao usuário autenticado.
-         * -----------------------------------------------------
-         */
 
         const pertenceAoUsuario =
             String(
@@ -868,6 +869,7 @@
             ) === String(
                 usuario.id
             ) ||
+
             String(
                 resposta.data.contratado_id
             ) === String(
@@ -910,1542 +912,7 @@
 
 
     /* =========================================================
-       RENDERIZAÇÃO — ARTISTA
-       ========================================================= */
-
-    function renderizarArtista() {
-
-        if (!estadoCentral) {
-
-            return;
-
-        }
-
-
-        const nome =
-            obterNomeArtista(
-                estadoCentral
-            );
-
-
-        const tipo =
-            obterTipoArtista(
-                estadoCentral
-            );
-
-
-        const localizacao =
-            obterLocalizacaoArtista(
-                estadoCentral
-            );
-
-
-        const foto =
-            obterFotoArtista(
-                estadoCentral
-            );
-
-
-        const elementoNome =
-            obterElemento(
-                "artistaNome",
-                "artistName",
-                "nomeArtista"
-            );
-
-
-        const elementoTipo =
-            obterElemento(
-                "artistaTipo",
-                "artistType",
-                "tipoArtista"
-            );
-
-
-        const elementoLocalizacao =
-            obterElemento(
-                "artistaLocalizacao",
-                "artistLocation",
-                "localizacaoArtista"
-            );
-
-
-        const elementoFoto =
-            obterElemento(
-                "artistaAvatar",
-                "artistaFoto",
-                "artistAvatar",
-                "avatarArtista",
-                "artistAvatarImage"
-            );
-
-
-        if (elementoNome) {
-
-            elementoNome.textContent =
-                nome;
-
-        }
-
-
-        if (elementoTipo) {
-
-            elementoTipo.textContent =
-                tipo ||
-                "Artista";
-
-        }
-
-
-        if (elementoLocalizacao) {
-
-            elementoLocalizacao.textContent =
-                localizacao ||
-                "Não informado";
-
-        }
-
-
-        if (elementoFoto) {
-
-            if (
-                elementoFoto.tagName &&
-                elementoFoto.tagName.toLowerCase() ===
-                "img"
-            ) {
-
-                if (foto) {
-
-                    elementoFoto.src =
-                        foto;
-
-                    elementoFoto.alt =
-                        `Foto de ${nome}`;
-
-                    elementoFoto.style.display =
-                        "block";
-
-
-                    elementoFoto.onerror =
-                        function () {
-
-                            console.warn(
-                                "MusicalWorldContratacaoPagamento: " +
-                                "não foi possível carregar a foto do artista.",
-                                foto
-                            );
-
-
-                            elementoFoto.removeAttribute(
-                                "src"
-                            );
-
-
-                            elementoFoto.style.display =
-                                "none";
-
-                        };
-
-                } else {
-
-                    elementoFoto.removeAttribute(
-                        "src"
-                    );
-
-
-                    elementoFoto.alt =
-                        "";
-
-
-                    elementoFoto.style.display =
-                        "none";
-
-                }
-
-            } else {
-
-                if (foto) {
-
-                    elementoFoto.style.backgroundImage =
-                        `url("${foto.replace(/"/g, '\\"')}")`;
-
-                    elementoFoto.style.backgroundSize =
-                        "cover";
-
-                    elementoFoto.style.backgroundPosition =
-                        "center";
-
-                    elementoFoto.style.backgroundRepeat =
-                        "no-repeat";
-
-                    elementoFoto.classList.add(
-                        "com-foto"
-                    );
-
-                } else {
-
-                    elementoFoto.style.backgroundImage =
-                        "none";
-
-                    elementoFoto.classList.remove(
-                        "com-foto"
-                    );
-
-                }
-
-            }
-
-        } else {
-
-            console.warn(
-                "MusicalWorldContratacaoPagamento: " +
-                "elemento #artistaAvatar não foi encontrado."
-            );
-
-        }
-
-
-        console.log(
-            "MusicalWorldContratacaoPagamento: dados do artista:",
-            {
-                nome: nome,
-                tipo: tipo,
-                localizacao: localizacao,
-                fotoUrl: foto
-            }
-        );
-
-    }
-
-
-    /* =========================================================
-       RENDERIZAÇÃO — SERVIÇO
-       ========================================================= */
-
-    function renderizarServico() {
-
-        if (!estadoCentral) {
-
-            return;
-
-        }
-
-
-        const servico =
-            estadoCentral.servico ||
-            {};
-
-
-        const nome =
-            servico.nome ||
-            "Serviço";
-
-
-        const valor =
-            obterValorServico(
-                estadoCentral
-            );
-
-
-        const elementoNome =
-            obterElemento(
-                "servicoNome",
-                "serviceName",
-                "nomeServico"
-            );
-
-
-        const elementoValor =
-            obterElemento(
-                "servicoValor",
-                "serviceValue",
-                "valorServico",
-                "valorPagamento"
-            );
-
-
-        if (elementoNome) {
-
-            elementoNome.textContent =
-                nome;
-
-        }
-
-
-        if (elementoValor) {
-
-            elementoValor.textContent =
-                formatarMoeda(
-                    valor
-                );
-
-        }
-
-
-        const elementosValor =
-            document.querySelectorAll(
-                "[data-valor-servico]"
-            );
-
-
-        elementosValor.forEach(
-            function (elemento) {
-
-                elemento.textContent =
-                    formatarMoeda(
-                        valor
-                    );
-
-            }
-        );
-
-    }
-
-
-    /* =========================================================
-       RENDERIZAÇÃO — RESUMO DO PAGAMENTO
-       ========================================================= */
-
-    function renderizarResumoPagamento() {
-
-        if (!estadoCentral) {
-
-            return;
-
-        }
-
-
-        const valor =
-            obterValorServico(
-                estadoCentral
-            );
-
-
-        const elementoTotal =
-            obterElemento(
-                "valorTotal",
-                "totalPagamento",
-                "pagamentoTotal",
-                "total"
-            );
-
-
-        if (elementoTotal) {
-
-            elementoTotal.textContent =
-                formatarMoeda(
-                    valor
-                );
-
-        }
-
-
-        const elementos =
-            document.querySelectorAll(
-                "[data-total-pagamento]"
-            );
-
-
-        elementos.forEach(
-            function (elemento) {
-
-                elemento.textContent =
-                    formatarMoeda(
-                        valor
-                    );
-
-            }
-        );
-
-    }
-
-
-    /* =========================================================
-       RESTAURAÇÃO DO MÉTODO DE PAGAMENTO
-       ========================================================= */
-
-    function restaurarMetodoPagamento() {
-
-        if (
-            !estadoCentral ||
-            !estadoCentral.pagamento
-        ) {
-
-            return;
-
-        }
-
-
-        const metodo =
-            estadoCentral.pagamento.metodo ||
-            "";
-
-
-        if (!metodo) {
-
-            return;
-
-        }
-
-
-        UI.metodoPagamento =
-            metodo;
-
-
-        atualizarInterfaceMetodoPagamento();
-
-    }
-
-
-    /* =========================================================
-       INTERFACE DO MÉTODO DE PAGAMENTO
-       ========================================================= */
-
-    function obterBotoesPagamento() {
-
-        return document.querySelectorAll(
-            "[data-metodo-pagamento], " +
-            ".payment-method, " +
-            ".metodo-pagamento, " +
-            "#btnPix, " +
-            "#btnCartao"
-        );
-
-    }
-
-
-    function atualizarInterfaceMetodoPagamento() {
-
-        const metodo =
-            UI.metodoPagamento;
-
-
-        document
-            .querySelectorAll(
-                "[data-metodo-pagamento]"
-            )
-            .forEach(
-                function (elemento) {
-
-                    const valor =
-                        elemento.dataset.metodoPagamento;
-
-
-                    elemento.classList.toggle(
-                        "active",
-                        valor === metodo
-                    );
-
-
-                    elemento.classList.toggle(
-                        "selected",
-                        valor === metodo
-                    );
-
-                }
-            );
-
-
-        const btnPix =
-            obterElemento(
-                "btnPix",
-                "metodoPix",
-                "paymentPix"
-            );
-
-
-        const btnCartao =
-            obterElemento(
-                "btnCartao",
-                "metodoCartao",
-                "paymentCard",
-                "pagamentoCartao"
-            );
-
-
-        if (btnPix) {
-
-            btnPix.classList.toggle(
-                "active",
-                metodo === "pix"
-            );
-
-
-            btnPix.classList.toggle(
-                "selected",
-                metodo === "pix"
-            );
-
-        }
-
-
-        if (btnCartao) {
-
-            btnCartao.classList.toggle(
-                "active",
-                metodo === "cartao"
-            );
-
-
-            btnCartao.classList.toggle(
-                "selected",
-                metodo === "cartao"
-            );
-
-        }
-
-
-        atualizarBotaoContinuar();
-
-    }
-
-
-    /* =========================================================
-       SELEÇÃO DO MÉTODO DE PAGAMENTO
-       ========================================================= */
-
-    function selecionarMetodoPagamento(metodo) {
-
-        if (
-            metodo !== "pix" &&
-            metodo !== "cartao"
-        ) {
-
-            console.warn(
-                "Método de pagamento inválido:",
-                metodo
-            );
-
-            return;
-
-        }
-
-
-        UI.metodoPagamento =
-            metodo;
-
-
-        salvarPagamentoParcial();
-
-
-        atualizarInterfaceMetodoPagamento();
-
-    }
-
-
-    /* =========================================================
-       SALVAR PAGAMENTO PARCIAL
-       ========================================================= */
-
-    function salvarPagamentoParcial() {
-
-        if (!estadoCentral) {
-
-            return false;
-
-        }
-
-
-        const valor =
-            obterValorServico(
-                estadoCentral
-            );
-
-
-        const pagamentoAtual =
-            estadoCentral.pagamento ||
-            {};
-
-
-        const sucesso =
-            salvarEstado({
-
-                pagamento: {
-
-                    ...pagamentoAtual,
-
-                    metodo:
-                        UI.metodoPagamento,
-
-                    valor:
-                        Number.isFinite(valor)
-                            ? valor
-                            : null,
-
-                    status:
-                        pagamentoAtual.status ||
-                        "pendente",
-
-                    idTransacao:
-                        pagamentoAtual.idTransacao ||
-                        null
-
-                },
-
-                etapaAtual:
-                    CONFIG.etapaAtual
-
-            });
-
-
-        if (sucesso) {
-
-            estadoCentral =
-                obterEstado();
-
-        }
-
-
-        return sucesso;
-
-    }
-
-
-    /* =========================================================
-       BOTÃO CONTINUAR
-       ========================================================= */
-
-    function atualizarBotaoContinuar() {
-
-        const botao =
-            obterElemento(
-                "btnContinuar",
-                "btnAbrirPagamento",
-                "btnPagar",
-                "btnFinalizarPagamento",
-                "continuarPagamento",
-                "finalizarPagamento"
-            );
-
-
-        if (!botao) {
-
-            return;
-
-        }
-
-
-        const habilitado =
-            UI.metodoPagamento === "pix" ||
-            UI.metodoPagamento === "cartao";
-
-
-        botao.disabled =
-            !habilitado ||
-            UI.processando;
-
-
-        botao.classList.toggle(
-            "disabled",
-            !habilitado ||
-            UI.processando
-        );
-
-    }
-
-
-    /* =========================================================
-       CONTINUAR — ABRIR MODAL
-       ========================================================= */
-
-    function abrirPagamento() {
-
-        if (UI.processando) {
-
-            return;
-
-        }
-
-
-        if (
-            UI.metodoPagamento !== "pix" &&
-            UI.metodoPagamento !== "cartao"
-        ) {
-
-            mostrarMensagemTemporaria(
-                "Selecione uma forma de pagamento."
-            );
-
-            return;
-
-        }
-
-
-        salvarPagamentoParcial();
-
-
-        if (
-            UI.metodoPagamento === "pix"
-        ) {
-
-            exibirModalPix();
-
-            return;
-
-        }
-
-
-        if (
-            UI.metodoPagamento === "cartao"
-        ) {
-
-            exibirModalCartao();
-
-            return;
-
-        }
-
-    }
-
-
-    /* =========================================================
-       MODAL PIX
-       ========================================================= */
-
-    function obterModalPix() {
-
-        return obterElemento(
-            "modalPix",
-            "pixModal",
-            "modalPagamentoPix"
-        );
-
-    }
-
-
-    function exibirModalPix() {
-
-        const modal =
-            obterModalPix();
-
-
-        if (!modal) {
-
-            console.warn(
-                "MusicalWorldContratacaoPagamento: " +
-                "modal Pix não encontrado."
-            );
-
-            return;
-
-        }
-
-
-        fecharModal();
-
-
-        UI.modalAtual =
-            modal;
-
-
-        modal.classList.add(
-            "aberto"
-        );
-
-
-        modal.classList.add(
-            "active"
-        );
-
-
-        modal.classList.remove(
-            "hidden"
-        );
-
-
-        modal.setAttribute(
-            "aria-hidden",
-            "false"
-        );
-
-
-        preencherPix();
-
-    }
-
-
-    function preencherPix() {
-
-        const valor =
-            obterValorServico(
-                estadoCentral
-            );
-
-
-        const elementoValor =
-            obterElemento(
-                "pixValor",
-                "valorPix"
-            );
-
-
-        if (elementoValor) {
-
-            elementoValor.textContent =
-                formatarMoeda(
-                    valor
-                );
-
-        }
-
-
-        const chave =
-            estadoCentral &&
-            estadoCentral.pagamento &&
-            estadoCentral.pagamento.chavePix
-                ? estadoCentral.pagamento.chavePix
-                : "PIX";
-
-
-        const elementoChave =
-            obterElemento(
-                "pixCodigo",
-                "pixChave",
-                "chavePix",
-                "pixCode"
-            );
-
-
-        if (elementoChave) {
-
-            elementoChave.textContent =
-                chave;
-
-        }
-
-    }
-
-
-    /* =========================================================
-       COPIAR PIX
-       ========================================================= */
-
-    async function copiarPix() {
-
-        const elementoChave =
-            obterElemento(
-                "pixCodigo",
-                "pixChave",
-                "chavePix",
-                "pixCode"
-            );
-
-
-        if (!elementoChave) {
-
-            console.warn(
-                "MusicalWorldContratacaoPagamento: " +
-                "código Pix não encontrado."
-            );
-
-            return;
-
-        }
-
-
-        const texto =
-            elementoChave.textContent.trim();
-
-
-        if (!texto) {
-
-            return;
-
-        }
-
-
-        try {
-
-            if (
-                navigator.clipboard &&
-                navigator.clipboard.writeText
-            ) {
-
-                await navigator.clipboard.writeText(
-                    texto
-                );
-
-            } else {
-
-                const area =
-                    document.createElement(
-                        "textarea"
-                    );
-
-
-                area.value =
-                    texto;
-
-
-                area.style.position =
-                    "fixed";
-
-
-                area.style.opacity =
-                    "0";
-
-
-                document.body.appendChild(
-                    area
-                );
-
-
-                area.focus();
-
-                area.select();
-
-
-                document.execCommand(
-                    "copy"
-                );
-
-
-                area.remove();
-
-            }
-
-
-            mostrarMensagemTemporaria(
-                "Chave Pix copiada."
-            );
-
-        } catch (erro) {
-
-            console.error(
-                "MusicalWorldContratacaoPagamento: " +
-                "erro ao copiar Pix.",
-                erro
-            );
-
-        }
-
-    }
-
-
-    /* =========================================================
-       MODAL CARTÃO
-       ========================================================= */
-
-    function obterModalCartao() {
-
-        return obterElemento(
-            "modalCartao",
-            "cartaoModal",
-            "modalPagamentoCartao"
-        );
-
-    }
-
-
-    function exibirModalCartao() {
-
-        const modal =
-            obterModalCartao();
-
-
-        if (!modal) {
-
-            console.warn(
-                "MusicalWorldContratacaoPagamento: " +
-                "modal de cartão não encontrado."
-            );
-
-            return;
-
-        }
-
-
-        fecharModal();
-
-
-        UI.modalAtual =
-            modal;
-
-
-        modal.classList.add(
-            "aberto"
-        );
-
-
-        modal.classList.add(
-            "active"
-        );
-
-
-        modal.classList.remove(
-            "hidden"
-        );
-
-
-        modal.setAttribute(
-            "aria-hidden",
-            "false"
-        );
-
-
-        setTimeout(
-            function () {
-
-                focarCampoCartao();
-
-            },
-            50
-        );
-
-    }
-
-
-    function focarCampoCartao() {
-
-        const campo =
-            obterElemento(
-                "numeroCartao",
-                "cardNumber",
-                "cartaoNumero"
-            );
-
-
-        if (campo) {
-
-            campo.focus();
-
-        }
-
-    }
-
-
-    /* =========================================================
-       FECHAR MODAL
-       ========================================================= */
-
-    function fecharModal() {
-
-        const modal =
-            UI.modalAtual;
-
-
-        if (modal) {
-
-            modal.classList.remove(
-                "aberto"
-            );
-
-
-            modal.classList.remove(
-                "active"
-            );
-
-
-            modal.classList.add(
-                "hidden"
-            );
-
-
-            modal.setAttribute(
-                "aria-hidden",
-                "true"
-            );
-
-        }
-
-
-        document
-            .querySelectorAll(
-                ".modal-overlay, .modal"
-            )
-            .forEach(
-                function (elemento) {
-
-                    elemento.classList.remove(
-                        "aberto"
-                    );
-
-
-                    elemento.classList.remove(
-                        "active"
-                    );
-
-
-                    elemento.classList.add(
-                        "hidden"
-                    );
-
-
-                    elemento.setAttribute(
-                        "aria-hidden",
-                        "true"
-                    );
-
-                }
-            );
-
-
-        UI.modalAtual =
-            null;
-
-    }
-
-
-    /* =========================================================
-       CARTÃO — FORMATAÇÃO
-       ========================================================= */
-
-    function formatarNumeroCartao(valor) {
-
-        return valor
-
-            .replace(
-                /\D/g,
-                ""
-            )
-
-            .slice(
-                0,
-                16
-            )
-
-            .replace(
-                /(\d{4})(?=\d)/g,
-                "$1 "
-            );
-
-    }
-
-
-    function formatarValidadeCartao(valor) {
-
-        const numeros =
-            valor
-
-                .replace(
-                    /\D/g,
-                    ""
-                )
-
-                .slice(
-                    0,
-                    4
-                );
-
-
-        if (
-            numeros.length <= 2
-        ) {
-
-            return numeros;
-
-        }
-
-
-        return (
-
-            numeros.slice(
-                0,
-                2
-            ) +
-
-            "/" +
-
-            numeros.slice(
-                2
-            )
-
-        );
-
-    }
-
-
-    function formatarCVV(valor) {
-
-        return valor
-
-            .replace(
-                /\D/g,
-                ""
-            )
-
-            .slice(
-                0,
-                4
-            );
-
-    }
-
-
-    function configurarFormatacaoCartao() {
-
-        const numero =
-            obterElemento(
-                "numeroCartao",
-                "cardNumber",
-                "cartaoNumero"
-            );
-
-
-        const validade =
-            obterElemento(
-                "validadeCartao",
-                "cardExpiry",
-                "cartaoValidade"
-            );
-
-
-        const cvv =
-            obterElemento(
-                "codigoCartao",
-                "cvvCartao",
-                "cardCvv",
-                "cartaoCvv"
-            );
-
-
-        if (numero) {
-
-            numero.addEventListener(
-                "input",
-                function () {
-
-                    numero.value =
-                        formatarNumeroCartao(
-                            numero.value
-                        );
-
-                }
-            );
-
-        }
-
-
-        if (validade) {
-
-            validade.addEventListener(
-                "input",
-                function () {
-
-                    validade.value =
-                        formatarValidadeCartao(
-                            validade.value
-                        );
-
-                }
-            );
-
-        }
-
-
-        if (cvv) {
-
-            cvv.addEventListener(
-                "input",
-                function () {
-
-                    cvv.value =
-                        formatarCVV(
-                            cvv.value
-                        );
-
-                }
-            );
-
-        }
-
-    }
-
-
-    /* =========================================================
-       CARTÃO — VALIDAÇÃO
-       ========================================================= */
-
-    function validarNumeroCartao(numero) {
-
-        const numeros =
-            String(numero || "")
-                .replace(
-                    /\D/g,
-                    ""
-                );
-
-
-        if (
-            numeros.length < 13 ||
-            numeros.length > 19
-        ) {
-
-            return false;
-
-        }
-
-
-        let soma = 0;
-
-        let alternar = false;
-
-
-        for (
-            let i =
-                numeros.length - 1;
-
-            i >= 0;
-
-            i--
-        ) {
-
-            let digito =
-                Number(
-                    numeros[i]
-                );
-
-
-            if (alternar) {
-
-                digito *= 2;
-
-
-                if (
-                    digito > 9
-                ) {
-
-                    digito -= 9;
-
-                }
-
-            }
-
-
-            soma +=
-                digito;
-
-
-            alternar =
-                !alternar;
-
-        }
-
-
-        return (
-            soma % 10 === 0
-        );
-
-    }
-
-
-    function validarValidadeCartao(validade) {
-
-        const partes =
-            String(validade || "")
-                .split("/");
-
-
-        if (
-            partes.length !== 2
-        ) {
-
-            return false;
-
-        }
-
-
-        const mes =
-            Number(
-                partes[0]
-            );
-
-
-        const ano =
-            Number(
-                partes[1]
-            );
-
-
-        if (
-            !Number.isInteger(mes) ||
-            mes < 1 ||
-            mes > 12
-        ) {
-
-            return false;
-
-        }
-
-
-        if (
-            !Number.isInteger(ano)
-        ) {
-
-            return false;
-
-        }
-
-
-        const agora =
-            new Date();
-
-
-        const anoAtual =
-            agora.getFullYear() % 100;
-
-
-        const mesAtual =
-            agora.getMonth() + 1;
-
-
-        if (
-            ano < anoAtual
-        ) {
-
-            return false;
-
-        }
-
-
-        if (
-            ano === anoAtual &&
-            mes < mesAtual
-        ) {
-
-            return false;
-
-        }
-
-
-        return true;
-
-    }
-
-
-    function validarDadosCartao() {
-
-        const numero =
-            obterElemento(
-                "numeroCartao",
-                "cardNumber",
-                "cartaoNumero"
-            );
-
-
-        const validade =
-            obterElemento(
-                "validadeCartao",
-                "cardExpiry",
-                "cartaoValidade"
-            );
-
-
-        const cvv =
-            obterElemento(
-                "codigoCartao",
-                "cvvCartao",
-                "cardCvv",
-                "cartaoCvv"
-            );
-
-
-        const nome =
-            obterElemento(
-                "nomeCartao",
-                "cardName",
-                "cartaoNome"
-            );
-
-
-        if (!numero) {
-
-            return true;
-
-        }
-
-
-        const numeroValor =
-            numero.value.trim();
-
-
-        if (
-            !validarNumeroCartao(
-                numeroValor
-            )
-        ) {
-
-            mostrarMensagemTemporaria(
-                "Informe um número de cartão válido."
-            );
-
-
-            numero.focus();
-
-
-            return false;
-
-        }
-
-
-        if (
-            validade &&
-            !validarValidadeCartao(
-                validade.value
-            )
-        ) {
-
-            mostrarMensagemTemporaria(
-                "Informe uma validade válida."
-            );
-
-
-            validade.focus();
-
-
-            return false;
-
-        }
-
-
-        if (
-            cvv &&
-            cvv.value
-                .replace(
-                    /\D/g,
-                    ""
-                )
-                .length < 3
-        ) {
-
-            mostrarMensagemTemporaria(
-                "Informe o código de segurança do cartão."
-            );
-
-
-            cvv.focus();
-
-
-            return false;
-
-        }
-
-
-        if (
-            nome &&
-            !nome.value.trim()
-        ) {
-
-            mostrarMensagemTemporaria(
-                "Informe o nome impresso no cartão."
-            );
-
-
-            nome.focus();
-
-
-            return false;
-
-        }
-
-
-        return true;
-
-    }
-
-
-    /* =========================================================
-       PREPARAR DADOS DA CONTRATAÇÃO
+       PREPARAR DADOS DA CONTRATAÇÃO NORMAL
        ========================================================= */
 
     function prepararDadosContratacao(
@@ -2608,7 +1075,7 @@
                 CONFIG.statusContratacao,
 
             metodo_pagamento:
-                UI.metodoPagamento,
+                obterMetodoPagamentoAtual(),
 
             status_pagamento:
                 CONFIG.statusPagamento,
@@ -2628,14 +1095,7 @@
 
 
     /* =========================================================
-       CRIAR CONTRATAÇÃO NO SUPABASE
-
-       Antes de criar:
-
-       1. Verifica se existe contratacaoId no estado.
-       2. Consulta o banco para confirmar se ele ainda existe.
-       3. Se existir, reutiliza a contratação.
-       4. Se não existir, cria uma nova.
+       CRIAR CONTRATAÇÃO NORMAL
        ========================================================= */
 
     async function criarContratacaoNoSupabase(
@@ -2654,17 +1114,6 @@
 
         }
 
-
-        /*
-         * -----------------------------------------------------
-         * PROTEÇÃO CONTRA ID ANTIGO OU DUPLICIDADE
-         * -----------------------------------------------------
-         *
-         * Nunca mais confiamos apenas no valor armazenado no
-         * sessionStorage/estado central.
-         *
-         * O ID é validado diretamente no banco.
-         */
 
         const contratacaoExistente =
             await verificarContratacaoExistente();
@@ -2689,19 +1138,9 @@
         }
 
 
-        /*
-         * Recupera o usuário autenticado diretamente do
-         * Supabase.
-         */
-
         const usuario =
             await obterUsuarioAutenticado();
 
-
-        /*
-         * O estado pode ter sido atualizado durante a validação
-         * do ID antigo.
-         */
 
         const estadoAtual =
             obterEstado() ||
@@ -2710,6 +1149,9 @@
 
         estadoCentral =
             estadoAtual;
+
+
+        sincronizarEstadoComUI();
 
 
         const dados =
@@ -2725,10 +1167,6 @@
             dados
         );
 
-
-        /*
-         * Insere a nova contratação.
-         */
 
         const resposta =
             await supabase
@@ -2787,7 +1225,7 @@
 
 
     /* =========================================================
-       CRIAR NOTIFICAÇÃO — NOVA SOLICITAÇÃO DE CONTRATAÇÃO
+       NOTIFICAÇÃO — NOVA SOLICITAÇÃO
        ========================================================= */
 
     async function criarNotificacaoNovaContratacao(
@@ -2928,14 +1366,6 @@
         }
 
 
-        const titulo =
-            "Nova solicitação de contratação";
-
-
-        const mensagem =
-            `${nomeContratante} enviou uma solicitação de contratação para você.`;
-
-
         const resposta =
             await supabase
 
@@ -2955,10 +1385,10 @@
                         "nova_contratacao",
 
                     titulo:
-                        titulo,
+                        "Nova solicitação de contratação",
 
                     mensagem:
-                        mensagem,
+                        `${nomeContratante} enviou uma solicitação de contratação para você.`,
 
                     referencia_id:
                         contratacao.id,
@@ -3000,6 +1430,7 @@
 
                 contratacaoId:
                     contratacao.id
+
             }
         );
 
@@ -3048,7 +1479,7 @@
                     ...pagamentoAtual,
 
                     metodo:
-                        UI.metodoPagamento,
+                        obterMetodoPagamentoAtual(),
 
                     valor:
                         obterValorServico(
@@ -3075,6 +1506,9 @@
             estadoCentral =
                 obterEstado();
 
+
+            sincronizarEstadoComUI();
+
         }
 
 
@@ -3084,27 +1518,58 @@
 
 
     /* =========================================================
+       SIMULAÇÃO TEMPORÁRIA
+       ========================================================= */
+
+    function simularProcessamentoPagamento() {
+
+        return new Promise(
+            function (resolve) {
+
+                setTimeout(
+                    function () {
+
+                        resolve();
+
+                    },
+                    900
+                );
+
+            }
+        );
+
+    }
+
+
+    /* =========================================================
+       IDENTIFICADOR TEMPORÁRIO
+       ========================================================= */
+
+    function gerarIdentificadorTemporario() {
+
+        return (
+
+            "TEMP-" +
+
+            Date.now() +
+
+            "-" +
+
+            Math.random()
+                .toString(36)
+                .substring(
+                    2,
+                    8
+                )
+                .toUpperCase()
+
+        );
+
+    }
+
+
+    /* =========================================================
        PROCESSAMENTO DO PAGAMENTO
-
-       Fluxo:
-
-       validação
-           ↓
-       verificar ID existente no banco
-           ↓
-       pagamento processando
-           ↓
-       simulação
-           ↓
-       pagamento pago
-           ↓
-       criar contratação
-           ↓
-       criar notificação
-           ↓
-       salvar ID
-           ↓
-       sucesso
        ========================================================= */
 
     async function processarPagamento() {
@@ -3117,6 +1582,21 @@
             return;
 
         }
+
+
+        /*
+         * IMPORTANTE:
+         * -----------------------------------------------------
+         * Recupera o método diretamente da interface antes de
+         * qualquer validação.
+         *
+         * Isso corrige o problema em que PIX/cartão aparecia
+         * selecionado visualmente, mas o controlador principal
+         * ainda possuía UI.metodoPagamento vazio.
+         */
+
+        const metodoPagamento =
+            obterMetodoPagamentoAtual();
 
 
         if (!estadoCentral) {
@@ -3153,11 +1633,13 @@
                 "O usuário contratado não foi identificado."
             );
 
+
             console.error(
                 "MusicalWorldContratacaoPagamento: " +
                 "estado.artista não contém usuarioId.",
                 estadoCentral.artista
             );
+
 
             return;
 
@@ -3178,9 +1660,7 @@
         }
 
 
-        if (
-            !estadoCentral.dataEvento
-        ) {
+        if (!estadoCentral.dataEvento) {
 
             mostrarMensagemTemporaria(
                 "A data do evento não foi identificada."
@@ -3191,9 +1671,28 @@
         }
 
 
+        const moduloUI =
+            obterModuloUI();
+
+
         if (
-            UI.metodoPagamento !== "pix" &&
-            UI.metodoPagamento !== "cartao"
+            !moduloUI ||
+            typeof moduloUI.validarDadosCartao !==
+            "function"
+        ) {
+
+            mostrarMensagemTemporaria(
+                "A interface de pagamento não foi carregada."
+            );
+
+            return;
+
+        }
+
+
+        if (
+            metodoPagamento !== "pix" &&
+            metodoPagamento !== "cartao"
         ) {
 
             mostrarMensagemTemporaria(
@@ -3206,12 +1705,12 @@
 
 
         if (
-            UI.metodoPagamento ===
+            metodoPagamento ===
             "cartao"
         ) {
 
             if (
-                !validarDadosCartao()
+                !moduloUI.validarDadosCartao()
             ) {
 
                 return;
@@ -3229,29 +1728,92 @@
             true;
 
 
-        atualizarBotaoContinuar();
+        sincronizarEstadoComUI();
 
 
         try {
 
-            /*
-             * -------------------------------------------------
-             * PRIMEIRO PASSO:
-             * Verificar se o contratacaoId salvo no estado
-             * ainda existe no banco.
-             *
-             * Se existir:
-             *     não cria duplicidade e vai para sucesso.
-             *
-             * Se não existir:
-             *     o ID antigo é removido e o fluxo continua
-             *     normalmente para criar uma nova contratação.
-             * -------------------------------------------------
-             */
+            /* =================================================
+               ETAPA 1
+               Verificar contratação existente.
+               ================================================= */
 
             const contratacaoExistente =
                 await verificarContratacaoExistente();
 
+
+            /*
+             * Se a contratação já veio de uma oportunidade,
+             * o processamento é totalmente delegado ao módulo
+             * específico.
+             */
+
+            if (
+                contratacaoExistente &&
+                contratacaoExistente.oportunidade_id &&
+                window.MusicalWorldContratacaoPagamentoOportunidade &&
+                typeof
+                    window.MusicalWorldContratacaoPagamentoOportunidade
+                        .processarPagamento ===
+                    "function"
+            ) {
+
+                console.log(
+                    "MusicalWorldContratacaoPagamento: " +
+                    "contratação de oportunidade identificada. " +
+                    "Delegando processamento ao módulo de oportunidade.",
+                    contratacaoExistente
+                );
+
+
+                await window
+                    .MusicalWorldContratacaoPagamentoOportunidade
+                    .processarPagamento({
+
+                        contratacao:
+                            contratacaoExistente,
+
+                        estado:
+                            estadoCentral,
+
+                        metodoPagamento:
+                            metodoPagamento,
+
+                        obterValorServico:
+                            obterValorServico,
+
+                        obterEstado:
+                            obterEstado,
+
+                        salvarEstado:
+                            salvarEstado,
+
+                        simularProcessamentoPagamento:
+                            simularProcessamentoPagamento
+
+                    });
+
+
+                estadoCentral =
+                    obterEstado();
+
+
+                sincronizarEstadoComUI();
+
+
+                window.location.href =
+                    CONFIG.paginaSucesso;
+
+
+                return;
+
+            }
+
+
+            /*
+             * Se existe uma contratação normal, não criamos
+             * outra.
+             */
 
             if (contratacaoExistente) {
 
@@ -3271,12 +1833,10 @@
             }
 
 
-            /*
-             * -------------------------------------------------
-             * ETAPA 1
-             * Marca o pagamento como processando.
-             * -------------------------------------------------
-             */
+            /* =================================================
+               ETAPA 2
+               Marca pagamento como processando.
+               ================================================= */
 
             const valor =
                 obterValorServico(
@@ -3297,7 +1857,7 @@
                         ...pagamentoAnterior,
 
                         metodo:
-                            UI.metodoPagamento,
+                            metodoPagamento,
 
                         valor:
                             Number.isFinite(valor)
@@ -3332,12 +1892,13 @@
                 obterEstado();
 
 
-            /*
-             * -------------------------------------------------
-             * ETAPA 2
-             * Simula o processamento do pagamento.
-             * -------------------------------------------------
-             */
+            sincronizarEstadoComUI();
+
+
+            /* =================================================
+               ETAPA 3
+               Simula processamento.
+               ================================================= */
 
             await simularProcessamentoPagamento();
 
@@ -3359,24 +1920,23 @@
                 estadoAtualizado;
 
 
-            /*
-             * -------------------------------------------------
-             * ETAPA 3
-             * Gera identificação temporária do pagamento.
-             * -------------------------------------------------
-             */
+            sincronizarEstadoComUI();
+
+
+            /* =================================================
+               ETAPA 4
+               Identificação temporária.
+               ================================================= */
 
             const idTransacao =
                 pagamentoAnterior.idTransacao ||
                 gerarIdentificadorTemporario();
 
 
-            /*
-             * -------------------------------------------------
-             * ETAPA 4
-             * Registra pagamento como pago no estado central.
-             * -------------------------------------------------
-             */
+            /* =================================================
+               ETAPA 5
+               Registra pagamento como pago.
+               ================================================= */
 
             const salvoPago =
                 salvarEstado({
@@ -3386,7 +1946,7 @@
                         ...(estadoCentral.pagamento || {}),
 
                         metodo:
-                            UI.metodoPagamento,
+                            metodoPagamento,
 
                         valor:
                             Number.isFinite(valor)
@@ -3420,12 +1980,13 @@
                 obterEstado();
 
 
-            /*
-             * -------------------------------------------------
-             * ETAPA 5
-             * CRIA A CONTRATAÇÃO REAL NO SUPABASE.
-             * -------------------------------------------------
-             */
+            sincronizarEstadoComUI();
+
+
+            /* =================================================
+               ETAPA 6
+               Cria contratação normal.
+               ================================================= */
 
             console.log(
                 "MusicalWorldContratacaoPagamento: " +
@@ -3451,12 +2012,10 @@
             }
 
 
-            /*
-             * -------------------------------------------------
-             * ETAPA 6
-             * CRIA A NOTIFICAÇÃO PARA O ARTISTA.
-             * -------------------------------------------------
-             */
+            /* =================================================
+               ETAPA 7
+               Cria notificação para o artista.
+               ================================================= */
 
             try {
 
@@ -3480,12 +2039,10 @@
             }
 
 
-            /*
-             * -------------------------------------------------
-             * ETAPA 7
-             * Salva o ID retornado pelo Supabase no estado.
-             * -------------------------------------------------
-             */
+            /* =================================================
+               ETAPA 8
+               Salva ID no estado central.
+               ================================================= */
 
             const salvouContratacao =
                 salvarContratacaoNoEstado(
@@ -3503,13 +2060,10 @@
             }
 
 
-            /*
-             * -------------------------------------------------
-             * ETAPA 8
-             * Redireciona somente depois que o banco confirmou
-             * a criação da contratação.
-             * -------------------------------------------------
-             */
+            /* =================================================
+               ETAPA 9
+               Finaliza fluxo.
+               ================================================= */
 
             console.log(
                 "MusicalWorldContratacaoPagamento: " +
@@ -3525,7 +2079,8 @@
                         CONFIG.statusPagamento,
 
                     metodoPagamento:
-                        UI.metodoPagamento
+                        metodoPagamento
+
                 }
             );
 
@@ -3591,6 +2146,12 @@
                     ) ||
                     texto.includes(
                         "data do evento"
+                    ) ||
+                    texto.includes(
+                        "proposta"
+                    ) ||
+                    texto.includes(
+                        "pagamento"
                     )
                 ) {
 
@@ -3617,63 +2178,9 @@
                 false;
 
 
-            atualizarBotaoContinuar();
+            sincronizarEstadoComUI();
 
         }
-
-    }
-
-
-    /* =========================================================
-       SIMULAÇÃO TEMPORÁRIA DO PAGAMENTO
-       ========================================================= */
-
-    function simularProcessamentoPagamento() {
-
-        return new Promise(
-            function (resolve) {
-
-                setTimeout(
-                    function () {
-
-                        resolve();
-
-                    },
-                    900
-                );
-
-            }
-        );
-
-    }
-
-
-    /* =========================================================
-       IDENTIFICADOR TEMPORÁRIO DO PAGAMENTO
-       ========================================================= */
-
-    function gerarIdentificadorTemporario() {
-
-        return (
-
-            "TEMP-" +
-
-            Date.now() +
-
-            "-" +
-
-            Math.random()
-
-                .toString(36)
-
-                .substring(
-                    2,
-                    8
-                )
-
-                .toUpperCase()
-
-        );
 
     }
 
@@ -3691,11 +2198,17 @@
         }
 
 
+        const metodoPagamento =
+            obterMetodoPagamentoAtual();
+
+
         if (
-            UI.metodoPagamento
+            metodoPagamento
         ) {
 
-            salvarPagamentoParcial();
+            salvarPagamentoParcial(
+                metodoPagamento
+            );
 
         }
 
@@ -3781,8 +2294,8 @@
 
 
         /*
-         * Não permitimos que uma contratação já criada seja
-         * simplesmente apagada pelo botão cancelar.
+         * Uma contratação já criada não pode ser apagada
+         * através desta tela.
          */
 
         const contratacaoId =
@@ -3834,10 +2347,6 @@
         }
 
 
-        /*
-         * Retorna para o perfil do artista.
-         */
-
         if (perfilId) {
 
             window.location.href =
@@ -3859,473 +2368,10 @@
 
 
     /* =========================================================
-       MENSAGEM TEMPORÁRIA
-       ========================================================= */
-
-    function mostrarMensagemTemporaria(
-        mensagem
-    ) {
-
-        const existente =
-            document.querySelector(
-                ".mw-pagamento-mensagem"
-            );
-
-
-        if (existente) {
-
-            existente.remove();
-
-        }
-
-
-        const elemento =
-            document.createElement(
-                "div"
-            );
-
-
-        elemento.className =
-            "mw-pagamento-mensagem";
-
-
-        elemento.textContent =
-            mensagem;
-
-
-        elemento.style.position =
-            "fixed";
-
-
-        elemento.style.left =
-            "50%";
-
-
-        elemento.style.bottom =
-            "24px";
-
-
-        elemento.style.transform =
-            "translateX(-50%)";
-
-
-        elemento.style.zIndex =
-            "99999";
-
-
-        elemento.style.padding =
-            "12px 18px";
-
-
-        elemento.style.borderRadius =
-            "10px";
-
-
-        elemento.style.background =
-            "#172033";
-
-
-        elemento.style.color =
-            "#ffffff";
-
-
-        elemento.style.fontSize =
-            "14px";
-
-
-        elemento.style.fontWeight =
-            "500";
-
-
-        elemento.style.boxShadow =
-            "0 8px 24px rgba(0, 0, 0, 0.18)";
-
-
-        elemento.style.maxWidth =
-            "calc(100vw - 32px)";
-
-
-        elemento.style.textAlign =
-            "center";
-
-
-        elemento.style.lineHeight =
-            "1.45";
-
-
-        document.body.appendChild(
-            elemento
-        );
-
-
-        setTimeout(
-            function () {
-
-                if (
-                    elemento &&
-                    elemento.parentNode
-                ) {
-
-                    elemento.remove();
-
-                }
-
-            },
-            3500
-        );
-
-    }
-
-
-    /* =========================================================
-       EVENTOS DOS BOTÕES
-       ========================================================= */
-
-    function configurarEventosPagamento() {
-
-        document
-            .querySelectorAll(
-                "[data-metodo-pagamento]"
-            )
-            .forEach(
-                function (elemento) {
-
-                    elemento.addEventListener(
-                        "click",
-                        function (evento) {
-
-                            if (
-                                evento &&
-                                typeof evento.preventDefault ===
-                                "function"
-                            ) {
-
-                                evento.preventDefault();
-
-                            }
-
-
-                            selecionarMetodoPagamento(
-                                elemento.dataset.metodoPagamento
-                            );
-
-                        }
-                    );
-
-                }
-            );
-
-
-        const btnPix =
-            obterElemento(
-                "btnPix",
-                "metodoPix",
-                "paymentPix"
-            );
-
-
-        if (btnPix) {
-
-            btnPix.addEventListener(
-                "click",
-                function (evento) {
-
-                    if (
-                        evento &&
-                        typeof evento.preventDefault ===
-                        "function"
-                    ) {
-
-                        evento.preventDefault();
-
-                    }
-
-
-                    selecionarMetodoPagamento(
-                        "pix"
-                    );
-
-                }
-            );
-
-        }
-
-
-        const btnCartao =
-            obterElemento(
-                "btnCartao",
-                "metodoCartao",
-                "paymentCard",
-                "pagamentoCartao"
-            );
-
-
-        if (btnCartao) {
-
-            btnCartao.addEventListener(
-                "click",
-                function (evento) {
-
-                    if (
-                        evento &&
-                        typeof evento.preventDefault ===
-                        "function"
-                    ) {
-
-                        evento.preventDefault();
-
-                    }
-
-
-                    selecionarMetodoPagamento(
-                        "cartao"
-                    );
-
-                }
-            );
-
-        }
-
-
-        const btnContinuar =
-            obterElemento(
-                "btnContinuar",
-                "btnAbrirPagamento",
-                "btnPagar",
-                "btnFinalizarPagamento",
-                "continuarPagamento",
-                "finalizarPagamento"
-            );
-
-
-        if (btnContinuar) {
-
-            btnContinuar.addEventListener(
-                "click",
-                function (evento) {
-
-                    if (
-                        evento &&
-                        typeof evento.preventDefault ===
-                        "function"
-                    ) {
-
-                        evento.preventDefault();
-
-                    }
-
-
-                    abrirPagamento();
-
-                }
-            );
-
-        }
-
-
-        const btnPagarCartao =
-            obterElemento(
-                "btnPagarCartao"
-            );
-
-
-        if (btnPagarCartao) {
-
-            btnPagarCartao.addEventListener(
-                "click",
-                function (evento) {
-
-                    if (
-                        evento &&
-                        typeof evento.preventDefault ===
-                        "function"
-                    ) {
-
-                        evento.preventDefault();
-
-                    }
-
-
-                    processarPagamento();
-
-                }
-            );
-
-        }
-
-
-        const btnSimularPix =
-            obterElemento(
-                "btnSimularPix"
-            );
-
-
-        if (btnSimularPix) {
-
-            btnSimularPix.addEventListener(
-                "click",
-                function (evento) {
-
-                    if (
-                        evento &&
-                        typeof evento.preventDefault ===
-                        "function"
-                    ) {
-
-                        evento.preventDefault();
-
-                    }
-
-
-                    processarPagamento();
-
-                }
-            );
-
-        }
-
-
-        const btnVoltar =
-            obterElemento(
-                "btnVoltar",
-                "btnAnterior",
-                "voltarPagamento"
-            );
-
-
-        if (btnVoltar) {
-
-            btnVoltar.addEventListener(
-                "click",
-                function () {
-
-                    voltar();
-
-                }
-            );
-
-        }
-
-
-        const btnCancelar =
-            obterElemento(
-                "btnCancelarContratacao",
-                "btnCancelar",
-                "cancelarPagamento",
-                "btnCancel"
-            );
-
-
-        if (btnCancelar) {
-
-            btnCancelar.addEventListener(
-                "click",
-                function () {
-
-                    cancelarContratacao();
-
-                }
-            );
-
-        }
-
-
-        document
-            .querySelectorAll(
-                "[data-fechar-modal], " +
-                ".fechar-modal, " +
-                ".modal-close, " +
-                ".btn-fechar-modal"
-            )
-            .forEach(
-                function (elemento) {
-
-                    elemento.addEventListener(
-                        "click",
-                        function () {
-
-                            fecharModal();
-
-                        }
-                    );
-
-                }
-            );
-
-
-        const btnCopiarPix =
-            obterElemento(
-                "btnCopiarPix",
-                "copiarPix",
-                "copyPix"
-            );
-
-
-        if (btnCopiarPix) {
-
-            btnCopiarPix.addEventListener(
-                "click",
-                function () {
-
-                    copiarPix();
-
-                }
-            );
-
-        }
-
-
-        document
-            .querySelectorAll(
-                ".modal-overlay, .modal"
-            )
-            .forEach(
-                function (modal) {
-
-                    modal.addEventListener(
-                        "click",
-                        function (evento) {
-
-                            if (
-                                evento.target ===
-                                modal
-                            ) {
-
-                                fecharModal();
-
-                            }
-
-                        }
-                    );
-
-                }
-            );
-
-
-        document.addEventListener(
-            "keydown",
-            function (evento) {
-
-                if (
-                    evento.key ===
-                    "Escape"
-                ) {
-
-                    fecharModal();
-
-                }
-
-            }
-        );
-
-    }
-
-
-    /* =========================================================
        CARREGAMENTO DO ESTADO CENTRAL
        ========================================================= */
 
-    function carregarEstadoCentral() {
+    async function carregarEstadoCentral() {
 
         const gerenciador =
             obterGerenciadorEstado();
@@ -4366,8 +2412,50 @@
 
 
             /*
-             * A Etapa 6 nunca reseta o estado.
+             * O módulo de oportunidade assume o carregamento
+             * quando existe contratacaoId na URL.
              */
+
+            const moduloOportunidade =
+                window.MusicalWorldContratacaoPagamentoOportunidade;
+
+
+            if (
+                moduloOportunidade &&
+                typeof moduloOportunidade.carregarSeNecessario ===
+                "function"
+            ) {
+
+                await moduloOportunidade
+                    .carregarSeNecessario();
+
+
+                estadoCentral =
+                    obterEstado();
+
+            } else if (
+                moduloOportunidade &&
+                typeof moduloOportunidade.possuiContratacaoNaURL ===
+                "function" &&
+                typeof moduloOportunidade.carregarDados ===
+                "function" &&
+                moduloOportunidade.possuiContratacaoNaURL()
+            ) {
+
+                /*
+                 * Compatibilidade com a versão anterior
+                 * do módulo de oportunidade.
+                 */
+
+                await moduloOportunidade
+                    .carregarDados();
+
+
+                estadoCentral =
+                    obterEstado();
+
+            }
+
 
             definirEtapa(
                 CONFIG.etapaAtual
@@ -4376,6 +2464,9 @@
 
             estadoCentral =
                 obterEstado();
+
+
+            sincronizarEstadoComUI();
 
 
             if (
@@ -4441,35 +2532,97 @@
 
 
     /* =========================================================
+       MENSAGEM TEMPORÁRIA
+       ========================================================= */
+
+    function mostrarMensagemTemporaria(
+        mensagem
+    ) {
+
+        const moduloUI =
+            obterModuloUI();
+
+
+        if (
+            moduloUI &&
+            typeof moduloUI.mostrarMensagemTemporaria ===
+            "function"
+        ) {
+
+            moduloUI.mostrarMensagemTemporaria(
+                mensagem
+            );
+
+            return;
+
+        }
+
+
+        console.warn(
+            mensagem
+        );
+
+    }
+
+
+    /* =========================================================
        INICIALIZAÇÃO
        ========================================================= */
 
-    function inicializar() {
+    async function inicializar() {
 
         try {
 
-            carregarEstadoCentral();
+            const moduloUI =
+                obterModuloUI();
 
 
-            renderizarArtista();
+            if (!moduloUI) {
+
+                throw new Error(
+                    "O módulo de interface do pagamento não foi carregado."
+                );
+
+            }
 
 
-            renderizarServico();
+            await carregarEstadoCentral();
 
 
-            renderizarResumoPagamento();
+            sincronizarEstadoComUI();
 
 
-            restaurarMetodoPagamento();
+            moduloUI.renderizarArtista();
 
 
-            configurarFormatacaoCartao();
+            moduloUI.renderizarServico();
 
 
-            configurarEventosPagamento();
+            moduloUI.renderizarResumoPagamento();
 
 
-            atualizarBotaoContinuar();
+            moduloUI.restaurarMetodoPagamento();
+
+
+            /*
+             * Depois de restaurar o método pela interface,
+             * sincroniza novamente a variável do controlador.
+             *
+             * Isso garante que, caso o estado central já possua
+             * "pix" ou "cartao", o controlador também conheça
+             * essa seleção.
+             */
+
+            obterMetodoPagamentoAtual();
+
+
+            moduloUI.configurarFormatacaoCartao();
+
+
+            moduloUI.configurarEventosPagamento();
+
+
+            moduloUI.atualizarBotaoContinuar();
 
 
             console.log(
@@ -4506,7 +2659,33 @@
 
             },
 
-        selecionarMetodoPagamento,
+        selecionarMetodoPagamento:
+            function (metodo) {
+
+                const moduloUI =
+                    obterModuloUI();
+
+
+                if (
+                    moduloUI &&
+                    typeof moduloUI.selecionarMetodoPagamento ===
+                    "function"
+                ) {
+
+                    UI.metodoPagamento =
+                        metodo;
+
+
+                    moduloUI.selecionarMetodoPagamento(
+                        metodo
+                    );
+
+                }
+
+            },
+
+        obterMetodoPagamento:
+            obterMetodoPagamentoAtual,
 
         processarPagamento,
 
@@ -4514,11 +2693,75 @@
 
         cancelarContratacao,
 
-        fecharModal,
+        salvarPagamentoParcial,
 
-        copiarPix,
+        mostrarMensagemTemporaria,
 
-        validarDadosCartao
+        obterValorServico,
+
+        obterSupabaseClient,
+
+        obterUsuarioAutenticado,
+
+        fecharModal:
+            function () {
+
+                const moduloUI =
+                    obterModuloUI();
+
+
+                if (
+                    moduloUI &&
+                    typeof moduloUI.fecharModal ===
+                    "function"
+                ) {
+
+                    moduloUI.fecharModal();
+
+                }
+
+            },
+
+        copiarPix:
+            function () {
+
+                const moduloUI =
+                    obterModuloUI();
+
+
+                if (
+                    moduloUI &&
+                    typeof moduloUI.copiarPix ===
+                    "function"
+                ) {
+
+                    return moduloUI.copiarPix();
+
+                }
+
+            },
+
+        validarDadosCartao:
+            function () {
+
+                const moduloUI =
+                    obterModuloUI();
+
+
+                if (
+                    moduloUI &&
+                    typeof moduloUI.validarDadosCartao ===
+                    "function"
+                ) {
+
+                    return moduloUI.validarDadosCartao();
+
+                }
+
+
+                return false;
+
+            }
 
     };
 
@@ -4549,4 +2792,3 @@
 
 
 })(window);
-
