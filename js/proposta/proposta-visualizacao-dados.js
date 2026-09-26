@@ -6,17 +6,28 @@
 
    Responsabilidades:
    - Configurar a página de visualização da proposta.
-   - Recuperar o ID da proposta pela URL.
+   - Recuperar o ID da contratação pela URL.
    - Recuperar o usuário autenticado.
    - Buscar a contratação no Supabase.
    - Garantir que o usuário atual seja um dos participantes
      da proposta.
-   - Identificar se o usuário atual é o remetente ou
-     o destinatário da proposta.
+   - Identificar se o usuário atual é o contratante ou
+     o artista contratado.
+   - Identificar corretamente remetente e destinatário.
    - Buscar os dados do artista.
    - Buscar os dados do estabelecimento.
+   - Buscar os dados da oportunidade, quando existir.
    - Buscar o serviço associado, quando existir.
    - Normalizar os dados para os demais módulos.
+
+   Regra atual do fluxo:
+
+   - contratante_id = estabelecimento/contratante
+   - contratado_id = artista
+   - O estabelecimento envia a proposta.
+   - O artista recebe a proposta.
+   - O artista pode aceitar ou recusar quando
+     status = solicitacao_enviada.
 
    Este arquivo NÃO:
    - Renderiza a interface.
@@ -78,6 +89,9 @@
 
             contratacoes:
                 "contratacoes",
+
+            oportunidades:
+                "oportunidades",
 
             usuarios:
                 "usuarios",
@@ -951,7 +965,7 @@
                     CONFIG.tabelas.usuarios
                 )
                 .select(
-                    "id,nome,email"
+                    "id,nome,email,foto_url"
                 )
                 .eq(
                     "id",
@@ -1111,6 +1125,8 @@
 
             perfilArtista?.foto_url ||
 
+            usuario?.foto_url ||
+
             null;
 
 
@@ -1200,7 +1216,7 @@
                     CONFIG.tabelas.usuarios
                 )
                 .select(
-                    "id,nome,email"
+                    "id,nome,email,foto_url"
                 )
                 .eq(
                     "id",
@@ -1399,6 +1415,7 @@
                 null,
 
             fotoUrl:
+                usuario?.foto_url ||
                 null,
 
             iniciais:
@@ -1432,6 +1449,156 @@
 
 
         return resultado;
+
+    }
+
+
+
+    /* =====================================================
+       BUSCAR DADOS DA OPORTUNIDADE
+       ===================================================== */
+
+    async function carregarOportunidade(
+        supabase,
+        oportunidadeId
+    ) {
+
+        console.log(
+            "📌 Carregando oportunidade:",
+            oportunidadeId
+        );
+
+
+        if (!oportunidadeId) {
+
+            console.log(
+                "ℹ️ Esta contratação não possui oportunidade vinculada."
+            );
+
+
+            return null;
+
+        }
+
+
+        const resposta =
+            await supabase
+                .from(
+                    CONFIG.tabelas.oportunidades
+                )
+                .select(
+                    "*"
+                )
+                .eq(
+                    "id",
+                    oportunidadeId
+                )
+                .maybeSingle();
+
+
+        if (
+            resposta.error
+        ) {
+
+            console.error(
+                "❌ Erro ao carregar oportunidade:",
+                resposta.error
+            );
+
+
+            throw resposta.error;
+
+        }
+
+
+        const oportunidade =
+            resposta.data;
+
+
+        console.log(
+            "✅ Oportunidade encontrada:",
+            oportunidade
+        );
+
+
+        if (!oportunidade) {
+
+            return null;
+
+        }
+
+
+        return {
+
+            id:
+                oportunidade.id,
+
+            contratanteId:
+                oportunidade.contratante_id,
+
+            titulo:
+                oportunidade.titulo ||
+                "Oportunidade",
+
+            descricao:
+                oportunidade.descricao ||
+                null,
+
+            tipoArtista:
+                oportunidade.tipo_artista ||
+                null,
+
+            dataEvento:
+                oportunidade.data_evento ||
+                null,
+
+            dataEventoFormatada:
+                formatarData(
+                    oportunidade.data_evento
+                ),
+
+            horaInicio:
+                oportunidade.hora_inicio ||
+                null,
+
+            horaFim:
+                oportunidade.hora_fim ||
+                null,
+
+            estilos:
+                oportunidade.estilos ||
+                null,
+
+            instrumentos:
+                oportunidade.instrumentos ||
+                null,
+
+            valor:
+                oportunidade.valor ??
+                null,
+
+            local:
+                normalizarLocal(
+                    oportunidade.local
+                ),
+
+            prazoInteresse:
+                oportunidade.prazo_interesse ||
+                null,
+
+            status:
+                oportunidade.status ||
+                null,
+
+            createdAt:
+                oportunidade.created_at ||
+                null,
+
+            updatedAt:
+                oportunidade.updated_at ||
+                null
+
+        };
 
     }
 
@@ -1689,13 +1856,17 @@
         /* =================================================
            IDENTIFICAR PARTICIPAÇÃO DO USUÁRIO
 
-           A proposta pode ser visualizada por:
+           Na estrutura atual:
 
-           1. O artista que enviou a proposta.
-           2. O estabelecimento que recebeu a proposta.
+           contratante_id = estabelecimento/contratante
+           contratado_id = artista
 
-           O estabelecimento continua sendo o único lado
-           autorizado a aceitar ou recusar a proposta.
+           Portanto:
+
+           - O contratante é quem envia a proposta.
+           - O contratado é o artista que recebe.
+           - O artista é o destinatário.
+           - O artista pode aceitar ou recusar.
            ================================================= */
 
         const usuarioEhContratante =
@@ -1772,10 +1943,11 @@
 
 
         /*
-         * O contratante é o artista que enviou a proposta.
+         * O contratante é o estabelecimento que enviou
+         * a proposta.
          *
-         * O contratado é o estabelecimento que recebeu
-         * a proposta e poderá tomar a decisão.
+         * O contratado é o artista que recebeu
+         * a proposta.
          */
 
         const papelUsuario =
@@ -1786,6 +1958,11 @@
 
                 : "destinatario";
 
+
+        /*
+         * Somente o artista contratado pode decidir
+         * sobre a proposta.
+         */
 
         const podeDecidir =
 
@@ -1832,28 +2009,45 @@
 
 
         console.log(
-            "🔄 Carregando artista, estabelecimento e serviço..."
+            "🔄 Carregando artista, estabelecimento, oportunidade e serviço..."
         );
 
 
+        /*
+         * Fluxo de oportunidade:
+         *
+         * contratante_id -> estabelecimento
+         * contratado_id  -> artista
+         *
+         * A oportunidade fica vinculada diretamente
+         * através de contratacoes.oportunidade_id.
+         */
+
         const [
+
+            estabelecimento,
 
             artista,
 
-            estabelecimento,
+            oportunidade,
 
             servico
 
         ] = await Promise.all([
 
-            carregarArtista(
+            carregarEstabelecimento(
                 supabase,
                 registro.contratante_id
             ),
 
-            carregarEstabelecimento(
+            carregarArtista(
                 supabase,
                 registro.contratado_id
+            ),
+
+            carregarOportunidade(
+                supabase,
+                registro.oportunidade_id
             ),
 
             carregarServico(
@@ -1865,7 +2059,7 @@
 
 
         console.log(
-            "✅ Participantes e serviço carregados."
+            "✅ Participantes, oportunidade e serviço carregados."
         );
 
 
@@ -1887,6 +2081,8 @@
 
             servico?.valor ??
 
+            oportunidade?.valor ??
+
             null;
 
 
@@ -1906,6 +2102,10 @@
 
             contratadoId:
                 registro.contratado_id,
+
+            oportunidadeId:
+                registro.oportunidade_id ||
+                null,
 
             servicoId:
                 registro.servico_id,
@@ -1930,11 +2130,21 @@
             podeDecidir:
                 podeDecidir,
 
+            /*
+             * Na estrutura atual:
+             *
+             * estabelecimento = remetente
+             * artista = destinatário
+             */
+
             artista:
                 artista,
 
             estabelecimento:
                 estabelecimento,
+
+            oportunidade:
+                oportunidade,
 
             servico:
                 servico
@@ -2204,6 +2414,8 @@
             carregarArtista,
 
             carregarEstabelecimento,
+
+            carregarOportunidade,
 
             carregarServico,
 

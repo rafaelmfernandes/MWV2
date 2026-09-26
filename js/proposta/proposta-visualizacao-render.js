@@ -14,22 +14,24 @@
    - Exibir a foto correta do participante.
    - Exibir serviço, data, horário, local e valor.
    - Exibir observações quando existirem.
+   - Exibir o contexto da oportunidade quando houver.
    - Controlar a apresentação das ações de aceitar/recusar.
    - Exibir estados de carregamento, processamento, erro e resultado.
 
-   Regras:
+   Regras atuais da contratação:
 
-   REMETENTE — ARTISTA
-   - Proposta enviada.
-   - Detalhes do estabelecimento.
-   - Exibe o estabelecimento.
-   - Não pode aceitar ou recusar.
-
-   DESTINATÁRIO — ESTABELECIMENTO
-   - Proposta recebida.
-   - Detalhes do profissional.
+   REMETENTE — ESTABELECIMENTO
+   - O estabelecimento criou/selecionou a contratação.
+   - A proposta foi enviada ao artista.
    - Exibe o artista.
-   - Pode aceitar ou recusar.
+   - Não pode aceitar ou recusar esta proposta.
+
+   DESTINATÁRIO — ARTISTA
+   - O artista foi selecionado pelo estabelecimento.
+   - A proposta foi recebida pelo artista.
+   - Exibe o estabelecimento.
+   - Pode aceitar ou recusar a proposta.
+   - Visualiza o contexto da oportunidade.
 
    IMPORTANTE:
 
@@ -63,10 +65,6 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
 
     const elementos = {
 
-        /* -------------------------------------------------
-           Estados principais
-           ------------------------------------------------- */
-
         loading:
             document.getElementById(
                 "propostaLoading"
@@ -88,10 +86,6 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
             ),
 
 
-        /* -------------------------------------------------
-           Cabeçalho superior
-           ------------------------------------------------- */
-
         headerEyebrow:
             document.querySelector(
                 ".proposta-header-eyebrow"
@@ -108,10 +102,6 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
             ),
 
 
-        /* -------------------------------------------------
-           Identificação da proposta
-           ------------------------------------------------- */
-
         cardEyebrow:
             document.getElementById(
                 "propostaCardEyebrow"
@@ -127,10 +117,6 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
                 "propostaStatus"
             ),
 
-
-        /* -------------------------------------------------
-           Participante
-           ------------------------------------------------- */
 
         artistaFoto:
             document.getElementById(
@@ -159,8 +145,19 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
 
 
         /* -------------------------------------------------
-           Serviço
+           Contexto da oportunidade
            ------------------------------------------------- */
+
+        oportunidadeContexto:
+            document.getElementById(
+                "propostaOportunidadeContexto"
+            ),
+
+        oportunidadeTitulo:
+            document.getElementById(
+                "propostaOportunidadeTitulo"
+            ),
+
 
         servicoContainer:
             document.getElementById(
@@ -173,10 +170,6 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
             ),
 
 
-        /* -------------------------------------------------
-           Evento
-           ------------------------------------------------- */
-
         data:
             document.getElementById(
                 "propostaData"
@@ -187,10 +180,6 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
                 "propostaHorario"
             ),
 
-
-        /* -------------------------------------------------
-           Local
-           ------------------------------------------------- */
 
         localNome:
             document.getElementById(
@@ -203,19 +192,11 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
             ),
 
 
-        /* -------------------------------------------------
-           Valor
-           ------------------------------------------------- */
-
         valor:
             document.getElementById(
                 "propostaValor"
             ),
 
-
-        /* -------------------------------------------------
-           Observações
-           ------------------------------------------------- */
 
         observacoesContainer:
             document.getElementById(
@@ -227,10 +208,6 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
                 "propostaObservacoes"
             ),
 
-
-        /* -------------------------------------------------
-           Ações
-           ------------------------------------------------- */
 
         acoes:
             document.getElementById(
@@ -248,19 +225,11 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
             ),
 
 
-        /* -------------------------------------------------
-           Processamento
-           ------------------------------------------------- */
-
         processando:
             document.getElementById(
                 "propostaProcessando"
             ),
 
-
-        /* -------------------------------------------------
-           Resultado
-           ------------------------------------------------- */
 
         resultado:
             document.getElementById(
@@ -289,14 +258,6 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
        FUNÇÕES UTILITÁRIAS
        ===================================================== */
 
-
-    /**
-     * Define o texto de um elemento.
-     *
-     * @param {HTMLElement|null} elemento
-     * @param {*} texto
-     * @param {string} fallback
-     */
     function definirTexto(
         elemento,
         texto,
@@ -324,12 +285,6 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
     }
 
 
-    /**
-     * Controla a visibilidade de um elemento.
-     *
-     * @param {HTMLElement|null} elemento
-     * @param {boolean} exibir
-     */
     function definirVisibilidade(
         elemento,
         exibir
@@ -344,13 +299,6 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
     }
 
 
-    /**
-     * Retorna um texto seguro.
-     *
-     * @param {*} valor
-     * @param {string} fallback
-     * @returns {string}
-     */
     function textoSeguro(
         valor,
         fallback = "—"
@@ -371,12 +319,6 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
     }
 
 
-    /**
-     * Formata valor em Real brasileiro.
-     *
-     * @param {*} valor
-     * @returns {string}
-     */
     function formatarValor(
         valor
     ) {
@@ -398,12 +340,6 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
     }
 
 
-    /**
-     * Formata data sem conversão de fuso.
-     *
-     * @param {*} data
-     * @returns {string}
-     */
     function formatarData(
         data
     ) {
@@ -462,12 +398,6 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
     }
 
 
-    /**
-     * Formata horário.
-     *
-     * @param {*} horario
-     * @returns {string}
-     */
     function formatarHorario(
         horario
     ) {
@@ -498,13 +428,6 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
     }
 
 
-    /**
-     * Formata intervalo de horário.
-     *
-     * @param {*} inicio
-     * @param {*} fim
-     * @returns {string}
-     */
     function formatarIntervaloHorario(
         inicio,
         fim
@@ -559,18 +482,20 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
        IDENTIFICAÇÃO DO PAPEL
        ===================================================== */
 
-
     /**
      * Verifica se o usuário atual é o remetente.
      *
-     * No fluxo atual:
+     * Regra:
      *
-     * remetente = artista
-     * destinatário = estabelecimento
+     * contratante_id = estabelecimento
+     * contratado_id  = artista
      *
-     * @param {Object} dados
-     * @returns {boolean}
+     * Portanto:
+     *
+     * estabelecimento = remetente
+     * artista = destinatário
      */
+
     function usuarioEhRemetente(
         dados
     ) {
@@ -579,19 +504,66 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
             return false;
         }
 
-        return (
-            dados.usuarioEhRemetente === true ||
-            dados.papelUsuario === "remetente"
-        );
+
+        /*
+         * Primeiro utiliza o papel já calculado
+         * pelo módulo de dados.
+         */
+
+        if (
+            dados.papelUsuario ===
+            "remetente"
+        ) {
+
+            return true;
+        }
+
+
+        if (
+            dados.usuarioEhRemetente === true
+        ) {
+
+            return true;
+        }
+
+
+        /*
+         * Fallback:
+         *
+         * Se o usuário atual for o contratante,
+         * ele é o estabelecimento/remetente.
+         */
+
+        if (
+            dados.usuarioAtualId &&
+            dados.contratanteId
+        ) {
+
+            return (
+                String(
+                    dados.usuarioAtualId
+                ) ===
+                String(
+                    dados.contratanteId
+                )
+            );
+        }
+
+
+        return false;
     }
 
 
     /**
      * Verifica se o usuário atual é o destinatário.
      *
-     * @param {Object} dados
-     * @returns {boolean}
+     * Regra:
+     *
+     * contratado_id = artista selecionado
+     *
+     * Portanto o artista é o destinatário.
      */
+
     function usuarioEhDestinatario(
         dados
     ) {
@@ -600,26 +572,60 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
             return false;
         }
 
-        return (
-            dados.usuarioEhDestinatario === true ||
-            dados.papelUsuario === "destinatario"
-        );
+
+        /*
+         * Primeiro utiliza o papel já calculado
+         * pelo módulo de dados.
+         */
+
+        if (
+            dados.papelUsuario ===
+            "destinatario"
+        ) {
+
+            return true;
+        }
+
+
+        if (
+            dados.usuarioEhDestinatario === true
+        ) {
+
+            return true;
+        }
+
+
+        /*
+         * Fallback principal:
+         *
+         * Se o usuário atual for o contratado,
+         * ele é o artista/destinatário.
+         */
+
+        if (
+            dados.usuarioAtualId &&
+            dados.contratadoId
+        ) {
+
+            return (
+                String(
+                    dados.usuarioAtualId
+                ) ===
+                String(
+                    dados.contratadoId
+                )
+            );
+        }
+
+
+        return false;
     }
 
 
-    /**
-     * Retorna o participante que deve ser mostrado
-     * no card principal.
-     *
-     * Se o artista estiver visualizando:
-     * → mostrar estabelecimento.
-     *
-     * Se o estabelecimento estiver visualizando:
-     * → mostrar artista.
-     *
-     * @param {Object} dados
-     * @returns {Object|null}
-     */
+    /* =====================================================
+       PARTICIPANTE EXIBIDO
+       ===================================================== */
+
     function obterParticipanteExibido(
         dados
     ) {
@@ -629,8 +635,17 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
         }
 
 
+        /*
+         * ARTISTA / DESTINATÁRIO
+         *
+         * O artista recebeu a proposta.
+         *
+         * Portanto ele deve visualizar
+         * os dados do estabelecimento.
+         */
+
         if (
-            usuarioEhRemetente(
+            usuarioEhDestinatario(
                 dados
             )
         ) {
@@ -642,10 +657,29 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
         }
 
 
-        return (
-            dados.artista ||
-            null
-        );
+        /*
+         * ESTABELECIMENTO / REMETENTE
+         *
+         * O estabelecimento enviou a proposta.
+         *
+         * Portanto ele deve visualizar
+         * os dados do artista.
+         */
+
+        if (
+            usuarioEhRemetente(
+                dados
+            )
+        ) {
+
+            return (
+                dados.artista ||
+                null
+            );
+        }
+
+
+        return null;
     }
 
 
@@ -653,22 +687,6 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
        CABEÇALHO DA PROPOSTA
        ===================================================== */
 
-
-    /**
-     * Renderiza os títulos conforme o papel.
-     *
-     * ARTISTA / REMETENTE:
-     *
-     * Proposta enviada
-     * Detalhes do estabelecimento
-     *
-     * ESTABELECIMENTO / DESTINATÁRIO:
-     *
-     * Proposta recebida
-     * Detalhes do profissional
-     *
-     * @param {Object} dados
-     */
     function renderizarCabecalho(
         dados
     ) {
@@ -685,14 +703,14 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
 
 
         /*
-         * ARTISTA VISUALIZANDO
+         * ARTISTA / DESTINATÁRIO
          */
 
-        if (remetente) {
+        if (destinatario) {
 
             definirTexto(
                 elementos.cardEyebrow,
-                "Proposta enviada"
+                "Proposta recebida"
             );
 
             definirTexto(
@@ -707,12 +725,12 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
 
             definirTexto(
                 elementos.headerTitulo,
-                "Proposta enviada"
+                "Nova proposta"
             );
 
             definirTexto(
                 elementos.headerDescricao,
-                "Acompanhe os detalhes enviados ao estabelecimento."
+                "Você foi selecionado para uma oportunidade e recebeu uma proposta de contratação."
             );
 
             return;
@@ -720,14 +738,14 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
 
 
         /*
-         * ESTABELECIMENTO VISUALIZANDO
+         * ESTABELECIMENTO / REMETENTE
          */
 
-        if (destinatario) {
+        if (remetente) {
 
             definirTexto(
                 elementos.cardEyebrow,
-                "Proposta recebida"
+                "Proposta enviada"
             );
 
             definirTexto(
@@ -742,12 +760,12 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
 
             definirTexto(
                 elementos.headerTitulo,
-                "Nova proposta"
+                "Proposta enviada"
             );
 
             definirTexto(
                 elementos.headerDescricao,
-                "Analise os detalhes enviados pelo profissional."
+                "Acompanhe os detalhes enviados ao profissional."
             );
 
             return;
@@ -755,10 +773,7 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
 
 
         /*
-         * Fallback.
-         *
-         * Normalmente não será utilizado porque
-         * o módulo de dados já valida o participante.
+         * FALLBACK
          */
 
         definirTexto(
@@ -789,13 +804,155 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
 
 
     /* =====================================================
+       CONTEXTO DA OPORTUNIDADE
+       ===================================================== */
+
+    function renderizarOportunidade(
+        dados
+    ) {
+
+        const contexto =
+            elementos.oportunidadeContexto;
+
+        const tituloElemento =
+            elementos.oportunidadeTitulo;
+
+
+        /*
+         * Segurança:
+         *
+         * Se os elementos não existirem no HTML,
+         * não interrompe a renderização da proposta.
+         */
+
+        if (
+            !contexto ||
+            !tituloElemento
+        ) {
+
+            return;
+        }
+
+
+        /*
+         * Somente o ARTISTA selecionado,
+         * que é o destinatário,
+         * deve visualizar este contexto.
+         */
+
+        const destinatario =
+            usuarioEhDestinatario(
+                dados
+            );
+
+
+        if (!destinatario) {
+
+            definirVisibilidade(
+                contexto,
+                false
+            );
+
+            definirTexto(
+                tituloElemento,
+                "—"
+            );
+
+            return;
+        }
+
+
+        const oportunidade =
+            dados &&
+            dados.oportunidade
+                ? dados.oportunidade
+                : null;
+
+
+        /*
+         * A oportunidade foi carregada pelo módulo
+         * proposta-visualizacao-dados.js.
+         */
+
+        if (!oportunidade) {
+
+            definirVisibilidade(
+                contexto,
+                false
+            );
+
+            definirTexto(
+                tituloElemento,
+                "—"
+            );
+
+            return;
+        }
+
+
+        const titulo =
+            oportunidade.titulo ||
+            oportunidade.nome ||
+            oportunidade.nomeOportunidade ||
+            null;
+
+
+        if (
+            !titulo ||
+            String(titulo).trim() === ""
+        ) {
+
+            definirVisibilidade(
+                contexto,
+                false
+            );
+
+            definirTexto(
+                tituloElemento,
+                "—"
+            );
+
+            return;
+        }
+
+
+        /*
+         * Insere somente o nome da oportunidade.
+         *
+         * O texto:
+         *
+         * "Você foi selecionado para a oportunidade"
+         *
+         * já está no HTML.
+         */
+
+        definirTexto(
+            tituloElemento,
+            titulo
+        );
+
+
+        /*
+         * Libera o bloco para aparecer na tela.
+         */
+
+        definirVisibilidade(
+            contexto,
+            true
+        );
+
+
+        console.log(
+            "Oportunidade exibida para o artista:",
+            titulo
+        );
+    }
+
+
+    /* =====================================================
        STATUS
        ===================================================== */
 
-
-    /**
-     * Limpa classes de status.
-     */
     function limparClassesStatus() {
 
         if (!elementos.status) {
@@ -813,11 +970,6 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
     }
 
 
-    /**
-     * Renderiza o status da proposta.
-     *
-     * @param {Object} dados
-     */
     function renderizarStatus(
         dados
     ) {
@@ -845,47 +997,62 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
                 : "";
 
 
-        const remetente =
-            usuarioEhRemetente(
+        const destinatario =
+            usuarioEhDestinatario(
                 dados
             );
 
 
+        /*
+         * O artista já visualiza "Nova proposta"
+         * no cabeçalho principal.
+         *
+         * Portanto, quando ele é o destinatário,
+         * não repetimos esse texto abaixo de
+         * "Detalhes do estabelecimento".
+         */
+
+        if (
+            destinatario &&
+            (
+                status === "solicitacao_enviada" ||
+                status === "aguardando_confirmacao" ||
+                status === ""
+            )
+        ) {
+
+            definirVisibilidade(
+                elementos.status,
+                false
+            );
+
+            return;
+        }
+
+
         let texto =
-            "Nova proposta";
+            destinatario
+                ? "Nova proposta"
+                : "Proposta enviada";
 
         let classe =
             "status-aguardando";
 
-
-        /*
-         * PROPOSTA ENVIADA / RECEBIDA
-         */
 
         if (
             status === "solicitacao_enviada" ||
             status === "aguardando_confirmacao"
         ) {
 
-            if (remetente) {
-
-                texto =
-                    "Proposta enviada";
-
-            } else {
-
-                texto =
-                    "Nova proposta";
-            }
+            texto =
+                destinatario
+                    ? "Nova proposta"
+                    : "Proposta enviada";
 
             classe =
                 "status-aguardando";
         }
 
-
-        /*
-         * CONFIRMADA
-         */
 
         else if (
             status === "confirmada"
@@ -899,10 +1066,6 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
         }
 
 
-        /*
-         * RECUSADA
-         */
-
         else if (
             status === "recusada"
         ) {
@@ -914,10 +1077,6 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
                 "status-recusada";
         }
 
-
-        /*
-         * CANCELADA
-         */
 
         else if (
             status === "cancelada"
@@ -931,10 +1090,6 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
         }
 
 
-        /*
-         * EM ANDAMENTO
-         */
-
         else if (
             status === "em_andamento"
         ) {
@@ -946,10 +1101,6 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
                 "status-andamento";
         }
 
-
-        /*
-         * CONCLUÍDA
-         */
 
         else if (
             status === "concluida"
@@ -972,6 +1123,12 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
             elementos.status,
             texto
         );
+
+
+        definirVisibilidade(
+            elementos.status,
+            true
+        );
     }
 
 
@@ -979,12 +1136,6 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
        PARTICIPANTE
        ===================================================== */
 
-
-    /**
-     * Renderiza o participante correto.
-     *
-     * @param {Object} dados
-     */
     function renderizarParticipante(
         dados
     ) {
@@ -994,10 +1145,6 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
                 dados
             );
 
-
-        /*
-         * Nenhum participante.
-         */
 
         if (!participante) {
 
@@ -1025,10 +1172,6 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
         }
 
 
-        /*
-         * NOME
-         */
-
         definirTexto(
             elementos.artistaNome,
             participante.nome ||
@@ -1037,10 +1180,6 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
             "—"
         );
 
-
-        /*
-         * TIPO DE PERFIL
-         */
 
         definirTexto(
             elementos.artistaTipo,
@@ -1051,10 +1190,6 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
         );
 
 
-        /*
-         * LOCALIZAÇÃO
-         */
-
         definirTexto(
             elementos.artistaLocalizacao,
             obterLocalizacao(
@@ -1063,10 +1198,6 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
         );
 
 
-        /*
-         * FOTO
-         */
-
         renderizarFoto(
             participante,
             dados
@@ -1074,12 +1205,10 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
     }
 
 
-    /**
-     * Obtém a localização do participante.
-     *
-     * @param {Object} participante
-     * @returns {string}
-     */
+    /* =====================================================
+       LOCALIZAÇÃO DO PARTICIPANTE
+       ===================================================== */
+
     function obterLocalizacao(
         participante
     ) {
@@ -1089,17 +1218,18 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
         }
 
 
-        const localizacao =
-            participante.localizacao;
-
-
         if (
-            localizacao === null ||
-            localizacao === undefined
+            participante.localizacaoFormatada
         ) {
 
-            return "—";
+            return textoSeguro(
+                participante.localizacaoFormatada
+            );
         }
+
+
+        const localizacao =
+            participante.localizacao;
 
 
         if (
@@ -1113,6 +1243,7 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
 
 
         if (
+            localizacao &&
             typeof localizacao === "object"
         ) {
 
@@ -1136,22 +1267,46 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
             }
 
 
-            const partes = [
+            const partesLocalizacao = [
+
                 localizacao.cidade,
+
                 localizacao.estado
+
             ].filter(
                 Boolean
             );
 
 
             if (
-                partes.length > 0
+                partesLocalizacao.length > 0
             ) {
 
-                return partes.join(
-                    "/"
+                return partesLocalizacao.join(
+                    " - "
                 );
             }
+        }
+
+
+        const partes = [
+
+            participante.cidade,
+
+            participante.estado
+
+        ].filter(
+            Boolean
+        );
+
+
+        if (
+            partes.length > 0
+        ) {
+
+            return partes.join(
+                " - "
+            );
         }
 
 
@@ -1159,12 +1314,10 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
     }
 
 
-    /**
-     * Obtém URL da foto do participante.
-     *
-     * @param {Object} participante
-     * @returns {string|null}
-     */
+    /* =====================================================
+       FOTO
+       ===================================================== */
+
     function obterFotoUrl(
         participante
     ) {
@@ -1200,12 +1353,6 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
     }
 
 
-    /**
-     * Renderiza foto do participante.
-     *
-     * @param {Object|null} participante
-     * @param {Object} dados
-     */
     function renderizarFoto(
         participante,
         dados
@@ -1226,11 +1373,6 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
             );
 
 
-        /*
-         * Sem foto:
-         * mostra placeholder.
-         */
-
         if (!fotoUrl) {
 
             elementos.artistaFoto.removeAttribute(
@@ -1247,11 +1389,6 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
         }
 
 
-        /*
-         * Com foto:
-         * mostra imagem.
-         */
-
         elementos.artistaFoto.src =
             fotoUrl;
 
@@ -1262,13 +1399,8 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
             true;
 
 
-        /*
-         * Texto alternativo conforme
-         * o participante que está sendo mostrado.
-         */
-
         if (
-            usuarioEhRemetente(
+            usuarioEhDestinatario(
                 dados
             )
         ) {
@@ -1282,11 +1414,6 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
                 "Foto do profissional";
         }
 
-
-        /*
-         * Caso a URL não possa ser carregada,
-         * voltamos para o placeholder.
-         */
 
         elementos.artistaFoto.onerror =
             function () {
@@ -1311,12 +1438,6 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
        SERVIÇO
        ===================================================== */
 
-
-    /**
-     * Renderiza o serviço.
-     *
-     * @param {Object} dados
-     */
     function renderizarServico(
         dados
     ) {
@@ -1371,12 +1492,6 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
        DATA E HORÁRIO
        ===================================================== */
 
-
-    /**
-     * Renderiza data e horário.
-     *
-     * @param {Object} dados
-     */
     function renderizarDataHorario(
         dados
     ) {
@@ -1436,12 +1551,6 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
        LOCAL
        ===================================================== */
 
-
-    /**
-     * Renderiza o local.
-     *
-     * @param {Object} dados
-     */
     function renderizarLocal(
         dados
     ) {
@@ -1478,11 +1587,6 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
         }
 
 
-        /*
-         * Caso local venha como JSON em string,
-         * tentamos converter.
-         */
-
         if (
             typeof local === "string"
         ) {
@@ -1498,11 +1602,6 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
                 erro
             ) {
 
-                /*
-                 * Se não for JSON, utilizamos
-                 * o conteúdo diretamente como nome.
-                 */
-
                 definirTexto(
                     elementos.localNome,
                     local
@@ -1517,11 +1616,6 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
             }
         }
 
-
-        /*
-         * Caso ainda não seja objeto,
-         * exibimos como texto.
-         */
 
         if (
             typeof local !== "object" ||
@@ -1595,12 +1689,6 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
        VALOR
        ===================================================== */
 
-
-    /**
-     * Renderiza valor da proposta.
-     *
-     * @param {Object} dados
-     */
     function renderizarValor(
         dados
     ) {
@@ -1617,9 +1705,10 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
 
 
         const valor =
-            proposta.valor ||
-            proposta.valor_total ||
-            proposta.valorTotal ||
+            proposta.valor ??
+            proposta.valor_total ??
+            proposta.valorTotal ??
+            dados.oportunidade?.valor ??
             0;
 
 
@@ -1636,12 +1725,6 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
        OBSERVAÇÕES
        ===================================================== */
 
-
-    /**
-     * Renderiza observações.
-     *
-     * @param {Object} dados
-     */
     function renderizarObservacoes(
         dados
     ) {
@@ -1660,6 +1743,7 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
         const observacoes =
             proposta.observacoes ||
             proposta.observacao ||
+            dados.oportunidade?.descricao ||
             "";
 
 
@@ -1694,16 +1778,6 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
        AÇÕES
        ===================================================== */
 
-
-    /**
-     * Renderiza as ações disponíveis.
-     *
-     * Somente o estabelecimento,
-     * que é o destinatário da proposta,
-     * pode aceitar ou recusar.
-     *
-     * @param {Object} dados
-     */
     function renderizarAcoes(
         dados
     ) {
@@ -1716,9 +1790,9 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
 
 
         /*
-         * ARTISTA / REMETENTE
-         *
-         * Não pode aceitar ou recusar.
+         * Somente o artista selecionado,
+         * que é o destinatário,
+         * pode decidir sobre a proposta.
          */
 
         if (!podeDecidir) {
@@ -1731,10 +1805,6 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
             return;
         }
 
-
-        /*
-         * ESTABELECIMENTO / DESTINATÁRIO
-         */
 
         definirVisibilidade(
             elementos.acoes,
@@ -1761,10 +1831,6 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
        ESTADO DE CARREGAMENTO
        ===================================================== */
 
-
-    /**
-     * Mostra carregamento.
-     */
     function mostrarCarregamento() {
 
         definirVisibilidade(
@@ -1784,9 +1850,6 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
     }
 
 
-    /**
-     * Esconde carregamento.
-     */
     function esconderCarregamento() {
 
         definirVisibilidade(
@@ -1800,12 +1863,6 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
        ESTADO DE ERRO
        ===================================================== */
 
-
-    /**
-     * Mostra erro.
-     *
-     * @param {string} mensagem
-     */
     function mostrarErro(
         mensagem
     ) {
@@ -1838,29 +1895,19 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
        RENDERIZAÇÃO PRINCIPAL
        ===================================================== */
 
-
-    /**
-     * Função principal esperada pelo controlador.
-     *
-     * O controlador chama:
-     *
-     * propostaVisualizacaoRender.renderizar(dados)
-     *
-     * @param {Object} dados
-     */
     function renderizar(
         dados
     ) {
 
         console.log(
-            "🎨 MusicalWorldPropostaVisualizacaoRender: iniciando renderização..."
+            "MusicalWorldPropostaVisualizacaoRender: iniciando renderização..."
         );
 
 
         if (!dados) {
 
             console.error(
-                "❌ Nenhum dado foi recebido pelo renderizador."
+                "Nenhum dado foi recebido pelo renderizador."
             );
 
             mostrarErro(
@@ -1871,25 +1918,52 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
         }
 
 
-        /*
-         * Registra no console o papel identificado
-         * pelo módulo de dados.
-         */
+        console.log(
+            "Dados da oportunidade recebidos:",
+            dados.oportunidade
+        );
+
 
         console.log(
-            "👤 Papel do usuário na proposta:",
+            "Título da oportunidade:",
+            dados.oportunidade?.titulo
+        );
+
+
+        console.log(
+            "Papel do usuário:",
             dados.papelUsuario
         );
 
+
         console.log(
-            "📌 É remetente:",
+            "Usuário atual:",
+            dados.usuarioAtualId
+        );
+
+
+        console.log(
+            "Contratante:",
+            dados.contratanteId
+        );
+
+
+        console.log(
+            "Contratado:",
+            dados.contratadoId
+        );
+
+
+        console.log(
+            "É remetente:",
             usuarioEhRemetente(
                 dados
             )
         );
 
+
         console.log(
-            "📌 É destinatário:",
+            "É destinatário:",
             usuarioEhDestinatario(
                 dados
             )
@@ -1897,7 +1971,7 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
 
 
         /*
-         * Primeiro definimos o cabeçalho.
+         * Cabeçalho.
          */
 
         renderizarCabecalho(
@@ -1906,7 +1980,7 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
 
 
         /*
-         * Depois o status.
+         * Status.
          */
 
         renderizarStatus(
@@ -1915,16 +1989,28 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
 
 
         /*
-         * Depois o participante correto.
-         *
-         * ARTISTA:
-         * → estabelecimento
-         *
-         * ESTABELECIMENTO:
-         * → artista
+         * Participante.
          */
 
         renderizarParticipante(
+            dados
+        );
+
+
+        /*
+         * CONTEXTO DA OPORTUNIDADE
+         *
+         * Esta chamada é obrigatória.
+         *
+         * O título vem de:
+         *
+         * dados.oportunidade.titulo
+         *
+         * e o bloco só aparece para o artista
+         * selecionado.
+         */
+
+        renderizarOportunidade(
             dados
         );
 
@@ -1963,18 +2049,8 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
         );
 
 
-        /*
-         * Remove carregamento.
-         */
-
         esconderCarregamento();
 
-
-        /*
-         * Exibe o conteúdo somente depois
-         * de todos os elementos terem sido
-         * preparados.
-         */
 
         definirVisibilidade(
             elementos.erro,
@@ -1988,7 +2064,7 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
 
 
         console.log(
-            "✅ MusicalWorldPropostaVisualizacaoRender: renderização concluída."
+            "MusicalWorldPropostaVisualizacaoRender: renderização concluída."
         );
     }
 
@@ -1997,12 +2073,6 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
        PROCESSAMENTO
        ===================================================== */
 
-
-    /**
-     * Mostra estado de processamento.
-     *
-     * @param {string} mensagem
-     */
     function mostrarProcessando(
         mensagem = "Processando..."
     ) {
@@ -2048,9 +2118,6 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
     }
 
 
-    /**
-     * Esconde estado de processamento.
-     */
     function esconderProcessando() {
 
         definirVisibilidade(
@@ -2064,12 +2131,6 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
        RESULTADO
        ===================================================== */
 
-
-    /**
-     * Mostra resultado de uma operação.
-     *
-     * @param {Object} config
-     */
     function mostrarResultado(
         config = {}
     ) {
@@ -2223,9 +2284,6 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
     }
 
 
-    /**
-     * Esconde resultado.
-     */
     function esconderResultado() {
 
         definirVisibilidade(
@@ -2239,10 +2297,6 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
        RESET
        ===================================================== */
 
-
-    /**
-     * Restaura interface.
-     */
     function resetar() {
 
         esconderProcessando();
@@ -2291,40 +2345,39 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
 
 
         definirVisibilidade(
+            elementos.oportunidadeContexto,
+            false
+        );
+
+
+        definirTexto(
+            elementos.oportunidadeTitulo,
+            "—"
+        );
+
+
+        definirVisibilidade(
             elementos.observacoesContainer,
             false
+        );
+
+
+        /*
+         * O status pode ter sido ocultado para o artista.
+         * No reset ele precisa voltar ao estado inicial,
+         * para que uma nova renderização decida novamente
+         * se deve exibi-lo ou ocultá-lo.
+         */
+
+        definirVisibilidade(
+            elementos.status,
+            true
         );
     }
 
 
     /* =====================================================
        API PÚBLICA
-       =====================================================
-
-       IMPORTANTE:
-
-       O controlador proposta-visualizacao.js
-       espera exatamente estes nomes.
-
-       Principal:
-       - renderizar
-
-       Estados:
-       - mostrarCarregamento
-       - esconderCarregamento
-       - mostrarErro
-       - mostrarProcessando
-       - esconderProcessando
-       - mostrarResultado
-       - esconderResultado
-
-       Renderizações específicas:
-       - renderizarParticipante
-       - renderizarStatus
-       - renderizarAcoes
-
-       Controle:
-       - resetar
        ===================================================== */
 
     return {
@@ -2350,6 +2403,8 @@ window.MusicalWorldPropostaVisualizacaoRender = (() => {
         renderizarStatus,
 
         renderizarAcoes,
+
+        renderizarOportunidade,
 
         resetar
 

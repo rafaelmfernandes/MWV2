@@ -19,11 +19,13 @@
      MUSICALWORLD — CENTRAL DE CONTRATAÇÕES
 
      Responsabilidade:
-     Estrutura principal da página onde o contratante
-     visualiza e gerencia todas as suas contratações.
 
-     Esta primeira versão utiliza dados demonstrativos.
-     Posteriormente, o JS será conectado ao Supabase.
+     - Estrutura principal da Central de Contratações.
+     - Separar visualmente Contratações e Oportunidades.
+     - Permitir acesso às oportunidades de acordo com o
+       tipo de perfil do usuário.
+     - Manter os indicadores, filtros, busca e lista
+       de contratações existentes.
 ========================================================== -->
 
 
@@ -61,7 +63,11 @@
     href="css/contratacoes.css"
 >
 
-<!-- Menu inferior padrão do MusicalWorld -->
+
+<!-- =========================================================
+     CSS DO MENU INFERIOR
+========================================================== -->
+
 <link
     rel="stylesheet"
     href="css/menu-inferior.css"
@@ -83,14 +89,10 @@
 
     <div class="topbar-inner">
 
-        <div class="brand">
 
-            <span class="brand-name">
-                MusicalWorld
-            </span>
-
-        </div>
-
+        <!-- =================================================
+             BOTÃO VOLTAR
+        ================================================== -->
 
         <button
             type="button"
@@ -101,11 +103,21 @@
 
             <i data-lucide="arrow-left"></i>
 
+        </button>
+
+
+        <!-- =================================================
+             TÍTULO DO CABEÇALHO
+        ================================================== -->
+
+        <div class="topbar-titulo">
+
             <span>
-                Voltar
+                Gestão de contratações
             </span>
 
-        </button>
+        </div>
+
 
     </div>
 
@@ -127,33 +139,138 @@
 
         <div class="page-header-content">
 
-            <span class="page-eyebrow">
-                Gestão
-            </span>
-
-            <h1>
-                Contratações
-            </h1>
-
             <p>
-                Gerencie seus artistas, eventos e solicitações
-                em um só lugar.
+                Acompanhe solicitações, contratações e
+                oportunidades selecionadas em um só lugar.
             </p>
 
         </div>
 
+    </section>
+
+
+    <!-- =================================================
+         NAVEGAÇÃO DA CENTRAL
+
+         Contratações:
+         - Todas as solicitações e contratações.
+
+         Oportunidades:
+         - Para estabelecimentos: Minhas oportunidades.
+         - Para artistas: Fui selecionado.
+
+         O JavaScript controla qual opção de oportunidade
+         deve aparecer de acordo com o tipo de perfil.
+    ================================================== -->
+
+    <section
+        class="central-navegacao"
+        aria-label="Navegação da central"
+    >
+
+
+        <!-- =================================================
+             CONTRATAÇÕES
+        ================================================== -->
 
         <button
             type="button"
-            class="btn-nova-contratacao"
-            id="btnNovaContratacao"
+            class="central-navegacao-card ativo"
+            id="btnCentralContratacoes"
+            data-central-area="contratacoes"
+            aria-current="page"
         >
 
-            <i data-lucide="plus"></i>
+            <div class="central-navegacao-conteudo">
 
-            <span>
-                Nova contratação
-            </span>
+                <div class="central-navegacao-icone">
+
+                    <i data-lucide="handshake"></i>
+
+                </div>
+
+
+                <div class="central-navegacao-texto">
+
+                    <span class="central-navegacao-titulo">
+                        Contratações
+                    </span>
+
+                    <span class="central-navegacao-descricao">
+                        Solicitações, eventos e contratos
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <i
+                class="central-navegacao-seta"
+                data-lucide="chevron-right"
+            ></i>
+
+        </button>
+
+
+        <!-- =================================================
+             OPORTUNIDADES
+
+             Este botão recebe sua configuração pelo
+             JavaScript conforme o tipo de perfil.
+
+             Estabelecimento:
+             "Minhas oportunidades"
+
+             Artista:
+             "Fui selecionado"
+        ================================================== -->
+
+        <button
+            type="button"
+            class="central-navegacao-card"
+            id="btnCentralOportunidades"
+            data-central-area="oportunidades"
+            hidden
+        >
+
+            <div class="central-navegacao-conteudo">
+
+                <div class="central-navegacao-icone">
+
+                    <i
+                        id="centralOportunidadesIcone"
+                        data-lucide="target"
+                    ></i>
+
+                </div>
+
+
+                <div class="central-navegacao-texto">
+
+                    <span
+                        class="central-navegacao-titulo"
+                        id="centralOportunidadesTitulo"
+                    >
+                        Oportunidades
+                    </span>
+
+                    <span
+                        class="central-navegacao-descricao"
+                        id="centralOportunidadesDescricao"
+                    >
+                        Encontre e gerencie oportunidades
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <i
+                class="central-navegacao-seta"
+                data-lucide="chevron-right"
+            ></i>
 
         </button>
 
@@ -170,7 +287,9 @@
     >
 
 
-        <!-- Aguardando -->
+        <!-- =================================================
+             AGUARDANDO
+        ================================================== -->
 
         <article
             class="resumo-card resumo-card-pendente"
@@ -180,14 +299,18 @@
             <div class="resumo-card-top">
 
                 <div class="resumo-icon">
+
                     <i data-lucide="clock-3"></i>
+
                 </div>
+
 
                 <span class="resumo-label">
                     Aguardando
                 </span>
 
             </div>
+
 
             <strong
                 class="resumo-valor"
@@ -196,6 +319,7 @@
                 0
             </strong>
 
+
             <span class="resumo-descricao">
                 Aguardando resposta do artista
             </span>
@@ -203,7 +327,9 @@
         </article>
 
 
-        <!-- Próximas -->
+        <!-- =================================================
+             PRÓXIMAS
+        ================================================== -->
 
         <article
             class="resumo-card resumo-card-proxima"
@@ -213,14 +339,18 @@
             <div class="resumo-card-top">
 
                 <div class="resumo-icon">
+
                     <i data-lucide="calendar-days"></i>
+
                 </div>
+
 
                 <span class="resumo-label">
                     Próximas
                 </span>
 
             </div>
+
 
             <strong
                 class="resumo-valor"
@@ -229,6 +359,7 @@
                 0
             </strong>
 
+
             <span class="resumo-descricao">
                 Eventos já confirmados
             </span>
@@ -236,7 +367,9 @@
         </article>
 
 
-        <!-- Em andamento -->
+        <!-- =================================================
+             EM ANDAMENTO
+        ================================================== -->
 
         <article
             class="resumo-card resumo-card-andamento"
@@ -246,14 +379,18 @@
             <div class="resumo-card-top">
 
                 <div class="resumo-icon">
+
                     <i data-lucide="activity"></i>
+
                 </div>
+
 
                 <span class="resumo-label">
                     Em andamento
                 </span>
 
             </div>
+
 
             <strong
                 class="resumo-valor"
@@ -262,6 +399,7 @@
                 0
             </strong>
 
+
             <span class="resumo-descricao">
                 Contratações em execução
             </span>
@@ -269,7 +407,9 @@
         </article>
 
 
-        <!-- Histórico -->
+        <!-- =================================================
+             HISTÓRICO
+        ================================================== -->
 
         <article
             class="resumo-card resumo-card-historico"
@@ -279,8 +419,11 @@
             <div class="resumo-card-top">
 
                 <div class="resumo-icon">
+
                     <i data-lucide="archive"></i>
+
                 </div>
+
 
                 <span class="resumo-label">
                     Histórico
@@ -288,12 +431,14 @@
 
             </div>
 
+
             <strong
                 class="resumo-valor"
                 id="resumoHistorico"
             >
                 0
             </strong>
+
 
             <span class="resumo-descricao">
                 Contratações finalizadas
@@ -305,12 +450,20 @@
 
 
     <!-- =================================================
-         FILTROS
+         FILTROS DE CONTRATAÇÕES
     ================================================== -->
 
     <section class="controle-contratacoes">
 
-        <div class="filtros">
+
+        <!-- =================================================
+             FILTROS
+        ================================================== -->
+
+        <div
+            class="filtros"
+            id="filtrosContratacoes"
+        >
 
             <button
                 type="button"
@@ -320,6 +473,25 @@
                 Todas
             </button>
 
+
+            <button
+                type="button"
+                class="filtro-btn"
+                data-filtro="recebidas"
+            >
+                Recebidas
+            </button>
+
+
+            <button
+                type="button"
+                class="filtro-btn"
+                data-filtro="enviadas"
+            >
+                Enviadas
+            </button>
+
+
             <button
                 type="button"
                 class="filtro-btn"
@@ -328,26 +500,59 @@
                 Aguardando
             </button>
 
+
+            <button
+                type="button"
+                class="filtro-btn"
+                data-filtro="proximas"
+            >
+                Próximas
+            </button>
+
+
+            <button
+                type="button"
+                class="filtro-btn"
+                data-filtro="andamento"
+            >
+                Em andamento
+            </button>
+
+
+            <button
+                type="button"
+                class="filtro-btn"
+                data-filtro="historico"
+            >
+                Histórico
+            </button>
+
+
             <button
                 type="button"
                 class="filtro-btn"
                 data-filtro="confirmadas"
+                hidden
             >
                 Confirmadas
             </button>
+
 
             <button
                 type="button"
                 class="filtro-btn"
                 data-filtro="concluidas"
+                hidden
             >
                 Concluídas
             </button>
+
 
             <button
                 type="button"
                 class="filtro-btn"
                 data-filtro="canceladas"
+                hidden
             >
                 Canceladas
             </button>
@@ -355,9 +560,14 @@
         </div>
 
 
+        <!-- =================================================
+             BUSCA
+        ================================================== -->
+
         <div class="campo-busca">
 
             <i data-lucide="search"></i>
+
 
             <input
                 type="search"
@@ -396,6 +606,7 @@
                 Suas contratações
             </h2>
 
+
             <span id="contadorContratacoes">
                 0 contratações
             </span>
@@ -410,6 +621,7 @@
         >
 
             <i data-lucide="arrow-down-up"></i>
+
 
             <span>
                 Mais recentes
@@ -429,7 +641,11 @@
         id="contratacoesLista"
         aria-live="polite"
     >
-        <!-- Os cards serão inseridos pelo JavaScript. -->
+
+        <!--
+            Os cards são inseridos pelo JavaScript.
+        -->
+
     </section>
 
 
@@ -478,10 +694,7 @@
      MENU INFERIOR PADRÃO DO MUSICALWORLD
 
      O conteúdo deste menu é criado pelo
-     js/menu-inferior.js.
-
-     Dessa forma, todas as páginas utilizam exatamente
-     a mesma navegação inferior.
+     js/components/menu-inferior.js.
 ====================================================== -->
 
 <div id="menu-inferior-container"></div>
@@ -489,11 +702,17 @@
 
 </div>
 
+
 <!-- =====================================================
-     SUPABASE E MÓDULOS CENTRAIS
+     SUPABASE
 ====================================================== -->
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+
+
+<!-- =====================================================
+     MÓDULOS CENTRAIS
+====================================================== -->
 
 <script src="js/core/SupabaseClient.js"></script>
 
@@ -505,17 +724,31 @@
 
 <script src="js/core/RoteamentoPerfil.js"></script>
 
+
+<!-- =====================================================
+     CABEÇALHO CENTRAL
+====================================================== -->
+
+<script src="js/components/Cabecalho.js"></script>
+
+<script src="js/contratacoes/ContratacoesDados.js"></script>
+<script src="js/contratacoes/ContratacoesRender.js"></script>
+<script src="js/contratacoes/Contratacoes.js"></script>
+
+
 <!-- =====================================================
      MENU INFERIOR PADRÃO
 ====================================================== -->
 
 <script src="js/components/menu-inferior.js"></script>
 
+
 <!-- =====================================================
      MÓDULO DA PÁGINA
 ====================================================== -->
 
-<script src="js/contratacoes.js"></script>
+
+
 
 </body>
 

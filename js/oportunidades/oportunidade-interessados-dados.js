@@ -17,6 +17,7 @@
    - Carregar dados específicos dos artistas.
    - Carregar a foto do estabelecimento.
    - Selecionar um artista.
+   - Criar a contratação a partir da oportunidade.
    - Manter a comunicação com o Supabase isolada deste módulo.
 
    Observação importante:
@@ -787,6 +788,10 @@ window.MusicalWorldOportunidadeInteressadosDados = (() => {
             obterSupabase();
 
 
+        /* =================================================
+           1. VALIDAR USUÁRIO AUTENTICADO
+           ================================================= */
+
         const {
             data: usuarioData
         } = await supabase.auth.getUser();
@@ -805,6 +810,10 @@ window.MusicalWorldOportunidadeInteressadosDados = (() => {
         }
 
 
+        /* =================================================
+           2. CARREGAR E VALIDAR OPORTUNIDADE
+           ================================================= */
+
         const oportunidade =
             await carregarOportunidade(
                 supabase,
@@ -818,9 +827,91 @@ window.MusicalWorldOportunidadeInteressadosDados = (() => {
         );
 
 
+        /* =================================================
+           3. LOCALIZAR O INTERESSADO
+
+           Precisamos do artista_id para criar a contratação.
+
+           O registro é buscado pelo ID do interessado e pelo
+           ID da oportunidade, garantindo que o artista pertence
+           realmente a esta oportunidade.
+           ================================================= */
+
         const {
-            data,
-            error
+            data: interessado,
+            error: erroInteressado
+        } = await supabase
+
+            .from("oportunidades_interessados")
+
+            .select(`
+                id,
+                oportunidade_id,
+                artista_id,
+                mensagem,
+                status,
+                created_at,
+                updated_at
+            `)
+
+            .eq(
+                "id",
+                interessadoId
+            )
+
+            .eq(
+                "oportunidade_id",
+                oportunidadeId
+            )
+
+            .maybeSingle();
+
+
+        if (erroInteressado) {
+
+            throw new Error(
+                `Não foi possível localizar o interessado: ${erroInteressado.message}`
+            );
+
+        }
+
+
+        if (!interessado) {
+
+            throw new Error(
+                "Interessado não encontrado."
+            );
+
+        }
+
+
+        if (!interessado.artista_id) {
+
+            throw new Error(
+                "O interessado não possui um artista válido para contratação."
+            );
+
+        }
+
+
+        /* =================================================
+           4. GUARDAR O STATUS ANTERIOR
+
+           Isso permite restaurar o interessado caso a criação
+           da contratação falhe depois.
+           ================================================= */
+
+        const statusAnterior =
+            interessado.status || "interessado";
+
+
+        /* =================================================
+           5. SELECIONAR O ARTISTA
+           ================================================= */
+
+        const {
+            data: interessadoAtualizado,
+            error: erroSelecao
         } = await supabase
 
             .from("oportunidades_interessados")
@@ -858,16 +949,16 @@ window.MusicalWorldOportunidadeInteressadosDados = (() => {
             .maybeSingle();
 
 
-        if (error) {
+        if (erroSelecao) {
 
             throw new Error(
-                `Não foi possível selecionar o artista: ${error.message}`
+                `Não foi possível selecionar o artista: ${erroSelecao.message}`
             );
 
         }
 
 
-        if (!data) {
+        if (!interessadoAtualizado) {
 
             throw new Error(
                 "Interessado não encontrado ou sem permissão para atualização."
@@ -876,7 +967,239 @@ window.MusicalWorldOportunidadeInteressadosDados = (() => {
         }
 
 
-        return data;
+        /* =================================================
+           6. CRIAR A CONTRATAÇÃO
+
+           A contratação nasce da oportunidade.
+
+           Mapeamento:
+
+           oportunidades.contratante_id
+               → contratacoes.contratante_id
+
+           interessado.artista_id
+               → contratacoes.contratado_id
+
+           oportunidades.data_evento
+               → contratacoes.data_evento
+
+           oportunidades.hora_inicio
+               → contratacoes.horario_inicio
+
+           oportunidades.hora_fim
+               → contratacoes.horario_fim
+
+           oportunidades.valor
+               → contratacoes.valor
+
+           oportunidades.tipo_artista
+               → contratacoes.tipo_evento
+
+           oportunidades.local
+               → contratacoes.local
+
+           oportunidades.descricao
+               → contratacoes.observacoes
+
+           A contratação começa como:
+
+           status = solicitacao_enviada
+           status_pagamento = pendente
+
+           O pagamento NÃO acontece nesta etapa.
+           ================================================= */
+
+        const {
+
+            data: contratacao,
+
+            error: erroContratacao
+
+        } = await supabase
+
+            .from("contratacoes")
+
+            .insert({
+
+                contratante_id:
+                    oportunidade.contratante_id,
+
+                contratado_id:
+                    interessado.artista_id,
+
+                servico_id:
+                    null,
+
+                data_evento:
+                    oportunidade.data_evento,
+
+                horario_inicio:
+                    oportunidade.hora_inicio,
+
+                horario_fim:
+                    oportunidade.hora_fim,
+
+                valor:
+                    oportunidade.valor,
+
+                status:
+                    "solicitacao_enviada",
+
+                metodo_pagamento:
+                    null,
+
+                status_pagamento:
+                    "pendente",
+
+                tipo_evento:
+                    oportunidade.tipo_artista,
+
+                local:
+                    oportunidade.local,
+
+                observacoes:
+                    oportunidade.descricao
+
+            })
+
+            .select(`
+
+                id,
+
+                contratante_id,
+
+                contratado_id,
+
+                servico_id,
+
+                data_evento,
+
+                horario_inicio,
+
+                horario_fim,
+
+                valor,
+
+                status,
+
+                metodo_pagamento,
+
+                status_pagamento,
+
+                tipo_evento,
+
+                local,
+
+                observacoes,
+
+                created_at,
+
+                updated_at
+
+            `)
+
+            .maybeSingle();
+
+
+        /* =================================================
+           7. TRATAR ERRO NA CRIAÇÃO DA CONTRATAÇÃO
+
+           Se a contratação não puder ser criada, desfazemos
+           a seleção do interessado.
+
+           Dessa forma não ficamos com:
+
+           interessado = selecionado
+
+           sem existir uma contratação correspondente.
+           ================================================= */
+
+        if (erroContratacao) {
+
+            await supabase
+
+                .from("oportunidades_interessados")
+
+                .update({
+
+                    status:
+                        statusAnterior,
+
+                    updated_at:
+                        new Date().toISOString()
+
+                })
+
+                .eq(
+                    "id",
+                    interessadoId
+                )
+
+                .eq(
+                    "oportunidade_id",
+                    oportunidadeId
+                );
+
+
+            throw new Error(
+                `O artista foi selecionado, mas não foi possível criar a contratação: ${erroContratacao.message}`
+            );
+
+        }
+
+
+        if (!contratacao) {
+
+            await supabase
+
+                .from("oportunidades_interessados")
+
+                .update({
+
+                    status:
+                        statusAnterior,
+
+                    updated_at:
+                        new Date().toISOString()
+
+                })
+
+                .eq(
+                    "id",
+                    interessadoId
+                )
+
+                .eq(
+                    "oportunidade_id",
+                    oportunidadeId
+                );
+
+
+            throw new Error(
+                "A contratação não foi criada."
+            );
+
+        }
+
+
+        /* =================================================
+           8. RETORNAR RESULTADO
+
+           O módulo de renderização poderá utilizar o resultado
+           para atualizar a interface.
+
+           Retornamos tanto o interessado atualizado quanto
+           a nova contratação.
+           ================================================= */
+
+        return {
+
+            interessado:
+                interessadoAtualizado,
+
+            contratacao
+
+        };
 
     }
 

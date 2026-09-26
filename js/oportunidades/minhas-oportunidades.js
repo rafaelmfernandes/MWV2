@@ -1,4 +1,3 @@
-
 /* =========================================================
    MUSICALWORLD — MINHAS OPORTUNIDADES
 
@@ -13,12 +12,30 @@
    - Renderizar os cards.
    - Permitir abrir o gerenciamento de uma oportunidade.
    - Controlar os estados de carregamento, erro e vazio.
+   - Controlar a página de origem utilizada pelo botão voltar.
+   - Controlar a navegação para criação de uma nova oportunidade.
 
    Esta página NÃO cria oportunidades.
 
    A criação continua sendo responsabilidade de:
-   criar-oportunidades.html
+   criar-oportunidade.html
    ========================================================= */
+
+
+/* =========================================================
+   CONFIGURAÇÕES DA NAVEGAÇÃO
+   ========================================================= */
+
+const CHAVE_ORIGEM_MINHAS_OPORTUNIDADES =
+    "mw_minhas_oportunidades_origem";
+
+
+const PAGINA_FALLBACK =
+    "index.html";
+
+
+const PAGINA_CRIAR_OPORTUNIDADE =
+    "criar-oportunidade.html";
 
 
 /* =========================================================
@@ -35,6 +52,10 @@ let oportunidades = [];
 /* =========================================================
    ELEMENTOS DA INTERFACE
    ========================================================= */
+
+let btnVoltar = null;
+
+let btnCriarOportunidade = null;
 
 let estadoCarregando = null;
 
@@ -67,6 +88,12 @@ async function iniciar() {
 
     obterElementos();
 
+    configurarOrigemNavegacao();
+
+    configurarBotaoVoltar();
+
+    configurarBotaoCriarOportunidade();
+
     btnTentarNovamente?.addEventListener(
         "click",
         carregarPagina
@@ -83,30 +110,47 @@ async function iniciar() {
 
 function obterElementos() {
 
+    btnVoltar =
+        document.getElementById(
+            "btnVoltar"
+        );
+
+
+    btnCriarOportunidade =
+        document.getElementById(
+            "btnCriarOportunidade"
+        );
+
+
     estadoCarregando =
         document.getElementById(
             "estadoCarregando"
         );
+
 
     estadoErro =
         document.getElementById(
             "estadoErro"
         );
 
+
     mensagemErro =
         document.getElementById(
             "mensagemErro"
         );
+
 
     btnTentarNovamente =
         document.getElementById(
             "btnTentarNovamente"
         );
 
+
     estadoVazio =
         document.getElementById(
             "estadoVazio"
         );
+
 
     listaOportunidades =
         document.getElementById(
@@ -117,19 +161,285 @@ function obterElementos() {
 
 
 /* =========================================================
+   CONFIGURAR BOTÃO CRIAR OPORTUNIDADE
+   =========================================================
+
+   O botão da página "Minhas oportunidades" apenas
+   direciona o usuário para a página responsável pela
+   criação de uma nova oportunidade.
+
+   A criação propriamente dita NÃO acontece neste arquivo.
+   ========================================================= */
+
+function configurarBotaoCriarOportunidade() {
+
+    if (!btnCriarOportunidade) {
+
+        return;
+
+    }
+
+
+    btnCriarOportunidade.addEventListener(
+        "click",
+        () => {
+
+            window.location.href =
+                PAGINA_CRIAR_OPORTUNIDADE;
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   CONFIGURAR ORIGEM DE NAVEGAÇÃO
+   ========================================================= */
+
+function configurarOrigemNavegacao() {
+
+    try {
+
+        const referrer =
+            document.referrer;
+
+
+        /*
+         * Verifica de qual página o usuário acabou
+         * de chegar.
+         */
+
+        let paginaAnterior = "";
+
+
+        if (referrer) {
+
+            try {
+
+                const urlAnterior =
+                    new URL(
+                        referrer
+                    );
+
+
+                if (
+                    urlAnterior.origin ===
+                    window.location.origin
+                ) {
+
+                    paginaAnterior =
+                        urlAnterior.pathname
+                            .replace(
+                                /^\/+/,
+                                ""
+                            );
+
+                }
+
+            } catch {
+
+                paginaAnterior = "";
+
+            }
+
+        }
+
+
+        /*
+         * =================================================
+         * ENTRADA VINDO DA CENTRAL DE CONTRATAÇÕES
+         * =================================================
+         */
+
+        if (
+            paginaAnterior ===
+            "contratacoes.html"
+        ) {
+
+            sessionStorage.setItem(
+                CHAVE_ORIGEM_MINHAS_OPORTUNIDADES,
+                "contratacoes.html"
+            );
+
+            return;
+
+        }
+
+
+        /*
+         * =================================================
+         * ORIGEM JÁ EXISTENTE
+         * =================================================
+         */
+
+        const origemSalva =
+            sessionStorage.getItem(
+                CHAVE_ORIGEM_MINHAS_OPORTUNIDADES
+            );
+
+
+        if (origemSalva) {
+
+            return;
+
+        }
+
+
+        /*
+         * =================================================
+         * PRIMEIRA ENTRADA SEM ORIGEM SALVA
+         * =================================================
+         */
+
+        const origem =
+            obterOrigemValida();
+
+
+        sessionStorage.setItem(
+            CHAVE_ORIGEM_MINHAS_OPORTUNIDADES,
+            origem
+        );
+
+    } catch (erro) {
+
+        console.warn(
+            "MusicalWorld — não foi possível configurar a origem da navegação:",
+            erro
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   OBTER ORIGEM VÁLIDA
+   ========================================================= */
+
+function obterOrigemValida() {
+
+    const referrer =
+        document.referrer;
+
+
+    if (!referrer) {
+
+        return PAGINA_FALLBACK;
+
+    }
+
+
+    try {
+
+        const url =
+            new URL(
+                referrer
+            );
+
+
+        if (
+            url.origin !==
+            window.location.origin
+        ) {
+
+            return PAGINA_FALLBACK;
+
+        }
+
+
+        const caminhoAtual =
+            window.location.pathname;
+
+
+        if (
+            url.pathname ===
+            caminhoAtual
+        ) {
+
+            return PAGINA_FALLBACK;
+
+        }
+
+
+        return (
+            url.pathname.replace(
+                /^\/+/,
+                ""
+            ) +
+            url.search +
+            url.hash
+        );
+
+    } catch {
+
+        return PAGINA_FALLBACK;
+
+    }
+
+}
+
+
+/* =========================================================
+   CONFIGURAR BOTÃO VOLTAR
+   ========================================================= */
+
+function configurarBotaoVoltar() {
+
+    if (!btnVoltar) {
+
+        return;
+
+    }
+
+
+    btnVoltar.addEventListener(
+        "click",
+        voltarParaOrigem
+    );
+
+}
+
+
+/* =========================================================
+   VOLTAR PARA A ORIGEM
+   ========================================================= */
+
+function voltarParaOrigem() {
+
+    let destino =
+        PAGINA_FALLBACK;
+
+
+    try {
+
+        destino =
+            sessionStorage.getItem(
+                CHAVE_ORIGEM_MINHAS_OPORTUNIDADES
+            ) ||
+            PAGINA_FALLBACK;
+
+    } catch (erro) {
+
+        console.warn(
+            "MusicalWorld — não foi possível recuperar a origem da navegação:",
+            erro
+        );
+
+    }
+
+
+    window.location.href =
+        destino;
+
+}
+
+
+/* =========================================================
    OBTER CLIENTE SUPABASE
    ========================================================= */
 
 function obterClienteSupabase() {
-
-    /*
-     * O SDK do Supabase já utiliza o identificador
-     * global "supabase".
-     *
-     * Por isso, nesta página utilizamos o cliente
-     * armazenado em "window.supabaseClient", criado
-     * pelo arquivo js/core/SupabaseClient.js.
-     */
 
     if (
         window.supabaseClient &&
@@ -357,14 +667,6 @@ async function carregarQuantidadeInteressados() {
                     interessado.oportunidade_id
                 );
 
-
-            /*
-             * Apenas interessados ativos entram
-             * na contagem apresentada no card.
-             *
-             * Registros retirados ou recusados
-             * não aparecem como interessados ativos.
-             */
 
             const status =
                 normalizarTexto(
@@ -706,25 +1008,6 @@ function obterNomeLocal(
     }
 
 
-    /*
-     * O campo "local" da oportunidade atualmente
-     * está armazenado como JSON.
-     *
-     * Exemplo:
-     *
-     * {
-     *     "cep": "...",
-     *     "bairro": "Setor Marista",
-     *     "cidade": "Goiânia",
-     *     "estado": "GO",
-     *     "numero": "1200",
-     *     "endereco": "Avenida Ricardo Paranhos",
-     *     "nomeLocal": "@bahrem"
-     * }
-     *
-     * Para o card, damos prioridade ao nome do local.
-     */
-
     let dados = local;
 
 
@@ -914,13 +1197,6 @@ function formatarData(data) {
 
 /* =========================================================
    FORMATAR DATA DE PUBLICAÇÃO
-   =========================================================
-
-   O campo created_at do Supabase normalmente chega
-   como timestamp ISO.
-
-   Aqui utilizamos somente a data para manter a
-   informação discreta no card.
    ========================================================= */
 
 function formatarDataHoraPublicacao(
@@ -1269,4 +1545,3 @@ function obterMensagemErro(
     );
 
 }
-

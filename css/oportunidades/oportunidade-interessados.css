@@ -1,3 +1,4 @@
+
 /* =========================================================
    MUSICALWORLD — GERENCIAR OPORTUNIDADE
 
@@ -766,14 +767,6 @@ a {
 
 /* =========================================================
    10. DETALHES DA OPORTUNIDADE
-
-   Os detalhes possuem agora:
-
-   - ícone visual;
-   - conteúdo separado;
-   - destaque específico para valor;
-   - adaptação própria para celular.
-
    ========================================================= */
 
 .oi-detalhes-grid {
@@ -1431,6 +1424,18 @@ a {
 
 /* =========================================================
    15. CARD DO ARTISTA
+
+   O card funciona como um pequeno perfil profissional.
+
+   Desktop:
+   - Avatar;
+   - Identidade;
+   - Status;
+   - Ações.
+
+   As tags e a mensagem ocupam a área de informações
+   do artista, mantendo o card organizado.
+
    ========================================================= */
 
 .oi-artista-card {
@@ -1438,14 +1443,14 @@ a {
     display: grid;
 
     grid-template-columns:
-        56px
+        60px
         minmax(0, 1fr)
         auto
         auto;
 
     align-items: center;
 
-    gap: 16px;
+    gap: 18px;
 
     width: 100%;
 
@@ -1453,7 +1458,7 @@ a {
 
     margin: 0;
 
-    padding: 20px;
+    padding: 22px;
 
     background: var(--oi-white);
 
@@ -1466,7 +1471,8 @@ a {
     transition:
         border-color 0.2s ease,
         box-shadow 0.2s ease,
-        transform 0.2s ease;
+        transform 0.2s ease,
+        background-color 0.2s ease;
 
 }
 
@@ -1493,6 +1499,16 @@ a {
             #ffffff 100%
         );
 
+    box-shadow:
+        0 6px 24px rgba(109, 74, 255, 0.08);
+
+}
+
+
+.oi-artista-selecionado:hover {
+
+    border-color: #c4b8ff;
+
 }
 
 
@@ -1508,13 +1524,13 @@ a {
 
     justify-content: center;
 
-    width: 56px;
+    width: 60px;
 
-    height: 56px;
+    height: 60px;
 
-    min-width: 56px;
+    min-width: 60px;
 
-    min-height: 56px;
+    min-height: 60px;
 
     overflow: hidden;
 
@@ -1524,11 +1540,21 @@ a {
 
     color: var(--oi-primary);
 
-    font-size: 18px;
+    font-size: 19px;
 
     font-weight: 800;
 
     line-height: 1;
+
+    box-shadow:
+        0 0 0 4px #faf9ff;
+
+}
+
+
+.oi-artista-avatar-foto {
+
+    background: var(--oi-border-soft);
 
 }
 
@@ -1605,9 +1631,40 @@ a {
 }
 
 
-.oi-artista-info span {
+/* =========================================================
+   TIPO + LOCALIZAÇÃO
 
-    display: block;
+   Os dois elementos ficam obrigatoriamente na mesma linha
+   sempre que houver espaço disponível.
+
+   Estrutura esperada pelo JavaScript:
+
+   .oi-artista-meta
+       span  = tipo
+       small = localização
+
+   ========================================================= */
+
+.oi-artista-meta {
+
+    display: flex;
+
+    align-items: center;
+
+    flex-wrap: wrap;
+
+    width: 100%;
+
+    min-width: 0;
+
+    gap: 0;
+
+}
+
+
+.oi-artista-meta span {
+
+    display: inline;
 
     max-width: 100%;
 
@@ -1624,9 +1681,9 @@ a {
 }
 
 
-.oi-artista-info small {
+.oi-artista-meta small {
 
-    display: block;
+    display: inline;
 
     max-width: 100%;
 
@@ -1641,19 +1698,138 @@ a {
 }
 
 
+.oi-artista-meta small::before {
+
+    content: "·";
+
+    display: inline-block;
+
+    margin:
+        0 7px;
+
+    color: var(--oi-light);
+
+    font-weight: 800;
+
+}
+
+
 /* =========================================================
-   18. STATUS DO ARTISTA
+   18. TAGS DO ARTISTA
+
+   As tags representam estilos e instrumentos.
+
+   Elas ficam discretas para não competir com o nome
+   e com as ações principais.
+
+   ========================================================= */
+
+.oi-artista-tags {
+
+    display: flex;
+
+    align-items: center;
+
+    flex-wrap: wrap;
+
+    gap: 5px;
+
+    width: 100%;
+
+    min-width: 0;
+
+    margin: 7px 0 0;
+
+}
+
+
+.oi-artista-tag {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    min-height: 24px;
+
+    max-width: 100%;
+
+    padding:
+        0 9px;
+
+    border: 1px solid #e6e1ff;
+
+    border-radius: 7px;
+
+    background: #faf9ff;
+
+    color: #5d4bb3;
+
+    font-size: 10px;
+
+    font-weight: 700;
+
+    line-height: 1;
+
+    overflow-wrap: anywhere;
+
+}
+
+
+/* =========================================================
+   19. MENSAGEM DO ARTISTA
+   ========================================================= */
+
+.oi-artista-mensagem {
+
+    display: block;
+
+    width: 100%;
+
+    max-width: 680px;
+
+    margin: 10px 0 0;
+
+    padding:
+        10px 12px;
+
+    border: 1px solid var(--oi-border-soft);
+
+    border-radius: 10px;
+
+    background: #fafbfc;
+
+    color: var(--oi-text-soft);
+
+    font-size: 12px;
+
+    font-weight: 500;
+
+    line-height: 1.55;
+
+    overflow-wrap: anywhere;
+
+}
+
+
+/* =========================================================
+   20. STATUS DO ARTISTA
    ========================================================= */
 
 .oi-artista-status {
 
     display: flex;
 
-    align-items: center;
+    align-items: flex-start;
 
     justify-content: center;
 
+    align-self: flex-start;
+
     min-width: 0;
+
+    padding-top: 1px;
 
 }
 
@@ -1669,7 +1845,7 @@ a {
     min-height: 28px;
 
     padding:
-        0 10px;
+        0 11px;
 
     border-radius: 20px;
 
@@ -1707,7 +1883,7 @@ a {
 
 
 /* =========================================================
-   19. AÇÕES DO ARTISTA
+   21. AÇÕES DO ARTISTA
    ========================================================= */
 
 .oi-artista-acoes {
@@ -1727,18 +1903,64 @@ a {
 
 .oi-artista-acoes .oi-btn {
 
-    min-height: 38px;
+    min-height: 40px;
 
     padding:
-        0 13px;
+        0 14px;
 
     font-size: 12px;
 
 }
 
 
+.oi-artista-acoes .oi-btn-primary {
+
+    box-shadow:
+        0 4px 12px rgba(109, 74, 255, 0.12);
+
+}
+
+
+.oi-artista-acoes .oi-btn-primary:hover {
+
+    box-shadow:
+        0 7px 18px rgba(109, 74, 255, 0.2);
+
+}
+
+
+.oi-artista-acoes .oi-btn-selecionado {
+
+    background: var(--oi-success-light);
+
+    border-color: #c8eadb;
+
+    color: var(--oi-success);
+
+    box-shadow: none;
+
+    cursor: default;
+
+}
+
+
+.oi-artista-acoes .oi-btn-selecionado:hover {
+
+    background: var(--oi-success-light);
+
+    border-color: #c8eadb;
+
+    color: var(--oi-success);
+
+    box-shadow: none;
+
+    transform: none;
+
+}
+
+
 /* =========================================================
-   20. ESTADOS VAZIOS
+   22. ESTADOS VAZIOS
    ========================================================= */
 
 .oi-lista-vazia {
@@ -1849,7 +2071,7 @@ a {
 
 
 /* =========================================================
-   21. MODAL
+   23. MODAL
    ========================================================= */
 
 .oi-modal {
@@ -2129,7 +2351,7 @@ a {
 
 
 /* =========================================================
-   22. TABLET
+   24. TABLET
    ========================================================= */
 
 @media (max-width: 900px) {
@@ -2184,11 +2406,17 @@ a {
     }
 
 
+    /* =====================================================
+       CARD DO ARTISTA — TABLET
+       ===================================================== */
+
     .oi-artista-card {
 
         grid-template-columns:
-            56px
+            60px
             minmax(0, 1fr);
+
+        gap: 16px;
 
     }
 
@@ -2200,6 +2428,10 @@ a {
         grid-row: 2;
 
         justify-content: flex-start;
+
+        align-self: start;
+
+        padding-top: 0;
 
     }
 
@@ -2220,7 +2452,7 @@ a {
 
 
 /* =========================================================
-   23. CELULAR
+   25. CELULAR
    ========================================================= */
 
 @media (max-width: 600px) {
@@ -2340,16 +2572,6 @@ a {
 
     /* =====================================================
        AÇÕES DA OPORTUNIDADE — CELULAR
-
-       No celular os botões deixam de exibir texto.
-
-       Ficam somente os ícones de:
-       - visualizar;
-       - editar.
-
-       Os dois ficam lado a lado no canto direito,
-       alinhados horizontalmente com o conteúdo da
-       oportunidade.
        ===================================================== */
 
     .oi-oportunidade-acoes {
@@ -2549,6 +2771,10 @@ a {
     }
 
 
+    /* =====================================================
+       CARD DO ARTISTA — CELULAR
+       ===================================================== */
+
     .oi-artista-card {
 
         grid-template-columns:
@@ -2558,6 +2784,15 @@ a {
         gap: 12px;
 
         padding: 17px;
+
+        border-radius: 16px;
+
+    }
+
+
+    .oi-artista-card:hover {
+
+        transform: none;
 
     }
 
@@ -2572,6 +2807,94 @@ a {
 
         min-height: 48px;
 
+        font-size: 16px;
+
+    }
+
+
+    .oi-artista-info {
+
+        gap: 2px;
+
+    }
+
+
+    .oi-artista-info strong {
+
+        font-size: 15px;
+
+        line-height: 1.3;
+
+    }
+
+
+    .oi-artista-meta {
+
+        width: 100%;
+
+        min-width: 0;
+
+        flex-wrap: wrap;
+
+    }
+
+
+    .oi-artista-meta span {
+
+        font-size: 12px;
+
+    }
+
+
+    .oi-artista-meta small {
+
+        font-size: 11px;
+
+    }
+
+
+    .oi-artista-meta small::before {
+
+        margin:
+            0 6px;
+
+    }
+
+
+    .oi-artista-tags {
+
+        gap: 5px;
+
+        margin-top: 7px;
+
+    }
+
+
+    .oi-artista-tag {
+
+        min-height: 23px;
+
+        padding:
+            0 8px;
+
+        font-size: 9.5px;
+
+    }
+
+
+    .oi-artista-mensagem {
+
+        margin-top: 9px;
+
+        padding:
+            9px 10px;
+
+        border-radius: 9px;
+
+        font-size: 11px;
+
+        line-height: 1.5;
+
     }
 
 
@@ -2582,6 +2905,22 @@ a {
         grid-row: 2;
 
         justify-content: flex-start;
+
+        align-self: start;
+
+        padding-top: 0;
+
+    }
+
+
+    .oi-status {
+
+        min-height: 27px;
+
+        padding:
+            0 10px;
+
+        font-size: 9px;
 
     }
 
@@ -2598,12 +2937,18 @@ a {
 
         width: 100%;
 
+        gap: 7px;
+
+        padding-top: 2px;
+
     }
 
 
     .oi-artista-acoes .oi-btn {
 
         width: 100%;
+
+        min-height: 40px;
 
     }
 
@@ -2659,7 +3004,7 @@ a {
 
 
 /* =========================================================
-   24. CELULAR PEQUENO
+   26. CELULAR PEQUENO
    ========================================================= */
 
 @media (max-width: 420px) {
@@ -2717,9 +3062,6 @@ a {
 
     /* =====================================================
        AÇÕES DA OPORTUNIDADE — CELULAR PEQUENO
-
-       Mantém os dois botões somente com os ícones,
-       alinhados ao lado direito do título.
        ===================================================== */
 
     .oi-oportunidade-acoes {
@@ -2777,6 +3119,10 @@ a {
     }
 
 
+    /* =====================================================
+       CARD DO ARTISTA — CELULAR PEQUENO
+       ===================================================== */
+
     .oi-artista-card {
 
         padding: 14px;
@@ -2791,16 +3137,50 @@ a {
     }
 
 
-    .oi-artista-info span {
+    .oi-artista-meta {
+
+        width: 100%;
+
+        min-width: 0;
+
+    }
+
+
+    .oi-artista-meta span {
 
         font-size: 12px;
 
     }
 
 
-    .oi-artista-info small {
+    .oi-artista-meta small {
 
         font-size: 11px;
+
+    }
+
+
+    .oi-artista-meta small::before {
+
+        margin:
+            0 5px;
+
+    }
+
+
+    .oi-artista-tag {
+
+        font-size: 9px;
+
+        padding:
+            0 7px;
+
+    }
+
+
+    .oi-artista-mensagem {
+
+        font-size: 10.5px;
 
     }
 
@@ -2808,7 +3188,7 @@ a {
 
 
 /* =========================================================
-   25. ACESSIBILIDADE — REDUÇÃO DE MOVIMENTO
+   27. ACESSIBILIDADE — REDUÇÃO DE MOVIMENTO
    ========================================================= */
 
 @media (prefers-reduced-motion: reduce) {
@@ -2832,3 +3212,4 @@ a {
     }
 
 }
+

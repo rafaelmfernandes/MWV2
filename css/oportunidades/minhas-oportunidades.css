@@ -84,23 +84,6 @@ body {
 
 /* =========================================================
    CONTROLE DE ELEMENTOS OCULTOS
-   =========================================================
-
-   Garante que elementos com o atributo HTML "hidden"
-   permaneçam realmente invisíveis.
-
-   Isso é importante porque componentes como:
-
-   - .mw-state
-   - .mw-empty
-   - .mw-opportunities
-
-   possuem propriedades "display" próprias no CSS.
-
-   Sem esta regra, o display definido pelas classes pode
-   sobrescrever o comportamento visual esperado do atributo
-   hidden e fazer carregamento, erro, vazio e conteúdo
-   aparecerem simultaneamente.
    ========================================================= */
 
 [hidden] {
@@ -135,7 +118,7 @@ a {
 
     height: 64px;
 
-    background: var(--mw-surface);
+    background: rgba(255, 255, 255, 0.94);
 
     border-bottom: 1px solid var(--mw-border);
 
@@ -144,6 +127,10 @@ a {
     top: 0;
 
     z-index: 100;
+
+    backdrop-filter: blur(12px);
+
+    -webkit-backdrop-filter: blur(12px);
 }
 
 
@@ -162,64 +149,83 @@ a {
 
     align-items: center;
 
-    justify-content: space-between;
+    justify-content: flex-start;
 
-    gap: 24px;
+    gap: 13px;
 }
 
 
-.mw-logo {
+/* =========================================================
+   BOTÃO VOLTAR
+   ========================================================= */
 
-    font-size: 20px;
+.mw-back-button {
 
-    font-weight: 800;
+    width: 40px;
 
-    letter-spacing: -0.5px;
+    height: 40px;
 
-    color: var(--mw-text);
-}
+    flex-shrink: 0;
 
+    border: 0;
 
-.mw-header-link {
+    border-radius: 10px;
 
-    height: 100%;
-
-    display: flex;
+    display: inline-flex;
 
     align-items: center;
 
-    position: relative;
+    justify-content: center;
+
+    background: transparent;
 
     color: var(--mw-text-secondary);
 
-    font-size: 14px;
-
-    font-weight: 700;
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
 }
 
 
-.mw-header-link.active {
-    color: var(--mw-primary);
+.mw-back-button:hover {
+
+    background: #f2f4f7;
+
+    color: var(--mw-text);
+
 }
 
 
-.mw-header-link.active::after {
+.mw-back-button:active {
 
-    content: "";
+    transform: scale(0.96);
+}
 
-    position: absolute;
 
-    left: 0;
+.mw-back-button:focus-visible {
 
-    right: 0;
+    outline: 2px solid var(--mw-primary);
 
-    bottom: 0;
+    outline-offset: 2px;
+}
 
-    height: 2px;
 
-    background: var(--mw-primary);
+/* =========================================================
+   TÍTULO DO CABEÇALHO
+   ========================================================= */
 
-    border-radius: 2px;
+.mw-header-title {
+
+    color: var(--mw-text);
+
+    font-size: 16px;
+
+    line-height: 1;
+
+    font-weight: 800;
+
+    letter-spacing: -0.2px;
 }
 
 
@@ -613,11 +619,6 @@ a {
 
 /* =========================================================
    METADADOS DO CARD
-   =========================================================
-
-   No desktop e tablet essas informações ficam ocultas.
-
-   Elas são exibidas somente na versão celular.
    ========================================================= */
 
 .mw-card-meta {
@@ -875,6 +876,12 @@ a {
     }
 
 
+    .mw-header-title {
+
+        font-size: 15px;
+    }
+
+
     .mw-main {
 
         width: min(
@@ -972,18 +979,6 @@ a {
 
     /* =====================================================
        ESCONDER INFORMAÇÕES SECUNDÁRIAS
-       =====================================================
-
-       No celular o card mostra somente:
-
-       - título
-       - data do evento
-       - horário
-       - data de publicação
-       - valor
-
-       O restante continua disponível na página
-       de gerenciamento da oportunidade.
        ===================================================== */
 
     .mw-card-status,
@@ -1038,19 +1033,6 @@ a {
     }
 
 
-    /*
-       Mantém somente os quatro dados principais.
-
-       A ordem esperada pelo card é:
-
-       1. Data do evento
-       2. Horário
-       3. Local
-       4. Valor
-
-       Os demais itens são ocultados.
-    */
-
     .mw-card-info .mw-info-item:nth-child(n + 5) {
 
         display: none;
@@ -1058,16 +1040,7 @@ a {
 
 
     /* =====================================================
-       METADADOS — DATA DE PUBLICAÇÃO E INTERESSADOS
-       =====================================================
-
-       Essas informações foram adicionadas pelo JavaScript
-       e aparecem somente na versão celular.
-
-       A data possui menor destaque visual.
-
-       A quantidade de interessados recebe um pequeno
-       destaque roxo para facilitar sua identificação.
+       METADADOS
        ===================================================== */
 
     .mw-card-meta {
