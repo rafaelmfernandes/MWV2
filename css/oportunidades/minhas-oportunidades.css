@@ -62,6 +62,21 @@
 
 html {
     scroll-behavior: smooth;
+
+    font-family:
+        Manrope,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        sans-serif;
+
+        /* Impede que o navegador altere o tamanho da fonte por conta própria */
+        -webkit-text-size-adjust: 100%;
+        text-size-adjust: 100%;
+
 }
 
 
@@ -72,11 +87,6 @@ body {
     background: var(--mw-bg);
 
     color: var(--mw-text);
-
-    font-family:
-        "Manrope",
-        Arial,
-        sans-serif;
 
     -webkit-font-smoothing: antialiased;
 }
