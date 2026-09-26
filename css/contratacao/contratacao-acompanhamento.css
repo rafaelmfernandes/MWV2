@@ -37,8 +37,8 @@ html {
     scroll-behavior: smooth;
 
     /* Impede que o navegador altere o tamanho da fonte por conta própria */
-        -webkit-text-size-adjust: 100%;
-        text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
 }
 
 
@@ -238,6 +238,31 @@ button:disabled {
 
     font-size: 14px;
     line-height: 1.6;
+}
+
+
+/* =========================================================
+   BADGE DE DIREÇÃO
+   ========================================================= */
+
+.direcao-badge {
+    display: inline-flex;
+    align-items: center;
+
+    margin-top: 12px;
+    padding: 6px 10px;
+
+    border: 1px solid #e2ddff;
+    border-radius: 999px;
+
+    background: #f5f2ff;
+
+    color: #6d4aff;
+
+    font-size: 11px;
+    line-height: 1.3;
+
+    font-weight: 800;
 }
 
 
@@ -1400,6 +1425,10 @@ button:disabled {
 
 @media (max-width: 600px) {
 
+    /* =====================================================
+       CABEÇALHO MOBILE
+       ===================================================== */
+
     .contratacao-header {
         min-height: 62px;
 
@@ -1408,202 +1437,673 @@ button:disabled {
 
 
     .contratacao-brand {
-        font-size: 17px;
+        font-size: 16px;
     }
 
 
     .btn-voltar {
+        min-height: 40px;
+
         padding: 0 8px;
 
-        font-size: 12px;
-    }
-
-
-    .contratacao-main {
-        width: calc(100% - 32px);
-
-        padding-top: 34px;
-        padding-bottom: 44px;
-    }
-
-
-    .pagina-heading {
-        margin-bottom: 24px;
-    }
-
-
-    .pagina-heading h1 {
-        font-size: 27px;
-    }
-
-
-    .pagina-heading p {
         font-size: 13px;
     }
 
 
+    /* =====================================================
+       CONTEÚDO MOBILE
+       ===================================================== */
+
+    .contratacao-main {
+        width: calc(100% - 24px);
+
+        padding-top: 28px;
+        padding-bottom: 44px;
+    }
+
+
+    /* =====================================================
+       CABEÇALHO DA PÁGINA
+       ===================================================== */
+
+    .pagina-heading {
+        margin-bottom: 22px;
+    }
+
+
+    .pagina-eyebrow,
+    .card-eyebrow {
+        margin-bottom: 6px;
+
+        font-size: 11px;
+    }
+
+
+    .pagina-heading h1 {
+        margin-bottom: 8px;
+
+        font-size: 24px;
+        line-height: 1.18;
+    }
+
+
+    .pagina-heading p {
+        font-size: 14px;
+        line-height: 1.55;
+    }
+
+
+    .direcao-badge {
+        margin-top: 11px;
+
+        padding: 6px 10px;
+
+        font-size: 11px;
+    }
+
+
+    /* =====================================================
+       RELAÇÃO
+       ===================================================== */
+
     .relacao-card {
-        padding: 16px;
+        gap: 12px;
+
+        margin-bottom: 14px;
+
+        padding: 15px;
+
+        border-radius: 17px;
     }
 
 
     .relacao-icon {
         width: 40px;
         height: 40px;
+
+        border-radius: 11px;
     }
 
 
+    .relacao-icon svg {
+        width: 18px;
+        height: 18px;
+    }
+
+
+    .relacao-conteudo > span {
+        margin-bottom: 4px;
+
+        font-size: 11px;
+    }
+
+
+    .relacao-conteudo strong {
+        margin-bottom: 4px;
+
+        font-size: 15px;
+        line-height: 1.35;
+    }
+
+
+    .relacao-conteudo p {
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+
+    /* =====================================================
+       STATUS PRINCIPAL
+       ===================================================== */
+
     .status-principal {
+        gap: 12px;
+
+        margin-bottom: 14px;
+
         padding: 16px;
+
+        border-radius: 17px;
     }
 
 
     .status-principal-icon {
         width: 42px;
         height: 42px;
+
+        border-radius: 11px;
+    }
+
+
+    .status-principal-icon svg {
+        width: 20px;
+        height: 20px;
+    }
+
+
+    .status-principal-conteudo > span {
+        margin-bottom: 4px;
+
+        font-size: 11px;
     }
 
 
     .status-principal-conteudo strong {
-        font-size: 15px;
+        margin-bottom: 5px;
+
+        font-size: 17px;
+        line-height: 1.35;
     }
 
 
+    .status-principal-conteudo p {
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+
+    /* =====================================================
+       CARDS
+       ===================================================== */
+
     .card {
-        padding: 20px;
+        margin-bottom: 14px;
+
+        padding: 18px;
+
+        border-radius: 18px;
     }
 
 
     .card-heading {
-        margin-bottom: 18px;
+        margin-bottom: 17px;
     }
 
 
     .card-heading h2 {
         font-size: 17px;
+        line-height: 1.3;
+    }
+
+
+    /* =====================================================
+       PARTICIPANTE
+       ===================================================== */
+
+    .artista {
+        gap: 12px;
     }
 
 
     .artista-avatar {
         width: 50px;
         height: 50px;
+
+        font-size: 14px;
     }
 
 
+    .artista-info {
+        gap: 3px;
+    }
+
+
+    .artista-info strong {
+        font-size: 16px;
+        line-height: 1.35;
+    }
+
+
+    .artista-info span {
+        font-size: 13px;
+        line-height: 1.4;
+    }
+
+
+    .artista-info small {
+        font-size: 12px;
+        line-height: 1.4;
+    }
+
+
+    /* =====================================================
+       SERVIÇO
+       ===================================================== */
+
     .servico-detalhes {
-        grid-template-columns: 1fr;
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 9px;
     }
 
 
     .servico-item {
         padding: 13px;
+
+        border-radius: 12px;
     }
 
 
+    .servico-item span {
+        margin-bottom: 5px;
+
+        font-size: 11px;
+    }
+
+
+    .servico-item strong {
+        font-size: 14px;
+        line-height: 1.4;
+    }
+
+
+    .servico-item:nth-child(3) {
+        grid-column: 1 / -1;
+    }
+
+
+    /* =====================================================
+       EVENTO
+       ===================================================== */
+
+    .detalhes-lista {
+        width: 100%;
+    }
+
+
+    .detalhe-item {
+        gap: 12px;
+
+        padding: 12px 0;
+    }
+
+
+    .detalhe-icon {
+        width: 38px;
+        height: 38px;
+
+        border-radius: 10px;
+    }
+
+
+    .detalhe-icon svg {
+        width: 17px;
+        height: 17px;
+    }
+
+
+    .detalhe-conteudo {
+        gap: 3px;
+    }
+
+
+    .detalhe-conteudo span {
+        font-size: 11px;
+    }
+
+
+    .detalhe-conteudo strong {
+        font-size: 14px;
+        line-height: 1.4;
+    }
+
+
+    /* =====================================================
+       TIMELINE
+       ===================================================== */
+
+    .timeline-item {
+        gap: 12px;
+
+        min-height: 70px;
+    }
+
+
+    .timeline-item:not(:last-child)::after {
+        left: 16px;
+        top: 34px;
+    }
+
+
+    .timeline-marker {
+        width: 34px;
+        height: 34px;
+    }
+
+
+    .timeline-marker svg {
+        width: 15px;
+        height: 15px;
+    }
+
+
+    .timeline-content {
+        gap: 4px;
+
+        padding-top: 0;
+        padding-bottom: 19px;
+    }
+
+
+    .timeline-content strong {
+        font-size: 14px;
+        line-height: 1.4;
+    }
+
+
+    .timeline-content span {
+        font-size: 12px;
+        line-height: 1.5;
+    }
+
+
+    /* =====================================================
+       AÇÕES DA SOLICITAÇÃO
+       ===================================================== */
+
     .acoes-solicitacao {
-        padding: 18px;
+        margin-bottom: 14px;
+
+        padding: 17px;
+
+        border-radius: 18px;
+    }
+
+
+    .acoes-solicitacao-header {
+        margin-bottom: 16px;
+    }
+
+
+    .acoes-solicitacao-header > span {
+        margin-bottom: 6px;
+
+        font-size: 11px;
+    }
+
+
+    .acoes-solicitacao-header h2 {
+        margin-bottom: 6px;
+
+        font-size: 17px;
+        line-height: 1.4;
+    }
+
+
+    .acoes-solicitacao-header p {
+        font-size: 13px;
+        line-height: 1.55;
     }
 
 
     .acoes-solicitacao-botoes {
         grid-template-columns: 1fr;
+
+        gap: 9px;
     }
 
 
     .btn-aceitar,
     .btn-recusar {
         min-height: 50px;
+
+        padding: 0 14px;
+
+        font-size: 13px;
     }
 
 
+    .btn-aceitar svg,
+    .btn-recusar svg {
+        width: 17px;
+        height: 17px;
+    }
+
+
+    /* =====================================================
+       AÇÕES DE CONCLUSÃO
+       ===================================================== */
+
     .acoes-conclusao {
-        padding: 18px;
+        margin-bottom: 14px;
+
+        padding: 17px;
+
+        border-radius: 18px;
+    }
+
+
+    .acoes-conclusao-header {
+        margin-bottom: 16px;
     }
 
 
     .acoes-conclusao-header h2 {
-        font-size: 15px;
+        margin-bottom: 6px;
+
+        font-size: 17px;
+        line-height: 1.4;
     }
 
 
     .acoes-conclusao-header p {
+        font-size: 13px;
+        line-height: 1.55;
+    }
+
+
+    .acoes-conclusao .btn-principal {
+        min-height: 50px;
+
+        font-size: 13px;
+    }
+
+
+    .acoes-conclusao .acoes-status {
+        font-size: 12px;
+    }
+
+
+    /* =====================================================
+       PAGAMENTO LEGADO
+       ===================================================== */
+
+    .pagamento-acao {
+        margin-bottom: 14px;
+
+        padding: 17px;
+
+        border-radius: 18px;
+    }
+
+
+    .pagamento-acao-conteudo {
+        margin-bottom: 15px;
+    }
+
+
+    .pagamento-acao-conteudo h2 {
+        font-size: 17px;
+    }
+
+
+    .pagamento-acao-conteudo p {
+        font-size: 13px;
+        line-height: 1.55;
+    }
+
+
+    /* =====================================================
+       PAGAMENTO
+       ===================================================== */
+
+    .pagamento-card {
+        gap: 12px;
+
+        margin-bottom: 14px;
+
+        padding: 16px;
+
+        border-radius: 17px;
+    }
+
+
+    .pagamento-icon {
+        width: 40px;
+        height: 40px;
+
+        border-radius: 11px;
+    }
+
+
+    .pagamento-icon svg {
+        width: 19px;
+        height: 19px;
+    }
+
+
+    .pagamento-conteudo > span {
+        margin-bottom: 4px;
+
         font-size: 11px;
     }
 
 
-    .pagamento-acao {
-        padding: 18px;
+    .pagamento-conteudo strong {
+        margin-bottom: 5px;
+
+        font-size: 15px;
+        line-height: 1.4;
     }
 
 
-    .pagamento-card {
-        padding: 17px;
+    .pagamento-conteudo p {
+        font-size: 13px;
+        line-height: 1.55;
     }
+
+
+    /* =====================================================
+       OBSERVAÇÕES
+       ===================================================== */
+
+    .observacoes-card p {
+        font-size: 13px;
+        line-height: 1.65;
+    }
+
+
+    /* =====================================================
+       AÇÕES FINAIS
+       ===================================================== */
+
+    .acoes {
+        margin-top: 20px;
+    }
+
+
+    .btn-principal {
+        min-height: 52px;
+
+        padding: 0 16px;
+
+        border-radius: 14px;
+
+        font-size: 13px;
+    }
+
+
+    .btn-principal svg {
+        width: 17px;
+        height: 17px;
+    }
+
+
+    /* =====================================================
+       RODAPÉ
+       ===================================================== */
+
+    .pagina-footer {
+        margin-top: 18px;
+
+        padding: 0 6px;
+
+        font-size: 12px;
+        line-height: 1.55;
+    }
+
 }
 
 
 /* =========================================================
    TELAS MUITO PEQUENAS
+
+   Mantém a mesma escala de leitura do mobile.
+   Apenas reduz espaçamentos e dimensões físicas,
+   sem diminuir excessivamente as fontes.
    ========================================================= */
 
-@media (max-width: 360px) {
+@media (max-width: 380px) {
 
     .contratacao-header {
         padding: 0 12px;
     }
 
 
-    .contratacao-main {
-        width: calc(100% - 24px);
+    .contratacao-brand {
+        font-size: 16px;
     }
 
 
-    .pagina-heading h1 {
-        font-size: 25px;
-    }
-
-
-    .pagina-heading p {
+    .btn-voltar {
         font-size: 12px;
     }
 
 
+    .contratacao-main {
+        width: calc(100% - 20px);
+
+        padding-top: 25px;
+        padding-bottom: 38px;
+    }
+
+
+    .pagina-heading h1 {
+        font-size: 23px;
+    }
+
+
+    .pagina-heading p {
+        font-size: 13px;
+    }
+
+
     .relacao-card {
-        gap: 11px;
+        gap: 10px;
 
         padding: 14px;
     }
 
 
     .relacao-icon {
-        width: 37px;
-        height: 37px;
-    }
-
-
-    .relacao-icon svg {
-        width: 17px;
-        height: 17px;
+        width: 38px;
+        height: 38px;
     }
 
 
     .relacao-conteudo strong {
-        font-size: 13px;
+        font-size: 14px;
     }
 
 
     .relacao-conteudo p {
-        font-size: 11px;
-    }
-
-
-    .card {
-        padding: 17px;
+        font-size: 12px;
     }
 
 
     .status-principal {
-        gap: 11px;
+        gap: 10px;
 
         padding: 14px;
     }
@@ -1622,17 +2122,32 @@ button:disabled {
 
 
     .status-principal-conteudo strong {
-        font-size: 14px;
+        font-size: 16px;
     }
 
 
     .status-principal-conteudo p {
-        font-size: 11px;
+        font-size: 12px;
+    }
+
+
+    .card {
+        padding: 16px;
+    }
+
+
+    .card-heading {
+        margin-bottom: 16px;
+    }
+
+
+    .card-heading h2 {
+        font-size: 16px;
     }
 
 
     .artista {
-        gap: 11px;
+        gap: 10px;
     }
 
 
@@ -1640,12 +2155,12 @@ button:disabled {
         width: 46px;
         height: 46px;
 
-        font-size: 12px;
+        font-size: 13px;
     }
 
 
     .artista-info strong {
-        font-size: 14px;
+        font-size: 15px;
     }
 
 
@@ -1659,14 +2174,44 @@ button:disabled {
     }
 
 
+    /* =====================================================
+       SERVIÇO
+       ===================================================== */
+
+    .servico-detalhes {
+        gap: 8px;
+    }
+
+
+    .servico-item {
+        padding: 12px;
+    }
+
+
+    .servico-item span {
+        font-size: 11px;
+    }
+
+
+    .servico-item strong {
+        font-size: 13px;
+    }
+
+
+    /* =====================================================
+       EVENTO
+       ===================================================== */
+
     .detalhe-item {
         gap: 10px;
+
+        padding: 11px 0;
     }
 
 
     .detalhe-icon {
-        width: 35px;
-        height: 35px;
+        width: 36px;
+        height: 36px;
     }
 
 
@@ -1676,13 +2221,29 @@ button:disabled {
     }
 
 
-    .detalhe-conteudo strong {
-        font-size: 12px;
+    .detalhe-conteudo span {
+        font-size: 11px;
     }
 
 
+    .detalhe-conteudo strong {
+        font-size: 13px;
+    }
+
+
+    /* =====================================================
+       TIMELINE
+       ===================================================== */
+
     .timeline-item {
         gap: 10px;
+
+        min-height: 67px;
+    }
+
+
+    .timeline-item:not(:last-child)::after {
+        left: 15px;
     }
 
 
@@ -1692,87 +2253,114 @@ button:disabled {
     }
 
 
-    .timeline-item:not(:last-child)::after {
-        left: 15px;
+    .timeline-marker svg {
+        width: 14px;
+        height: 14px;
+    }
+
+
+    .timeline-content {
+        padding-bottom: 17px;
     }
 
 
     .timeline-content strong {
-        font-size: 12px;
+        font-size: 13px;
     }
 
 
     .timeline-content span {
-        font-size: 10px;
+        font-size: 11px;
     }
 
 
+    /* =====================================================
+       AÇÕES
+       ===================================================== */
+
     .acoes-solicitacao {
-        padding: 16px;
+        padding: 15px;
     }
 
 
     .acoes-solicitacao-header h2 {
-        font-size: 14px;
+        font-size: 16px;
     }
 
 
     .acoes-solicitacao-header p {
-        font-size: 11px;
+        font-size: 12px;
     }
 
 
     .btn-aceitar,
     .btn-recusar {
-        font-size: 12px;
+        min-height: 49px;
+
+        font-size: 13px;
     }
 
 
     .acoes-conclusao {
-        padding: 16px;
+        padding: 15px;
     }
 
 
     .acoes-conclusao-header h2 {
-        font-size: 14px;
+        font-size: 16px;
     }
 
 
     .acoes-conclusao-header p {
-        font-size: 11px;
+        font-size: 12px;
     }
 
 
     .pagamento-acao {
-        padding: 16px;
+        padding: 15px;
+    }
+
+
+    .pagamento-acao-conteudo h2 {
+        font-size: 16px;
+    }
+
+
+    .pagamento-acao-conteudo p {
+        font-size: 12px;
     }
 
 
     .pagamento-card {
         gap: 10px;
 
-        padding: 15px;
+        padding: 14px;
     }
 
 
     .pagamento-icon {
-        width: 36px;
-        height: 36px;
+        width: 37px;
+        height: 37px;
     }
 
 
-    .pagamento-conteudo strong {
-        font-size: 13px;
-    }
-
-
-    .pagamento-conteudo p {
+    .pagamento-conteudo > span {
         font-size: 11px;
     }
 
 
-    .observacoes-card p {
+    .pagamento-conteudo strong {
+        font-size: 14px;
+    }
+
+
+    .pagamento-conteudo p {
         font-size: 12px;
+    }
+
+
+    .observacoes-card p {
+        font-size: 13px;
     }
 
 
@@ -1781,6 +2369,12 @@ button:disabled {
 
         font-size: 13px;
     }
+
+
+    .pagina-footer {
+        font-size: 11px;
+    }
+
 }
 
 
@@ -1802,6 +2396,7 @@ button:disabled {
     .btn-recusar {
         transition: none;
     }
+
 }
 
 
@@ -1815,7 +2410,9 @@ button:disabled {
     .btn-recusar:focus-visible,
     .btn-principal:focus-visible,
     .btn-voltar:focus-visible {
+
         transition:
             outline-offset 120ms ease;
     }
+
 }

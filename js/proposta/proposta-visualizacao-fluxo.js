@@ -1,3 +1,4 @@
+
 /* =========================================================
 MUSICALWORLD — FLUXO DE VISUALIZAÇÃO DA PROPOSTA
 
@@ -44,12 +45,14 @@ Observação:
 * O mesmo registro da tabela "contratacoes" é atualizado.
   ========================================================= */
 
+
 /* =========================================================
 NAMESPACE INTERNO
 ========================================================= */
 
 window.MusicalWorldPropostaVisualizacaoFluxo =
 window.MusicalWorldPropostaVisualizacaoFluxo || {};
+
 
 /* =========================================================
 REFERÊNCIAS DOS MÓDULOS
@@ -60,6 +63,7 @@ window.MusicalWorldPropostaVisualizacaoInterno;
 
 const propostaFluxoRender =
 window.MusicalWorldPropostaVisualizacaoRender;
+
 
 /* =========================================================
 CONFIGURAÇÕES
@@ -83,6 +87,7 @@ const PROPOSTA_FLUXO_CONFIG = {
 
 };
 
+
 /* =========================================================
 ESTADO INTERNO
 ========================================================= */
@@ -94,6 +99,7 @@ const propostaFluxoEstado = {
     acaoAtual: null
 
 };
+
 
 /* =========================================================
 OBTER SUPABASE
@@ -132,6 +138,7 @@ function obterSupabaseFluxo() {
 
 }
 
+
 /* =========================================================
 OBTER ID DA PROPOSTA
 ========================================================= */
@@ -167,11 +174,73 @@ function obterIdDaPropostaFluxo() {
 
 }
 
+
 /* =========================================================
 OBTER USUÁRIO ATUAL
+
+Prioridade:
+
+1. Utilizar o usuário já identificado pelo módulo
+   proposta-visualizacao-dados.js.
+
+2. Utilizar carregarUsuarioAtual() como fallback.
+
+3. Utilizar Supabase Auth como último recurso.
+
+Isso evita realizar uma segunda identificação
+desnecessária do usuário quando o módulo de dados
+já carregou corretamente o estado da página.
 ========================================================= */
 
 async function obterUsuarioAtualFluxo() {
+
+    /*
+     * Primeiro utiliza o estado compartilhado pelo
+     * módulo de dados da proposta.
+     *
+     * O arquivo proposta-visualizacao-dados.js já
+     * identifica o usuário e armazena o ID em:
+     *
+     * propostaFluxoDados.estado.usuarioId
+     */
+
+    if (
+        propostaFluxoDados &&
+        propostaFluxoDados.estado &&
+        propostaFluxoDados.estado.usuarioId
+    ) {
+
+        const usuarioId =
+            String(
+                propostaFluxoDados.estado.usuarioId
+            ).trim();
+
+
+        if (usuarioId) {
+
+            console.log(
+                "👤 Usuário atual reutilizado do módulo de dados:",
+                usuarioId
+            );
+
+
+            return {
+
+                id:
+                    usuarioId
+
+            };
+
+        }
+
+    }
+
+
+    /*
+     * Caso o estado compartilhado ainda não esteja
+     * disponível, utiliza o método existente do
+     * módulo de dados.
+     */
 
     if (
         propostaFluxoDados &&
@@ -181,29 +250,68 @@ async function obterUsuarioAtualFluxo() {
         const usuario =
             await propostaFluxoDados.carregarUsuarioAtual();
 
+
         if (usuario) {
 
-            return usuario;
+            const usuarioId =
+                obterIdDoUsuarioFluxo(
+                    usuario
+                );
+
+
+            if (usuarioId) {
+
+                console.log(
+                    "👤 Usuário atual identificado pelo módulo de dados:",
+                    usuarioId
+                );
+
+
+                return {
+
+                    ...usuario,
+
+                    id:
+                        usuarioId
+
+                };
+
+            }
 
         }
 
     }
 
+
+    /*
+     * Último fallback:
+     * Supabase Auth.
+     */
+
     const supabase =
         obterSupabaseFluxo();
+
 
     const {
         data,
         error
     } = await supabase.auth.getUser();
 
+
     if (error) {
+
+        console.error(
+            "❌ Erro ao identificar usuário pelo Supabase Auth:",
+            error
+        );
+
 
         throw new Error(
             "Não foi possível identificar o usuário atual."
         );
 
     }
+
 
     if (
         !data ||
@@ -216,6 +324,13 @@ async function obterUsuarioAtualFluxo() {
         );
 
     }
+
+
+    console.log(
+        "👤 Usuário atual identificado pelo Supabase Auth:",
+        data.user.id
+    );
+
 
     return {
 
@@ -231,6 +346,7 @@ async function obterUsuarioAtualFluxo() {
     };
 
 }
+
 
 /* =========================================================
 NORMALIZAR ID DO USUÁRIO
@@ -285,6 +401,7 @@ function obterIdDoUsuarioFluxo(
 
 }
 
+
 /* =========================================================
 CARREGAR PROPOSTA ATUAL
 ========================================================= */
@@ -335,6 +452,7 @@ async function carregarPropostaParaAcao() {
     return data;
 
 }
+
 
 /* =========================================================
 VALIDAR DESTINATÁRIO
@@ -394,6 +512,7 @@ function validarDestinatarioDaProposta(
     return true;
 
 }
+
 
 /* =========================================================
 IDENTIFICAR PAPEL DO USUÁRIO NA PROPOSTA
@@ -467,6 +586,7 @@ function obterPapelDoUsuarioNaProposta(
 
 }
 
+
 /* =========================================================
 VALIDAR STATUS DA PROPOSTA
 ========================================================= */
@@ -497,6 +617,7 @@ function validarStatusDaProposta(
     return true;
 
 }
+
 
 /* =========================================================
 ATUALIZAR STATUS DA PROPOSTA
@@ -579,6 +700,7 @@ async function atualizarStatusDaProposta(
 
 }
 
+
 /* =========================================================
 MOSTRAR PROCESSAMENTO
 ========================================================= */
@@ -608,6 +730,7 @@ function mostrarProcessandoFluxo(
 
 }
 
+
 /* =========================================================
 ESCONDER PROCESSAMENTO
 ========================================================= */
@@ -630,6 +753,7 @@ function esconderProcessandoFluxo() {
         null;
 
 }
+
 
 /* =========================================================
 MOSTRAR RESULTADO
@@ -672,6 +796,7 @@ function mostrarResultadoFluxo(
     }
 
 }
+
 
 /* =========================================================
 ACEITAR PROPOSTA
@@ -851,6 +976,7 @@ async function aceitarProposta() {
 
 }
 
+
 /* =========================================================
 RECUSAR PROPOSTA
 ========================================================= */
@@ -974,6 +1100,7 @@ async function recusarProposta() {
 
 }
 
+
 /* =========================================================
 VOLTAR
 ========================================================= */
@@ -992,6 +1119,7 @@ function voltarDaProposta() {
         PROPOSTA_FLUXO_CONFIG.paginaContratacoes;
 
 }
+
 
 /* =========================================================
 CONFIGURAR BOTÕES
@@ -1069,6 +1197,7 @@ function configurarBotoesFluxo() {
 
 }
 
+
 /* =========================================================
 INICIALIZAÇÃO DO FLUXO
 ========================================================= */
@@ -1078,6 +1207,7 @@ function inicializarFluxoProposta() {
     configurarBotoesFluxo();
 
 }
+
 
 /* =========================================================
 API PÚBLICA
@@ -1111,9 +1241,11 @@ window.MusicalWorldPropostaVisualizacaoFluxo = {
 
 };
 
+
 /* =========================================================
 INICIALIZAÇÃO
 
 O arquivo principal proposta-visualizacao.js será
 responsável por iniciar o fluxo da página.
 ========================================================= */
+
